@@ -1,11 +1,21 @@
-// Basit form doğrulama
-document.querySelector('form').addEventListener('submit', function(e) {
-    let name = document.getElementById('name').value;
-    let email = document.getElementById('email').value;
-    let message = document.getElementById('message').value;
-
-    if (!name || !email || !message) {
-        alert('Lütfen tüm alanları doldurun!');
-        e.preventDefault();
-    }
+// Sticky Navbar
+window.addEventListener("scroll", function() {
+    const header = document.getElementById("header");
+    header.classList.toggle("sticky", window.scrollY > 50);
+  });
+  
+  // Loader
+  window.addEventListener("load", function() {
+    const loader = document.getElementById("loader");
+    loader.classList.add("fade-out");
+  });
+  
+  // Sayfa yüklendikten sonra loader'ı kaldır
+window.addEventListener("load", function() {
+    const loader = document.getElementById("loader");
+    loader.classList.add("fade-out");
+    
+    setTimeout(function() {
+        loader.style.display = "none"; // Yükleme animasyonunu gizler
+    }, 1500); // Animasyon bitiminden sonra gizler
 });

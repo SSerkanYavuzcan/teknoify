@@ -384,6 +384,60 @@ header.sticky {
   }
 }
 
+/* =========================================== */
+/* İndikatörler SAYFASI STİLLERİ */
+/* =========================================== */
+
+.indikatorler-section {
+  padding: 5rem 2rem;
+  background: #f1f3f5;
+  text-align: center;
+}
+
+.hero-content {
+  margin-bottom: 3rem;
+}
+
+.indikatorler-listesi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.indikator-item {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  transition: transform 0.4s;
+}
+
+.indikator-item:hover {
+  transform: perspective(600px) rotateY(10deg) rotateX(10deg);
+}
+
+.indikator-icon {
+  width: 60px;
+  margin-bottom: 1rem;
+}
+
+.btn-secondary {
+  background: #00b4d8;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.btn-secondary:hover {
+  background: #0077b3;
+}
+
+
 
 /* =========================================== */
 /* 5. HAKKIMIZDA BÖLÜMÜ (ABOUT) */

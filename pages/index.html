@@ -11,9 +11,20 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.teknoify.com">
   <meta property="og:image" content="https://www.teknoify.com/og-image.jpg">
-  <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="../css/style.css">
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome (İkonlar için) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
 <!-- ========================================== -->
@@ -21,12 +32,19 @@
 <!-- ========================================== -->
 <header id="header">
   <nav class="navbar">
-    <div class="logo">
+    <div class="logo" id="logo">
       <a href="#home">Teknoify</a>
     </div>
     <ul class="nav-links">
       <li><a href="#home">Ana Sayfa</a></li>
-      <li><a href="#products">Ürünler</a></li>
+      <li>
+        <a href="#products">Ürünler</a>
+        <ul>
+          <li><a href="#"><i class="fas fa-robot"></i> Google Sheets Otomasyon</a></li>
+          <li><a href="#"><i class="fas fa-chart-line"></i> Finansal İndikatörler</a></li>
+          <li><a href="#"><i class="fas fa-database"></i> Hazır Dashboardlar</a></li>
+        </ul>
+      </li>
       <li><a href="#about">Hakkımızda</a></li>
       <li><a href="#contact">İletişim</a></li>
     </ul>
@@ -50,28 +68,32 @@
 <section id="products" class="products-section">
   <h2>Ürünlerimiz</h2>
   <div class="product-list">
+    <!-- Google Sheets Otomasyonu -->
     <div class="product-item">
-      <img src="../icons/google-sheets-icon.svg" alt="Google Sheets Icon" class="product-icon">
+      <img src="icons/google-sheets-icon.svg" alt="Google Sheets Icon" class="product-icon">
       <h3>Google Sheets Otomasyonu</h3>
       <p>Google Sheets üzerinde süreçlerinizi kolaylaştıracak özel otomasyonlar.</p>
-      <a href="#contact" class="btn-secondary">Detaylar</a>
+      <a href="google-sheets-automation.html" class="btn-secondary">Detaylar</a> <!-- Yönlendirme -->
     </div>
 
+    <!-- Finansal İndikatörler -->
     <div class="product-item">
-      <img src="../icons/finance-icon.svg" alt="Finance Icon" class="product-icon">
+      <img src="icons/finance-icon.svg" alt="Finance Icon" class="product-icon">
       <h3>Finansal İndikatörler</h3>
       <p>Alım satım stratejileriniz için profesyonel hazırlanmış finansal indikatörler.</p>
       <a href="#contact" class="btn-secondary">Detaylar</a>
     </div>
 
+    <!-- Hazır Dashboardlar -->
     <div class="product-item">
-      <img src="../icons/dashboard-icon.svg" alt="Dashboard Icon" class="product-icon">
+      <img src="icons/dashboard-icon.svg" alt="Dashboard Icon" class="product-icon">
       <h3>Hazır Dashboardlar</h3>
       <p>Verilerinizi görselleştirerek karar verme süreçlerinizi hızlandırın.</p>
       <a href="#contact" class="btn-secondary">Detaylar</a>
     </div>
   </div>
 </section>
+
 
 <!-- ========================================== -->
 <!-- 4. HAKKIMIZDA BÖLÜMÜ (SCROLL ANİMASYONLU) -->
@@ -96,28 +118,53 @@
 </section>
 
 <!-- ========================================== -->
-<!-- 6. FOOTER (SOSYAL MEDYA İKONLARI İLE) -->
+<!-- 6. SIKÇA SORULAN SORULAR (FAQ) BÖLÜMÜ -->
+<!-- ========================================== -->
+<section id="faq" class="faq-section">
+  <h2>Sıkça Sorulan Sorular</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <h3>Sunduğunuz hizmetler nelerdir?</h3>
+      <p>Otomasyon çözümleri, Google Sheets entegrasyonları, finansal indikatörler ve hazır dashboard hizmetleri sunuyoruz.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Size nasıl ulaşabilirim?</h3>
+      <p>İletişim formumuzu kullanarak veya info@teknoify.com adresine e-posta göndererek bize ulaşabilirsiniz.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Hizmetleriniz hangi sektörlere yöneliktir?</h3>
+      <p>Hizmetlerimiz, finans, e-ticaret, eğitim ve teknoloji başta olmak üzere birçok sektöre yöneliktir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- 7. FOOTER (SOSYAL MEDYA İKONLARI İLE) -->
 <!-- ========================================== -->
 <footer class="footer">
   <p>&copy; 2025 Teknoify - Tüm Hakları Saklıdır.</p>
   <div class="social-icons">
-    <a href="#" target="_blank"><img src="../icons/github-icon.svg" alt="GitHub"></a>
-    <a href="#" target="_blank"><img src="../icons/linkedin-icon.svg" alt="LinkedIn"></a>
-    <a href="#" target="_blank"><img src="../icons/instagram-icon.svg" alt="Instagram"></a>
+    <a href="#" target="_blank"><img src="icons/github-icon.svg" alt="GitHub"></a>
+    <a href="#" target="_blank"><img src="icons/linkedin-icon.svg" alt="LinkedIn"></a>
+    <a href="#" target="_blank"><img src="icons/instagram-icon.svg" alt="Instagram"></a>
   </div>
 </footer>
 
+
 <!-- ========================================== -->
-<!-- 7. LOADER (AÇILIŞ ANİMASYONU - OPSİYONEL) -->
+<!-- 8. LOADER (AÇILIŞ ANİMASYONU - OPSİYONEL) -->
 <!-- ========================================== -->
 <div id="loader">
-  <div class="spinner"></div>
+  <div class="loader-content">
+    <img src="images/logo.png" alt="Teknoify Logo" class="loader-logo">
+    <div class="spinner"></div>
+  </div>
 </div>
 
 <!-- ========================================== -->
-<!-- 8. SCRIPT DOSYALARI -->
+<!-- 9. SCRIPT DOSYALARI -->
 <!-- ========================================== -->
-<script src="../js/script.js"></script>
+<script src="js/script.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script> <!-- Scroll Animasyonları için -->
 <script>
   AOS.init();
@@ -125,25 +172,3 @@
 
 </body>
 </html>
-
-<!-- ========================================== -->
-<!-- 8. SIKÇA SORULAN SORULAR (FAQ) BÖLÜMÜ -->
-<!-- ========================================== -->
-<section id="faq" class="faq-section">
-    <h2>Sıkça Sorulan Sorular</h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <h3>Sunduğunuz hizmetler nelerdir?</h3>
-        <p>Otomasyon çözümleri, Google Sheets entegrasyonları, finansal indikatörler ve hazır dashboard hizmetleri sunuyoruz.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Size nasıl ulaşabilirim?</h3>
-        <p>İletişim formumuzu kullanarak veya info@teknoify.com adresine e-posta göndererek bize ulaşabilirsiniz.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Hizmetleriniz hangi sektörlere yöneliktir?</h3>
-        <p>Hizmetlerimiz, finans, e-ticaret, eğitim ve teknoloji başta olmak üzere birçok sektöre yöneliktir.</p>
-      </div>
-    </div>
-  </section>
-  
