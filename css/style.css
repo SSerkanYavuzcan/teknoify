@@ -1,110 +1,360 @@
-/* Temel stil */
+/* =========================================== */
+/* 1. TEMEL AYARLAR (RESET, FONT, RENKLER) */
+/* =========================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
 }
 
-/* Header ve Navbar */
+h1, h2, h3 {
+  font-weight: 600;
+  color: #222;
+}
+
+p {
+  font-size: 1rem;
+  color: #555;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* =========================================== */
+/* 2. NAVBAR / HEADER */
+/* =========================================== */
 header {
-    background-color: #333;
-    color: white;
-    padding: 10px;
+  background: #ffffff;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 999;
 }
 
-header nav ul {
-    list-style-type: none;
-    padding: 0;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-header nav ul li {
-    display: inline;
-    margin-right: 20px;
+.navbar .logo a {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0077ff;
 }
 
-header nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
 }
 
-/* Ana Sayfa */
-#home {
-    background-color: #1e3d58;
-    color: white;
-    text-align: center;
-    padding: 100px 20px;
+.nav-links li a {
+  font-size: 1rem;
+  transition: color 0.3s ease;
 }
 
-#home h1 {
-    font-size: 3em;
-    margin: 0;
+.nav-links li a:hover {
+  color: #0056b3;
 }
 
-#home p {
-    font-size: 1.5em;
-    margin-top: 10px;
+/* =========================================== */
+/* 3. HERO SECTION */
+/* =========================================== */
+.hero-section {
+  height: 90vh;
+  background: linear-gradient(to right, #0077ff, #00c6ff);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
 }
 
-/* Hakkında, Hizmetler, İletişim */
-section {
-    padding: 50px 20px;
-    text-align: center;
+.hero-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  animation: fadeInDown 1s ease forwards;
 }
 
-h2 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1.2s ease forwards;
 }
 
-/* Hizmetler */
-.service-list {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+.btn-primary {
+  display: inline-block;
+  background: #fff;
+  color: #0077ff;
+  padding: 0.8rem 1.8rem;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: 0.3s;
 }
 
-.service-item {
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 30%;
+.btn-primary:hover {
+  background: #0056b3;
+  color: #fff;
 }
 
-.service-item h3 {
-    font-size: 1.8em;
+/* Hero Animations */
+@keyframes fadeInDown {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-/* Form */
-form input, form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-form button {
-    padding: 10px 20px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+/* =========================================== */
+/* 4. ÜRÜNLER BÖLÜMÜ (PRODUCTS SECTION) */
+/* =========================================== */
+.products-section {
+  padding: 5rem 2rem;
+  background: #f1f3f5;
+  text-align: center;
 }
 
-form button:hover {
-    background-color: #555;
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 3rem;
 }
 
-/* Footer */
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+.product-item {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  width: 300px;
+  transition: transform 0.4s;
+}
+
+.product-item:hover {
+  transform: perspective(600px) rotateY(10deg) rotateX(10deg);
+}
+
+.product-icon {
+  width: 60px;
+  margin-bottom: 1rem;
+}
+
+/* =========================================== */
+/* 5. HAKKIMIZDA BÖLÜMÜ (ABOUT) */
+/* =========================================== */
+.about-section {
+  padding: 5rem 2rem;
+  background: #ffffff;
+  text-align: center;
+}
+
+.about-section p {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* =========================================== */
+/* 6. VİZYON & MİSYON BÖLÜMÜ */
+/* =========================================== */
+.vision-mission-section {
+  padding: 5rem 2rem;
+  background: #f8f9fa;
+  text-align: center;
+}
+
+.vision-mission-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+.vision, .mission {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  width: 300px;
+}
+
+/* =========================================== */
+/* 7. SSS (FAQ) BÖLÜMÜ */
+/* =========================================== */
+.faq-section {
+  padding: 5rem 2rem;
+  background: #ffffff;
+  text-align: center;
+}
+
+.faq-list {
+  margin-top: 3rem;
+}
+
+.faq-item {
+  margin-bottom: 2rem;
+}
+
+.faq-item h3 {
+  cursor: pointer;
+  position: relative;
+}
+
+.faq-item p {
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.faq-item:hover p {
+  display: block;
+}
+
+/* =========================================== */
+/* 8. İLETİŞİM FORMU */
+/* =========================================== */
+.contact-section {
+  padding: 5rem 2rem;
+  background: #f1f3f5;
+  text-align: center;
+}
+
+.contact-form {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-form input, .contact-form textarea {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.contact-form button {
+  background: #0077ff;
+  color: #fff;
+  border: none;
+  padding: 1rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.contact-form button:hover {
+  background: #0056b3;
+}
+
+/* =========================================== */
+/* 9. FOOTER */
+/* =========================================== */
+.footer {
+  background: #222;
+  color: #fff;
+  padding: 2rem;
+  text-align: center;
+}
+
+.social-icons {
+  margin-top: 1rem;
+}
+
+.social-icons a {
+  margin: 0 0.5rem;
+  display: inline-block;
+  transition: transform 0.3s;
+}
+
+.social-icons a:hover {
+  transform: scale(1.2);
+}
+
+/* =========================================== */
+/* 10. LOADER */
+/* =========================================== */
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #0077ff;
+  border-top: 5px solid #00c6ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* =========================================== */
+/* 11. RESPONSIVE TASARIM */
+/* =========================================== */
+@media (max-width: 768px) {
+  .product-list, .vision-mission-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .navbar .nav-links {
+    display: none;
+  }
+
+  .navbar .logo {
+    font-size: 1.5rem;
+  }
 }
