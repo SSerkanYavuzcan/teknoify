@@ -40,42 +40,138 @@ img {
 }
 
 /* =========================================== */
-/* 2. NAVBAR / HEADER */
+/* 2. HEADER VE NAVBAR */
 /* =========================================== */
+
+#logo a {
+  font-size: 2rem; /* Başlangıç boyutu */
+  font-weight: bold;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+header.sticky #logo a {
+  font-size: 1.5rem; /* Scroll sonrası küçülmüş logo */
+}
+
+.nav-links a {
+  font-size: 1rem; /* Başlangıç boyutu */
+  transition: all 0.3s ease;
+}
+
+header.sticky .nav-links a {
+  font-size: 0.9rem; /* Scroll sonrası yazılar küçülür */
+}
+
 header {
-  background: #ffffff;
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  position: sticky;
+  position: fixed;
   top: 0;
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
   z-index: 999;
 }
 
+/* Scroll sonrası sticky header */
+header.sticky {
+  background-color: rgba(13, 27, 42, 0.95); /* Koyu Lacivert, hafif saydam */
+  backdrop-filter: blur(10px); /* Hafif blur efekti */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+  
 .navbar {
+  width: 90%;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.navbar .logo a {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #0077ff;
-}
-
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 2rem;
+  gap: 30px;
 }
 
-.nav-links li a {
+.nav-links li {
+  position: relative;
+}
+
+.nav-links a {
+  color: #ffffff;
   font-size: 1rem;
+  padding: 8px 15px;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
   transition: color 0.3s ease;
 }
 
-.nav-links li a:hover {
-  color: #0056b3;
+/* Hover Animasyon (Sağdan Sola Çizgi Efekti) */
+.nav-links a::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: -100%;
+  background-color: #00b4d8; /* Vurgu Rengi: Açık Mavi */
+  transition: all 0.3s ease;
+}
+
+.nav-links a:hover::before {
+  left: 0;
+}
+
+/* Hover olduğunda link rengi değişimi */
+.nav-links a:hover {
+  color: #00b4d8;
+}
+
+/* DROPDOWN MENÜ */
+.nav-links li:hover > ul {
+  display: block;
+}
+
+.nav-links li ul {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  z-index: 1000;
+}
+
+.nav-links li ul li {
+  width: 100%;
+}
+
+.nav-links li ul li a {
+  color: #333;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Alt Menü Hover */
+.nav-links li ul li a:hover {
+  background-color: #00b4d8;
+  color: #fff;
+  border-radius: 5px;
+}
+
+/* İkonlar için (Dropdown menüde ikon eklersen) */
+.nav-links li ul li a i {
+  font-size: 1.2rem;
+  color: #00b4d8;
 }
 
 /* =========================================== */
@@ -176,6 +272,118 @@ header {
   width: 60px;
   margin-bottom: 1rem;
 }
+
+/* =========================================== */
+/* GOOGLE SHEETS OTOMASYONU SAYFASI STİLLERİ */
+/* =========================================== */
+
+/* Google Sheets Otomasyonu Sayfası Başlık ve Görsel */
+#google-sheets-header {
+  text-align: center;
+  padding: 50px 0;
+  background-color: #f1f3f5; /* Arka plan rengi */
+}
+
+.google-sheets-header-content h1 {
+  font-size: 2.5rem;
+  color: #0d1b2a; /* Başlık rengi */
+  margin-bottom: 20px;
+}
+
+.google-sheets-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+  border-radius: 10px; /* Görsele köşe yuvarlama efekti */
+}
+
+/* Google Sheets Açıklama */
+#google-sheets-description {
+  padding: 30px 20px;
+  text-align: center;
+}
+
+#google-sheets-description h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #0d1b2a;
+}
+
+#google-sheets-description ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+#google-sheets-description ul li {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Aksiyon Butonları */
+#google-sheets-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+#google-sheets-actions .btn-primary, 
+#google-sheets-actions .btn-secondary {
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+/* Satın Al Butonu */
+#google-sheets-actions .btn-primary {
+  background-color: #0077ff;
+  color: white;
+}
+
+#google-sheets-actions .btn-primary:hover {
+  background-color: #0056b3; /* Hover rengini değiştirelim */
+}
+
+/* Bilgilendirme İste Butonu */
+#google-sheets-actions .btn-secondary {
+  background-color: #00c6ff;
+  color: white;
+}
+
+#google-sheets-actions .btn-secondary:hover {
+  background-color: #0091b3; /* Hover rengini değiştirelim */
+}
+
+/* Mobil Düzenlemeler */
+@media (max-width: 768px) {
+  #google-sheets-header h1 {
+    font-size: 2rem;
+  }
+
+  #google-sheets-description h2 {
+    font-size: 1.5rem;
+  }
+
+  #google-sheets-description ul li {
+    font-size: 0.9rem;
+  }
+
+  #google-sheets-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #google-sheets-actions .btn-primary, 
+  #google-sheets-actions .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+}
+
 
 /* =========================================== */
 /* 5. HAKKIMIZDA BÖLÜMÜ (ABOUT) */
@@ -320,11 +528,18 @@ header {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #ffffff;
+  background-color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .spinner {
@@ -339,6 +554,33 @@ header {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+#loader-logo {
+  width: 100px;
+  height: 100px;
+  animation: logoAnimation 3s ease-in-out infinite;
+}
+
+@keyframes logoAnimation {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* Loader gizlendiğinde */
+#loader.fade-out {
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* =========================================== */
