@@ -438,6 +438,51 @@ header.sticky {
 }
 
 
+/* =========================================== */
+/* 4. İNDİKATÖR DETAY SAYFASI */
+/* =========================================== */
+.indikator-detay-section {
+  padding: 5rem 2rem;
+  background: #ffffff;
+  text-align: center;
+}
+
+.indikator-detay-section h1 {
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+}
+
+.indikator-detay-section img {
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem 0;
+}
+
+.indikator-detay-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.indikator-detay-section ul li {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.indikator-detay-section .btn-secondary {
+  background: #00b4d8;
+  color: #fff;
+  padding: 0.8rem 1.6rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.indikator-detay-section .btn-secondary:hover {
+  background: #0077b3;
+}
+
 
 /* =========================================== */
 /* 5. HAKKIMIZDA BÖLÜMÜ (ABOUT) */
