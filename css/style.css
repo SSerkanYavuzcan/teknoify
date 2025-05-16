@@ -255,16 +255,10 @@ header.sticky {
 /* =========================================== */
 .products-section {
   padding: 5rem 2rem;
-  background: linear-gradient(
-    180deg, 
-    #171926 0%,        /* Dalganın devamı koyu gece mavisi */
-    #223962 35%,       
-    #23324b 50%,       
-    #27334a 67%,       
-    #f8775e 100%
-  );
+  background: #171926; /* Veya başka koyu bir renk, örn: #181a20 */
   text-align: center;
 }
+
 .products-section h2 {
   color: #fff;
 }
