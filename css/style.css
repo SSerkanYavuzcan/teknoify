@@ -263,8 +263,8 @@ header.sticky {
   grid-template-columns: repeat(4, 1fr);
   gap: 2.5rem;
   margin-top: 3rem;
-  justify-items: stretch; /* Stretch tüm kutuları doldurur */
-  align-items: stretch;   /* Dikeyde de hizalama sağlar */
+  justify-items: stretch;
+  align-items: stretch;
 }
 
 .modern-product-card {
@@ -278,13 +278,8 @@ header.sticky {
   transition: transform 0.18s, box-shadow 0.18s;
   max-width: 370px;
   width: 100%;
-  height: 100%;        /* YENİ: Yüksekliği grid hücresi kadar yap */
+  height: 100%;
   align-items: stretch;
-}
-
-.modern-product-card:hover {
-  transform: translateY(-6px) scale(1.025);
-  box-shadow: 0 8px 30px #0002;
 }
 
 .modern-product-header {
@@ -295,21 +290,24 @@ header.sticky {
   color: #fff;
   min-height: 90px;
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
   letter-spacing: -1px;
+  text-align: center;
+  flex: 0 0 120px;
 }
 
 .modern-product-desc {
   padding: 28px 28px 24px 28px;
   font-size: 1.08rem;
   color: #232323;
-  flex: 1;
+  flex: 1 1 0;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: flex-start;    /* veya center */
+  justify-content: center;
   font-weight: 400;
   line-height: 1.55;
+  text-align: center;
 }
 
 /* FARKLI GRADIENTLER - Her ürüne ayrı renk */
