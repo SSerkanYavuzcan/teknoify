@@ -249,7 +249,6 @@ header.sticky {
   display: block;
   pointer-events: none;
 }
-
 /* =========================================== */
 /* 4. ÜRÜNLER BÖLÜMÜ (PRODUCTS SECTION) */
 /* =========================================== */
@@ -312,33 +311,37 @@ header.sticky {
   letter-spacing: -1px;
   text-align: center;
   flex: 0 0 120px;
+  /* Animasyon için background-size eklendi! */
+  background-size: 200% 200%;
 }
 
-.modern-product-desc {
-  padding: 28px 28px 24px 28px;
-  font-size: 1.08rem;
-  color: #232323;
-  flex: 1 1 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  font-weight: 400;
-  line-height: 1.55;
-  text-align: center;
+/* Animasyonlu Gradient Keyframes */
+@keyframes animatedGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* FARKLI GRADIENTLER - Her ürüne ayrı renk */
+/* HAREKETLİ GRADIENTLER - Her ürüne ayrı animasyon */
 .gradient-rpa {
-  background: linear-gradient(120deg, #212966 0%, #3154e2 60%, #a93ae7 100%);
+  background: linear-gradient(120deg, #212966, #3154e2, #a93ae7, #212966);
+  background-size: 200% 200%;
+  animation: animatedGradient 7s ease-in-out infinite;
 }
 .gradient-scraping {
-  background: linear-gradient(120deg, #6f2672 0%, #f98945 90%);
+  background: linear-gradient(120deg, #6f2672, #f98945, #6f2672);
+  background-size: 200% 200%;
+  animation: animatedGradient 8s ease-in-out infinite;
 }
 .gradient-finance {
-  background: linear-gradient(120deg, #e63e6d 0%, #a252e5 60%, #fd7c55 100%);
+  background: linear-gradient(120deg, #e63e6d, #a252e5, #fd7c55, #e63e6d);
+  background-size: 200% 200%;
+  animation: animatedGradient 10s ease-in-out infinite;
 }
 .gradient-agent {
-  background: linear-gradient(120deg, #5033a4 0%, #24a6f8 100%);
+  background: linear-gradient(120deg, #5033a4, #24a6f8, #5033a4);
+  background-size: 200% 200%;
+  animation: animatedGradient 12s ease-in-out infinite;
 }
 
 /* RESPONSIVE */
