@@ -13,8 +13,8 @@ html {
 
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #f8f9fa;
-  color: #333;
+  background: #171926;
+  color: #fff;
   line-height: 1.6;
 }
 
@@ -44,10 +44,11 @@ img {
 /* =========================================== */
 
 #logo a {
-  font-size: 2rem; /* Başlangıç boyutu */
+  font-size: 2rem;
   font-weight: bold;
-  color: #ffffff;
+  color: #fff;
   transition: all 0.3s ease;
+  letter-spacing: 1px;
 }
 
 header.sticky #logo a {
@@ -178,40 +179,49 @@ header.sticky {
 /* 3. HERO SECTION */
 /* =========================================== */
 .hero-section {
-  height: 90vh;
-  background: linear-gradient(to right, #0077ff, #00c6ff);
-  color: #fff;
+  min-height: 93vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(180deg, #171926 0%, #26406b 60%, #f8775e 100%);
+  color: #fff;
   text-align: center;
-  padding: 2rem;
+  position: relative;
+  padding-top: 80px;
+  padding-bottom: 30px;
 }
 
 .hero-content h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  animation: fadeInDown 1s ease forwards;
+  font-size: 3.4rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: #fff;
+  letter-spacing: -1.5px;
 }
-
 .hero-content p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  animation: fadeInUp 1.2s ease forwards;
+  font-size: 1.32rem;
+  margin-bottom: 36px;
+  color: #e2e2e2;
+  font-weight: 400;
 }
 
 .btn-primary {
   display: inline-block;
   background: #fff;
-  color: #0077ff;
-  padding: 0.8rem 1.8rem;
-  border-radius: 30px;
+  color: #26406b;
+  padding: 16px 46px;
+  border-radius: 32px;
   font-weight: 600;
-  transition: 0.3s;
+  font-size: 1.18rem;
+  transition: background 0.18s, color 0.18s;
+  margin-bottom: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 24px 0 rgba(0,0,0,0.12);
+  border: none;
 }
-
 .btn-primary:hover {
-  background: #0056b3;
+  background: #f8775e;
   color: #fff;
 }
 
@@ -685,17 +695,70 @@ header.sticky {
 /* =========================================== */
 /* 11. RESPONSIVE TASARIM */
 /* =========================================== */
+
+@media (max-width: 900px) {
+  .product-list, .vision-mission-content {
+    flex-direction: column;
+    align-items: center;
+  }
+  .product-item, .vision, .mission {
+    width: 90vw;
+    margin-bottom: 22px;
+  }
+  .about-section, .contact-section { 
+    padding: 26px 8px;
+  }
+  .navbar {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* Klasik tablet boyutu */
 @media (max-width: 768px) {
   .product-list, .vision-mission-content {
     flex-direction: column;
     align-items: center;
   }
-
   .navbar .nav-links {
     display: none;
   }
-
   .navbar .logo {
     font-size: 1.5rem;
   }
+  .about-section, .contact-section {
+    padding: 18px 6px;
+  }
 }
+
+/* Mobil ve küçük tabletler */
+@media (max-width: 700px) {
+  .hero-content h1 { 
+    font-size: 2.1rem;
+  }
+  .hero-section {
+    padding: 30px 8px 10px 8px;
+  }
+  .hero-content p {
+    font-size: 1rem;
+  }
+  .btn-primary {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+}
+
+/* Küçük mobil cihazlar */
+@media (max-width: 500px) {
+  .hero-section h1 {
+    font-size: 1.3rem;
+  }
+  .btn-primary {
+    font-size: 0.95rem;
+    padding: 9px 12px;
+  }
+  .navbar {
+    padding-top: 18px;
+  }
+}
+
