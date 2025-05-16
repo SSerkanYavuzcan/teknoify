@@ -253,7 +253,14 @@ header.sticky {
 /* =========================================== */
 .products-section {
   padding: 5rem 2rem;
-  background: linear-gradient(180deg, #171926 0%, #223962 70%, #f8775e 100%);
+  background: linear-gradient(
+    180deg, 
+    #171926 0%,          /* En tepe, koyu gece mavisi */
+    #223962 35%,         /* Hafif açılıyor */
+    #23324b 50%,         /* Orta koyuluk */
+    #27334a 67%,         /* Hafif bir geçiş */
+    #f8775e 100%         /* Turuncuya çok yumuşak bir iniş */
+  );
   text-align: center;
 }
 
