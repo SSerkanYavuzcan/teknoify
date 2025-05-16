@@ -345,6 +345,21 @@ header.sticky {
   animation: animatedGradient 12s ease-in-out infinite;
 }
 
+/* KART AÇIKLAMASI STİLİ - GÖRÜNÜR KOYU TON */
+.modern-product-desc {
+  padding: 28px 28px 24px 28px;
+  font-size: 1.08rem;
+  color: #232323 !important;   /* Açıklama KOYU tonda net görünür */
+  background: #fff;
+  flex: 1 1 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-weight: 400;
+  line-height: 1.55;
+  text-align: center;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1200px) {
   .product-list-modern {
