@@ -255,7 +255,7 @@ header.sticky {
 /* =========================================== */
 .products-section {
   padding: 5rem 2rem;
-  background: #171926; /* Veya başka koyu bir renk, örn: #181a20 */
+  background: #171926; /* Koyu arka plan */
   text-align: center;
 }
 
@@ -306,7 +306,6 @@ header.sticky {
   letter-spacing: -1px;
   text-align: center;
   flex: 0 0 120px;
-  /* Animasyon için background-size eklendi! */
   background-size: 200% 200%;
 }
 
@@ -339,11 +338,11 @@ header.sticky {
   animation: animatedGradient 12s ease-in-out infinite;
 }
 
-/* KART AÇIKLAMASI STİLİ - GÖRÜNÜR KOYU TON */
+/* KART AÇIKLAMASI STİLİ */
 .modern-product-desc {
   padding: 28px 28px 24px 28px;
   font-size: 1.08rem;
-  color: #232323 !important;   /* Açıklama KOYU tonda net görünür */
+  color: #232323 !important;
   background: #fff;
   flex: 1 1 0;
   display: flex;
@@ -354,7 +353,30 @@ header.sticky {
   text-align: center;
 }
 
-/* RESPONSIVE */
+/* KEŞFET BUTONU */
+.discover-btn {
+  display: inline-block;
+  margin: 0 auto 2rem auto;
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(90deg, #6d5dfc, #21d4fd);
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 0 6px 16px 0 rgba(32, 32, 100, 0.14);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.13s, box-shadow 0.13s, background 0.18s;
+}
+.discover-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 24px 0 rgba(32, 32, 100, 0.23);
+  background: linear-gradient(90deg, #21d4fd, #6d5dfc);
+}
+
+/* RESPONSIVE TASARIM */
 @media (max-width: 1200px) {
   .product-list-modern {
     grid-template-columns: repeat(2, 1fr);
