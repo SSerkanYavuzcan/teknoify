@@ -255,13 +255,16 @@ header.sticky {
   padding: 5rem 2rem;
   background: linear-gradient(
     180deg, 
-    #171926 0%,          /* En tepe, koyu gece mavisi */
-    #223962 35%,         /* Hafif açılıyor */
-    #23324b 50%,         /* Orta koyuluk */
-    #27334a 67%,         /* Hafif bir geçiş */
-    #f8775e 100%         /* Turuncuya çok yumuşak bir iniş */
+    #171926 0%,        /* En tepe, koyu gece mavisi */
+    #223962 35%,       /* Hafif açılıyor */
+    #23324b 50%,       /* Orta koyuluk */
+    #27334a 67%,       /* Hafif bir geçiş */
+    #f8775e 100%       /* Turuncuya çok yumuşak bir iniş */
   );
   text-align: center;
+}
+.products-section h2 {
+  color: #fff;
 }
 
 /* MODERN ÜRÜNLER KART YAPISI */
@@ -277,7 +280,7 @@ header.sticky {
 .modern-product-card {
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 4px 24px #0001;
+  box-shadow: 0 8px 36px 0 rgba(20,24,41,0.13);
   min-width: 0;
   min-height: 380px;
   display: flex;
@@ -287,6 +290,11 @@ header.sticky {
   width: 100%;
   height: 100%;
   align-items: stretch;
+}
+
+.modern-product-card:hover {
+  transform: translateY(-6px) scale(1.025);
+  box-shadow: 0 16px 40px 0 rgba(20,24,41,0.19);
 }
 
 .modern-product-header {
@@ -310,7 +318,7 @@ header.sticky {
   color: #232323;
   flex: 1 1 0;
   display: flex;
-  align-items: flex-start;    /* veya center */
+  align-items: flex-start;
   justify-content: center;
   font-weight: 400;
   line-height: 1.55;
@@ -332,16 +340,20 @@ header.sticky {
 }
 
 /* RESPONSIVE */
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .product-list-modern {
-    flex-direction: column;
-    align-items: center;
-  }
-  .modern-product-card {
-    width: 95vw;
-    max-width: 400px;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
+@media (max-width: 800px) {
+  .product-list-modern {
+    grid-template-columns: 1fr;
+  }
+  .modern-product-card {
+    max-width: 98vw;
+  }
+}
+
 
 
 /* =========================================== */
