@@ -227,25 +227,27 @@ header.sticky {
 
 /* Hero Animations */
 @keyframes fadeInDown {
-  0% {
-    transform: translateY(-50px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  0% { transform: translateY(-50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeInUp {
+  0% { transform: translateY(50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes fadeInUp {
-  0% {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+/* =========================================== */
+/* 3.5. SECTION WAVE SEPARATOR */
+/* =========================================== */
+.section-wave-separator {
+  line-height: 0;
+  margin-top: -4px;
+  margin-bottom: -4px;
+}
+.section-wave-separator svg {
+  width: 100%;
+  height: 70px;
+  display: block;
+  pointer-events: none;
 }
 
 /* =========================================== */
@@ -255,11 +257,11 @@ header.sticky {
   padding: 5rem 2rem;
   background: linear-gradient(
     180deg, 
-    #171926 0%,        /* En tepe, koyu gece mavisi */
-    #223962 35%,       /* Hafif açılıyor */
-    #23324b 50%,       /* Orta koyuluk */
-    #27334a 67%,       /* Hafif bir geçiş */
-    #f8775e 100%       /* Turuncuya çok yumuşak bir iniş */
+    #171926 0%,        /* Dalganın devamı koyu gece mavisi */
+    #223962 35%,       
+    #23324b 50%,       
+    #27334a 67%,       
+    #f8775e 100%
   );
   text-align: center;
 }
@@ -353,7 +355,6 @@ header.sticky {
     max-width: 98vw;
   }
 }
-
 
 
 /* =========================================== */
