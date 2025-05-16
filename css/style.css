@@ -253,7 +253,7 @@ header.sticky {
 /* =========================================== */
 .products-section {
   padding: 5rem 2rem;
-  background: #f1f3f5;
+  background: linear-gradient(180deg, #171926 0%, #223962 70%, #f8775e 100%);
   text-align: center;
 }
 
