@@ -259,11 +259,11 @@ header.sticky {
 
 /* MODERN ÜRÜNLER KART YAPISI */
 .product-list-modern {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 2.5rem;
-  justify-content: center;
   margin-top: 3rem;
+  justify-items: center;
 }
 
 .modern-product-card {
