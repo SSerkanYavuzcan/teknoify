@@ -940,6 +940,7 @@ header.sticky {
   background: #0056b3;
 }
 
+
 /* =========================================== */
 /* 9. FOOTER */
 /* =========================================== */
@@ -948,21 +949,11 @@ header.sticky {
   color: #fff;
   padding: 2rem;
   text-align: center;
+  font-size: 1.06rem;
+  letter-spacing: 0.2px;
+  border-top: 1.5px solid #171926; /* Üstte hafif bir çizgiyle ayırabilirsin */
 }
 
-.social-icons {
-  margin-top: 1rem;
-}
-
-.social-icons a {
-  margin: 0 0.5rem;
-  display: inline-block;
-  transition: transform 0.3s;
-}
-
-.social-icons a:hover {
-  transform: scale(1.2);
-}
 
 
 
