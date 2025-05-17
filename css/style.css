@@ -70,7 +70,8 @@ header {
   width: 100%;
   padding: 10px 0;
   background: transparent;
-  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+  border-bottom: 1.5px solid #fff;  /* BEYAZ GEÇİŞ ÇİZGİSİ EKLENDİ */
+  transition: background-color 0.4s ease, box-shadow 0.4s ease, border-bottom 0.18s;
   z-index: 999;
 }
 
@@ -79,6 +80,7 @@ header.sticky {
   background-color: rgba(13, 27, 42, 0.95); /* Koyu Lacivert, hafif saydam */
   backdrop-filter: blur(10px); /* Hafif blur efekti */
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-bottom: 1.5px solid #fff;  /* Sticky'de de çizgi devam eder */
 }
   
 .navbar {
