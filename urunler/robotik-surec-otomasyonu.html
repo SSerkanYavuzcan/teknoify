@@ -15,18 +15,19 @@
       margin: 0;
       padding: 0;
     }
-    /* Gradientli hero */
+    /* Küçültülmüş gradient hero */
     .product-gradient-hero {
       background: linear-gradient(120deg, #212966, #3154e2, #a93ae7, #212966);
       background-size: 200% 200%;
       animation: animatedGradient 7s ease-in-out infinite;
       color: #fff;
       text-align: center;
-      padding: 70px 20px 38px 20px;
-      border-radius: 0 0 36px 36px;
+      padding: 38px 12px 20px 12px;  /* %50'ye yakın küçültüldü */
+      border-radius: 0 0 24px 24px;
       box-shadow: 0 8px 36px 0 rgba(20,24,41,0.08);
       position: relative;
       z-index: 10;
+      margin-bottom: 0;
     }
     @keyframes animatedGradient {
       0% { background-position: 0% 50%; }
@@ -34,19 +35,57 @@
       100% { background-position: 0% 50%; }
     }
     .product-gradient-hero h1 {
-      font-size: 2.55rem;
+      font-size: 2rem;
       font-weight: 800;
       letter-spacing: -1px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       color: #fff;
     }
     .product-gradient-hero p {
-      font-size: 1.17rem;
-      color: #f3f3f3;
+      font-size: 1rem;
+      color: #e7e7f9;
       margin: 0 auto;
-      max-width: 620px;
+      max-width: 500px;
       font-weight: 400;
+      line-height: 1.5;
+    }
+    /* Video ve mesaj alanı */
+    .rpa-video-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 42px;
+      max-width: 980px;
+      margin: -18px auto 24px auto;
+      padding: 18px 8px 14px 8px;
+    }
+    .rpa-video-box {
+      flex: 0 0 320px;
+      max-width: 340px;
+      min-width: 220px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(33,41,102,0.10);
+      background: #181b2c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+    }
+    .rpa-video-box video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .rpa-video-message {
+      flex: 1 1 300px;
+      font-size: 1.22rem;
+      color: #fff;
+      font-weight: 600;
       line-height: 1.52;
+      text-align: left;
+      background: none;
+      padding-left: 8px;
     }
     /* Kart stili */
     .product-detail-section {
@@ -65,17 +104,17 @@
       box-shadow: 0 8px 36px 0 rgba(20,24,41,0.11);
       max-width: 620px;
       width: 98vw;
-      margin: -62px auto 0 auto;
-      padding: 2.7rem 2.1rem 2.6rem 2.1rem;
+      margin: -34px auto 0 auto;
+      padding: 2.2rem 2.1rem 2.3rem 2.1rem;
       position: relative;
       z-index: 1;
       text-align: left;
       animation: fadeInUp 1.05s cubic-bezier(0.23,0.79,0.39,1) both;
     }
     .product-detail-title {
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 800;
-      margin-bottom: 1.7rem;
+      margin-bottom: 1.4rem;
       letter-spacing: -1px;
       background: linear-gradient(90deg, #212966 10%, #3154e2 60%, #a93ae7 100%);
       -webkit-background-clip: text;
@@ -85,39 +124,39 @@
     }
     .product-detail-lead {
       color: #43425d;
-      font-size: 1.08rem;
+      font-size: 1.04rem;
       font-weight: 500;
-      margin-bottom: 1.6rem;
+      margin-bottom: 1.4rem;
     }
     .product-detail-card h2 {
       color: #212966;
-      font-size: 1.36rem;
-      margin: 1.1rem 0 0.75rem 0;
+      font-size: 1.23rem;
+      margin: 1rem 0 0.65rem 0;
     }
     .product-detail-card h3 {
       color: #3154e2;
-      font-size: 1.12rem;
-      margin: 1.3rem 0 0.7rem 0;
+      font-size: 1.08rem;
+      margin: 1.1rem 0 0.6rem 0;
     }
     .product-detail-card ul {
-      margin: 0.6rem 0 1.2rem 1.2rem;
+      margin: 0.4rem 0 1rem 1.2rem;
       padding-left: 1.2rem;
     }
     .product-detail-card li {
-      font-size: 1.03rem;
-      margin-bottom: 0.4em;
+      font-size: 1rem;
+      margin-bottom: 0.3em;
       color: #383b4c;
     }
     .btn-primary {
       display: inline-block;
       background: linear-gradient(90deg, #6d5dfc 0%, #21d4fd 100%);
       color: #fff;
-      padding: 15px 40px;
-      border-radius: 30px;
+      padding: 14px 32px;
+      border-radius: 28px;
       font-weight: 600;
-      font-size: 1.07rem;
+      font-size: 1.02rem;
       transition: background 0.18s, color 0.18s;
-      margin-top: 1.3rem;
+      margin-top: 1.1rem;
       cursor: pointer;
       text-decoration: none;
       box-shadow: 0 2px 16px 0 rgba(32, 32, 100, 0.12);
@@ -127,17 +166,35 @@
     .btn-primary:focus {
       background: linear-gradient(90deg, #21d4fd 0%, #6d5dfc 100%);
       color: #fff;
-      filter: brightness(1.05);
+      filter: brightness(1.07);
     }
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(60px);}
       to { opacity: 1; transform: none;}
     }
+    @media (max-width: 900px) {
+      .rpa-video-row {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+        margin-bottom: 14px;
+      }
+      .rpa-video-message {
+        text-align: center;
+        padding-left: 0;
+        margin-top: 10px;
+        font-size: 1.07rem;
+      }
+      .rpa-video-box {
+        max-width: 100vw;
+        min-width: 0;
+      }
+    }
     @media (max-width: 700px) {
-      .product-gradient-hero { padding: 38px 6px 20px 6px; border-radius: 0 0 16px 16px;}
-      .product-gradient-hero h1 { font-size: 1.4rem;}
-      .product-detail-card { padding: 1.1rem 0.5rem 1.2rem 0.5rem; max-width: 99vw;}
-      .btn-primary { padding: 11px 18px; font-size: 0.96rem;}
+      .product-gradient-hero { padding: 18px 4px 13px 4px; border-radius: 0 0 12px 12px;}
+      .product-gradient-hero h1 { font-size: 1.1rem;}
+      .product-detail-card { padding: 1rem 0.5rem 1rem 0.5rem; max-width: 99vw;}
+      .btn-primary { padding: 9px 12px; font-size: 0.97rem;}
     }
   </style>
 </head>
@@ -150,6 +207,21 @@
       Zaman ve maliyet tasarrufunu, otomatik ve hatasız süreçlerle bir üst seviyeye taşıyın!
     </p>
   </section>
+
+  <!-- Video ve vurucu mesaj -->
+  <div class="rpa-video-row">
+    <div class="rpa-video-box">
+      <!-- ÖRNEK: Video bağlantısını değiştir (mp4, webm veya YouTube embed kullanılabilir) -->
+      <video src="/videos/robotic-process-demo.mp4" autoplay muted loop playsinline></video>
+      <!-- Örnek: YouTube için -->
+      <!--
+      <iframe width="320" height="180" src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&loop=1&playlist=VIDEO_ID" frameborder="0" allowfullscreen style="border-radius:14px;"></iframe>
+      -->
+    </div>
+    <div class="rpa-video-message">
+      <span>Manuel işlemlerinizi <b>sistemlere bırakarak</b> stratejik işlere odaklanın.</span>
+    </div>
+  </div>
 
   <!-- Detay kartı -->
   <main class="product-detail-section fade-in-section">
