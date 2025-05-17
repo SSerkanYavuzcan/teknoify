@@ -18,51 +18,17 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-    /* Navbar */
-    .navbar-framer {
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 30px 48px 0 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      z-index: 20;
-      background: none;
-    }
-    .navbar-framer .logo {
-      font-size: 2.3rem;
-      font-weight: 800;
-      letter-spacing: -2px;
-      color: #fff;
-    }
-    .navbar-framer .nav-links {
-      display: flex;
-      gap: 34px;
-    }
-    .navbar-framer .nav-links a {
-      color: #fff;
-      font-size: 1.09rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: color 0.17s;
-    }
-    .navbar-framer .nav-links a:hover {
-      color: #65e0f7;
-    }
-
+    /* Navbar tamamen kaldırıldı */
     /* Hero alanı */
     .hero-framer-section {
       position: relative;
-      min-height: 82vh;
+      min-height: 88vh;
       width: 100vw;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
       overflow: hidden;
-      padding: 40px 0 0 0;
       z-index: 10;
     }
     .framer-blob-bg {
@@ -89,7 +55,7 @@
       margin-top: 44px;
     }
     .framer-hero-content h1 {
-      font-size: 3.3rem;
+      font-size: 2.2rem;
       font-weight: 800;
       color: var(--text-color);
       letter-spacing: -2.1px;
@@ -98,23 +64,23 @@
       text-shadow: 0 6px 32px #21296655;
     }
     .framer-hero-content p {
-      font-size: 1.25rem;
+      font-size: 1.10rem;
       color: #e8eaf9;
       margin-bottom: 32px;
       font-weight: 400;
-      max-width: 640px;
+      max-width: 600px;
       margin-left: auto;
       margin-right: auto;
       line-height: 1.55;
     }
     .framer-hero-content .cta-btn {
       display: inline-block;
-      padding: 18px 48px;
+      padding: 16px 38px;
       background: var(--hero-gradient);
       color: #fff;
       font-weight: 700;
       border-radius: 32px;
-      font-size: 1.18rem;
+      font-size: 1.14rem;
       box-shadow: 0 4px 32px 0 #4e62f933;
       border: none;
       outline: none;
@@ -127,29 +93,89 @@
       background: linear-gradient(100deg, #65e0f7 10%, #2036e0 100%);
       transform: translateY(-4px) scale(1.03);
     }
-    /* Mobil uyum */
-    @media (max-width: 700px) {
-      .navbar-framer { padding: 16px 10px 0 10px;}
-      .navbar-framer .logo { font-size: 1.22rem;}
-      .framer-hero-content h1 { font-size: 1.36rem;}
-      .framer-hero-content p { font-size: 1.01rem;}
-      .framer-hero-content .cta-btn { font-size: 1rem; padding: 13px 22px;}
-      .framer-blob-bg { height: 400px;}
-      .hero-framer-section { min-height: 62vh;}
+
+    /* ÖRNEK BLOĞU */
+    .rpa-sample-section {
+      width: 100%;
+      background: #181b29;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 68px 0 92px 0;
+      gap: 4vw;
+      min-height: 420px;
+    }
+    .rpa-sample-visual {
+      flex: 1 1 420px;
+      max-width: 550px;
+      min-width: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .rpa-sample-visual img, .rpa-sample-visual video {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 18px;
+      box-shadow: 0 8px 42px 0 rgba(60,40,150,0.14);
+    }
+    .rpa-sample-content {
+      flex: 1 1 370px;
+      max-width: 480px;
+      color: #fff;
+      padding-left: 2vw;
+      padding-right: 2vw;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .rpa-sample-content h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #65e0f7;
+      margin-bottom: 12px;
+      margin-top: 0;
+    }
+    .rpa-sample-content p {
+      font-size: 1.13rem;
+      font-weight: 400;
+      color: #e4e7fa;
+      margin-bottom: 16px;
+      margin-top: 0;
+    }
+    .rpa-sample-content ul {
+      padding-left: 20px;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .rpa-sample-content li {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+      color: #a7bbff;
+    }
+
+    @media (max-width: 950px) {
+      .rpa-sample-section {
+        flex-direction: column;
+        padding: 44px 0 58px 0;
+      }
+      .rpa-sample-content, .rpa-sample-visual {
+        max-width: 99vw;
+        width: 99vw;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        text-align: center;
+      }
+      .rpa-sample-content h2 { font-size: 1.09rem;}
+      .rpa-sample-content p, .rpa-sample-content li { font-size: 1rem;}
+      .rpa-sample-visual img, .rpa-sample-visual video { max-width: 90vw;}
     }
   </style>
 </head>
 <body>
-  <nav class="navbar-framer">
-    <div class="logo">Teknoify</div>
-    <div class="nav-links">
-      <a href="#">Ana Sayfa</a>
-      <a href="#">Ürünler</a>
-      <a href="#">Hakkımızda</a>
-      <a href="#">İletişim</a>
-    </div>
-  </nav>
-
+  <!-- HERO (navbar yok!) -->
   <section class="hero-framer-section">
     <div class="framer-blob-bg"></div>
     <div class="framer-hero-content">
@@ -158,7 +184,27 @@
         Tekrarlayan işleri dijital çalışanlara bırakın.<br>
         Zaman ve maliyet tasarrufunu, otomatik ve hatasız süreçlerle bir üst seviyeye taşıyın!
       </p>
-      <a class="cta-btn" href="#contact">Hemen Teklif Al</a>
+      <a class="cta-btn" href="#rpa-ornek">Hemen Teklif Al</a>
+    </div>
+  </section>
+
+  <!-- ÖRNEK DEMO (görsel veya video + açıklama) -->
+  <section id="rpa-ornek" class="rpa-sample-section">
+    <div class="rpa-sample-visual">
+      <!-- Video eklemek için <video ... autoplay loop muted></video> kullanabilirsin -->
+      <img src="/mnt/data/1c46d1f7-3a98-4d75-839a-c5da84b797c9.png" alt="Robotik Süreç Otomasyonu Örneği">
+    </div>
+    <div class="rpa-sample-content">
+      <h2>Manuel işlemlerinizi sistemlere bırakarak stratejik işlere odaklanın</h2>
+      <p>
+        Robotik Süreç Otomasyonu (RPA), tekrar eden ve manuel işleri yazılım robotlarına devreder.  
+        İnsan kaynağını en verimli şekilde kullanmanızı sağlar.
+      </p>
+      <ul>
+        <li>Otomatik fatura, sipariş ve raporlama süreçleri</li>
+        <li>7/24 çalışan dijital asistanlar</li>
+        <li>Minimum hata, maksimum verimlilik</li>
+      </ul>
     </div>
   </section>
 </body>
