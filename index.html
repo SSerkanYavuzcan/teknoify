@@ -153,26 +153,45 @@
 
 
 <!-- ========================================== -->
-<!-- 4. HAKKIMIZDA BÖLÜMÜ (SCROLL ANİMASYONLU) -->
+<!-- 4. HAKKIMIZDA BÖLÜMÜ (MODERN VE SCROLL ANİMASYONLU) -->
 <!-- ========================================== -->
-<section id="about" class="about-section">
-  <h2>Hakkımızda</h2>
-  <p>Teknoify, küçük ve orta ölçekli işletmelere dijital çözümler sunar. Otomasyon ve veri analitiği ile iş süreçlerinizi daha verimli ve hızlı hale getiriyoruz. Hedefimiz, teknolojiyi herkes için erişilebilir ve kolay kullanılır hale getirmek.</p>
+<section id="about" class="about-section fade-in-section">
+  <div class="about-card">
+    <h2 class="section-title gradient-text">Hakkımızda</h2>
+    <p>
+      <strong>Teknoify</strong>, küçük ve orta ölçekli işletmelere dijital çözümler sunar.<br>
+      <br>
+      Otomasyon ve veri analitiğiyle iş süreçlerinizi daha verimli, hızlı ve esnek hale getiriyoruz. Hedefimiz; teknolojiyi herkes için erişilebilir, akıllı ve kolay kullanılır bir hale getirmek.<br>
+      <br>
+      Her fikri dijital bir başarıya dönüştürmek için buradayız!
+    </p>
+  </div>
 </section>
 
 <!-- ========================================== -->
-<!-- 5. İLETİŞİM FORMU (İYİLEŞTİRİLMİŞ) -->
+<!-- 5. İLETİŞİM FORMU (YENİ NESİL & MODERN) -->
 <!-- ========================================== -->
-<section id="contact" class="contact-section">
-  <h2>İletişim</h2>
-  <p>Bizimle iletişime geçmek için aşağıdaki formu doldurabilirsiniz.</p>
-  <form action="submit_form.php" method="POST" class="contact-form">
-    <input type="text" id="name" name="name" placeholder="Adınız" required>
-    <input type="email" id="email" name="email" placeholder="E-posta" required>
-    <textarea id="message" name="message" placeholder="Mesajınız" required></textarea>
-    <button type="submit" class="btn-primary">Gönder</button>
-  </form>
+<section id="contact" class="contact-section fade-in-section">
+  <div class="contact-card">
+    <h2 class="section-title gradient-text">İletişim</h2>
+    <p>Bizimle iletişime geçmek için aşağıdaki formu doldurabilirsiniz. Her türlü soru, öneri ve iş birliği için yanınızdayız.</p>
+    
+    <!-- İletişim ikonu & LinkedIn -->
+    <div class="contact-social">
+      <a href="mailto:info@teknoify.com" title="E-posta" class="contact-icon"><i class="fas fa-envelope"></i></a>
+      <a href="https://www.linkedin.com/company/teknoify" target="_blank" title="LinkedIn" class="contact-icon"><i class="fab fa-linkedin-in"></i></a>
+      <!-- Diğer sosyal ikonları da ekleyebilirsin -->
+    </div>
+    
+    <form action="submit_form.php" method="POST" class="contact-form">
+      <input type="text" id="name" name="name" placeholder="Adınız" required>
+      <input type="email" id="email" name="email" placeholder="E-posta" required>
+      <textarea id="message" name="message" placeholder="Mesajınız" required></textarea>
+      <button type="submit" class="btn-primary">Gönder</button>
+    </form>
+  </div>
 </section>
+
 
 <!-- ========================================== -->
 <!-- 6. SIKÇA SORULAN SORULAR (FAQ) BÖLÜMÜ -->

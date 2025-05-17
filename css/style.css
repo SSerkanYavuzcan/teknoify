@@ -755,15 +755,72 @@ header.sticky {
 /* 5. HAKKIMIZDA BÖLÜMÜ (ABOUT) */
 /* =========================================== */
 .about-section {
-  padding: 5rem 2rem;
-  background: #ffffff;
-  text-align: center;
+  background: #171926;  /* Ürünlerle aynı koyu renk */
+  color: #fff;
+  padding: 4.5rem 0 4.5rem 0;
+  display: flex;
+  justify-content: center;
 }
 
-.about-section p {
-  max-width: 800px;
+/* Kart/kutu yapısı */
+.about-card {
+  background: #fff;
+  color: #232323;
+  border-radius: 22px;
+  box-shadow: 0 8px 44px 0 rgba(20,24,41,0.13);
+  max-width: 540px;
+  width: 92vw;
+  padding: 3rem 2.2rem 2.5rem 2.2rem;
   margin: 0 auto;
+  text-align: center;
+  position: relative;
+  animation: fadeInUp 1s cubic-bezier(0.23,0.79,0.39,1) both;
 }
+
+/* Başlık gradient */
+/* Başlık gradient */
+.section-title.gradient-text {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #6d5dfc 10%, #21d4fd 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+
+/* Metin modern ve ferah */
+.about-card p {
+  font-size: 1.11rem;
+  font-weight: 400;
+  line-height: 1.68;
+  color: #2d2e43;
+  margin-bottom: 18px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Fade-in animasyon */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(60px);}
+  to { opacity: 1; transform: none;}
+}
+
+/* Responsive uyum */
+@media (max-width: 700px) {
+  .about-card {
+    padding: 1.4rem 0.8rem 1.7rem 0.8rem;
+    max-width: 98vw;
+  }
+  .section-title.gradient-text {
+    font-size: 1.35rem;
+  }
+}
+
 
 /* =========================================== */
 /* 6. VİZYON & MİSYON BÖLÜMÜ */
