@@ -7,15 +7,114 @@
   <meta name="description" content="Robotik Süreç Otomasyonu ile iş süreçlerinizi dijitalleştirin. Teknoify, işletmeniz için tekrarlayan görevleri otomatikleştirir, verimlilik ve tasarruf sağlar.">
   <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- Ortak stil dosyası -->
-  <link rel="stylesheet" href="/css/base.css">
-  <!-- Ürün detay sayfası özel CSS -->
-  <link rel="stylesheet" href="/css/product-detail.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Gradientli hero */
+    .product-gradient-hero {
+      background: linear-gradient(120deg, #212966, #3154e2, #a93ae7, #212966);
+      background-size: 200% 200%;
+      animation: animatedGradient 7s ease-in-out infinite;
+      color: #fff;
+      text-align: center;
+      padding: 70px 20px 38px 20px;
+      border-radius: 0 0 36px 36px;
+      box-shadow: 0 8px 36px 0 rgba(20,24,41,0.08);
+      position: relative;
+    }
+    @keyframes animatedGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .product-gradient-hero h1 {
+      font-size: 2.55rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+    .product-gradient-hero p {
+      font-size: 1.17rem;
+      color: #f3f3f3;
+      margin: 0 auto;
+      max-width: 620px;
+      font-weight: 400;
+      line-height: 1.52;
+    }
+    /* Kart stili */
+    .product-detail-section {
+      background: #171926;
+      color: #fff;
+      min-height: 80vh;
+      padding: 0 0 3rem 0;
+    }
+    .product-detail-card {
+      background: #fff;
+      color: #222;
+      border-radius: 22px;
+      box-shadow: 0 8px 36px 0 rgba(20,24,41,0.11);
+      max-width: 620px;
+      margin: -62px auto 0 auto;
+      padding: 2.7rem 2.1rem 2.6rem 2.1rem;
+      position: relative;
+      z-index: 1;
+      text-align: left;
+    }
+    .product-detail-card h2 {
+      color: #212966;
+      font-size: 1.36rem;
+      margin: 1.1rem 0 0.75rem 0;
+    }
+    .product-detail-card h3 {
+      color: #3154e2;
+      font-size: 1.12rem;
+      margin: 1.3rem 0 0.7rem 0;
+    }
+    .product-detail-card ul {
+      margin: 0.6rem 0 1.2rem 1.2rem;
+      padding-left: 1.2rem;
+    }
+    .product-detail-card li {
+      font-size: 1.03rem;
+      margin-bottom: 0.4em;
+      color: #383b4c;
+    }
+    .product-detail-lead {
+      color: #43425d;
+      font-size: 1.08rem;
+      font-weight: 500;
+      margin-bottom: 1.6rem;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: linear-gradient(90deg, #6d5dfc 0%, #21d4fd 100%);
+      color: #fff;
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1.07rem;
+      transition: background 0.18s, color 0.18s;
+      margin-top: 1.3rem;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 2px 16px 0 rgba(32, 32, 100, 0.12);
+      border: none;
+    }
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: linear-gradient(90deg, #21d4fd 0%, #6d5dfc 100%);
+      color: #fff;
+      filter: brightness(1.05);
+    }
+    @media (max-width: 700px) {
+      .product-gradient-hero { padding: 38px 6px 20px 6px; border-radius: 0 0 16px 16px;}
+      .product-gradient-hero h1 { font-size: 1.4rem;}
+      .product-detail-card { padding: 1.1rem 0.5rem 1.2rem 0.5rem; max-width: 99vw;}
+      .btn-primary { padding: 11px 18px; font-size: 0.96rem;}
+    }
+  </style>
 </head>
-
 <body>
-  <!-- HEADER / NAVBAR -->
+  <!-- HEADER/ NAVBAR -->
   <header id="header">
     <nav class="navbar">
       <div class="logo" id="logo">
@@ -30,14 +129,21 @@
     </nav>
   </header>
 
-  <!-- ÜRÜN DETAY ANA BÖLÜM -->
+  <!-- En üstte gradientli hero başlık -->
+  <section class="product-gradient-hero">
+    <h1>Robotik Süreç Otomasyonu</h1>
+    <p>
+      Tekrarlayan işleri dijital çalışanlara bırakın.<br>
+      Zaman ve maliyet tasarrufunu, otomatik ve hatasız süreçlerle bir üst seviyeye taşıyın!
+    </p>
+  </section>
+
+  <!-- Detay kartı -->
   <main class="product-detail-section fade-in-section">
     <section class="product-detail-card">
-      <h1 class="product-detail-title gradient-rpa">Robotik Süreç Otomasyonu</h1>
       <p class="product-detail-lead">
-        Tekrarlayan işlerinizi otomatikleştirin, insan hatasını azaltın ve zaman/maliyet tasarrufu sağlayın. Teknoify ile süreçlerinizi dijitalleştirerek ekibinizi stratejik işlere odaklayın.
+        Teknoify ile süreçlerinizi dijitalleştirerek, ekibinizin stratejik işlere odaklanmasını sağlayın.
       </p>
-
       <div class="product-detail-content">
         <h2>Neden Robotik Süreç Otomasyonu?</h2>
         <ul>
@@ -46,12 +152,10 @@
           <li>Çalışanlarınızı daha değerli görevlere yönlendirme</li>
           <li>7/24 çalışan dijital iş gücüyle operasyonel süreklilik</li>
         </ul>
-        
         <h3>Hangi Süreçlerde Kullanılır?</h3>
         <p>
           Sipariş yönetimi, fatura işleme, veri aktarımı, stok kontrolleri, e-posta ve bildirim otomasyonu, müşteri servis işlemleri ve daha fazlası…
         </p>
-
         <h3>Size Nasıl Yardımcı Oluyoruz?</h3>
         <ul>
           <li>İhtiyacınıza özel RPA çözümü analizi</li>
@@ -60,8 +164,7 @@
           <li>Destek ve eğitim</li>
         </ul>
       </div>
-
-      <a href="/#contact" class="btn-primary" style="margin-top:2.5rem;">Hemen Teklif Al</a>
+      <a href="/#contact" class="btn-primary">Hemen Teklif Al</a>
     </section>
   </main>
 

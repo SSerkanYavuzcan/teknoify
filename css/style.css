@@ -564,11 +564,44 @@ header.sticky {
    ROBOTİK SÜREÇ OTOMASYONU SAYFASI STİLLERİ
 =========================================== */
 
+/* EN ÜSTTE ANİMASYONLU GRADIENT HERO */
+.robotic-hero-gradient {
+  background: linear-gradient(120deg, #212966, #3154e2, #a93ae7, #212966);
+  background-size: 200% 200%;
+  animation: animatedGradient 7s ease-in-out infinite;
+  color: #fff;
+  text-align: center;
+  padding: 68px 18px 34px 18px;
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 8px 36px 0 rgba(20,24,41,0.08);
+  margin-bottom: -36px; /* Kartın üstüne taşsın */
+  position: relative;
+}
+@keyframes animatedGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.robotic-hero-gradient h1 {
+  font-size: 2.55rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+}
+.robotic-hero-gradient p {
+  font-size: 1.14rem;
+  color: #e3e3e3;
+  margin: 0 auto;
+  max-width: 600px;
+  font-weight: 400;
+  line-height: 1.52;
+}
+
 /* Sayfa genel alanı */
 .product-detail-section {
   min-height: 85vh;
   background: #171926;
-  padding: 4.5rem 1.2rem 4rem 1.2rem;
+  padding: 0 1.2rem 4rem 1.2rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -587,6 +620,8 @@ header.sticky {
   text-align: center;
   position: relative;
   animation: fadeInUp 1.05s cubic-bezier(0.23,0.79,0.39,1) both;
+  z-index: 2;
+  top: -36px; /* Hero gradient ile biraz üst üste gelsin */
 }
 
 .product-detail-title {
@@ -663,17 +698,13 @@ header.sticky {
 
 /* Responsive */
 @media (max-width: 700px) {
-  .product-detail-card {
-    padding: 1.2rem 0.6rem 1.4rem 0.6rem;
-    max-width: 99vw;
-  }
-  .product-detail-title {
-    font-size: 1.25rem;
-  }
-  .product-detail-lead {
-    font-size: 1rem;
-  }
+  .robotic-hero-gradient { padding: 28px 6px 15px 6px; border-radius: 0 0 14px 14px; }
+  .robotic-hero-gradient h1 { font-size: 1.18rem;}
+  .product-detail-card { padding: 1.2rem 0.6rem 1.4rem 0.6rem; max-width: 99vw; top: -20px;}
+  .product-detail-title { font-size: 1.1rem;}
+  .product-detail-lead { font-size: 0.98rem;}
 }
+
 
 
 /* =========================================== */
