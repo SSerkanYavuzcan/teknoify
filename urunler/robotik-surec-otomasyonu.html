@@ -10,6 +10,7 @@
       --hero-gradient: linear-gradient(110deg, #2036e0 0%, #65e0f7 100%);
       --blob-gradient: radial-gradient(ellipse 75% 55% at 60% 40%, #4e62f9 50%, #993ae7 90%, #212966 100%);
       --text-color: #fff;
+      --menu-bg: #171926ee;
     }
     body {
       margin: 0;
@@ -18,11 +19,99 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-    /* Navbar tamamen kaldırıldı */
-    /* Hero alanı */
+    /* NAVBAR */
+    .navbar {
+      width: 100vw;
+      padding: 0 1.5rem;
+      height: 70px;
+      background: var(--menu-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0; left: 0; z-index: 40;
+      border-bottom: 1.5px solid #262a3a;
+    }
+    .navbar .logo {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -2px;
+      text-decoration: none;
+      transition: color 0.18s;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-links li a {
+      color: #fff;
+      font-size: 1.07rem;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0;
+      padding: 8px 0;
+      transition: color 0.14s;
+      position: relative;
+    }
+    .nav-links li a:hover, .nav-links li a.active {
+      color: #65e0f7;
+    }
+
+    /* Hamburger Menü - Mobil */
+    .navbar .burger {
+      display: none;
+      width: 36px;
+      height: 36px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .burger-bar {
+      width: 24px;
+      height: 3px;
+      background: #fff;
+      border-radius: 3px;
+      margin: 3px 0;
+      transition: 0.4s;
+    }
+    /* Mobil menü */
+    @media (max-width: 850px) {
+      .nav-links {
+        position: fixed;
+        flex-direction: column;
+        background: var(--menu-bg);
+        top: 70px;
+        right: -220px;
+        width: 180px;
+        height: 100vh;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 28px 24px;
+        gap: 28px;
+        box-shadow: -6px 0 20px 0 #21296633;
+        transition: right 0.3s;
+        z-index: 40;
+      }
+      .nav-links.open {
+        right: 0;
+      }
+      .navbar .burger {
+        display: flex;
+      }
+    }
+
+    /* HERO */
     .hero-framer-section {
       position: relative;
-      min-height: 88vh;
+      min-height: 83vh;
       width: 100vw;
       display: flex;
       align-items: center;
@@ -30,6 +119,7 @@
       flex-direction: column;
       overflow: hidden;
       z-index: 10;
+      padding-top: 70px; /* Navbar yüksekliği kadar yukarıdan boşluk */
     }
     .framer-blob-bg {
       position: absolute;
@@ -94,7 +184,7 @@
       transform: translateY(-4px) scale(1.03);
     }
 
-    /* ÖRNEK BLOĞU */
+    /* DEMO BLOĞU */
     .rpa-sample-section {
       width: 100%;
       background: #181b29;
@@ -155,6 +245,10 @@
       color: #a7bbff;
     }
 
+    /* Responsive Tasarım */
+    @media (max-width: 1100px) {
+      .rpa-sample-section { gap: 1vw;}
+    }
     @media (max-width: 950px) {
       .rpa-sample-section {
         flex-direction: column;
@@ -172,10 +266,36 @@
       .rpa-sample-content p, .rpa-sample-content li { font-size: 1rem;}
       .rpa-sample-visual img, .rpa-sample-visual video { max-width: 90vw;}
     }
+    @media (max-width: 700px) {
+      .navbar { height: 60px; padding: 0 0.4rem;}
+      .navbar .logo { font-size: 1.1rem;}
+      .hero-framer-section { padding-top: 60px;}
+      .framer-hero-content h1 { font-size: 1.14rem;}
+      .framer-hero-content p { font-size: 0.95rem;}
+      .framer-hero-content .cta-btn { font-size: 0.98rem; padding: 9px 20px;}
+    }
   </style>
 </head>
 <body>
-  <!-- HERO (navbar yok!) -->
+  <!-- NAVBAR -->
+  <header>
+    <nav class="navbar">
+      <a href="/" class="logo">Teknoify</a>
+      <button class="burger" id="burger-btn" aria-label="Menüyü Aç / Kapat">
+        <div class="burger-bar"></div>
+        <div class="burger-bar"></div>
+        <div class="burger-bar"></div>
+      </button>
+      <ul class="nav-links" id="nav-menu">
+        <li><a href="/#home">Ana Sayfa</a></li>
+        <li><a href="/#products">Ürünler</a></li>
+        <li><a href="/#about">Hakkımızda</a></li>
+        <li><a href="/#contact">İletişim</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO -->
   <section class="hero-framer-section">
     <div class="framer-blob-bg"></div>
     <div class="framer-hero-content">
@@ -188,10 +308,11 @@
     </div>
   </section>
 
-  <!-- ÖRNEK DEMO (görsel veya video + açıklama) -->
+  <!-- DEMO -->
   <section id="rpa-ornek" class="rpa-sample-section">
     <div class="rpa-sample-visual">
-      <!-- Video eklemek için <video ... autoplay loop muted></video> kullanabilirsin -->
+      <!-- Video eklemek için aşağıdaki satırı kullanabilirsin: -->
+      <!-- <video src="video-dosyan.mp4" autoplay loop muted playsinline></video> -->
       <img src="/mnt/data/1c46d1f7-3a98-4d75-839a-c5da84b797c9.png" alt="Robotik Süreç Otomasyonu Örneği">
     </div>
     <div class="rpa-sample-content">
@@ -207,5 +328,15 @@
       </ul>
     </div>
   </section>
+  <script>
+    // Hamburger menu aç/kapat
+    const burgerBtn = document.getElementById('burger-btn');
+    const navMenu = document.getElementById('nav-menu');
+    burgerBtn.onclick = () => navMenu.classList.toggle('open');
+    // Menüden linke tıklanınca menüyü kapat
+    document.querySelectorAll('.nav-links a').forEach(a =>
+      a.onclick = () => navMenu.classList.remove('open')
+    );
+  </script>
 </body>
 </html>
