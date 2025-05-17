@@ -576,6 +576,7 @@ header.sticky {
   box-shadow: 0 8px 36px 0 rgba(20,24,41,0.08);
   margin-bottom: -36px; /* Kartın üstüne taşsın */
   position: relative;
+  z-index: 10;
 }
 @keyframes animatedGradient {
   0% { background-position: 0% 50%; }
@@ -587,6 +588,7 @@ header.sticky {
   font-weight: 800;
   letter-spacing: -1px;
   margin-bottom: 12px;
+  color: #fff; /* Mutlaka beyaz */
 }
 .robotic-hero-gradient p {
   font-size: 1.14rem;
@@ -598,6 +600,12 @@ header.sticky {
 }
 
 /* Sayfa genel alanı */
+body {
+  background: #171926;
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+}
+
 .product-detail-section {
   min-height: 85vh;
   background: #171926;
@@ -690,7 +698,7 @@ header.sticky {
   color: #fff;
 }
 
-/* Fade-in animasyon (isteğe bağlı) */
+/* Fade-in animasyon */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(60px);}
   to { opacity: 1; transform: none;}
@@ -698,13 +706,20 @@ header.sticky {
 
 /* Responsive */
 @media (max-width: 700px) {
-  .robotic-hero-gradient { padding: 28px 6px 15px 6px; border-radius: 0 0 14px 14px; }
+  .robotic-hero-gradient { 
+    padding: 28px 6px 15px 6px; 
+    border-radius: 0 0 14px 14px; 
+    font-size: 0.96rem;
+  }
   .robotic-hero-gradient h1 { font-size: 1.18rem;}
-  .product-detail-card { padding: 1.2rem 0.6rem 1.4rem 0.6rem; max-width: 99vw; top: -20px;}
+  .product-detail-card { 
+    padding: 1.2rem 0.6rem 1.4rem 0.6rem; 
+    max-width: 99vw; 
+    top: -20px;
+  }
   .product-detail-title { font-size: 1.1rem;}
   .product-detail-lead { font-size: 0.98rem;}
 }
-
 
 
 /* =========================================== */
