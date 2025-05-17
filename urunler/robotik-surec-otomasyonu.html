@@ -1,262 +1,165 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Robotik Süreç Otomasyonu | Teknoify</title>
-  <meta name="description" content="Robotik Süreç Otomasyonu ile iş süreçlerinizi dijitalleştirin. Teknoify, işletmeniz için tekrarlayan görevleri otomatikleştirir, verimlilik ve tasarruf sağlar.">
-  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --hero-gradient: linear-gradient(110deg, #2036e0 0%, #65e0f7 100%);
+      --blob-gradient: radial-gradient(ellipse 75% 55% at 60% 40%, #4e62f9 50%, #993ae7 90%, #212966 100%);
+      --text-color: #fff;
+    }
     body {
+      margin: 0;
       background: #171926;
       font-family: 'Poppins', sans-serif;
       min-height: 100vh;
-      margin: 0;
-      padding: 0;
+      overflow-x: hidden;
     }
-    /* Küçültülmüş gradient hero */
-    .product-gradient-hero {
-      background: linear-gradient(120deg, #212966, #3154e2, #a93ae7, #212966);
-      background-size: 200% 200%;
-      animation: animatedGradient 7s ease-in-out infinite;
-      color: #fff;
-      text-align: center;
-      padding: 38px 12px 20px 12px;  /* %50'ye yakın küçültüldü */
-      border-radius: 0 0 24px 24px;
-      box-shadow: 0 8px 36px 0 rgba(20,24,41,0.08);
-      position: relative;
-      z-index: 10;
-      margin-bottom: 0;
-    }
-    @keyframes animatedGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .product-gradient-hero h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-      margin-bottom: 10px;
-      color: #fff;
-    }
-    .product-gradient-hero p {
-      font-size: 1rem;
-      color: #e7e7f9;
-      margin: 0 auto;
-      max-width: 500px;
-      font-weight: 400;
-      line-height: 1.5;
-    }
-    /* Video ve mesaj alanı */
-    .rpa-video-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 42px;
-      max-width: 980px;
-      margin: -18px auto 24px auto;
-      padding: 18px 8px 14px 8px;
-    }
-    .rpa-video-box {
-      flex: 0 0 320px;
-      max-width: 340px;
-      min-width: 220px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 4px 24px rgba(33,41,102,0.10);
-      background: #181b2c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 180px;
-    }
-    .rpa-video-box video {
+    /* Navbar */
+    .navbar-framer {
       width: 100%;
-      height: auto;
-      display: block;
-    }
-    .rpa-video-message {
-      flex: 1 1 300px;
-      font-size: 1.22rem;
-      color: #fff;
-      font-weight: 600;
-      line-height: 1.52;
-      text-align: left;
-      background: none;
-      padding-left: 8px;
-    }
-    /* Kart stili */
-    .product-detail-section {
-      background: #171926;
-      color: #fff;
-      min-height: 80vh;
-      padding: 0 0 3rem 0;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 48px 0 48px;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-    .product-detail-card {
-      background: #fff;
-      color: #222;
-      border-radius: 22px;
-      box-shadow: 0 8px 36px 0 rgba(20,24,41,0.11);
-      max-width: 620px;
-      width: 98vw;
-      margin: -34px auto 0 auto;
-      padding: 2.2rem 2.1rem 2.3rem 2.1rem;
+      align-items: center;
+      justify-content: space-between;
       position: relative;
-      z-index: 1;
-      text-align: left;
-      animation: fadeInUp 1.05s cubic-bezier(0.23,0.79,0.39,1) both;
+      z-index: 20;
+      background: none;
     }
-    .product-detail-title {
-      font-size: 2rem;
+    .navbar-framer .logo {
+      font-size: 2.3rem;
       font-weight: 800;
-      margin-bottom: 1.4rem;
-      letter-spacing: -1px;
-      background: linear-gradient(90deg, #212966 10%, #3154e2 60%, #a93ae7 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-fill-color: transparent;
-    }
-    .product-detail-lead {
-      color: #43425d;
-      font-size: 1.04rem;
-      font-weight: 500;
-      margin-bottom: 1.4rem;
-    }
-    .product-detail-card h2 {
-      color: #212966;
-      font-size: 1.23rem;
-      margin: 1rem 0 0.65rem 0;
-    }
-    .product-detail-card h3 {
-      color: #3154e2;
-      font-size: 1.08rem;
-      margin: 1.1rem 0 0.6rem 0;
-    }
-    .product-detail-card ul {
-      margin: 0.4rem 0 1rem 1.2rem;
-      padding-left: 1.2rem;
-    }
-    .product-detail-card li {
-      font-size: 1rem;
-      margin-bottom: 0.3em;
-      color: #383b4c;
-    }
-    .btn-primary {
-      display: inline-block;
-      background: linear-gradient(90deg, #6d5dfc 0%, #21d4fd 100%);
+      letter-spacing: -2px;
       color: #fff;
-      padding: 14px 32px;
-      border-radius: 28px;
-      font-weight: 600;
-      font-size: 1.02rem;
-      transition: background 0.18s, color 0.18s;
-      margin-top: 1.1rem;
+    }
+    .navbar-framer .nav-links {
+      display: flex;
+      gap: 34px;
+    }
+    .navbar-framer .nav-links a {
+      color: #fff;
+      font-size: 1.09rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.17s;
+    }
+    .navbar-framer .nav-links a:hover {
+      color: #65e0f7;
+    }
+
+    /* Hero alanı */
+    .hero-framer-section {
+      position: relative;
+      min-height: 82vh;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 40px 0 0 0;
+      z-index: 10;
+    }
+    .framer-blob-bg {
+      position: absolute;
+      top: -90px;
+      left: 0;
+      width: 110vw;
+      height: 102vh;
+      background: var(--blob-gradient);
+      z-index: 0;
+      filter: blur(0px) brightness(1.09);
+      border-radius: 0 0 300px 300px / 0 0 180px 180px;
+      animation: framerBlob 16s ease-in-out infinite alternate;
+    }
+    @keyframes framerBlob {
+      0%   { transform: scaleX(1) scaleY(1.05) rotate(-5deg);}
+      50%  { transform: scaleX(1.08) scaleY(1) rotate(4deg);}
+      100% { transform: scaleX(1) scaleY(1.06) rotate(-4deg);}
+    }
+    .framer-hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      margin-top: 44px;
+    }
+    .framer-hero-content h1 {
+      font-size: 3.3rem;
+      font-weight: 800;
+      color: var(--text-color);
+      letter-spacing: -2.1px;
+      margin-bottom: 1.5rem;
+      line-height: 1.06;
+      text-shadow: 0 6px 32px #21296655;
+    }
+    .framer-hero-content p {
+      font-size: 1.25rem;
+      color: #e8eaf9;
+      margin-bottom: 32px;
+      font-weight: 400;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.55;
+    }
+    .framer-hero-content .cta-btn {
+      display: inline-block;
+      padding: 18px 48px;
+      background: var(--hero-gradient);
+      color: #fff;
+      font-weight: 700;
+      border-radius: 32px;
+      font-size: 1.18rem;
+      box-shadow: 0 4px 32px 0 #4e62f933;
+      border: none;
+      outline: none;
       cursor: pointer;
       text-decoration: none;
-      box-shadow: 0 2px 16px 0 rgba(32, 32, 100, 0.12);
-      border: none;
+      margin-top: 12px;
+      transition: background 0.2s, transform 0.15s;
     }
-    .btn-primary:hover,
-    .btn-primary:focus {
-      background: linear-gradient(90deg, #21d4fd 0%, #6d5dfc 100%);
-      color: #fff;
-      filter: brightness(1.07);
+    .framer-hero-content .cta-btn:hover {
+      background: linear-gradient(100deg, #65e0f7 10%, #2036e0 100%);
+      transform: translateY(-4px) scale(1.03);
     }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(60px);}
-      to { opacity: 1; transform: none;}
-    }
-    @media (max-width: 900px) {
-      .rpa-video-row {
-        flex-direction: column;
-        gap: 12px;
-        align-items: stretch;
-        margin-bottom: 14px;
-      }
-      .rpa-video-message {
-        text-align: center;
-        padding-left: 0;
-        margin-top: 10px;
-        font-size: 1.07rem;
-      }
-      .rpa-video-box {
-        max-width: 100vw;
-        min-width: 0;
-      }
-    }
+    /* Mobil uyum */
     @media (max-width: 700px) {
-      .product-gradient-hero { padding: 18px 4px 13px 4px; border-radius: 0 0 12px 12px;}
-      .product-gradient-hero h1 { font-size: 1.1rem;}
-      .product-detail-card { padding: 1rem 0.5rem 1rem 0.5rem; max-width: 99vw;}
-      .btn-primary { padding: 9px 12px; font-size: 0.97rem;}
+      .navbar-framer { padding: 16px 10px 0 10px;}
+      .navbar-framer .logo { font-size: 1.22rem;}
+      .framer-hero-content h1 { font-size: 1.36rem;}
+      .framer-hero-content p { font-size: 1.01rem;}
+      .framer-hero-content .cta-btn { font-size: 1rem; padding: 13px 22px;}
+      .framer-blob-bg { height: 400px;}
+      .hero-framer-section { min-height: 62vh;}
     }
   </style>
 </head>
 <body>
-  <!-- EN ÜSTTE GRADIENTLİ HERO BAŞLIK -->
-  <section class="product-gradient-hero">
-    <h1>Robotik Süreç Otomasyonu</h1>
-    <p>
-      Tekrarlayan işleri dijital çalışanlara bırakın.<br>
-      Zaman ve maliyet tasarrufunu, otomatik ve hatasız süreçlerle bir üst seviyeye taşıyın!
-    </p>
-  </section>
-
-  <!-- Video ve vurucu mesaj -->
-  <div class="rpa-video-row">
-    <div class="rpa-video-box">
-      <!-- ÖRNEK: Video bağlantısını değiştir (mp4, webm veya YouTube embed kullanılabilir) -->
-      <video src="/videos/robotic-process-demo.mp4" autoplay muted loop playsinline></video>
-      <!-- Örnek: YouTube için -->
-      <!--
-      <iframe width="320" height="180" src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&loop=1&playlist=VIDEO_ID" frameborder="0" allowfullscreen style="border-radius:14px;"></iframe>
-      -->
+  <nav class="navbar-framer">
+    <div class="logo">Teknoify</div>
+    <div class="nav-links">
+      <a href="#">Ana Sayfa</a>
+      <a href="#">Ürünler</a>
+      <a href="#">Hakkımızda</a>
+      <a href="#">İletişim</a>
     </div>
-    <div class="rpa-video-message">
-      <span>Manuel işlemlerinizi <b>sistemlere bırakarak</b> stratejik işlere odaklanın.</span>
-    </div>
-  </div>
+  </nav>
 
-  <!-- Detay kartı -->
-  <main class="product-detail-section fade-in-section">
-    <section class="product-detail-card">
-      <h2 class="product-detail-title">Robotik Süreç Otomasyonu</h2>
-      <p class="product-detail-lead">
-        Teknoify ile süreçlerinizi dijitalleştirerek, ekibinizin stratejik işlere odaklanmasını sağlayın.
+  <section class="hero-framer-section">
+    <div class="framer-blob-bg"></div>
+    <div class="framer-hero-content">
+      <h1>Robotik Süreç Otomasyonu</h1>
+      <p>
+        Tekrarlayan işleri dijital çalışanlara bırakın.<br>
+        Zaman ve maliyet tasarrufunu, otomatik ve hatasız süreçlerle bir üst seviyeye taşıyın!
       </p>
-      <div class="product-detail-content">
-        <h2>Neden Robotik Süreç Otomasyonu?</h2>
-        <ul>
-          <li>Manuel ve tekrarlayan işleri otomatikleştirerek hız ve verimlilik artışı</li>
-          <li>Hata oranlarını minimize ederek kaliteyi yükseltme</li>
-          <li>Çalışanlarınızı daha değerli görevlere yönlendirme</li>
-          <li>7/24 çalışan dijital iş gücüyle operasyonel süreklilik</li>
-        </ul>
-        <h3>Hangi Süreçlerde Kullanılır?</h3>
-        <p>
-          Sipariş yönetimi, fatura işleme, veri aktarımı, stok kontrolleri, e-posta ve bildirim otomasyonu, müşteri servis işlemleri ve daha fazlası…
-        </p>
-        <h3>Size Nasıl Yardımcı Oluyoruz?</h3>
-        <ul>
-          <li>İhtiyacınıza özel RPA çözümü analizi</li>
-          <li>Kurulum ve entegrasyon desteği</li>
-          <li>Kullanıcı dostu rapor ve izleme ekranları</li>
-          <li>Destek ve eğitim</li>
-        </ul>
-      </div>
-      <a href="/#contact" class="btn-primary">Hemen Teklif Al</a>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="footer" style="background:#171926; color:#fff; text-align:center; padding:2rem 0 1rem 0; border-top:1.5px solid #23233b;">
-    <p>&copy; 2025 Teknoify - Tüm Hakları Saklıdır.</p>
-  </footer>
+      <a class="cta-btn" href="#contact">Hemen Teklif Al</a>
+    </div>
+  </section>
 </body>
 </html>
