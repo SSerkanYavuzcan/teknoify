@@ -5,45 +5,44 @@
 ========================================================= -->
 <head>
   <!-- 0.1 Meta -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teknoify | Innovate. Integrate. Inspire.</title>
-  <meta name="description" content="Teknoify ile vizyonunuzu inşa edin. AI destekli otomasyon, veri analizi ve akıllı çözümlerle geleceğe hazır olun." />
-  <meta name="author" content="Teknoify" />
-  <meta property="og:title" content="Teknoify | Innovate. Integrate. Inspire." />
-  <meta property="og:description" content="We build your vision. AI destekli otomasyon ve veri çözümleri ile işinizi geleceğe taşıyın." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.teknoify.com" />
-  <meta property="og:image" content="https://www.teknoify.com/og-image.jpg" />
+  <meta name="description" content="Teknoify ile vizyonunuzu inşa edin. AI destekli otomasyon, veri analizi ve akıllı çözümlerle geleceğe hazır olun.">
+  <meta name="author" content="Teknoify">
+  <meta property="og:title" content="Teknoify | Innovate. Integrate. Inspire.">
+  <meta property="og:description" content="We build your vision. AI destekli otomasyon ve veri çözümleri ile işinizi geleceğe taşıyın.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.teknoify.com">
+  <meta property="og:image" content="https://www.teknoify.com/og-image.jpg">
 
   <!-- 0.2 Favicon -->
-  <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 
-  <!-- 0.3 Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <!-- Başlık için daha modern görünüm -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- Inter Tight: daha modern başlık görünümü -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- 0.4 AOS -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
   <!-- 0.5 Global CSS -->
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
+
   <!-- =========================================================
   #1. HEADER
   ========================================================= -->
   <header id="header" class="header">
     <!-- 1.1 Navbar -->
-    <nav class="navbar" aria-label="Ana menü">
+    <nav class="navbar">
       <div class="nav-container">
         <!-- 1.2 Logo -->
         <div class="logo">
-          <a href="#home" aria-label="Teknoify ana sayfa">
-            <span class="logo-icon"><i class="fas fa-cube" aria-hidden="true"></i></span>
+          <a href="#home">
+            <span class="logo-icon"><i class="fas fa-cube"></i></span>
             <span class="logo-text">Teknoify</span>
           </a>
         </div>
@@ -51,91 +50,108 @@
         <!-- 1.3 Menu -->
         <ul class="nav-menu">
           <!-- 1.3.1 Ana Sayfa -->
-          <li class="nav-item"><a href="#home" class="nav-link">Ana Sayfa</a></li>
+          <li class="nav-item">
+            <a href="#home" class="nav-link">Ana Sayfa</a>
+          </li>
 
           <!-- 1.3.2 Hizmetler (Dropdown) -->
           <li class="nav-item dropdown">
-            <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="/urunler/robotik-surec-otomasyonu.html"><i class="fas fa-robot" aria-hidden="true"></i> RPA</a></li>
-              <li><a href="/urunler/web-scraping.html"><i class="fas fa-spider" aria-hidden="true"></i> Web Scraping</a></li>
-              <li><a href="/urunler/finansal-indikatorler.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Finansal Analiz</a></li>
-              <li><a href="/urunler/akilli-dijital-asistan.html"><i class="fas fa-brain" aria-hidden="true"></i> AI Asistan</a></li>
+            <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down"></i></a>
+            <ul class="dropdown-menu">
+              <!-- 1.3.2.a RPA -->
+              <li><a href="/urunler/robotik-surec-otomasyonu.html"><i class="fas fa-robot"></i> RPA</a></li>
+              <!-- 1.3.2.b Web Scraping -->
+              <li><a href="/urunler/web-scraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+              <!-- 1.3.2.c Finansal Analiz -->
+              <li><a href="/urunler/finansal-indikatorler.html"><i class="fas fa-chart-line"></i> Finansal Analiz</a></li>
+              <!-- 1.3.2.d AI Asistan -->
+              <li><a href="/urunler/akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
             </ul>
           </li>
 
           <!-- 1.3.3 Hakkımızda -->
-          <li class="nav-item"><a href="#about" class="nav-link">Hakkımızda</a></li>
+          <li class="nav-item">
+            <a href="#about" class="nav-link">Hakkımızda</a>
+          </li>
 
           <!-- 1.3.4 İletişim -->
-          <li class="nav-item"><a href="#contact" class="nav-link">İletişim</a></li>
+          <li class="nav-item">
+            <a href="#contact" class="nav-link">İletişim</a>
+          </li>
         </ul>
 
         <!-- 1.4 Hamburger -->
-        <button class="hamburger" aria-label="Menüyü aç/kapat" aria-expanded="false" aria-controls="menu">
-          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-        </button>
+        <div class="hamburger">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
       </div>
     </nav>
   </header>
 
-  <!-- =========================================================
-  #2. HERO (Koyu tema, şeffaf dünya, yıldızlar)
-  ========================================================= -->
-  <section id="home" class="hero" aria-label="Kahraman alanı">
-    <!-- 2.1 Background Layers -->
-    <div class="hero-background">
-      <div class="light-rays"></div>
-      <div class="floating-particles"></div>
-      <!-- Dönen dikdörtgen kaldırıldı; yerine globe -->
-      <div id="globe" class="hero-globe" aria-hidden="true"></div>
-    </div>
+<!-- =========================================================
+#2. HERO
+========================================================= -->
+<section id="home" class="hero">
+  <!-- 2.1 Background Layers -->
+  <div class="hero-background">
+    <div class="light-rays"></div>
+    <div class="floating-particles"></div>
 
-    <!-- 2.2 Container -->
-    <div class="hero-container">
-      <div class="hero-content">
-        <!-- 2.2.1 Philosophy (Hayal edin / Tasarlayın / İlham verin) -->
-        <div class="philosophy-text">
-          <!-- 2.2.1.a Hayal edin. -->
-          <div class="philosophy-word" id="innovate" aria-label="Hayal edin">
-            <span class="letter">H</span><span class="letter">a</span><span class="letter">y</span><span class="letter">a</span><span class="letter">l</span>
-            <span class="letter">&nbsp;</span>
-            <span class="letter">e</span><span class="letter">d</span><span class="letter">i</span><span class="letter">n</span>
-            <span class="dot">.</span>
-          </div>
-          <!-- 2.2.1.b Tasarlayın. -->
-          <div class="philosophy-word" id="integrate" aria-label="Tasarlayın">
-            <span class="letter">T</span><span class="letter">a</span><span class="letter">s</span><span class="letter">a</span><span class="letter">r</span><span class="letter">l</span><span class="letter">a</span><span class="letter">y</span><span class="letter">ı</span><span class="letter">n</span>
-            <span class="dot">.</span>
-          </div>
-          <!-- 2.2.1.c İlham verin. -->
-          <div class="philosophy-word" id="inspire" aria-label="İlham verin">
-            <span class="letter">İ</span><span class="letter">l</span><span class="letter">h</span><span class="letter">a</span><span class="letter">m</span>
-            <span class="letter">&nbsp;</span>
-            <span class="letter">v</span><span class="letter">e</span><span class="letter">r</span><span class="letter">i</span><span class="letter">n</span>
-            <span class="dot">.</span>
-          </div>
+    <!-- Şeffaf Dünya: JS bu elemana canvas yerleştirecek -->
+    <div id="globe" class="hero-globe" aria-hidden="true"></div>
+  </div>
+
+  <!-- 2.2 Container -->
+  <div class="hero-container">
+    <div class="hero-content">
+      <!-- 2.2.1 Philosophy (Hayal edin / Tasarlayın / İlham verin) -->
+      <div class="philosophy-text">
+        <!-- 2.2.1.a Hayal edin. -->
+        <div class="philosophy-word" id="innovate">
+          <span class="letter">H</span><span class="letter">a</span><span class="letter">y</span><span class="letter">a</span><span class="letter">l</span>
+          <span class="letter">&nbsp;</span>
+          <span class="letter">e</span><span class="letter">d</span><span class="letter">i</span><span class="letter">n</span>
+          <span class="dot">.</span>
         </div>
 
-        <!-- 2.2.2 Vision -->
-        <div class="vision-text" id="vision" aria-label="Vizyonunuz">
-          <span class="vision-word">Vizyonunuzu</span>
-          <span class="vision-word">gerçeğe</span>
-          <span class="vision-word">dönüştürüyoruz.</span>
+        <!-- 2.2.1.b Tasarlayın. -->
+        <div class="philosophy-word" id="integrate">
+          <span class="letter">T</span><span class="letter">a</span><span class="letter">s</span><span class="letter">a</span><span class="letter">r</span><span class="letter">l</span><span class="letter">a</span><span class="letter">y</span><span class="letter">ı</span><span class="letter">n</span>
+          <span class="dot">.</span>
         </div>
 
-        <!-- 2.2.3 Actions -->
-        <div class="hero-actions" id="hero-actions">
-          <a href="#contact" class="btn btn-primary glow-effect"><span>Bilgi Alın</span></a>
+        <!-- 2.2.1.c İlham verin. -->
+        <div class="philosophy-word" id="inspire">
+          <span class="letter">İ</span><span class="letter">l</span><span class="letter">h</span><span class="letter">a</span><span class="letter">m</span>
+          <span class="letter">&nbsp;</span>
+          <span class="letter">v</span><span class="letter">e</span><span class="letter">r</span><span class="letter">i</span><span class="letter">n</span>
+          <span class="dot">.</span>
         </div>
       </div>
-    </div>
 
-    <!-- 2.3 Scroll Indicator -->
-    <div class="hero-scroll-indicator" aria-hidden="true">
-      <div class="scroll-arrow"></div>
+      <!-- 2.2.2 Vision -->
+      <div class="vision-text" id="vision">
+        <span class="vision-word">Vizyonunuzu</span>
+        <span class="vision-word">gerçeğe</span>
+        <span class="vision-word">dönüştürüyoruz.</span>
+      </div>
+
+      <!-- 2.2.3 Actions -->
+      <div class="hero-actions" id="hero-actions">
+        <a href="#contact" class="btn btn-primary glow-effect">
+          <span>Bilgi Alın</span>
+        </a>
+      </div>
     </div>
-  </section>
+  </div>
+
+  <!-- 2.3 Scroll Indicator -->
+  <div class="hero-scroll-indicator">
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
 
   <!-- =========================================================
   #3. SERVICES
@@ -145,7 +161,7 @@
       <!-- 3.1 Section Header -->
       <div class="section-header" data-aos="fade-up">
         <div class="section-badge">
-          <i class="fas fa-cogs" aria-hidden="true"></i>
+          <i class="fas fa-cogs"></i>
           <span>Hizmetlerimiz</span>
         </div>
         <h2 class="section-title"><span class="gradient-text">Kapsamlı</span> Dijital Çözümler</h2>
@@ -156,54 +172,54 @@
       <div class="services-grid">
         <!-- 3.2.1 Card: RPA -->
         <div class="service-card" data-aos="fade-up" data-aos-delay="100">
-          <div class="service-icon"><i class="fas fa-robot" aria-hidden="true"></i></div>
+          <div class="service-icon"><i class="fas fa-robot"></i></div>
           <h3 class="service-title">Robotik Süreç Otomasyonu</h3>
           <p class="service-description">Tekrarlayan işleri otomatikleştirerek %80'e varan verimlilik artışı sağlayın.</p>
           <ul class="service-features">
-            <li><i class="fas fa-check" aria-hidden="true"></i> %80 Verimlilik Artışı</li>
-            <li><i class="fas fa-check" aria-hidden="true"></i> 7/24 Kesintisiz Çalışma</li>
-            <li><i class="fas fa-check" aria-hidden="true"></i> Hata Oranında %95 Azalma</li>
+            <li><i class="fas fa-check"></i> %80 Verimlilik Artışı</li>
+            <li><i class="fas fa-check"></i> 7/24 Kesintisiz Çalışma</li>
+            <li><i class="fas fa-check"></i> Hata Oranında %95 Azalma</li>
           </ul>
-          <a href="/urunler/robotik-surec-otomasyonu.html" class="service-link">Detayları İncele <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          <a href="/urunler/robotik-surec-otomasyonu.html" class="service-link">Detayları İncele <i class="fas fa-arrow-right"></i></a>
         </div>
 
         <!-- 3.2.2 Card: Web Scraping -->
         <div class="service-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="service-icon"><i class="fas fa-spider" aria-hidden="true"></i></div>
+          <div class="service-icon"><i class="fas fa-spider"></i></div>
           <h3 class="service-title">Web Scraping & Veri Analizi</h3>
           <p class="service-description">Web'den otomatik veri çekme ve analiz ile rakiplerinizden önce harekete geçin.</p>
           <ul class="service-features">
-            <li><i class="fas fa-check" aria-hidden="true"></i> Gerçek Zamanlı Veri</li>
-            <li><i class="fas fa-check" aria-hidden="true"></i> AI Destekli Analiz</li>
-            <li><i class="fas fa-check" aria-hidden="true"></i> Özelleştirilebilir Raporlar</li>
+            <li><i class="fas fa-check"></i> Gerçek Zamanlı Veri</li>
+            <li><i class="fas fa-check"></i> AI Destekli Analiz</li>
+            <li><i class="fas fa-check"></i> Özelleştirilebilir Raporlar</li>
           </ul>
-          <a href="/urunler/web-scraping.html" class="service-link">Detayları İncele <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          <a href="/urunler/web-scraping.html" class="service-link">Detayları İncele <i class="fas fa-arrow-right"></i></a>
         </div>
 
         <!-- 3.2.3 Card: Finans -->
         <div class="service-card" data-aos="fade-up" data-aos-delay="300">
-          <div class="service-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
+          <div class="service-icon"><i class="fas fa-chart-line"></i></div>
           <h3 class="service-title">Finansal İndikatörler</h3>
           <p class="service-description">Yapay zeka destekli finansal analiz ile yatırım kararlarınızı optimize edin.</p>
           <ul class="service-features">
-            <li><i class="fas fa-check" aria-hidden="true"></i> AI Tahmin Modelleri</li>
-            <li><i class="fas fa-check" aria-hidden="true"></i> Risk Analizi</li>
-            <li><i class="fas fa-check" aria-hidden="true"></i> Portföy Optimizasyonu</li>
+            <li><i class="fas fa-check"></i> AI Tahmin Modelleri</li>
+            <li><i class="fas fa-check"></i> Risk Analizi</li>
+            <li><i class="fas fa-check"></i> Portföy Optimizasyonu</li>
           </ul>
-          <a href="/urunler/finansal-indikatorler.html" class="service-link">Detayları İncele <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          <a href="/urunler/finansal-indikatorler.html" class="service-link">Detayları İncele <i class="fas fa-arrow-right"></i></a>
         </div>
 
         <!-- 3.2.4 Card: AI Asistan -->
         <div class="service-card" data-aos="fade-up" data-aos-delay="400">
-          <div class="service-icon"><i class="fas fa-brain" aria-hidden="true"></i></div>
+          <div class="service-icon"><i class="fas fa-brain"></i></div>
           <h3 class="service-title">Akıllı Dijital Asistan</h3>
           <p class="service-description">İş süreçlerinizi yöneten, size özel öneriler sunan AI asistanınız.</p>
           <ul class="service-features">
-            <li><i class="fas fa-check" aria-hidden="true"></i> Doğal Dil İşleme</li>
-            <li><i class="fas fa-check" aria-hidden="true"></i> Otomatik Görev Yönetimi</li>
-            <li><i class="fas fa-check" aria-hidden="true"></i> Öğrenen Sistem</li>
+            <li><i class="fas fa-check"></i> Doğal Dil İşleme</li>
+            <li><i class="fas fa-check"></i> Otomatik Görev Yönetimi</li>
+            <li><i class="fas fa-check"></i> Öğrenen Sistem</li>
           </ul>
-          <a href="/urunler/akilli-dijital-asistan.html" class="service-link">Detayları İncele <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          <a href="/urunler/akilli-dijital-asistan.html" class="service-link">Detayları İncele <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
     </div>
@@ -217,26 +233,26 @@
       <div class="about-content">
         <!-- 4.1 Text -->
         <div class="about-text" data-aos="fade-right">
-          <div class="section-badge"><i class="fas fa-lightbulb" aria-hidden="true"></i><span>Hakkımızda</span></div>
+          <div class="section-badge"><i class="fas fa-lightbulb"></i><span>Hakkımızda</span></div>
           <h2 class="section-title"><span class="gradient-text">Teknoloji</span> ile Geleceği Şekillendiriyoruz</h2>
           <p class="about-description">
-            Teknoify olarak, işletmelerin dijital dönüşüm süreçlerinde yanlarında yer alıyoruz.
-            Yapay zeka, makine öğrenmesi ve otomasyon teknolojilerini kullanarak,
+            Teknoify olarak, işletmelerin dijital dönüşüm süreçlerinde yanlarında yer alıyoruz. 
+            Yapay zeka, makine öğrenmesi ve otomasyon teknolojilerini kullanarak, 
             müşterilerimizin iş süreçlerini optimize ediyor ve rekabet avantajı sağlıyoruz.
           </p>
 
           <!-- 4.1.1 Features -->
           <div class="about-features">
             <div class="feature-item">
-              <i class="fas fa-shield-alt" aria-hidden="true"></i>
+              <i class="fas fa-shield-alt"></i>
               <div><h4>Güvenli Altyapı</h4><p>En son güvenlik standartları ile korunan sistemler</p></div>
             </div>
             <div class="feature-item">
-              <i class="fas fa-users" aria-hidden="true"></i>
+              <i class="fas fa-users"></i>
               <div><h4>Uzman Ekip</h4><p>Deneyimli yazılım geliştiricileri ve veri bilimcileri</p></div>
             </div>
             <div class="feature-item">
-              <i class="fas fa-clock" aria-hidden="true"></i>
+              <i class="fas fa-clock"></i>
               <div><h4>7/24 Destek</h4><p>Kesintisiz teknik destek ve müşteri hizmetleri</p></div>
             </div>
           </div>
@@ -246,7 +262,7 @@
         <div class="about-visual" data-aos="fade-left">
           <div class="about-image">
             <div class="image-placeholder">
-              <i class="fas fa-chart-network" aria-hidden="true"></i>
+              <i class="fas fa-chart-network"></i>
             </div>
           </div>
         </div>
@@ -262,25 +278,25 @@
       <div class="contact-content">
         <!-- 5.1 Info -->
         <div class="contact-info" data-aos="fade-right">
-          <div class="section-badge"><i class="fas fa-envelope" aria-hidden="true"></i><span>İletişim</span></div>
+          <div class="section-badge"><i class="fas fa-envelope"></i><span>İletişim</span></div>
           <h2 class="section-title"><span class="gradient-text">Projenizi</span> Konuşalım</h2>
           <p class="contact-description">
-            Dijital dönüşüm yolculuğunuzda size yardımcı olmak için buradayız.
+            Dijital dönüşüm yolculuğunuzda size yardımcı olmak için buradayız. 
             Ücretsiz danışmanlık için hemen iletişime geçin.
           </p>
 
           <!-- 5.1.1 Methods -->
           <div class="contact-methods">
             <div class="contact-method">
-              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <i class="fas fa-envelope"></i>
               <div><h4>E-posta</h4><p>info@teknoify.com</p></div>
             </div>
             <div class="contact-method">
-              <i class="fas fa-phone" aria-hidden="true"></i>
+              <i class="fas fa-phone"></i>
               <div><h4>Telefon</h4><p>+90 (212) 555 0123</p></div>
             </div>
             <div class="contact-method">
-              <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+              <i class="fas fa-map-marker-alt"></i>
               <div><h4>Adres</h4><p>İstanbul, Türkiye</p></div>
             </div>
           </div>
@@ -290,11 +306,17 @@
         <div class="contact-form-container" data-aos="fade-left">
           <form class="contact-form">
             <!-- 5.2.1 Name -->
-            <div class="form-group"><input type="text" id="name" name="name" placeholder="Adınız Soyadınız" required /></div>
+            <div class="form-group">
+              <input type="text" id="name" name="name" placeholder="Adınız Soyadınız" required>
+            </div>
             <!-- 5.2.2 Email -->
-            <div class="form-group"><input type="email" id="email" name="email" placeholder="E-posta Adresiniz" required /></div>
+            <div class="form-group">
+              <input type="email" id="email" name="email" placeholder="E-posta Adresiniz" required>
+            </div>
             <!-- 5.2.3 Phone -->
-            <div class="form-group"><input type="tel" id="phone" name="phone" placeholder="Telefon Numaranız" /></div>
+            <div class="form-group">
+              <input type="tel" id="phone" name="phone" placeholder="Telefon Numaranız">
+            </div>
             <!-- 5.2.4 Service -->
             <div class="form-group">
               <select id="service" name="service" required>
@@ -306,11 +328,13 @@
               </select>
             </div>
             <!-- 5.2.5 Message -->
-            <div class="form-group"><textarea id="message" name="message" placeholder="Projeniz hakkında bilgi verin..." rows="5" required></textarea></div>
+            <div class="form-group">
+              <textarea id="message" name="message" placeholder="Projeniz hakkında bilgi verin..." rows="5" required></textarea>
+            </div>
             <!-- 5.2.6 Submit -->
             <button type="submit" class="btn btn-primary">
               <span>Mesaj Gönder</span>
-              <i class="fas fa-paper-plane" aria-hidden="true"></i>
+              <i class="fas fa-paper-plane"></i>
             </button>
           </form>
         </div>
@@ -328,14 +352,14 @@
         <!-- 6.1.1 Brand -->
         <div class="footer-section">
           <div class="footer-logo">
-            <span class="logo-icon"><i class="fas fa-cube" aria-hidden="true"></i></span>
+            <span class="logo-icon"><i class="fas fa-cube"></i></span>
             <span class="logo-text">Teknoify</span>
           </div>
           <p>Geleceğin teknolojisi ile işinizi dijitalleştirin.</p>
           <div class="social-links">
-            <a href="#"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
-            <a href="#"><i class="fab fa-twitter" aria-hidden="true"></i></a>
-            <a href="#"><i class="fab fa-github" aria-hidden="true"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
           </div>
         </div>
 
@@ -384,13 +408,10 @@
     </div>
   </footer>
 
-  <!-- =========================================================
-  #7. SCRIPTS
-  ========================================================= -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <!-- Globe için üçlü sıra: three.js -> globe.js -> script.js -->
-  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-  <script src="js/globe.js"></script>
-  <script src="js/script.js"></script>
-</body>
-</html>
+<!-- =========================================================
+#7. SCRIPTS
+========================================================= -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+<script src="js/globe.js"></script>
+<script src="js/script.js"></script>
