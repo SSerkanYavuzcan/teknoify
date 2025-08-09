@@ -1,17 +1,20 @@
 // ===========================================
 // 0. GLOBAL INITIALIZATION
 // ===========================================
-
 document.addEventListener('DOMContentLoaded', function() {
-    initHeader();              // 2. Header Functionality
-    initMobileMenu();          // 3. Mobile Menu
-    initSmoothScrolling();     // 4. Smooth Scrolling
-    initAnimations();          // 5. Animations
-    initContactForm();         // 6. Contact Form
-    initLightEffects();        // 7. Light Effects
-    initPhilosophyAnimation(); // 8. Philosophy Animation
-});
-
+    initHeader();
+    initMobileMenu();
+    initSmoothScrolling();
+    initAnimations();
+    initContactForm();
+    initLightEffects();
+    initPhilosophyAnimation();
+  
+    // NEW: Transparent globe (if three.js & globe.js loaded)
+    if (typeof window.initHeroGlobe === 'function') {
+      window.initHeroGlobe();
+    }
+  });
 
 // ===========================================
 // 2. HEADER FUNCTIONALITY
@@ -79,24 +82,45 @@ function initSmoothScrolling() {
 
 
 // ===========================================
-// 5. PHILOSOPHY ANIMATION
+// PHILOSOPHY ANIMATION (fixed for TR words)
 // ===========================================
 function initPhilosophyAnimation() {
-    const sequence = [
-        'innovate', 'integrate', 'inspire', 'vision', 'hero-actions'
+    const words = [
+      document.getElementById('innovate'),  // "Hayal edin."
+      document.getElementById('integrate'), // "Tasarlayın."
+      document.getElementById('inspire')    // "İlham verin."
     ];
-    let delay = 500;
-    sequence.forEach((id, index) => {
-        setTimeout(() => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.style.opacity = '1';
-                el.style.transform = 'translateY(0)';
-            }
-        }, delay + index * 1500);
+    const vision = document.getElementById('vision');
+    const actions = document.getElementById('hero-actions');
+  
+    // Base delays kelime sırasına göre (CSS harf gecikmelerini kapsıyor)
+    const base = 500;
+    const step = 1500;
+  
+    words.forEach((w, i) => {
+      if (!w) return;
+      setTimeout(() => {
+        w.style.opacity = '1';
+        w.style.transform = 'translateY(0)';
+      }, base + i * step);
     });
-}
-
+  
+    // Vision cümlesi ve buton
+    setTimeout(() => {
+      if (vision) {
+        vision.style.opacity = '1';
+        vision.style.transform = 'translateY(0)';
+      }
+    }, base + words.length * step + 400);
+  
+    setTimeout(() => {
+      if (actions) {
+        actions.style.opacity = '1';
+        actions.style.transform = 'translateY(0)';
+      }
+    }, base + words.length * step + 900);
+  }
+  
 
 // ===========================================
 // 6. LIGHT EFFECTS
@@ -134,26 +158,28 @@ function createLightParticles() {
 function addMouseFollowEffect() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
+  
     hero.addEventListener('mousemove', function(e) {
-        const rect = hero.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const lightTrail = document.createElement('div');
-        lightTrail.style.cssText = `
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-            left: ${x - 50}px;
-            top: ${y - 50}px;
-            pointer-events: none;
-            animation: light-trail 1s ease-out forwards;
-        `;
-        hero.appendChild(lightTrail);
-        setTimeout(() => lightTrail.remove(), 1000);
+      const rect = hero.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+  
+      const lightTrail = document.createElement('div');
+      lightTrail.style.cssText = `
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 72%);
+        left: ${x - 50}px;
+        top: ${y - 50}px;
+        pointer-events: none;
+        animation: light-trail 1s ease-out forwards;
+      `;
+      hero.appendChild(lightTrail);
+      setTimeout(() => lightTrail.remove(), 1000);
     });
-}
-
+  }
+  
 // 6.3 Scroll-based light intensity
 function addScrollLightEffect() {
     window.addEventListener('scroll', function() {

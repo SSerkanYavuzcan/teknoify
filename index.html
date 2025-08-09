@@ -90,7 +90,7 @@
     </nav>
   </header>
 
-  <!-- =========================================================
+<!-- =========================================================
 #2. HERO
 ========================================================= -->
 <section id="home" class="hero">
@@ -98,28 +98,30 @@
   <div class="hero-background">
     <div class="light-rays"></div>
     <div class="floating-particles"></div>
-    <div class="energy-grid"></div>
+
+    <!-- Şeffaf Dünya: JS bu elemana canvas yerleştirecek -->
+    <div id="globe" class="hero-globe" aria-hidden="true"></div>
   </div>
 
   <!-- 2.2 Container -->
   <div class="hero-container">
     <div class="hero-content">
-      <!-- 2.2.1 Philosophy (Yenilikçi olun / Entegre edin / İlham verin) -->
+      <!-- 2.2.1 Philosophy (Hayal edin / Tasarlayın / İlham verin) -->
       <div class="philosophy-text">
-        <!-- 2.2.1.a Yenilikçi olun. -->
+        <!-- 2.2.1.a Hayal edin. -->
         <div class="philosophy-word" id="innovate">
-          <span class="letter">Y</span><span class="letter">e</span><span class="letter">n</span><span class="letter">i</span><span class="letter">l</span><span class="letter">i</span><span class="letter">k</span><span class="letter">ç</span><span class="letter">i</span>
-          <span class="letter">&nbsp;</span>
-          <span class="letter">o</span><span class="letter">l</span><span class="letter">u</span><span class="letter">n</span>
-          <span class="dot">.</span>
-        </div>
-        <!-- 2.2.1.b Entegre edin. -->
-        <div class="philosophy-word" id="integrate">
-          <span class="letter">E</span><span class="letter">n</span><span class="letter">t</span><span class="letter">e</span><span class="letter">g</span><span class="letter">r</span><span class="letter">e</span>
+          <span class="letter">H</span><span class="letter">a</span><span class="letter">y</span><span class="letter">a</span><span class="letter">l</span>
           <span class="letter">&nbsp;</span>
           <span class="letter">e</span><span class="letter">d</span><span class="letter">i</span><span class="letter">n</span>
           <span class="dot">.</span>
         </div>
+
+        <!-- 2.2.1.b Tasarlayın. -->
+        <div class="philosophy-word" id="integrate">
+          <span class="letter">T</span><span class="letter">a</span><span class="letter">s</span><span class="letter">a</span><span class="letter">r</span><span class="letter">l</span><span class="letter">a</span><span class="letter">y</span><span class="letter">ı</span><span class="letter">n</span>
+          <span class="dot">.</span>
+        </div>
+
         <!-- 2.2.1.c İlham verin. -->
         <div class="philosophy-word" id="inspire">
           <span class="letter">İ</span><span class="letter">l</span><span class="letter">h</span><span class="letter">a</span><span class="letter">m</span>
@@ -150,7 +152,6 @@
     <div class="scroll-arrow"></div>
   </div>
 </section>
-
 
   <!-- =========================================================
   #3. SERVICES
@@ -407,10 +408,10 @@
     </div>
   </footer>
 
-  <!-- =========================================================
-  #7. SCRIPTS
-  ========================================================= -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script src="js/script.js"></script>
-</body>
-</html>
+<!-- =========================================================
+#7. SCRIPTS
+========================================================= -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+<script src="js/globe.js"></script>
+<script src="js/script.js"></script>
