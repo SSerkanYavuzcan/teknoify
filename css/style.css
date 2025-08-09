@@ -682,48 +682,133 @@
 .footer-links a:hover { color: var(--white); }
 
 /* ===========================================================
-#11. HERO — Responsive overrides
+#11. RESPONSIVE
 =========================================================== */
-
-/* Tablet (≤1024px) */
-@media (max-width: 1024px){
-  .hero-content{ max-width:540px; padding: var(--spacing-2xl); }
-  .philosophy-word .letter{ font-size: clamp(2rem, 5vw, 3.4rem); }
-  .vision-word{ font-size: clamp(1.2rem, 2.6vw, 1.8rem); }
+@media (max-width: 1024px) {
+  .about-content,
+  .contact-content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2xl);
+  }
+  .about-visual {
+    order: -1;
+  }
+  .philosophy-word .letter {
+    font-size: var(--font-size-4xl);
+  }
+  .vision-word {
+    font-size: var(--font-size-3xl);
+  }
+  .hero-content {
+    max-width: 500px;
+  }
+  .rotating-globe {
+    width: 400px;
+    height: 400px;
+  }
 }
 
-/* Mobile (≤768px) */
-@media (max-width: 768px){
-  .hero{ padding-top: 64px; } /* fixed header boşluğu */
-  .hero-content{ max-width: 440px; padding: var(--spacing-xl) var(--spacing-lg); }
-  .philosophy-word{ margin: .25rem 0; }
-  .philosophy-word .letter{ font-size: clamp(1.8rem, 7.2vw, 2.6rem); letter-spacing:.01em; }
-  .vision-text{ margin-bottom: var(--spacing-2xl); }
-  .vision-word{ font-size: clamp(1.05rem, 3.2vw, 1.4rem); }
+@media (max-width: 768px) {
+  /* Mobile Nav */
+  .nav-menu {
+    position: fixed;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--bg-secondary);
+    flex-direction: column;
+    padding: var(--spacing-xl);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-normal);
+    z-index: 1000;
+  }
+  .nav-menu.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .hamburger.active .bar:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger.active .bar:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+  }
 
-  /* Globe daha hafif/şeffaf */
-  .hero-globe{ opacity:.30; }
-  .floating-particles{ background-size: 260px 130px; }
+  /* Hero */
+  .philosophy-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .philosophy-word {
+    margin: var(--spacing-sm) 0;
+  }
+  .philosophy-word .letter {
+    font-size: var(--font-size-3xl);
+  }
+  .vision-word {
+    font-size: var(--font-size-2xl);
+  }
+  .hero-content {
+    max-width: 400px;
+    text-align: center;
+  }
+  .rotating-globe {
+    width: 300px;
+    height: 300px;
+    opacity: 0.6;
+  }
+
+  /* Layouts */
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
 }
 
-/* Small mobile (≤480px) */
-@media (max-width: 480px){
-  .hero-container{ padding: 0 var(--spacing-md); }
-  .hero-content{ max-width: 340px; padding: var(--spacing-lg); border-radius: var(--radius-xl); }
-  .philosophy-word .letter{ font-size: clamp(1.6rem, 8vw, 2.2rem); }
-  .vision-word{ font-size: clamp(.95rem, 3.6vw, 1.2rem); }
-  .btn.btn-primary{ padding: .9rem 1.25rem; font-size: .95rem; }
-
-  /* En küçük cihazlarda GPU yükünü azalt */
-  .hero-globe{ opacity:.22; }
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+  .philosophy-word .letter {
+    font-size: var(--font-size-2xl);
+  }
+  .vision-word {
+    font-size: var(--font-size-xl);
+  }
+  .hero-content {
+    max-width: 300px;
+  }
+  .section-title {
+    font-size: var(--font-size-3xl);
+  }
+  .service-card,
+  .contact-form-container {
+    padding: var(--spacing-lg);
+  }
+  .rotating-globe {
+    width: 250px;
+    height: 250px;
+    opacity: 0.5;
+  }
 }
 
-/* Çok küçük (≤360px) – globe’u kapatmak istersen uncomment et */
-/*
-@media (max-width: 360px){
-  .hero-globe{ display:none; }
-}
-*/
 
 /* ===========================================================
 #12. RESPONSIVE LAYOUT — sections
