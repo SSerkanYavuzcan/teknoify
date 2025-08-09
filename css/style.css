@@ -3,7 +3,7 @@
 #0.1 CSS Variables
 =========================================================== */
 :root {
-  /* 0.1.1 Brand Colors */
+  /* Brand */
   --primary-color: #6366f1;
   --primary-dark: #4f46e5;
   --secondary-color: #06b6d4;
@@ -12,7 +12,7 @@
   --warning-color: #f59e0b;
   --error-color: #ef4444;
 
-  /* 0.1.2 Neutrals */
+  /* Neutrals */
   --white: #ffffff;
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
@@ -25,30 +25,25 @@
   --gray-800: #1f2937;
   --gray-900: #111827;
 
-  /* 0.1.3 Backgrounds */
+  /* Backgrounds */
   --bg-primary: #0a0a0a;
   --bg-secondary: #111317;
   --bg-tertiary: #181b22;
   --bg-card: #ffffff;
   --bg-overlay: rgba(10, 10, 10, 0.8);
 
-  /* 0.1.4 Gradients (dark-friendly palette) */
+  /* Gradients */
   --gradient-primary: linear-gradient(135deg, #5b5fe0 0%, #7a55e4 100%);
   --gradient-secondary: linear-gradient(135deg, #0ea5b7 0%, #2563eb 100%);
   --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-  /* koyu hero için yeni katmanlı gradyan */
+  /* koyu hero için */
   --gradient-hero-dark:
       radial-gradient(1200px 600px at 20% -10%, rgba(88,101,242,.18), transparent 55%),
-      radial-gradient(900px 480px at 85% 0%,   rgba(139, 92,246,.16), transparent 60%),
+      radial-gradient(900px 480px  at 85% 0%,   rgba(139, 92,246,.16), transparent 60%),
       linear-gradient(180deg, #0b0f17 0%, #0d1220 55%, #0e1426 100%);
 
-  /* 0.1.5 Light Effects */
-  --light-glow: 0 0 20px rgba(99, 102, 241, 0.5);
-  --light-glow-strong: 0 0 40px rgba(99, 102, 241, 0.8);
-  --light-glow-white: 0 0 30px rgba(255, 255, 255, 0.3);
-
-  /* 0.1.6 Typography Scale */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Typography (Inter Tight eklendi) */
+  --font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -62,7 +57,7 @@
   --font-size-7xl: 4.5rem;
   --font-size-8xl: 6rem;
 
-  /* 0.1.7 Spacing Scale */
+  /* Spacing */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -72,7 +67,7 @@
   --spacing-3xl: 4rem;
   --spacing-4xl: 6rem;
 
-  /* 0.1.8 Radius */
+  /* Radius & Shadows */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
@@ -80,14 +75,13 @@
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* 0.1.9 Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,.25);
 
-  /* 0.1.10 Motion & Layers */
+  /* Motion & Layers */
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 300ms ease-in-out;
   --transition-slow: 500ms ease-in-out;
@@ -99,6 +93,10 @@
   --z-popover: 1050;
   --z-tooltip: 1060;
 }
+
+/* Eski dönen grid’i tamamen kapat (güvenlik için) */
+.energy-grid { display:none !important; }
+
 
 
 /* ===========================================================
@@ -298,27 +296,16 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 /* 6.2 Background Layers */
 .hero-background{ position:absolute; inset:0; z-index:1; overflow:hidden; }
 
-/* 6.2.1 Light Rays — koyu tonda yumuşak ışık */
-.light-rays{
-  position:absolute; inset:0; z-index:1;
-  background:
-    radial-gradient(circle at 18% 78%, rgba(120,132,255,.12) 0%, transparent 50%),
-    radial-gradient(circle at 80% 22%, rgba(167,139,250,.10) 0%, transparent 50%),
-    radial-gradient(circle at 42% 40%, rgba(255,255,255,.06) 0%, transparent 50%),
-    radial-gradient(circle at 62% 60%, rgba(255,255,255,.05) 0%, transparent 50%);
-  animation: light-rays-move 28s ease-in-out infinite;
-  opacity:.85;
-}
-@keyframes light-rays-move{
-  0%,100%{ transform:translateY(0) rotate(0) scale(1); opacity:.85; }
-  25%{ transform:translateY(-15px) rotate(90deg) scale(1.1); opacity:1; }
-  50%{ transform:translateY(-25px) rotate(180deg) scale(1.2); opacity:.9; }
-  75%{ transform:translateY(-10px) rotate(270deg) scale(1.05); opacity:1; }
-}
-
-/* 6.2.2 Floating Particles — yıldızlar */
-.floating-particles{
+/* katman sıraları: rays(1) < globe(2) < stars(3) < content(4) */
+.light-rays{ z-index:1; }
+.hero-globe{
   position:absolute; inset:0; z-index:2;
+  opacity:.5; pointer-events:none;
+  filter: drop-shadow(0 0 24px rgba(0,0,0,.25));
+}
+.hero-globe canvas{ position:absolute; inset:0; width:100% !important; height:100% !important; }
+.floating-particles{
+  position:absolute; inset:0; z-index:3;
   background-image:
     radial-gradient(2px 2px at 20px 30px, rgba(120,132,255,.35), transparent),
     radial-gradient(2px 2px at 40px 70px, rgba(167,139,250,.28), transparent),
@@ -339,17 +326,27 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   100%{ transform:translateY(0) translateX(0); }
 }
 
-/* 6.2.3 Transparent Globe — three.js canvas buraya gelir */
-.hero-globe{
-  position:absolute; inset:0; z-index:1; /* ışıkların altında, yıldızların arkasında */
-  pointer-events:none; opacity:.35;      /* şeffaflık */
-  filter: drop-shadow(0 0 24px rgba(0,0,0,.25));
+/* 6.2.1 Light Rays — koyu tonda yumuşak ışık */
+.light-rays{
+  position:absolute; inset:0;
+  background:
+    radial-gradient(circle at 18% 78%, rgba(120,132,255,.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 22%, rgba(167,139,250,.10) 0%, transparent 50%),
+    radial-gradient(circle at 42% 40%, rgba(255,255,255,.06) 0%, transparent 50%),
+    radial-gradient(circle at 62% 60%, rgba(255,255,255,.05) 0%, transparent 50%);
+  animation: light-rays-move 28s ease-in-out infinite;
+  opacity:.85;
 }
-.hero-globe canvas{ position:absolute; inset:0; width:100% !important; height:100% !important; }
+@keyframes light-rays-move{
+  0%,100%{ transform:translateY(0) rotate(0) scale(1); opacity:.85; }
+  25%{ transform:translateY(-15px) rotate(90deg) scale(1.1); opacity:1; }
+  50%{ transform:translateY(-25px) rotate(180deg) scale(1.2); opacity:.9; }
+  75%{ transform:translateY(-10px) rotate(270deg) scale(1.05); opacity:1; }
+}
 
 /* 6.3 Container & Card */
 .hero-container{
-  position:relative; z-index:3;
+  position:relative; z-index:4;
   display:flex; justify-content:center; align-items:center;
   max-width:1200px; margin:0 auto; padding:0 var(--spacing-lg);
   text-align:center;
@@ -366,19 +363,21 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 
 /* 6.4 Philosophy (harf-harf animasyon) */
 .philosophy-text{ margin-bottom: var(--spacing-2xl); }
-.philosophy-word{ display:block; margin: .35rem 0; opacity:0; transform:translateY(30px); }
+.philosophy-word{ display:block; margin:.35rem 0; opacity:0; transform:translateY(30px); }
 
 .philosophy-word .letter{
   display:inline-block;
-  font-size: var(--font-size-5xl);
-  font-weight:300; color:var(--white);
+  font-family: var(--font-family);
+  font-weight:300;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  letter-spacing:.02em;
+  color:var(--white);
   text-shadow:0 0 14px rgba(255,255,255,.35);
   opacity:0; transform:translateY(20px);
   animation: letter-appear .6s ease-out forwards;
-  letter-spacing: 2px;
 }
 .philosophy-word .dot{
-  display:inline-block; font-size: var(--font-size-5xl); font-weight:300; color:var(--white);
+  display:inline-block; font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight:300; color:var(--white);
   text-shadow:0 0 20px rgba(255,255,255,.5);
   opacity:0; transform:scale(0);
   animation: dot-appear .4s ease-out forwards; animation-delay:.5s;
@@ -386,10 +385,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 @keyframes letter-appear{ to{ opacity:1; transform:translateY(0); } }
 @keyframes dot-appear{ to{ opacity:1; transform:scale(1); } }
 
-/* 6.4.x TR Letter Delays — kelime uzunluklarına göre TAM kapsama
-   (boşluk için de .letter kullandığımızdan delay’i sayıya dahil)   */
-
-/* 6.4.1 "Hayal edin." (10 harf + 1 boşluk = 11 letter) */
+/* TR Letter Delays — kelime uzunluklarına göre tam kapsama */
 #innovate .letter:nth-child(1){animation-delay:.50s}
 #innovate .letter:nth-child(2){animation-delay:.60s}
 #innovate .letter:nth-child(3){animation-delay:.70s}
@@ -402,7 +398,6 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 #innovate .letter:nth-child(10){animation-delay:1.40s}
 #innovate .letter:nth-child(11){animation-delay:1.50s}
 
-/* 6.4.2 "Tasarlayın." (10 harf) */
 #integrate .letter:nth-child(1){animation-delay:2.00s}
 #integrate .letter:nth-child(2){animation-delay:2.10s}
 #integrate .letter:nth-child(3){animation-delay:2.20s}
@@ -414,7 +409,6 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 #integrate .letter:nth-child(9){animation-delay:2.80s}
 #integrate .letter:nth-child(10){animation-delay:2.90s}
 
-/* 6.4.3 "İlham verin." (5 + boşluk + 5 = 11 letter) */
 #inspire .letter:nth-child(1){animation-delay:3.50s}
 #inspire .letter:nth-child(2){animation-delay:3.60s}
 #inspire .letter:nth-child(3){animation-delay:3.70s}
@@ -434,10 +428,11 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   animation: vision-appear 1s ease-out forwards; animation-delay:4.9s;
 }
 .vision-word{
-  display:inline-block; font-size: var(--font-size-4xl); font-weight:400; color:var(--white);
+  display:inline-block; font-weight:300;
+  font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+  letter-spacing:.015em; color:var(--white);
   margin:0 var(--spacing-sm); opacity:0; transform:translateY(20px);
   animation: vision-word-appear .8s ease-out forwards;
-  letter-spacing:1px; text-shadow:0 0 10px rgba(255,255,255,.22);
 }
 .vision-word:nth-child(1){animation-delay:5.1s}
 .vision-word:nth-child(2){animation-delay:5.3s}
@@ -451,7 +446,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 
 .hero-scroll-indicator{
   position:absolute; bottom: var(--spacing-xl); left:50%; transform:translateX(-50%);
-  z-index:3; opacity:0; animation: scroll-indicator-appear 1s ease-out forwards; animation-delay:6.4s;
+  z-index:4; opacity:0; animation: scroll-indicator-appear 1s ease-out forwards; animation-delay:6.4s;
 }
 .scroll-arrow{
   width:30px; height:30px;
@@ -466,6 +461,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   40%{ transform:translateY(-10px) rotate(45deg); }
   60%{ transform:translateY(-5px) rotate(45deg); }
 }
+
 
 /* ===========================================================
 #7. SERVICES
