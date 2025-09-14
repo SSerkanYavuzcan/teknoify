@@ -139,24 +139,40 @@ function initLightEffects() {
 function createLightParticles() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
-    for (let i = 0; i < 20; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'light-particle';
-        particle.style.cssText = `
-            position: absolute;
-            width: ${Math.random() * 4 + 2}px;
-            height: ${Math.random() * 4 + 2}px;
-            background: rgba(99, 102, 241, ${Math.random() * 0.5 + 0.3});
-            border-radius: 50%;
-            left: ${Math.random() * 100}%;
-            top: ${Math.random() * 100}%;
-            animation: float-particle ${Math.random() * 10 + 10}s linear infinite;
-            animation-delay: ${Math.random() * 5}s;
-            pointer-events: none;
-        `;
-        hero.appendChild(particle);
+  
+    // Eski parçacıkları temizle (yeniden init olursa birikmesin)
+    hero.querySelectorAll('.light-particle').forEach(p => p.remove());
+  
+    const COUNT = 32; // önceki 20'den biraz fazla
+    for (let i = 0; i < COUNT; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'light-particle';
+  
+      // Boyut (px), konum (soldan %), başlangıç (ekranın ALTINDAN başlasın)
+      const size = (Math.random() * 2 + 2).toFixed(1);      // 2–4px
+      const left = (Math.random() * 100).toFixed(2) + '%';  // 0–100%
+      const top  = (105 + Math.random() * 35).toFixed(2) + '%'; // 105–140% (view'ın altı)
+  
+      // Süre ve gecikme (negatif delay → bazıları ortadan/yukarıdan başlamış gibi)
+      const duration = (18 + Math.random() * 18).toFixed(1); // 18–36s
+      const delay    = (Math.random() * duration * -1).toFixed(1) + 's';
+  
+      particle.style.cssText = `
+        position:absolute;
+        width:${size}px; height:${size}px;
+        left:${left}; top:${top};
+        background: rgba(99,102,241, ${ (0.22 + Math.random() * 0.25).toFixed(2) });
+        border-radius:50%;
+        pointer-events:none;
+        will-change: transform, opacity;
+        animation: float-particle ${duration}s linear infinite;
+        animation-delay:${delay};
+        filter: drop-shadow(0 0 6px rgba(99,102,241,0.28));
+      `;
+      hero.appendChild(particle);
     }
-}
+  }
+  
 
 // 6.2 Mouse follow light effect
 function addMouseFollowEffect() {
@@ -305,10 +321,22 @@ initFocusManagement();
 // ===========================================
 const style = document.createElement('style');
 style.textContent = `
-    @keyframes light-trail { 0%{opacity:.3;transform:scale(.5);} 50%{opacity:.1;transform:scale(1);} 100%{opacity:0;transform:scale(1.5);} }
-    @keyframes float-particle { 0%{transform:translateY(0px);} 100%{transform:translateY(-100px);} }
+  @keyframes light-trail {
+    0% { opacity:.3; transform:scale(.5); }
+    50%{ opacity:.1; transform:scale(1); }
+    100%{ opacity:0; transform:scale(1.5); }
+  }
+
+  /* Yıldızlar sürekli yukarı çıkar; sadece en üstte kaybolur */
+  @keyframes float-particle {
+    0%   { transform: translateY(0);       opacity: 0; }
+    8%   { opacity: .6; }
+    90%  { opacity: .6; }
+    100% { transform: translateY(-120vh); opacity: 0; }
+  }
 `;
 document.head.appendChild(style);
+
 
 // ===========================================
 // 14. AI MANIFESTO TERMINAL (looping typewriter)
