@@ -10,11 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
     initLightEffects();
     initPhilosophyAnimation();
   
-    // NEW: Transparent globe (if three.js & globe.js loaded)
+    // Transparent globe (if three.js & globe.js loaded)
     if (typeof window.initHeroGlobe === 'function') {
       window.initHeroGlobe();
     }
+  
+    // NEW: AI Manifesto terminali başlat
+    initHeroTerminalManifesto();
   });
+  
 
 // ===========================================
 // 2. HEADER FUNCTIONALITY
@@ -305,3 +309,150 @@ style.textContent = `
     @keyframes float-particle { 0%{transform:translateY(0px);} 100%{transform:translateY(-100px);} }
 `;
 document.head.appendChild(style);
+
+// ===========================================
+// 14. AI MANIFESTO TERMINAL (looping typewriter)
+// ===========================================
+function initHeroTerminalManifesto() {
+    const pre  = document.getElementById('ai-manifesto');
+    if (!pre) return;
+    const code = pre.querySelector('code') || pre;
+  
+    const LINES = [
+      "/*",
+      "  TEKNOIFY :: AI MANIFESTO (DRAFT)",
+      "  Build AI that is: Useful · Reliable · Respectful · Measurable",
+      "*/",
+      "",
+      "#!/usr/bin/env teknoify",
+      "spec.version = \"0.1.0\"",
+      "spec.tagline = \"Innovate · Integrate · Inspire\"",
+      "",
+      "principles = [",
+      "  \"Human-in-the-loop\",",
+      "  \"Safety-first\",",
+      "  \"Transparency\",",
+      "  \"Data minimization\",",
+      "  \"Reproducibility\"",
+      "]",
+      "",
+      "layers = {",
+      "  ingestion:  [\"sheets\", \"sftp\", \"apis\", \"web\"],",
+      "  storage:    [\"bigquery\", \"warehouse\"],",
+      "  retrieval:  [\"bm25\", \"vector\", \"hybrid\"],",
+      "  orchestration: [\"workflows\", \"schedulers\", \"slas\"],",
+      "  governance: { pii_scanner: true, audit_log: true, red_team: true }",
+      "}",
+      "",
+      "class Assistant:",
+      "  def __init__(self, tools, memory, policy):",
+      "    self.tools  = tools",
+      "    self.mem    = memory",
+      "    self.policy = policy",
+      "",
+      "  def route(self, intent):",
+      "    if intent in [\"scrape\", \"clean\", \"export\"]: return \"pipeline\"",
+      "    if intent in [\"ask\", \"summarize\", \"decide\"]: return \"reason\"",
+      "    return \"fallback\"",
+      "",
+      "  def reason(self, query):",
+      "    context = retrieve(query)",
+      "    plan    = draft_plan(query, context)",
+      "    return execute(plan)",
+      "",
+      "  def pipeline(self, job):",
+      "    stage(\"fetch\",  connectors.pull(job.sources))",
+      "    stage(\"validate\",validators.schema(job.rules))",
+      "    stage(\"transform\",etl.cleanse(job.transforms))",
+      "    stage(\"publish\", sinks.to(job.dest))",
+      "",
+      "  def evals(self):",
+      "    metrics = {",
+      "      latency_ms: p95(),",
+      "      accuracy:   exact_match(),",
+      "      grounding:  cite_ratio(),",
+      "      safety:     red_flag_rate(),",
+      "    }",
+      "    return metrics",
+      "",
+      "policy = {",
+      "  privacy:  { minimize_data: true, encrypt_at_rest: true },",
+      "  safety:   { refuse_harm: true, traceability: \"full\" },",
+      "  style:    { tone: \"clear\", cite: \"when_external\" }",
+      "}",
+      "",
+      "// Pipelines",
+      "job.scrape_getir = {",
+      "  sources: [\"https://getir.com/buyuk/kategoriler/\"],",
+      "  transforms: [\"price.parse\", \"badge.parse\", \"paginate.auto\"],",
+      "  dest: \"sheets://GetirDump\"",
+      "}",
+      "",
+      "job.vendor_portal_upload = {",
+      "  file: \"products.csv\",",
+      "  validate: [\"schema.check\", \"price.bounds\", \"sku.unique\"],",
+      "  dest: \"rpa://portal/upload\"",
+      "}",
+      "",
+      "// Actions",
+      "run(job.scrape_getir)        -> report.email(to=\"ops@teknoify.com\")",
+      "run(job.vendor_portal_upload) -> notify.slack(#ops)",
+      "",
+      "// Guardrails",
+      "assert(PII.scan(input)   == false)",
+      "assert(prompt.jailbreaks == blocked)",
+      "assert(secrets.leak      == none)",
+      "",
+      "// Observability",
+      "trace.enable(); metrics.push({stage:\"retrieval\", took_ms: 58})",
+      "metrics.push({stage:\"reason\",    tokens: 1024, cites: 3})",
+      "",
+      "// Human Feedback",
+      "hxl.loop(sample=10%) -> label { helpfulness, harmlessness, groundedness }",
+      "",
+      "// Deployment",
+      "containers = docker.build({",
+      "  api: \"gpt-service\",",
+      "  worker: \"etl-service\",",
+      "  scheduler: \"cron-service\"",
+      "})",
+      "deploy(cluster=\"teknoify-prod\", replicas=3)",
+      "",
+      "// Final Check",
+      "ok = all([tests.pass, evals.above(0.9), budgets.within])",
+      "if ok: ship(tag=\"v0.1.0-draft\") else: rollback()",
+      "",
+      "/* ——— End of pass. Rebuilding from scratch (loop) ——— */",
+      ""
+    ];
+  
+    const CHAR_DELAY = 14;   // karakter arası (ms)
+    const LINE_DELAY = 260;  // satır arası bekleme (ms)
+    const LOOP_DELAY = 1200; // tüm blok bitince bekleme (ms)
+  
+    let li = 0, ci = 0;
+  
+    function writeNext() {
+      if (li >= LINES.length) {
+        setTimeout(() => { code.textContent = ""; li = 0; ci = 0; writeNext(); }, LOOP_DELAY);
+        return;
+      }
+      const line = LINES[li];
+  
+      if (ci === 0 && li > 0) code.textContent += "\n";
+      code.textContent += line.charAt(ci);
+      ci++;
+  
+      pre.scrollTop = pre.scrollHeight;
+  
+      if (ci < line.length) {
+        setTimeout(writeNext, CHAR_DELAY);
+      } else {
+        li++; ci = 0;
+        setTimeout(writeNext, LINE_DELAY);
+      }
+    }
+  
+    writeNext();
+  }
+  
