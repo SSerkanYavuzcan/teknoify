@@ -218,37 +218,69 @@ function addScrollLightEffect() {
 // ===========================================
 function initAnimations() {
     if (typeof AOS !== 'undefined') {
-        AOS.init({ duration: 800, easing: 'ease-in-out', once: true, offset: 100 });
+      AOS.init({ duration: 800, easing: 'ease-in-out', once: true, offset: 100 });
     }
+  
+    // Parallax (hero)
     const hero = document.querySelector('.hero');
     if (hero) {
-        window.addEventListener('scroll', () => {
-            hero.style.transform = `translateY(${window.pageYOffset * -0.5}px)`;
-        });
+      window.addEventListener('scroll', () => {
+        hero.style.transform = `translateY(${window.pageYOffset * -0.5}px)`;
+      });
     }
+  
+    // Stat numbers (0'dan hedefe)
     const stats = document.querySelectorAll('.stat-number');
     if (stats.length) {
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) animateNumber(entry.target);
-            });
-        }, { threshold: 0.5 });
-        stats.forEach(stat => observer.observe(stat));
+      // Başlangıç metnini 0 olarak hazırla
+      stats.forEach(el => {
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        el.textContent = `${prefix}0${suffix}`;
+      });
+  
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateNumber(entry.target);
+            observer.unobserve(entry.target); // bir kez oynat
+          }
+        });
+      }, { threshold: 0.5 });
+  
+      stats.forEach(stat => observer.observe(stat));
     }
-}
-
-function animateNumber(element) {
-    const target = parseInt(element.textContent.replace(/\D/g, ''));
-    const suffix = element.textContent.replace(/\d/g, '');
-    let current = 0;
-    const increment = target / 50;
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) { current = target; clearInterval(timer); }
-        element.textContent = Math.floor(current) + suffix;
-    }, 30);
-}
-
+  }
+  
+  // Hedefe ease-out ile akıcı artış
+  function animateNumber(el) {
+    const target   = Number(el.dataset.target || 0);
+    const duration = Number(el.dataset.duration || 1500);
+    const decimals = Number(el.dataset.decimals || 0);
+    const prefix   = el.dataset.prefix || '';
+    const suffix   = el.dataset.suffix || '';
+  
+    const start = 0;
+    const startTime = performance.now();
+  
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  
+    function frame(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutCubic(progress);
+      const value = start + (target - start) * eased;
+  
+      el.textContent = prefix + (decimals ? value.toFixed(decimals) : Math.round(value)) + suffix;
+  
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      }
+    }
+  
+    requestAnimationFrame(frame);
+  }
+  
 
 // ===========================================
 // 8. CONTACT FORM
