@@ -130,38 +130,46 @@ function initPhilosophyAnimation() {
 // 6. LIGHT EFFECTS
 // ===========================================
 function initLightEffects() {
-    createLightParticles();
-    addMouseFollowEffect();
-    addScrollLightEffect();
-}
-
-// 6.1 Create floating light particles
-function createLightParticles() {
-    const hero = document.querySelector('.hero');
-    if (!hero) return;
+    createLightParticles();     // Artık global overlay'e çizer
+    addMouseFollowEffect();     // Hero üzerinde hafif iz efekti
+    addScrollLightEffect();     // Işık yoğunluğu (opsiyonel)
+  }
   
-    // Eski parçacıkları temizle (yeniden init olursa birikmesin)
-    hero.querySelectorAll('.light-particle').forEach(p => p.remove());
+  // Global yıldız overlay'i yarat / getir
+  function getOrCreateStarsOverlay() {
+    let overlay = document.getElementById('stars-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'stars-overlay';
+      document.body.appendChild(overlay);
+    }
+    return overlay;
+  }
   
-    const COUNT = 32; // önceki 20'den biraz fazla
+  // 6.1 Create floating light particles (GLOBAL overlay)
+  function createLightParticles() {
+    const overlay = getOrCreateStarsOverlay();
+  
+    // Önceki parçacıkları temizle (yeniden init edilirse birikmesin)
+    overlay.querySelectorAll('.light-particle').forEach(p => p.remove());
+  
+    const COUNT = 48; // tüm sayfa için artırıldı
     for (let i = 0; i < COUNT; i++) {
       const particle = document.createElement('div');
       particle.className = 'light-particle';
   
-      // Boyut (px), konum (soldan %), başlangıç (ekranın ALTINDAN başlasın)
-      const size = (Math.random() * 2 + 2).toFixed(1);      // 2–4px
-      const left = (Math.random() * 100).toFixed(2) + '%';  // 0–100%
-      const top  = (105 + Math.random() * 35).toFixed(2) + '%'; // 105–140% (view'ın altı)
+      const size = (Math.random() * 2 + 2).toFixed(1);          // 2–4px
+      const left = (Math.random() * 100).toFixed(2) + '%';       // 0–100%
+      const top  = (105 + Math.random() * 35).toFixed(2) + '%';  // 105–140% (ekranın altı)
   
-      // Süre ve gecikme (negatif delay → bazıları ortadan/yukarıdan başlamış gibi)
-      const duration = (18 + Math.random() * 18).toFixed(1); // 18–36s
-      const delay    = (Math.random() * duration * -1).toFixed(1) + 's';
+      const duration = (18 + Math.random() * 18).toFixed(1);     // 18–36s
+      const delay    = (Math.random() * duration * -1).toFixed(1) + 's'; // bazıları ortadan başlar gibi
   
       particle.style.cssText = `
         position:absolute;
         width:${size}px; height:${size}px;
         left:${left}; top:${top};
-        background: rgba(99,102,241, ${ (0.22 + Math.random() * 0.25).toFixed(2) });
+        background: rgba(99,102,241, ${(0.22 + Math.random() * 0.25).toFixed(2)});
         border-radius:50%;
         pointer-events:none;
         will-change: transform, opacity;
@@ -169,13 +177,15 @@ function createLightParticles() {
         animation-delay:${delay};
         filter: drop-shadow(0 0 6px rgba(99,102,241,0.28));
       `;
-      hero.appendChild(particle);
+      overlay.appendChild(particle);
     }
+  
+    // Hero içinde oluşturulmuş eski parçacıklar varsa temizle
+    document.querySelectorAll('.hero .light-particle').forEach(p => p.remove());
   }
   
-
-// 6.2 Mouse follow light effect
-function addMouseFollowEffect() {
+  // 6.2 Mouse follow light effect (hero alanında)
+  function addMouseFollowEffect() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
   
@@ -187,11 +197,9 @@ function addMouseFollowEffect() {
       const lightTrail = document.createElement('div');
       lightTrail.style.cssText = `
         position: absolute;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 72%);
-        left: ${x - 50}px;
-        top: ${y - 50}px;
+        width: 100px; height: 100px;
+        background: radial-gradient(circle, rgba(99,102,241, 0.08) 0%, transparent 72%);
+        left: ${x - 50}px; top: ${y - 50}px;
         pointer-events: none;
         animation: light-trail 1s ease-out forwards;
       `;
@@ -200,39 +208,33 @@ function addMouseFollowEffect() {
     });
   }
   
-// 6.3 Scroll-based light intensity
-function addScrollLightEffect() {
+  // 6.3 Scroll-based light intensity (opsiyonel)
+  function addScrollLightEffect() {
     window.addEventListener('scroll', function() {
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const scrollProgress = window.pageYOffset / maxScroll;
-        const lightRays = document.querySelector('.light-rays');
-        if (lightRays) {
-            lightRays.style.opacity = 0.8 + (scrollProgress * 0.2);
-        }
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = maxScroll ? window.pageYOffset / maxScroll : 0;
+      const lightRays = document.querySelector('.light-rays');
+      if (lightRays) {
+        lightRays.style.opacity = 0.8 + (scrollProgress * 0.2);
+      }
     });
-}
-
+  }
+  
 
 // ===========================================
-// 7. ANIMATIONS (AOS + Parallax + Stats)
+// 7. ANIMATIONS (AOS + Stats)
 // ===========================================
 function initAnimations() {
     if (typeof AOS !== 'undefined') {
       AOS.init({ duration: 800, easing: 'ease-in-out', once: true, offset: 100 });
     }
   
-    // Parallax (hero)
-    const hero = document.querySelector('.hero');
-    if (hero) {
-      window.addEventListener('scroll', () => {
-        hero.style.transform = `translateY(${window.pageYOffset * -0.5}px)`;
-      });
-    }
+    // Parallax kaldırıldı: bölüm geçişinde siyah boşluk oluşmasın.
   
     // Stat numbers (0'dan hedefe)
     const stats = document.querySelectorAll('.stat-number');
     if (stats.length) {
-      // Başlangıç metnini 0 olarak hazırla
+      // Başlangıç görünümü
       stats.forEach(el => {
         const prefix = el.dataset.prefix || '';
         const suffix = el.dataset.suffix || '';
@@ -252,7 +254,6 @@ function initAnimations() {
     }
   }
   
-  // Hedefe ease-out ile akıcı artış
   function animateNumber(el) {
     const target   = Number(el.dataset.target || 0);
     const duration = Number(el.dataset.duration || 1500);
@@ -262,22 +263,18 @@ function initAnimations() {
   
     const start = 0;
     const startTime = performance.now();
-  
-    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
   
     function frame(now) {
-      const elapsed = now - startTime;
+      const elapsed  = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      const eased = easeOutCubic(progress);
-      const value = start + (target - start) * eased;
+      const eased    = easeOutCubic(progress);
+      const value    = start + (target - start) * eased;
   
       el.textContent = prefix + (decimals ? value.toFixed(decimals) : Math.round(value)) + suffix;
   
-      if (progress < 1) {
-        requestAnimationFrame(frame);
-      }
+      if (progress < 1) requestAnimationFrame(frame);
     }
-  
     requestAnimationFrame(frame);
   }
   
@@ -353,13 +350,21 @@ initFocusManagement();
 // ===========================================
 const style = document.createElement('style');
 style.textContent = `
+  /* Global yıldız overlay: tüm sayfada görünür, tıklamayı engellemez */
+  #stars-overlay{
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2; /* içerik üstünde ama şeffaf; istersen 1 yapabilirsin */
+  }
+
   @keyframes light-trail {
     0% { opacity:.3; transform:scale(.5); }
     50%{ opacity:.1; transform:scale(1); }
     100%{ opacity:0; transform:scale(1.5); }
   }
 
-  /* Yıldızlar sürekli yukarı çıkar; sadece en üstte kaybolur */
+  /* Yıldızlar sürekli yukarı çıkar; tepeye gelince kaybolur */
   @keyframes float-particle {
     0%   { transform: translateY(0);       opacity: 0; }
     8%   { opacity: .6; }
@@ -368,6 +373,7 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
 
 
 // ===========================================

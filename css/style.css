@@ -148,7 +148,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 #3. BUTTONS
 #3.1 Base Button
 #3.2 Primary
-#3.3 Secondary
+#3.3 Secondary (+ purple glow)
 #3.4 Glow Animation
 =========================================================== */
 .btn {
@@ -167,6 +167,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   text-decoration: none;
 }
 
+/* 3.2 Primary (Bilgi Alın) */
 .btn-primary {
   background: rgba(255, 255, 255, 0.2);
   color: var(--white);
@@ -187,15 +188,45 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* 3.4 Glow */
+/* 3.3 Secondary (Hizmetler) */
+.btn-secondary {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid var(--gray-400);
+  position: relative; /* glow pseudo için */
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 16px 38px rgba(99,102,241,.25), 0 0 0 1px rgba(255,255,255,.08) inset;
+}
+
+/* Mor arka plan parıltısı (secondary için) */
+.btn-glow-alt::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(60% 60% at 50% 50%, rgba(99,102,241,.35), transparent 70%);
+  filter: blur(16px);
+  opacity: 0;
+  transform: scale(.95);
+  transition: opacity var(--transition-normal), transform var(--transition-fast);
+  z-index: -1;
+}
+.btn-glow-alt:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 3.4 Pulse animasyonu (varsa kullandığın) */
 .glow-effect { animation: glow-pulse 3s ease-in-out infinite; }
 @keyframes glow-pulse {
   0%, 100% { box-shadow: 0 8px 32px rgba(255, 255, 255, 0.2); transform: scale(1); }
-  50% { box-shadow: 0 12px 40px rgba(255, 255, 255, 0.4); transform: scale(1.02); }
+  50%      { box-shadow: 0 12px 40px rgba(255, 255, 255, 0.4); transform: scale(1.02); }
 }
 
-.btn-secondary { background: transparent; color: var(--white); border: 2px solid var(--gray-400); }
-.btn-secondary:hover { background: var(--white); color: var(--bg-primary); border-color: var(--white); }
 
 /* ===========================================================
 #5. HEADER
