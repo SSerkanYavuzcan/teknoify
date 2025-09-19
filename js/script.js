@@ -8,8 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnimations();
     initContactForm();
     initLightEffects();
-    initLangSwitcher();        // TR/EN kahraman metinleri
-    initAiTerminalLoop();      // Terminalde döngü halinde AI kodu
+    initAiTerminalLoop(); // Terminal kod akışı
   });
   
   // ===========================================
@@ -82,43 +81,41 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ===========================================
-  // 4. LIGHT EFFECTS – Kahraman arka plan yıldızları
+  // 4. LIGHT EFFECTS – Global yıldız overlay
   // ===========================================
   function initLightEffects() {
-    createLightParticles();   // hero içinde yıldızlar
-    addScrollLightEffect();   // yüzey opaklığı scroll ile az artar
+    createLightParticles();   // hero yüzeyinde sabit "yıldız" efekti
+    addScrollLightEffect();   // scroll'a göre yüzey opaklığı hafif değişsin
   }
   
-  // 4.1 Create floating light particles (arkaplan yıldızları)
+  // Arkaplan yıldızları (.hero-surface içinde)
   function createLightParticles() {
-    const hero = document.querySelector('.hero');
-    if (!hero) return;
+    const host = document.querySelector('.hero-surface'); // çerçeve içinde kalsın
+    if (!host) return;
   
-    // önceki parçacıkları temizle (yeniden init edilirse birikmesin)
-    hero.querySelectorAll('.light-particle').forEach(p => p.remove());
+    // yeniden init edilirse birikmesin
+    host.querySelectorAll('.light-particle').forEach(p => p.remove());
   
-    for (let i = 0; i < 28; i++) { // hafifçe artırılmış sayı
-      const particle = document.createElement('div');
-      particle.className = 'light-particle';
-      const size = Math.random() * 3 + 1.5;
-      particle.style.cssText = `
-        position:absolute;
-        width:${size}px;
-        height:${size}px;
-        background: rgba(139,92,246,${Math.random()*0.45+0.25});
-        border-radius:50%;
-        left:${Math.random()*100}%;
-        top:${Math.random()*100}%;
-        animation: float-particle ${Math.random()*12+14}s linear infinite;
-        animation-delay:${Math.random()*6}s;
-        pointer-events:none;
+    const COUNT = 32;
+    for (let i = 0; i < COUNT; i++) {
+      const p = document.createElement('div');
+      p.className = 'light-particle';
+      const size = (Math.random() * 3 + 1.5).toFixed(1);
+      p.style.cssText = `
+        position:absolute; z-index:0;
+        width:${size}px; height:${size}px; border-radius:50%;
+        left:${(Math.random()*100).toFixed(2)}%; top:${(Math.random()*100).toFixed(2)}%;
+        background: rgba(139,92,246, ${(Math.random()*0.45+0.25).toFixed(2)});
         filter: drop-shadow(0 0 4px rgba(139,92,246,.45));
+        pointer-events:none;
+        animation: float-particle ${(Math.random()*12+14).toFixed(1)}s linear infinite;
+        animation-delay:${(Math.random()*6).toFixed(1)}s;
       `;
-      hero.appendChild(particle);
+      host.appendChild(p);
     }
   }
   
-  // 4.2 Scroll-based surface intensity
+  // Scroll’a göre hero yüzeyinin opaklığını hafifçe değiştir
   function addScrollLightEffect() {
     const surface = document.querySelector('.hero-surface');
     if (!surface) return;
@@ -153,31 +150,28 @@ document.addEventListener('DOMContentLoaded', () => {
             io.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.5 });
+      }, { threshold: 0.25 });
       stats.forEach(el => io.observe(el));
     }
   }
   
   function animateNumber(el) {
-    // data-target yoksa data-stat'ı kullan (INDEX ile uyum)
-    const target   = Number(el.dataset.target ?? el.dataset.stat ?? el.getAttribute('data-stat') ?? 0);
-    const duration = Number(el.dataset.duration ?? 1500);
-    const decimals = Number(el.dataset.decimals ?? 0);
+    // hem data-stat hem data-target destekle
+    const target   = Number(el.dataset.stat ?? el.dataset.target ?? 0);
+    const duration = Number(el.dataset.duration || 1500);
+    const decimals = Number(el.dataset.decimals || 0);
     const prefix   = el.dataset.prefix || '';
     const suffix   = el.dataset.suffix || '';
   
     const start = 0;
-    const startTime = performance.now();
-    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+    const t0 = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
   
     function frame(now) {
-      const elapsed  = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased    = easeOutCubic(progress);
-      const value    = start + (target - start) * eased;
-  
-      el.textContent = prefix + (decimals ? value.toFixed(decimals) : Math.round(value)) + suffix;
-      if (progress < 1) requestAnimationFrame(frame);
+      const p = Math.min((now - t0) / duration, 1);
+      const v = start + (target - start) * ease(p);
+      el.textContent = prefix + (decimals ? v.toFixed(decimals) : Math.round(v)) + suffix;
+      if (p < 1) requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
   }
@@ -267,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         background:rgba(17,24,39,.98);color:#fff;padding:12px 16px;
         border-radius:12px;border:1px solid rgba(255,255,255,.08);
         box-shadow:0 10px 30px rgba(0,0,0,.35);display:flex;gap:10px;align-items:center;
-        ">
+      ">
         <i class="${getNotificationIcon(type)}"></i>
         <span>${message}</span>
       </div>`;
@@ -278,34 +272,33 @@ document.addEventListener('DOMContentLoaded', () => {
   function getNotificationIcon(type) {
     switch (type) {
       case 'success': return 'fas fa-check-circle';
-      case 'error': return 'fas fa-times-circle';
+      case 'error':   return 'fas fa-times-circle';
       case 'warning': return 'fas fa-exclamation-triangle';
-      default: return 'fas fa-info-circle';
+      default:        return 'fas fa-info-circle';
     }
   }
   
   // ===========================================
   // 8. AI TERMINAL LOOP (kod döngüsü)
   // ===========================================
-  function initAiTerminalLoop(){
-    const container = document.querySelector('#heroTerminal');  // doğru hedef
-    if(!container) return;
+  function initAiTerminalLoop() {
+    // DOĞRU HEDEF: hero'daki <pre id="heroTerminal">
+    const container = document.querySelector('#heroTerminal');
+    if (!container) return;
   
-    // Basit sözdizimi renklendirme
+    // basit renklendirme
     const kw  = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
     const fn  = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative)\b/g;
     const str = /(\".*?\"|\'.*?\')/g;
     const num = /\b(\d+(\.\d+)?)\b/g;
   
-    function highlight(line){
-      return line
-        .replace(str, '<span class="tok-str">$1</span>')
-        .replace(fn,  '<span class="tok-fn">$1</span>')
-        .replace(kw,  '<span class="tok-kw">$1</span>')
-        .replace(num, '<span class="tok-num">$1</span>');
-    }
+    const hl = (s) =>
+      s.replace(str, '<span class="tok-str">$1</span>')
+       .replace(fn,  '<span class="tok-fn">$1</span>')
+       .replace(kw,  '<span class="tok-kw">$1</span>')
+       .replace(num, '<span class="tok-num">$1</span>');
   
-    // Senaryo: Trends -> Mağaza Fiyat -> BQ -> Geçmiş -> Bütçe -> Öneri
+    // İstenen senaryo
     const SNIPPETS = [
       [
         '# Ingest → Google Trends (Shopping)',
@@ -345,14 +338,16 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     ];
   
-    async function writeSnippet(lines){
-      container.innerHTML = ''; // temizle
-      for (const raw of lines){
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+  
+    async function write(lines) {
+      container.innerHTML = '';
+      for (const raw of lines) {
         const line = document.createElement('span');
         line.className = 'line';
-        line.innerHTML = highlight(raw);
+        line.innerHTML = hl(raw);
         container.appendChild(line);
-        await wait(140); // satır arası hız
+        await wait(140);
       }
       const cursor = document.createElement('span');
       cursor.className = 'cursor';
@@ -360,73 +355,24 @@ document.addEventListener('DOMContentLoaded', () => {
       await wait(1800);
     }
   
-    async function loop(){
+    (async () => {
       let i = 0;
-      while(true){
-        await writeSnippet(SNIPPETS[i]);
+      while (true) {
+        await write(SNIPPETS[i]);
         i = (i + 1) % SNIPPETS.length;
       }
-    }
-  
-    loop().catch(() => { /* sessizce geç */ });
+    })();
   }
   
+  // küçük yardımcı
   function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
   
   // ===========================================
-  // 9. LANGUAGE SWITCHER (TR/EN hero metinleri)
-  // ===========================================
-  function initLangSwitcher(){
-    const menu = document.querySelector('.lang-menu');
-    const btn  = document.querySelector('.lang-switch');
-    const flagSpan = btn ? btn.querySelector('.lang-flag') : null;
-    const titleEl = document.getElementById('heroTitle');
-    const subEl   = document.getElementById('heroSubtitle');
-  
-    if(!menu || !btn || !flagSpan || !titleEl || !subEl) return;
-  
-    const copy = {
-      tr: {
-        flag: '🇹🇷',
-        title: 'Daha az çabayla Hayalinizi inşa edin',
-        subtitle: 'Teknoify, AI destekli otomasyon, veri analizi ve akıllı çözümlerle işinizi büyütmek ve hayalinizi inşa etmek için çalışır.'
-      },
-      en: {
-        flag: '🇬🇧',
-        title: 'Build your vision with less effort',
-        subtitle: 'Teknoify works to grow your business and build your vision with AI-powered automation, data analysis, and intelligent solutions.'
-      }
-    };
-  
-    function applyLang(lang){
-      const c = copy[lang] || copy.tr;
-      titleEl.textContent = c.title;
-      subEl.textContent   = c.subtitle;
-      flagSpan.textContent = c.flag;
-      localStorage.setItem('lang', lang);
-    }
-  
-    // Menü tıklamaları
-    menu.querySelectorAll('a[data-lang]').forEach(a => {
-      a.addEventListener('click', e => {
-        e.preventDefault();
-        const lang = a.getAttribute('data-lang');
-        applyLang(lang);
-      });
-    });
-  
-    // İlk yüklemede kaydedilmiş dili uygula
-    applyLang(localStorage.getItem('lang') || 'tr');
-  }
-  
-  // ===========================================
-  // 10. UTILS
+  // 9. UTILS
   // ===========================================
   function debounce(fn, wait = 200) {
-    let t;
-    return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
+    let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
   }
-  
   function throttle(fn, limit = 100) {
     let inThrottle, lastFn, lastTime;
     return function () {
@@ -448,16 +394,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ===========================================
-  // 11. EXTRA STYLES (Injected)
+  // 10. EXTRA STYLES (Injected)
   // ===========================================
-  const _injectedStyle = document.createElement('style');
-  _injectedStyle.textContent = `
-    /* Mouse trail animasyonu yok */
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Yıldızlar için animasyon */
     @keyframes float-particle {
       0%   { transform: translateY(0) translateX(0); opacity:.9; }
       50%  { transform: translateY(-80px) translateX(15px); opacity:.78; }
       100% { transform: translateY(-160px) translateX(-10px); opacity:.9; }
     }
+    .light-particle { will-change: transform, opacity; }
   `;
-  document.head.appendChild(_injectedStyle);
+  document.head.appendChild(style);
   
