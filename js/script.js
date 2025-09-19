@@ -82,21 +82,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // ===========================================
-  // 4. LIGHT EFFECTS – Global yıldız overlay
-  // ===========================================
-  function initLightEffects() {
-    createLightParticles();     // tüm sayfaya fixed overlay
-    addMouseFollowEffect();     // hero içinde hafif iz efekti
+// ===========================================
+// 4. LIGHT EFFECTS – Global yıldız overlay
+// ===========================================
+function initLightEffects() {
+    createLightParticles(); // sadece global yıldızlar
   }
   
-  // Overlay oluştur / getir
+  // Overlay oluştur / getir (fixed & en altta)
   function getOrCreateStarsOverlay() {
     let overlay = document.getElementById('stars-overlay');
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.id = 'stars-overlay';
-      document.body.appendChild(overlay);
+      overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: visible;
+      `;
+      document.body.prepend(overlay); // içeriklerin ALT katmanına yerleştir
     }
     return overlay;
   }
@@ -108,56 +114,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // yeniden init edilirse birikmesin
     overlay.querySelectorAll('.light-particle').forEach(p => p.remove());
   
-    const COUNT = 48; // tüm sayfa için
+    const COUNT = 64; // tüm sayfa için
     for (let i = 0; i < COUNT; i++) {
       const particle = document.createElement('div');
       particle.className = 'light-particle';
   
-      const size = (Math.random() * 2 + 2).toFixed(1);          // 2–4px
-      const left = (Math.random() * 100).toFixed(2) + '%';       // 0–100%
-      const top  = (105 + Math.random() * 35).toFixed(2) + '%';  // ekranın altından başlasın
+      const size = (Math.random() * 2 + 1.5).toFixed(1);          // 1.5–3.5px
+      const left = (Math.random() * 100).toFixed(2) + '%';         // 0–100%
+      const top  = (100 + Math.random() * 30).toFixed(2) + '%';    // ekranın altından başlasın
   
-      const duration = (18 + Math.random() * 18).toFixed(1);     // 18–36s
-      const delay    = (Math.random() * duration * -1).toFixed(1) + 's';
+      const duration = (18 + Math.random() * 18).toFixed(1);       // 18–36s
+      const delay    = (-Math.random() * duration).toFixed(1) + 's';
   
       particle.style.cssText = `
         position:absolute;
         width:${size}px; height:${size}px;
         left:${left}; top:${top};
-        background: rgba(99,102,241, ${(0.22 + Math.random() * 0.25).toFixed(2)});
+        background: rgba(139,92,246, ${(0.25 + Math.random() * 0.35).toFixed(2)});
         border-radius:50%;
         pointer-events:none;
         will-change: transform, opacity;
         animation: float-particle ${duration}s linear infinite;
         animation-delay:${delay};
-        filter: drop-shadow(0 0 6px rgba(99,102,241,0.28));
+        filter: drop-shadow(0 0 6px rgba(139,92,246,0.35));
       `;
       overlay.appendChild(particle);
     }
   }
   
-  function addMouseFollowEffect() {
-    const hero = document.querySelector('.hero');
-    if (!hero) return;
-  
-    hero.addEventListener('mousemove', function (e) {
-      const rect = hero.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-  
-      const lightTrail = document.createElement('div');
-      lightTrail.style.cssText = `
-        position:absolute;
-        width:100px;height:100px;
-        background: radial-gradient(circle, rgba(99,102,241, 0.08) 0%, transparent 72%);
-        left:${x - 50}px; top:${y - 50}px;
-        pointer-events:none;
-        animation: light-trail 1s ease-out forwards;
-      `;
-      hero.appendChild(lightTrail);
-      setTimeout(() => lightTrail.remove(), 1000);
-    });
-  }
   
   // ===========================================
   // 5. ANIMATIONS (AOS + Stat sayaçları)
@@ -314,51 +298,63 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ===========================================
-  // 8. AI TERMINAL LOOP (kod döngüsü)
-  // ===========================================
-  function initAiTerminalLoop(){
+// 8. AI TERMINAL LOOP (kod döngüsü)
+// ===========================================
+function initAiTerminalLoop(){
     const container = document.querySelector('#ai-manifesto code');
     if(!container) return;
   
     // Basit sözdizimi renklendirme
     const kw = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
-    const fn = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run)\b/g;
+    const fn = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative)\b/g;
     const str = /(\".*?\"|\'.*?\')/g;
     const num = /\b(\d+(\.\d+)?)\b/g;
   
     function highlight(line){
       return line
         .replace(str, '<span class="tok-str">$1</span>')
-        .replace(fn, '<span class="tok-fn">$1</span>')
-        .replace(kw, '<span class="tok-kw">$1</span>')
+        .replace(fn,  '<span class="tok-fn">$1</span>')
+        .replace(kw,  '<span class="tok-kw">$1</span>')
         .replace(num, '<span class="tok-num">$1</span>');
     }
   
+    // ——— İSTENEN SENARYO: Trends -> Mağaza Fiyat -> BQ -> Geçmiş veriler -> Bütçe -> Öneri ———
     const SNIPPETS = [
       [
-        '# Ingest → Google Trends',
-        'data = fetch.google_trends(["ai","automation"], region="TR", window="7d")',
-        'data = validate.schema(data, rules=["non_empty","dedupe","unicode_norm"])',
-        'docs = transform.etl.cleanse(data) | nlp.normalize() | embed(model="text-embedding-3-large")',
-        'publish.warehouse(docs, dest="bigquery", table="trends_ai_daily")'
+        '# Ingest → Google Trends (Shopping)',
+        'trends   = fetch.google_trends(category="shopping", region="TR", window="7d")',
+        'products = trends.topk(5, key="search_volume").name   # en çok aranan 5 ürün'
       ],
       [
-        '# Retrieval-Augmented Generation',
-        'index = vector.index(docs, metric="cosine")',
-        'query = "RPA ile verimlilik nasıl artar?"',
-        'ctx = retriever.topk(index, query, k=5)',
-        'answer = gpt("gpt-4.1-mini", prompt=compose(query, ctx), guardrails={pii:false,toxicity:"<0.02"})',
-        'print(answer)'
+        '# Crawl → Online Stores (fiyat toplama)',
+        'stores = ["hepsiburada","trendyol","n11","amazon-tr"]',
+        'offers = scrape.search(stores=stores, items=products)',
+        'prices = transform.normalize(offers)',
+        'prices = prices.groupby("item").agg(min="price", max="price", avg="price")'
       ],
       [
-        '# Evals',
-        'metrics = { latency_p95_ms: < 450, accuracy_em: >= 0.82, freshness_h: <= 1 }',
-        'assert(evals.run(answer, metrics))'
+        '# Publish → BigQuery (piyasa fiyatları)',
+        'publish.bigquery(prices, dataset="pricing", table="market_prices_daily")'
       ],
       [
-        '# Serve & Deploy',
-        'serve.api = "gpt-service"; serve.workers = 3; serve.scheduler = "cron-service"',
-        'deploy(cluster="teknoify-prod", api="gpt-service", autoscale={min:2, max:10})'
+        '# Internal Metrics → CTR / CVR / AvgPrice',
+        'internal = fetch.warehouse(dataset="sales", tables=["orders","impressions","catalog"])',
+        'joined   = transform.join(internal.orders, internal.impressions, on="sku")',
+        'stats    = joined.with_columns(ctr=clicks/impressions, cvr=orders/clicks)',
+        'stats    = stats.groupby("sku").agg(avg_price="mean(sale_price)", avg_ctr="mean(ctr)", avg_cvr="mean(cvr)")'
+      ],
+      [
+        '# Merge → Piyasa + Geçmiş + Bütçe',
+        'model_in = transform.join(stats, prices, on=("sku","item"), how="left")',
+        'budget   = finance.budget("Q4")',
+        'recos    = price.recommend(model_in, strategy="market+margin", budget=budget,',
+        '            constraints={min_margin:0.12, step:1})'
+      ],
+      [
+        '# Save & Evals',
+        'publish.bigquery(recos, dataset="pricing", table="recommended_prices")',
+        'checks = { sanity: rules.non_negative(["price"]), roi_expected: ">= 1.2" }',
+        'assert(evals.run(recos, checks))'
       ]
     ];
   
@@ -390,6 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
+  
   
   // ===========================================
   // 9. UTILS
