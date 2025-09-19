@@ -8,9 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnimations();
     initContactForm();
     initLightEffects();
-  
-    // Terminalde döngü halinde AI kodu akıt
-    initAiTerminalLoop();
+    initLangSwitcher();        // TR/EN kahraman metinleri
+    initAiTerminalLoop();      // Terminalde döngü halinde AI kodu
   });
   
   // ===========================================
@@ -83,18 +82,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ===========================================
-  // 4. LIGHT EFFECTS – Global yıldız overlay
+  // 4. LIGHT EFFECTS – Kahraman arka plan yıldızları
   // ===========================================
-function initLightEffects() {
-    createLightParticles();
-    // addMouseFollowEffect(); // KALDIRILDI
-    addScrollLightEffect();
+  function initLightEffects() {
+    createLightParticles();   // hero içinde yıldızlar
+    addScrollLightEffect();   // yüzey opaklığı scroll ile az artar
   }
   
-  // 6.1 Create floating light particles (arkaplan yıldızları)
+  // 4.1 Create floating light particles (arkaplan yıldızları)
   function createLightParticles() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
+  
     // önceki parçacıkları temizle (yeniden init edilirse birikmesin)
     hero.querySelectorAll('.light-particle').forEach(p => p.remove());
   
@@ -119,7 +118,7 @@ function initLightEffects() {
     }
   }
   
-  // 6.3 Scroll-based light intensity
+  // 4.2 Scroll-based surface intensity
   function addScrollLightEffect() {
     const surface = document.querySelector('.hero-surface');
     if (!surface) return;
@@ -160,9 +159,10 @@ function initLightEffects() {
   }
   
   function animateNumber(el) {
-    const target   = Number(el.dataset.target || 0);
-    const duration = Number(el.dataset.duration || 1500);
-    const decimals = Number(el.dataset.decimals || 0);
+    // data-target yoksa data-stat'ı kullan (INDEX ile uyum)
+    const target   = Number(el.dataset.target ?? el.dataset.stat ?? el.getAttribute('data-stat') ?? 0);
+    const duration = Number(el.dataset.duration ?? 1500);
+    const decimals = Number(el.dataset.decimals ?? 0);
     const prefix   = el.dataset.prefix || '';
     const suffix   = el.dataset.suffix || '';
   
@@ -284,16 +284,16 @@ function initLightEffects() {
     }
   }
   
-// ===========================================
-// 8. AI TERMINAL LOOP (kod döngüsü)
-// ===========================================
-function initAiTerminalLoop(){
-    const container = document.querySelector('#ai-manifesto code');
+  // ===========================================
+  // 8. AI TERMINAL LOOP (kod döngüsü)
+  // ===========================================
+  function initAiTerminalLoop(){
+    const container = document.querySelector('#heroTerminal');  // doğru hedef
     if(!container) return;
   
     // Basit sözdizimi renklendirme
-    const kw = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
-    const fn = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative)\b/g;
+    const kw  = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
+    const fn  = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative)\b/g;
     const str = /(\".*?\"|\'.*?\')/g;
     const num = /\b(\d+(\.\d+)?)\b/g;
   
@@ -305,7 +305,7 @@ function initAiTerminalLoop(){
         .replace(num, '<span class="tok-num">$1</span>');
     }
   
-    // ——— İSTENEN SENARYO: Trends -> Mağaza Fiyat -> BQ -> Geçmiş veriler -> Bütçe -> Öneri ———
+    // Senaryo: Trends -> Mağaza Fiyat -> BQ -> Geçmiş -> Bütçe -> Öneri
     const SNIPPETS = [
       [
         '# Ingest → Google Trends (Shopping)',
@@ -345,8 +345,6 @@ function initAiTerminalLoop(){
       ]
     ];
   
-    let i = 0;
-  
     async function writeSnippet(lines){
       container.innerHTML = ''; // temizle
       for (const raw of lines){
@@ -363,24 +361,72 @@ function initAiTerminalLoop(){
     }
   
     async function loop(){
+      let i = 0;
       while(true){
         await writeSnippet(SNIPPETS[i]);
         i = (i + 1) % SNIPPETS.length;
       }
     }
   
-    loop().catch(()=>{ /* sessizce geç */ });
+    loop().catch(() => { /* sessizce geç */ });
   }
   
   function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
   
+  // ===========================================
+  // 9. LANGUAGE SWITCHER (TR/EN hero metinleri)
+  // ===========================================
+  function initLangSwitcher(){
+    const menu = document.querySelector('.lang-menu');
+    const btn  = document.querySelector('.lang-switch');
+    const flagSpan = btn ? btn.querySelector('.lang-flag') : null;
+    const titleEl = document.getElementById('heroTitle');
+    const subEl   = document.getElementById('heroSubtitle');
+  
+    if(!menu || !btn || !flagSpan || !titleEl || !subEl) return;
+  
+    const copy = {
+      tr: {
+        flag: '🇹🇷',
+        title: 'Daha az çabayla Hayalinizi inşa edin',
+        subtitle: 'Teknoify, AI destekli otomasyon, veri analizi ve akıllı çözümlerle işinizi büyütmek ve hayalinizi inşa etmek için çalışır.'
+      },
+      en: {
+        flag: '🇬🇧',
+        title: 'Build your vision with less effort',
+        subtitle: 'Teknoify works to grow your business and build your vision with AI-powered automation, data analysis, and intelligent solutions.'
+      }
+    };
+  
+    function applyLang(lang){
+      const c = copy[lang] || copy.tr;
+      titleEl.textContent = c.title;
+      subEl.textContent   = c.subtitle;
+      flagSpan.textContent = c.flag;
+      localStorage.setItem('lang', lang);
+    }
+  
+    // Menü tıklamaları
+    menu.querySelectorAll('a[data-lang]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const lang = a.getAttribute('data-lang');
+        applyLang(lang);
+      });
+    });
+  
+    // İlk yüklemede kaydedilmiş dili uygula
+    applyLang(localStorage.getItem('lang') || 'tr');
+  }
   
   // ===========================================
-  // 9. UTILS
+  // 10. UTILS
   // ===========================================
   function debounce(fn, wait = 200) {
-    let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
   }
+  
   function throttle(fn, limit = 100) {
     let inThrottle, lastFn, lastTime;
     return function () {
@@ -402,15 +448,16 @@ function initAiTerminalLoop(){
   }
   
   // ===========================================
-  // 10. EXTRA STYLES (Injected)
+  // 11. EXTRA STYLES (Injected)
   // ===========================================
-  const style = document.createElement('style');
-style.textContent = `
-  /* Mouse trail animasyonu KALDIRILDI */
-  @keyframes float-particle {
-    0%   { transform: translateY(0) translateX(0); opacity:.9; }
-    50%  { transform: translateY(-80px) translateX(15px); opacity:.75; }
-    100% { transform: translateY(-160px) translateX(-10px); opacity:.9; }
-  }
-`;
-document.head.appendChild(style);
+  const _injectedStyle = document.createElement('style');
+  _injectedStyle.textContent = `
+    /* Mouse trail animasyonu yok */
+    @keyframes float-particle {
+      0%   { transform: translateY(0) translateX(0); opacity:.9; }
+      50%  { transform: translateY(-80px) translateX(15px); opacity:.78; }
+      100% { transform: translateY(-160px) translateX(-10px); opacity:.9; }
+    }
+  `;
+  document.head.appendChild(_injectedStyle);
+  
