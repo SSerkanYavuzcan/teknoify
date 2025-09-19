@@ -259,125 +259,144 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 #5.4 Menu & Links
 #5.5 Dropdown
 #5.6 Hamburger
+#5.7 Language (flags)
 =========================================================== */
-.header{
+.header {
   position: fixed; top: 0; left: 0; width: 100%;
-  background: rgba(10,10,10,.95);
+  background: rgba(10, 10, 10, 0.95);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   z-index: var(--z-sticky);
   transition: all var(--transition-normal);
 }
-.header.scrolled{ background: rgba(10,10,10,.98); box-shadow: var(--shadow-lg); }
+.header.scrolled { background: rgba(10, 10, 10, 0.98); box-shadow: var(--shadow-lg); }
 
-.navbar{ padding: var(--spacing-md) 0; }
+.navbar { padding: var(--spacing-md) 0; }
 
-.nav-container{
-  display:flex; align-items:center; justify-content:space-between;
-  max-width:1200px; margin:0 auto; padding:0 var(--spacing-lg);
+.nav-container {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1200px; margin: 0 auto; padding: 0 var(--spacing-lg);
 }
 
-/* Logo */
-.logo a{
-  display:flex; align-items:center; gap:var(--spacing-sm);
-  font-size:var(--font-size-xl); font-weight:700; color:var(--white);
+/* 5.3 Logo */
+.logo a {
+  display: flex; align-items: center; gap: var(--spacing-sm);
+  font-size: var(--font-size-xl); font-weight: 700; color: var(--white);
 }
-.logo-icon{ color:var(--primary-color); font-size:var(--font-size-2xl); }
+.logo-icon { color: var(--primary-color); font-size: var(--font-size-2xl); }
 
-/* Menü */
-.nav-menu{
-  display:flex; align-items:center; gap: var(--spacing-xl);
-  list-style:none;
+/* 5.4 Menu & Links */
+.nav-menu {
+  display: flex; list-style: none; gap: var(--spacing-xl); align-items: center;
 }
-.nav-item{
-  position: relative; /* dropdown’ın doğru yerde açılması için */
-  display:flex; align-items:center;
-}
-.nav-link{
-  display:flex; align-items:center; justify-content:center;
-  height:40px;
-  padding:0 var(--spacing-md);
-  line-height:1;
-  color:var(--gray-300);
-  font-weight:500;
+.nav-item { position: relative; }
+.nav-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  color: var(--gray-300);
+  font-weight: 500;
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
-  gap: var(--spacing-xs);
-  text-decoration:none;
 }
-.nav-link:hover{
-  color:var(--white);
-  background: rgba(255,255,255,.08);
+.nav-link:hover {
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-/* Dropdown genel */
-.dropdown-menu{
-  position:absolute; top:100%; left:0;
+/* 5.5 Dropdown — hizalama fix (nav-item’e göre) */
+.nav-item.dropdown { position: relative; }
+.dropdown-menu {
+  position: absolute; top: 100%; left: 0; /* soldan hizala */
   background: var(--bg-secondary);
   border: 1px solid var(--gray-700);
   border-radius: var(--radius-lg);
   padding: var(--spacing-sm);
   min-width: 220px;
-  opacity:0; visibility:hidden; transform: translateY(-10px);
+  opacity: 0; visibility: hidden; transform: translateY(6px);
   transition: all var(--transition-normal);
   box-shadow: var(--shadow-xl);
+  z-index: var(--z-dropdown);
 }
-.dropdown:hover > .dropdown-menu{ opacity:1; visibility:visible; transform: translateY(0); }
-.dropdown-menu li{ list-style:none; }
-.dropdown-menu a{
-  display:flex; align-items:center; gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
+.dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.dropdown-menu li { list-style: none; }
+.dropdown-menu a {
+  display: flex; align-items: center; gap: var(--spacing-sm);
+  padding: .6rem .8rem;
   color: var(--gray-300);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
-  text-decoration:none;
+  white-space: nowrap;
 }
-.dropdown-menu a:hover{ color: var(--white); background: rgba(255,255,255,.08); }
+.dropdown-menu a i { width: 1.15rem; text-align: center; }
+.dropdown-menu a:hover { color: var(--white); background: rgba(255, 255, 255, 0.08); }
 
-/* Dil seçici: sağa hizalı açılır menü */
-.nav-item.lang > .dropdown-menu{
-  right: 0; left: auto;
-  min-width: 180px;
+/* 5.6 Hamburger */
+.hamburger { display: none; flex-direction: column; cursor: pointer; gap: 4px; }
+.bar { width: 25px; height: 3px; background: var(--white); border-radius: var(--radius-sm); transition: all var(--transition-normal); }
+
+/* 5.7 Language (flags) */
+.nav-item.lang .lang-switch {
+  /* diğer nav-link’lerle aynı çizgide */
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
 }
-
-/* Dil butonu görünümü — renksiz/şeffaf (buton kullanılırsa da bozulmasın) */
-.lang-switch{
-  background: transparent !important;
-  border: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-  color: inherit;
-  cursor: pointer;
-}
-.flag{ width:1.2em; display:inline-flex; align-items:center; justify-content:center; }
-
-/* Bayrak yuvarlağı — çok hafif çizgi, arka plan yok */
-.lang-flag{
-  display:inline-flex; align-items:center; justify-content:center;
-  width:22px; height:22px; border-radius:9999px;
-  border: 1px solid rgba(255,255,255,.15);
-  /* arka plan yok: background: none; */
-  font-size: .95rem;
+.nav-item.lang .lang-switch:hover{
+  background: rgba(255,255,255,.08);
 }
 
-/* Hamburger (mobil) */
-.hamburger{ display:none; flex-direction:column; cursor:pointer; gap:4px; }
-.bar{ width:25px; height:3px; background:var(--white); border-radius:var(--radius-sm); transition:all var(--transition-normal); }
+/* Bayrak emojileri için doğru font ailesi ve görünüm */
+.nav-item.lang .lang-switch .lang-flag,
+.dropdown-menu.lang-menu .flag{
+  font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",
+               "Twemoji Mozilla", emoji, "Segoe UI Symbol", sans-serif;
+  font-variant-emoji: emoji;
+  line-height: 1;
+}
+.nav-item.lang .lang-switch .lang-flag{
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1rem; padding: 2px 6px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 9999px;
+}
 
-/* Mobil menü */
-@media (max-width: 768px){
-  .nav-menu{
-    position: fixed; top: 100%; left:0; width:100%;
+/* Dil menüsü */
+.dropdown-menu.lang-menu{
+  min-width: 220px;
+  padding: .4rem;
+}
+.dropdown-menu.lang-menu a{
+  display: flex; align-items: center; gap: .6rem;
+  padding: .6rem .8rem;
+  border-radius: .8rem;
+}
+.dropdown-menu.lang-menu .flag{ font-size: 1.15rem; margin-right: .1rem; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-menu {
+    position: fixed; top: 100%; left: 0; width: 100%;
     background: var(--bg-secondary);
-    flex-direction:column; padding: var(--spacing-xl);
-    transform: translateY(-100%); opacity:0; visibility:hidden;
+    flex-direction: column; padding: var(--spacing-xl);
+    transform: translateY(-100%); opacity: 0; visibility: hidden;
     transition: all var(--transition-normal);
   }
-  .nav-menu.active{ transform: translateY(0); opacity:1; visibility:visible; }
-  .hamburger{ display:flex; }
-  .hamburger.active .bar:nth-child(1){ transform: rotate(45deg) translate(5px, 5px); }
-  .hamburger.active .bar:nth-child(2){ opacity:0; }
-  .hamburger.active .bar:nth-child(3){ transform: rotate(-45deg) translate(7px, -6px); }
+  .nav-menu.active { transform: translateY(0); opacity: 1; visibility: visible; }
+
+  .hamburger { display: flex; }
+  .hamburger.active .bar:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.active .bar:nth-child(2) { opacity: 0; }
+  .hamburger.active .bar:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
+  /* Mobilde dropdown’lar blok içinde açılsın */
+  .dropdown-menu {
+    position: static; transform: none; opacity: 1; visibility: visible;
+    background: transparent; border: none; box-shadow: none; padding: 0; min-width: 0;
+  }
+  .dropdown-menu a { padding-left: 0; }
+  .nav-item.lang .lang-switch{ width: 100%; justify-content: space-between; }
 }
 
 
