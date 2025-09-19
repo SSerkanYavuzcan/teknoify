@@ -1,141 +1,95 @@
 // ===========================================
 // 0. GLOBAL INITIALIZATION
 // ===========================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     initHeader();
     initMobileMenu();
     initSmoothScrolling();
     initAnimations();
     initContactForm();
     initLightEffects();
-    initPhilosophyAnimation();
-  
-    // Transparent globe (if three.js & globe.js loaded)
-    if (typeof window.initHeroGlobe === 'function') {
-      window.initHeroGlobe();
-    }
-  
-    // NEW: AI Manifesto terminali başlat
-    initHeroTerminalManifesto();
   });
   
-
-// ===========================================
-// 2. HEADER FUNCTIONALITY
-// ===========================================
-function initHeader() {
+  // ===========================================
+  // 1. HEADER
+  // ===========================================
+  function initHeader() {
     const header = document.getElementById('header');
     if (!header) return;
-
-    window.addEventListener('scroll', function() {
-        header.classList.toggle('scrolled', window.scrollY > 100);
-    });
-}
-
-
-// ===========================================
-// 3. MOBILE MENU
-// ===========================================
-function initMobileMenu() {
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 100);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+  
+  // ===========================================
+  // 2. MOBILE MENU
+  // ===========================================
+  function initMobileMenu() {
     const hamburger = document.querySelector('.hamburger');
     const navMenu   = document.querySelector('.nav-menu');
     const navLinks  = document.querySelectorAll('.nav-link');
     if (!hamburger || !navMenu) return;
-
+  
     hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        document.body.classList.toggle('menu-open');
+      hamburger.classList.toggle('active');
+      navMenu.classList.toggle('active');
+      document.body.classList.toggle('menu-open');
     });
-
+  
     navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.classList.remove('menu-open');
-        });
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      });
     });
-
+  
     document.addEventListener('click', e => {
-        if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.classList.remove('menu-open');
-        }
+      if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      }
     });
-}
-
-
-// ===========================================
-// 4. SMOOTH SCROLLING
-// ===========================================
-function initSmoothScrolling() {
+  }
+  
+  // ===========================================
+  // 3. SMOOTH SCROLLING (services ofsetli)
+  // ===========================================
+  function initSmoothScrolling() {
     const links = document.querySelectorAll('a[href^="#"]');
     links.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetElement = document.querySelector(this.getAttribute('href'));
-            if (!targetElement) return;
-
-            const headerHeight = document.querySelector('.header').offsetHeight;
-            const targetPos = targetElement.offsetTop - headerHeight;
-            window.scrollTo({ top: targetPos, behavior: 'smooth' });
-        });
+      link.addEventListener('click', function (e) {
+        const hash = this.getAttribute('href');
+        if (!hash || hash === '#') return;
+        const targetElement = document.querySelector(hash);
+        if (!targetElement) return;
+        e.preventDefault();
+  
+        const headerEl = document.querySelector('.header');
+        const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+  
+        // Hizmetler için ekstra yukarı kaydır (ilk 3 kart görünsün)
+        let extra = 0;
+        if (hash === '#services') {
+          extra = window.innerWidth >= 1024 ? 180 : 120;
+        }
+  
+        const top = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - extra;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      });
     });
-}
-
-
-// ===========================================
-// PHILOSOPHY ANIMATION (fixed for TR words)
-// ===========================================
-function initPhilosophyAnimation() {
-    const words = [
-      document.getElementById('innovate'),  // "Hayal edin."
-      document.getElementById('integrate'), // "Tasarlayın."
-      document.getElementById('inspire')    // "İlham verin."
-    ];
-    const vision = document.getElementById('vision');
-    const actions = document.getElementById('hero-actions');
-  
-    // Base delays kelime sırasına göre (CSS harf gecikmelerini kapsıyor)
-    const base = 500;
-    const step = 1500;
-  
-    words.forEach((w, i) => {
-      if (!w) return;
-      setTimeout(() => {
-        w.style.opacity = '1';
-        w.style.transform = 'translateY(0)';
-      }, base + i * step);
-    });
-  
-    // Vision cümlesi ve buton
-    setTimeout(() => {
-      if (vision) {
-        vision.style.opacity = '1';
-        vision.style.transform = 'translateY(0)';
-      }
-    }, base + words.length * step + 400);
-  
-    setTimeout(() => {
-      if (actions) {
-        actions.style.opacity = '1';
-        actions.style.transform = 'translateY(0)';
-      }
-    }, base + words.length * step + 900);
   }
   
-
-// ===========================================
-// 6. LIGHT EFFECTS
-// ===========================================
-function initLightEffects() {
-    createLightParticles();     // Artık global overlay'e çizer
-    addMouseFollowEffect();     // Hero üzerinde hafif iz efekti
-    addScrollLightEffect();     // Işık yoğunluğu (opsiyonel)
+  // ===========================================
+  // 4. LIGHT EFFECTS – Global yıldız overlay
+  // ===========================================
+  function initLightEffects() {
+    createLightParticles();     // tüm sayfaya fixed overlay
+    addMouseFollowEffect();     // hero içinde hafif iz efekti
   }
   
-  // Global yıldız overlay'i yarat / getir
+  // Overlay oluştur / getir
   function getOrCreateStarsOverlay() {
     let overlay = document.getElementById('stars-overlay');
     if (!overlay) {
@@ -146,24 +100,24 @@ function initLightEffects() {
     return overlay;
   }
   
-  // 6.1 Create floating light particles (GLOBAL overlay)
+  // Yıldızlar (global)
   function createLightParticles() {
     const overlay = getOrCreateStarsOverlay();
   
-    // Önceki parçacıkları temizle (yeniden init edilirse birikmesin)
+    // Yeniden init edilirse birikmesin
     overlay.querySelectorAll('.light-particle').forEach(p => p.remove());
   
-    const COUNT = 48; // tüm sayfa için artırıldı
+    const COUNT = 48; // tüm sayfa için
     for (let i = 0; i < COUNT; i++) {
       const particle = document.createElement('div');
       particle.className = 'light-particle';
   
       const size = (Math.random() * 2 + 2).toFixed(1);          // 2–4px
       const left = (Math.random() * 100).toFixed(2) + '%';       // 0–100%
-      const top  = (105 + Math.random() * 35).toFixed(2) + '%';  // 105–140% (ekranın altı)
+      const top  = (105 + Math.random() * 35).toFixed(2) + '%';  // ekranın altından başlasın
   
       const duration = (18 + Math.random() * 18).toFixed(1);     // 18–36s
-      const delay    = (Math.random() * duration * -1).toFixed(1) + 's'; // bazıları ortadan başlar gibi
+      const delay    = (Math.random() * duration * -1).toFixed(1) + 's';
   
       particle.style.cssText = `
         position:absolute;
@@ -179,28 +133,24 @@ function initLightEffects() {
       `;
       overlay.appendChild(particle);
     }
-  
-    // Hero içinde oluşturulmuş eski parçacıklar varsa temizle
-    document.querySelectorAll('.hero .light-particle').forEach(p => p.remove());
   }
   
-  // 6.2 Mouse follow light effect (hero alanında)
   function addMouseFollowEffect() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
   
-    hero.addEventListener('mousemove', function(e) {
+    hero.addEventListener('mousemove', function (e) {
       const rect = hero.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
   
       const lightTrail = document.createElement('div');
       lightTrail.style.cssText = `
-        position: absolute;
-        width: 100px; height: 100px;
+        position:absolute;
+        width:100px;height:100px;
         background: radial-gradient(circle, rgba(99,102,241, 0.08) 0%, transparent 72%);
-        left: ${x - 50}px; top: ${y - 50}px;
-        pointer-events: none;
+        left:${x - 50}px; top:${y - 50}px;
+        pointer-events:none;
         animation: light-trail 1s ease-out forwards;
       `;
       hero.appendChild(lightTrail);
@@ -208,49 +158,32 @@ function initLightEffects() {
     });
   }
   
-  // 6.3 Scroll-based light intensity (opsiyonel)
-  function addScrollLightEffect() {
-    window.addEventListener('scroll', function() {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollProgress = maxScroll ? window.pageYOffset / maxScroll : 0;
-      const lightRays = document.querySelector('.light-rays');
-      if (lightRays) {
-        lightRays.style.opacity = 0.8 + (scrollProgress * 0.2);
-      }
-    });
-  }
-  
-
-// ===========================================
-// 7. ANIMATIONS (AOS + Stats)
-// ===========================================
-function initAnimations() {
+  // ===========================================
+  // 5. ANIMATIONS (AOS + Stat sayı sayacı)
+  // ===========================================
+  function initAnimations() {
     if (typeof AOS !== 'undefined') {
       AOS.init({ duration: 800, easing: 'ease-in-out', once: true, offset: 100 });
     }
   
-    // Parallax kaldırıldı: bölüm geçişinde siyah boşluk oluşmasın.
-  
-    // Stat numbers (0'dan hedefe)
+    // Stat başlangıç değerleri
     const stats = document.querySelectorAll('.stat-number');
-    if (stats.length) {
-      // Başlangıç görünümü
-      stats.forEach(el => {
-        const prefix = el.dataset.prefix || '';
-        const suffix = el.dataset.suffix || '';
-        el.textContent = `${prefix}0${suffix}`;
-      });
+    stats.forEach(el => {
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      el.textContent = `${prefix}0${suffix}`;
+    });
   
-      const observer = new IntersectionObserver(entries => {
+    if (stats.length) {
+      const io = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             animateNumber(entry.target);
-            observer.unobserve(entry.target); // bir kez oynat
+            io.unobserve(entry.target);
           }
         });
       }, { threshold: 0.5 });
-  
-      stats.forEach(stat => observer.observe(stat));
+      stats.forEach(el => io.observe(el));
     }
   }
   
@@ -272,262 +205,167 @@ function initAnimations() {
       const value    = start + (target - start) * eased;
   
       el.textContent = prefix + (decimals ? value.toFixed(decimals) : Math.round(value)) + suffix;
-  
       if (progress < 1) requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
   }
   
-
-// ===========================================
-// 8. CONTACT FORM
-// ===========================================
-function initContactForm() {
+  // ===========================================
+  // 6. CONTACT FORM (hafif doğrulama + toast)
+  // ===========================================
+  function initContactForm() {
     const form = document.querySelector('.contact-form');
     if (!form) return;
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(form));
-        if (validateForm(data)) {
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
-            submitBtn.disabled = true;
-            setTimeout(() => {
-                showNotification('Mesajınız başarıyla gönderildi!', 'success');
-                form.reset();
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }, 2000);
-        }
+  
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      if (!validateForm(data, form)) return;
+  
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+      submitBtn.disabled = true;
+  
+      setTimeout(() => {
+        showNotification('Mesajınız başarıyla gönderildi!', 'success');
+        form.reset();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }, 1200);
     });
+  
     form.querySelectorAll('input, textarea, select').forEach(input => {
-        input.addEventListener('blur', () => validateField(input));
-        input.addEventListener('input', () => {
-            if (input.classList.contains('error')) validateField(input);
-        });
+      input.addEventListener('blur', () => validateField(input));
+      input.addEventListener('input', () => {
+        if (input.classList.contains('error')) validateField(input);
+      });
     });
-}
-
-// 8.1 Validation helpers
-function validateForm(data) { /* ... */ }
-function validateField(field) { /* ... */ }
-function showFieldError(fieldName, message) { /* ... */ }
-function isValidEmail(email) { /* ... */ }
-
-
-// ===========================================
-// 9. NOTIFICATIONS
-// ===========================================
-function showNotification(message, type = 'info') { /* ... */ }
-function getNotificationIcon(type) { /* ... */ }
-
-
-// ===========================================
-// 10. UTILITY FUNCTIONS
-// ===========================================
-function debounce(func, wait) { /* ... */ }
-function throttle(func, limit) { /* ... */ }
-
-
-// ===========================================
-// 11. PERFORMANCE OPTIMIZATIONS
-// ===========================================
-const optimizedScrollHandler = throttle(function() { /* ... */ }, 16);
-window.addEventListener('scroll', optimizedScrollHandler);
-
-
-// ===========================================
-// 12. ACCESSIBILITY IMPROVEMENTS
-// ===========================================
-document.addEventListener('keydown', function(e) { /* ... */ });
-function initFocusManagement() { /* ... */ }
-initFocusManagement();
-
-
-// ===========================================
-// 13. EXTRA STYLES (Injected)
-// ===========================================
-const style = document.createElement('style');
-style.textContent = `
-  /* Global yıldız overlay: tüm sayfada görünür, tıklamayı engellemez */
-  #stars-overlay{
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 2; /* içerik üstünde ama şeffaf; istersen 1 yapabilirsin */
   }
-
-  @keyframes light-trail {
-    0% { opacity:.3; transform:scale(.5); }
-    50%{ opacity:.1; transform:scale(1); }
-    100%{ opacity:0; transform:scale(1.5); }
+  
+  function validateForm(data, form) {
+    let ok = true;
+    ['name','email','service','message'].forEach(name => {
+      const field = form.querySelector(`[name="${name}"]`);
+      if (!validateField(field)) ok = false;
+    });
+    return ok;
   }
-
-  /* Yıldızlar sürekli yukarı çıkar; tepeye gelince kaybolur */
-  @keyframes float-particle {
-    0%   { transform: translateY(0);       opacity: 0; }
-    8%   { opacity: .6; }
-    90%  { opacity: .6; }
-    100% { transform: translateY(-120vh); opacity: 0; }
+  
+  function validateField(field) {
+    if (!field) return true;
+    let valid = true;
+    const v = String(field.value || '').trim();
+  
+    if (!v) valid = false;
+    if (valid && field.type === 'email') valid = isValidEmail(v);
+  
+    field.classList.toggle('error', !valid);
+    field.style.borderColor = valid ? '' : 'var(--error-color)';
+    if (!valid) {
+      showFieldError(field, field.type === 'email' ? 'Geçerli bir e-posta girin' : 'Bu alan zorunludur');
+    }
+    return valid;
   }
-`;
-document.head.appendChild(style);
-
-
-
-// ===========================================
-// 14. AI MANIFESTO TERMINAL (looping typewriter)
-// ===========================================
-function initHeroTerminalManifesto() {
-    const pre  = document.getElementById('ai-manifesto');
-    if (!pre) return;
-    const code = pre.querySelector('code') || pre;
   
-    const LINES = [
-      "/*",
-      "  TEKNOIFY :: AI MANIFESTO",
-      "  Build AI that is: Useful · Reliable · Respectful · Measurable",
-      "*/",
-      "",
-      "#!/usr/bin/env teknoify",
-      "spec.version = \"0.1.1\"",
-      "spec.tagline = \"Innovate · Integrate · Inspire\"",
-      "",
-      "principles = [",
-      "  \"Human-in-the-loop\",",
-      "  \"Safety-first\",",
-      "  \"Transparency\",",
-      "  \"Data minimization\",",
-      "  \"Reproducibility\"",
-      "]",
-      "",
-      "layers = {",
-      "  ingestion:  [\"sheets\", \"sftp\", \"apis\", \"web\"],",
-      "  storage:    [\"bigquery\", \"warehouse\"],",
-      "  retrieval:  [\"bm25\", \"vector\", \"hybrid\"],",
-      "  orchestration: [\"workflows\", \"schedulers\", \"slas\"],",
-      "  governance: { pii_scanner: true, audit_log: true, red_team: true }",
-      "}",
-      "",
-      "class Assistant:",
-      "  def __init__(self, tools, memory, policy):",
-      "    self.tools  = tools",
-      "    self.mem    = memory",
-      "    self.policy = policy",
-      "",
-      "  def route(self, intent):",
-      "    if intent in [\"scrape\", \"clean\", \"export\"]: return \"pipeline\"",
-      "    if intent in [\"ask\", \"summarize\", \"decide\"]: return \"reason\"",
-      "    return \"fallback\"",
-      "",
-      "  def reason(self, query):",
-      "    context = retrieve(query)",
-      "    plan    = draft_plan(query, context)",
-      "    return execute(plan)",
-      "",
-      "  def pipeline(self, job):",
-      "    stage(\"fetch\",  connectors.pull(job.sources))",
-      "    stage(\"validate\",validators.schema(job.rules))",
-      "    stage(\"transform\",etl.cleanse(job.transforms))",
-      "    stage(\"publish\", sinks.to(job.dest))",
-      "",
-      "  def evals(self):",
-      "    metrics = {",
-      "      latency_ms: p95(),",
-      "      accuracy:   exact_match(),",
-      "      grounding:  cite_ratio(),",
-      "      safety:     red_flag_rate(),",
-      "    }",
-      "    return metrics",
-      "",
-      "policy = {",
-      "  privacy:  { minimize_data: true, encrypt_at_rest: true },",
-      "  safety:   { refuse_harm: true, traceability: \"full\" },",
-      "  style:    { tone: \"clear\", cite: \"when_external\" }",
-      "}",
-      "",
-      "// Data Source — Google Trends",
-      "trends = TrendsClient(auth=\"service-account\")",
-      "",
-      "// Trends job (weekly monitoring)",
-      "job.trends_monitor = {",
-      "  topics:   [\"e-ticaret\", \"yapay zeka\", \"robotik\"],",
-      "  geo:      \"TR\",",
-      "  interval: \"now 7-d\",",
-      "  metrics:  [\"interest_over_time\", \"top_queries\", \"rising_queries\"],",
-      "  dest:     \"sheets://TrendsWeekly\"",
-      "}",
-      "",
-      "// Pipeline plan for trends",
-      "def build_trends_pipeline(job):",
-      "  data   = trends.fetch(topics=job.topics, geo=job.geo, interval=job.interval, metrics=job.metrics)",
-      "  clean  = etl.cleanse([\"normalize.whitespace\", \"dedupe.rows\"])(data)",
-      "  norms  = normalize(clean.interest_over_time, method=\"zscore\")",
-      "  spikes = detect_spikes(series=norms, sigma=2.0)",
-      "  report = compose_report(data, spikes)",
-      "  return sinks.to(job.dest)(report)",
-      "",
-      "// Action",
-      "run(build_trends_pipeline(job.trends_monitor))",
-      "-> analyze.trendshift(threshold=0.25)",
-      "-> notify.email(to=\"ops@teknoify.com\", subject=\"Weekly Trends Report\")",
-      "",
-      "// Guardrails",
-      "assert(PII.scan(input)   == false)",
-      "assert(prompt.jailbreaks == blocked)",
-      "assert(secrets.leak      == none)",
-      "",
-      "// Observability",
-      "trace.enable(); metrics.push({stage:\"retrieval\", took_ms: 58})",
-      "metrics.push({stage:\"reason\",    tokens: 1024, cites: 3})",
-      "",
-      "// Human Feedback",
-      "hxl.loop(sample=10%) -> label { helpfulness, harmlessness, groundedness }",
-      "",
-      "// Deployment",
-      "containers = docker.build({",
-      "  api: \"gpt-service\",",
-      "  worker: \"etl-service\",",
-      "  scheduler: \"cron-service\"",
-      "})",
-      "deploy(cluster=\"teknoify-prod\", replicas=3)",
-      "",
-      "// Final Check",
-      "ok = all([tests.pass, evals.above(0.9), budgets.within])",
-      "if ok: ship(tag=\"v0.1.1\") else: rollback()",
-      "",
-      "/* ——— End of pass. Rebuilding from scratch (loop) ——— */",
-      ""
-    ];
+  function showFieldError(field, message) {
+    let hint = field.parentElement.querySelector('.field-error');
+    if (!hint) {
+      hint = document.createElement('small');
+      hint.className = 'field-error';
+      hint.style.cssText = 'color:#ef4444;margin-top:6px;';
+      field.parentElement.appendChild(hint);
+    }
+    hint.textContent = message;
+  }
   
-    const CHAR_DELAY = 14;   // karakter arası (ms)
-    const LINE_DELAY = 260;  // satır arası bekleme (ms)
-    const LOOP_DELAY = 1200; // tüm blok bitince bekleme (ms)
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
   
-    let li = 0, ci = 0;
+  // ===========================================
+  // 7. NOTIFICATION (toast)
+  // ===========================================
+  function showNotification(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+      <div style="
+        position:fixed;right:20px;bottom:20px;z-index:2000;
+        background:rgba(17,24,39,.98);color:#fff;padding:12px 16px;
+        border-radius:12px;border:1px solid rgba(255,255,255,.08);
+        box-shadow:0 10px 30px rgba(0,0,0,.35);display:flex;gap:10px;align-items:center;
+        ">
+        <i class="${getNotificationIcon(type)}"></i>
+        <span>${message}</span>
+      </div>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  }
   
-    function writeNext() {
-      if (li >= LINES.length) {
-        setTimeout(() => { code.textContent = ""; li = 0; ci = 0; writeNext(); }, LOOP_DELAY);
-        return;
-      }
-      const line = LINES[li];
+  function getNotificationIcon(type) {
+    switch (type) {
+      case 'success': return 'fas fa-check-circle';
+      case 'error': return 'fas fa-times-circle';
+      case 'warning': return 'fas fa-exclamation-triangle';
+      default: return 'fas fa-info-circle';
+    }
+  }
   
-      if (ci === 0 && li > 0) code.textContent += "\n";
-      code.textContent += line.charAt(ci);
-      ci++;
-  
-      pre.scrollTop = pre.scrollHeight;
-  
-      if (ci < line.length) {
-        setTimeout(writeNext, CHAR_DELAY);
+  // ===========================================
+  // 8. UTILS
+  // ===========================================
+  function debounce(fn, wait = 200) {
+    let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
+  }
+  function throttle(fn, limit = 100) {
+    let inThrottle, lastFn, lastTime;
+    return function () {
+      const context = this, args = arguments;
+      if (!inThrottle) {
+        fn.apply(context, args);
+        lastTime = Date.now();
+        inThrottle = true;
       } else {
-        li++; ci = 0;
-        setTimeout(writeNext, LINE_DELAY);
+        clearTimeout(lastFn);
+        lastFn = setTimeout(function () {
+          if ((Date.now() - lastTime) >= limit) {
+            fn.apply(context, args);
+            lastTime = Date.now();
+          }
+        }, Math.max(limit - (Date.now() - lastTime), 0));
       }
+    };
+  }
+  
+  // ===========================================
+  // 9. EXTRA STYLES (Injected)
+  // ===========================================
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Global yıldız overlay: çerçevenin altında kalsın */
+    #stars-overlay{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0; /* .page-frame z-index:1, yani yıldızlar dış alanda görünür */
     }
   
-    writeNext();
-  }
+    @keyframes light-trail {
+      0% { opacity:.3; transform:scale(.5); }
+      50%{ opacity:.1; transform:scale(1); }
+      100%{ opacity:0; transform:scale(1.5); }
+    }
+  
+    /* Yıldızlar sürekli yukarı */
+    @keyframes float-particle {
+      0%   { transform: translateY(0);       opacity: 0; }
+      8%   { opacity: .6; }
+      90%  { opacity: .6; }
+      100% { transform: translateY(-120vh); opacity: 0; }
+    }
+  
+    .contact-form .error { border-color: #ef4444 !important; }
+  `;
+  document.head.appendChild(style);
   
