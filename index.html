@@ -76,69 +76,83 @@
   <!-- === PAGE FRAME: Tüm içerik bu çerçevenin içinde === -->
   <main class="page-frame">
 
-    <!-- =========================================================
-    #2. HERO (Profesyonel - Terminal + CTA)
-    ========================================================= -->
-    <section id="home" class="hero hero-pro">
-      <!-- Dekoratif yüzey -->
-      <div class="hero-surface" aria-hidden="true">
-        <div class="hero-grid"></div>
-        <div class="hero-accent"></div>
+<!-- =========================================================
+#2. HERO
+========================================================= -->
+<section id="home" class="hero">
+  <!-- (İsteğe bağlı: dekoratif yüzey) -->
+  <div class="hero-surface" aria-hidden="true">
+    <div class="hero-grid"></div>
+    <div class="hero-accent"></div>
+  </div>
+
+  <div class="hero-container">
+    <!-- SOL SÜTUN -->
+    <div class="hero-left" data-aos="fade-right">
+      <!-- Etiketler -->
+      <div class="hero-eyebrow">
+        <span class="pill"><i class="fas fa-bolt"></i> AI + Otomasyon</span>
+        <span class="pill pill-ghost"><i class="fas fa-shield-halved"></i> Kurumsal Seviye</span>
       </div>
 
-      <div class="container hero-container">
-        <!-- Sol Sütun -->
-        <div class="hero-left" data-aos="fade-right">
-          <div class="hero-eyebrow">
-            <span class="pill"><i class="fas fa-bolt"></i> AI + Otomasyon</span>
-            <span class="pill pill-ghost"><i class="fas fa-shield-alt"></i> Kurumsal Seviye</span>
-          </div>
+      <!-- Başlık + Alt başlık -->
+      <h1 class="hero-title">Düşün. Tasarla. Dönüştür.</h1>
+      <p class="hero-subtitle">AI destekli otomasyon, veri analizi ve akıllı çözümlerle işinizi büyütün.</p>
 
-          <h1 class="hero-title">Düşün. Tasarla. Dönüştür.</h1>
-          <p class="hero-subtitle">AI destekli otomasyon, veri analizi ve akıllı çözümlerle işinizi büyütün.</p>
+      <!-- CTA'lar -->
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-primary btn-glow">
+          <span>Bilgi Alın</span>
+          <i class="fas fa-paper-plane"></i>
+        </a>
 
-          <div class="hero-ctas">
-            <a href="#contact" class="btn btn-primary btn-glow">
-              <span>Bilgi Alın</span><i class="fas fa-paper-plane"></i>
-            </a>
-            <a href="#services" class="btn btn-secondary btn-glow-alt">
-              <i class="fas fa-gears"></i><span>Hizmetler</span>
-            </a>
-          </div>
+        <a href="#services" class="btn btn-secondary btn-glow-alt">
+          <i class="fas fa-gears"></i>
+          <span>Hizmetler</span>
+        </a>
+      </div>
 
-          <ul class="hero-meta">
-            <li>
-              <strong class="stat-number" data-target="80" data-prefix="%" data-suffix="" data-duration="1500"></strong>
-              <span>Verimlilik</span>
-            </li>
-            <li>
-              <strong class="stat-number" data-target="7" data-prefix="" data-suffix="/24" data-duration="1400"></strong>
-              <span>Otomasyon</span>
-            </li>
-            <li>
-              <strong class="stat-number" data-target="12" data-prefix="" data-suffix="+ saat" data-duration="1600"></strong>
-              <span>Haftalık Kazanım</span>
-            </li>
-          </ul>
+      <!-- Sayısal özetler -->
+      <ul class="hero-meta">
+        <li>
+          <strong class="stat-number" data-prefix="%" data-target="80" data-duration="1600"> %80</strong>
+          <span>Verimlilik</span>
+        </li>
+        <li>
+          <strong class="stat-number" data-prefix="" data-suffix="/24" data-target="7" data-duration="1600">7/24</strong>
+          <span>Otomasyon</span>
+        </li>
+        <li>
+          <strong class="stat-number" data-prefix="" data-suffix="+ saat" data-target="12" data-duration="1600">12+ saat</strong>
+          <span>Haftalık Kazanım</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- SAĞ SÜTUN: Terminal v2 -->
+    <div class="hero-right" data-aos="fade-left">
+      <!-- Renkli blur backdrop -->
+      <div class="term-backdrop" aria-hidden="true"></div>
+
+      <div class="hero-terminal terminal-v2">
+        <div class="term-header v2">
+          <span class="term-label">›_ Terminal</span>
+          <span class="term-led"></span>
         </div>
 
-        <!-- Sağ Sütun: AI Manifesto Terminal -->
-        <div class="hero-right" data-aos="fade-left">
-          <div class="hero-terminal">
-            <div class="term-header">
-              <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-              <span class="title">Teknoify · AI Manifesto</span>
-            </div>
-            <pre class="term-body" id="ai-manifesto"><code></code></pre>
-            <div class="term-footer">
-              <span class="badge"><i class="fas fa-cubes"></i> Modüler Mimari</span>
-              <span class="badge"><i class="fas fa-clipboard-check"></i> Evals &amp; Ölçümler</span>
-              <span class="badge"><i class="fas fa-user-shield"></i> Güven &amp; Gizlilik</span>
-            </div>
-          </div>
+        <!-- İçerik JS ile dolduruluyor (initAiManifestoTerminal) -->
+        <pre class="term-body v2" id="ai-manifesto"><code></code></pre>
+
+        <div class="term-footer v2">
+          <span class="badge"><i class="fas fa-cubes"></i> Modüler Mimari</span>
+          <span class="badge"><i class="fas fa-clipboard-check"></i> Evals &amp; Ölçümler</span>
+          <span class="badge"><i class="fas fa-user-shield"></i> Güven &amp; Gizlilik</span>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
+
 
     <!-- =========================================================
     #3. SERVICES
