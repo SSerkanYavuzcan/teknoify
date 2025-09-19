@@ -877,51 +877,92 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 .image-placeholder { font-size: var(--font-size-6xl); color: var(--white); opacity: 0.8; }
 
-/* ===========================================================
-#9. CONTACT
-=========================================================== */
-.contact { padding: var(--spacing-4xl) 0; background: var(--bg-secondary); }
-.contact-content { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4xl); align-items: start; }
+/* ===== 9. CONTACT — Dark card + unified font (UPDATED) ===== */
 
-.contact-description { font-size: var(--font-size-lg); color: var(--gray-300); margin-bottom: var(--spacing-2xl); line-height: 1.7; }
-.contact-methods { display: flex; flex-direction: column; gap: var(--spacing-lg); }
-.contact-method { display: flex; align-items: center; gap: var(--spacing-md); }
-.contact-method i {
-  width: 50px; height: 50px; background: var(--gradient-primary);
-  border-radius: var(--radius-lg);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--white); font-size: var(--font-size-lg);
-}
-.contact-method h4 { font-size: var(--font-size-base); font-weight: 600; margin-bottom: var(--spacing-xs); color: var(--white); }
-.contact-method p { color: var(--gray-400); margin-bottom: 0; }
-
-.contact-form-container {
-  background: var(--bg-card);
+/* Sağdaki panel: ürün kartlarıyla aynı koyu stil */
+.contact-form-container{
+  background: var(--bg-tertiary);                 /* eskiden: var(--bg-card) (beyaz) */
   padding: var(--spacing-2xl);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  border-radius: 22px;                             /* servis kartlarıyla uyumlu */
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 24px 48px rgba(0,0,0,.55),
+              0 1px 0 rgba(255,255,255,.04) inset; /* aynı kart gölgesi */
+  color: var(--white);
+  font-family: var(--font-family);                 /* yazı tipini tekilleştir */
 }
-.contact-form { display: flex; flex-direction: column; gap: var(--spacing-lg); }
-.form-group { display: flex; flex-direction: column; }
-.form-group input,
-.form-group select,
-.form-group textarea {
-  padding: var(--spacing-md);
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-lg);
+
+/* Form genel tipografi */
+.contact-form{
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  font-family: var(--font-family);
+}
+
+/* Alanlar — koyu arkaplan, tek tip font, modern kenarlık */
+.contact-form .form-group input,
+.contact-form .form-group select,
+.contact-form .form-group textarea{
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.02);
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,.12);
   font-size: var(--font-size-base);
-  transition: all var(--transition-fast);
-  background: var(--white);
-  color: var(--gray-900);
+  font-family: var(--font-family);
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              background var(--transition-fast);
 }
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+
+/* Placeholder rengi (tek tip) */
+.contact-form .form-group input::placeholder,
+.contact-form .form-group textarea::placeholder{
+  color: var(--gray-400);
+}
+
+/* Focus hali — birincil renkle vurgulu */
+.contact-form .form-group input:focus,
+.contact-form .form-group select:focus,
+.contact-form .form-group textarea:focus{
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: rgba(99,102,241,.65);
+  box-shadow: 0 0 0 3px rgba(99,102,241,.15),
+              0 1px 0 rgba(255,255,255,.06) inset;
+  background: rgba(255,255,255,.03);
 }
-.form-group textarea { resize: vertical; min-height: 120px; }
+
+/* Select okunu sadeleştir (opsiyonel) */
+.contact-form .form-group select{
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(255,255,255,.6) 50%),
+    linear-gradient(135deg, rgba(255,255,255,.6) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 3px),
+    calc(100% - 13px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 40px;
+}
+
+/* Textarea minimum yükseklik */
+.contact-form .form-group textarea{
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Hata durumunda (JS doğrulamayla uyumlu) */
+.contact-form .form-group input.error,
+.contact-form .form-group select.error,
+.contact-form .form-group textarea.error{
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 3px rgba(239,68,68,.15);
+}
+
 
 /* ===========================================================
 #10. FOOTER
