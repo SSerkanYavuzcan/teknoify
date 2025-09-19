@@ -80,50 +80,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // ===========================================
-  // 4. LIGHT EFFECTS – Global yıldız overlay
-  // ===========================================
-  function initLightEffects() {
-    createLightParticles();   // hero yüzeyinde sabit "yıldız" efekti
-    addScrollLightEffect();   // scroll'a göre yüzey opaklığı hafif değişsin
+// ===========================================
+// 4. LIGHT EFFECTS – Global yıldız overlay
+// ===========================================
+function initLightEffects() {
+    const overlay = getOrCreateStarsOverlay();
+    createLightParticles(overlay);      // tüm sayfaya, fixed overlay
+    addScrollLightEffect(overlay);      // hafif parlaklık tepkisi
+  
+    // Ekran boyutu değişince yeniden oluştur (çok parçacık birikmesin)
+    window.addEventListener('resize', throttle(() => {
+      createLightParticles(overlay);
+    }, 600));
   }
   
-  // Arkaplan yıldızları (.hero-surface içinde)
-  function createLightParticles() {
-    const host = document.querySelector('.hero-surface'); // çerçeve içinde kalsın
-    if (!host) return;
+  // Overlay oluştur / getir
+  function getOrCreateStarsOverlay() {
+    let overlay = document.getElementById('stars-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'stars-overlay';
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(overlay);
+    }
+    return overlay;
+  }
   
+  // Tüm sayfa için parçacıklar
+  function createLightParticles(overlay) {
     // yeniden init edilirse birikmesin
-    host.querySelectorAll('.light-particle').forEach(p => p.remove());
+    overlay.querySelectorAll('.light-particle').forEach(p => p.remove());
   
-    const COUNT = 32;
+    // Ekran alanına göre sayıyı ölçekle
+    const area = window.innerWidth * window.innerHeight;
+    const COUNT = Math.max(36, Math.round(area / 28000)); // ~2k px² başına 1 parçacık
+  
     for (let i = 0; i < COUNT; i++) {
-      const p = document.createElement('div');
-      p.className = 'light-particle';
-      const size = (Math.random() * 3 + 1.5).toFixed(1);
-      p.style.cssText = `
-        position:absolute; z-index:0;
-        width:${size}px; height:${size}px; border-radius:50%;
-        left:${(Math.random()*100).toFixed(2)}%; top:${(Math.random()*100).toFixed(2)}%;
-        background: rgba(139,92,246, ${(Math.random()*0.45+0.25).toFixed(2)});
-        filter: drop-shadow(0 0 4px rgba(139,92,246,.45));
+      const particle = document.createElement('div');
+      particle.className = 'light-particle';
+  
+      const size = (Math.random() * 2 + 2).toFixed(1);          // 2–4px
+      const left = (Math.random() * 100).toFixed(2) + '%';       // 0–100%
+      // Ekranın ALTINDAN başlat (105–140vh), yukarı doğru aksın
+      const topStart = (105 + Math.random() * 35).toFixed(2) + 'vh';
+  
+      const duration = (18 + Math.random() * 18).toFixed(1);     // 18–36s
+      // Negatif delay ile akışta dağınık başlat
+      const delay    = (Math.random() * duration * -1).toFixed(1) + 's';
+  
+      particle.style.cssText = `
+        position:absolute;
+        width:${size}px;height:${size}px;
+        left:${left}; top:${topStart};
+        background: rgba(139,92,246, ${(0.25 + Math.random() * 0.35).toFixed(2)});
+        border-radius:50%;
         pointer-events:none;
-        animation: float-particle ${(Math.random()*12+14).toFixed(1)}s linear infinite;
-        animation-delay:${(Math.random()*6).toFixed(1)}s;
+        will-change: transform, opacity;
+        animation: float-particle ${duration}s linear infinite;
+        animation-delay:${delay};
+        filter: drop-shadow(0 0 6px rgba(139,92,246,0.35));
       `;
-      host.appendChild(p);
+      overlay.appendChild(particle);
     }
   }
   
-  // Scroll’a göre hero yüzeyinin opaklığını hafifçe değiştir
-  function addScrollLightEffect() {
-    const surface = document.querySelector('.hero-surface');
-    if (!surface) return;
-    window.addEventListener('scroll', () => {
+  // Parlaklığı scroll’a göre çok hafif değiştir
+  function addScrollLightEffect(overlay) {
+    if (!overlay) return;
+    const onScroll = () => {
       const h = document.documentElement.scrollHeight - window.innerHeight;
       const p = h ? (window.pageYOffset / h) : 0;
-      surface.style.opacity = String(0.85 + p * 0.15);
-    }, { passive: true });
+      overlay.style.opacity = String(0.9 + p * 0.1); // 0.9 → 1.0
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
   }
   
   // ===========================================
@@ -393,18 +423,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
   
-  // ===========================================
-  // 10. EXTRA STYLES (Injected)
-  // ===========================================
-  const style = document.createElement('style');
-  style.textContent = `
-    /* Yıldızlar için animasyon */
-    @keyframes float-particle {
-      0%   { transform: translateY(0) translateX(0); opacity:.9; }
-      50%  { transform: translateY(-80px) translateX(15px); opacity:.78; }
-      100% { transform: translateY(-160px) translateX(-10px); opacity:.9; }
-    }
-    .light-particle { will-change: transform, opacity; }
-  `;
-  document.head.appendChild(style);
-  
+// ===========================================
+// 10. EXTRA STYLES (Injected) – keyframes
+// ===========================================
+const style = document.createElement('style');
+style.textContent = `
+  /* Parçacıklar ekranın altından yukarı akar */
+  @keyframes float-particle {
+    0%   { transform: translateY(0) translateX(0); opacity:.95; }
+    50%  { transform: translateY(-60vh) translateX(8px); opacity:.8; }
+    100% { transform: translateY(-120vh) translateX(-6px); opacity:.95; }
+  }
+`;
+document.head.appendChild(style);
+
