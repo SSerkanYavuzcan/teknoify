@@ -1,55 +1,37 @@
-/* ===========================================================
-  Teknoify – Main Script (full)
-  - Header (sticky + dropdown hizası)
-  - Mobile menu
-  - Smooth scroll (header ofsetli)
-  - Global yıldız overlay (fare izi YOK)
-  - Hero sayaçları
-  - Terminal v2: sabit boyutlu, typist döngü
-  - Dil seçici (TR/EN) + hero başlık/altbaşlık metinleri
-  - Küçük yardımcılar
-=========================================================== */
-
+// ===========================================
+// 0. GLOBAL INITIALIZATION
+// ===========================================
 document.addEventListener('DOMContentLoaded', () => {
     initHeader();
     initMobileMenu();
     initSmoothScrolling();
-    initStarsOverlay();
-    initCounters();
-    initTerminalTyping();
-    initLanguageSwitch();
-    initNavDropdowns();   // Hizmetler menüsünün solda açılma sorununu da çözüyor
+    initAnimations();
+    initContactForm();
+    initLightEffects();
+  
+    // Terminalde döngü halinde AI kodu akıt
+    initAiTerminalLoop();
   });
   
-  /* ===========================================================
-     1) HEADER
-  =========================================================== */
+  // ===========================================
+  // 1. HEADER
+  // ===========================================
   function initHeader() {
-    const header = document.getElementById('header') || document.querySelector('.header');
+    const header = document.getElementById('header');
     if (!header) return;
-  
-    const onScroll = throttle(() => {
-      header.classList.toggle('scrolled', window.scrollY > 10);
-    }, 16);
-  
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 100);
     onScroll();
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
   }
   
-  /* ===========================================================
-     2) MOBILE MENU
-  =========================================================== */
+  // ===========================================
+  // 2. MOBILE MENU
+  // ===========================================
   function initMobileMenu() {
     const hamburger = document.querySelector('.hamburger');
     const navMenu   = document.querySelector('.nav-menu');
-  
+    const navLinks  = document.querySelectorAll('.nav-link');
     if (!hamburger || !navMenu) return;
-  
-    const close = () => {
-      hamburger.classList.remove('active');
-      navMenu.classList.remove('active');
-      document.body.classList.remove('menu-open');
-    };
   
     hamburger.addEventListener('click', () => {
       hamburger.classList.toggle('active');
@@ -57,349 +39,347 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.toggle('menu-open');
     });
   
-    navMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      });
+    });
   
-    document.addEventListener('click', (e) => {
-      if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) close();
+    document.addEventListener('click', e => {
+      if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      }
     });
   }
   
-  /* ===========================================================
-     3) SMOOTH SCROLL (Header yüksekliği kadar ofset)
-  =========================================================== */
+  // ===========================================
+  // 3. SMOOTH SCROLLING (services ofsetli)
+  // ===========================================
   function initSmoothScrolling() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', (e) => {
-        const id = anchor.getAttribute('href');
-        if (!id || id === '#') return;
-        const target = document.querySelector(id);
-        if (!target) return;
+    const links = document.querySelectorAll('a[href^="#"]');
+    links.forEach(link => {
+      link.addEventListener('click', function (e) {
+        const hash = this.getAttribute('href');
+        if (!hash || hash === '#') return;
+        const targetElement = document.querySelector(hash);
+        if (!targetElement) return;
         e.preventDefault();
   
-        const header = document.getElementById('header') || document.querySelector('.header');
-        const offset = header ? header.offsetHeight : 0;
-        const top = target.getBoundingClientRect().top + window.pageYOffset - offset - 6;
+        const headerEl = document.querySelector('.header');
+        const headerHeight = headerEl ? headerEl.offsetHeight : 0;
   
-        window.scrollTo({ top, behavior: 'smooth' });
+        // Hizmetler için ekstra ofset (ilk 3 kart ekrana gelsin)
+        let extra = 0;
+        if (hash === '#services') extra = window.innerWidth >= 1024 ? 180 : 120;
+  
+        const top = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - extra;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
       });
     });
   }
   
-  /* ===========================================================
-     4) GLOBAL YILDIZ OVERLAY (fare izi KALDIRILDI)
-  =========================================================== */
-  function initStarsOverlay() {
-    // tek bir overlay kullan, tekrar init'te birikmesin
-    let overlay = document.getElementById('stars-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'stars-overlay';
-      Object.assign(overlay.style, {
-        position: 'fixed',
-        inset: '0',
-        zIndex: '0',
-        pointerEvents: 'none',
-        overflow: 'hidden'
-      });
-      document.body.appendChild(overlay);
-    } else {
-      overlay.innerHTML = '';
-    }
+  // ===========================================
+  // 4. LIGHT EFFECTS – Global yıldız overlay
+  // ===========================================
+function initLightEffects() {
+    createLightParticles();
+    // addMouseFollowEffect(); // KALDIRILDI
+    addScrollLightEffect();
+  }
   
-    const COUNT = 56;
-    for (let i = 0; i < COUNT; i++) {
-      const p = document.createElement('div');
-      p.className = 'light-particle';
-      const size = (Math.random() * 2 + 1.6).toFixed(1); // 1.6–3.6px
-      const left = (Math.random() * 100).toFixed(3) + '%';
-      const top  = (105 + Math.random() * 40).toFixed(3) + '%'; // ekran altından başlasın
-      const duration = (20 + Math.random() * 18).toFixed(1);     // 20–38s
-      const delay = (-1 * Math.random() * duration).toFixed(1) + 's';
+  // 6.1 Create floating light particles (arkaplan yıldızları)
+  function createLightParticles() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    // önceki parçacıkları temizle (yeniden init edilirse birikmesin)
+    hero.querySelectorAll('.light-particle').forEach(p => p.remove());
   
-      p.style.cssText = `
-        position:absolute; width:${size}px; height:${size}px; border-radius:50%;
-        left:${left}; top:${top};
-        background: rgba(99,102,241, ${(0.22 + Math.random() * 0.25).toFixed(2)});
-        filter: drop-shadow(0 0 6px rgba(99,102,241,0.28));
-        will-change: transform, opacity;
-        animation: float-particle ${duration}s linear infinite;
-        animation-delay: ${delay};
+    for (let i = 0; i < 28; i++) { // hafifçe artırılmış sayı
+      const particle = document.createElement('div');
+      particle.className = 'light-particle';
+      const size = Math.random() * 3 + 1.5;
+      particle.style.cssText = `
+        position:absolute;
+        width:${size}px;
+        height:${size}px;
+        background: rgba(139,92,246,${Math.random()*0.45+0.25});
+        border-radius:50%;
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        animation: float-particle ${Math.random()*12+14}s linear infinite;
+        animation-delay:${Math.random()*6}s;
+        pointer-events:none;
+        filter: drop-shadow(0 0 4px rgba(139,92,246,.45));
       `;
-      overlay.appendChild(p);
+      hero.appendChild(particle);
+    }
+  }
+  
+  // 6.3 Scroll-based light intensity
+  function addScrollLightEffect() {
+    const surface = document.querySelector('.hero-surface');
+    if (!surface) return;
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const p = h ? (window.pageYOffset / h) : 0;
+      surface.style.opacity = String(0.85 + p * 0.15);
+    }, { passive: true });
+  }
+  
+  // ===========================================
+  // 5. ANIMATIONS (AOS + Stat sayaçları)
+  // ===========================================
+  function initAnimations() {
+    if (typeof AOS !== 'undefined') {
+      AOS.init({ duration: 800, easing: 'ease-in-out', once: true, offset: 100 });
     }
   
-    // gerekli animasyon tanımı yoksa enjekte et
-    injectOnce('stars-keyframes', `
-      @keyframes float-particle{
-        0%   { transform: translateY(0)   translateX(0);    opacity:.9; }
-        50%  { transform: translateY(-50vh) translateX(8px); opacity:.85; }
-        100% { transform: translateY(-100vh) translateX(-10px); opacity:.0; }
-      }
-    `);
+    // Stat başlangıç değerleri
+    const stats = document.querySelectorAll('.stat-number');
+    stats.forEach(el => {
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      el.textContent = `${prefix}0${suffix}`;
+    });
+  
+    if (stats.length) {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateNumber(entry.target);
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      stats.forEach(el => io.observe(el));
+    }
   }
   
-  /* ===========================================================
-     5) HERO SAYAÇLARI
-     .stat-number (veya [data-stat]) içindeki sayıları 0'dan hedefe say
-  =========================================================== */
-  function initCounters() {
-    const stats = document.querySelectorAll('.stat-number, [data-stat]');
-    if (!stats.length) return;
+  function animateNumber(el) {
+    const target   = Number(el.dataset.target || 0);
+    const duration = Number(el.dataset.duration || 1500);
+    const decimals = Number(el.dataset.decimals || 0);
+    const prefix   = el.dataset.prefix || '';
+    const suffix   = el.dataset.suffix || '';
   
-    const toInt = (el) => parseInt((el.dataset.stat || el.textContent).replace(/\D/g, ''), 10) || 0;
-    const suffix = (el) => (el.dataset.suffix !== undefined ? el.dataset.suffix : el.textContent.replace(/\d/g, ''));
+    const start = 0;
+    const startTime = performance.now();
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
   
-    const animate = (el) => {
-      const target = toInt(el);
-      const suf = suffix(el);
-      let cur = 0;
-      const inc = Math.max(1, Math.floor(target / 50));
-      const t = setInterval(() => {
-        cur += inc;
-        if (cur >= target) { cur = target; clearInterval(t); }
-        el.textContent = cur + suf;
-      }, 26);
-    };
+    function frame(now) {
+      const elapsed  = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased    = easeOutCubic(progress);
+      const value    = start + (target - start) * eased;
   
-    const obs = new IntersectionObserver((ents) => {
-      ents.forEach(e => { if (e.isIntersecting) { animate(e.target); obs.unobserve(e.target); } });
-    }, { threshold: 0.5 });
-  
-    stats.forEach(s => obs.observe(s));
+      el.textContent = prefix + (decimals ? value.toFixed(decimals) : Math.round(value)) + suffix;
+      if (progress < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
   }
   
-  /* ===========================================================
-     6) TERMINAL v2 – typist döngü (SABİT BOYUTLU KART)
-  =========================================================== */
-  function initTerminalTyping() {
-    const term = document.querySelector('.hero-terminal.terminal-v2 .term-body.v2');
-    if (!term) return;
+  // ===========================================
+  // 6. CONTACT FORM (hafif doğrulama + toast)
+  // ===========================================
+  function initContactForm() {
+    const form = document.querySelector('.contact-form');
+    if (!form) return;
   
-    // Kod sahneleri – Türkçe etiketli, renkli token <span>’leri ile
-    const SCENES = [
-      // 1) Google Trends → Top5 ürün
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      if (!validateForm(data, form)) return;
+  
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+      submitBtn.disabled = true;
+  
+      setTimeout(() => {
+        showNotification('Mesajınız başarıyla gönderildi!', 'success');
+        form.reset();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }, 1200);
+    });
+  
+    form.querySelectorAll('input, textarea, select').forEach(input => {
+      input.addEventListener('blur', () => validateField(input));
+      input.addEventListener('input', () => {
+        if (input.classList.contains('error')) validateField(input);
+      });
+    });
+  }
+  
+  function validateForm(data, form) {
+    let ok = true;
+    ['name','email','service','message'].forEach(name => {
+      const field = form.querySelector(`[name="${name}"]`);
+      if (!validateField(field)) ok = false;
+    });
+    return ok;
+  }
+  
+  function validateField(field) {
+    if (!field) return true;
+    let valid = true;
+    const v = String(field.value || '').trim();
+  
+    if (!v) valid = false;
+    if (valid && field.type === 'email') valid = isValidEmail(v);
+  
+    field.classList.toggle('error', !valid);
+    field.style.borderColor = valid ? '' : 'var(--error-color)';
+    if (!valid) {
+      showFieldError(field, field.type === 'email' ? 'Geçerli bir e-posta girin' : 'Bu alan zorunludur');
+    }
+    return valid;
+  }
+  
+  function showFieldError(field, message) {
+    let hint = field.parentElement.querySelector('.field-error');
+    if (!hint) {
+      hint = document.createElement('small');
+      hint.className = 'field-error';
+      hint.style.cssText = 'color:#ef4444;margin-top:6px;';
+      field.parentElement.appendChild(hint);
+    }
+    hint.textContent = message;
+  }
+  
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+  
+  // ===========================================
+  // 7. NOTIFICATION (toast)
+  // ===========================================
+  function showNotification(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+      <div style="
+        position:fixed;right:20px;bottom:20px;z-index:2000;
+        background:rgba(17,24,39,.98);color:#fff;padding:12px 16px;
+        border-radius:12px;border:1px solid rgba(255,255,255,.08);
+        box-shadow:0 10px 30px rgba(0,0,0,.35);display:flex;gap:10px;align-items:center;
+        ">
+        <i class="${getNotificationIcon(type)}"></i>
+        <span>${message}</span>
+      </div>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  }
+  
+  function getNotificationIcon(type) {
+    switch (type) {
+      case 'success': return 'fas fa-check-circle';
+      case 'error': return 'fas fa-times-circle';
+      case 'warning': return 'fas fa-exclamation-triangle';
+      default: return 'fas fa-info-circle';
+    }
+  }
+  
+// ===========================================
+// 8. AI TERMINAL LOOP (kod döngüsü)
+// ===========================================
+function initAiTerminalLoop(){
+    const container = document.querySelector('#ai-manifesto code');
+    if(!container) return;
+  
+    // Basit sözdizimi renklendirme
+    const kw = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
+    const fn = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative)\b/g;
+    const str = /(\".*?\"|\'.*?\')/g;
+    const num = /\b(\d+(\.\d+)?)\b/g;
+  
+    function highlight(line){
+      return line
+        .replace(str, '<span class="tok-str">$1</span>')
+        .replace(fn,  '<span class="tok-fn">$1</span>')
+        .replace(kw,  '<span class="tok-kw">$1</span>')
+        .replace(num, '<span class="tok-num">$1</span>');
+    }
+  
+    // ——— İSTENEN SENARYO: Trends -> Mağaza Fiyat -> BQ -> Geçmiş veriler -> Bütçe -> Öneri ———
+    const SNIPPETS = [
       [
-        line('# Ingest → Google Trends'),
-        line(`${kw('data')} = ${fn('fetch')}.${fn('google_trends')}(${str('["ai","automation"]')}, ${kw('region')}=${str('"TR"')}, ${kw('window')}=${str('"7d"')})`)
+        '# Ingest → Google Trends (Shopping)',
+        'trends   = fetch.google_trends(category="shopping", region="TR", window="7d")',
+        'products = trends.topk(5, key="search_volume").name   # en çok aranan 5 ürün'
       ],
-      // 2) Online mağazalardan fiyat topla
       [
-        line('# Crawl → Online Mağazalar'),
-        line(`${kw('prices')} = ${fn('shop')}.${fn('search_many')}(${kw('data')}.${fn('top')}( ${num('5')} ), ${kw('sources')}=${str('["hepsiburada","trendyol","n11"]')})`)
+        '# Crawl → Online Stores (fiyat toplama)',
+        'stores = ["hepsiburada","trendyol","n11","amazon-tr"]',
+        'offers = scrape.search(stores=stores, items=products)',
+        'prices = transform.normalize(offers)',
+        'prices = prices.groupby("item").agg(min="price", max="price", avg="price")'
       ],
-      // 3) BigQuery’ye yaz
       [
-        line('# Publish → BigQuery'),
-        line(`${fn('publish')}.${fn('warehouse')}(${kw('prices')}, ${kw('dest')}=${str('"bigquery"')}, ${kw('table')}=${str('"trends_ai_daily"')})`)
+        '# Publish → BigQuery (piyasa fiyatları)',
+        'publish.bigquery(prices, dataset="pricing", table="market_prices_daily")'
       ],
-      // 4) Geçmiş satış + CTR + CVR ile birleştir
       [
-        line('# Join → Geçmiş Satış + CTR + CVR'),
-        line(`${kw('facts')} = ${fn('table')}(${str('"sales_facts"')}).${fn('select')}(${str('"sku"')}, ${str('"qty"')}, ${str('"revenue"')}, ${str('"ctr"')}, ${str('"cvr"')})`),
-        line(`${kw('hist')}  = ${fn('transform')}.${fn('join')}(${kw('prices')}, ${kw('facts')}, ${kw('on')}=${str('"sku"')}, ${kw('how')}=${str('"left"')})`)
+        '# Internal Metrics → CTR / CVR / AvgPrice',
+        'internal = fetch.warehouse(dataset="sales", tables=["orders","impressions","catalog"])',
+        'joined   = transform.join(internal.orders, internal.impressions, on="sku")',
+        'stats    = joined.with_columns(ctr=clicks/impressions, cvr=orders/clicks)',
+        'stats    = stats.groupby("sku").agg(avg_price="mean(sale_price)", avg_ctr="mean(ctr)", avg_cvr="mean(cvr)")'
       ],
-      // 5) Bütçe + Pazar fiyatı + marj kısıtı ile fiyat öner
       [
-        line('# Model → Bütçe & Pazar Fiyatı ile Optimum Fiyat'),
-        line(`${kw('budget')} = ${fn('finance')}.${fn('budget')}(${str('"Q4"')})`),
-        line(`${kw('reco')}   = ${fn('price')}.${fn('recommend')}(${kw('hist')}, ${kw('budget')}=${kw('budget')}, ${kw('strategy')}=${str('"market+margin"')}, ${kw('constraints')}={${kw('min_margin')}:${num('0.12')}})`)
+        '# Merge → Piyasa + Geçmiş + Bütçe',
+        'model_in = transform.join(stats, prices, on=("sku","item"), how="left")',
+        'budget   = finance.budget("Q4")',
+        'recos    = price.recommend(model_in, strategy="market+margin", budget=budget,',
+        '            constraints={min_margin:0.12, step:1})'
       ],
-      // 6) Evals
       [
-        line('# Evals'),
-        line(`${kw('metrics')} = { ${kw('latency_p95_ms')}: < ${num('450')}, ${kw('accuracy_em')}: >= ${num('0.82')}, ${kw('freshness_h')}: <= ${num('1')} }`),
-        line(`${fn('assert')}(${fn('evals')}.${fn('run')}(${kw('reco')}, ${kw('metrics')}))`)
+        '# Save & Evals',
+        'publish.bigquery(recos, dataset="pricing", table="recommended_prices")',
+        'checks = { sanity: rules.non_negative(["price"]), roi_expected: ">= 1.2" }',
+        'assert(evals.run(recos, checks))'
       ]
     ];
   
-    // Yazma hızı
-    const CHAR_DELAY = 10;
-    const LINE_DELAY = 420;
-    const SCENE_DELAY = 900;
+    let i = 0;
   
-    let sceneIndex = 0;
-  
-    const runScene = async () => {
-      term.innerHTML = ''; // sabit yükseklik, içeriği sıfırla
-      const lines = SCENES[sceneIndex];
-  
-      for (const html of lines) {
-        await typeLine(term, html, CHAR_DELAY);
-        await wait(LINE_DELAY);
+    async function writeSnippet(lines){
+      container.innerHTML = ''; // temizle
+      for (const raw of lines){
+        const line = document.createElement('span');
+        line.className = 'line';
+        line.innerHTML = highlight(raw);
+        container.appendChild(line);
+        await wait(140); // satır arası hız
       }
-  
-      sceneIndex = (sceneIndex + 1) % SCENES.length;
-      await wait(SCENE_DELAY);
-      runScene();
-    };
-  
-    // Başlat
-    runScene();
-  }
-  
-  // satıra yazım (sabit genişliği bozmayacak şekilde)
-  async function typeLine(container, html, charDelay) {
-    return new Promise(resolve => {
-      const lineEl = document.createElement('span');
-      lineEl.className = 'line';
-      container.appendChild(lineEl);
-  
-      // html string’ini karakter karakter yazmak için düz metne çevirme hilesi:
-      // önce bir temp div’e koy, sonra textContent’ini kullan
-      const temp = document.createElement('div');
-      temp.innerHTML = html;
-      const flatText = temp.textContent || '';
-  
-      let i = 0;
       const cursor = document.createElement('span');
       cursor.className = 'cursor';
-      lineEl.appendChild(cursor);
+      container.appendChild(cursor);
+      await wait(1800);
+    }
   
-      const t = setInterval(() => {
-        // mevcut text + yeni karakteri tekrar "renklendir" (tokenizer basit)
-        const next = flatText.slice(0, ++i);
-        lineEl.innerHTML = colorize(next) + '<span class="cursor"></span>';
-  
-        if (i >= flatText.length) {
-          clearInterval(t);
-          resolve();
-        }
-      }, charDelay);
-    });
-  }
-  
-  // Token renklendirme – basit/highlight amaçlı
-  function colorize(text) {
-    // anahtar kelime, sayı, string, fonksiyon isimlerini çok basitçe boyar
-    // (gelişmiş bir parser yerine görsel amaçlıdır)
-    let out = text
-      .replace(/(#.*)$/gm, '<span class="tok-cmt">$1</span>')
-      .replace(/\b(const|let|var|return|async|await|if|else|for|in|of|true|false|null)\b/g, '<span class="tok-kw">$1</span>')
-      .replace(/"([^"]*)"/g, '<span class="tok-str">"$1"</span>')
-      .replace(/'([^']*)'/g, "<span class='tok-str'>'$1'</span>")
-      .replace(/\b(\d+(\.\d+)?)\b/g, '<span class="tok-num">$1</span>')
-      .replace(/\b([a-z_][a-z0-9_]*)\s*(?=\()/gi, '<span class="tok-fn">$1</span>');
-    return out;
-  }
-  
-  // Kısa helper’lar – terminal sahnelerinde okunaklı HTML üretmek için:
-  const kw  = (s) => `<span class="tok-kw">${s}</span>`;
-  const fn  = (s) => `<span class="tok-fn">${s}</span>`;
-  const str = (s) => `<span class="tok-str">${s}</span>`;
-  const num = (s) => `<span class="tok-num">${s}</span>`;
-  const line = (s) => s;
-  
-  /* ===========================================================
-     7) DİL SEÇİCİ – TR/EN ve hero metinlerini güncelle
-     (Markup beklenen: #langToggle butonu + #langMenu menüsü)
-  =========================================================== */
-  function initLanguageSwitch() {
-    const btn  = document.getElementById('langToggle');
-    const menu = document.getElementById('langMenu');
-    if (!btn || !menu) return;
-  
-    const currentCodeEl = btn.querySelector('[data-lang-current]');
-    let current = (currentCodeEl?.textContent || 'TR').trim().toLowerCase();
-  
-    const strings = {
-      tr: {
-        title: 'Daha az çabayla Hayalinizi inşa edin',
-        subtitle: 'Teknoify, AI destekli otomasyon, veri analizi ve akıllı çözümlerle işinizi büyütmek ve hayalinizi inşa etmek için çalışır.'
-      },
-      en: {
-        title: 'Build your vision with less effort',
-        subtitle: 'Teknoify helps you grow your business and build your vision with AI-powered automation, data analytics, and smart solutions.'
+    async function loop(){
+      while(true){
+        await writeSnippet(SNIPPETS[i]);
+        i = (i + 1) % SNIPPETS.length;
       }
-    };
+    }
   
-    const titleEl = document.getElementById('heroTitle') || document.querySelector('.hero-title');
-    const subEl   = document.getElementById('heroSubtitle') || document.querySelector('.hero-subtitle');
-  
-    const apply = (code) => {
-      const t = strings[code] || strings.tr;
-      if (titleEl) titleEl.textContent = t.title;
-      if (subEl)   subEl.textContent   = t.subtitle;
-      if (currentCodeEl) currentCodeEl.textContent = code.toUpperCase();
-      current = code;
-    };
-  
-    // toggle
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menu.classList.toggle('open');
-      // menüyü butonun altına hizala
-      const rect = btn.getBoundingClientRect();
-      Object.assign(menu.style, {
-        position: 'absolute',
-        top: `${rect.bottom + window.scrollY + 10}px`,
-        left: `${rect.left + window.scrollX}px`
-      });
-    });
-  
-    // seçim
-    menu.querySelectorAll('[data-lang]').forEach(item => {
-      item.addEventListener('click', () => {
-        const code = (item.getAttribute('data-lang') || 'tr').toLowerCase();
-        apply(code);
-        menu.classList.remove('open');
-      });
-    });
-  
-    // dışarı tıkla kapat
-    document.addEventListener('click', (e) => {
-      if (!menu.contains(e.target) && !btn.contains(e.target)) {
-        menu.classList.remove('open');
-      }
-    });
-  
-    // ilk uygulama
-    apply(current);
+    loop().catch(()=>{ /* sessizce geç */ });
   }
   
-  /* ===========================================================
-     8) NAV DROPDOWNS (Hizmetler menüsü solda açılmasın)
-     Markup: .nav-item.has-dropdown > .dropdown-menu
-  =========================================================== */
-  function initNavDropdowns() {
-    const items = document.querySelectorAll('.nav-item.has-dropdown');
-    items.forEach(item => {
-      const trigger = item.querySelector('.nav-link, button, a') || item;
-      const dd = item.querySelector('.dropdown-menu');
-      if (!dd || !trigger) return;
+  function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
   
-      // hover veya fokus ile aç/kapat
-      let openTimer, closeTimer;
   
-      const open = () => {
-        clearTimeout(closeTimer);
-        openTimer = setTimeout(() => {
-          dd.classList.add('open');
-  
-          // Konumu parent’a göre hizala
-          const rect = trigger.getBoundingClientRect();
-          const left = rect.left + window.scrollX;
-          dd.style.left = left + 'px';
-          dd.style.top  = (rect.bottom + window.scrollY + 8) + 'px';
-        }, 60);
-      };
-  
-      const close = () => {
-        clearTimeout(openTimer);
-        closeTimer = setTimeout(() => dd.classList.remove('open'), 120);
-      };
-  
-      trigger.addEventListener('mouseenter', open);
-      trigger.addEventListener('focus', open);
-      item.addEventListener('mouseleave', close);
-      trigger.addEventListener('blur', close);
-    });
-  }
-  
-  /* ===========================================================
-     UTILITIES
-  =========================================================== */
-  function wait(ms) {
-    return new Promise(res => setTimeout(res, ms));
+  // ===========================================
+  // 9. UTILS
+  // ===========================================
+  function debounce(fn, wait = 200) {
+    let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
   }
   function throttle(fn, limit = 100) {
     let inThrottle, lastFn, lastTime;
@@ -409,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fn.apply(context, args);
         lastTime = Date.now();
         inThrottle = true;
-        setTimeout(() => { inThrottle = false; }, limit);
       } else {
         clearTimeout(lastFn);
         lastFn = setTimeout(function () {
@@ -421,11 +400,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
   }
-  function injectOnce(id, cssText) {
-    if (document.getElementById(id)) return;
-    const style = document.createElement('style');
-    style.id = id;
-    style.textContent = cssText;
-    document.head.appendChild(style);
-  }
   
+  // ===========================================
+  // 10. EXTRA STYLES (Injected)
+  // ===========================================
+  const style = document.createElement('style');
+style.textContent = `
+  /* Mouse trail animasyonu KALDIRILDI */
+  @keyframes float-particle {
+    0%   { transform: translateY(0) translateX(0); opacity:.9; }
+    50%  { transform: translateY(-80px) translateX(15px); opacity:.75; }
+    100% { transform: translateY(-160px) translateX(-10px); opacity:.9; }
+  }
+`;
+document.head.appendChild(style);
