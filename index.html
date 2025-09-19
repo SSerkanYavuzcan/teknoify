@@ -334,12 +334,14 @@
 <section id="contact" class="contact">
   <div class="container">
     <div class="contact-content">
-      <!-- LEFT: Info -->
+      <!-- Info -->
       <div class="contact-info" data-aos="fade-right">
         <div class="section-badge">
           <i class="fas fa-envelope"></i><span>İletişim</span>
         </div>
-        <h2 class="section-title"><span class="gradient-text">Projenizi</span> Konuşalım</h2>
+        <h2 class="section-title">
+          <span class="gradient-text">Projenizi</span> Konuşalım
+        </h2>
         <p class="contact-description">
           Dijital dönüşüm yolculuğunuzda size yardımcı olmak için buradayız.
           Ücretsiz danışmanlık için hemen iletişime geçin.
@@ -370,41 +372,56 @@
         </div>
       </div>
 
-      <!-- RIGHT: Form (dark card) -->
-      <div class="contact-form-card" data-aos="fade-left">
+      <!-- Form -->
+      <div class="contact-form-container contact-card" data-aos="fade-left">
         <form class="contact-form" novalidate>
           <div class="form-group">
             <input type="text" id="name" name="name" placeholder="Adınız Soyadınız" required />
-            <small class="field-error" aria-live="polite"></small>
           </div>
 
           <div class="form-group">
             <input type="email" id="email" name="email" placeholder="E-posta Adresiniz" required />
-            <small class="field-error" aria-live="polite"></small>
           </div>
 
           <div class="form-group">
             <input type="tel" id="phone" name="phone" placeholder="Telefon Numaranız" />
-            <small class="field-error" aria-live="polite"></small>
+          </div>
+
+          <!-- CUSTOM SELECT: Hizmet Seçiniz -->
+          <div class="form-group">
+            <div class="custom-select" data-name="service">
+              <button type="button"
+                      class="cs-trigger"
+                      aria-haspopup="listbox"
+                      aria-expanded="false">
+                <span class="cs-value">Hizmet Seçiniz</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+
+              <ul class="cs-list" role="listbox">
+                <li class="cs-option is-placeholder" data-value="">Hizmet Seçiniz</li>
+                <li class="cs-option" data-value="rpa">Robotik Süreç Otomasyonu</li>
+                <li class="cs-option" data-value="scraping">Web Scraping</li>
+                <li class="cs-option" data-value="finance">Finansal Analiz</li>
+                <li class="cs-option" data-value="ai">AI Asistan</li>
+              </ul>
+
+              <!-- Gizli native select (FormData & required için) -->
+              <select id="service" name="service" required hidden>
+                <option value="">Hizmet Seçiniz</option>
+                <option value="rpa">Robotik Süreç Otomasyonu</option>
+                <option value="scraping">Web Scraping</option>
+                <option value="finance">Finansal Analiz</option>
+                <option value="ai">AI Asistan</option>
+              </select>
+            </div>
           </div>
 
           <div class="form-group">
-            <select id="service" name="service" required>
-              <option value="">Hizmet Seçiniz</option>
-              <option value="rpa">Robotik Süreç Otomasyonu</option>
-              <option value="scraping">Web Scraping</option>
-              <option value="finance">Finansal Analiz</option>
-              <option value="ai">AI Asistan</option>
-            </select>
-            <small class="field-error" aria-live="polite"></small>
+            <textarea id="message" name="message" placeholder="Projeniz hakkında bilgi verin..." rows="5" required></textarea>
           </div>
 
-          <div class="form-group">
-            <textarea id="message" name="message" rows="5" placeholder="Projeniz hakkında bilgi verin..." required></textarea>
-            <small class="field-error" aria-live="polite"></small>
-          </div>
-
-          <button type="submit" class="btn btn-secondary btn-glow-alt">
+          <button type="submit" class="btn btn-primary">
             <span>Mesaj Gönder</span>
             <i class="fas fa-paper-plane"></i>
           </button>
@@ -413,6 +430,7 @@
     </div>
   </div>
 </section>
+
 
 
   <!-- =========================================================

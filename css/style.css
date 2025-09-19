@@ -878,7 +878,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 .image-placeholder { font-size: var(--font-size-6xl); color: var(--white); opacity: 0.8; }
 
 /* ===========================================================
-#9. CONTACT  (REVISED — no aura/glow)
+#9. CONTACT
 =========================================================== */
 .contact {
   padding: var(--spacing-4xl) 0;
@@ -892,26 +892,23 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   align-items: start;
 }
 
-/* LEFT */
+/* Sol metin tarafı */
 .contact-description {
   font-size: var(--font-size-lg);
   color: var(--gray-300);
   margin-bottom: var(--spacing-2xl);
   line-height: 1.7;
 }
-
 .contact-methods {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
 }
-
 .contact-method {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
 }
-
 .contact-method i {
   width: 50px;
   height: 50px;
@@ -922,104 +919,158 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   justify-content: center;
   color: var(--white);
   font-size: var(--font-size-lg);
-  flex-shrink: 0;
 }
-
 .contact-method h4 {
   font-size: var(--font-size-base);
   font-weight: 600;
   margin-bottom: var(--spacing-xs);
   color: var(--white);
 }
-
 .contact-method p {
   color: var(--gray-400);
   margin-bottom: 0;
 }
 
-/* RIGHT — Dark card (aura kapalı) */
-.contact-form-card {
-  position: relative;
+/* Sağ form kartı */
+.contact-form-container.contact-card {
+  /* ürün kartlarıyla aynı hissiyat */
   background: var(--bg-tertiary);
-  color: var(--white);
-  padding: var(--spacing-2xl);
+  border: 1px solid rgba(255,255,255,.08);
   border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.06);
-  box-shadow: 0 24px 48px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.04) inset;
-  overflow: hidden;
+  box-shadow:
+    0 24px 48px rgba(0,0,0,.55),
+    0 1px 0 rgba(255,255,255,.04) inset;
+  padding: var(--spacing-2xl);
 }
-
-/* Kart arkasındaki aura’yı tamamen kapat */
-.contact-form-card::before { display: none !important; }
 
 .contact-form {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  font-family: var(--font-family);
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: .4rem;
-}
+/* Form alanları – tek tip yazı ve karanlık stil */
+.form-group { display: flex; flex-direction: column; }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.contact-form input,
+.contact-form textarea {
   width: 100%;
-  padding: var(--spacing-md);
+  font-family: var(--font-family);
   font-size: var(--font-size-base);
-  font-family: var(--font-family); /* tek font */
   color: var(--white);
-  background: linear-gradient(180deg,#151922,#12161c);
+  background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.10);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-md);
+  transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: var(--gray-400);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
   outline: none;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
-  box-shadow: none; /* tüm glow’ları kapat */
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.18);
+  box-shadow: 0 0 0 2px rgba(99,102,241,.18) inset;
 }
 
-.form-group textarea { min-height: 140px; resize: vertical; }
-
-.form-group input::placeholder,
-.form-group textarea::placeholder { color: var(--gray-500); }
-
-.form-group select {
-  appearance: none;
-  background-image: linear-gradient(180deg,#151922,#12161c);
-  color: var(--white);
+.contact-form textarea {
+  resize: vertical;
+  min-height: 140px;
 }
 
-/* Focus — sadece sınır rengi, glow yok */
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: rgba(255,255,255,.28);
-  box-shadow: none;
+/* Gönder butonu */
+.contact-form .btn.btn-primary {
+  align-self: flex-start;
 }
 
-/* Error — sadece kırmızı sınır, glow yok */
-.form-group .field-error {
-  color: var(--error-color);
-  font-size: .85rem;
-  line-height: 1.3;
-}
-
-.form-group input.error,
-.form-group select.error,
-.form-group textarea.error {
+/* Basıldıktan sonra hatalı alan stili (JS işaretler) */
+.contact-form .error {
   border-color: var(--error-color) !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 1px rgba(239,68,68,.25) inset;
+}
+.field-error {
+  color: var(--error-color);
+  margin-top: 6px;
+  font-size: var(--font-size-sm);
 }
 
-/* Submit butonu hizalama */
-.contact-form .btn { align-self: flex-start; }
+/* ===== Custom Select (Hizmet Seçiniz) ===== */
+.custom-select { position: relative; width: 100%; }
+
+.cs-trigger {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .75rem;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-xl);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  color: var(--white);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+.cs-trigger i { opacity: .75; transition: transform var(--transition-fast); }
+.custom-select.open .cs-trigger i { transform: rotate(180deg); }
+
+.cs-trigger:hover {
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.16);
+}
+
+/* Açılır panel (kart hissi) */
+.cs-list {
+  position: absolute; left: 0; right: 0; top: calc(100% + 8px);
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 22px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+  max-height: 260px; overflow: auto;
+  transform: scale(.98); opacity: 0; pointer-events: none;
+  transition: transform var(--transition-normal), opacity var(--transition-normal);
+  z-index: 20;
+}
+.custom-select.open .cs-list {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Seçenekler */
+.cs-option {
+  list-style: none;
+  margin: 4px; padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--white);
+  border: 1px solid transparent;
+  background: linear-gradient(180deg,#1a1d23 0%, #0f1318 100%);
+  display: flex; align-items: center; gap: .5rem;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  font-weight: 600;
+}
+.cs-option.is-placeholder { opacity: .7; font-weight: 500; }
+.cs-option:hover {
+  border-color: rgba(255,255,255,.14);
+  box-shadow: 0 10px 24px rgba(0,0,0,.45);
+  transform: translateY(-1px);
+}
+.cs-option.is-selected {
+  border-color: rgba(99,102,241,.45);
+  box-shadow: 0 0 0 2px rgba(99,102,241,.22) inset;
+}
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .contact-content { grid-template-columns: 1fr; gap: var(--spacing-2xl); }
+  .contact-content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2xl);
+  }
 }
 
 

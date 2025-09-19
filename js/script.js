@@ -6,10 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initSmoothScrolling();
     initAnimations();
-    initContactForm();
     initLightEffects();
-    initAiTerminalLoop(); // Terminal kod akışı
+  
+    // CONTACT
+    initCustomSelect();   // <- yeni: native <select> yerine koyu tema açılır liste
+    initContactForm();    // <- güncel: yalnızca "Gönder"de doğrula
   });
+  
   
   // ===========================================
   // 1. HEADER
@@ -213,31 +216,155 @@ function initLightEffects() {
     const form = document.querySelector('.contact-form');
     if (!form) return;
   
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(form));
-      if (!validateForm(data, form)) return;
+    const $ = (sel) => form.querySelector(sel);
   
-      const submitBtn = form.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
-      submitBtn.disabled = true;
+    const nameEl    = $('#name')    || form.querySelector('input[name="name"]');
+    const emailEl   = $('#email')   || form.querySelector('input[type="email"]');
+    const phoneEl   = $('#phone')   || form.querySelector('input[type="tel"]');
+    const serviceEl = $('#service') || form.querySelector('select[name="service"]');
+    const msgEl     = $('#message') || form.querySelector('textarea[name="message"]');
+  
+    // Yardımcılar
+    const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
+  
+    const clearError = (el) => {
+      if (!el) return;
+      el.classList.remove('error');
+      const hint = el.parentElement.querySelector('.field-error');
+      if (hint) hint.remove();
+    };
+  
+    const setError = (el, msg) => {
+      if (!el) return;
+      clearError(el);
+      el.classList.add('error');
+      const hint = document.createElement('small');
+      hint.className = 'field-error';
+      hint.textContent = msg;
+      el.parentElement.appendChild(hint);
+    };
+  
+    // Yazmaya başlayınca hatayı temizle (blur ile uyarı yok!)
+    [nameEl, emailEl, phoneEl, msgEl].forEach(el => {
+      if (!el) return;
+      el.addEventListener('input', () => clearError(el));
+    });
+    if (serviceEl) {
+      serviceEl.addEventListener('change', () => clearError(serviceEl));
+    }
+  
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+  
+      // Tüm alanları yalnızca gönderimde kontrol et
+      let ok = true;
+  
+      if (nameEl && !String(nameEl.value).trim()) {
+        setError(nameEl, 'Bu alan zorunludur');
+        ok = false;
+      }
+  
+      if (emailEl) {
+        const v = String(emailEl.value).trim();
+        if (!v) { setError(emailEl, 'Bu alan zorunludur'); ok = false; }
+        else if (!isValidEmail(v)) { setError(emailEl, 'Geçerli bir e-posta girin'); ok = false; }
+      }
+  
+      if (serviceEl && !String(serviceEl.value).trim()) {
+        // Custom select varsa yine de orijinal <select> değerini kontrol ediyoruz
+        setError(serviceEl, 'Bir hizmet seçiniz');
+        ok = false;
+      }
+  
+      if (msgEl && !String(msgEl.value).trim()) {
+        setError(msgEl, 'Bu alan zorunludur');
+        ok = false;
+      }
+  
+      if (!ok) return;
+  
+      // Başarılı gönderim simülasyonu
+      const btn = form.querySelector('button[type="submit"]');
+      const orig = btn ? btn.innerHTML : null;
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...'; }
   
       setTimeout(() => {
-        showNotification('Mesajınız başarıyla gönderildi!', 'success');
+        // Temizle
         form.reset();
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-      }, 1200);
-    });
+        // Custom select etiketini placeholder'a döndür
+        const cs = document.querySelector('.custom-select .cs-label');
+        if (cs) cs.textContent = 'Hizmet Seçiniz';
   
-    form.querySelectorAll('input, textarea, select').forEach(input => {
-      input.addEventListener('blur', () => validateField(input));
-      input.addEventListener('input', () => {
-        if (input.classList.contains('error')) validateField(input);
-      });
+        if (btn && orig) { btn.disabled = false; btn.innerHTML = orig; }
+        showNotification('Mesajınız başarıyla gönderildi!', 'success');
+      }, 900);
     });
   }
+  
+  function initCustomSelect() {
+    const native = document.querySelector('#service');
+    if (!native) return;
+  
+    // Zaten dönüştürüldüyse tekrar etme
+    if (native.dataset.enhanced === '1') return;
+    native.dataset.enhanced = '1';
+  
+    // Kapsayıcı
+    const wrap = document.createElement('div');
+    wrap.className = 'custom-select';
+  
+    // Tetik (üst alan)
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'cs-trigger';
+    trigger.innerHTML = `
+      <span class="cs-label">${native.options[native.selectedIndex]?.text || 'Hizmet Seçiniz'}</span>
+      <i class="fas fa-chevron-down"></i>
+    `;
+  
+    // Liste
+    const list = document.createElement('ul');
+    list.className = 'cs-list';
+  
+    // Tüm seçenekler
+    [...native.options].forEach((opt, idx) => {
+      const li = document.createElement('li');
+      li.className = 'cs-option' + (idx === native.selectedIndex ? ' is-selected' : '');
+      if (!opt.value) li.classList.add('is-placeholder');
+      li.dataset.value = opt.value;
+      li.textContent = opt.text;
+      li.addEventListener('click', () => {
+        // seçimi yansıt
+        native.value = opt.value;
+        trigger.querySelector('.cs-label').textContent = opt.text;
+        list.querySelectorAll('.cs-option').forEach(o => o.classList.remove('is-selected'));
+        li.classList.add('is-selected');
+        wrap.classList.remove('open');
+        native.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      list.appendChild(li);
+    });
+  
+    // Toggle
+    trigger.addEventListener('click', () => {
+      wrap.classList.toggle('open');
+    });
+  
+    // Dışarı tıklayınca kapat
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target)) wrap.classList.remove('open');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') wrap.classList.remove('open');
+    });
+  
+    // Native select'i sakla, ama form gönderimi için DOM'da tut
+    native.style.display = 'none';
+    native.insertAdjacentElement('afterend', wrap);
+    wrap.appendChild(trigger);
+    wrap.appendChild(list);
+  }
+  
   
   function validateForm(data, form) {
     let ok = true;
