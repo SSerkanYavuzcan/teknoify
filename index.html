@@ -52,7 +52,7 @@
           <a href="#home" class="nav-link">Ana Sayfa</a>
         </li>
 
-        <!-- Hizmetler (Dropdown) -->
+        <!-- Hizmetler -->
         <li class="nav-item dropdown">
           <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down"></i></a>
           <ul class="dropdown-menu">
@@ -71,13 +71,14 @@
           <a href="#contact" class="nav-link">İletişim</a>
         </li>
 
-        <!-- Dil seçici (Dropdown) -->
+        <!-- Dil seçici -->
         <li class="nav-item dropdown lang">
-          <button class="nav-link lang-switch" aria-haspopup="true" aria-expanded="false">
+          <!-- NOT: button yerine a.nav-link -> varsayılan buton stilleri yok -->
+          <a href="#" class="nav-link lang-switch" role="button" aria-haspopup="true" aria-expanded="false">
             <span class="lang-label">Dil</span>
             <span class="lang-flag" aria-hidden="true">🇹🇷</span>
             <i class="fas fa-chevron-down" style="font-size:.8em;opacity:.8;"></i>
-          </button>
+          </a>
           <ul class="dropdown-menu lang-menu">
             <li><a href="#" data-lang="tr"><span class="flag">🇹🇷</span> Türkçe</a></li>
             <li><a href="#" data-lang="en"><span class="flag">🇬🇧</span> English</a></li>
@@ -94,7 +95,6 @@
     </div>
   </nav>
 </header>
-
 
 
 <!-- =========================================================

@@ -284,18 +284,18 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 .logo-icon{ color:var(--primary-color); font-size:var(--font-size-2xl); }
 
-/* Menü — hizalama */
+/* Menü */
 .nav-menu{
   display:flex; align-items:center; gap: var(--spacing-xl);
   list-style:none;
 }
 .nav-item{
-  position: relative;                     /* dropdown’un item altında açılması için şart */
+  position: relative; /* dropdown’ın doğru yerde açılması için */
   display:flex; align-items:center;
 }
 .nav-link{
   display:flex; align-items:center; justify-content:center;
-  height:40px;                            /* çiplerle aynı yükseklik */
+  height:40px;
   padding:0 var(--spacing-md);
   line-height:1;
   color:var(--gray-300);
@@ -303,6 +303,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
   gap: var(--spacing-xs);
+  text-decoration:none;
 }
 .nav-link:hover{
   color:var(--white);
@@ -311,7 +312,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 
 /* Dropdown genel */
 .dropdown-menu{
-  position:absolute; top:100%; left:0;    /* item’in hemen altında, soldan hizalı */
+  position:absolute; top:100%; left:0;
   background: var(--bg-secondary);
   border: 1px solid var(--gray-700);
   border-radius: var(--radius-lg);
@@ -329,16 +330,35 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   color: var(--gray-300);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
+  text-decoration:none;
 }
 .dropdown-menu a:hover{ color: var(--white); background: rgba(255,255,255,.08); }
 
-/* Dil seçici özel hizalama (sağa açılacak) */
+/* Dil seçici: sağa hizalı açılır menü */
 .nav-item.lang > .dropdown-menu{
-  right: 0; left: auto;                   /* sağa hizala */
+  right: 0; left: auto;
   min-width: 180px;
 }
-.lang-switch{ gap:8px; }                 /* “Dil + bayrak + ok” aralığı */
+
+/* Dil butonu görünümü — renksiz/şeffaf (buton kullanılırsa da bozulmasın) */
+.lang-switch{
+  background: transparent !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: inherit;
+  cursor: pointer;
+}
 .flag{ width:1.2em; display:inline-flex; align-items:center; justify-content:center; }
+
+/* Bayrak yuvarlağı — çok hafif çizgi, arka plan yok */
+.lang-flag{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:22px; height:22px; border-radius:9999px;
+  border: 1px solid rgba(255,255,255,.15);
+  /* arka plan yok: background: none; */
+  font-size: .95rem;
+}
 
 /* Hamburger (mobil) */
 .hamburger{ display:none; flex-direction:column; cursor:pointer; gap:4px; }
