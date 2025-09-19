@@ -416,7 +416,106 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 .hero-meta span{ color: var(--gray-400); font-size: var(--font-size-sm); }
 
-/* 6.7 Terminal v2 + Backdrop (sağ panel) */
+/* ===========================================================
+#6. HERO
+#6.1 Section Wrapper
+#6.2 (Eski) katmanları gizle
+#6.3 Grid & Typography
+#6.4 Eyebrow / Pills
+#6.5 CTA’lar
+#6.6 Meta istatistikler
+#6.7 Terminal v2 + Backdrop  (SABİT BOYUT)
+#6.8 Responsive
+=========================================================== */
+
+/* 6.1 Section Wrapper */
+.hero{
+  min-height:88vh;
+  position:relative;
+  overflow:hidden;
+  background: var(--bg-secondary);
+}
+
+/* 6.2 Eski ağır katmanları kapat */
+.hero-background,
+.light-rays,
+.floating-particles,
+.hero-globe,
+.philosophy-text,
+.vision-text,
+.hero-scroll-indicator { display: none !important; }
+
+/* Dekoratif (opsiyonel) */
+.hero-surface{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+.hero-grid{
+  position:absolute; inset:-10% -10% 0 -10%;
+  background-image: radial-gradient(rgba(99,102,241,.18) 1px, transparent 1px);
+  background-size: 22px 22px; opacity:.18;
+  animation: heroGridShift 30s linear infinite;
+}
+@keyframes heroGridShift { from{ background-position:0 0; } to{ background-position:220px 140px; } }
+.hero-accent{
+  position:absolute; top:-20vw; right:-10vw; width:60vw; height:60vw;
+  background: radial-gradient(closest-side, rgba(99,102,241,.25), transparent 65%),
+              radial-gradient(closest-side, rgba(6,182,212,.18), transparent 70%);
+  filter: blur(40px); opacity:.7;
+}
+
+/* 6.3 Layout & Typography */
+.hero-container{
+  position:relative; z-index:1;
+  display:grid; grid-template-columns: 1.15fr .85fr;
+  gap: var(--spacing-3xl); align-items:center;
+  max-width: 1200px; margin: 0 auto; padding: var(--spacing-4xl) var(--spacing-lg);
+}
+.hero-left{ display:flex; flex-direction:column; gap: var(--spacing-lg); }
+.hero-right{ position:relative; display:block; }
+
+.hero-title{
+  font-size: clamp(2rem, 4.8vw, 2.9rem);
+  line-height: 1.15; letter-spacing: .005em; font-weight: 800;
+}
+.hero-subtitle{
+  font-size: var(--font-size-lg);
+  color: var(--gray-300);
+  max-width: 58ch;
+}
+
+/* 6.4 Eyebrow / Pills */
+.hero-eyebrow{ display:flex; gap: var(--spacing-sm); flex-wrap:wrap; }
+.pill{
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.4rem .8rem; border-radius: var(--radius-full);
+  background: rgba(99,102,241,.12); color: var(--white);
+  border: 1px solid rgba(99,102,241,.35);
+  font-size: var(--font-size-sm); font-weight:600;
+}
+.pill-ghost{
+  background:transparent; border-color: var(--gray-700); color: var(--gray-300);
+}
+
+/* 6.5 CTA’lar */
+.hero-ctas{ display:flex; gap: var(--spacing-md); align-items:center; }
+.hero-ctas .btn{ font-size: var(--font-size-base); padding: var(--spacing-md) var(--spacing-xl); }
+.hero-ctas .btn-primary{ border-width: 1px; }
+.hero-ctas .btn-secondary{ border-width: 2px; }
+.btn-glow{
+  box-shadow: 0 10px 30px rgba(255,255,255,.08), 0 0 0 1px rgba(255,255,255,.06) inset;
+  transition: box-shadow var(--transition-normal), transform var(--transition-fast);
+}
+.btn-glow:hover{ transform: translateY(-2px); box-shadow: 0 16px 38px rgba(99,102,241,.25), 0 0 0 1px rgba(255,255,255,.12) inset; }
+
+/* 6.6 Meta istatistikler */
+.hero-meta{ display:flex; gap: var(--spacing-xl); list-style:none; padding:0; margin:0; }
+.hero-meta li{ display:flex; flex-direction:column; gap:.2rem; }
+.hero-meta strong{
+  font-size: var(--font-size-2xl);
+  background: var(--gradient-primary);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hero-meta span{ color: var(--gray-400); font-size: var(--font-size-sm); }
+
+/* 6.7 Terminal v2 + Backdrop — SABİT BOYUT */
 .term-backdrop{
   position:absolute; inset:-8% -12% -10% -12%;
   z-index:0; pointer-events:none;
@@ -435,6 +534,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   50%{ transform: translateY(-10px) scale(1.02); }
 }
 
+/* KART: Yükseklik sabit, içerik scroll; scrollbar genişliği rezerve */
 .hero-terminal.terminal-v2{
   position: relative; z-index:1;
   background: linear-gradient(180deg, rgba(12,14,20,.9), rgba(12,14,20,.85)) padding-box,
@@ -443,12 +543,19 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   border-radius: 22px;
   box-shadow: 0 28px 60px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.04) inset;
   overflow: hidden;
+
+  /* SABİT BOYUT İÇİN */
+  height: 420px;                 /* <- terminal yüksekliği sabit */
+  display: flex; flex-direction: column;
+  contain: layout paint;         /* komşu layout'u etkilemesin */
 }
+
 .term-header.v2{
   display:flex; align-items:center; justify-content:space-between;
   padding: 10px 14px;
   background: linear-gradient(180deg, rgba(16,18,26,.9), rgba(16,18,26,.7));
   border-bottom: 1px solid rgba(255,255,255,.06);
+  flex: 0 0 auto;                /* sabit */
 }
 .term-header.v2 .term-label{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -460,9 +567,15 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 
 .term-body.v2{
+  /* SABİT ALAN – header/footer dışında kalan boşluğu doldurur */
+  flex: 1 1 auto;
+  min-height: 0;                 /* overflow çalışsın */
+  height: auto;                  /* içerik büyüse de kart büyümez */
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable both-edges; /* scrollbar çıkınca genişlik değişmesin */
+
   margin:0; padding: 16px 18px 6px 18px;
-  min-height: 360px; max-height: 420px;
-  overflow:auto; scrollbar-width: thin;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: .95rem; line-height: 1.6; color: #e5e7eb;
   background: radial-gradient(120% 120% at 0% 0%, rgba(37,99,235,.14), transparent 55%),
@@ -489,6 +602,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   padding: 10px 14px 14px 14px;
   background: linear-gradient(180deg, rgba(16,18,26,.35), rgba(16,18,26,0));
   border-top: 1px solid rgba(255,255,255,.05);
+  flex: 0 0 auto;                /* sabit */
 }
 .term-footer.v2 .badge{
   display:inline-flex; align-items:center; gap:.4rem;
