@@ -31,50 +31,77 @@
 </head>
 
 <body>
-  <!-- =========================================================
-  #1. HEADER
-  ========================================================= -->
-  <header id="header" class="header">
-    <nav class="navbar">
-      <div class="nav-container">
-        <!-- 1.2 Logo -->
-        <div class="logo">
-          <a href="#home">
-            <span class="logo-icon"><i class="fas fa-cube"></i></span>
-            <span class="logo-text">Teknoify</span>
-          </a>
-        </div>
-
-        <!-- 1.3 Menu -->
-        <ul class="nav-menu">
-          <li class="nav-item"><a href="#home" class="nav-link">Ana Sayfa</a></li>
-
-          <li class="nav-item dropdown">
-            <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down"></i></a>
-            <ul class="dropdown-menu">
-              <li><a href="/urunler/robotik-surec-otomasyonu.html"><i class="fas fa-robot"></i> RPA</a></li>
-              <li><a href="/urunler/web-scraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
-              <li><a href="/urunler/finansal-indikatorler.html"><i class="fas fa-chart-line"></i> Finansal Analiz</a></li>
-              <li><a href="/urunler/akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
-            </ul>
-          </li>
-
-          <li class="nav-item"><a href="#about" class="nav-link">Hakkımızda</a></li>
-          <li class="nav-item"><a href="#contact" class="nav-link">İletişim</a></li>
-        </ul>
-
-        <!-- 1.4 Hamburger -->
-        <div class="hamburger">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </div>
+  
+<!-- =========================================================
+#1. HEADER
+========================================================= -->
+<header id="header" class="header">
+  <nav class="navbar">
+    <div class="nav-container">
+      <!-- 1.1 Logo -->
+      <div class="logo">
+        <a href="#home" aria-label="Teknoify anasayfa">
+          <span class="logo-icon"><i class="fas fa-cube"></i></span>
+          <span class="logo-text">Teknoify</span>
+        </a>
       </div>
-    </nav>
-  </header>
 
-  <!-- === PAGE FRAME: Tüm içerik bu çerçevenin içinde === -->
-  <main class="page-frame">
+      <!-- 1.2 Menü -->
+      <ul class="nav-menu">
+        <!-- Ana Sayfa -->
+        <li class="nav-item">
+          <a href="#home" class="nav-link">Ana Sayfa</a>
+        </li>
+
+        <!-- Hizmetler (Dropdown) -->
+        <li class="nav-item dropdown">
+          <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="/urunler/robotik-surec-otomasyonu.html"><i class="fas fa-robot"></i> RPA</a></li>
+            <li><a href="/urunler/web-scraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+            <li><a href="/urunler/finansal-indikatorler.html"><i class="fas fa-chart-line"></i> Finansal Analiz</a></li>
+            <li><a href="/urunler/akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+          </ul>
+        </li>
+
+        <!-- Hakkımızda -->
+        <li class="nav-item">
+          <a href="#about" class="nav-link">Hakkımızda</a>
+        </li>
+
+        <!-- İletişim -->
+        <li class="nav-item">
+          <a href="#contact" class="nav-link">İletişim</a>
+        </li>
+
+        <!-- Dil seçici -->
+        <li class="nav-item lang-item">
+          <button class="lang-switch" type="button" aria-label="Dil seçimi">
+            <span class="lang-label">Dil</span>
+            <span class="lang-flag" aria-hidden="true">
+              <!-- TR bayrağı (daire içinde) -->
+              <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+                <circle cx="12" cy="12" r="11" fill="#E30A17"/>
+                <!-- Hilal -->
+                <path d="M14.8 12a4.6 4.6 0 1 1-2.6-4.2 3.4 3.4 0 1 0 0 6.8 4.6 4.6 0 0 1 2.6-2.6z" fill="#fff"/>
+                <!-- Yıldız -->
+                <path d="M17.5 12.0l2.2.6-1.4-1.6 1.4-1.6-2.2.6-.6-2.2-.6 2.2-2.2-.6 1.4 1.6-1.4 1.6 2.2-.6.6 2.2z" fill="#fff"/>
+              </svg>
+            </span>
+          </button>
+        </li>
+      </ul>
+
+      <!-- 1.3 Hamburger (Mobil) -->
+      <div class="hamburger" aria-label="Menüyü aç/kapat" role="button" tabindex="0">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+</header>
+
 
 <!-- =========================================================
 #2. HERO
