@@ -31,129 +31,107 @@
 </head>
 
 <body>
-
-<!-- =========================================================
-#1. HEADER
-========================================================= -->
-<header id="header" class="header">
-  <nav class="navbar">
-    <div class="nav-container">
-      <!-- 1.1 Logo -->
-      <div class="logo">
-        <a href="#home" aria-label="Teknoify">
-          <span class="logo-icon"><i class="fas fa-cube"></i></span>
-          <span class="logo-text">Teknoify</span>
-        </a>
-      </div>
-
-      <!-- 1.2 Menu -->
-      <ul class="nav-menu">
-        <!-- Ana Sayfa -->
-        <li class="nav-item">
-          <a href="#home" class="nav-link">Ana Sayfa</a>
-        </li>
-
-        <!-- Hizmetler -->
-        <li class="nav-item dropdown">
-          <a href="#services" class="nav-link">
-            Hizmetler <i class="fas fa-chevron-down" aria-hidden="true"></i>
+  <!-- =========================================================
+  #1. HEADER
+  ========================================================= -->
+  <header id="header" class="header">
+    <nav class="navbar">
+      <div class="nav-container">
+        <!-- 1.2 Logo -->
+        <div class="logo">
+          <a href="#home">
+            <span class="logo-icon"><i class="fas fa-cube"></i></span>
+            <span class="logo-text">Teknoify</span>
           </a>
-          <ul class="dropdown-menu">
-            <li><a href="/urunler/robotik-surec-otomasyonu.html"><i class="fas fa-robot"></i> RPA</a></li>
-            <li><a href="/urunler/web-scraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
-            <li><a href="/urunler/finansal-indikatorler.html"><i class="fas fa-chart-line"></i> Finansal Analiz</a></li>
-            <li><a href="/urunler/akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
-          </ul>
-        </li>
+        </div>
 
-        <!-- Hakkımızda -->
-        <li class="nav-item">
-          <a href="#about" class="nav-link">Hakkımızda</a>
-        </li>
+        <!-- 1.3 Menu -->
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="#home" class="nav-link">Ana Sayfa</a></li>
 
-        <!-- İletişim -->
-        <li class="nav-item">
-          <a href="#contact" class="nav-link">İletişim</a>
-        </li>
+          <li class="nav-item dropdown">
+            <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="/urunler/robotik-surec-otomasyonu.html"><i class="fas fa-robot"></i> RPA</a></li>
+              <li><a href="/urunler/web-scraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+              <li><a href="/urunler/finansal-indikatorler.html"><i class="fas fa-chart-line"></i> Finansal Analiz</a></li>
+              <li><a href="/urunler/akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+            </ul>
+          </li>
 
-        <!-- Dil seçici -->
-        <li class="nav-item dropdown lang">
-          <a href="#" class="nav-link lang-switch" aria-haspopup="true" aria-expanded="false">
-            <span class="lang-label">Dil</span>
-            <span class="lang-flag" aria-hidden="true">🇹🇷</span>
-            <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </a>
-          <ul class="dropdown-menu lang-menu" role="menu">
-            <li><a href="#" data-lang="tr"><span class="flag">🇹🇷</span>Türkçe</a></li>
-            <li><a href="#" data-lang="en"><span class="flag">🇬🇧</span>English</a></li>
-          </ul>
-        </li>
-      </ul>
+          <li class="nav-item"><a href="#about" class="nav-link">Hakkımızda</a></li>
+          <li class="nav-item"><a href="#contact" class="nav-link">İletişim</a></li>
+        </ul>
 
-      <!-- 1.3 Hamburger -->
-      <div class="hamburger" aria-label="Menüyü aç/kapat" aria-expanded="false">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
+        <!-- 1.4 Hamburger -->
+        <div class="hamburger">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
       </div>
-    </div>
-  </nav>
-</header>
+    </nav>
+  </header>
 
+  <!-- === PAGE FRAME: Tüm içerik bu çerçevenin içinde === -->
+  <main class="page-frame">
 
 <!-- =========================================================
 #2. HERO
 ========================================================= -->
-<section class="hero" id="home">
-  <!-- dekoratif yüzey -->
+<section id="home" class="hero">
+  <!-- (İsteğe bağlı: dekoratif yüzey) -->
   <div class="hero-surface" aria-hidden="true">
     <div class="hero-grid"></div>
     <div class="hero-accent"></div>
   </div>
 
   <div class="hero-container">
-    <!-- SOL: metinler -->
-    <div class="hero-left">
+    <!-- SOL SÜTUN -->
+    <div class="hero-left" data-aos="fade-right">
+      <!-- Etiketler -->
       <div class="hero-eyebrow">
-        <span class="pill"><i class="ri-flashlight-fill"></i> AI + Otomasyon</span>
-        <span class="pill pill-ghost"><i class="ri-shield-check-line"></i> Kurumsal Seviye</span>
+        <span class="pill"><i class="fas fa-bolt"></i> AI + Otomasyon</span>
+        <span class="pill pill-ghost"><i class="fas fa-shield-halved"></i> Kurumsal Seviye</span>
       </div>
 
-      <h1 id="heroTitle" class="hero-title">
-        Daha az çabayla Hayalinizi inşa edin
-      </h1>
+      <!-- Başlık + Alt başlık -->
+      <h1 class="hero-title">Düşün. Tasarla. Dönüştür.</h1>
+      <p class="hero-subtitle">AI destekli otomasyon, veri analizi ve akıllı çözümlerle işinizi büyütün.</p>
 
-      <p id="heroSubtitle" class="hero-subtitle">
-        Teknoify, AI destekli otomasyon, veri analizi ve akıllı çözümlerle işinizi büyütmek ve hayalinizi inşa etmek için çalışır.
-      </p>
-
+      <!-- CTA'lar -->
       <div class="hero-ctas">
         <a href="#contact" class="btn btn-primary btn-glow">
-          Bilgi Alın <i class="ri-send-plane-2-fill"></i>
+          <span>Bilgi Alın</span>
+          <i class="fas fa-paper-plane"></i>
         </a>
-        <a href="#services" class="btn btn-secondary">
-          Hizmetler
+
+        <a href="#services" class="btn btn-secondary btn-glow-alt">
+          <i class="fas fa-gears"></i>
+          <span>Hizmetler</span>
         </a>
       </div>
 
+      <!-- Sayısal özetler -->
       <ul class="hero-meta">
         <li>
-          <strong class="stat-number" data-stat="80" data-suffix="%">0%</strong>
+          <strong class="stat-number" data-prefix="%" data-target="80" data-duration="1600"> %80</strong>
           <span>Verimlilik</span>
         </li>
         <li>
-          <strong class="stat-number" data-stat="24">0</strong>
+          <strong class="stat-number" data-prefix="" data-suffix="/24" data-target="7" data-duration="1600">7/24</strong>
           <span>Otomasyon</span>
         </li>
         <li>
-          <strong class="stat-number" data-stat="12" data-suffix="+ saat">0</strong>
+          <strong class="stat-number" data-prefix="" data-suffix="+ saat" data-target="12" data-duration="1600">12+ saat</strong>
           <span>Haftalık Kazanım</span>
         </li>
       </ul>
     </div>
 
-    <!-- SAĞ: Terminal kartı (SABİT BOYUT) -->
-    <div class="hero-right">
+    <!-- SAĞ SÜTUN: Terminal v2 -->
+    <div class="hero-right" data-aos="fade-left">
+      <!-- Renkli blur backdrop -->
       <div class="term-backdrop" aria-hidden="true"></div>
 
       <div class="hero-terminal terminal-v2">
@@ -162,18 +140,19 @@
           <span class="term-led"></span>
         </div>
 
-        <!-- JS burayı dolduruyor -->
-        <pre class="term-body v2" id="heroTerminal"></pre>
+        <!-- İçerik JS ile dolduruluyor (initAiManifestoTerminal) -->
+        <pre class="term-body v2" id="ai-manifesto"><code></code></pre>
 
         <div class="term-footer v2">
-          <span class="badge"><i class="ri-cpu-line"></i> Modüler Mimari</span>
-          <span class="badge"><i class="ri-speed-mini-line"></i> Evals & Ölçümler</span>
-          <span class="badge"><i class="ri-shield-check-line"></i> Güven & Gizlilik</span>
+          <span class="badge"><i class="fas fa-cubes"></i> Modüler Mimari</span>
+          <span class="badge"><i class="fas fa-clipboard-check"></i> Evals &amp; Ölçümler</span>
+          <span class="badge"><i class="fas fa-user-shield"></i> Güven &amp; Gizlilik</span>
         </div>
       </div>
     </div>
   </div>
 </section>
+
 
   <!-- =========================================================
   #3. SERVICES
