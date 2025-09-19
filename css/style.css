@@ -998,17 +998,84 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 
 /* ===========================================================
-#11. ADDITIONAL – Global stars overlay
+#11. ADDITIONAL / Overrides
+#11.1 Global stars overlay (sayfa geneli)
+#11.2 Dil seçici (her zaman koyu)
+#11.3 Primary butonu outline’a çevir (Bilgi Alın = Hizmetler gibi)
+#11.4 Yardımcı animasyonlar
 =========================================================== */
+
+/* 11.1 Global stars overlay (createLightParticles() #stars-overlay’a ekliyor) */
 #stars-overlay{
-  position: fixed;               /* tüm ekranda, scroll’dan bağımsız */
+  position: fixed;
   inset: 0;
-  z-index: 0;                    /* içerikten geride */
   pointer-events: none;
-  overflow: visible;
+  z-index: 0;                    /* header ve içerik üstünde değil, arkaplanda */
+  overflow: visible;             /* çerçevenin dışına taşabilsin */
 }
-.light-particle{                 /* JS zaten inline stilliyor; burada fallback */
-  position:absolute;
-  border-radius:50%;
+#stars-overlay .light-particle{
+  position: absolute;
+  border-radius: 50%;
   will-change: transform, opacity;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(139,92,246,.35));
+  opacity: .9;
+}
+
+/* 11.2 Dil seçici – her zaman koyu görünsün, küçük yuvarlak bayrak */
+.nav-item.lang .lang-switch{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--white);
+}
+.nav-item.lang .lang-switch:hover{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.18);
+}
+.nav-item.lang > .dropdown-menu{
+  right: 0; left: auto;                /* sağa hizalı açılır */
+  background: var(--bg-secondary);
+  border: 1px solid var(--gray-700);
+}
+.lang-switch .lang-flag{
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: radial-gradient(closest-side, #23262f, #13161c);
+  border: 1px solid rgba(255,255,255,.15);
+  font-size: 12px; line-height: 1;
+}
+
+/* 11.3 Primary butonu outline’a çevir — “Bilgi Alın” butonu “Hizmetler” ile aynı görünüm */
+.btn-primary{
+  background: transparent !important;
+  color: var(--white) !important;
+  border: 2px solid var(--gray-400) !important;
+  padding: var(--spacing-md) var(--spacing-xl) !important;
+  font-size: var(--font-size-base) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  letter-spacing: 0 !important;
+}
+.btn-primary:hover{
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.55) !important;
+  color: var(--white) !important;
+  box-shadow:
+    0 16px 38px rgba(99,102,241,.25),
+    0 0 0 1px rgba(255,255,255,.08) inset !important;
+  transform: translateY(-2px);
+}
+
+/* 11.4 Yardımcı – yıldız hareketi (JS’te de kullanılıyor) */
+@keyframes float-particle{
+  0%   { transform: translateY(0) translateX(0);    opacity: .90; }
+  50%  { transform: translateY(-80px) translateX(15px); opacity: .78; }
+  100% { transform: translateY(-160px) translateX(-10px); opacity: .90; }
 }
