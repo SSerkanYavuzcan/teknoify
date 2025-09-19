@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnimations();
     initContactForm();
     initLightEffects();
+  
+    // Terminalde döngü halinde AI kodu akıt
+    initAiTerminalLoop();
   });
   
   // ===========================================
@@ -69,11 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const headerEl = document.querySelector('.header');
         const headerHeight = headerEl ? headerEl.offsetHeight : 0;
   
-        // Hizmetler için ekstra yukarı kaydır (ilk 3 kart görünsün)
+        // Hizmetler için ekstra ofset (ilk 3 kart ekrana gelsin)
         let extra = 0;
-        if (hash === '#services') {
-          extra = window.innerWidth >= 1024 ? 180 : 120;
-        }
+        if (hash === '#services') extra = window.innerWidth >= 1024 ? 180 : 120;
   
         const top = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - extra;
         window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
@@ -104,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function createLightParticles() {
     const overlay = getOrCreateStarsOverlay();
   
-    // Yeniden init edilirse birikmesin
+    // yeniden init edilirse birikmesin
     overlay.querySelectorAll('.light-particle').forEach(p => p.remove());
   
     const COUNT = 48; // tüm sayfa için
@@ -159,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ===========================================
-  // 5. ANIMATIONS (AOS + Stat sayı sayacı)
+  // 5. ANIMATIONS (AOS + Stat sayaçları)
   // ===========================================
   function initAnimations() {
     if (typeof AOS !== 'undefined') {
@@ -313,7 +314,85 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ===========================================
-  // 8. UTILS
+  // 8. AI TERMINAL LOOP (kod döngüsü)
+  // ===========================================
+  function initAiTerminalLoop(){
+    const container = document.querySelector('#ai-manifesto code');
+    if(!container) return;
+  
+    // Basit sözdizimi renklendirme
+    const kw = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
+    const fn = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run)\b/g;
+    const str = /(\".*?\"|\'.*?\')/g;
+    const num = /\b(\d+(\.\d+)?)\b/g;
+  
+    function highlight(line){
+      return line
+        .replace(str, '<span class="tok-str">$1</span>')
+        .replace(fn, '<span class="tok-fn">$1</span>')
+        .replace(kw, '<span class="tok-kw">$1</span>')
+        .replace(num, '<span class="tok-num">$1</span>');
+    }
+  
+    const SNIPPETS = [
+      [
+        '# Ingest → Google Trends',
+        'data = fetch.google_trends(["ai","automation"], region="TR", window="7d")',
+        'data = validate.schema(data, rules=["non_empty","dedupe","unicode_norm"])',
+        'docs = transform.etl.cleanse(data) | nlp.normalize() | embed(model="text-embedding-3-large")',
+        'publish.warehouse(docs, dest="bigquery", table="trends_ai_daily")'
+      ],
+      [
+        '# Retrieval-Augmented Generation',
+        'index = vector.index(docs, metric="cosine")',
+        'query = "RPA ile verimlilik nasıl artar?"',
+        'ctx = retriever.topk(index, query, k=5)',
+        'answer = gpt("gpt-4.1-mini", prompt=compose(query, ctx), guardrails={pii:false,toxicity:"<0.02"})',
+        'print(answer)'
+      ],
+      [
+        '# Evals',
+        'metrics = { latency_p95_ms: < 450, accuracy_em: >= 0.82, freshness_h: <= 1 }',
+        'assert(evals.run(answer, metrics))'
+      ],
+      [
+        '# Serve & Deploy',
+        'serve.api = "gpt-service"; serve.workers = 3; serve.scheduler = "cron-service"',
+        'deploy(cluster="teknoify-prod", api="gpt-service", autoscale={min:2, max:10})'
+      ]
+    ];
+  
+    let i = 0;
+  
+    async function writeSnippet(lines){
+      container.innerHTML = ''; // temizle
+      for (const raw of lines){
+        const line = document.createElement('span');
+        line.className = 'line';
+        line.innerHTML = highlight(raw);
+        container.appendChild(line);
+        await wait(140); // satır arası hız
+      }
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      container.appendChild(cursor);
+      await wait(1800);
+    }
+  
+    async function loop(){
+      while(true){
+        await writeSnippet(SNIPPETS[i]);
+        i = (i + 1) % SNIPPETS.length;
+      }
+    }
+  
+    loop().catch(()=>{ /* sessizce geç */ });
+  }
+  
+  function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
+  
+  // ===========================================
+  // 9. UTILS
   // ===========================================
   function debounce(fn, wait = 200) {
     let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), wait); };
@@ -339,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ===========================================
-  // 9. EXTRA STYLES (Injected)
+  // 10. EXTRA STYLES (Injected)
   // ===========================================
   const style = document.createElement('style');
   style.textContent = `
