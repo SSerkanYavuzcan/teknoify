@@ -224,27 +224,52 @@ function initLightEffects() {
     const serviceEl = $('#service') || form.querySelector('select[name="service"]');
     const msgEl     = $('#message') || form.querySelector('textarea[name="message"]');
   
-    // Yardımcılar
+    // Telefon alanı isteğe bağlı placeholder
+    if (phoneEl) {
+      phoneEl.placeholder = 'Telefon Numaranız (isteğe bağlı)';
+    }
+  
     const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
   
     const clearError = (el) => {
       if (!el) return;
       el.classList.remove('error');
+  
+      // service için hata, custom-select içine yazılıyor olabilir
+      if (el.id === 'service' && el.nextElementSibling?.classList?.contains('custom-select')) {
+        const cs = el.nextElementSibling;
+        const hint = cs.querySelector('.field-error');
+        if (hint) hint.remove();
+      }
+  
       const hint = el.parentElement.querySelector('.field-error');
       if (hint) hint.remove();
     };
   
     const setError = (el, msg) => {
       if (!el) return;
+  
+      // Önce temizle
       clearError(el);
       el.classList.add('error');
+  
+      // Service için hatayı custom-select içine koy
+      if (el.id === 'service' && el.nextElementSibling?.classList?.contains('custom-select')) {
+        const cs = el.nextElementSibling;               // .custom-select
+        const hint = document.createElement('small');
+        hint.className = 'field-error';
+        hint.textContent = msg;
+        cs.appendChild(hint);
+        return;
+      }
+  
       const hint = document.createElement('small');
       hint.className = 'field-error';
       hint.textContent = msg;
       el.parentElement.appendChild(hint);
     };
   
-    // Yazmaya başlayınca hatayı temizle (blur ile uyarı yok!)
+    // Yazarken hata temizle (blur’da uyarı YOK)
     [nameEl, emailEl, phoneEl, msgEl].forEach(el => {
       if (!el) return;
       el.addEventListener('input', () => clearError(el));
@@ -256,7 +281,6 @@ function initLightEffects() {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
   
-      // Tüm alanları yalnızca gönderimde kontrol et
       let ok = true;
   
       if (nameEl && !String(nameEl.value).trim()) {
@@ -270,8 +294,9 @@ function initLightEffects() {
         else if (!isValidEmail(v)) { setError(emailEl, 'Geçerli bir e-posta girin'); ok = false; }
       }
   
+      // Telefon ZORUNLU DEĞİL — hiçbir kontrol yok
+  
       if (serviceEl && !String(serviceEl.value).trim()) {
-        // Custom select varsa yine de orijinal <select> değerini kontrol ediyoruz
         setError(serviceEl, 'Bir hizmet seçiniz');
         ok = false;
       }
@@ -283,17 +308,16 @@ function initLightEffects() {
   
       if (!ok) return;
   
-      // Başarılı gönderim simülasyonu
+      // Gönderim simülasyonu
       const btn = form.querySelector('button[type="submit"]');
       const orig = btn ? btn.innerHTML : null;
       if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...'; }
   
       setTimeout(() => {
-        // Temizle
         form.reset();
-        // Custom select etiketini placeholder'a döndür
-        const cs = document.querySelector('.custom-select .cs-label');
-        if (cs) cs.textContent = 'Hizmet Seçiniz';
+        // Custom select etiketini placeholder’a döndür
+        const csLabel = document.querySelector('.custom-select .cs-label');
+        if (csLabel) csLabel.textContent = 'Hizmet Seçiniz';
   
         if (btn && orig) { btn.disabled = false; btn.innerHTML = orig; }
         showNotification('Mesajınız başarıyla gönderildi!', 'success');
@@ -305,20 +329,27 @@ function initLightEffects() {
     const native = document.querySelector('#service');
     if (!native) return;
   
-    // Zaten dönüştürüldüyse tekrar etme
+    // Varsa eski wrapper'ı temizle (yeniden init senaryosu)
+    if (native.nextElementSibling && native.nextElementSibling.classList?.contains('custom-select')) {
+      native.nextElementSibling.remove();
+    }
     if (native.dataset.enhanced === '1') return;
+  
     native.dataset.enhanced = '1';
+  
+    // Placeholder metni
+    const placeholderText = native.options[0]?.text || 'Hizmet Seçiniz';
   
     // Kapsayıcı
     const wrap = document.createElement('div');
     wrap.className = 'custom-select';
   
-    // Tetik (üst alan)
+    // Tetik
     const trigger = document.createElement('button');
     trigger.type = 'button';
     trigger.className = 'cs-trigger';
     trigger.innerHTML = `
-      <span class="cs-label">${native.options[native.selectedIndex]?.text || 'Hizmet Seçiniz'}</span>
+      <span class="cs-label">${native.value ? native.options[native.selectedIndex].text : placeholderText}</span>
       <i class="fas fa-chevron-down"></i>
     `;
   
@@ -326,15 +357,14 @@ function initLightEffects() {
     const list = document.createElement('ul');
     list.className = 'cs-list';
   
-    // Tüm seçenekler
+    // Seçenekleri oluştur (placeholder'ı LİSTEYE ekleme!)
     [...native.options].forEach((opt, idx) => {
+      if (!opt.value) return;               // boş value = placeholder -> atla
       const li = document.createElement('li');
-      li.className = 'cs-option' + (idx === native.selectedIndex ? ' is-selected' : '');
-      if (!opt.value) li.classList.add('is-placeholder');
+      li.className = 'cs-option' + (opt.selected ? ' is-selected' : '');
       li.dataset.value = opt.value;
       li.textContent = opt.text;
       li.addEventListener('click', () => {
-        // seçimi yansıt
         native.value = opt.value;
         trigger.querySelector('.cs-label').textContent = opt.text;
         list.querySelectorAll('.cs-option').forEach(o => o.classList.remove('is-selected'));
@@ -345,12 +375,10 @@ function initLightEffects() {
       list.appendChild(li);
     });
   
-    // Toggle
+    // Aç / Kapat
     trigger.addEventListener('click', () => {
       wrap.classList.toggle('open');
     });
-  
-    // Dışarı tıklayınca kapat
     document.addEventListener('click', (e) => {
       if (!wrap.contains(e.target)) wrap.classList.remove('open');
     });
@@ -358,12 +386,22 @@ function initLightEffects() {
       if (e.key === 'Escape') wrap.classList.remove('open');
     });
   
-    // Native select'i sakla, ama form gönderimi için DOM'da tut
-    native.style.display = 'none';
+    // Native select'i görünmez (ama form için mevcut)
+    native.setAttribute('aria-hidden', 'true');
+    native.tabIndex = -1;
+    native.style.position = 'absolute';
+    native.style.left = '-9999px';
+    native.style.width = '1px';
+    native.style.height = '1px';
+    native.style.opacity = '0';
+    native.style.pointerEvents = 'none';
+  
+    // Yerleşim
     native.insertAdjacentElement('afterend', wrap);
     wrap.appendChild(trigger);
     wrap.appendChild(list);
   }
+  
   
   
   function validateForm(data, form) {
