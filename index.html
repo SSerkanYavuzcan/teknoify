@@ -104,82 +104,74 @@
 <!-- =========================================================
 #2. HERO
 ========================================================= -->
-<section id="home" class="hero">
-  <!-- arka plan katmanları (sende zaten vardı) -->
-  <div class="hero-background">
-    <div class="light-rays"></div>
-    <div class="floating-particles"></div>
+<section class="hero" id="home">
+  <!-- dekoratif yüzey -->
+  <div class="hero-surface" aria-hidden="true">
+    <div class="hero-grid"></div>
+    <div class="hero-accent"></div>
   </div>
 
-  <div class="hero-container container">
-    <div class="hero-content">
-      <!-- rozetler -->
-      <div class="hero-badges" aria-label="Öne çıkanlar">
-        <a href="#services" class="badge"><i class="fas fa-bolt"></i> AI + Otomasyon</a>
-        <a href="#about" class="badge"><i class="fas fa-shield-alt"></i> Kurumsal Seviye</a>
+  <div class="hero-container">
+    <!-- SOL: metinler -->
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <span class="pill"><i class="ri-flashlight-fill"></i> AI + Otomasyon</span>
+        <span class="pill pill-ghost"><i class="ri-shield-check-line"></i> Kurumsal Seviye</span>
       </div>
 
-      <!-- Başlık & Alt başlık -->
-      <h1 class="hero-title" data-i18n="hero.title">
+      <h1 id="heroTitle" class="hero-title">
         Daha az çabayla Hayalinizi inşa edin
       </h1>
 
-      <p class="hero-subtitle" data-i18n="hero.subtitle">
+      <p id="heroSubtitle" class="hero-subtitle">
         Teknoify, AI destekli otomasyon, veri analizi ve akıllı çözümlerle işinizi büyütmek ve hayalinizi inşa etmek için çalışır.
       </p>
 
-      <!-- CTA -->
-      <div class="hero-actions" id="hero-actions">
-        <a href="#contact" class="btn btn-primary glow-effect">
-          Bilgi Alın <i class="fas fa-paper-plane"></i>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-primary btn-glow">
+          Bilgi Alın <i class="ri-send-plane-2-fill"></i>
         </a>
-        <a href="#services" class="btn btn-secondary btn-services">
-          <i class="fas fa-cogs"></i> Hizmetler
-          <span class="btn-glow"></span>
+        <a href="#services" class="btn btn-secondary">
+          Hizmetler
         </a>
       </div>
 
-      <!-- İstatistikler -->
-      <div class="hero-stats">
-        <div class="stat">
-          <div class="stat-number"> %80</div>
-          <div class="stat-label">Verimlilik</div>
+      <ul class="hero-meta">
+        <li>
+          <strong class="stat-number" data-stat="80" data-suffix="%">0%</strong>
+          <span>Verimlilik</span>
+        </li>
+        <li>
+          <strong class="stat-number" data-stat="24">0</strong>
+          <span>Otomasyon</span>
+        </li>
+        <li>
+          <strong class="stat-number" data-stat="12" data-suffix="+ saat">0</strong>
+          <span>Haftalık Kazanım</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- SAĞ: Terminal kartı (SABİT BOYUT) -->
+    <div class="hero-right">
+      <div class="term-backdrop" aria-hidden="true"></div>
+
+      <div class="hero-terminal terminal-v2">
+        <div class="term-header v2">
+          <span class="term-label">›_ Terminal</span>
+          <span class="term-led"></span>
         </div>
-        <div class="stat">
-          <div class="stat-number">7/24</div>
-          <div class="stat-label">Otomasyon</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number">12+ saat</div>
-          <div class="stat-label">Haftalık Kazanım</div>
+
+        <!-- JS burayı dolduruyor -->
+        <pre class="term-body v2" id="heroTerminal"></pre>
+
+        <div class="term-footer v2">
+          <span class="badge"><i class="ri-cpu-line"></i> Modüler Mimari</span>
+          <span class="badge"><i class="ri-speed-mini-line"></i> Evals & Ölçümler</span>
+          <span class="badge"><i class="ri-shield-check-line"></i> Güven & Gizlilik</span>
         </div>
       </div>
     </div>
-
-    <!-- Sağ panel: Terminal (varsa mevcut tasarımınla aynı kalsın) -->
-    <aside class="hero-right">
-      <div class="terminal-card">
-        <div class="terminal-topbar">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot green"></span>
-          <span class="terminal-title">›_ Terminal</span>
-        </div>
-        <pre class="terminal-pre" aria-label="AI pipeline code">
-<span class="c"># Ingest → Google Trends</span>
-data = <span class="fn">fetch.google_trends</span>(["ai","automation"], region="TR", window="7d")
-data = <span class="fn">validate.schema</span>(data, rules=["non_empty","dedupe","unicode_norm"])
-docs = <span class="fn">transform.etl.cleanse</span>(data) | <span class="fn">nlp.normalize</span>() | <span class="fn">embed</span>(model="text-embedding-3-large")
-<span class="fn">publish.warehouse</span>(docs, dest="bigquery", table="trends_ai_daily")
-        </pre>
-
-        <div class="terminal-chips">
-          <span class="chip"><i class="fas fa-project-diagram"></i> Modüler Mimari</span>
-          <span class="chip"><i class="fas fa-clipboard-check"></i> Evals &amp; Ölçümler</span>
-          <span class="chip"><i class="fas fa-shield-alt"></i> Güven &amp; Gizlilik</span>
-        </div>
-      </div>
-    </aside>
   </div>
 </section>
 
