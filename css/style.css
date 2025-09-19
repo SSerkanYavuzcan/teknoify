@@ -360,8 +360,6 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   .hamburger.active .bar:nth-child(3){ transform: rotate(-45deg) translate(7px, -6px); }
 }
 
-
-
 /* ===========================================================
 #6. HERO
 #6.1 Section Wrapper
@@ -374,7 +372,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 #6.8 Responsive
 =========================================================== */
 
-/* 1.1 Section Wrapper */
+/* 6.1 Section Wrapper */
 .hero{
   min-height:88vh;
   position:relative;
@@ -382,7 +380,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   background: var(--bg-secondary);
 }
 
-/* 1.2 Eski ağır katmanları kapat (sayfanda varsa) */
+/* 6.2 Eski ağır katmanları kapat (sayfanda varsa) */
 .hero-background,
 .light-rays,
 .floating-particles,
@@ -407,7 +405,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   filter: blur(40px); opacity:.7;
 }
 
-/* 1.3 Layout & Typography (Fumadocs tarzı başlık) */
+/* 6.3 Layout & Typography (Fumadocs tadında) */
 .hero-container{
   position:relative; z-index:1;
   display:grid; grid-template-columns: 1.15fr .85fr;
@@ -417,10 +415,11 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 .hero-left{ display:flex; flex-direction:column; gap: var(--spacing-lg); min-width:0; }
 .hero-right{ position:relative; display:block; min-width:0; }
 
+/* ↓ Başlık ve alt başlık küçültüldü */
 .hero-title{
-  /* Fumadocs’a yakın, güçlü başlık */
   font-weight: 800;
-  font-size: clamp(2.2rem, 5.5vw, 4.25rem);
+  /* eski: clamp(2.2rem, 5.5vw, 4.25rem) */
+  font-size: clamp(1.9rem, 4.4vw, 3.2rem);
   line-height: 1.12;
   letter-spacing: -0.02em;
   color: var(--white);
@@ -429,14 +428,15 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 .hero-subtitle{
   font-weight: 400;
-  font-size: clamp(1.05rem, 2.1vw, 1.35rem);
+  /* eski: clamp(1.05rem, 2.1vw, 1.35rem) */
+  font-size: clamp(0.98rem, 1.6vw, 1.15rem);
   line-height: 1.6;
   color: var(--gray-300);
   max-width: 58ch;
-  margin: 0 0 var(--spacing-2xl);
+  margin: 0 0 var(--spacing-xl);
 }
 
-/* 1.4 Eyebrow / Pills */
+/* 6.4 Eyebrow / Pills */
 .hero-eyebrow{ display:flex; gap: var(--spacing-sm); flex-wrap:wrap; }
 .pill{
   display:inline-flex; align-items:center; gap:.5rem;
@@ -449,7 +449,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   background:transparent; border-color: var(--gray-700); color: var(--gray-300);
 }
 
-/* 1.5 CTA’lar */
+/* 6.5 CTA’lar */
 .hero-ctas{ display:flex; gap: var(--spacing-md); align-items:center; }
 .hero-ctas .btn{ font-size: var(--font-size-base); padding: var(--spacing-md) var(--spacing-xl); }
 .hero-ctas .btn-primary{ border-width: 1px; }
@@ -476,7 +476,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 .btn.btn-services:hover .btn-glow{ opacity: 1; }
 
-/* 1.6 Meta istatistikler */
+/* 6.6 Meta istatistikler */
 .hero-meta{
   display:flex; gap: var(--spacing-xl); list-style:none; padding:0; margin:0;
 }
@@ -488,7 +488,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 .hero-meta span{ color: var(--gray-400); font-size: var(--font-size-sm); }
 
-/* 1.7 Terminal v2 + Backdrop — SABİT BOYUT */
+/* 6.7 Terminal v2 + Backdrop — SABİT BOYUT */
 .term-backdrop{
   position:absolute; inset:-8% -12% -10% -12%;
   z-index:0; pointer-events:none;
@@ -591,7 +591,7 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
   background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);
 }
 
-/* 1.8 Responsive */
+/* 6.8 Responsive */
 @media (max-width: 1024px){
   .hero{ min-height:72vh; }
   .hero-container{ grid-template-columns:1fr; gap: var(--spacing-2xl); }
@@ -599,14 +599,15 @@ a { color: inherit; text-decoration: none; transition: color var(--transition-fa
 }
 @media (max-width: 768px){
   .hero-container{ padding: var(--spacing-3xl) var(--spacing-lg); }
-  .hero-title{ font-size: clamp(1.8rem, 6vw, 2.4rem); }
+  .hero-title{ font-size: clamp(1.6rem, 6vw, 2.0rem); }
   .hero-subtitle{ font-size: var(--font-size-base); }
   .hero-meta{ gap: var(--spacing-lg); }
 }
 @media (max-width: 480px){
-  .hero-title{ font-size: clamp(1.6rem, 7vw, 2rem); }
+  .hero-title{ font-size: clamp(1.5rem, 7vw, 1.9rem); }
   .hero-ctas{ flex-direction:column; align-items:stretch; }
 }
+
 
 /* ===========================================================
 #7. SERVICES
