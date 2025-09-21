@@ -159,34 +159,38 @@ function initLightEffects() {
     window.addEventListener('scroll', onScroll, { passive: true });
   }
   
-  // ===========================================
-  // 5. ANIMATIONS (AOS + Stat sayaçları)
-  // ===========================================
-  function initAnimations() {
-    if (typeof AOS !== 'undefined') {
-      AOS.init({ duration: 800, easing: 'ease-in-out', once: true, offset: 100 });
-    }
-  
-    // Stat başlangıç değerleri
-    const stats = document.querySelectorAll('.stat-number');
-    stats.forEach(el => {
-      const prefix = el.dataset.prefix || '';
-      const suffix = el.dataset.suffix || '';
-      el.textContent = `${prefix}0${suffix}`;
-    });
-  
-    if (stats.length) {
-      const io = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            animateNumber(entry.target);
-            io.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.25 });
-      stats.forEach(el => io.observe(el));
-    }
+// ===========================================
+// 5. ANIMATIONS (AOS + Stat sayaçları)  [GÜNCELLENDİ]
+// ===========================================
+function initAnimations() {
+  if (typeof AOS !== 'undefined') {
+    AOS.init({ duration: 800, easing: 'ease-in-out', once: true, offset: 100 });
   }
+
+  // Stat başlangıç değerleri
+  const stats = document.querySelectorAll('.stat-number');
+  stats.forEach(el => {
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    el.textContent = `${prefix}0${suffix}`;
+  });
+
+  if (stats.length) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateNumber(entry.target);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.25 });
+    stats.forEach(el => io.observe(el));
+  }
+
+  // --- Terminal kod döngüsünü başlat ---
+  initAiTerminalLoop();
+}
+
   
   function animateNumber(el) {
     // hem data-stat hem data-target destekle
@@ -420,91 +424,92 @@ function initCustomSelect() {
     }
   }
   
-  // ===========================================
-  // 8. AI TERMINAL LOOP (kod döngüsü)
-  // ===========================================
-  function initAiTerminalLoop() {
-    // DOĞRU HEDEF: hero'daki <pre id="heroTerminal">
-    const container = document.querySelector('#heroTerminal');
-    if (!container) return;
-  
-    // basit renklendirme
-    const kw  = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
-    const fn  = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative)\b/g;
-    const str = /(\".*?\"|\'.*?\')/g;
-    const num = /\b(\d+(\.\d+)?)\b/g;
-  
-    const hl = (s) =>
-      s.replace(str, '<span class="tok-str">$1</span>')
-       .replace(fn,  '<span class="tok-fn">$1</span>')
-       .replace(kw,  '<span class="tok-kw">$1</span>')
-       .replace(num, '<span class="tok-num">$1</span>');
-  
-    // İstenen senaryo
-    const SNIPPETS = [
-      [
-        '# Ingest → Google Trends (Shopping)',
-        'trends   = fetch.google_trends(category="shopping", region="TR", window="7d")',
-        'products = trends.topk(5, key="search_volume").name   # en çok aranan 5 ürün'
-      ],
-      [
-        '# Crawl → Online Stores (fiyat toplama)',
-        'stores = ["hepsiburada","trendyol","n11","amazon-tr"]',
-        'offers = scrape.search(stores=stores, items=products)',
-        'prices = transform.normalize(offers)',
-        'prices = prices.groupby("item").agg(min="price", max="price", avg="price")'
-      ],
-      [
-        '# Publish → BigQuery (piyasa fiyatları)',
-        'publish.bigquery(prices, dataset="pricing", table="market_prices_daily")'
-      ],
-      [
-        '# Internal Metrics → CTR / CVR / AvgPrice',
-        'internal = fetch.warehouse(dataset="sales", tables=["orders","impressions","catalog"])',
-        'joined   = transform.join(internal.orders, internal.impressions, on="sku")',
-        'stats    = joined.with_columns(ctr=clicks/impressions, cvr=orders/clicks)',
-        'stats    = stats.groupby("sku").agg(avg_price="mean(sale_price)", avg_ctr="mean(ctr)", avg_cvr="mean(cvr)")'
-      ],
-      [
-        '# Merge → Piyasa + Geçmiş + Bütçe',
-        'model_in = transform.join(stats, prices, on=("sku","item"), how="left")',
-        'budget   = finance.budget("Q4")',
-        'recos    = price.recommend(model_in, strategy="market+margin", budget=budget,',
-        '            constraints={min_margin:0.12, step:1})'
-      ],
-      [
-        '# Save & Evals',
-        'publish.bigquery(recos, dataset="pricing", table="recommended_prices")',
-        'checks = { sanity: rules.non_negative(["price"]), roi_expected: ">= 1.2" }',
-        'assert(evals.run(recos, checks))'
-      ]
-    ];
-  
-    const wait = (ms) => new Promise(r => setTimeout(r, ms));
-  
-    async function write(lines) {
-      container.innerHTML = '';
-      for (const raw of lines) {
-        const line = document.createElement('span');
-        line.className = 'line';
-        line.innerHTML = hl(raw);
-        container.appendChild(line);
-        await wait(140);
-      }
-      const cursor = document.createElement('span');
-      cursor.className = 'cursor';
-      container.appendChild(cursor);
-      await wait(1800);
+// ===========================================
+// 8. AI TERMINAL LOOP (kod döngüsü)  [GÜNCELLENDİ]
+// ===========================================
+function initAiTerminalLoop() {
+  // DOĞRU HEDEF: hero'daki <pre id="heroTerminal">
+  const container = document.querySelector('#heroTerminal');
+  if (!container) return;
+
+  // basit renklendirme
+  const kw  = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
+  const fn  = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative|excel|csv)\b/g;
+  const str = /(\".*?\"|\'.*?\')/g;
+  const num = /\b(\d+(\.\d+)?)\b/g;
+
+  const hl = (s) =>
+    s.replace(str, '<span class="tok-str">$1</span>')
+     .replace(fn,  '<span class="tok-fn">$1</span>')
+     .replace(kw,  '<span class="tok-kw">$1</span>')
+     .replace(num, '<span class="tok-num">$1</span>');
+
+  // Taslak otomasyon akışı (TR)
+  const SNIPPETS = [
+    [
+      '# Ingest → Google Trends (Shopping, TR)',
+      'trends   = fetch.google_trends(category="shopping", region="TR", window="7d")',
+      'products = trends.topk(10, key="search_volume").name   # en çok aranan 10 ürün'
+    ],
+    [
+      '# Crawl → TR e-ticaret siteleri (fiyat toplama)',
+      'stores = ["hepsiburada","trendyol","n11","amazon-tr"]',
+      'offers = scrape.search(stores=stores, items=products)',
+      'prices = transform.normalize(offers)                           # para birimi, KDV, varyant temizliği',
+      'prices = prices.groupby("item").agg(min="price", max="price", avg="price", count="n")'
+    ],
+    [
+      '# Export → Excel/CSV (rapor paylaşımı)',
+      'publish.excel(prices,  path="exports/market_prices.xlsx")',
+      'publish.csv(prices,    path="exports/market_prices.csv")'
+    ],
+    [
+      '# Internal → Geçmiş satış & görünürlük metrikleri',
+      'sales  = fetch.warehouse(dataset="sales", tables=["orders","impressions","catalog"])',
+      'joined = transform.join(sales.orders, sales.impressions, on="sku")',
+      'stats  = joined.with_columns(ctr=clicks/impressions, cvr=orders/clicks)',
+      'stats  = stats.groupby("sku").agg(avg_sale_price="mean(sale_price)", avg_ctr="mean(ctr)", avg_cvr="mean(cvr)")'
+    ],
+    [
+      '# Merge → Piyasa fiyatı + İç metrikler',
+      'model_in = transform.join(stats, prices, on=("sku","item"), how="left")',
+      'policy   = { min_margin:0.12, step:1, match_market:"avg±5%" }',
+      'recos    = price.recommend(model_in, strategy="market+margin", policy=policy)'
+    ],
+    [
+      '# Save & Evals',
+      'publish.bigquery(recos, dataset="pricing", table="recommended_prices")',
+      'checks = { sanity: rules.non_negative(["price"]), roi_expected: ">= 1.2" }',
+      'assert(evals.run(recos, checks))'
+    ]
+  ];
+
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+  async function write(lines) {
+    container.innerHTML = '';
+    for (const raw of lines) {
+      const line = document.createElement('span');
+      line.className = 'line';
+      line.innerHTML = hl(raw);
+      container.appendChild(line);
+      await wait(140);
     }
-  
-    (async () => {
-      let i = 0;
-      while (true) {
-        await write(SNIPPETS[i]);
-        i = (i + 1) % SNIPPETS.length;
-      }
-    })();
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    container.appendChild(cursor);
+    await wait(1800);
   }
+
+  (async () => {
+    let i = 0;
+    while (true) {
+      await write(SNIPPETS[i]);
+      i = (i + 1) % SNIPPETS.length;
+    }
+  })();
+}
+
   
   // küçük yardımcı
   function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
