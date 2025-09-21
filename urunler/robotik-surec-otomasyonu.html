@@ -26,27 +26,55 @@
   
   <style>
     /* ===========================================================
-       PAGE-SPECIFIC CSS (RPA)
-       Not: Mevcut görsel kimliği korundu.
+       PAGE THEME OVERRIDES → Ana sayfadaki koyu tema + yıldızlar
     =========================================================== */
-    /* RPA Specific Styles */
-    .rpa-hero {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+    /* Sayfa arka planını ana sayfa ile hizala */
+    body{
+      background:
+        radial-gradient(1200px 800px at 75% -10%, rgba(99,102,241,.18) 0%, rgba(99,102,241,0) 55%),
+        radial-gradient(900px 700px at 10% 110%, rgba(6,182,212,.14) 0%, rgba(6,182,212,0) 60%),
+        #0b1020;
+    }
+    /* Yıldız overlay görünürlüğü (script.js ile geliyor) */
+    #stars-overlay{ mix-blend-mode: screen; opacity:.95; pointer-events:none; }
+    
+    /* ===========================================================
+       FRAME / SURFACE → Ana sayfadaki kart/çerçeve görünümü
+    =========================================================== */
+    .page-frame{
       position: relative;
+      background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(17,24,39,.92));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 28px;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.45),
+        inset 0 0 0 1px rgba(255,255,255,.03);
+      backdrop-filter: blur(6px);
+      padding: clamp(24px, 4vw, 48px);
       overflow: hidden;
     }
-    
-    .rpa-hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-      opacity: 0.3;
+    .page-frame::after{
+      /* üst kenarda yumuşak parlama */
+      content:"";
+      position:absolute; inset: -1px -1px auto -1px; height: 140px;
+      background: linear-gradient(180deg, rgba(139,92,246,.22), rgba(139,92,246,0));
+      border-top-left-radius: 28px; border-top-right-radius: 28px;
+      pointer-events:none;
     }
-    
+
+    /* ===========================================================
+       RPA HERO → parlak gradyanı kapat, koyu temaya bırak
+    =========================================================== */
+    .rpa-hero{
+      background: transparent !important;  /* eski mor-mavi gradyanı kapat */
+      position: relative; z-index: 1;
+      padding-top: clamp(24px, 3vw, 36px);
+    }
+    .rpa-hero .hero-background{ display:none; } /* grid / partikül katmanını kapat */
+
+    /* ===========================================================
+       Kalan sayfa bölümleri (mevcut kimliği korundu)
+    =========================================================== */
     .rpa-stats { background: var(--bg-secondary); padding: var(--spacing-4xl) 0; }
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-2xl); margin-top: var(--spacing-3xl); }
     .stat-card { background: var(--bg-card); padding: var(--spacing-2xl); border-radius: var(--radius-xl); text-align: center; box-shadow: var(--shadow-lg); transition: all var(--transition-normal); }
@@ -54,7 +82,7 @@
     .stat-icon { width: 80px; height: 80px; background: var(--gradient-primary); border-radius: var(--radius-xl); display:flex; align-items:center; justify-content:center; margin: 0 auto var(--spacing-lg); font-size: var(--font-size-3xl); color: var(--white); }
     .stat-number { font-size: var(--font-size-4xl); font-weight: 800; color: var(--primary-color); margin-bottom: var(--spacing-sm); }
     .stat-label { font-size: var(--font-size-lg); color: var(--gray-600); font-weight: 600; }
-    
+
     .rpa-features { background: var(--bg-primary); padding: var(--spacing-4xl) 0; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-xl); margin-top: var(--spacing-3xl); }
     .feature-card { background: var(--bg-secondary); padding: var(--spacing-2xl); border-radius: var(--radius-xl); border: 1px solid var(--gray-700); transition: all var(--transition-normal); }
@@ -62,14 +90,14 @@
     .feature-icon { width: 60px; height: 60px; background: var(--gradient-primary); border-radius: var(--radius-lg); display:flex; align-items:center; justify-content:center; margin-bottom: var(--spacing-lg); font-size: var(--font-size-2xl); color: var(--white); }
     .feature-title { font-size: var(--font-size-xl); font-weight: 700; color: var(--white); margin-bottom: var(--spacing-md); }
     .feature-description { color: var(--gray-300); line-height: 1.6; }
-    
+
     .rpa-process { background: var(--bg-secondary); padding: var(--spacing-4xl) 0; }
     .process-steps { display:flex; flex-direction:column; gap: var(--spacing-2xl); margin-top: var(--spacing-3xl); }
     .process-step { display:grid; grid-template-columns: auto 1fr; gap: var(--spacing-xl); align-items:center; background: var(--bg-card); padding: var(--spacing-2xl); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
     .step-number { width: 80px; height: 80px; background: var(--gradient-primary); border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size: var(--font-size-2xl); font-weight: 800; color: var(--white); flex-shrink: 0; }
     .step-content h3 { font-size: var(--font-size-xl); font-weight: 700; color: var(--gray-900); margin-bottom: var(--spacing-md); }
     .step-content p { color: var(--gray-600); line-height: 1.6; }
-    
+
     .rpa-demo { background: var(--bg-primary); padding: var(--spacing-4xl) 0; }
     .demo-container { display:grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4xl); align-items:center; margin-top: var(--spacing-3xl); }
     .demo-video { border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-2xl); }
@@ -79,8 +107,9 @@
     .demo-features { list-style: none; padding: 0; }
     .demo-features li { display:flex; align-items:center; gap: var(--spacing-md); margin-bottom: var(--spacing-md); color: var(--gray-300); font-size: var(--font-size-base); }
     .demo-features i { color: var(--success-color); font-size: var(--font-size-lg); }
-    
+
     @media (max-width: 768px) {
+      .page-frame{ border-radius: 20px; padding: 20px; }
       .process-step { grid-template-columns: 1fr; text-align: center; }
       .demo-container { grid-template-columns: 1fr; gap: var(--spacing-2xl); }
       .stats-grid, .features-grid { grid-template-columns: 1fr; }
@@ -89,6 +118,7 @@
   <!-- ===========================================================
   [2] HEAD — END
   =========================================================== -->
+
 </head>
 
 <body>
@@ -152,41 +182,44 @@
   [5] HERO — START
   =========================================================== -->
   <section class="hero rpa-hero">
-    <div class="hero-background">
-      <div class="hero-particles"></div>
-      <div class="hero-grid"></div>
-    </div>
-    
-    <div class="hero-container">
-      <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
-        <div class="hero-badge"><i class="fas fa-robot"></i><span>Robotik Süreç Otomasyonu</span></div>
-        
-        <h1 class="hero-title">
-          <span class="gradient-text">Tekrarlayan İşleri</span>
-          <span class="hero-title-main">Otomatikleştirin</span>
-          <span class="hero-title-sub">Verimliliği Artırın</span>
-        </h1>
-        
-        <p class="hero-description">
-          Robotik Süreç Otomasyonu (RPA) ile tekrarlayan işlerinizi dijital çalışanlara bırakın. 
-          %80 verimlilik artışı, 7/24 kesintisiz çalışma ve hata oranında %95 azalma sağlayın.
-        </p>
-        
-        <div class="hero-actions">
-          <a href="#demo" class="btn btn-primary"><span>Demo İzle</span><i class="fas fa-play"></i></a>
-          <a href="../index.html#contact" class="btn btn-secondary"><i class="fas fa-envelope"></i><span>Teklif Al</span></a>
+    <div class="container page-frame">
+      <div class="hero-container">
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+          <div class="hero-badge">
+            <i class="fas fa-robot"></i>
+            <span>Robotik Süreç Otomasyonu</span>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="gradient-text">Tekrarlayan İşleri</span>
+            <span class="hero-title-main">Otomatikleştirin</span>
+            <span class="hero-title-sub">Verimliliği Artırın</span>
+          </h1>
+
+          <p class="hero-description">
+            Robotik Süreç Otomasyonu (RPA) ile tekrarlayan işlerinizi dijital çalışanlara bırakın.
+            %80 verimlilik artışı, 7/24 kesintisiz çalışma ve hata oranında %95 azalma sağlayın.
+          </p>
+
+          <div class="hero-actions">
+            <!-- Demo İzle kaldırıldı -->
+            <a href="../index.html#contact" class="btn btn-secondary">
+              <i class="fas fa-envelope"></i>
+              <span>Teklif Al</span>
+            </a>
+          </div>
         </div>
-      </div>
-      
-      <div class="hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
-        <div class="hero-3d-element">
-          <div class="cube">
-            <div class="cube-face front"><i class="fas fa-robot"></i></div>
-            <div class="cube-face back"><i class="fas fa-cogs"></i></div>
-            <div class="cube-face right"><i class="fas fa-chart-line"></i></div>
-            <div class="cube-face left"><i class="fas fa-database"></i></div>
-            <div class="cube-face top"><i class="fas fa-brain"></i></div>
-            <div class="cube-face bottom"><i class="fas fa-rocket"></i></div>
+
+        <div class="hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
+          <div class="hero-3d-element">
+            <div class="cube">
+              <div class="cube-face front"><i class="fas fa-robot"></i></div>
+              <div class="cube-face back"><i class="fas fa-cogs"></i></div>
+              <div class="cube-face right"><i class="fas fa-chart-line"></i></div>
+              <div class="cube-face left"><i class="fas fa-database"></i></div>
+              <div class="cube-face top"><i class="fas fa-brain"></i></div>
+              <div class="cube-face bottom"><i class="fas fa-rocket"></i></div>
+            </div>
           </div>
         </div>
       </div>
@@ -195,6 +228,7 @@
   <!-- ===========================================================
   [5] HERO — END
   =========================================================== -->
+
 
   <!-- ===========================================================
   [6] STATS — START
