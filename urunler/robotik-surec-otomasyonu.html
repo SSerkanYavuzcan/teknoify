@@ -5,280 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Robotik Süreç Otomasyonu (RPA) | Teknoify</title>
   <meta name="description" content="Teknoify RPA ile tekrarlayan işleri otomatikleştirin. %80 verimlilik artışı, 7/24 kesintisiz çalışma ve hata oranında %95 azalma.">
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
-  <!-- AOS Animation Library -->
+  <!-- AOS -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  
-  <!-- CSS -->
+  <!-- Global CSS -->
   <link rel="stylesheet" href="../css/style.css">
-  
+
   <style>
-    /* RPA Specific Styles */
-    .rpa-hero {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .rpa-hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-      opacity: 0.3;
-    }
-    
-    .rpa-stats {
-      background: var(--bg-secondary);
-      padding: var(--spacing-4xl) 0;
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--spacing-2xl);
-      margin-top: var(--spacing-3xl);
-    }
-    
-    .stat-card {
-      background: var(--bg-card);
-      padding: var(--spacing-2xl);
-      border-radius: var(--radius-xl);
-      text-align: center;
-      box-shadow: var(--shadow-lg);
-      transition: all var(--transition-normal);
-    }
-    
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-xl);
-    }
-    
-    .stat-icon {
-      width: 80px;
-      height: 80px;
-      background: var(--gradient-primary);
-      border-radius: var(--radius-xl);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto var(--spacing-lg);
-      font-size: var(--font-size-3xl);
-      color: var(--white);
-    }
-    
-    .stat-number {
-      font-size: var(--font-size-4xl);
-      font-weight: 800;
-      color: var(--primary-color);
-      margin-bottom: var(--spacing-sm);
-    }
-    
-    .stat-label {
-      font-size: var(--font-size-lg);
-      color: var(--gray-600);
-      font-weight: 600;
-    }
-    
-    .rpa-features {
-      background: var(--bg-primary);
-      padding: var(--spacing-4xl) 0;
-    }
-    
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: var(--spacing-xl);
-      margin-top: var(--spacing-3xl);
-    }
-    
-    .feature-card {
-      background: var(--bg-secondary);
-      padding: var(--spacing-2xl);
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--gray-700);
-      transition: all var(--transition-normal);
-    }
-    
-    .feature-card:hover {
-      border-color: var(--primary-color);
-      transform: translateY(-3px);
-    }
-    
-    .feature-icon {
-      width: 60px;
-      height: 60px;
-      background: var(--gradient-primary);
-      border-radius: var(--radius-lg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: var(--spacing-lg);
-      font-size: var(--font-size-2xl);
-      color: var(--white);
-    }
-    
-    .feature-title {
-      font-size: var(--font-size-xl);
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: var(--spacing-md);
-    }
-    
-    .feature-description {
-      color: var(--gray-300);
-      line-height: 1.6;
-    }
-    
-    .rpa-process {
-      background: var(--bg-secondary);
-      padding: var(--spacing-4xl) 0;
-    }
-    
-    .process-steps {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2xl);
-      margin-top: var(--spacing-3xl);
-    }
-    
-    .process-step {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: var(--spacing-xl);
-      align-items: center;
-      background: var(--bg-card);
-      padding: var(--spacing-2xl);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-lg);
-    }
-    
-    .step-number {
-      width: 80px;
-      height: 80px;
-      background: var(--gradient-primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: var(--font-size-2xl);
-      font-weight: 800;
-      color: var(--white);
-      flex-shrink: 0;
-    }
-    
-    .step-content h3 {
-      font-size: var(--font-size-xl);
-      font-weight: 700;
-      color: var(--gray-900);
-      margin-bottom: var(--spacing-md);
-    }
-    
-    .step-content p {
-      color: var(--gray-600);
-      line-height: 1.6;
-    }
-    
-    .rpa-demo {
-      background: var(--bg-primary);
-      padding: var(--spacing-4xl) 0;
-    }
-    
-    .demo-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-4xl);
-      align-items: center;
-      margin-top: var(--spacing-3xl);
-    }
-    
-    .demo-video {
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-2xl);
-    }
-    
-    .demo-video video {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    
-    .demo-content h3 {
-      font-size: var(--font-size-3xl);
-      font-weight: 800;
-      color: var(--white);
+    /* ==== RPA sayfasına özel hafif dokunuşlar ==== */
+
+    /* Hero'yu anasayfadaki koyu stile getir */
+    .rpa-hero { background: var(--bg-secondary); }
+
+    /* Önceki grid/gradient kaplamasını devre dışı bırak (gerek kalmadı) */
+    .rpa-hero .hero-background { display: none !important; }
+
+    /* RPA rozet/başlık düzeni */
+    .hero-badge{
+      display:inline-flex; align-items:center; gap:.6rem;
+      padding:.5rem .9rem; border-radius:9999px;
+      background:rgba(99,102,241,.12); color:#fff;
+      border:1px solid rgba(99,102,241,.28); font-weight:700;
       margin-bottom: var(--spacing-lg);
     }
-    
-    .demo-content p {
-      font-size: var(--font-size-lg);
-      color: var(--gray-300);
-      margin-bottom: var(--spacing-xl);
-      line-height: 1.7;
-    }
-    
-    .demo-features {
-      list-style: none;
-      padding: 0;
-    }
-    
-    .demo-features li {
-      display: flex;
-        align-items: center;
-      gap: var(--spacing-md);
-      margin-bottom: var(--spacing-md);
-      color: var(--gray-300);
-      font-size: var(--font-size-base);
-    }
-    
-    .demo-features i {
-      color: var(--success-color);
-      font-size: var(--font-size-lg);
-    }
-    
-    @media (max-width: 768px) {
-      .process-step {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-      
-      .demo-container {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-2xl);
-      }
-      
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    .hero-title .hero-title-main{ display:block; }
+    .hero-title .hero-title-sub{ display:block; opacity:.85; }
+
+    /* Hero CTA: sadece Teklif Al */
+    .hero-ctas .btn{ font-size: var(--font-size-base); padding: var(--spacing-md) var(--spacing-xl); }
+
+    /* İkonlu 3D görsel için küçük iyileştirme (varsa) */
+    .hero-3d-element { display:flex; justify-content:center; align-items:center; }
+
+    /* Diğer bölümler dokunulmadı */
   </style>
 </head>
 
 <body>
-  <!-- Loading Screen -->
+  <!-- Loader (varsa) -->
   <div id="loader" class="loader">
     <div class="loader-content">
       <div class="loader-logo">
         <div class="logo-circle"></div>
         <div class="logo-text">TEKNOIFY</div>
       </div>
-      <div class="loader-bar">
-        <div class="loader-progress"></div>
-      </div>
+      <div class="loader-bar"><div class="loader-progress"></div></div>
     </div>
   </div>
 
@@ -292,11 +67,9 @@
             <span class="logo-text">Teknoify</span>
           </a>
         </div>
-        
+
         <ul class="nav-menu">
-          <li class="nav-item">
-            <a href="../index.html#home" class="nav-link">Ana Sayfa</a>
-          </li>
+          <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
           <li class="nav-item dropdown">
             <a href="../index.html#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down"></i></a>
             <ul class="dropdown-menu">
@@ -306,365 +79,264 @@
               <li><a href="akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
             </ul>
           </li>
-          <li class="nav-item">
-            <a href="../index.html#about" class="nav-link">Hakkımızda</a>
-          </li>
-          <li class="nav-item">
-            <a href="../index.html#contact" class="nav-link">İletişim</a>
-          </li>
-      </ul>
-        
-        <div class="hamburger">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </div>
+          <li class="nav-item"><a href="../index.html#about" class="nav-link">Hakkımızda</a></li>
+          <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+        </ul>
+
+        <div class="hamburger"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
       </div>
     </nav>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero rpa-hero">
-    <div class="hero-background">
-      <div class="hero-particles"></div>
-      <div class="hero-grid"></div>
-    </div>
-    
-    <div class="hero-container">
-      <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
-        <div class="hero-badge">
-          <i class="fas fa-robot"></i>
-          <span>Robotik Süreç Otomasyonu</span>
-        </div>
-        
-        <h1 class="hero-title">
-          <span class="gradient-text">Tekrarlayan İşleri</span>
-          <span class="hero-title-main">Otomatikleştirin</span>
-          <span class="hero-title-sub">Verimliliği Artırın</span>
-        </h1>
-        
-        <p class="hero-description">
-          Robotik Süreç Otomasyonu (RPA) ile tekrarlayan işlerinizi dijital çalışanlara bırakın. 
-          %80 verimlilik artışı, 7/24 kesintisiz çalışma ve hata oranında %95 azalma sağlayın.
-        </p>
-        
-        <div class="hero-actions">
-          <a href="#demo" class="btn btn-primary">
-            <span>Demo İzle</span>
-            <i class="fas fa-play"></i>
-          </a>
-          <a href="../index.html#contact" class="btn btn-secondary">
-            <i class="fas fa-envelope"></i>
-            <span>Teklif Al</span>
-          </a>
-        </div>
-      </div>
-      
-      <div class="hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
-        <div class="hero-3d-element">
-          <div class="cube">
-            <div class="cube-face front"><i class="fas fa-robot"></i></div>
-            <div class="cube-face back"><i class="fas fa-cogs"></i></div>
-            <div class="cube-face right"><i class="fas fa-chart-line"></i></div>
-            <div class="cube-face left"><i class="fas fa-database"></i></div>
-            <div class="cube-face top"><i class="fas fa-brain"></i></div>
-            <div class="cube-face bottom"><i class="fas fa-rocket"></i></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- ======= PAGE FRAME BAŞLANGIÇ ======= -->
+  <div class="page-frame">
 
-  <!-- Stats Section -->
-  <section class="rpa-stats">
-    <div class="container">
-      <div class="section-header" data-aos="fade-up">
-        <div class="section-badge">
-          <i class="fas fa-chart-bar"></i>
-          <span>RPA İstatistikleri</span>
-        </div>
-        <h2 class="section-title">
-          <span class="gradient-text">Kanıtlanmış</span> Sonuçlar
-        </h2>
-        <p class="section-description">
-          RPA teknolojimiz ile elde ettiğimiz başarılı sonuçlar
-        </p>
+    <!-- Hero (anasayfa stili + yıldız + grid) -->
+    <section class="hero rpa-hero" id="rpa-hero">
+      <!-- dekoratif yüzey -->
+      <div class="hero-surface" aria-hidden="true">
+        <div class="hero-grid"></div>
+        <div class="hero-accent"></div>
       </div>
-      
-      <div class="stats-grid">
-        <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
-          <div class="stat-icon">
-            <i class="fas fa-arrow-up"></i>
-          </div>
-          <div class="stat-number">80%</div>
-          <div class="stat-label">Verimlilik Artışı</div>
-        </div>
-        
-        <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="stat-icon">
-            <i class="fas fa-clock"></i>
-          </div>
-          <div class="stat-number">24/7</div>
-          <div class="stat-label">Kesintisiz Çalışma</div>
-        </div>
-        
-        <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
-          <div class="stat-icon">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <div class="stat-number">95%</div>
-          <div class="stat-label">Hata Azalması</div>
-        </div>
-        
-        <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
-          <div class="stat-icon">
-            <i class="fas fa-dollar-sign"></i>
-          </div>
-          <div class="stat-number">60%</div>
-          <div class="stat-label">Maliyet Tasarrufu</div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Features Section -->
-  <section class="rpa-features">
-    <div class="container">
-      <div class="section-header" data-aos="fade-up">
-        <div class="section-badge">
-          <i class="fas fa-star"></i>
-          <span>RPA Özellikleri</span>
-        </div>
-        <h2 class="section-title">
-          <span class="gradient-text">Güçlü</span> Otomasyon Çözümleri
-        </h2>
-        <p class="section-description">
-          İş süreçlerinizi optimize eden gelişmiş RPA özellikleri
-        </p>
-      </div>
-      
-      <div class="features-grid">
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-          <div class="feature-icon">
-            <i class="fas fa-brain"></i>
+      <div class="hero-container">
+        <!-- Sol -->
+        <div class="hero-left" data-aos="fade-up">
+          <div class="hero-badge">
+            <i class="fas fa-robot"></i>
+            <span>Robotik Süreç Otomasyonu</span>
           </div>
-          <h3 class="feature-title">Yapay Zeka Destekli</h3>
-          <p class="feature-description">
-            Makine öğrenmesi algoritmaları ile sürekli öğrenen ve gelişen otomasyon sistemleri.
-          </p>
-        </div>
-        
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="feature-icon">
-            <i class="fas fa-shield-alt"></i>
-          </div>
-          <h3 class="feature-title">Güvenli Altyapı</h3>
-          <p class="feature-description">
-            En son güvenlik standartları ile korunan, veri güvenliğini ön planda tutan sistemler.
-          </p>
-        </div>
-        
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-          <div class="feature-icon">
-            <i class="fas fa-plug"></i>
-          </div>
-          <h3 class="feature-title">Kolay Entegrasyon</h3>
-          <p class="feature-description">
-            Mevcut sistemlerinizle sorunsuz entegrasyon, hızlı kurulum ve kolay yönetim.
-          </p>
-        </div>
-        
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
-          <div class="feature-icon">
-            <i class="fas fa-chart-line"></i>
-          </div>
-          <h3 class="feature-title">Detaylı Raporlama</h3>
-          <p class="feature-description">
-            Gerçek zamanlı performans takibi ve detaylı analiz raporları ile süreç kontrolü.
-          </p>
-        </div>
-        
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
-          <div class="feature-icon">
-            <i class="fas fa-users"></i>
-          </div>
-          <h3 class="feature-title">Ölçeklenebilir</h3>
-          <p class="feature-description">
-            İhtiyacınıza göre büyüyebilen, esnek ve uyarlanabilir otomasyon çözümleri.
-          </p>
-        </div>
-        
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
-          <div class="feature-icon">
-            <i class="fas fa-headset"></i>
-          </div>
-          <h3 class="feature-title">7/24 Destek</h3>
-          <p class="feature-description">
-            Kesintisiz teknik destek ve müşteri hizmetleri ile her zaman yanınızdayız.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Process Section -->
-  <section class="rpa-process">
-    <div class="container">
-      <div class="section-header" data-aos="fade-up">
-        <div class="section-badge">
-          <i class="fas fa-cogs"></i>
-          <span>RPA Süreci</span>
-        </div>
-        <h2 class="section-title">
-          <span class="gradient-text">4 Adımda</span> RPA Kurulumu
-        </h2>
-        <p class="section-description">
-          RPA projenizi başarıyla hayata geçirmek için izlediğimiz süreç
-        </p>
-      </div>
-      
-      <div class="process-steps">
-        <div class="process-step" data-aos="fade-up" data-aos-delay="100">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h3>Süreç Analizi</h3>
-            <p>Mevcut iş süreçlerinizi detaylı olarak analiz ediyor, otomasyona uygun alanları belirliyoruz.</p>
-          </div>
-        </div>
-        
-        <div class="process-step" data-aos="fade-up" data-aos-delay="200">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h3>Çözüm Tasarımı</h3>
-            <p>İhtiyaçlarınıza özel RPA çözümünü tasarlıyor, prototip geliştiriyoruz.</p>
-          </div>
-        </div>
-        
-        <div class="process-step" data-aos="fade-up" data-aos-delay="300">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <h3>Geliştirme ve Test</h3>
-            <p>RPA botlarını geliştiriyor, kapsamlı testler yaparak mükemmel çalışmasını sağlıyoruz.</p>
-          </div>
-        </div>
-        
-        <div class="process-step" data-aos="fade-up" data-aos-delay="400">
-          <div class="step-number">4</div>
-          <div class="step-content">
-            <h3>Canlıya Alma ve Destek</h3>
-            <p>Sistemi canlıya alıyor, sürekli destek ve optimizasyon hizmetleri sunuyoruz.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+          <h1 class="hero-title">
+            <span class="gradient-text">Tekrarlayan İşleri</span>
+            <span class="hero-title-main">Otomatikleştirin</span>
+            <span class="hero-title-sub">Verimliliği Artırın</span>
+          </h1>
 
-  <!-- Demo Section -->
-  <section id="demo" class="rpa-demo">
-    <div class="container">
-      <div class="section-header" data-aos="fade-up">
-        <div class="section-badge">
-          <i class="fas fa-play"></i>
-          <span>Demo</span>
-        </div>
-        <h2 class="section-title">
-          <span class="gradient-text">RPA</span> Nasıl Çalışır?
-        </h2>
-        <p class="section-description">
-          Robotik süreç otomasyonunun gerçek hayatta nasıl çalıştığını gösteren demo
-        </p>
-      </div>
-      
-      <div class="demo-container">
-        <div class="demo-video" data-aos="fade-right">
-          <video autoplay loop muted playsinline>
-            <source src="../videos/robotic-process-automation.mp4" type="video/mp4">
-            Tarayıcınız video oynatmayı desteklemiyor.
-          </video>
-    </div>
-        
-        <div class="demo-content" data-aos="fade-left">
-          <h3>Otomatik Veri İşleme Süreci</h3>
-          <p>
-            Bu demo, RPA teknolojimizin nasıl çalıştığını gösteriyor. Bot, 
-            tekrarlayan işleri otomatik olarak gerçekleştiriyor ve insan 
-            müdahalesi gerektirmeden sürekli çalışıyor.
+          <p class="hero-subtitle">
+            Robotik Süreç Otomasyonu (RPA) ile tekrarlayan işlerinizi dijital çalışanlara bırakın.
+            %80 verimlilik artışı, 7/24 kesintisiz çalışma ve hata oranında %95 azalma sağlayın.
           </p>
-          
-          <ul class="demo-features">
-            <li><i class="fas fa-check"></i> Otomatik veri girişi ve işleme</li>
-            <li><i class="fas fa-check"></i> Hata kontrolü ve düzeltme</li>
-            <li><i class="fas fa-check"></i> Gerçek zamanlı raporlama</li>
-            <li><i class="fas fa-check"></i> Sistem entegrasyonu</li>
-            <li><i class="fas fa-check"></i> Performans optimizasyonu</li>
-          </ul>
-          
-          <a href="../index.html#contact" class="btn btn-primary" style="margin-top: var(--spacing-lg);">
-            <span>Kendi Projenizi Başlatın</span>
-            <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <div class="footer-logo">
-            <span class="logo-icon"><i class="fas fa-cube"></i></span>
-            <span class="logo-text">Teknoify</span>
-          </div>
-          <p>Geleceğin teknolojisi ile işinizi dijitalleştirin.</p>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-linkedin"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-github"></i></a>
+          <div class="hero-ctas">
+            <a href="../index.html#contact" class="btn btn-primary btn-glow">
+              <span>Teklif Al</span>
+              <i class="fas fa-paper-plane"></i>
+            </a>
           </div>
         </div>
-        
-        <div class="footer-section">
-          <h4>Hizmetler</h4>
-          <ul>
-            <li><a href="robotik-surec-otomasyonu.html">RPA</a></li>
-            <li><a href="web-scraping.html">Web Scraping</a></li>
-            <li><a href="finansal-indikatorler.html">Finansal Analiz</a></li>
-            <li><a href="akilli-dijital-asistan.html">AI Asistan</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-section">
-          <h4>Şirket</h4>
-          <ul>
-            <li><a href="../index.html#about">Hakkımızda</a></li>
-            <li><a href="../index.html#contact">İletişim</a></li>
-            <li><a href="#">Kariyer</a></li>
-            <li><a href="#">Blog</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-section">
-          <h4>Destek</h4>
-          <ul>
-            <li><a href="#">Dokümantasyon</a></li>
-            <li><a href="#">API Referansı</a></li>
-            <li><a href="#">SSS</a></li>
-            <li><a href="#">Teknik Destek</a></li>
-      </ul>
-    </div>
-      </div>
-      
-      <div class="footer-bottom">
-        <p>&copy; 2025 Teknoify. Tüm hakları saklıdır.</p>
-        <div class="footer-links">
-          <a href="#">Gizlilik Politikası</a>
-          <a href="#">Kullanım Şartları</a>
+
+        <!-- Sağ (isteğe bağlı görsel/3D) -->
+        <div class="hero-right" data-aos="fade-left" data-aos-delay="200">
+          <div class="hero-terminal terminal-v2" style="display:none;"></div>
+          <!-- İstersen burada 3D küpünü tutmaya devam edebilirsin -->
+          <div class="hero-3d-element">
+            <div class="cube">
+              <div class="cube-face front"><i class="fas fa-robot"></i></div>
+              <div class="cube-face back"><i class="fas fa-cogs"></i></div>
+              <div class="cube-face right"><i class="fas fa-chart-line"></i></div>
+              <div class="cube-face left"><i class="fas fa-database"></i></div>
+              <div class="cube-face top"><i class="fas fa-brain"></i></div>
+              <div class="cube-face bottom"><i class="fas fa-rocket"></i></div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="rpa-stats">
+      <div class="container">
+        <div class="section-header" data-aos="fade-up">
+          <div class="section-badge"><i class="fas fa-chart-bar"></i><span>RPA İstatistikleri</span></div>
+          <h2 class="section-title"><span class="gradient-text">Kanıtlanmış</span> Sonuçlar</h2>
+          <p class="section-description">RPA teknolojimiz ile elde ettiğimiz başarılı sonuçlar</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+            <div class="stat-number">80%</div>
+            <div class="stat-label">Verimlilik Artışı</div>
+          </div>
+
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Kesintisiz Çalışma</div>
+          </div>
+
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-number">95%</div>
+            <div class="stat-label">Hata Azalması</div>
+          </div>
+
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="stat-number">60%</div>
+            <div class="stat-label">Maliyet Tasarrufu</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="rpa-features">
+      <div class="container">
+        <div class="section-header" data-aos="fade-up">
+          <div class="section-badge"><i class="fas fa-star"></i><span>RPA Özellikleri</span></div>
+          <h2 class="section-title"><span class="gradient-text">Güçlü</span> Otomasyon Çözümleri</h2>
+          <p class="section-description">İş süreçlerinizi optimize eden gelişmiş RPA özellikleri</p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-icon"><i class="fas fa-brain"></i></div>
+            <h3 class="feature-title">Yapay Zeka Destekli</h3>
+            <p class="feature-description">Makine öğrenmesi algoritmaları ile sürekli öğrenen ve gelişen otomasyon sistemleri.</p>
+          </div>
+
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+            <h3 class="feature-title">Güvenli Altyapı</h3>
+            <p class="feature-description">En son güvenlik standartları ile korunan, veri güvenliğini ön planda tutan sistemler.</p>
+          </div>
+
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="feature-icon"><i class="fas fa-plug"></i></div>
+            <h3 class="feature-title">Kolay Entegrasyon</h3>
+            <p class="feature-description">Mevcut sistemlerinizle sorunsuz entegrasyon, hızlı kurulum ve kolay yönetim.</p>
+          </div>
+
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+            <h3 class="feature-title">Detaylı Raporlama</h3>
+            <p class="feature-description">Gerçek zamanlı performans takibi ve detaylı analiz raporları ile süreç kontrolü.</p>
+          </div>
+
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+            <div class="feature-icon"><i class="fas fa-users"></i></div>
+            <h3 class="feature-title">Ölçeklenebilir</h3>
+            <p class="feature-description">İhtiyacınıza göre büyüyebilen, esnek ve uyarlanabilir otomasyon çözümleri.</p>
+          </div>
+
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+            <div class="feature-icon"><i class="fas fa-headset"></i></div>
+            <h3 class="feature-title">7/24 Destek</h3>
+            <p class="feature-description">Kesintisiz teknik destek ve müşteri hizmetleri ile her zaman yanınızdayız.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="rpa-process">
+      <div class="container">
+        <div class="section-header" data-aos="fade-up">
+          <div class="section-badge"><i class="fas fa-cogs"></i><span>RPA Süreci</span></div>
+          <h2 class="section-title"><span class="gradient-text">4 Adımda</span> RPA Kurulumu</h2>
+          <p class="section-description">RPA projenizi başarıyla hayata geçirmek için izlediğimiz süreç</p>
+        </div>
+
+        <div class="process-steps">
+          <div class="process-step" data-aos="fade-up" data-aos-delay="100">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Süreç Analizi</h3>
+              <p>Mevcut iş süreçlerinizi detaylı olarak analiz ediyor, otomasyona uygun alanları belirliyoruz.</p>
+            </div>
+          </div>
+
+          <div class="process-step" data-aos="fade-up" data-aos-delay="200">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Çözüm Tasarımı</h3>
+              <p>İhtiyaçlarınıza özel RPA çözümünü tasarlıyor, prototip geliştiriyoruz.</p>
+            </div>
+          </div>
+
+          <div class="process-step" data-aos="fade-up" data-aos-delay="300">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Geliştirme ve Test</h3>
+              <p>RPA botlarını geliştiriyor, kapsamlı testler yaparak mükemmel çalışmasını sağlıyoruz.</p>
+            </div>
+          </div>
+
+          <div class="process-step" data-aos="fade-up" data-aos-delay="400">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h3>Canlıya Alma ve Destek</h3>
+              <p>Sistemi canlıya alıyor, sürekli destek ve optimizasyon hizmetleri sunuyoruz.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demo bölümü kaldırıldı (istenirse geri eklenebilir) -->
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <div class="footer-logo">
+              <span class="logo-icon"><i class="fas fa-cube"></i></span>
+              <span class="logo-text">Teknoify</span>
+            </div>
+            <p>Geleceğin teknolojisi ile işinizi dijitalleştirin.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+          </div>
+
+          <div class="footer-section">
+            <h4>Hizmetler</h4>
+            <ul>
+              <li><a href="robotik-surec-otomasyonu.html">RPA</a></li>
+              <li><a href="web-scraping.html">Web Scraping</a></li>
+              <li><a href="finansal-indikatorler.html">Finansal Analiz</a></li>
+              <li><a href="akilli-dijital-asistan.html">AI Asistan</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Şirket</h4>
+            <ul>
+              <li><a href="../index.html#about">Hakkımızda</a></li>
+              <li><a href="../index.html#contact">İletişim</a></li>
+              <li><a href="#">Kariyer</a></li>
+              <li><a href="#">Blog</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Destek</h4>
+            <ul>
+              <li><a href="#">Dokümantasyon</a></li>
+              <li><a href="#">API Referansı</a></li>
+              <li><a href="#">SSS</a></li>
+              <li><a href="#">Teknik Destek</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2025 Teknoify. Tüm hakları saklıdır.</p>
+          <div class="footer-links">
+            <a href="#">Gizlilik Politikası</a>
+            <a href="#">Kullanım Şartları</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /.page-frame -->
+  <!-- ======= PAGE FRAME BİTİŞ ======= -->
 
   <!-- Scripts -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
