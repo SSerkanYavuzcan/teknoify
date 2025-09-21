@@ -160,7 +160,7 @@ function initLightEffects() {
   }
   
 // ===========================================
-// 5. ANIMATIONS — terminal döngüsünü garantile  [GÜNCELLENDİ]
+// 5. ANIMATIONS — terminal döngüsünü başlat  [GÜNCELLENDİ]
 // ===========================================
 function initAnimations() {
   if (typeof AOS !== 'undefined') {
@@ -187,10 +187,11 @@ function initAnimations() {
     stats.forEach(el => io.observe(el));
   }
 
-  // Terminal kod akışı
-  try { initAiTerminalLoop(); } catch (e) { /* sessizce geç */ }
+  // Terminal kod akışını mutlaka başlat (idempotent)
+  try { initAiTerminalLoop(); } catch (_) {}
 }
-  
+
+
   function animateNumber(el) {
     // hem data-stat hem data-target destekle
     const target   = Number(el.dataset.stat ?? el.dataset.target ?? 0);
@@ -627,3 +628,105 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+
+// ===========================================
+// 11. AI TERMINAL LOOP 
+// ===========================================
+
+function initAiTerminalLoop() {
+  const container = document.querySelector('#heroTerminal');
+  if (!container) return;
+
+  // Zaten çalışıyorsa tekrar kurma
+  if (container.dataset.running === '1') return;
+  container.dataset.running = '1';
+
+  // Güvenli highlight
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const kw  = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
+  const fn  = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative|excel|csv)\b/g;
+  const str = /(\".*?\"|\'.*?\')/g;
+  const num = /\b(\d+(\.\d+)?)\b/g;
+  const hl  = raw => esc(raw)
+    .replace(str,'<span class="tok-str">$1</span>')
+    .replace(fn, '<span class="tok-fn">$1</span>')
+    .replace(kw, '<span class="tok-kw">$1</span>')
+    .replace(num,'<span class="tok-num">$1</span>');
+
+  // Akış (markasız mağazalar)
+  const LINES = [
+    '# Ingest → Google Trends (Shopping, TR)',
+    'trends   = fetch.google_trends(category="shopping", region="TR", window="7d")',
+    'products = trends.topk(10, key="search_volume").name',
+    '',
+    '# Crawl → e-ticaret siteleri (fiyat toplama)',
+    'stores = ["x","y","z","w"]',
+    'offers = scrape.search(stores=stores, items=products)',
+    'prices = transform.normalize(offers)  # para birimi, KDV, varyant temizliği',
+    'prices = prices.groupby("item").agg(min="price", max="price", avg="price", count="n")',
+    '',
+    '# Export → Excel/CSV (rapor)',
+    'publish.excel(prices, path="exports/market_prices.xlsx")',
+    'publish.csv(prices,   path="exports/market_prices.csv")',
+    '',
+    '# Internal → Geçmiş satış & görünürlük',
+    'sales  = fetch.warehouse(dataset="sales", tables=["orders","impressions","catalog"])',
+    'joined = transform.join(sales.orders, sales.impressions, on="sku")',
+    'stats  = joined.with_columns(ctr=clicks/impressions, cvr=orders/clicks)',
+    'stats  = stats.groupby("sku").agg(avg_sale_price="mean(sale_price)", avg_ctr="mean(ctr)", avg_cvr="mean(cvr)")',
+    '',
+    '# Merge → Piyasa fiyatı + iç metrikler',
+    'model_in = transform.join(stats, prices, on=("sku","item"), how="left")',
+    'policy   = { min_margin:0.12, step:1, match_market:"avg±5%" }',
+    'recos    = price.recommend(model_in, strategy="market+margin", policy=policy)',
+    '',
+    '# Save & Evals',
+    'publish.bigquery(recos, dataset="pricing", table="recommended_prices")',
+    'checks = { sanity: rules.non_negative(["price"]), roi_expected: ">= 1.2" }',
+    'assert(evals.run(recos, checks))',
+  ];
+
+  // İnsan hızına yakın yazım
+  const charDelay  = () => 60 + Math.random() * 70;          // 60–130ms
+  const extraPause = ch => /[.,;:)]/.test(ch) ? 180 : ch===' ' ? 10 : 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  // Cursor
+  let cursor;
+  const ensureCursor = () => {
+    if (!cursor) { cursor = document.createElement('span'); cursor.className = 'cursor'; }
+    container.appendChild(cursor);
+  };
+
+  async function typeLine(text) {
+    const line = document.createElement('span');
+    line.className = 'line';
+    // Satır animasyonu görünürlüğe engel olmasın
+    line.style.opacity = '1';
+    line.style.transform = 'none';
+    line.style.animation = 'none';
+    container.appendChild(line);
+    ensureCursor();
+
+    let buf = '';
+    for (let i = 0; i < text.length; i++) {
+      buf += text[i];
+      line.innerHTML = hl(buf);
+      ensureCursor();
+      container.scrollTop = container.scrollHeight;
+      await wait(charDelay() + extraPause(text[i]));
+    }
+    container.appendChild(document.createTextNode('\n'));
+    container.scrollTop = container.scrollHeight;
+    await wait(160);
+  }
+
+  (async () => {
+    while (true) {
+      container.innerHTML = '';
+      cursor = null;
+      for (const ln of LINES) await typeLine(ln);
+      await wait(800);
+    }
+  })();
+}
