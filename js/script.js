@@ -160,7 +160,7 @@ function initLightEffects() {
   }
   
 // ===========================================
-// 5. ANIMATIONS (AOS + Stat sayaçları)  [GÜNCELLENDİ]
+// 5. ANIMATIONS — terminal döngüsünü garantile  [GÜNCELLENDİ]
 // ===========================================
 function initAnimations() {
   if (typeof AOS !== 'undefined') {
@@ -187,10 +187,9 @@ function initAnimations() {
     stats.forEach(el => io.observe(el));
   }
 
-  // --- Terminal kod döngüsünü başlat ---
-  initAiTerminalLoop();
+  // Terminal kod akışı
+  try { initAiTerminalLoop(); } catch (e) { /* sessizce geç */ }
 }
-
   
   function animateNumber(el) {
     // hem data-stat hem data-target destekle
@@ -320,55 +319,124 @@ function initContactForm() {
 
   
 // ===========================================
-// 8. CUSTOM SELECT — devre dışı, native'i görünür bırak
+// 8. CUSTOM SELECT — sağlam kurulum (gerekirse sıfırdan oluşturur)  [GÜNCELLENDİ]
 // ===========================================
 function initCustomSelect() {
-  const native = document.querySelector('#service');
+  const native = document.querySelector('select#service');
   if (!native) return;
 
-  // Varsa custom wrapper'ı temizle
-  const maybeCustom = native.nextElementSibling;
-  if (maybeCustom && maybeCustom.classList?.contains('custom-select')) {
-    maybeCustom.remove();
+  // 1) Eğer custom wrapper yoksa, native <select>'ten yeniden oluştur
+  let wrap = native.closest('.custom-select');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'custom-select';
+    wrap.dataset.name = 'service';
+
+    // Trigger
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'cs-trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+
+    const valSpan = document.createElement('span');
+    valSpan.className = 'cs-value';
+    valSpan.textContent = native.options[0]?.textContent || 'Hizmet Seçiniz';
+
+    const chevron = document.createElement('i');
+    chevron.className = 'fas fa-chevron-down';
+
+    trigger.appendChild(valSpan);
+    trigger.appendChild(chevron);
+
+    // Liste
+    const list = document.createElement('ul');
+    list.className = 'cs-list';
+    list.setAttribute('role', 'listbox');
+
+    Array.from(native.options).forEach((opt, i) => {
+      const li = document.createElement('li');
+      li.className = 'cs-option' + (opt.value === '' ? ' is-placeholder' : '');
+      li.dataset.value = opt.value;
+      li.textContent = opt.textContent;
+      list.appendChild(li);
+    });
+
+    // Yerleştir: native'i içine al
+    native.parentElement.insertBefore(wrap, native);
+    wrap.appendChild(trigger);
+    wrap.appendChild(list);
+    wrap.appendChild(native);
   }
 
-  // Native'i normal hâline getir
-  native.dataset.enhanced = '0';
-  native.style.display = '';
-  native.style.position = '';
-  native.style.left = '';
-  native.style.width = '';
-  native.style.height = '';
-  native.style.opacity = '';
-  native.style.pointerEvents = '';
-  native.removeAttribute('aria-hidden');
-  native.tabIndex = 0;
-}
-  
-  function validateForm(data, form) {
-    let ok = true;
-    ['name','email','service','message'].forEach(name => {
-      const field = form.querySelector(`[name="${name}"]`);
-      if (!validateField(field)) ok = false;
+  // 2) Ortak referanslar
+  const trigger = wrap.querySelector('.cs-trigger');
+  const valueEl = wrap.querySelector('.cs-value');
+  const list    = wrap.querySelector('.cs-list');
+  const options = Array.from(wrap.querySelectorAll('.cs-option'));
+
+  if (!trigger || !list || !options.length) return;
+
+  // Native'i gizle (formda kullanılmaya devam eder)
+  native.hidden = true;
+  native.style.display = 'none';
+  native.setAttribute('aria-hidden', 'true');
+  native.tabIndex = -1;
+
+  // Yardımcılar
+  const open  = () => { wrap.classList.add('open');  trigger.setAttribute('aria-expanded', 'true'); };
+  const close = () => { wrap.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+
+  // Dışa tıklayınca kapan
+  document.addEventListener('click', (e) => { if (!wrap.contains(e.target)) close(); });
+
+  // Aç/Kapat
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    wrap.classList.contains('open') ? close() : open();
+  });
+
+  // Seçim
+  function selectOption(opt) {
+    const val = opt.getAttribute('data-value') || '';
+    const txt = opt.textContent.trim();
+
+    options.forEach(o => o.classList.toggle('is-selected', o === opt));
+    if (valueEl) valueEl.textContent = txt;
+
+    native.value = val;
+    native.dispatchEvent(new Event('change', { bubbles: true }));
+
+    close();
+  }
+
+  options.forEach((opt) => {
+    opt.setAttribute('role', 'option');
+    opt.tabIndex = 0;
+    opt.addEventListener('click', (e) => { e.preventDefault(); selectOption(opt); });
+    opt.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectOption(opt); }
     });
-    return ok;
-  }
-  
-  function validateField(field) {
-    if (!field) return true;
-    let valid = true;
-    const v = String(field.value || '').trim();
-  
-    if (!v) valid = false;
-    if (valid && field.type === 'email') valid = isValidEmail(v);
-  
-    field.classList.toggle('error', !valid);
-    field.style.borderColor = valid ? '' : 'var(--error-color)';
-    if (!valid) {
-      showFieldError(field, field.type === 'email' ? 'Geçerli bir e-posta girin' : 'Bu alan zorunludur');
+  });
+
+  // Klavye navigasyonu (trigger odaktayken)
+  let activeIndex = Math.max(0, options.findIndex(o => o.classList.contains('is-selected')));
+  trigger.addEventListener('keydown', (e) => {
+    if (!wrap.classList.contains('open') && (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault(); open(); options[activeIndex]?.focus(); return;
     }
-    return valid;
-  }
+    if (!wrap.classList.contains('open')) return;
+    if (e.key === 'Escape') { close(); trigger.focus(); return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = Math.min(options.length - 1, activeIndex + 1); options[activeIndex].focus(); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); activeIndex = Math.max(0, activeIndex - 1); options[activeIndex].focus(); }
+    if (e.key === 'Enter')     { e.preventDefault(); selectOption(options[activeIndex]); }
+  });
+
+  // Placeholder etiketi
+  const placeholder = options.find(o => o.classList.contains('is-placeholder'));
+  if (placeholder && valueEl) valueEl.textContent = placeholder.textContent.trim();
+}
+
   
   function showFieldError(field, message) {
     let hint = field.parentElement.querySelector('.field-error');
