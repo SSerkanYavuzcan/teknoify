@@ -213,121 +213,111 @@ function initAnimations() {
     requestAnimationFrame(frame);
   }
   
-  // ===========================================
-  // 6. CONTACT FORM (hafif doğrulama + toast)
-  // ===========================================
-  function initContactForm() {
-    const form = document.querySelector('.contact-form');
-    if (!form) return;
-  
-    const $ = (sel) => form.querySelector(sel);
-  
-    const nameEl    = $('#name')    || form.querySelector('input[name="name"]');
-    const emailEl   = $('#email')   || form.querySelector('input[type="email"]');
-    const phoneEl   = $('#phone')   || form.querySelector('input[type="tel"]');
-    const serviceEl = $('#service') || form.querySelector('select[name="service"]');
-    const msgEl     = $('#message') || form.querySelector('textarea[name="message"]');
-  
-    // Telefon alanı isteğe bağlı placeholder
-    if (phoneEl) {
-      phoneEl.placeholder = 'Telefon Numaranız (isteğe bağlı)';
-    }
-  
-    const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
-  
-    const clearError = (el) => {
-      if (!el) return;
-      el.classList.remove('error');
-  
-      // service için hata, custom-select içine yazılıyor olabilir
-      if (el.id === 'service' && el.nextElementSibling?.classList?.contains('custom-select')) {
-        const cs = el.nextElementSibling;
-        const hint = cs.querySelector('.field-error');
-        if (hint) hint.remove();
-      }
-  
-      const hint = el.parentElement.querySelector('.field-error');
-      if (hint) hint.remove();
-    };
-  
-    const setError = (el, msg) => {
-      if (!el) return;
-  
-      // Önce temizle
-      clearError(el);
-      el.classList.add('error');
-  
-      // Service için hatayı custom-select içine koy
-      if (el.id === 'service' && el.nextElementSibling?.classList?.contains('custom-select')) {
-        const cs = el.nextElementSibling;               // .custom-select
-        const hint = document.createElement('small');
-        hint.className = 'field-error';
-        hint.textContent = msg;
-        cs.appendChild(hint);
-        return;
-      }
-  
+// ===========================================
+// 6. CONTACT FORM (submit & hata gösterimi)  [GÜNCELLENDİ]
+// ===========================================
+function initContactForm() {
+  const form = document.querySelector('.contact-form');
+  if (!form) return;
+
+  const $ = (sel) => form.querySelector(sel);
+
+  const nameEl    = $('#name')    || form.querySelector('input[name="name"]');
+  const emailEl   = $('#email')   || form.querySelector('input[type="email"]');
+  const phoneEl   = $('#phone')   || form.querySelector('input[type="tel"]');
+  const serviceEl = $('#service') || form.querySelector('select[name="service"]');
+  const msgEl     = $('#message') || form.querySelector('textarea[name="message"]');
+
+  if (phoneEl) phoneEl.placeholder = 'Telefon Numaranız (isteğe bağlı)';
+
+  const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
+
+  const clearError = (el) => {
+    if (!el) return;
+    el.classList.remove('error');
+
+    // custom-select içindeki hata mesajını sil
+    const wrap = el.closest('.custom-select');
+    const hintInCustom = wrap?.querySelector('.field-error');
+    if (hintInCustom) hintInCustom.remove();
+
+    const hint = el.parentElement.querySelector('.field-error');
+    if (hint) hint.remove();
+  };
+
+  const setError = (el, msg) => {
+    if (!el) return;
+    clearError(el);
+    el.classList.add('error');
+
+    // custom-select içindeyse, mesaji wrapper içine yaz
+    const wrap = el.closest('.custom-select');
+    if (wrap) {
       const hint = document.createElement('small');
       hint.className = 'field-error';
       hint.textContent = msg;
-      el.parentElement.appendChild(hint);
-    };
-  
-    // Yazarken hata temizle (blur’da uyarı YOK)
-    [nameEl, emailEl, phoneEl, msgEl].forEach(el => {
-      if (!el) return;
-      el.addEventListener('input', () => clearError(el));
-    });
-    if (serviceEl) {
-      serviceEl.addEventListener('change', () => clearError(serviceEl));
+      wrap.appendChild(hint);
+      return;
     }
-  
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-  
-      let ok = true;
-  
-      if (nameEl && !String(nameEl.value).trim()) {
-        setError(nameEl, 'Bu alan zorunludur');
-        ok = false;
-      }
-  
-      if (emailEl) {
-        const v = String(emailEl.value).trim();
-        if (!v) { setError(emailEl, 'Bu alan zorunludur'); ok = false; }
-        else if (!isValidEmail(v)) { setError(emailEl, 'Geçerli bir e-posta girin'); ok = false; }
-      }
-  
-      // Telefon ZORUNLU DEĞİL — hiçbir kontrol yok
-  
-      if (serviceEl && !String(serviceEl.value).trim()) {
-        setError(serviceEl, 'Bir hizmet seçiniz');
-        ok = false;
-      }
-  
-      if (msgEl && !String(msgEl.value).trim()) {
-        setError(msgEl, 'Bu alan zorunludur');
-        ok = false;
-      }
-  
-      if (!ok) return;
-  
-      // Gönderim simülasyonu
-      const btn = form.querySelector('button[type="submit"]');
-      const orig = btn ? btn.innerHTML : null;
-      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...'; }
-  
-      setTimeout(() => {
-        form.reset();
-        // Custom select etiketini placeholder’a döndür
-        const csLabel = document.querySelector('.custom-select .cs-label');
-        if (csLabel) csLabel.textContent = 'Hizmet Seçiniz';
-  
-        if (btn && orig) { btn.disabled = false; btn.innerHTML = orig; }
-        showNotification('Mesajınız başarıyla gönderildi!', 'success');
-      }, 900);
-    });
+
+    const hint = document.createElement('small');
+    hint.className = 'field-error';
+    hint.textContent = msg;
+    el.parentElement.appendChild(hint);
+  };
+
+  [nameEl, emailEl, phoneEl, msgEl].forEach(el => {
+    if (!el) return;
+    el.addEventListener('input', () => clearError(el));
+  });
+  if (serviceEl) {
+    serviceEl.addEventListener('change', () => clearError(serviceEl));
   }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    let ok = true;
+
+    if (nameEl && !String(nameEl.value).trim()) {
+      setError(nameEl, 'Bu alan zorunludur'); ok = false;
+    }
+
+    if (emailEl) {
+      const v = String(emailEl.value).trim();
+      if (!v) { setError(emailEl, 'Bu alan zorunludur'); ok = false; }
+      else if (!isValidEmail(v)) { setError(emailEl, 'Geçerli bir e-posta girin'); ok = false; }
+    }
+
+    if (serviceEl && !String(serviceEl.value).trim()) {
+      setError(serviceEl, 'Bir hizmet seçiniz'); ok = false;
+    }
+
+    if (msgEl && !String(msgEl.value).trim()) {
+      setError(msgEl, 'Bu alan zorunludur'); ok = false;
+    }
+
+    if (!ok) return;
+
+    // Gönderim simülasyonu
+    const btn = form.querySelector('button[type="submit"]');
+    const orig = btn ? btn.innerHTML : null;
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...'; }
+
+    setTimeout(() => {
+      form.reset();
+
+      // Custom select etiketini placeholder’a döndür (".cs-value")
+      const csValue = document.querySelector('.custom-select .cs-value');
+      const placeholder = document.querySelector('.custom-select .cs-option.is-placeholder');
+      if (csValue && placeholder) csValue.textContent = placeholder.textContent.trim();
+
+      if (btn && orig) { btn.disabled = false; btn.innerHTML = orig; }
+      showNotification('Mesajınız başarıyla gönderildi!', 'success');
+    }, 900);
+  });
+}
+
   
 // ===========================================
 // 8. CUSTOM SELECT — devre dışı, native'i görünür bırak
@@ -425,112 +415,106 @@ function initCustomSelect() {
   }
   
 // ===========================================
-// 8. AI TERMINAL LOOP (karakter karakter, animasyonsuz satır) [GÜNCELLENDİ]
+// 8. CUSTOM SELECT — açılır liste kontrolü  [GÜNCELLENDİ]
 // ===========================================
-function initAiTerminalLoop() {
-  const container = document.querySelector('#heroTerminal');
-  if (!container) return;
+function initCustomSelect() {
+  const wrappers = document.querySelectorAll('.custom-select');
+  if (!wrappers.length) return;
 
-  // Sözdizimi vurgulama
-  const kw  = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
-  const fn  = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative|excel|csv)\b/g;
-  const str = /(\".*?\"|\'.*?\')/g;
-  const num = /\b(\d+(\.\d+)?)\b/g;
-  const highlight = (s) =>
-    s.replace(str, '<span class="tok-str">$1</span>')
-     .replace(fn,  '<span class="tok-fn">$1</span>')
-     .replace(kw,  '<span class="tok-kw">$1</span>')
-     .replace(num, '<span class="tok-num">$1</span>');
+  // Tüm bileşenler için kurulumu yap
+  wrappers.forEach((wrap) => {
+    const trigger = wrap.querySelector('.cs-trigger');
+    const valueEl = wrap.querySelector('.cs-value');
+    const list    = wrap.querySelector('.cs-list');
+    const options = Array.from(wrap.querySelectorAll('.cs-option'));
+    const native  = wrap.querySelector('select#service'); // gizli native select
 
-  // Akış
-  const LINES = [
-    '# Ingest → Google Trends (Shopping, TR)',
-    'trends   = fetch.google_trends(category="shopping", region="TR", window="7d")',
-    'products = trends.topk(10, key="search_volume").name',
-    '',
-    '# Crawl → e-ticaret siteleri (fiyat toplama)',
-    'stores = ["x","y","z","w"]',
-    'offers = scrape.search(stores=stores, items=products)',
-    'prices = transform.normalize(offers)  # para birimi, KDV, varyant temizliği',
-    'prices = prices.groupby("item").agg(min="price", max="price", avg="price", count="n")',
-    '',
-    '# Export → Excel/CSV (rapor)',
-    'publish.excel(prices, path="exports/market_prices.xlsx")',
-    'publish.csv(prices,   path="exports/market_prices.csv")',
-    '',
-    '# Internal → Geçmiş satış & görünürlük',
-    'sales  = fetch.warehouse(dataset="sales", tables=["orders","impressions","catalog"])',
-    'joined = transform.join(sales.orders, sales.impressions, on="sku")',
-    'stats  = joined.with_columns(ctr=clicks/impressions, cvr=orders/clicks)',
-    'stats  = stats.groupby("sku").agg(avg_sale_price="mean(sale_price)", avg_ctr="mean(ctr)", avg_cvr="mean(cvr)")',
-    '',
-    '# Merge → Piyasa fiyatı + iç metrikler',
-    'model_in = transform.join(stats, prices, on=("sku","item"), how="left")',
-    'policy   = { min_margin:0.12, step:1, match_market:"avg±5%" }',
-    'recos    = price.recommend(model_in, strategy="market+margin", policy=policy)',
-    '',
-    '# Save & Evals',
-    'publish.bigquery(recos, dataset="pricing", table="recommended_prices")',
-    'checks = { sanity: rules.non_negative(["price"]), roi_expected: ">= 1.2" }',
-    'assert(evals.run(recos, checks))',
-  ];
+    if (!trigger || !list || !options.length || !native) return;
 
-  // İnsan hızına yakın: 60–130ms/karakter + küçük duraksamalar
-  const charDelay = () => 60 + Math.random() * 70;
-  const extraPause = (ch) => (/[.,;:)]/.test(ch) ? 180 : ch === ' ' ? 10 : 0);
-  const wait = (ms) => new Promise(r => setTimeout(r, ms));
+    // Aria
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+    list.setAttribute('role', 'listbox');
 
-  // Cursor
-  let cursor;
-  const ensureCursor = () => {
-    if (!cursor) {
-      cursor = document.createElement('span');
-      cursor.className = 'cursor';
-      container.appendChild(cursor);
+    // Aç / Kapat
+    const open  = () => { wrap.classList.add('open');  trigger.setAttribute('aria-expanded', 'true'); };
+    const close = () => { wrap.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); };
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      wrap.classList.contains('open') ? close() : open();
+    });
+
+    // Dışa tıkla kapat
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target)) close();
+    });
+
+    // Seçim yap
+    function selectOption(opt) {
+      const val = opt.getAttribute('data-value') || '';
+      const txt = opt.textContent.trim();
+
+      // selected görselleri
+      options.forEach(o => o.classList.toggle('is-selected', o === opt));
+
+      // gizli select senkronizasyonu
+      native.value = val;
+      native.dispatchEvent(new Event('change', { bubbles: true }));
+
+      // etiket
+      if (valueEl) valueEl.textContent = txt;
+
+      close();
     }
-  };
 
-  async function typeLine(text) {
-    // .line animasyonunu KAPAT: hemen görünür
-    const lineEl = document.createElement('span');
-    lineEl.className = 'line';
-    lineEl.style.opacity = '1';
-    lineEl.style.transform = 'none';
-    lineEl.style.animation = 'none';
-    container.appendChild(lineEl);
-    ensureCursor();
+    options.forEach((opt, idx) => {
+      opt.setAttribute('role', 'option');
+      opt.addEventListener('click', (e) => {
+        e.preventDefault();
+        selectOption(opt);
+      });
+      // Keyboard: Enter/Space
+      opt.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectOption(opt);
+        }
+      });
+    });
 
-    let buf = '';
-    for (let i = 0; i < text.length; i++) {
-      buf += text[i];
-      // karakter karakter güncelle — vurgulamayı her seferinde uygula
-      lineEl.innerHTML = highlight(buf);
+    // Trigger için klavye navigasyonu
+    let activeIndex = options.findIndex(o => o.classList.contains('is-selected'));
+    if (activeIndex < 0) activeIndex = 0;
 
-      // cursor hep en sonda dursun
-      container.appendChild(cursor);
-      // aşağı kaydır
-      container.scrollTop = container.scrollHeight;
-
-      await wait(charDelay() + extraPause(text[i]));
-    }
-    // satır sonu
-    container.appendChild(document.createTextNode('\n'));
-    container.scrollTop = container.scrollHeight;
-    await wait(160);
-  }
-
-  (async () => {
-    while (true) {
-      container.innerHTML = '';
-      cursor = null;
-      for (const ln of LINES) {
-        await typeLine(ln);
+    trigger.addEventListener('keydown', (e) => {
+      if (!wrap.classList.contains('open') && (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault(); open(); return;
       }
-      await wait(800); // tur arası kısa duraklama
-    }
-  })();
-}
+      if (!wrap.classList.contains('open')) return;
 
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = Math.min(options.length - 1, activeIndex + 1);
+        options[activeIndex].focus();
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = Math.max(0, activeIndex - 1);
+        options[activeIndex].focus();
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        selectOption(options[activeIndex]);
+      }
+    });
+
+    // Varsayılan etiket (placeholder)
+    const placeholder = options.find(o => o.classList.contains('is-placeholder'));
+    if (placeholder && valueEl) valueEl.textContent = placeholder.textContent.trim();
+  });
+}
   
   // küçük yardımcı
   function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
