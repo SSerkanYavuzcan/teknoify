@@ -425,25 +425,24 @@ function initCustomSelect() {
   }
   
 // ===========================================
-// 8. AI TERMINAL LOOP (insan hızıyla yazım)  [GÜNCELLENDİ]
+// 8. AI TERMINAL LOOP (karakter karakter, animasyonsuz satır) [GÜNCELLENDİ]
 // ===========================================
 function initAiTerminalLoop() {
   const container = document.querySelector('#heroTerminal');
   if (!container) return;
 
-  // Basit renklendirme
+  // Sözdizimi vurgulama
   const kw  = /\b(pipeline|fetch|validate|transform|publish|model|evals|serve|deploy|index|retriever|guardrails|autoscale|assert|for|in|if|return|with|import|from|as)\b/g;
   const fn  = /\b(gpt|embed|normalize|cleanse|warehouse|topk|compose|vector\.index|google_trends|run|search|scrape|groupby|agg|join|with_columns|bigquery|budget|recommend|non_negative|excel|csv)\b/g;
   const str = /(\".*?\"|\'.*?\')/g;
   const num = /\b(\d+(\.\d+)?)\b/g;
-
   const highlight = (s) =>
     s.replace(str, '<span class="tok-str">$1</span>')
      .replace(fn,  '<span class="tok-fn">$1</span>')
      .replace(kw,  '<span class="tok-kw">$1</span>')
      .replace(num, '<span class="tok-num">$1</span>');
 
-  // Tek akış: Google Trends -> e-ticaret -> Excel -> Analiz -> Öneri
+  // Akış
   const LINES = [
     '# Ingest → Google Trends (Shopping, TR)',
     'trends   = fetch.google_trends(category="shopping", region="TR", window="7d")',
@@ -476,10 +475,9 @@ function initAiTerminalLoop() {
     'assert(evals.run(recos, checks))',
   ];
 
-  // Ortalama insan yazım hızı ~ 35–45 wpm ≈ 3–4 karakter/sn -> görsel için biraz hızlandırıp doğal duraksama ekledik
-  const charDelay = () => 60 + Math.random() * 70;     // 60–130ms/karakter
-  const extraPause = (ch) => (/[.,;:)]/.test(ch) ? 180 : /[\n]/.test(ch) ? 220 : 0);
-
+  // İnsan hızına yakın: 60–130ms/karakter + küçük duraksamalar
+  const charDelay = () => 60 + Math.random() * 70;
+  const extraPause = (ch) => (/[.,;:)]/.test(ch) ? 180 : ch === ' ' ? 10 : 0);
   const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
   // Cursor
@@ -493,23 +491,29 @@ function initAiTerminalLoop() {
   };
 
   async function typeLine(text) {
-    // Her satır için ayrı span; içerik her karakterde renklendirilir
+    // .line animasyonunu KAPAT: hemen görünür
     const lineEl = document.createElement('span');
     lineEl.className = 'line';
+    lineEl.style.opacity = '1';
+    lineEl.style.transform = 'none';
+    lineEl.style.animation = 'none';
     container.appendChild(lineEl);
     ensureCursor();
 
-    let buffer = '';
+    let buf = '';
     for (let i = 0; i < text.length; i++) {
-      buffer += text[i];
-      lineEl.innerHTML = highlight(buffer);
-      container.appendChild(lineEl);
+      buf += text[i];
+      // karakter karakter güncelle — vurgulamayı her seferinde uygula
+      lineEl.innerHTML = highlight(buf);
+
+      // cursor hep en sonda dursun
       container.appendChild(cursor);
+      // aşağı kaydır
       container.scrollTop = container.scrollHeight;
 
       await wait(charDelay() + extraPause(text[i]));
     }
-    // Satır sonu (yeni satır karakteri gibi)
+    // satır sonu
     container.appendChild(document.createTextNode('\n'));
     container.scrollTop = container.scrollHeight;
     await wait(160);
@@ -522,8 +526,7 @@ function initAiTerminalLoop() {
       for (const ln of LINES) {
         await typeLine(ln);
       }
-      // Tur bittiğinde kısa bekleyip baştan
-      await wait(800);
+      await wait(800); // tur arası kısa duraklama
     }
   })();
 }
