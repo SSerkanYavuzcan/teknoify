@@ -425,7 +425,7 @@ function initCustomSelect() {
   }
   
 // ===========================================
-// 8. AI TERMINAL LOOP (kod döngüsü)  [GÜNCELLENDİ]
+// 8. AI TERMINAL LOOP (insan hızıyla yazım)  [GÜNCELLENDİ]
 // ===========================================
 function initAiTerminalLoop() {
   const container = document.querySelector('#heroTerminal');
@@ -437,20 +437,20 @@ function initAiTerminalLoop() {
   const str = /(\".*?\"|\'.*?\')/g;
   const num = /\b(\d+(\.\d+)?)\b/g;
 
-  const hl = (s) =>
+  const highlight = (s) =>
     s.replace(str, '<span class="tok-str">$1</span>')
      .replace(fn,  '<span class="tok-fn">$1</span>')
      .replace(kw,  '<span class="tok-kw">$1</span>')
      .replace(num, '<span class="tok-num">$1</span>');
 
-  // Tek akış: Google Trends -> E-ticaret -> Excel -> Analiz -> Öneri
+  // Tek akış: Google Trends -> e-ticaret -> Excel -> Analiz -> Öneri
   const LINES = [
     '# Ingest → Google Trends (Shopping, TR)',
     'trends   = fetch.google_trends(category="shopping", region="TR", window="7d")',
     'products = trends.topk(10, key="search_volume").name',
     '',
-    '# Crawl → TR e-ticaret siteleri (fiyat toplama)',
-    'stores = ["hepsiburada","trendyol","n11","amazon-tr"]',
+    '# Crawl → e-ticaret siteleri (fiyat toplama)',
+    'stores = ["x","y","z","w"]',
     'offers = scrape.search(stores=stores, items=products)',
     'prices = transform.normalize(offers)  # para birimi, KDV, varyant temizliği',
     'prices = prices.groupby("item").agg(min="price", max="price", avg="price", count="n")',
@@ -465,7 +465,7 @@ function initAiTerminalLoop() {
     'stats  = joined.with_columns(ctr=clicks/impressions, cvr=orders/clicks)',
     'stats  = stats.groupby("sku").agg(avg_sale_price="mean(sale_price)", avg_ctr="mean(ctr)", avg_cvr="mean(cvr)")',
     '',
-    '# Merge → Piyasa fiyatı + İç metrikler',
+    '# Merge → Piyasa fiyatı + iç metrikler',
     'model_in = transform.join(stats, prices, on=("sku","item"), how="left")',
     'policy   = { min_margin:0.12, step:1, match_market:"avg±5%" }',
     'recos    = price.recommend(model_in, strategy="market+margin", policy=policy)',
@@ -476,34 +476,58 @@ function initAiTerminalLoop() {
     'assert(evals.run(recos, checks))',
   ];
 
+  // Ortalama insan yazım hızı ~ 35–45 wpm ≈ 3–4 karakter/sn -> görsel için biraz hızlandırıp doğal duraksama ekledik
+  const charDelay = () => 60 + Math.random() * 70;     // 60–130ms/karakter
+  const extraPause = (ch) => (/[.,;:)]/.test(ch) ? 180 : /[\n]/.test(ch) ? 220 : 0);
+
   const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
-  async function stream(lines) {
-    container.innerHTML = '';
-    for (const raw of lines) {
-      const line = document.createElement('span');
-      line.className = 'line';
-      line.innerHTML = hl(raw);
-      container.appendChild(line);
-      container.appendChild(document.createTextNode('\n'));
-      container.scrollTop = container.scrollHeight; // her satırda aşağı kaydır
-      await wait(120);
+  // Cursor
+  let cursor;
+  const ensureCursor = () => {
+    if (!cursor) {
+      cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      container.appendChild(cursor);
     }
-    // kısa bir bekleme + imleç
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor';
-    container.appendChild(cursor);
+  };
+
+  async function typeLine(text) {
+    // Her satır için ayrı span; içerik her karakterde renklendirilir
+    const lineEl = document.createElement('span');
+    lineEl.className = 'line';
+    container.appendChild(lineEl);
+    ensureCursor();
+
+    let buffer = '';
+    for (let i = 0; i < text.length; i++) {
+      buffer += text[i];
+      lineEl.innerHTML = highlight(buffer);
+      container.appendChild(lineEl);
+      container.appendChild(cursor);
+      container.scrollTop = container.scrollHeight;
+
+      await wait(charDelay() + extraPause(text[i]));
+    }
+    // Satır sonu (yeni satır karakteri gibi)
+    container.appendChild(document.createTextNode('\n'));
     container.scrollTop = container.scrollHeight;
-    await wait(1200);
+    await wait(160);
   }
 
   (async () => {
     while (true) {
-      await stream(LINES);       // tek akış aşağı doğru yaz
-      container.innerHTML = '';  // bittiğinde temizle ve yeniden başlat
+      container.innerHTML = '';
+      cursor = null;
+      for (const ln of LINES) {
+        await typeLine(ln);
+      }
+      // Tur bittiğinde kısa bekleyip baştan
+      await wait(800);
     }
   })();
 }
+
   
   // küçük yardımcı
   function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
