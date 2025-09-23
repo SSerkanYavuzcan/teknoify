@@ -98,12 +98,20 @@
       max-width: 520px;
       margin-inline: auto; /* sağ kolonda ortala */
     }
+
+    /* === KART İÇERİĞİ ORTALAMA (DÜZELTME) === */
     .hstat-card{
       background: rgba(8,11,19,.66);
       border: 1px solid rgba(139,92,246,.18);
       border-radius: 18px;
-      padding: 18px 18px 16px;
+      padding: 18px;
       box-shadow: 0 18px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.03);
+      display: flex;                 /* ortalama için */
+      flex-direction: column;        /* dikey akış */
+      align-items: center;           /* yatay merkez */
+      justify-content: center;       /* dikey merkez */
+      text-align: center;            /* metni ortala */
+      min-height: 180px;             /* dengeli yükseklik */
     }
     .hstat-icon{
       width:56px; height:56px; border-radius:14px;
@@ -111,6 +119,7 @@
       background: var(--gradient-primary); color:#fff; font-size:22px;
       box-shadow: 0 10px 26px rgba(99,102,241,.35);
       margin-bottom: 12px;
+      flex: 0 0 auto;
     }
     .hstat-number{
       font-weight: 800;
@@ -119,10 +128,15 @@
       color: #8b5cf6; /* mor ton */
       margin-bottom: 6px;
     }
-    .hstat-label{ color: var(--gray-300); font-weight: 600; font-size: 14px; }
+    .hstat-label{
+      color: var(--gray-300);
+      font-weight: 600;
+      font-size: 14px;
+    }
 
     @media (max-width: 991px){
       .hero-stats{ grid-template-columns: repeat(2, 1fr); margin-top: 20px; }
+      .hstat-card{ min-height: 160px; }
     }
 
     /* ===========================================================
@@ -152,7 +166,7 @@
       box-shadow: 0 8px 24px rgba(99,102,241,.35);
       font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla","EmojiOne Color","Android Emoji", system-ui, sans-serif !important;
       font-size: 28px; line-height:1;
-      color:#fff; /* FA ikonu kullanılsa da görünür kalsın */
+      color:#fff;
     }
     .feature-title{ font-size: var(--font-size-xl); font-weight:700; color:#fff; margin-bottom: var(--spacing-md); }
     .feature-description{ color: var(--gray-300); line-height:1.6; }
@@ -207,6 +221,7 @@
 <!-- ===========================================================
 [2] HEAD — END
 =========================================================== -->
+
 
 
 </head>
@@ -336,6 +351,7 @@
 <!-- ===========================================================
 [5] HERO — END
 =========================================================== -->
+
 
 
 <!-- ===========================================================
