@@ -42,8 +42,9 @@
         #0b1020;
       font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
+
+    /* === tek cam yüzey tüm sayfayı sarsın === */
     main.page-frame{
-      /* sayfa genelinde tek cam yüzey / çerçeve */
       position: relative;
       flex: 1;
       background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(17,24,39,.92));
@@ -51,7 +52,7 @@
       border-radius: 28px;
       box-shadow: 0 20px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.03);
       backdrop-filter: blur(6px);
-      margin: clamp(16px, 3vw, 28px);
+      margin: clamp(12px, 2.5vw, 24px);
       padding: clamp(20px, 3.5vw, 40px);
       overflow: hidden;
     }
@@ -62,8 +63,19 @@
       border-top-left-radius:28px; border-top-right-radius:28px;
       pointer-events:none;
     }
-    /* global yıldız overlay (script.js içinden ekleniyor) */
+
+    /* yıldız overlay (script.js ekliyor) */
     #stars-overlay{ mix-blend-mode: screen; opacity:.95; pointer-events:none; }
+
+    /* === sticky header (cam hissi) === */
+    .header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10,12,20,.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
 
     /* -----------------------------------------------------------
        HERO
@@ -175,6 +187,16 @@
     .demo-features i{ color: var(--success-color); font-size: var(--font-size-lg); }
 
     /* -----------------------------------------------------------
+       FOOTER — cam yüzey içinde, şeffaf
+    ----------------------------------------------------------- */
+    .footer{
+      background: transparent !important;
+      border-top: 1px solid rgba(255,255,255,.08);
+      box-shadow: none;
+      padding-top: var(--spacing-3xl);
+    }
+
+    /* -----------------------------------------------------------
        RESPONSIVE
     ----------------------------------------------------------- */
     @media (max-width: 768px){
@@ -190,7 +212,6 @@
 </head>
 
 <body>
-  <!-- (opsiyonel) yıldız overlay -->
   <canvas id="stars-overlay"></canvas>
 
   <!-- ===========================================================
@@ -248,7 +269,7 @@
   =========================================================== -->
 
   <!-- ===========================================================
-  [5] MAIN FRAME (Sayfanın tamamını saran cam yüzey) — START
+  [5] MAIN FRAME — START (footer DAHİL)
   =========================================================== -->
   <main class="page-frame">
     <!-- HERO -->
@@ -463,66 +484,69 @@
         </div>
       </div>
     </section>
+
+    <!-- ===========================================================
+        [10] FOOTER — START  (ARTIK MAIN İÇİNDE)
+    =========================================================== -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <div class="footer-logo"><span class="logo-icon"><i class="fas fa-cube"></i></span><span class="logo-text">Teknoify</span></div>
+            <p>Geleceğin teknolojisi ile işinizi dijitalleştirin.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+          </div>
+
+          <div class="footer-section">
+            <h4>Hizmetler</h4>
+            <ul>
+              <li><a href="robotik-surec-otomasyonu.html">RPA</a></li>
+              <li><a href="web-scraping.html">Web Scraping</a></li>
+              <li><a href="finansal-indikatorler.html">Finansal Analiz</a></li>
+              <li><a href="akilli-dijital-asistan.html">AI Asistan</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Şirket</h4>
+            <ul>
+              <li><a href="../index.html#about">Hakkımızda</a></li>
+              <li><a href="../index.html#contact">İletişim</a></li>
+              <li><a href="#">Kariyer</a></li>
+              <li><a href="#">Blog</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Destek</h4>
+            <ul>
+              <li><a href="#">Dokümantasyon</a></li>
+              <li><a href="#">API Referansı</a></li>
+              <li><a href="#">SSS</a></li>
+              <li><a href="#">Teknik Destek</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2025 Teknoify. Tüm hakları saklıdır.</p>
+          <div class="footer-links">
+            <a href="#">Gizlilik Politikası</a>
+            <a href="#">Kullanım Şartları</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- ===========================================================
+        [10] FOOTER — END
+    =========================================================== -->
   </main>
   <!-- ===========================================================
   [5] MAIN FRAME — END
-  =========================================================== -->
-
-  <!-- ===========================================================
-  [10] FOOTER — START
-  =========================================================== -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <div class="footer-logo"><span class="logo-icon"><i class="fas fa-cube"></i></span><span class="logo-text">Teknoify</span></div>
-          <p>Geleceğin teknolojisi ile işinizi dijitalleştirin.</p>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-linkedin"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-github"></i></a>
-          </div>
-        </div>
-        <div class="footer-section">
-          <h4>Hizmetler</h4>
-          <ul>
-            <li><a href="robotik-surec-otomasyonu.html">RPA</a></li>
-            <li><a href="web-scraping.html">Web Scraping</a></li>
-            <li><a href="finansal-indikatorler.html">Finansal Analiz</a></li>
-            <li><a href="akilli-dijital-asistan.html">AI Asistan</a></li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h4>Şirket</h4>
-          <ul>
-            <li><a href="../index.html#about">Hakkımızda</a></li>
-            <li><a href="../index.html#contact">İletişim</a></li>
-            <li><a href="#">Kariyer</a></li>
-            <li><a href="#">Blog</a></li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h4>Destek</h4>
-          <ul>
-            <li><a href="#">Dokümantasyon</a></li>
-            <li><a href="#">API Referansı</a></li>
-            <li><a href="#">SSS</a></li>
-            <li><a href="#">Teknik Destek</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>&copy; 2025 Teknoify. Tüm hakları saklıdır.</p>
-        <div class="footer-links">
-          <a href="#">Gizlilik Politikası</a>
-          <a href="#">Kullanım Şartları</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-  <!-- ===========================================================
-  [10] FOOTER — END
   =========================================================== -->
 
   <!-- ===========================================================
@@ -531,7 +555,6 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
   <script src="../js/script.js" defer></script>
   <script>
-    // AOS init (defer ile geldiği için güvenli)
     window.addEventListener('DOMContentLoaded', () => {
       AOS.init({ once: true });
     });
