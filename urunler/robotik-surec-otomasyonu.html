@@ -98,20 +98,18 @@
       max-width: 520px;
       margin-inline: auto; /* sağ kolonda ortala */
     }
-
-    /* === KART İÇERİĞİ ORTALAMA (DÜZELTME) === */
     .hstat-card{
       background: rgba(8,11,19,.66);
       border: 1px solid rgba(139,92,246,.18);
       border-radius: 18px;
       padding: 18px;
       box-shadow: 0 18px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.03);
-      display: flex;                 /* ortalama için */
-      flex-direction: column;        /* dikey akış */
-      align-items: center;           /* yatay merkez */
-      justify-content: center;       /* dikey merkez */
-      text-align: center;            /* metni ortala */
-      min-height: 180px;             /* dengeli yükseklik */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 180px;
     }
     .hstat-icon{
       width:56px; height:56px; border-radius:14px;
@@ -125,14 +123,10 @@
       font-weight: 800;
       font-size: 28px;
       line-height: 1.1;
-      color: #8b5cf6; /* mor ton */
+      color: #8b5cf6;
       margin-bottom: 6px;
     }
-    .hstat-label{
-      color: var(--gray-300);
-      font-weight: 600;
-      font-size: 14px;
-    }
+    .hstat-label{ color: var(--gray-300); font-weight: 600; font-size: 14px; }
 
     @media (max-width: 991px){
       .hero-stats{ grid-template-columns: repeat(2, 1fr); margin-top: 20px; }
@@ -140,7 +134,8 @@
     }
 
     /* ===========================================================
-       ÖZELLİKLER (FEATURES) — Emoji ikon düzeltmesi ile
+       ÖZELLİKLER (FEATURES) — Renkli EMOJI görünümü
+       (ana sayfadaki örnekle aynı his: mor kare içinde renkli emoji)
     =========================================================== */
     .features-grid{
       display:grid;
@@ -157,16 +152,17 @@
     }
     .feature-card:hover{ border-color: rgba(139,92,246,.45); transform: translateY(-3px); }
 
-    /* Emoji’lerin renkli görünmesi ve hizası için font yığını */
+    /* >>> Emoji’ler renkli kalsın; FA kullanırsan yine görünür olsun */
     .feature-icon{
-      width:60px; height:60px; border-radius: var(--radius-lg);
+      width:72px; height:72px; border-radius: 18px;
       display:flex; align-items:center; justify-content:center;
       margin-bottom: var(--spacing-lg);
-      background: var(--gradient-primary);
-      box-shadow: 0 8px 24px rgba(99,102,241,.35);
+      background: linear-gradient(180deg, #6d5efc, #7c3aed);
+      box-shadow: 0 14px 30px rgba(99,102,241,.35);
       font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla","EmojiOne Color","Android Emoji", system-ui, sans-serif !important;
-      font-size: 28px; line-height:1;
-      color:#fff;
+      font-size: 34px; line-height:1;
+      color: unset !important;         /* ← emoji kendi rengiyle kalsın */
+      text-shadow: none;
     }
     .feature-title{ font-size: var(--font-size-xl); font-weight:700; color:#fff; margin-bottom: var(--spacing-md); }
     .feature-description{ color: var(--gray-300); line-height:1.6; }
@@ -192,7 +188,7 @@
     .step-content p{ color: var(--gray-600); line-height:1.6; }
 
     /* ===========================================================
-       DEMO
+      DEMO
     =========================================================== */
     .demo-container{ display:grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4xl); align-items:center; margin-top: var(--spacing-3xl); }
     .demo-video{ border-radius: var(--radius-xl); overflow:hidden; box-shadow: var(--shadow-2xl); }
@@ -351,7 +347,6 @@
 <!-- ===========================================================
 [5] HERO — END
 =========================================================== -->
-
 
 
 <!-- ===========================================================
