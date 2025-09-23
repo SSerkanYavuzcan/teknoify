@@ -27,56 +27,47 @@
 
   <style>
     /* ===========================================================
-       TEMA → Bu sayfa diğer sayfalarla aynı temayı kullansın
+       TEMA UYUMU — Bu sayfa ana sayfa ile aynı renk şemasını kullansın
     =========================================================== */
-    body{ background: var(--bg-primary); }
-    #stars-overlay{ mix-blend-mode: screen; opacity:.95; pointer-events:none; }
+    body { background: var(--bg-primary); }
+    #stars-overlay { mix-blend-mode: screen; opacity:.95; pointer-events:none; }
 
     /* ===========================================================
-       FRAME / SURFACE → Tek, kesintisiz çerçeve görünümü
-       (start/mid/end varyantlarıyla bölümler birleşir)
+       TEK ÇERÇEVE — Tüm içerik için tek bir dış frame (ana sayfa stili)
     =========================================================== */
-    .page-frame{
+    .site-frame{
       position: relative;
-      background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(17,24,39,.92));
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 28px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.03);
-      backdrop-filter: blur(6px);
+      margin: clamp(16px, 3vw, 32px) auto;
       padding: clamp(24px, 4vw, 48px);
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: radial-gradient(1200px 800px at 85% -10%, rgba(99,102,241,.12) 0%, rgba(99,102,241,0) 55%),
+                  radial-gradient(900px 700px at 10% 110%, rgba(124,58,237,.10) 0%, rgba(124,58,237,0) 60%),
+                  linear-gradient(180deg, rgba(15,18,28,.92) 0%, rgba(15,18,28,.92) 100%);
+      box-shadow:
+        0 24px 80px rgba(0,0,0,.55),
+        inset 0 0 0 1px rgba(255,255,255,.03);
       overflow: hidden;
     }
-    .page-frame::after{
+    .site-frame::before{
+      /* üstte ana sayfaya benzer mor parıltı */
       content:"";
       position:absolute; inset:-1px -1px auto -1px; height:140px;
       background: linear-gradient(180deg, rgba(139,92,246,.22), rgba(139,92,246,0));
       border-top-left-radius:28px; border-top-right-radius:28px;
       pointer-events:none;
     }
-    /* Varyantlar: üst/orta/alt parçaları dikişsiz birleştir */
-    .page-frame-start{ border-radius: 28px 28px 0 0; }
-    .page-frame-mid{
-      border-radius: 0;              /* köşeler düz */
-      border-top: none;              /* üst kenarda çift çizgi olmasın */
-      margin-top: -1px;              /* kenarı hizala, dikişi gizle */
-    }
-    .page-frame-end{
-      border-radius: 0 0 28px 28px;  /* alt köşeleri yuvarla */
-      border-top: none;
-      margin-top: -1px;
-    }
 
-    /* ===========================================================
-       RPA HERO → arka plan şeffaf; çerçeve rengi görünsün
-    =========================================================== */
-    .rpa-hero{ background:transparent !important; position:relative; z-index:1; padding-top:clamp(24px,3vw,36px); }
+    /* Bölüm arka planlarını şeffaf yap: tek frame yüzeyi görünsün */
+    .rpa-hero,
+    .rpa-stats,
+    .rpa-features,
+    .rpa-process,
+    .rpa-demo { background: transparent !important; }
+
+    /* HERO (mevcut görünümü koru) */
+    .rpa-hero{ position:relative; z-index:1; padding-top:clamp(24px,3vw,36px); }
     .rpa-hero .hero-background{ display:none; }
-
-    /* ===========================================================
-       STATS / FEATURES / PROCESS / DEMO → arka planı şeffaf
-       (çerçeve yüzeyi alttan görünsün)
-    =========================================================== */
-    .rpa-stats, .rpa-features, .rpa-process, .rpa-demo{ background: transparent; }
 
     /* STATS kartları */
     .stats-grid{
@@ -171,7 +162,7 @@
 
     /* RESPONSIVE */
     @media (max-width: 768px){
-      .page-frame{ border-radius:20px; padding:20px; }
+      .site-frame { border-radius:20px; padding:20px; }
       .process-step{ grid-template-columns: 1fr; text-align:center; }
       .demo-container{ grid-template-columns:1fr; gap: var(--spacing-2xl); }
       .stats-grid, .features-grid{ grid-template-columns:1fr; }
@@ -203,49 +194,52 @@
   [3] LOADING SCREEN — END
   =========================================================== -->
 
-  <!-- ===========================================================
-  [4] HEADER / NAVBAR — START
-  =========================================================== -->
-  <header id="header" class="header">
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="logo">
-          <a href="../index.html">
-            <span class="logo-icon"><i class="fas fa-cube"></i></span>
-            <span class="logo-text">Teknoify</span>
-          </a>
-        </div>
-        
-        <ul class="nav-menu">
-          <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
-          <li class="nav-item dropdown">
-            <a href="../index.html#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down"></i></a>
-            <ul class="dropdown-menu">
-              <li><a href="robotik-surec-otomasyonu.html"><i class="fas fa-robot"></i> RPA</a></li>
-              <li><a href="web-scraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
-              <li><a href="finansal-indikatorler.html"><i class="fas fa-chart-line"></i> Finansal Analiz</a></li>
-              <li><a href="akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a href="../index.html#about" class="nav-link">Hakkımızda</a></li>
-          <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
-        </ul>
-        
-        <div class="hamburger">
-          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-        </div>
+<!-- ===========================================================
+[4] HEADER / NAVBAR — START
+=========================================================== -->
+<header id="header" class="header">
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <a href="../index.html">
+          <span class="logo-icon"><i class="fas fa-cube"></i></span>
+          <span class="logo-text">Teknoify</span>
+        </a>
       </div>
-    </nav>
-  </header>
-  <!-- ===========================================================
-  [4] HEADER / NAVBAR — END
-  =========================================================== -->
+      
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+        <li class="nav-item dropdown">
+          <a href="../index.html#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down"></i></a>
+          <ul class="dropdown-menu">
+            <li><a href="robotik-surec-otomasyonu.html"><i class="fas fa-robot"></i> RPA</a></li>
+            <li><a href="web-scraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+            <li><a href="finansal-indikatorler.html"><i class="fas fa-chart-line"></i> Finansal Analiz</a></li>
+            <li><a href="akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a href="../index.html#about" class="nav-link">Hakkımızda</a></li>
+        <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+      </ul>
+      
+      <div class="hamburger">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+</header>
+<!-- ===========================================================
+[4] HEADER / NAVBAR — END
+=========================================================== -->
 
-  <!-- ===========================================================
+<!-- === TEK FRAME: TÜM BÖLÜMLER BU ANA KAPSAYICININ İÇİNDE === -->
+<main class="site-frame">
+
+<!-- ===========================================================
 [5] HERO — START
 =========================================================== -->
 <section class="hero rpa-hero">
-  <div class="container page-frame page-frame-start">
+  <div class="container">
     <div class="hero-container">
       <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
         <div class="hero-badge">
@@ -292,10 +286,10 @@
 =========================================================== -->
 
 <!-- ===========================================================
-[6] STATS — START (UPDATED)
+[6] STATS — START
 =========================================================== -->
 <section class="rpa-stats">
-  <div class="container page-frame page-frame-mid">
+  <div class="container">
     <div class="section-header" data-aos="fade-up">
       <div class="section-badge">
         <i class="fas fa-chart-bar"></i>
@@ -335,14 +329,14 @@
   </div>
 </section>
 <!-- ===========================================================
-[6] STATS — END (UPDATED)
+[6] STATS — END
 =========================================================== -->
 
 <!-- ===========================================================
 [7] FEATURES — START
 =========================================================== -->
 <section class="rpa-features">
-  <div class="container page-frame page-frame-mid">
+  <div class="container">
     <div class="section-header" data-aos="fade-up">
       <div class="section-badge"><i class="fas fa-star"></i><span>RPA Özellikleri</span></div>
       <h2 class="section-title"><span class="gradient-text">Güçlü</span> Otomasyon Çözümleri</h2>
@@ -396,7 +390,7 @@
 [8] PROCESS — START
 =========================================================== -->
 <section class="rpa-process">
-  <div class="container page-frame page-frame-mid">
+  <div class="container">
     <div class="section-header" data-aos="fade-up">
       <div class="section-badge"><i class="fas fa-cogs"></i><span>RPA Süreci</span></div>
       <h2 class="section-title"><span class="gradient-text">4 Adımda</span> RPA Kurulumu</h2>
@@ -442,12 +436,11 @@
 [8] PROCESS — END
 =========================================================== -->
 
-
 <!-- ===========================================================
 [9] DEMO — START
 =========================================================== -->
 <section id="demo" class="rpa-demo">
-  <div class="container page-frame page-frame-end">
+  <div class="container">
     <div class="section-header" data-aos="fade-up">
       <div class="section-badge"><i class="fas fa-play"></i><span>Demo</span></div>
       <h2 class="section-title"><span class="gradient-text">RPA</span> Nasıl Çalışır?</h2>
@@ -481,65 +474,68 @@
 [9] DEMO — END
 =========================================================== -->
 
-  <!-- ===========================================================
-  [10] FOOTER — START
-  =========================================================== -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <div class="footer-logo"><span class="logo-icon"><i class="fas fa-cube"></i></span><span class="logo-text">Teknoify</span></div>
-          <p>Geleceğin teknolojisi ile işinizi dijitalleştirin.</p>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-linkedin"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-github"></i></a>
-          </div>
-        </div>
-        
-        <div class="footer-section">
-          <h4>Hizmetler</h4>
-          <ul>
-            <li><a href="robotik-surec-otomasyonu.html">RPA</a></li>
-            <li><a href="web-scraping.html">Web Scraping</a></li>
-            <li><a href="finansal-indikatorler.html">Finansal Analiz</a></li>
-            <li><a href="akilli-dijital-asistan.html">AI Asistan</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-section">
-          <h4>Şirket</h4>
-          <ul>
-            <li><a href="../index.html#about">Hakkımızda</a></li>
-            <li><a href="../index.html#contact">İletişim</a></li>
-            <li><a href="#">Kariyer</a></li>
-            <li><a href="#">Blog</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-section">
-          <h4>Destek</h4>
-          <ul>
-            <li><a href="#">Dokümantasyon</a></li>
-            <li><a href="#">API Referansı</a></li>
-            <li><a href="#">SSS</a></li>
-            <li><a href="#">Teknik Destek</a></li>
-          </ul>
+</main> <!-- === TEK FRAME KAPANIŞI === -->
+
+<!-- ===========================================================
+[10] FOOTER — START
+=========================================================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="footer-logo"><span class="logo-icon"><i class="fas fa-cube"></i></span><span class="logo-text">Teknoify</span></div>
+        <p>Geleceğin teknolojisi ile işinizi dijitalleştirin.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
         </div>
       </div>
       
-      <div class="footer-bottom">
-        <p>&copy; 2025 Teknoify. Tüm hakları saklıdır.</p>
-        <div class="footer-links">
-          <a href="#">Gizlilik Politikası</a>
-          <a href="#">Kullanım Şartları</a>
-        </div>
+      <div class="footer-section">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="robotik-surec-otomasyonu.html">RPA</a></li>
+          <li><a href="web-scraping.html">Web Scraping</a></li>
+          <li><a href="finansal-indikatorler.html">Finansal Analiz</a></li>
+          <li><a href="akilli-dijital-asistan.html">AI Asistan</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Şirket</h4>
+        <ul>
+          <li><a href="../index.html#about">Hakkımızda</a></li>
+          <li><a href="../index.html#contact">İletişim</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Destek</h4>
+        <ul>
+          <li><a href="#">Dokümantasyon</a></li>
+          <li><a href="#">API Referansı</a></li>
+          <li><a href="#">SSS</a></li>
+          <li><a href="#">Teknik Destek</a></li>
+        </ul>
       </div>
     </div>
-  </footer>
-  <!-- ===========================================================
-  [10] FOOTER — END
-  =========================================================== -->
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 Teknoify. Tüm hakları saklıdır.</p>
+      <div class="footer-links">
+        <a href="#">Gizlilik Politikası</a>
+        <a href="#">Kullanım Şartları</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- ===========================================================
+[10] FOOTER — END
+=========================================================== -->
+
 
   <!-- ===========================================================
   [11] SCRIPTS (AOS, Site JS) — START
