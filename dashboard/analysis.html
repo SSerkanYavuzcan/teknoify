@@ -10,25 +10,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="../css/dashboard.css">
-    <style>
-        .filter-select option { background-color: #14161c; color: #fff; padding: 10px; }
-        .toast-notification {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: rgba(20, 22, 28, 0.95); border: 1px solid var(--border); border-left: 4px solid var(--warning);
-            border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            min-width: 350px;
-        }
-        .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .toast-icon { font-size: 1.5rem; color: var(--warning); }
-        .toast-content h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: #fff; }
-        .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
-        .limit-warning {
-            background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
-            color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
-            text-align: center; font-size: 0.9rem; display: none;
-        }
-    </style>
 </head>
 <body>
 
@@ -63,13 +44,13 @@
         </header>
 
         <div class="content-scroll">
-            
+           
             <div class="filter-bar">
                 <div class="filter-group" style="min-width: 260px;">
                     <label>Rapor Tarihi Seçiniz</label>
                     <div class="date-picker-wrapper">
                         <i class="fas fa-calendar-alt calendar-icon"></i>
-                        <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı..." readonly>
+                        <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz" readonly>
                     </div>
                 </div>
                 <div class="filter-group">
@@ -87,6 +68,7 @@
                 <button class="btn-filter" id="btn-load" onclick="applyFilters()">
                     <i class="fas fa-search"></i> Verileri Yükle
                 </button>
+                
                 <div class="download-wrapper">
                     <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
                         <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down" style="font-size:0.8em; margin-left:4px;"></i>
@@ -111,8 +93,8 @@
                 <div class="kpi-card">
                     <div class="kpi-title">İndirimdeki Ürünler</div>
                     <div class="kpi-value">
-                        <span style="color:#10b981" id="kpi-disc-us">0</span> 
-                        <span style="font-size:0.8em; color:#666">vs</span> 
+                        <span style="color:#10b981" id="kpi-disc-us">0</span>
+                        <span style="font-size:0.8em; color:#666">vs</span>
                         <span style="color:#f97316" id="kpi-disc-comp">0</span>
                     </div>
                     <div class="kpi-sub">Tazeyo vs Rakip</div>
@@ -163,7 +145,7 @@
             </div>
 
             <div id="limit-msg" class="limit-warning">
-                <i class="fas fa-info-circle"></i> Sonuçlar performans için <strong>250 satır</strong> ile sınırlandırılmıştır. 
+                <i class="fas fa-info-circle"></i> Sonuçlar performans için <strong>250 satır</strong> ile sınırlandırılmıştır.
                 Tüm veriyi görmek için <strong>İndir</strong> butonunu kullanınız.
             </div>
         </div>
@@ -174,8 +156,8 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="../js/session-manager.js"></script>
-    <script src="../js/script.js"></script> 
-    
+    <script src="../js/script.js"></script>
+   
     <script>
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
 
@@ -206,22 +188,24 @@
         });
 
         function initCalendar() {
+            // Placeholder burada güncellendi
             flatpickrInstance = flatpickr("#date-range", {
-                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null, placeholder: "Tarih Aralığı Seçiniz..."
+                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null, 
+                placeholder: "Tarih Aralığı Seçiniz" 
             });
         }
 
         function initData() {
             Papa.parse(SHEET_URL, {
-                download: true, header: true, skipEmptyLines: true, 
+                download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
                     ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
-                    populateFilters(); 
-                    
+                    populateFilters();
+                   
                     const tbody = document.getElementById('table-body');
                     const branchSelect = document.getElementById('filter-branch');
                     const catSelect = document.getElementById('filter-category');
-                    
+                   
                     tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
                     branchSelect.disabled = false;
                     catSelect.disabled = false;
@@ -257,7 +241,7 @@
         }
 
         function applyFilters() {
-            const dateRange = flatpickrInstance.selectedDates; 
+            const dateRange = flatpickrInstance.selectedDates;
             const selectedBranch = document.getElementById('filter-branch').value;
             const selectedCat = document.getElementById('filter-category').value;
             const tbody = document.getElementById('table-body');
@@ -267,9 +251,9 @@
             const miniDash = document.getElementById('mini-dashboard');
 
             if (selectedBranch && selectedBranch !== 'all') {
-                headerTazeyo.textContent = selectedBranch; 
+                headerTazeyo.textContent = selectedBranch;
             } else {
-                headerTazeyo.textContent = "Tazeyo"; 
+                headerTazeyo.textContent = "Tazeyo";
             }
 
             if (dateRange.length < 1) {
@@ -279,22 +263,22 @@
 
             tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
 
-            const startDate = dateRange[0]; 
-            const endDate = dateRange[1] ? dateRange[1] : dateRange[0]; 
+            const startDate = dateRange[0];
+            const endDate = dateRange[1] ? dateRange[1] : dateRange[0];
             startDate.setHours(0,0,0,0);
             endDate.setHours(23,59,59,999);
 
             let filteredData = ALL_DATA.filter(row => {
                 const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const catName = row['Category Name'] ? row['Category Name'].trim() : "";
-                
+               
                 const branchMatch = (!selectedBranch || selectedBranch === 'all') || (storeName === selectedBranch);
                 const catMatch = (selectedCat === 'all') || (catName === selectedCat);
-                
+               
                 const dateStr = row['Report Date'];
                 if (!dateStr) return false;
-                const parts = dateStr.split('.'); 
-                if(parts.length !== 3) return false; 
+                const parts = dateStr.split('.');
+                if(parts.length !== 3) return false;
                 const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
                 const dateMatch = (rowDate >= startDate && rowDate <= endDate);
 
@@ -316,10 +300,9 @@
             }
 
             btnDownload.classList.remove('btn-disabled');
-            miniDash.style.display = 'grid'; 
-            
-            // KPI Hesapla (Filtrelenmiş veri ile)
-            calculateKPIs(filteredData, selectedCat); // Kategori bilgisini de gönderiyoruz
+            miniDash.style.display = 'grid';
+           
+            calculateKPIs(filteredData, selectedCat);
 
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
@@ -331,7 +314,7 @@
         function updateCompetitorHeader(data, selectedBranch) {
             const headerComp = document.getElementById('header-competitor');
             let detected = "Rakip Market";
-            
+           
             if(data.length > 0) {
                 const compName = data[0]['Competitor Store Name'];
                 if(compName) {
@@ -347,7 +330,7 @@
                 const key = row['SKU'] || row['Product Name'];
                 if(!grouped[key]) {
                     grouped[key] = {
-                        ...row, 
+                        ...row,
                         'Store Name': 'Zincir Geneli',
                         'Competitor Store Name': 'Rakip Zincir',
                         count: 0, t_org: 0, t_dsc: 0, c_org: 0, c_dsc: 0
@@ -370,7 +353,6 @@
             });
         }
 
-        // --- GÜNCELLENMİŞ KPI HESAPLAMA ---
         function calculateKPIs(data, selectedCat) {
             let totalBiz = 0, totalComp = 0;
             let discountCountBiz = 0, discountCountComp = 0;
@@ -389,9 +371,9 @@
                 if (bizPrice > 0 && compPrice > 0) {
                     totalBiz += bizPrice;
                     totalComp += compPrice;
-                    
+                   
                     const catRaw = row['Category Name'] || 'Diğer';
-                    const cat = catRaw.trim(); // Boşlukları temizle!
+                    const cat = catRaw.trim();
 
                     if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0 };
                     categoryStats[cat].biz += bizPrice;
@@ -407,7 +389,6 @@
                 if (c_dsc > 0 && c_dsc < c_org) discountCountComp++;
             });
 
-            // 1. Fiyat Rekabeti (Genel)
             const compElem = document.getElementById('kpi-competition');
             let globalDiff = 0;
             let isGlobalAdvantage = false;
@@ -422,7 +403,6 @@
                 compElem.innerHTML = `<span class="trend-down"><i class="fas fa-arrow-up"></i> %${globalDiff.toFixed(1)}</span> Daha Pahalıyız`;
             }
 
-            // 2. İndirimler
             document.getElementById('kpi-disc-us').innerText = discountCountBiz;
             document.getElementById('kpi-disc-comp').innerText = discountCountComp;
 
@@ -430,15 +410,12 @@
             document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
             document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
 
-            // 4. Kategori Kartı Mantığı
             const catTitle = document.querySelector('#kpi-best-cat').parentElement.querySelector('.kpi-title');
             const catSub = document.getElementById('kpi-best-cat-sub');
             const catValue = document.getElementById('kpi-best-cat');
 
-            // EĞER KULLANICI ÖZEL BİR KATEGORİ SEÇTİYSE
             if (selectedCat && selectedCat !== 'all') {
-                catValue.innerText = selectedCat; // Seçilen kategori adını yaz
-                
+                catValue.innerText = selectedCat;
                 if(isGlobalAdvantage) {
                     catTitle.innerText = "Mevcut Kategori Durumu";
                     catSub.innerHTML = `Rakipten <span class="trend-up">%${globalDiff.toFixed(1)} daha ucuz</span>`;
@@ -446,8 +423,7 @@
                     catTitle.innerText = "Mevcut Kategori Durumu";
                     catSub.innerHTML = `Rakipten <span class="trend-down">%${globalDiff.toFixed(1)} daha pahalı</span>`;
                 }
-            } 
-            // EĞER TÜM KATEGORİLER SEÇİLİYSE (ESKİ MANTIK DEVAM)
+            }
             else {
                 let bestCat = '-'; let maxDiff = 0; let isAdvantage = true;
 
@@ -483,11 +459,11 @@
                 let brandName = row['Brand Name'] || '-';
                 if (brandName.toLowerCase().trim() === 'unbranded') brandName = '-';
                 const categoryName = row['Category Name'] || '-';
-                
+               
                 const t_org = getValue(row['Tazeyo Original Price']);
                 const t_dsc = getValue(row['Tazeyo Discount Price']);
                 const priceBiz = t_dsc > 0 ? t_dsc : t_org;
-                
+               
                 const c_org = getValue(row['Competitor Original Price']);
                 const c_dsc = getValue(row['Competitor Discount Price']);
                 const priceRakip = c_dsc > 0 ? c_dsc : c_org;
@@ -496,7 +472,7 @@
                 let compBadge = compName ? cleanName(compName).toUpperCase() : 'RAKİP';
 
                 let farkYuzde = 0;
-                let farkClass = "diff-negative"; 
+                let farkClass = "diff-negative";
                 if(priceRakip > 0 && priceBiz > 0) {
                     farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
                 }
@@ -525,10 +501,10 @@
                     <td>${categoryName}</td>
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
-                    <td>-</td> 
+                    <td>-</td>
                     <td class="price-cell">₺${formatMoney(c_org)}</td>
                     <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
-                    <td>-</td> 
+                    <td>-</td>
                     <td>${badgeHtml}</td>
                     <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                 `;
@@ -550,7 +526,7 @@
         function parsePrice(val) {
             if(!val) return 0;
             let clean = val.toString().replace(/["'₺\s]/g, '');
-            if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) { clean = clean.replace(',', '.'); } 
+            if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) { clean = clean.replace(',', '.'); }
             else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) { clean = clean.replace(/\./g, '').replace(',', '.'); }
             return parseFloat(clean) || 0;
         }
