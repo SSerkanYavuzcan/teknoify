@@ -189,7 +189,7 @@ a { text-decoration: none; color: inherit; }
     font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
 }
 
-/* Ortak Input Stili */
+/* Ortak Input Stili (Select ve Standart Input) */
 .filter-select, input[type="text"].filter-select {
     background: rgba(255,255,255,0.03);
     border: 1px solid var(--border);
@@ -370,26 +370,144 @@ select.filter-select {
     background-color: rgba(139, 92, 246, 0.4) !important;
 }
 
-/* --- FLATPICKR (TAKVİM) DARK THEME --- */
+/* --- MODERN TAKVİM (FLATPICKR) STİLLERİ --- */
+
+/* 1. Takvim Input Alanı (Wrapper) */
+.date-picker-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Input yerine şık bir buton gibi görünsün */
+input.flatpickr-input {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    color: #e2e8f0 !important;
+    font-family: var(--font-main) !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    padding: 12px 16px 12px 42px !important; /* İkon için soldan boşluk */
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    width: 100% !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    height: 47px !important;
+}
+
+input.flatpickr-input:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+input.flatpickr-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+    outline: none !important;
+}
+
+/* Takvim İkonu */
+.calendar-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 1rem;
+    z-index: 2;
+}
+
+/* 2. Açılan Takvim Penceresi */
 .flatpickr-calendar {
     background: #14161c !important;
     border: 1px solid var(--border) !important;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+    border-radius: 16px !important;
+    padding: 10px !important;
     font-family: var(--font-main) !important;
+    margin-top: 8px !important;
 }
-.flatpickr-months .flatpickr-month { background: #14161c !important; color: #fff !important; fill: #fff !important; }
-.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: #fff !important; }
-.flatpickr-current-month .flatpickr-monthDropdown-months { background: #14161c !important; }
-.flatpickr-weekdays { background: #14161c !important; }
-.flatpickr-weekday { color: var(--text-muted) !important; }
-.flatpickr-day { color: #fff !important; }
-.flatpickr-day.inRange, .flatpickr-day.prevMonthDay.inRange, 
-.flatpickr-day.nextMonthDay.inRange, .flatpickr-day.today.inRange,
-.flatpickr-day:hover, .flatpickr-day:focus {
-    background: rgba(99,102,241,0.2) !important; border-color: transparent !important;
+
+/* Ok (Arrow) Gizle */
+.flatpickr-calendar::before, .flatpickr-calendar::after {
+    display: none !important;
 }
-.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-    background: var(--primary) !important; border-color: var(--primary) !important; color: #fff !important;
+
+/* Ay ve Yıl Başlığı */
+.flatpickr-months {
+    background: transparent !important;
+    margin-bottom: 10px !important;
+    padding: 5px !important;
+}
+.flatpickr-month {
+    color: #fff !important;
+    fill: #fff !important;
+}
+.flatpickr-current-month {
+    font-size: 1rem !important;
+    padding-top: 0 !important;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    font-weight: 700 !important;
+    background: transparent !important;
+}
+.flatpickr-current-month input.cur-year {
+    font-weight: 700 !important;
+}
+
+/* Oklar */
+.flatpickr-prev-month, .flatpickr-next-month {
+    fill: var(--text-muted) !important;
+}
+.flatpickr-prev-month:hover, .flatpickr-next-month:hover {
+    fill: #fff !important;
+    background: rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important;
+}
+
+/* Haftanın Günleri */
+.flatpickr-weekdays {
+    background: transparent !important;
+    margin-bottom: 5px !important;
+}
+span.flatpickr-weekday {
+    color: var(--text-muted) !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+}
+
+/* Günler */
+.flatpickr-day {
+    color: #e2e8f0 !important;
+    border-radius: 8px !important;
+    border: 1px solid transparent !important;
+    transition: 0.2s !important;
+    font-weight: 500 !important;
+}
+
+.flatpickr-day:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+}
+
+.flatpickr-day.today {
+    border-color: rgba(255,255,255,0.2) !important;
+}
+
+.flatpickr-day.selected, 
+.flatpickr-day.startRange, 
+.flatpickr-day.endRange {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
+}
+
+.flatpickr-day.inRange {
+    background: rgba(99, 102, 241, 0.15) !important;
+    box-shadow: -5px 0 0 rgba(99, 102, 241, 0.15), 5px 0 0 rgba(99, 102, 241, 0.15) !important;
+    border-color: transparent !important;
 }
 
 

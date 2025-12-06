@@ -14,12 +14,10 @@
     <link rel="stylesheet" href="../css/dashboard.css">
     
     <style>
+        /* Flatpickr input özelleştirmesi */
+        .date-picker-wrapper { position: relative; width: 100%; }
+        /* Dropdown seçenekleri için arka plan */
         .filter-select option { background-color: #14161c; color: #fff; padding: 10px; }
-        .limit-warning {
-            background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
-            color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
-            text-align: center; font-size: 0.9rem; display: none;
-        }
     </style>
 </head>
 <body>
@@ -49,9 +47,13 @@
         <div class="content-scroll">
             
             <div class="filter-bar">
+                
                 <div class="filter-group" style="min-width: 260px;">
                     <label>Rapor Tarihi Seçiniz</label>
-                    <input type="text" id="date-range" class="filter-select" placeholder="Tarih Aralığı..." style="cursor:pointer;">
+                    <div class="date-picker-wrapper">
+                        <i class="fas fa-calendar-alt calendar-icon"></i>
+                        <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı..." readonly>
+                    </div>
                 </div>
 
                 <div class="filter-group">
@@ -156,7 +158,7 @@
             initCalendar();
             initData();
 
-            // Dropdown dışına tıklama kontrolü
+            // İndirme menüsü dışı tıklama kontrolü
             document.addEventListener('click', function(e) {
                 const wrapper = document.querySelector('.download-wrapper');
                 const menu = document.getElementById('download-menu');
@@ -172,20 +174,20 @@
                 dateFormat: "Y-m-d",
                 locale: "tr",
                 theme: "dark",
-                defaultDate: null
+                defaultDate: null,
+                placeholder: "Tarih Aralığı Seçiniz..."
             });
         }
 
-        // --- YENİ VERİ ÇEKME YÖNTEMİ (PAPA PARSE) ---
+        // --- VERİ ÇEKME (PapaParse) ---
         function initData() {
             Papa.parse(SHEET_URL, {
                 download: true,
-                header: true, // Başlıkları anahtar olarak kullan
-                skipEmptyLines: true, // Boş satırları atla
+                header: true, 
+                skipEmptyLines: true, 
                 complete: function(results) {
-                    console.log("Veri Yüklendi:", results.data[0]); // Test için konsola bas
+                    console.log("Veri Yüklendi:", results.data[0]); 
                     
-                    // Bozuk satırları temizle
                     ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
                     
                     populateBranchFilter();
@@ -206,13 +208,11 @@
         function populateBranchFilter() {
             const branchSet = new Set();
             ALL_DATA.forEach(row => {
-                // PapaParse sayesinde direkt sütun adıyla çağırıyoruz
                 const name = row['Store Name']; 
                 if(name) branchSet.add(name.trim());
             });
 
             const branchSelect = document.getElementById('filter-branch');
-            // İstediğin gibi, ilk seçenek başlık gibi duruyor ama seçilemiyor
             branchSelect.innerHTML = '<option value="" disabled selected>Şube Seçiniz</option>';
             branchSelect.innerHTML += '<option value="all">Tüm Şubeler</option>';
             
@@ -256,7 +256,7 @@
                 const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const branchMatch = (!selectedBranch || selectedBranch === 'all') || (storeName === selectedBranch);
                 
-                // Tarih (Format: 06.12.2025)
+                // Tarih (06.12.2025)
                 const dateStr = row['Report Date'];
                 if (!dateStr) return false;
                 const parts = dateStr.split('.'); 
@@ -292,7 +292,7 @@
             tbody.innerHTML = '';
 
             dataRows.forEach(row => {
-                // Sütun İsimleri (Excel'deki başlıkların AYNISI olmalı)
+                // Sütunlar
                 const reportDate = row['Report Date'];
                 const storeName  = row['Store Name'];
                 const sku        = row['SKU'];
@@ -408,7 +408,6 @@
 
         function downloadCSV() {
             if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
-            // PapaParse unparse ile veriyi tekrar CSV yap (En güvenlisi)
             const csv = Papa.unparse(window.CURRENT_EXPORT_DATA);
             const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
@@ -429,9 +428,7 @@
 
         function parsePrice(val) {
             if(!val) return 0;
-            // Tüm karakterleri temizle
-            let clean = val.toString().replace(/[^0-9,.-]/g, '');
-            // Format: 1.250,50 -> 1250.50
+            let clean = val.toString().replace(/["'₺\s]/g, '');
             if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
                 clean = clean.replace(',', '.');
             } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
