@@ -184,13 +184,18 @@ a { text-decoration: none; color: inherit; }
 
 .filter-group {
     display: flex; flex-direction: column; gap: 8px;
-    flex: 1; min-width: 200px;
+    flex: 1; min-width: 180px; /* Biraz küçülttük */
 }
-.filter-group label {
+.filter-group label, .filter-label-group label {
     font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
 }
 
-.filter-select {
+/* Tarih Seçimi Özel Grubu */
+.filter-label-group {
+    display: flex; flex-direction: column; gap: 8px;
+}
+
+.filter-select, input[type="date"] {
     background: rgba(255,255,255,0.03);
     border: 1px solid var(--border);
     color: #fff;
@@ -199,6 +204,17 @@ a { text-decoration: none; color: inherit; }
     font-family: inherit; font-size: 0.9rem;
     cursor: pointer;
     transition: 0.2s;
+    height: 47px; /* Yükseklik sabitleme */
+}
+
+/* Tarih inputu için dark mode ikonu */
+input[type="date"] {
+    color-scheme: dark;
+    min-width: 140px;
+}
+
+/* Select için ok ikonu */
+.filter-select {
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
@@ -206,12 +222,14 @@ a { text-decoration: none; color: inherit; }
     background-size: 16px;
 }
 
-.filter-select:hover, .filter-select:focus {
+.filter-select:hover, .filter-select:focus,
+input[type="date"]:hover, input[type="date"]:focus {
     background-color: rgba(255,255,255,0.06);
     border-color: var(--primary);
     outline: none;
 }
 
+/* Filtre Butonu */
 .btn-filter {
     background: var(--primary);
     color: #fff;
@@ -220,7 +238,7 @@ a { text-decoration: none; color: inherit; }
     border-radius: 10px;
     font-weight: 600; font-size: 0.9rem;
     cursor: pointer;
-    height: 47px; /* Select ile hizalama */
+    height: 47px;
     display: flex; align-items: center; gap: 8px;
     transition: 0.2s;
 }
@@ -244,7 +262,7 @@ a { text-decoration: none; color: inherit; }
     border-bottom: 1px solid var(--border);
     border-right: 1px solid var(--border);
     text-align: left;
-    position: sticky; top: 0; z-index: 10; /* Başlık sabitleme */
+    position: sticky; top: 0; z-index: 10;
 }
 
 /* Gruplanmış Başlık Renkleri */
