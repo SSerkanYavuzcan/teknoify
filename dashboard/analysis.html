@@ -7,8 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    
     <link rel="stylesheet" href="../css/dashboard.css">
     
     <style>
@@ -54,8 +56,8 @@
 
                 <div class="filter-group">
                     <label>Şube Seçiniz</label>
-                    <select class="filter-select" id="filter-branch">
-                        <option value="" disabled selected>Veriler Yükleniyor...</option>
+                    <select class="filter-select" id="filter-branch" disabled>
+                        <option value="" selected>Veriler Yükleniyor...</option>
                     </select>
                 </div>
 
@@ -80,7 +82,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
@@ -93,21 +94,21 @@
                             <th colspan="2" style="background:#14161c;">Analiz</th>
                         </tr>
                         <tr id="header-row">
-                            <th data-id="0">Report Date</th>
-                            <th data-id="1">Store Name</th>
-                            <th data-id="2">SKU</th>
-                            <th data-id="3">Product Name</th>
+                            <th data-id="date">Report Date</th>
+                            <th data-id="store">Store Name</th>
+                            <th data-id="sku">SKU</th>
+                            <th data-id="product">Product Name</th>
                             
-                            <th data-id="4">Original Price</th>
-                            <th data-id="5">Discount Price</th>
-                            <th data-id="6">Weekly Change</th>
+                            <th data-id="t_org">Original Price</th>
+                            <th data-id="t_dsc">Discount Price</th>
+                            <th data-id="t_chg">Weekly Change</th>
                             
-                            <th data-id="7">Original Price</th>
-                            <th data-id="8">Discount Price</th>
-                            <th data-id="9">Weekly Change</th>
+                            <th data-id="c_org">Original Price</th>
+                            <th data-id="c_dsc">Discount Price</th>
+                            <th data-id="c_chg">Weekly Change</th>
                             
-                            <th data-id="10">En Ucuz</th>
-                            <th data-id="11">Ucuzluk Oranı</th>
+                            <th data-id="cheapest">En Ucuz</th>
+                            <th data-id="ratio">Ucuzluk Oranı</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -128,6 +129,7 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     
     <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script> 
@@ -154,11 +156,11 @@
             initCalendar();
             initData();
 
-            // İndirme menüsü dışına tıklayınca kapat
+            // Dropdown dışına tıklama kontrolü
             document.addEventListener('click', function(e) {
                 const wrapper = document.querySelector('.download-wrapper');
                 const menu = document.getElementById('download-menu');
-                if (!wrapper.contains(e.target)) {
+                if (wrapper && !wrapper.contains(e.target)) {
                     menu.classList.remove('show');
                 }
             });
@@ -174,45 +176,43 @@
             });
         }
 
-        async function initData() {
-            try {
-                const response = await fetch(SHEET_URL);
-                if (!response.ok) throw new Error("Veri çekilemedi");
-                const text = await response.text();
-                
-                const rows = text.split(/\r?\n/).slice(1);
-
-                ALL_DATA = rows.map(row => {
-                    if(!row || row.trim() === "") return null;
-                    const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
-                    let cols = [];
-                    let match;
-                    while ((match = regex.exec(row)) !== null) {
-                        cols.push(match[0].replace(/^"|"$/g, '').trim());
-                    }
-                    return cols;
-                }).filter(cols => cols !== null && cols.length >= 5);
-
-                populateBranchFilter();
-                
-                document.getElementById('table-body').innerHTML = '<tr><td colspan="12" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
-
-            } catch (error) {
-                console.error(error);
-                document.getElementById('table-body').innerHTML = '<tr><td colspan="12" style="color:#ef4444; text-align:center;">Veri bağlantı hatası.</td></tr>';
-            }
+        // --- YENİ VERİ ÇEKME YÖNTEMİ (PAPA PARSE) ---
+        function initData() {
+            Papa.parse(SHEET_URL, {
+                download: true,
+                header: true, // Başlıkları anahtar olarak kullan
+                skipEmptyLines: true, // Boş satırları atla
+                complete: function(results) {
+                    console.log("Veri Yüklendi:", results.data[0]); // Test için konsola bas
+                    
+                    // Bozuk satırları temizle
+                    ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
+                    
+                    populateBranchFilter();
+                    
+                    const tbody = document.getElementById('table-body');
+                    const branchSelect = document.getElementById('filter-branch');
+                    
+                    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
+                    branchSelect.disabled = false;
+                },
+                error: function(err) {
+                    console.error("CSV Hatası:", err);
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="12" style="color:#ef4444; text-align:center;">Veri çekilemedi.</td></tr>';
+                }
+            });
         }
 
         function populateBranchFilter() {
             const branchSet = new Set();
-            ALL_DATA.forEach(cols => {
-                const rawName = cols[1];
-                if(rawName && rawName.trim().length > 0) {
-                    branchSet.add(rawName.trim());
-                }
+            ALL_DATA.forEach(row => {
+                // PapaParse sayesinde direkt sütun adıyla çağırıyoruz
+                const name = row['Store Name']; 
+                if(name) branchSet.add(name.trim());
             });
 
             const branchSelect = document.getElementById('filter-branch');
+            // İstediğin gibi, ilk seçenek başlık gibi duruyor ama seçilemiyor
             branchSelect.innerHTML = '<option value="" disabled selected>Şube Seçiniz</option>';
             branchSelect.innerHTML += '<option value="all">Tüm Şubeler</option>';
             
@@ -230,12 +230,10 @@
             const limitMsg = document.getElementById('limit-msg');
             const btnDownload = document.getElementById('btn-download');
             const btnEdit = document.getElementById('btn-edit');
-            
-            // BAŞLIK GÜNCELLEME LOGİĞİ
             const headerTazeyo = document.getElementById('header-tazeyo');
+
+            // Başlık Güncelleme
             if (selectedBranch && selectedBranch !== 'all') {
-                // Parantez içini temizleyelim mi? Örn: "Tazeyo (Batıkent)" -> sadece "Batıkent"
-                // İsteğine göre direkt adı da yazabiliriz. Şimdilik direkt adı yazıyorum.
                 headerTazeyo.textContent = selectedBranch; 
             } else {
                 headerTazeyo.textContent = "Tazeyo (Biz)";
@@ -253,15 +251,18 @@
             startDate.setHours(0,0,0,0);
             endDate.setHours(23,59,59,999);
 
-            let filteredData = ALL_DATA.filter(cols => {
-                const storeName = cols[1] ? cols[1].trim() : "";
+            let filteredData = ALL_DATA.filter(row => {
+                // Şube
+                const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const branchMatch = (!selectedBranch || selectedBranch === 'all') || (storeName === selectedBranch);
                 
-                const dateStr = cols[0];
+                // Tarih (Format: 06.12.2025)
+                const dateStr = row['Report Date'];
                 if (!dateStr) return false;
                 const parts = dateStr.split('.'); 
                 if(parts.length !== 3) return false; 
                 const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
+                
                 const dateMatch = (rowDate >= startDate && rowDate <= endDate);
 
                 return branchMatch && dateMatch;
@@ -290,20 +291,22 @@
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
 
-            dataRows.forEach(cols => {
-                const reportDate = cols[0];
-                const storeName = cols[1];
-                const sku = cols[2];
-                const prodName = cols[3];
+            dataRows.forEach(row => {
+                // Sütun İsimleri (Excel'deki başlıkların AYNISI olmalı)
+                const reportDate = row['Report Date'];
+                const storeName  = row['Store Name'];
+                const sku        = row['SKU'];
+                const prodName   = row['Product Name'];
                 
-                const t_org = parsePrice(cols[6]);
-                const t_dsc = parsePrice(cols[7]);
+                const t_org = parsePrice(row['Tazeyo Original Price']);
+                const t_dsc = parsePrice(row['Tazeyo Discount Price']);
                 const priceBiz = t_dsc > 0 ? t_dsc : t_org;
                 
-                const c_org = parsePrice(cols[8]);
-                const c_dsc = parsePrice(cols[9]);
+                const c_org = parsePrice(row['Competitor Original Price']);
+                const c_dsc = parsePrice(row['Competitor Discount Price']);
                 const priceRakip = c_dsc > 0 ? c_dsc : c_org;
 
+                // Hesaplama
                 let farkYuzde = 0;
                 let farkClass = "diff-negative"; 
                 if(priceRakip > 0 && priceBiz > 0) {
@@ -330,67 +333,20 @@
                     <td>${storeName}</td>
                     <td>${sku}</td>
                     <td title="${prodName}">${prodName}</td>
+                    
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
                     <td>-</td> 
+                    
                     <td class="price-cell">₺${formatMoney(c_org)}</td>
                     <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
                     <td>-</td> 
+                    
                     <td>${badgeHtml}</td>
                     <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        // --- İNDİRME FONKSİYONLARI ---
-        function toggleDownloadMenu() {
-            const menu = document.getElementById('download-menu');
-            menu.classList.toggle('show');
-        }
-
-        function downloadCSV() {
-            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "Report Date,Store Name,SKU,Product Name,Brand,Category,Tazeyo Original,Tazeyo Discount,Competitor Original,Competitor Discount\n";
-            window.CURRENT_EXPORT_DATA.forEach(rowArray => {
-                let row = rowArray.map(e => `"${e}"`).join(",");
-                csvContent += row + "\r\n";
-            });
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "teknoify_analiz_raporu.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            document.getElementById('download-menu').classList.remove('show');
-        }
-
-        function downloadExcel() {
-            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
-
-            // Veriyi Excel formatına hazırla (Object Array)
-            const exportData = window.CURRENT_EXPORT_DATA.map(cols => ({
-                "Report Date": cols[0],
-                "Store Name": cols[1],
-                "SKU": cols[2],
-                "Product Name": cols[3],
-                "Brand": cols[4],
-                "Category": cols[5],
-                "Tazeyo Orig": parsePrice(cols[6]),
-                "Tazeyo Disc": parsePrice(cols[7]),
-                "Marketten Orig": parsePrice(cols[8]),
-                "Marketten Disc": parsePrice(cols[9])
-            }));
-
-            // SheetJS ile Excel Oluştur
-            const ws = XLSX.utils.json_to_sheet(exportData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
-            XLSX.writeFile(wb, "teknoify_analiz_raporu.xlsx");
-            
-            document.getElementById('download-menu').classList.remove('show');
         }
 
         // --- YARDIMCILAR ---
@@ -414,12 +370,10 @@
                     ghostClass: 'sortable-ghost',
                     onEnd: function (evt) { moveTableColumn(evt.oldIndex, evt.newIndex); }
                 });
-
                 rowSortable = new Sortable(tbody, {
                     animation: 150,
                     ghostClass: 'sortable-ghost'
                 });
-
             } else {
                 btn.innerHTML = '<i class="fas fa-arrows-alt"></i> Tabloyu Düzenle';
                 btn.classList.remove('active');
@@ -448,9 +402,36 @@
             });
         }
 
+        function toggleDownloadMenu() {
+            document.getElementById('download-menu').classList.toggle('show');
+        }
+
+        function downloadCSV() {
+            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
+            // PapaParse unparse ile veriyi tekrar CSV yap (En güvenlisi)
+            const csv = Papa.unparse(window.CURRENT_EXPORT_DATA);
+            const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "teknoify_analiz_raporu.csv";
+            link.click();
+            document.getElementById('download-menu').classList.remove('show');
+        }
+
+        function downloadExcel() {
+            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
+            const ws = XLSX.utils.json_to_sheet(window.CURRENT_EXPORT_DATA);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
+            XLSX.writeFile(wb, "teknoify_analiz_raporu.xlsx");
+            document.getElementById('download-menu').classList.remove('show');
+        }
+
         function parsePrice(val) {
             if(!val) return 0;
-            let clean = val.toString().replace(/["'₺\s]/g, '');
+            // Tüm karakterleri temizle
+            let clean = val.toString().replace(/[^0-9,.-]/g, '');
+            // Format: 1.250,50 -> 1250.50
             if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
                 clean = clean.replace(',', '.');
             } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
