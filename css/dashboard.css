@@ -1,7 +1,7 @@
 /* ================================================================
    [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (CLEAN & FINAL)
    [FILE] css/dashboard.css
-   [UPDATED] Takvim Başlığı Tam Ortalandı & Kilitlendi
+   [UPDATED] Takvim Başlığı ve Oklar Milimetrik Ortalandı
    ================================================================ */
 
    :root {
@@ -100,7 +100,7 @@ a { text-decoration: none; color: inherit; }
 .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
 /* ================================================================
-   MODERN TAKVİM (FLATPICKR) - FIX & TRANSPARENT
+   MODERN TAKVİM (FLATPICKR) - FIX & ABSOLUTE CENTER
    ================================================================ */
 
 .date-picker-wrapper { position: relative; width: 100%; }
@@ -144,93 +144,82 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 }
 .flatpickr-calendar::before, .flatpickr-calendar::after { display: none !important; }
 
-/* 3. Ay ve Yıl Başlığı - TAM ORTALAMA VE KİLİTLEME */
+/* 3. Ay/Yıl Başlık Konteyneri */
 .flatpickr-months { 
-    padding-bottom: 10px !important; 
-    background: transparent !important; 
-    border: none !important; 
-    position: relative !important;
+    background: transparent !important;
+    border: none !important;
+    position: relative !important; /* Okları buna göre yerleştireceğiz */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 50px !important; /* Yükseklik sabitleme */
+    margin-bottom: 10px !important;
 }
 
-.flatpickr-month { 
-    background: transparent !important; 
-    height: 40px !important; 
-    color: #fff !important; 
-    fill: #fff !important; 
-    overflow: visible !important;
-}
-
-/* BAŞLIK ORTALAMA VE POZİSYONLAMA */
-.flatpickr-current-month { 
-    font-size: 1.1rem !important; 
-    padding: 0 !important; 
-    color: #fff !important; 
-    
-    /* Flex ile tam ortalama */
+/* OKLARIN YERLEŞİMİ - ABSOLUTE CENTER */
+.flatpickr-prev-month, .flatpickr-next-month { 
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 100 !important;
+    height: 32px !important; 
+    width: 32px !important; 
+    padding: 0 !important;
     display: flex !important; 
     align-items: center !important; 
     justify-content: center !important; 
-    
-    /* Pozisyonu sabitleme */
+    border-radius: 8px !important; 
+    background: rgba(255,255,255,0.05) !important;
+    cursor: pointer !important;
+}
+.flatpickr-prev-month { left: 10px !important; } /* Sola yasla */
+.flatpickr-next-month { right: 10px !important; } /* Sağa yasla */
+
+.flatpickr-prev-month:hover, .flatpickr-next-month:hover { background: var(--primary) !important; fill: #fff !important; }
+.flatpickr-prev-month svg, .flatpickr-next-month svg { width: 12px !important; height: 12px !important; fill: #fff !important; }
+
+/* ORTA KISIM (AY VE YIL) */
+.flatpickr-current-month { 
     position: absolute !important;
-    width: 100% !important;
     left: 0 !important;
-    top: 5px !important;
-    
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important; /* TAM ORTA */
+    padding: 0 !important;
+    margin: 0 !important;
     background: transparent !important;
+    pointer-events: none !important; /* Tıklamayı kapat */
 }
 
-/* Ay Seçimini (Dropdown) Yazıya Çevirme & Kilitleme */
+/* Ay (Yazı) */
 .flatpickr-monthDropdown-months {
     appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
     background: transparent !important;
     border: none !important;
     color: #fff !important;
     font-weight: 700 !important;
     font-size: 1.1rem !important;
-    padding: 0 5px !important;
+    padding: 0 6px !important;
+    margin: 0 !important;
     cursor: default !important;
-    pointer-events: none !important; /* Tıklamayı engeller */
 }
 
-/* Yıl Seçimini (Input) Yazıya Çevirme & Kilitleme */
-.flatpickr-current-month .numInputWrapper {
-    width: auto !important;
-    background: transparent !important;
-}
-
+/* Yıl (Input) */
+.flatpickr-current-month .numInputWrapper { width: auto !important; }
 .flatpickr-current-month input.cur-year { 
     font-weight: 700 !important; 
     color: #fff !important; 
     background: transparent !important; 
     border: none !important;
-    pointer-events: none !important; /* Tıklamayı engeller */
     padding: 0 !important;
     margin: 0 !important;
+    font-size: 1.1rem !important;
 }
 
-/* Yılın yanındaki okları gizle */
-.numInputWrapper span.arrowUp, .numInputWrapper span.arrowDown {
-    display: none !important;
-}
-
-/* Gezinme Okları (Bunlar tıklanabilir kalmalı) */
-.flatpickr-prev-month, .flatpickr-next-month { 
-    padding: 10px !important; 
-    height: 36px !important; width: 36px !important; 
-    display: flex !important; align-items: center; justify-content: center; 
-    border-radius: 8px !important; 
-    background: rgba(255,255,255,0.05) !important;
-    top: 15px !important; 
-    cursor: pointer !important;
-    z-index: 10 !important; /* Başlığın üzerinde kalsın */
-}
-.flatpickr-prev-month { left: 15px !important; }
-.flatpickr-next-month { right: 15px !important; }
-.flatpickr-prev-month:hover, .flatpickr-next-month:hover { background: var(--primary) !important; fill: #fff !important; }
-.flatpickr-prev-month svg, .flatpickr-next-month svg { width: 12px !important; height: 12px !important; fill: #fff !important; }
+/* Gereksiz Okları Gizle */
+.numInputWrapper span.arrowUp, .numInputWrapper span.arrowDown { display: none !important; }
 
 /* 4. Günlerin Başlıkları (Pzt, Sal...) */
 .flatpickr-weekdays { 
@@ -238,32 +227,24 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     margin-bottom: 10px !important; 
     background: transparent !important; 
     border: none !important;
-    box-shadow: none !important;
 }
 span.flatpickr-weekday { 
     color: var(--text-muted) !important; 
     font-weight: 600 !important; 
     font-size: 0.85rem !important; 
     background: transparent !important; 
-    border: none !important;
 }
 
 /* 5. Günler Konteyneri */
-.flatpickr-innerContainer, .flatpickr-rContainer, .flatpickr-days { 
+.flatpickr-innerContainer, .flatpickr-rContainer, .flatpickr-days, .dayContainer { 
     width: 100% !important; 
     background: transparent !important; 
     border: none !important;
 }
-
 .dayContainer { 
-    width: 100% !important; 
-    min-width: 100% !important; 
-    max-width: 100% !important; 
-    padding: 0 !important; 
     display: flex !important; 
     flex-wrap: wrap !important; 
     justify-content: flex-start !important;
-    background: transparent !important;
 }
 
 /* 6. Gün Kutucukları */
@@ -283,7 +264,6 @@ span.flatpickr-weekday {
 }
 
 .flatpickr-day:hover { background: rgba(255, 255, 255, 0.05) !important; color: #fff !important; }
-
 .flatpickr-day.today { border: 1px solid var(--primary) !important; color: var(--primary) !important; background: transparent !important; }
 .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange { 
     background: var(--primary) !important; 
