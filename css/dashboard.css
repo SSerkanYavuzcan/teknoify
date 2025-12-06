@@ -395,4 +395,48 @@ span.flatpickr-weekday { background: transparent !important; color: var(--text-m
 /* Diğer Ayın Günleri */
 .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: rgba(156, 163, 175, 0.3) !important; }
 
+/* --- FLATPICKR ARKA PLAN TEMİZLİĞİ (KESİN ÇÖZÜM) --- */
+
+/* 1. Ay ve Yıl Kısmı (Üst Header) */
+.flatpickr-months, 
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month .numInputWrapper {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Yıl Inputunun Kendisi */
+input.cur-year {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* 2. Haftanın Günleri (Pzt, Sal...) */
+.flatpickr-weekdays, 
+span.flatpickr-weekday {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* 3. Günlerin Kapsayıcısı (Container) */
+.flatpickr-days, 
+.dayContainer {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* 4. Eğer hala koyu gri bir kutu varsa, ana pencereyi zorla */
+.flatpickr-calendar {
+    background-color: #14161c !important; /* Bizim kart rengimiz */
+}
+.flatpickr-calendar.hasWeeks .flatpickr-days, 
+.flatpickr-calendar.hasTime .flatpickr-time {
+    border-top: none !important;
+}
+
 
