@@ -148,12 +148,24 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 .flatpickr-months { 
     background: transparent !important;
     border: none !important;
-    position: relative !important; /* Okları buna göre yerleştireceğiz */
+    position: relative !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    height: 50px !important; /* Yükseklik sabitleme */
+    height: 50px !important;
     margin-bottom: 10px !important;
+}
+
+/* HEADER İÇİ (GRİLİĞİ KALDIR + ORTALA) */
+.flatpickr-months .flatpickr-month {
+    background: transparent !important;  /* arkadaki grilik gitti */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 1 1 auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: relative !important;
 }
 
 /* OKLARIN YERLEŞİMİ - ABSOLUTE CENTER */
@@ -172,17 +184,16 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     background: rgba(255,255,255,0.05) !important;
     cursor: pointer !important;
 }
-.flatpickr-prev-month { left: 10px !important; } /* Sola yasla */
-.flatpickr-next-month { right: 10px !important; } /* Sağa yasla */
+.flatpickr-prev-month { left: 10px !important; }
+.flatpickr-next-month { right: 10px !important; }
 
 .flatpickr-prev-month:hover, .flatpickr-next-month:hover { background: var(--primary) !important; fill: #fff !important; }
 .flatpickr-prev-month svg, .flatpickr-next-month svg { width: 12px !important; height: 12px !important; fill: #fff !important; }
 
 /* ORTA KISIM (AY VE YIL) */
 .flatpickr-current-month { 
-    position: absolute !important;
-    left: 0 !important;
-    width: 100% !important;
+    position: relative !important;
+    width: auto !important;
     height: 100% !important;
     display: flex !important; 
     align-items: center !important; 
@@ -190,7 +201,7 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     padding: 0 !important;
     margin: 0 !important;
     background: transparent !important;
-    pointer-events: none !important; /* Tıklamayı kapat */
+    pointer-events: none !important;
 }
 
 /* Ay (Yazı) */
@@ -204,6 +215,7 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     padding: 0 6px !important;
     margin: 0 !important;
     cursor: default !important;
+    text-align: center !important;
 }
 
 /* Yıl (Input) */
@@ -216,6 +228,7 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     padding: 0 !important;
     margin: 0 !important;
     font-size: 1.1rem !important;
+    text-align: center !important;
 }
 
 /* Gereksiz Okları Gizle */
@@ -326,5 +339,6 @@ span.flatpickr-weekday {
     color: #fff; font-size: 0.7rem; opacity: 0; transform: scale(0.5); transition: 0.2s;
 }
 .multi-option.selected .option-checkbox::after { opacity: 1; transform: scale(1); }
+
 
 
