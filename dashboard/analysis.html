@@ -21,6 +21,14 @@
 </head>
 <body>
 
+    <div id="toast" class="toast-notification">
+        <div class="toast-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="toast-content">
+            <h4>Dikkat</h4>
+            <p id="toast-message">Lütfen bir tarih aralığı seçiniz.</p>
+        </div>
+    </div>
+
     <aside class="sidebar">
         <div class="brand"><i class="fas fa-cube"></i> Teknoify</div>
         <nav>
@@ -112,7 +120,7 @@
                     <thead>
                         <tr class="no-sort">
                             <th colspan="6" style="background:#14161c;">Ürün Bilgileri</th>
-                            <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">TAZEYO</th>
+                            <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Tazeyo</th>
                             <th colspan="3" class="th-group-market" id="header-competitor">Rakip Market</th>
                             <th colspan="2" style="background:#14161c;">Analiz</th>
                         </tr>
@@ -240,15 +248,16 @@
             const headerTazeyo = document.getElementById('header-tazeyo');
             const miniDash = document.getElementById('mini-dashboard');
 
-            // --- BAŞLIK GÜNCELLEME ---
+            // --- BAŞLIK GÜNCELLEME (Küçük Harf) ---
             if (selectedBranch && selectedBranch !== 'all') {
                 headerTazeyo.textContent = selectedBranch; 
             } else {
-                headerTazeyo.textContent = "Tazeyo"; // SADECE MARKA ADI
+                headerTazeyo.textContent = "Tazeyo"; // Düzeltildi
             }
 
+            // --- YENİ: ALERT YERİNE TOAST BİLDİRİM ---
             if (dateRange.length < 1) {
-                alert("Lütfen bir Tarih Aralığı seçiniz.");
+                showToast("Lütfen verileri yükleyebilmek için tarih seçiniz.");
                 return;
             }
 
@@ -291,7 +300,7 @@
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
 
-            let detectedCompetitor = "RAKİP MARKET"; 
+            let detectedCompetitor = "Rakip Market"; 
             if (displayData.length > 0) {
                 const firstRowComp = displayData[0]['Competitor Store Name'];
                 if (firstRowComp) {
@@ -301,6 +310,20 @@
             document.getElementById('header-competitor').textContent = detectedCompetitor;
 
             renderTable(displayData);
+        }
+
+        // --- YENİ: TOAST GÖSTERME FONKSİYONU ---
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msg = document.getElementById('toast-message');
+            msg.textContent = message;
+            
+            toast.classList.add('show');
+            
+            // 3 Saniye sonra kapat
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
         function calculateKPIs(data) {

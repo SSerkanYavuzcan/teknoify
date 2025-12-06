@@ -159,4 +159,53 @@ span.flatpickr-weekday { background: transparent !important; color: var(--text-m
 .flatpickr-day.startRange.endRange { border-radius: 50% !important; }
 .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: rgba(156, 163, 175, 0.3) !important; }
 
+/* --- MODERN TOAST BİLDİRİM (UYARI KUTUCUĞU) --- */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px); /* Başlangıçta yukarıda gizli */
+    background: rgba(20, 22, 28, 0.95);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--warning); /* Turuncu çizgi */
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Yaylanma efekti */
+    min-width: 350px;
+}
+
+.toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+    color: var(--warning); /* Uyarı rengi */
+}
+
+.toast-content h4 {
+    margin: 0 0 4px 0;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.toast-content p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Filtre Başlıklarını Düzeltme */
+.filter-group label {
+    text-transform: none !important; /* Hepsini büyük yapma */
+    font-weight: 600;
+    font-size: 0.85rem;
+}
 
