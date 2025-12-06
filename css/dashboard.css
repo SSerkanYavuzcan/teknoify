@@ -471,4 +471,38 @@ span.flatpickr-weekday {
     vertical-align: middle !important;
 }
 
+/* --- TAKVİM REVİZESİ: AY DROPDOWN İPTALİ --- */
+
+/* Ay yazısının (Örn: Aralık) tıklanabilirliğini kapat */
+.flatpickr-monthDropdown-months {
+    pointer-events: none !important; /* Tıklanamaz yap */
+    appearance: none !important;     /* Ok işaretini gizle */
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background: transparent !important;
+    border: none !important;
+    font-weight: 700 !important;
+    cursor: default !important;
+}
+
+/* Yıl inputunun da tıklanabilirliğini kapatalım mı? */
+/* Eğer sadece oklarla gezilsin diyorsan bunu da ekle: */
+.flatpickr-current-month input.cur-year {
+    pointer-events: none !important; 
+}
+
+/* Okları biraz daha belirgin yapalım ki tek yol olduğu anlaşılsın */
+.flatpickr-prev-month, .flatpickr-next-month {
+    opacity: 1 !important;
+    fill: #fff !important; /* Tam beyaz */
+    background: rgba(255,255,255,0.05) !important; /* Hafif arka plan */
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin: 0 10px !important;
+}
+.flatpickr-prev-month:hover, .flatpickr-next-month:hover {
+    background: var(--primary) !important; /* Hover olunca mavi */
+    fill: #fff !important;
+}
 
