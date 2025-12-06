@@ -207,11 +207,15 @@
             const limitMsg = document.getElementById('limit-msg');
             const btnDownload = document.getElementById('btn-download');
             const btnEdit = document.getElementById('btn-edit');
+            
+            // --- BAŞLIK GÜNCELLEME (Parantezli, Olduğu Gibi) ---
             const headerTazeyo = document.getElementById('header-tazeyo');
-
+            
+            // Eğer "Tüm Şubeler" değilse, Seçilen Şube adını (Örn: "Tazeyo (Batıkent)") aynen yaz
             if (selectedBranch && selectedBranch !== 'all') {
                 headerTazeyo.textContent = selectedBranch; 
             } else {
+                // Seçili değilse varsayılan
                 headerTazeyo.textContent = "Tazeyo (Biz)";
             }
 
@@ -254,12 +258,12 @@
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
 
-            // --- YENİ: RAKİP ADINI BUL VE BAŞLIĞA YAZ ---
-            let detectedCompetitor = "Rakip Market"; // Varsayılan
+            // --- YENİ: RAKİP BAŞLIĞINI GÜNCELLE (Parantezli, Olduğu Gibi) ---
+            let detectedCompetitor = "Rakip Market"; 
             if (displayData.length > 0) {
                 const firstRowComp = displayData[0]['Competitor Store Name'];
                 if (firstRowComp) {
-                    detectedCompetitor = cleanName(firstRowComp); // Parantezleri temizle
+                    detectedCompetitor = firstRowComp; // Olduğu gibi al (Örn: "Migros (Jet)")
                 }
             }
             document.getElementById('header-competitor').textContent = detectedCompetitor;
@@ -285,9 +289,10 @@
                 const c_dsc = parsePrice(row['Competitor Discount Price']);
                 const priceRakip = c_dsc > 0 ? c_dsc : c_org;
 
-                // --- YENİ: Rakip Adını Çek ve Temizle ---
-                let compName = row['Competitor Store Name'];
-                compName = compName ? cleanName(compName) : 'RAKİP';
+                // --- ROZETLER İÇİN İSİM TEMİZLİĞİ ---
+                // Tablo başlıkları parantezli, ama rozetler (badge) parantezsiz olacak.
+                let storeBadgeName = cleanName(row['Store Name']) || "TAZEYO";
+                let compBadgeName = cleanName(row['Competitor Store Name']) || "RAKİP";
 
                 let farkYuzde = 0;
                 let farkClass = "diff-negative"; 
@@ -298,10 +303,11 @@
                 let badgeHtml = '';
                 if (priceBiz > 0 && priceRakip > 0) {
                     if (priceBiz < priceRakip) {
-                        badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
+                        // Biz Ucuzsak: Bizim temizlenmiş ismimiz
+                        badgeHtml = `<span class="badge badge-tazeyo">${storeBadgeName.toUpperCase()}</span>`;
                     } else if (priceBiz > priceRakip) {
-                        // --- YENİ: Temizlenmiş Rakip Adını Yaz ---
-                        badgeHtml = `<span class="badge badge-market">${compName.toUpperCase()}</span>`;
+                        // Rakip Ucuzsa: Rakibin temizlenmiş ismi
+                        badgeHtml = `<span class="badge badge-market">${compBadgeName.toUpperCase()}</span>`;
                         farkClass = "diff-positive";
                     } else {
                         badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
@@ -329,14 +335,13 @@
             });
         }
 
-        // --- YENİ YARDIMCI: İsim Temizleyici ---
+        // --- YARDIMCI: İsim Temizleyici (Sadece Badge İçin) ---
         // "Migros (Jet)" -> "Migros"
         function cleanName(name) {
             if (!name) return "";
             return name.split('(')[0].trim();
         }
 
-        // --- DİĞER YARDIMCILAR ---
         function toggleEditMode() {
             const btn = document.getElementById('btn-edit');
             const headerRow = document.getElementById('header-row');
