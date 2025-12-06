@@ -7,9 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    
     <link rel="stylesheet" href="../css/dashboard.css">
+    
     <style>
         .filter-select option { background-color: #14161c; color: #fff; padding: 10px; }
         .limit-warning {
@@ -83,7 +86,7 @@
                 <table class="comparison-table" id="main-table">
                     <thead>
                         <tr class="no-sort">
-                            <th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>
+                            <th colspan="6" style="background:#14161c;">Ürün Bilgileri</th>
                             <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Tazeyo (Biz)</th>
                             <th colspan="3" class="th-group-market" id="header-competitor">Rakip Market</th>
                             <th colspan="2" style="background:#14161c;">Analiz</th>
@@ -93,18 +96,23 @@
                             <th data-id="store">Store Name</th>
                             <th data-id="sku">SKU</th>
                             <th data-id="product">Product Name</th>
+                            <th data-id="brand">Brand</th>
+                            <th data-id="category">Category</th>
+                            
                             <th data-id="t_org">Original Price</th>
                             <th data-id="t_dsc">Discount Price</th>
                             <th data-id="t_chg">Weekly Change</th>
+                            
                             <th data-id="c_org">Original Price</th>
                             <th data-id="c_dsc">Discount Price</th>
                             <th data-id="c_chg">Weekly Change</th>
+                            
                             <th data-id="cheapest">En Ucuz</th>
                             <th data-id="ratio">Ucuzluk Oranı</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <tr><td colspan="12" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağına bağlanılıyor...</td></tr>
+                        <tr><td colspan="14" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağına bağlanılıyor...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -174,12 +182,13 @@
                     populateBranchFilter();
                     const tbody = document.getElementById('table-body');
                     const branchSelect = document.getElementById('filter-branch');
-                    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
+                    // GÜNCEL: Colspan 12 -> 14 oldu (Yeni sütunlar için)
+                    tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
                     branchSelect.disabled = false;
                 },
                 error: function(err) {
                     console.error("CSV Hatası:", err);
-                    document.getElementById('table-body').innerHTML = '<tr><td colspan="12" style="color:#ef4444; text-align:center;">Veri çekilemedi.</td></tr>';
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="14" style="color:#ef4444; text-align:center;">Veri çekilemedi.</td></tr>';
                 }
             });
         }
@@ -207,15 +216,11 @@
             const limitMsg = document.getElementById('limit-msg');
             const btnDownload = document.getElementById('btn-download');
             const btnEdit = document.getElementById('btn-edit');
-            
-            // --- BAŞLIK GÜNCELLEME (Parantezli, Olduğu Gibi) ---
             const headerTazeyo = document.getElementById('header-tazeyo');
-            
-            // Eğer "Tüm Şubeler" değilse, Seçilen Şube adını (Örn: "Tazeyo (Batıkent)") aynen yaz
+
             if (selectedBranch && selectedBranch !== 'all') {
                 headerTazeyo.textContent = selectedBranch; 
             } else {
-                // Seçili değilse varsayılan
                 headerTazeyo.textContent = "Tazeyo (Biz)";
             }
 
@@ -224,7 +229,7 @@
                 return;
             }
 
-            tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
 
             const startDate = dateRange[0]; 
             const endDate = dateRange[1] ? dateRange[1] : dateRange[0]; 
@@ -246,7 +251,7 @@
             window.CURRENT_EXPORT_DATA = filteredData;
 
             if (filteredData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
                 btnDownload.classList.add('btn-disabled');
                 btnEdit.classList.add('btn-disabled');
                 limitMsg.style.display = 'none';
@@ -258,12 +263,11 @@
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
 
-            // --- YENİ: RAKİP BAŞLIĞINI GÜNCELLE (Parantezli, Olduğu Gibi) ---
             let detectedCompetitor = "Rakip Market"; 
             if (displayData.length > 0) {
                 const firstRowComp = displayData[0]['Competitor Store Name'];
                 if (firstRowComp) {
-                    detectedCompetitor = firstRowComp; // Olduğu gibi al (Örn: "Migros (Jet)")
+                    detectedCompetitor = firstRowComp; 
                 }
             }
             document.getElementById('header-competitor').textContent = detectedCompetitor;
@@ -281,6 +285,13 @@
                 const sku        = row['SKU'];
                 const prodName   = row['Product Name'];
                 
+                // YENİ: Marka ve Kategori
+                let brandName = row['Brand Name'] || '-';
+                // "unbranded" kontrolü (Büyük/küçük harf duyarsız)
+                if (brandName.toLowerCase().trim() === 'unbranded') brandName = '-';
+                
+                const categoryName = row['Category Name'] || '-';
+                
                 const t_org = parsePrice(row['Tazeyo Original Price']);
                 const t_dsc = parsePrice(row['Tazeyo Discount Price']);
                 const priceBiz = t_dsc > 0 ? t_dsc : t_org;
@@ -289,10 +300,8 @@
                 const c_dsc = parsePrice(row['Competitor Discount Price']);
                 const priceRakip = c_dsc > 0 ? c_dsc : c_org;
 
-                // --- ROZETLER İÇİN İSİM TEMİZLİĞİ ---
-                // Tablo başlıkları parantezli, ama rozetler (badge) parantezsiz olacak.
-                let storeBadgeName = cleanName(row['Store Name']) || "TAZEYO";
-                let compBadgeName = cleanName(row['Competitor Store Name']) || "RAKİP";
+                let compName = row['Competitor Store Name'];
+                compName = compName ? cleanName(compName) : 'RAKİP';
 
                 let farkYuzde = 0;
                 let farkClass = "diff-negative"; 
@@ -303,11 +312,9 @@
                 let badgeHtml = '';
                 if (priceBiz > 0 && priceRakip > 0) {
                     if (priceBiz < priceRakip) {
-                        // Biz Ucuzsak: Bizim temizlenmiş ismimiz
-                        badgeHtml = `<span class="badge badge-tazeyo">${storeBadgeName.toUpperCase()}</span>`;
+                        badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
                     } else if (priceBiz > priceRakip) {
-                        // Rakip Ucuzsa: Rakibin temizlenmiş ismi
-                        badgeHtml = `<span class="badge badge-market">${compBadgeName.toUpperCase()}</span>`;
+                        badgeHtml = `<span class="badge badge-market">${compName.toUpperCase()}</span>`;
                         farkClass = "diff-positive";
                     } else {
                         badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
@@ -322,12 +329,18 @@
                     <td>${storeName}</td>
                     <td>${sku}</td>
                     <td title="${prodName}">${prodName}</td>
+                    
+                    <td>${brandName}</td>
+                    <td>${categoryName}</td>
+                    
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
                     <td>-</td> 
+                    
                     <td class="price-cell">₺${formatMoney(c_org)}</td>
                     <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
                     <td>-</td> 
+                    
                     <td>${badgeHtml}</td>
                     <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                 `;
@@ -335,8 +348,6 @@
             });
         }
 
-        // --- YARDIMCI: İsim Temizleyici (Sadece Badge İçin) ---
-        // "Migros (Jet)" -> "Migros"
         function cleanName(name) {
             if (!name) return "";
             return name.split('(')[0].trim();
