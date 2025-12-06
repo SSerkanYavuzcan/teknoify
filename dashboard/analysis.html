@@ -20,6 +20,42 @@
             color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
             text-align: center; font-size: 0.9rem; display: none;
         }
+
+        /* --- MINI ANALYTICS DASHBOARD --- */
+        .mini-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 Eşit Sütun */
+            gap: 16px;
+            margin-bottom: 24px;
+            display: none; /* Veri gelene kadar gizli */
+        }
+
+        .kpi-card {
+            background: var(--dash-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex; flex-direction: column; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+
+        .kpi-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 8px; }
+        .kpi-value { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .kpi-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* Renkli İndikatörler */
+        .trend-up { color: var(--success); font-size: 0.9rem; }
+        .trend-down { color: var(--danger); font-size: 0.9rem; }
+        .trend-neutral { color: var(--warning); font-size: 0.9rem; }
+
+        /* Progress Bar */
+        .progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; }
+        .progress-fill { height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 1s ease; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .mini-dashboard { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body>
@@ -47,6 +83,7 @@
         </header>
 
         <div class="content-scroll">
+            
             <div class="filter-bar">
                 <div class="filter-group" style="min-width: 260px;">
                     <label>Rapor Tarihi Seçiniz</label>
@@ -82,6 +119,37 @@
                 </div>
             </div>
 
+            <div id="mini-dashboard" class="mini-dashboard">
+                <div class="kpi-card">
+                    <div class="kpi-title">Fiyat Rekabeti (Genel)</div>
+                    <div class="kpi-value" id="kpi-competition">Analiz Ediliyor...</div>
+                    <div class="kpi-sub" id="kpi-competition-sub">Ortalama sepet tutarına göre</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-title">İndirimdeki Ürünler</div>
+                    <div class="kpi-value">
+                        <span style="color:#10b981" id="kpi-disc-us">0</span> 
+                        <span style="font-size:0.8em; color:#666">vs</span> 
+                        <span style="color:#f97316" id="kpi-disc-comp">0</span>
+                    </div>
+                    <div class="kpi-sub">Tazeyo vs Rakip</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-title">Ort. İndirim Derinliği</div>
+                    <div class="kpi-value" id="kpi-depth">%0</div>
+                    <div class="progress-bg"><div class="progress-fill" id="kpi-depth-bar"></div></div>
+                    <div class="kpi-sub">Orijinal fiyattan yapılan indirim</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-title">En Avantajlı Kategori</div>
+                    <div class="kpi-value" id="kpi-best-cat" style="font-size:1rem;">-</div>
+                    <div class="kpi-sub" id="kpi-best-cat-sub">Rakipten daha ucuz olduğumuz</div>
+                </div>
+            </div>
+
             <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
                 <table class="comparison-table" id="main-table">
                     <thead>
@@ -98,15 +166,12 @@
                             <th data-id="product">Product Name</th>
                             <th data-id="brand">Brand</th>
                             <th data-id="category">Category</th>
-                            
                             <th data-id="t_org">Original Price</th>
                             <th data-id="t_dsc">Discount Price</th>
                             <th data-id="t_chg">Weekly Change</th>
-                            
                             <th data-id="c_org">Original Price</th>
                             <th data-id="c_dsc">Discount Price</th>
                             <th data-id="c_chg">Weekly Change</th>
-                            
                             <th data-id="cheapest">En Ucuz</th>
                             <th data-id="ratio">Ucuzluk Oranı</th>
                         </tr>
@@ -182,7 +247,6 @@
                     populateBranchFilter();
                     const tbody = document.getElementById('table-body');
                     const branchSelect = document.getElementById('filter-branch');
-                    // GÜNCEL: Colspan 12 -> 14 oldu (Yeni sütunlar için)
                     tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
                     branchSelect.disabled = false;
                 },
@@ -217,6 +281,7 @@
             const btnDownload = document.getElementById('btn-download');
             const btnEdit = document.getElementById('btn-edit');
             const headerTazeyo = document.getElementById('header-tazeyo');
+            const miniDash = document.getElementById('mini-dashboard');
 
             if (selectedBranch && selectedBranch !== 'all') {
                 headerTazeyo.textContent = selectedBranch; 
@@ -255,11 +320,17 @@
                 btnDownload.classList.add('btn-disabled');
                 btnEdit.classList.add('btn-disabled');
                 limitMsg.style.display = 'none';
+                miniDash.style.display = 'none'; // Veri yoksa dashboardu gizle
                 return;
             }
 
             btnDownload.classList.remove('btn-disabled');
             btnEdit.classList.remove('btn-disabled');
+            miniDash.style.display = 'grid'; // Veri varsa göster
+            
+            // ANALİZİ HESAPLA VE GÖSTER
+            calculateKPIs(filteredData);
+
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
 
@@ -275,6 +346,79 @@
             renderTable(displayData);
         }
 
+        // --- DASHBOARD KPI HESAPLAMA ---
+        function calculateKPIs(data) {
+            let totalBiz = 0, totalComp = 0;
+            let discountCountBiz = 0, discountCountComp = 0;
+            let totalDiscountDepth = 0, depthCount = 0;
+            let categoryStats = {};
+
+            data.forEach(row => {
+                const t_org = parsePrice(row['Tazeyo Original Price']);
+                const t_dsc = parsePrice(row['Tazeyo Discount Price']);
+                const bizPrice = t_dsc > 0 ? t_dsc : t_org;
+
+                const c_org = parsePrice(row['Competitor Original Price']);
+                const c_dsc = parsePrice(row['Competitor Discount Price']);
+                const compPrice = c_dsc > 0 ? c_dsc : c_org;
+
+                if (bizPrice > 0 && compPrice > 0) {
+                    totalBiz += bizPrice;
+                    totalComp += compPrice;
+
+                    // Kategori Analizi
+                    const cat = row['Category Name'] || 'Diğer';
+                    if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0 };
+                    categoryStats[cat].biz += bizPrice;
+                    categoryStats[cat].comp += compPrice;
+                }
+
+                // İndirim Sayıları
+                if (t_dsc > 0 && t_dsc < t_org) {
+                    discountCountBiz++;
+                    // İndirim Derinliği
+                    const depth = ((t_org - t_dsc) / t_org) * 100;
+                    totalDiscountDepth += depth;
+                    depthCount++;
+                }
+                if (c_dsc > 0 && c_dsc < c_org) discountCountComp++;
+            });
+
+            // 1. Fiyat Rekabeti
+            const compElem = document.getElementById('kpi-competition');
+            if (totalBiz < totalComp) {
+                const diff = ((totalComp - totalBiz) / totalComp) * 100;
+                compElem.innerHTML = `<span class="trend-up"><i class="fas fa-arrow-down"></i> %${diff.toFixed(1)}</span> Daha Ucuzuz`;
+            } else {
+                const diff = ((totalBiz - totalComp) / totalBiz) * 100;
+                compElem.innerHTML = `<span class="trend-down"><i class="fas fa-arrow-up"></i> %${diff.toFixed(1)}</span> Daha Pahalıyız`;
+            }
+
+            // 2. İndirimli Ürün Sayısı
+            document.getElementById('kpi-disc-us').innerText = discountCountBiz;
+            document.getElementById('kpi-disc-comp').innerText = discountCountComp;
+
+            // 3. İndirim Derinliği
+            const avgDepth = depthCount > 0 ? (totalDiscountDepth / depthCount) : 0;
+            document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
+            document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
+
+            // 4. En Avantajlı Kategori
+            let bestCat = '-';
+            let maxAdvantage = -999;
+
+            for (const [cat, stats] of Object.entries(categoryStats)) {
+                // Rakipten ne kadar ucuzuz? (Pozitif iyidir)
+                const advantage = ((stats.comp - stats.biz) / stats.comp) * 100;
+                if (advantage > maxAdvantage) {
+                    maxAdvantage = advantage;
+                    bestCat = cat;
+                }
+            }
+            document.getElementById('kpi-best-cat').innerText = bestCat;
+            document.getElementById('kpi-best-cat-sub').innerText = `Rakipten %${maxAdvantage.toFixed(1)} daha ucuz`;
+        }
+
         function renderTable(dataRows) {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -284,12 +428,8 @@
                 const storeName  = row['Store Name'];
                 const sku        = row['SKU'];
                 const prodName   = row['Product Name'];
-                
-                // YENİ: Marka ve Kategori
                 let brandName = row['Brand Name'] || '-';
-                // "unbranded" kontrolü (Büyük/küçük harf duyarsız)
                 if (brandName.toLowerCase().trim() === 'unbranded') brandName = '-';
-                
                 const categoryName = row['Category Name'] || '-';
                 
                 const t_org = parsePrice(row['Tazeyo Original Price']);
@@ -329,18 +469,14 @@
                     <td>${storeName}</td>
                     <td>${sku}</td>
                     <td title="${prodName}">${prodName}</td>
-                    
                     <td>${brandName}</td>
                     <td>${categoryName}</td>
-                    
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
                     <td>-</td> 
-                    
                     <td class="price-cell">₺${formatMoney(c_org)}</td>
                     <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
                     <td>-</td> 
-                    
                     <td>${badgeHtml}</td>
                     <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                 `;
