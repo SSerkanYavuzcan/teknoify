@@ -12,24 +12,7 @@
     <link rel="stylesheet" href="../css/dashboard.css">
     
     <style>
-        /* DROPDOWN DÜZELTMESİ (BEYAZ SORUNU İÇİN) */
-        select option {
-            background-color: #14161c;
-            color: #fff;
-            padding: 10px;
-        }
-
-        /* İndirme Butonu */
-        .btn-download {
-            background: #10b981; color: #fff; border: none;
-            padding: 0 24px; border-radius: 10px; font-weight: 600;
-            height: 47px; cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: 0.2s; text-decoration: none;
-        }
-        .btn-download:hover { background: #059669; transform: translateY(-1px); }
-        .btn-disabled { opacity: 0.5; pointer-events: none; background: #374151; }
-        
-        /* Uyarı */
+        .filter-select option { background-color: #14161c; color: #fff; padding: 10px; }
         .limit-warning {
             background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
             color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
@@ -72,19 +55,16 @@
                 <div class="filter-group">
                     <label>Şube Seçiniz</label>
                     <select class="filter-select" id="filter-branch">
-                        <option value="">Veriler Yükleniyor...</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Marka (Opsiyonel)</label>
-                    <select class="filter-select" id="filter-brand">
-                        <option value="all">Tüm Markalar</option>
+                        <option value="" disabled selected>Veriler Yükleniyor...</option>
                     </select>
                 </div>
 
                 <button class="btn-filter" id="btn-load" onclick="applyFilters()">
                     <i class="fas fa-search"></i> Verileri Yükle
+                </button>
+
+                <button class="btn-edit btn-disabled" id="btn-edit" onclick="toggleEditMode()">
+                    <i class="fas fa-arrows-alt"></i> Tabloyu Düzenle
                 </button>
                 
                 <button class="btn-download btn-disabled" id="btn-download" onclick="downloadCSV()">
@@ -93,30 +73,30 @@
             </div>
 
             <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
-                <table class="comparison-table">
+                <table class="comparison-table" id="main-table">
                     <thead>
-                        <tr>
+                        <tr class="no-sort">
                             <th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>
                             <th colspan="3" class="th-group-tazeyo">Tazeyo (Biz)</th>
                             <th colspan="3" class="th-group-market">Rakip Market</th>
                             <th colspan="2" style="background:#14161c;">Analiz</th>
                         </tr>
-                        <tr>
-                            <th>Report Date</th>
-                            <th>Store Name</th>
-                            <th>SKU</th>
-                            <th>Product Name</th>
+                        <tr id="header-row">
+                            <th data-id="0">Report Date</th>
+                            <th data-id="1">Store Name</th>
+                            <th data-id="2">SKU</th>
+                            <th data-id="3">Product Name</th>
                             
-                            <th>Original Price</th>
-                            <th>Discount Price</th>
-                            <th>Weekly Change</th>
+                            <th data-id="4">Original Price</th>
+                            <th data-id="5">Discount Price</th>
+                            <th data-id="6">Weekly Change</th>
                             
-                            <th>Original Price</th>
-                            <th>Discount Price</th>
-                            <th>Weekly Change</th>
+                            <th data-id="7">Original Price</th>
+                            <th data-id="8">Discount Price</th>
+                            <th data-id="9">Weekly Change</th>
                             
-                            <th>En Ucuz</th>
-                            <th>Ucuzluk Oranı</th>
+                            <th data-id="10">En Ucuz</th>
+                            <th data-id="11">Ucuzluk Oranı</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -135,6 +115,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    
     <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script> 
     
@@ -143,6 +125,8 @@
 
         let ALL_DATA = [];
         let flatpickrInstance;
+        let isEditMode = false;
+        let colSortable, rowSortable;
 
         document.addEventListener('DOMContentLoaded', () => {
             const session = new SessionManager();
@@ -179,17 +163,16 @@
 
                 ALL_DATA = rows.map(row => {
                     if(!row || row.trim() === "") return null;
-
-                    // --- KRİTİK DÜZELTME: Sadece virgülleri böl, boşlukları bölme! ---
-                    // Regex: Virgülü bul, ama eğer tırnak içinde değilse.
-                    const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; 
-                    const cols = row.split(regex);
-
-                    // Tırnakları temizle ("Beyaz Ekmek" -> Beyaz Ekmek)
-                    return cols.map(col => col.replace(/^"|"$/g, '').trim());
+                    const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
+                    let cols = [];
+                    let match;
+                    while ((match = regex.exec(row)) !== null) {
+                        cols.push(match[0].replace(/^"|"$/g, '').trim());
+                    }
+                    return cols;
                 }).filter(cols => cols !== null && cols.length >= 5);
 
-                populateFilters();
+                populateBranchFilter();
                 
                 document.getElementById('table-body').innerHTML = '<tr><td colspan="12" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
 
@@ -199,39 +182,35 @@
             }
         }
 
-        function populateFilters() {
+        function populateBranchFilter() {
             const branchSet = new Set();
-            const brandSet = new Set();
-
             ALL_DATA.forEach(cols => {
-                // Sütun 1: Store Name, Sütun 4: Brand Name
-                if(cols[1]) branchSet.add(cols[1]);
-                if(cols[4]) brandSet.add(cols[4]);
+                const rawName = cols[1];
+                if(rawName && rawName.trim().length > 0) {
+                    branchSet.add(rawName.trim());
+                }
             });
 
-            // Şube Doldur
             const branchSelect = document.getElementById('filter-branch');
-            branchSelect.innerHTML = '<option value="">Şube Seçiniz</option>';
+            // DÜZELTME: İlk seçenek disabled ve selected
+            branchSelect.innerHTML = '<option value="" disabled selected>Şube Seçiniz</option>';
             branchSelect.innerHTML += '<option value="all">Tüm Şubeler</option>';
-            Array.from(branchSet).sort().forEach(item => {
-                branchSelect.innerHTML += `<option value="${item}">${item}</option>`;
-            });
-
-            // Marka Doldur
-            const brandSelect = document.getElementById('filter-brand');
-            brandSelect.innerHTML = '<option value="all">Tüm Markalar</option>';
-            Array.from(brandSet).sort().forEach(item => {
-                brandSelect.innerHTML += `<option value="${item}">${item}</option>`;
+            
+            Array.from(branchSet).sort().forEach(branch => {
+                branchSelect.innerHTML += `<option value="${branch}">${branch}</option>`;
             });
         }
 
         function applyFilters() {
+            // Eğer düzenleme modu açıksa kapat (Sorun olmaması için)
+            if(isEditMode) toggleEditMode();
+
             const dateRange = flatpickrInstance.selectedDates; 
             const selectedBranch = document.getElementById('filter-branch').value;
-            const selectedBrand = document.getElementById('filter-brand').value;
             const tbody = document.getElementById('table-body');
             const limitMsg = document.getElementById('limit-msg');
             const btnDownload = document.getElementById('btn-download');
+            const btnEdit = document.getElementById('btn-edit');
 
             if (dateRange.length < 1) {
                 alert("Lütfen bir Tarih Aralığı seçiniz.");
@@ -246,13 +225,9 @@
             endDate.setHours(23,59,59,999);
 
             let filteredData = ALL_DATA.filter(cols => {
-                // 1. Şube Kontrolü
-                const branchMatch = (!selectedBranch || selectedBranch === 'all') || (cols[1] === selectedBranch);
+                const storeName = cols[1] ? cols[1].trim() : "";
+                const branchMatch = (!selectedBranch || selectedBranch === 'all') || (storeName === selectedBranch);
                 
-                // 2. Marka Kontrolü
-                const brandMatch = (selectedBrand === 'all') || (cols[4] === selectedBrand);
-
-                // 3. Tarih Kontrolü
                 const dateStr = cols[0];
                 if (!dateStr) return false;
                 const parts = dateStr.split('.'); 
@@ -260,20 +235,22 @@
                 const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
                 const dateMatch = (rowDate >= startDate && rowDate <= endDate);
 
-                return branchMatch && brandMatch && dateMatch;
+                return branchMatch && dateMatch;
             });
 
-            // İndirme verisi için globale ata
             window.CURRENT_EXPORT_DATA = filteredData;
 
             if (filteredData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
                 btnDownload.classList.add('btn-disabled');
+                btnEdit.classList.add('btn-disabled');
                 limitMsg.style.display = 'none';
                 return;
             }
 
             btnDownload.classList.remove('btn-disabled');
+            btnEdit.classList.remove('btn-disabled'); // Tablo dolunca aktif et
+            
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
 
@@ -285,9 +262,6 @@
             tbody.innerHTML = '';
 
             dataRows.forEach(cols => {
-                // SÜTUNLAR (Sheet sırasına göre)
-                // [0]Date, [1]Store, [2]SKU, [3]Product, [6]TazOrg, [7]TazDisc, [8]CompOrg, [9]CompDisc
-                
                 const reportDate = cols[0];
                 const storeName = cols[1];
                 const sku = cols[2];
@@ -295,19 +269,15 @@
                 
                 const t_org = parsePrice(cols[6]);
                 const t_dsc = parsePrice(cols[7]);
-                // Eğer indirimli fiyat (cols[7]) dolu ve >0 ise onu kullan, yoksa normali
-                const priceBiz = (t_dsc > 0) ? t_dsc : t_org;
+                const priceBiz = t_dsc > 0 ? t_dsc : t_org;
                 
                 const c_org = parsePrice(cols[8]);
                 const c_dsc = parsePrice(cols[9]);
-                const priceRakip = (c_dsc > 0) ? c_dsc : c_org;
+                const priceRakip = c_dsc > 0 ? c_dsc : c_org;
 
-                // Hesaplamalar
                 let farkYuzde = 0;
                 let farkClass = "diff-negative"; 
-                
                 if(priceRakip > 0 && priceBiz > 0) {
-                    // (Rakip - Biz) / Rakip formülü: Pozitifse Biz Ucuzuz
                     farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
                 }
 
@@ -317,7 +287,7 @@
                         badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
                     } else if (priceBiz > priceRakip) {
                         badgeHtml = '<span class="badge badge-market">MARKETTEN</span>';
-                        farkClass = "diff-positive"; // Kırmızı
+                        farkClass = "diff-positive";
                     } else {
                         badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
                     }
@@ -330,16 +300,13 @@
                     <td style="color:#888; font-size:0.85rem;">${reportDate}</td>
                     <td>${storeName}</td>
                     <td>${sku}</td>
-                    <td title="${prodName}" style="max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${prodName}</td>
-                    
+                    <td title="${prodName}">${prodName}</td>
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
                     <td>-</td> 
-                    
                     <td class="price-cell">₺${formatMoney(c_org)}</td>
                     <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
                     <td>-</td> 
-                    
                     <td>${badgeHtml}</td>
                     <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                 `;
@@ -347,18 +314,86 @@
             });
         }
 
+        // --- TABLO DÜZENLEME (SÜRÜKLE BIRAK) ---
+        function toggleEditMode() {
+            const btn = document.getElementById('btn-edit');
+            const headerRow = document.getElementById('header-row');
+            const tbody = document.getElementById('table-body');
+            const ths = headerRow.querySelectorAll('th');
+
+            isEditMode = !isEditMode; // Durumu tersine çevir
+
+            if (isEditMode) {
+                // MOD AÇIK
+                btn.innerHTML = '<i class="fas fa-check"></i> Düzenlemeyi Bitir';
+                btn.classList.add('active'); // Kırmızı yap
+                
+                // Cursor değişimi
+                headerRow.classList.add('draggable-cursor');
+                tbody.classList.add('draggable-cursor');
+                ths.forEach(th => th.style.cursor = 'grab');
+
+                // 1. SÜTUN SÜRÜKLEME (Karmaşık Kısım)
+                colSortable = new Sortable(headerRow, {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    onEnd: function (evt) {
+                        // Başlık değiştiğinde altındaki tüm hücreleri de taşı
+                        moveTableColumn(evt.oldIndex, evt.newIndex);
+                    }
+                });
+
+                // 2. SATIR SÜRÜKLEME
+                rowSortable = new Sortable(tbody, {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost'
+                });
+
+            } else {
+                // MOD KAPALI
+                btn.innerHTML = '<i class="fas fa-arrows-alt"></i> Tabloyu Düzenle';
+                btn.classList.remove('active');
+                
+                headerRow.classList.remove('draggable-cursor');
+                tbody.classList.remove('draggable-cursor');
+                ths.forEach(th => th.style.cursor = 'default');
+
+                // Sortable'ı yok et (Normal moda dön)
+                if(colSortable) colSortable.destroy();
+                if(rowSortable) rowSortable.destroy();
+            }
+        }
+
+        // Sütun Taşıma Yardımcısı (Tüm satırları gezerek hücrelerin yerini değiştirir)
+        function moveTableColumn(fromIndex, toIndex) {
+            const tbody = document.getElementById('table-body');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            rows.forEach(row => {
+                const cells = Array.from(row.children);
+                if (cells.length > fromIndex && cells.length > toIndex) {
+                    const cellToMove = cells[fromIndex];
+                    
+                    // DOM manipülasyonu ile hücreyi taşı
+                    if (toIndex >= cells.length - 1) {
+                        row.appendChild(cellToMove); // En sona taşı
+                    } else {
+                        // Sağa mı sola mı gidiyor?
+                        const referenceNode = (toIndex > fromIndex) ? cells[toIndex].nextSibling : cells[toIndex];
+                        row.insertBefore(cellToMove, referenceNode);
+                    }
+                }
+            });
+        }
+
         function downloadCSV() {
             if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
-            
             let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
             csvContent += "Report Date,Store Name,SKU,Product Name,Brand,Category,Tazeyo Original,Tazeyo Discount,Competitor Original,Competitor Discount\n";
-            
             window.CURRENT_EXPORT_DATA.forEach(rowArray => {
-                // Her hücreyi tırnak içine alarak CSV formatını koru
                 let row = rowArray.map(e => `"${e}"`).join(",");
                 csvContent += row + "\r\n";
             });
-            
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -370,16 +405,12 @@
 
         function parsePrice(val) {
             if(!val) return 0;
-            // Tüm gereksiz karakterleri temizle
             let clean = val.replace(/["'₺\s]/g, '');
-            
-            // Format Kontrolü (1.250,50 veya 8,75)
             if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
                 clean = clean.replace(',', '.');
             } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
                 clean = clean.replace(/\./g, '').replace(',', '.');
             }
-            
             let num = parseFloat(clean);
             return isNaN(num) ? 0 : num;
         }

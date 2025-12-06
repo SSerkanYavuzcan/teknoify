@@ -1,7 +1,7 @@
 /* ================================================================
    [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES
    [FILE] css/dashboard.css
-   [DESC] Yönetim paneli, Analiz ve Takvim stilleri
+   [DESC] Yönetim paneli, Analiz, Takvim ve Sürükle-Bırak Stilleri
    ================================================================ */
 
    :root {
@@ -168,7 +168,7 @@ a { text-decoration: none; color: inherit; }
 
 
 /* =================================================================
-   5. ANALİZ SAYFASI ÖZEL STİLLERİ (Filtreler & Excel Tablosu)
+   5. ANALİZ SAYFASI ÖZEL STİLLERİ (Filtreler, Tablo & Düzenleme)
    ================================================================= */
 
 /* 5.1 Filtre Barı */
@@ -190,7 +190,7 @@ a { text-decoration: none; color: inherit; }
     font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
 }
 
-/* Ortak Input Stili (Select ve Date Input) */
+/* Ortak Input Stili */
 .filter-select, input[type="text"].filter-select {
     background: rgba(255,255,255,0.03);
     border: 1px solid var(--border);
@@ -210,7 +210,7 @@ a { text-decoration: none; color: inherit; }
     outline: none;
 }
 
-/* Select Oku */
+/* Select için ok ikonu */
 select.filter-select {
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -219,30 +219,26 @@ select.filter-select {
     background-size: 16px;
 }
 
-/* Filtre Butonu */
-.btn-filter {
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    padding: 0 32px;
-    border-radius: 10px;
-    font-weight: 600; font-size: 0.9rem;
-    cursor: pointer;
-    height: 47px;
-    display: flex; align-items: center; gap: 8px;
+/* Butonlar (Yükle, İndir, Düzenle) */
+.btn-filter, .btn-download, .btn-edit {
+    border: none; padding: 0 24px; border-radius: 10px;
+    font-weight: 600; font-size: 0.9rem; height: 47px;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
     transition: 0.2s;
 }
+
+.btn-filter { background: var(--primary); color: #fff; }
 .btn-filter:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-/* İndirme Butonu */
-.btn-download {
-    background: #10b981; color: #fff; border: none;
-    padding: 0 24px; border-radius: 10px; font-weight: 600;
-    height: 47px; cursor: pointer; display: flex; align-items: center; gap: 8px;
-    transition: 0.2s; text-decoration: none;
-}
+.btn-download { background: #10b981; color: #fff; text-decoration: none; }
 .btn-download:hover { background: #059669; transform: translateY(-1px); }
+
+.btn-edit { background: #8b5cf6; color: #fff; }
+.btn-edit:hover { background: #7c3aed; transform: translateY(-1px); }
+.btn-edit.active { background: #ef4444; } /* Kırmızı (Bitir modu) */
+
 .btn-disabled { opacity: 0.5; pointer-events: none; background: #374151; }
+
 
 /* 5.2 Excel/Analiz Tablosu */
 .comparison-table {
@@ -262,6 +258,7 @@ select.filter-select {
     border-right: 1px solid var(--border);
     text-align: left;
     position: sticky; top: 0; z-index: 10;
+    user-select: none; /* Sürükleme sırasında metin seçilmesin */
 }
 
 /* Gruplanmış Başlık Renkleri */
@@ -291,37 +288,19 @@ select.filter-select {
 }
 .comparison-table tr:hover td { background: rgba(255,255,255,0.03); color: #fff; }
 
-/* Özel Hücre Tipleri */
-.price-cell {
-    font-family: var(--font-mono);
-    font-weight: 600;
-    color: #e5e7eb;
-}
+/* Hücre Stilleri & Renkler */
+.price-cell { font-family: var(--font-mono); font-weight: 600; color: #e5e7eb; }
+.diff-negative { color: var(--success); font-weight: 600; }
+.diff-positive { color: var(--danger); font-weight: 600; }
 
-/* Renklendirme */
-.diff-negative { color: var(--success); font-weight: 600; } /* Yeşil */
-.diff-positive { color: var(--danger); font-weight: 600; }  /* Kırmızı */
-
-/* Badges (Etiketler) */
+/* Badges */
 .badge {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: inline-block;
+    padding: 4px 8px; border-radius: 6px;
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; display: inline-block;
 }
-.badge-tazeyo {
-    background: rgba(16, 185, 129, 0.15);
-    color: var(--success);
-    border: 1px solid rgba(16, 185, 129, 0.25);
-}
-.badge-market {
-    background: rgba(249, 115, 22, 0.15);
-    color: var(--warning);
-    border: 1px solid rgba(249, 115, 22, 0.25);
-}
+.badge-tazeyo { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
+.badge-market { background: rgba(249, 115, 22, 0.15); color: var(--warning); border: 1px solid rgba(249, 115, 22, 0.25); }
 
 /* Limit Uyarısı */
 .limit-warning {
@@ -330,49 +309,38 @@ select.filter-select {
     text-align: center; font-size: 0.9rem; display: none;
 }
 
-/* --- FLATPICKR (TAKVİM) DARK THEME OVERRIDES --- */
+/* --- TABLO DÜZENLEME (DRAG & DROP) STİLLERİ --- */
+.draggable-cursor { cursor: grab !important; }
+.draggable-cursor:active { cursor: grabbing !important; }
+
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: rgba(139, 92, 246, 0.2) !important;
+}
+.sortable-chosen {
+    background-color: rgba(139, 92, 246, 0.4) !important;
+}
+
+/* --- FLATPICKR (TAKVİM) DARK THEME --- */
 .flatpickr-calendar {
     background: #14161c !important;
     border: 1px solid var(--border) !important;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
     font-family: var(--font-main) !important;
 }
-.flatpickr-months .flatpickr-month {
-    background: #14161c !important;
-    color: #fff !important;
-    fill: #fff !important;
-}
-.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month {
-    fill: #fff !important;
-}
-.flatpickr-current-month .flatpickr-monthDropdown-months {
-    background: #14161c !important;
-}
-.flatpickr-weekdays {
-    background: #14161c !important;
-}
-.flatpickr-weekday {
-    color: var(--text-muted) !important;
-}
-.flatpickr-day {
-    color: #fff !important;
-}
+.flatpickr-months .flatpickr-month { background: #14161c !important; color: #fff !important; fill: #fff !important; }
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: #fff !important; }
+.flatpickr-current-month .flatpickr-monthDropdown-months { background: #14161c !important; }
+.flatpickr-weekdays { background: #14161c !important; }
+.flatpickr-weekday { color: var(--text-muted) !important; }
+.flatpickr-day { color: #fff !important; }
 .flatpickr-day.inRange, .flatpickr-day.prevMonthDay.inRange, 
 .flatpickr-day.nextMonthDay.inRange, .flatpickr-day.today.inRange,
-.flatpickr-day.prevMonthDay.today.inRange, .flatpickr-day.nextMonthDay.today.inRange,
-.flatpickr-day:hover, .flatpickr-day.prevMonthDay:hover, .flatpickr-day.nextMonthDay:hover, .flatpickr-day:focus, .flatpickr-day.prevMonthDay:focus, .flatpickr-day.nextMonthDay:focus {
-    background: rgba(99,102,241,0.2) !important;
-    border-color: transparent !important;
+.flatpickr-day:hover, .flatpickr-day:focus {
+    background: rgba(99,102,241,0.2) !important; border-color: transparent !important;
 }
-.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange,
-.flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange,
-.flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus,
-.flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover,
-.flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay,
-.flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
-    background: var(--primary) !important;
-    border-color: var(--primary) !important;
-    color: #fff !important;
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+    background: var(--primary) !important; border-color: var(--primary) !important; color: #fff !important;
 }
 
 
