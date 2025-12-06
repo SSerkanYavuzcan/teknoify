@@ -12,6 +12,22 @@
     <link rel="stylesheet" href="../css/dashboard.css">
     <style>
         .filter-select option { background-color: #14161c; color: #fff; padding: 10px; }
+        .toast-notification {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: rgba(20, 22, 28, 0.95); border: 1px solid var(--border); border-left: 4px solid var(--warning);
+            border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            min-width: 350px;
+        }
+        .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast-icon { font-size: 1.5rem; color: var(--warning); }
+        .toast-content h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: #fff; }
+        .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+        .limit-warning {
+            background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
+            color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
+            text-align: center; font-size: 0.9rem; display: none;
+        }
     </style>
 </head>
 <body>
@@ -53,7 +69,7 @@
                     <label>Rapor Tarihi Seçiniz</label>
                     <div class="date-picker-wrapper">
                         <i class="fas fa-calendar-alt calendar-icon"></i>
-                        <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz" readonly>
+                        <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı..." readonly>
                     </div>
                 </div>
                 <div class="filter-group">
@@ -95,7 +111,9 @@
                 <div class="kpi-card">
                     <div class="kpi-title">İndirimdeki Ürünler</div>
                     <div class="kpi-value">
-                        <span style="color:#10b981" id="kpi-disc-us">0</span> <span style="font-size:0.8em; color:#666">vs</span> <span style="color:#f97316" id="kpi-disc-comp">0</span>
+                        <span style="color:#10b981" id="kpi-disc-us">0</span> 
+                        <span style="font-size:0.8em; color:#666">vs</span> 
+                        <span style="color:#f97316" id="kpi-disc-comp">0</span>
                     </div>
                     <div class="kpi-sub">Tazeyo vs Rakip</div>
                 </div>
@@ -115,7 +133,7 @@
             <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
                 <table class="comparison-table" id="main-table">
                     <thead>
-                        <tr>
+                        <tr class="no-sort">
                             <th colspan="6" style="background:#14161c;">Ürün Bilgileri</th>
                             <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Tazeyo</th>
                             <th colspan="3" class="th-group-market" id="header-competitor">Rakip Market</th>
@@ -171,10 +189,8 @@
 
             const userDataFull = USER_DB[currentUser.username];
             if (userDataFull) {
-                let cleanName = userDataFull.name;
-                if(cleanName.includes('Ltd.')) cleanName = cleanName.replace('Ltd.', '').trim();
-                document.getElementById('user-name-display').textContent = cleanName;
-                document.getElementById('user-avatar').textContent = cleanName.charAt(0).toUpperCase();
+                document.getElementById('user-name-display').textContent = userDataFull.name;
+                document.getElementById('user-avatar').textContent = userDataFull.name.charAt(0).toUpperCase();
             }
 
             initCalendar();
@@ -191,8 +207,7 @@
 
         function initCalendar() {
             flatpickrInstance = flatpickr("#date-range", {
-                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null, 
-                placeholder: "Tarih Aralığı Seçiniz"
+                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null, placeholder: "Tarih Aralığı Seçiniz..."
             });
         }
 
@@ -206,6 +221,7 @@
                     const tbody = document.getElementById('table-body');
                     const branchSelect = document.getElementById('filter-branch');
                     const catSelect = document.getElementById('filter-category');
+                    
                     tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
                     branchSelect.disabled = false;
                     catSelect.disabled = false;
@@ -302,7 +318,8 @@
             btnDownload.classList.remove('btn-disabled');
             miniDash.style.display = 'grid'; 
             
-            calculateKPIs(filteredData, selectedCat);
+            // KPI Hesapla (Filtrelenmiş veri ile)
+            calculateKPIs(filteredData, selectedCat); // Kategori bilgisini de gönderiyoruz
 
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
@@ -314,6 +331,7 @@
         function updateCompetitorHeader(data, selectedBranch) {
             const headerComp = document.getElementById('header-competitor');
             let detected = "Rakip Market";
+            
             if(data.length > 0) {
                 const compName = data[0]['Competitor Store Name'];
                 if(compName) {
@@ -352,6 +370,7 @@
             });
         }
 
+        // --- GÜNCELLENMİŞ KPI HESAPLAMA ---
         function calculateKPIs(data, selectedCat) {
             let totalBiz = 0, totalComp = 0;
             let discountCountBiz = 0, discountCountComp = 0;
@@ -362,6 +381,7 @@
                 const t_org = getValue(row['Tazeyo Original Price']);
                 const t_dsc = getValue(row['Tazeyo Discount Price']);
                 const bizPrice = t_dsc > 0 ? t_dsc : t_org;
+
                 const c_org = getValue(row['Competitor Original Price']);
                 const c_dsc = getValue(row['Competitor Discount Price']);
                 const compPrice = c_dsc > 0 ? c_dsc : c_org;
@@ -369,12 +389,15 @@
                 if (bizPrice > 0 && compPrice > 0) {
                     totalBiz += bizPrice;
                     totalComp += compPrice;
+                    
                     const catRaw = row['Category Name'] || 'Diğer';
-                    const cat = catRaw.trim(); 
+                    const cat = catRaw.trim(); // Boşlukları temizle!
+
                     if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0 };
                     categoryStats[cat].biz += bizPrice;
                     categoryStats[cat].comp += compPrice;
                 }
+
                 if (t_dsc > 0 && t_dsc < t_org) {
                     discountCountBiz++;
                     const depth = ((t_org - t_dsc) / t_org) * 100;
@@ -384,6 +407,7 @@
                 if (c_dsc > 0 && c_dsc < c_org) discountCountComp++;
             });
 
+            // 1. Fiyat Rekabeti (Genel)
             const compElem = document.getElementById('kpi-competition');
             let globalDiff = 0;
             let isGlobalAdvantage = false;
@@ -398,6 +422,7 @@
                 compElem.innerHTML = `<span class="trend-down"><i class="fas fa-arrow-up"></i> %${globalDiff.toFixed(1)}</span> Daha Pahalıyız`;
             }
 
+            // 2. İndirimler
             document.getElementById('kpi-disc-us').innerText = discountCountBiz;
             document.getElementById('kpi-disc-comp').innerText = discountCountComp;
 
@@ -405,12 +430,15 @@
             document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
             document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
 
+            // 4. Kategori Kartı Mantığı
             const catTitle = document.querySelector('#kpi-best-cat').parentElement.querySelector('.kpi-title');
             const catSub = document.getElementById('kpi-best-cat-sub');
             const catValue = document.getElementById('kpi-best-cat');
 
+            // EĞER KULLANICI ÖZEL BİR KATEGORİ SEÇTİYSE
             if (selectedCat && selectedCat !== 'all') {
-                catValue.innerText = selectedCat;
+                catValue.innerText = selectedCat; // Seçilen kategori adını yaz
+                
                 if(isGlobalAdvantage) {
                     catTitle.innerText = "Mevcut Kategori Durumu";
                     catSub.innerHTML = `Rakipten <span class="trend-up">%${globalDiff.toFixed(1)} daha ucuz</span>`;
@@ -418,8 +446,11 @@
                     catTitle.innerText = "Mevcut Kategori Durumu";
                     catSub.innerHTML = `Rakipten <span class="trend-down">%${globalDiff.toFixed(1)} daha pahalı</span>`;
                 }
-            } else {
+            } 
+            // EĞER TÜM KATEGORİLER SEÇİLİYSE (ESKİ MANTIK DEVAM)
+            else {
                 let bestCat = '-'; let maxDiff = 0; let isAdvantage = true;
+
                 for (const [cat, stats] of Object.entries(categoryStats)) {
                     const diffPercent = ((stats.comp - stats.biz) / stats.comp) * 100;
                     if (Math.abs(diffPercent) > Math.abs(maxDiff)) {
@@ -428,6 +459,7 @@
                         isAdvantage = diffPercent > 0;
                     }
                 }
+
                 catValue.innerText = bestCat;
                 if (isAdvantage) {
                     catTitle.innerText = "En Avantajlı Kategori";
@@ -442,6 +474,7 @@
         function renderTable(dataRows) {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
+
             dataRows.forEach(row => {
                 const reportDate = row['Report Date'];
                 const storeName = row['Store Name'];
@@ -450,24 +483,55 @@
                 let brandName = row['Brand Name'] || '-';
                 if (brandName.toLowerCase().trim() === 'unbranded') brandName = '-';
                 const categoryName = row['Category Name'] || '-';
+                
                 const t_org = getValue(row['Tazeyo Original Price']);
                 const t_dsc = getValue(row['Tazeyo Discount Price']);
+                const priceBiz = t_dsc > 0 ? t_dsc : t_org;
+                
                 const c_org = getValue(row['Competitor Original Price']);
                 const c_dsc = getValue(row['Competitor Discount Price']);
-                const priceBiz = t_dsc > 0 ? t_dsc : t_org;
                 const priceRakip = c_dsc > 0 ? c_dsc : c_org;
+
                 let compName = row['Competitor Store Name'];
                 let compBadge = compName ? cleanName(compName).toUpperCase() : 'RAKİP';
-                let farkYuzde = 0; let farkClass = "diff-negative"; 
-                if(priceRakip > 0 && priceBiz > 0) { farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100; }
+
+                let farkYuzde = 0;
+                let farkClass = "diff-negative"; 
+                if(priceRakip > 0 && priceBiz > 0) {
+                    farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
+                }
+
                 let badgeHtml = '';
                 if (priceBiz > 0 && priceRakip > 0) {
-                    if (priceBiz < priceRakip) { badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>'; }
-                    else if (priceBiz > priceRakip) { badgeHtml = `<span class="badge badge-market">${compBadge}</span>`; farkClass = "diff-positive"; }
-                    else { badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>'; }
-                } else { badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">VERİ YOK</span>'; }
+                    if (priceBiz < priceRakip) {
+                        badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
+                    } else if (priceBiz > priceRakip) {
+                        badgeHtml = `<span class="badge badge-market">${compBadge}</span>`;
+                        farkClass = "diff-positive";
+                    } else {
+                        badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
+                    }
+                } else {
+                    badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">VERİ YOK</span>';
+                }
+
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="color:#888; font-size:0.85rem;">${reportDate}</td><td>${storeName}</td><td>${sku}</td><td title="${prodName}">${prodName}</td><td>${brandName}</td><td>${categoryName}</td><td class="price-cell">₺${formatMoney(t_org)}</td><td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td><td>-</td> <td class="price-cell">₺${formatMoney(c_org)}</td><td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td><td>-</td> <td>${badgeHtml}</td><td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>`;
+                tr.innerHTML = `
+                    <td style="color:#888; font-size:0.85rem;">${reportDate}</td>
+                    <td>${storeName}</td>
+                    <td>${sku}</td>
+                    <td title="${prodName}">${prodName}</td>
+                    <td>${brandName}</td>
+                    <td>${categoryName}</td>
+                    <td class="price-cell">₺${formatMoney(t_org)}</td>
+                    <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
+                    <td>-</td> 
+                    <td class="price-cell">₺${formatMoney(c_org)}</td>
+                    <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
+                    <td>-</td> 
+                    <td>${badgeHtml}</td>
+                    <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
+                `;
                 tbody.appendChild(tr);
             });
         }
@@ -482,11 +546,36 @@
         function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
         function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
         function getValue(val) { return typeof val === 'number' ? val : parsePrice(val); }
-        function parsePrice(val) { if(!val) return 0; let clean = val.toString().replace(/["'₺\s]/g, ''); if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) { clean = clean.replace(',', '.'); } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) { clean = clean.replace(/\./g, '').replace(',', '.'); } return parseFloat(clean) || 0; }
+
+        function parsePrice(val) {
+            if(!val) return 0;
+            let clean = val.toString().replace(/["'₺\s]/g, '');
+            if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) { clean = clean.replace(',', '.'); } 
+            else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) { clean = clean.replace(/\./g, '').replace(',', '.'); }
+            return parseFloat(clean) || 0;
+        }
         function formatMoney(num) { return num === 0 ? '0,00' : new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(num); }
         function logout() { new SessionManager().destroySession(); window.location.href = '../index.html'; }
-        function downloadCSV() { if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return; const csv = Papa.unparse(window.CURRENT_EXPORT_DATA); const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "teknoify_analiz_raporu.csv"; link.click(); document.getElementById('download-menu').classList.remove('show'); }
-        function downloadExcel() { if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return; const ws = XLSX.utils.json_to_sheet(window.CURRENT_EXPORT_DATA); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi"); XLSX.writeFile(wb, "teknoify_analiz_raporu.xlsx"); document.getElementById('download-menu').classList.remove('show'); }
+
+        function downloadCSV() {
+            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
+            const csv = Papa.unparse(window.CURRENT_EXPORT_DATA);
+            const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "teknoify_analiz_raporu.csv";
+            link.click();
+            document.getElementById('download-menu').classList.remove('show');
+        }
+
+        function downloadExcel() {
+            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
+            const ws = XLSX.utils.json_to_sheet(window.CURRENT_EXPORT_DATA);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
+            XLSX.writeFile(wb, "teknoify_analiz_raporu.xlsx");
+            document.getElementById('download-menu').classList.remove('show');
+        }
     </script>
 </body>
 </html>
