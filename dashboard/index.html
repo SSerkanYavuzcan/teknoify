@@ -2,32 +2,211 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Yönlendiriliyor... | Teknoify</title>
-    <script src="../js/session-manager.js"></script>
-    <script>
-        // ROUTER: Burası bekleme salonudur. Kimlik kontrolü yapar ve odaya gönderir.
-        const session = new SessionManager();
-        const user = session.validateSession();
-
-        if (!user) {
-            // Giriş yapmamışsa ana sayfaya at
-            window.location.href = '../index.html';
-        } else {
-            // Rolüne göre doğru sayfaya postala
-            if (user.role === 'admin') {
-                window.location.replace('admin.html');
-            } else if (user.role === 'premium') {
-                window.location.replace('premium.html');
-            } else {
-                window.location.replace('member.html');
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veri Çekme & Analiz | Teknoify</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
-    <div style="background:#050505; color:#fff; height:100vh; display:flex; align-items:center; justify-content:center;">
-        <p>Panel Yükleniyor...</p>
-    </div>
+
+    <aside class="sidebar">
+        <div class="brand"><i class="fas fa-cube"></i> Teknoify</div>
+        <nav>
+            <a href="member.html" class="menu-item"><i class="fas fa-home"></i> Genel Bakış</a>
+            
+            <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
+            <a href="analysis.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
+            
+            <a href="#" class="menu-item"><i class="fas fa-file-invoice"></i> Faturalar</a>
+            <a href="#" class="menu-item"><i class="fas fa-cog"></i> Ayarlar</a>
+        </nav>
+        <div class="menu-spacer"></div>
+        <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h2>Pazar Analizi & Fiyat Takibi</h2>
+            <div class="user-profile">
+                <span id="user-name-display">Yükleniyor...</span>
+                <div class="avatar" id="user-avatar">U</div>
+            </div>
+        </header>
+
+        <div class="content-scroll">
+            
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Şube Seçiniz</label>
+                    <select class="filter-select">
+                        <option>Tüm Şubeler</option>
+                        <option>İstanbul - Kadıköy</option>
+                        <option>İstanbul - Beşiktaş</option>
+                        <option>Ankara - Çankaya</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Marka Seçiniz</label>
+                    <select class="filter-select">
+                        <option>Tüm Markalar</option>
+                        <option>ABC Deterjan</option>
+                        <option>7Days</option>
+                        <option>Abant Su</option>
+                        <option>7UP</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Kategori Seçiniz</label>
+                    <select class="filter-select">
+                        <option>Tüm Kategoriler</option>
+                        <option>İçecekler</option>
+                        <option>Temizlik Ürünleri</option>
+                        <option>Atıştırmalık</option>
+                    </select>
+                </div>
+                <button class="btn-filter"><i class="fas fa-filter"></i> Uygula</button>
+            </div>
+
+            <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background:#14161c;">Ürün Bilgileri</th>
+                            <th colspan="3" class="th-group-tazeyo">Tazeyo (Biz)</th>
+                            <th colspan="3" class="th-group-market">Rakip Market</th>
+                            <th colspan="2" style="background:#14161c;">Analiz</th>
+                        </tr>
+                        <tr>
+                            <th style="top:50px;">Store Name</th>
+                            <th style="top:50px;">SKU</th>
+                            <th style="top:50px;">Ürün Adı</th>
+                            
+                            <th style="top:50px;">Normal Fiyat</th>
+                            <th style="top:50px;">İndirimli</th>
+                            <th style="top:50px;">Fark %</th>
+                            
+                            <th style="top:50px;">Normal Fiyat</th>
+                            <th style="top:50px;">İndirimli</th>
+                            <th style="top:50px;">Fark %</th>
+                            
+                            <th style="top:50px;">En Ucuz</th>
+                            <th style="top:50px;">Ucuzluk Oranı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/session-manager.js"></script>
+    <script src="../js/script.js"></script> 
+    <script>
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = new SessionManager();
+            const currentUser = session.validateSession();
+
+            if (!currentUser) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            const userDataFull = USER_DB[currentUser.username];
+            if (userDataFull) {
+                document.getElementById('user-name-display').textContent = userDataFull.name;
+                document.getElementById('user-avatar').textContent = userDataFull.name.charAt(0).toUpperCase();
+            }
+
+            fetchData();
+        });
+
+        async function fetchData() {
+            const tbody = document.querySelector('.comparison-table tbody');
+            tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px;">Veriler Yükleniyor...</td></tr>';
+
+            try {
+                const response = await fetch(SHEET_URL);
+                const data = await response.text();
+                const rows = data.split(/\r?\n/).slice(1);
+                
+                tbody.innerHTML = ''; 
+
+                rows.forEach(row => {
+                    const cols = row.split(','); 
+                    
+                    if (cols.length < 10) return; 
+
+                    const storeName = cols[1];
+                    const sku = cols[2];
+                    const prodName = cols[3];
+                    
+                    const t_org = parsePrice(cols[6]);
+                    const t_dsc = parsePrice(cols[7]);
+                    const priceBiz = t_dsc > 0 ? t_dsc : t_org;
+                    
+                    const c_org = parsePrice(cols[8]);
+                    const c_dsc = parsePrice(cols[9]);
+                    const priceRakip = c_dsc > 0 ? c_dsc : c_org;
+
+                    let farkYuzde = 0;
+                    let farkClass = "diff-negative"; 
+                    
+                    if(priceRakip > 0) {
+                        farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
+                    }
+
+                    let badgeHtml = '';
+                    if (priceBiz < priceRakip) {
+                        badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
+                    } else if (priceBiz > priceRakip) {
+                        badgeHtml = '<span class="badge badge-market">MARKETTEN</span>';
+                        farkClass = "diff-positive";
+                    } else {
+                        badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${storeName}</td>
+                        <td>${sku}</td>
+                        <td>${prodName}</td>
+                        <td class="price-cell">₺${t_org.toFixed(2)}</td>
+                        <td class="price-cell">${t_dsc > 0 ? '₺'+t_dsc.toFixed(2) : '-'}</td>
+                        <td class="${farkClass}">%${farkYuzde.toFixed(1)}</td>
+                        <td class="price-cell">₺${c_org.toFixed(2)}</td>
+                        <td class="price-cell">${c_dsc > 0 ? '₺'+c_dsc.toFixed(2) : '-'}</td>
+                        <td class="${farkClass}">%${(-farkYuzde).toFixed(1)}</td>
+                        <td>${badgeHtml}</td>
+                        <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = '<tr><td colspan="11" style="color:#ef4444; text-align:center;">Veri bağlantı hatası.</td></tr>';
+            }
+        }
+
+        function parsePrice(val) {
+            if(!val) return 0;
+            let clean = val.replace(/[^0-9,.-]/g, '').replace(',', '.');
+            let num = parseFloat(clean);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function logout() {
+            const session = new SessionManager();
+            session.destroySession();
+            window.location.href = '../index.html';
+        }
+    </script>
 </body>
 </html>
+
 
