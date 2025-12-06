@@ -3,6 +3,9 @@
    [FILE] css/dashboard.css
    ================================================================ */
 
+
+
+
    :root {
     --dash-bg: #050505; --dash-sidebar: #0f1014; --dash-card: #14161c;
     --primary: #6366f1; --primary-hover: #4f46e5;
@@ -12,9 +15,15 @@
     --font-main: 'Inter Tight', sans-serif; --font-mono: 'Fira Code', monospace;
 }
 
+
+
+
 * { box-sizing: border-box; }
 body { background-color: var(--dash-bg); color: var(--text-main); font-family: var(--font-main); margin: 0; display: flex; height: 100vh; overflow: hidden; }
 a { text-decoration: none; color: inherit; }
+
+
+
 
 /* SIDEBAR */
 .sidebar { width: 260px; background: var(--dash-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; flex-shrink: 0; transition: 0.3s ease; z-index: 50; }
@@ -26,6 +35,9 @@ a { text-decoration: none; color: inherit; }
 .menu-item.active i { color: var(--primary); }
 .menu-spacer { flex: 1; }
 
+
+
+
 /* MAIN CONTENT */
 .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; background: radial-gradient(circle at 50% 0%, rgba(99,102,241,0.03), transparent 40%); }
 .top-bar { height: 72px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: rgba(5,5,5,0.85); backdrop-filter: blur(12px); z-index: 40; }
@@ -33,6 +45,9 @@ a { text-decoration: none; color: inherit; }
 .user-profile { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 500; }
 .avatar { width: 38px; height: 38px; background: linear-gradient(135deg, var(--primary), #4f46e5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,0.1); }
 .content-scroll { padding: 32px; overflow-y: auto; height: 100%; scrollbar-width: thin; scrollbar-color: #333 transparent; }
+
+
+
 
 /* DASHBOARD WIDGETS */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 40px; }
@@ -46,6 +61,9 @@ a { text-decoration: none; color: inherit; }
 .data-table th { background: rgba(255,255,255,0.02); color: var(--text-muted); font-weight: 500; }
 .data-table tr:last-child td { border-bottom: none; }
 
+
+
+
 /* ANALİZ SAYFASI - FİLTRELER */
 .filter-bar { display: flex; gap: 16px; flex-wrap: wrap; background: var(--dash-card); border: 1px solid var(--border); padding: 20px; border-radius: 16px; margin-bottom: 30px; align-items: flex-end; position: relative; z-index: 30; }
 .filter-group { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 180px; }
@@ -54,11 +72,17 @@ a { text-decoration: none; color: inherit; }
 .filter-select:hover { background-color: rgba(255,255,255,0.06); border-color: var(--primary); outline: none; }
 select.filter-select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; }
 
+
+
+
 /* Butonlar */
 .btn-filter, .btn-download { border: none; padding: 0 24px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; height: 47px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; position: relative; z-index: 5; }
 .btn-filter { background: var(--primary); color: #fff; } .btn-filter:hover { background: var(--primary-hover); transform: translateY(-1px); }
 .btn-download { background: #10b981; color: #fff; text-decoration: none; } .btn-download:hover { background: #059669; transform: translateY(-1px); }
 .btn-disabled { opacity: 0.5; pointer-events: none !important; background: #374151 !important; cursor: not-allowed; }
+
+
+
 
 /* İndirme Menüsü */
 .download-wrapper { position: relative; display: inline-block; z-index: 50; }
@@ -68,6 +92,9 @@ select.filter-select { appearance: none; background-image: url("data:image/svg+x
 .download-item:last-child { border-bottom: none; }
 .download-item:hover { background: var(--primary); }
 @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+
+
+
 
 /* MINI DASHBOARD */
 .mini-dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; display: none; }
@@ -79,6 +106,9 @@ select.filter-select { appearance: none; background-image: url("data:image/svg+x
 .progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; }
 .progress-fill { height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 1s ease; }
 @media (max-width: 1024px) { .mini-dashboard { grid-template-columns: repeat(2, 1fr); } }
+
+
+
 
 /* TABLO STİLLERİ (Auto Fit) */
 .comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; table-layout: auto; }
@@ -94,12 +124,18 @@ select.filter-select { appearance: none; background-image: url("data:image/svg+x
 .badge-market { background: rgba(249, 115, 22, 0.15); color: var(--warning); border: 1px solid rgba(249, 115, 22, 0.25); }
 .limit-warning { background: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.4); color: #fdba74; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center; font-size: 0.9rem; display: none; font-weight: 500; }
 
+
+
+
 /* TOAST NOTIFICATION */
 .toast-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: rgba(20, 22, 28, 0.95); border: 1px solid var(--border); border-left: 4px solid var(--warning); border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); min-width: 350px; }
 .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .toast-icon { font-size: 1.5rem; color: var(--warning); }
 .toast-content h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: #fff; }
 .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+
+
+
 
 /* MODERN TAKVİM (FLATPICKR - CLEAN) */
 .date-picker-wrapper { position: relative; width: 100%; } .calendar-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 1rem; z-index: 2; }
@@ -116,11 +152,34 @@ input.flatpickr-input:hover { border-color: rgba(255, 255, 255, 0.3) !important;
 .flatpickr-prev-month { order: 1; margin-right: 10px !important; } .flatpickr-next-month { order: 3; margin-left: 10px !important; }
 .flatpickr-prev-month:hover, .flatpickr-next-month:hover { background: var(--primary) !important; fill: #fff !important; }
 .flatpickr-weekdays, span.flatpickr-weekday { background: transparent !important; color: var(--text-muted) !important; font-weight: 600 !important; font-size: 0.85rem !important; }
-.flatpickr-days { background: transparent !important; } .dayContainer { justify-content: space-around !important; }
+.flatpickr-days {
+    background: transparent !important;
+    width: 100% !important; /* Genişliği kapsayıcıya yay */
+    display: flex !important;
+    justify-content: center !important;
+}
 .flatpickr-day { color: #e2e8f0 !important; border-radius: 8px !important; border: none !important; font-weight: 500 !important; height: 40px !important; line-height: 40px !important; margin-top: 2px !important; background: transparent !important; }
 .flatpickr-day:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
 .flatpickr-day.today { border: 1px solid var(--primary) !important; color: var(--primary) !important; }
 .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange { background: var(--primary) !important; color: #fff !important; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important; border: none !important; }
 .flatpickr-day.inRange { background: rgba(99, 102, 241, 0.15) !important; color: #fff !important; border: none !important; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
