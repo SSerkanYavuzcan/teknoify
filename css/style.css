@@ -203,12 +203,7 @@ Sayfa iskeletini oluşturan büyük bloklar
   backdrop-filter: blur(12px); /* Glassmorphism */
   transition: transform var(--ease-smooth);
 }
-.nav-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 72px;
-}
+.nav-container { display: flex; align-items: center; justify-content: space-between; height: 72px; /* YENİ EKLENENLER: İçeriği ortalar ve sınırlar */ width: 100%; max-width: var(--container-width); /* 1200px */ margin: 0 auto; /* Sağdan soldan otomatik boşluk */ padding: 0 1.5rem; /* Kenarlara yapışmaması için iç boşluk */ }
 .logo-text {
   font-weight: 700;
   font-size: 1.25rem;
