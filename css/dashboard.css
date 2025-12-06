@@ -1,5 +1,5 @@
 /* ================================================================
-   [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (CALENDAR FIXED)
+   [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (FINAL - TRANSPARENT CALENDAR HEADER)
    [FILE] css/dashboard.css
    ================================================================ */
 
@@ -121,6 +121,7 @@ a { text-decoration: none; color: inherit; }
 
 .section-title { font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; }
 
+/* Bildirim Tablosu */
 .data-table {
     width: 100%; border-collapse: collapse;
     background: var(--dash-card); border-radius: 16px; overflow: hidden;
@@ -307,7 +308,7 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 /* Okları (Triangle) Gizle */
 .flatpickr-calendar::before, .flatpickr-calendar::after { display: none !important; }
 
-/* 3. Başlık (Header) - RENK VE OKLAR DÜZELTİLDİ */
+/* 3. Başlık (Header) - ŞEFFAF ARKA PLAN */
 .flatpickr-months {
     background: transparent !important; /* Arka planı kaldır */
     margin-bottom: 20px !important; padding: 0 !important;
@@ -315,18 +316,26 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     position: relative !important;
 }
 
-/* Ay/Yıl Metni */
+/* Ay/Yıl Metni (Şeffaf Arka Plan) */
 .flatpickr-current-month {
+    background: transparent !important; /* Kapsayıcı şeffaf */
     font-size: 1.1rem !important; padding: 0 !important; color: #fff !important;
     display: flex !important; align-items: center !important; justify-content: center !important;
     position: static !important; flex-grow: 1; order: 2; /* Ortala */
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months {
-    font-weight: 700 !important; background: transparent !important; color: #fff !important;
+    background: transparent !important; /* Ay seçimi şeffaf */
+    font-weight: 700 !important; color: #fff !important;
     appearance: none !important; margin: 0 !important;
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months:hover { background: transparent !important; }
-.flatpickr-current-month input.cur-year { font-weight: 700 !important; color: #fff !important; }
+
+.flatpickr-current-month input.cur-year {
+    background: transparent !important; /* Yıl inputu şeffaf */
+    font-weight: 700 !important; color: #fff !important;
+}
+.flatpickr-current-month input.cur-year:hover, .flatpickr-current-month input.cur-year:focus { background: transparent !important; }
+
 /* Yıl Oklarını Gizle (Spinner) */
 .flatpickr-current-month .numInputWrapper span { display: none !important; }
 
@@ -341,12 +350,12 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 .flatpickr-next-month { order: 3; margin-left: 10px !important; }
 .flatpickr-prev-month:hover, .flatpickr-next-month:hover { background: rgba(255,255,255,0.1) !important; fill: #fff !important; }
 
-/* 4. Haftanın Günleri (Pzt, Sal...) */
+/* 4. Haftanın Günleri (Pzt, Sal...) - ŞEFFAF ARKA PLAN */
 .flatpickr-weekdays { background: transparent !important; margin-bottom: 10px !important; }
-span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !important; font-size: 0.85rem !important; }
+span.flatpickr-weekday { background: transparent !important; color: var(--text-muted) !important; font-weight: 600 !important; font-size: 0.85rem !important; }
 
 /* 5. Günler (1, 2, 3...) - TAM SIĞACAK ŞEKİLDE */
-.flatpickr-days { width: 100% !important; }
+.flatpickr-days { width: 100% !important; background: transparent !important; }
 .dayContainer { width: 100% !important; min-width: 100% !important; max-width: 100% !important; justify-content: space-around !important; }
 
 .flatpickr-day {
