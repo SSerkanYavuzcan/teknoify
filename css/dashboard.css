@@ -1,5 +1,5 @@
 /* ================================================================
-   [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (FINAL - TRANSPARENT CALENDAR HEADER)
+   [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (FINAL - TRANSPARENT CALENDAR)
    [FILE] css/dashboard.css
    ================================================================ */
 
@@ -179,6 +179,7 @@ select.filter-select {
     cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
     position: relative; z-index: 5;
 }
+
 .btn-filter { background: var(--primary); color: #fff; }
 .btn-filter:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
@@ -211,7 +212,7 @@ select.filter-select {
 @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
 
-/* --- MINI DASHBOARD --- */
+/* --- MINI DASHBOARD (KPI CARDS) --- */
 .mini-dashboard {
     display: grid; grid-template-columns: repeat(4, 1fr); 
     gap: 16px; margin-bottom: 24px; display: none; 
@@ -276,8 +277,17 @@ select.filter-select {
 .sortable-ghost { opacity: 0.4; background-color: rgba(139, 92, 246, 0.2) !important; }
 .sortable-chosen { background-color: rgba(139, 92, 246, 0.4) !important; }
 
+/* Resizer (Sütun Genişletme) */
+.resizer {
+    position: absolute; top: 0; right: 0;
+    width: 5px; cursor: col-resize; user-select: none; height: 100%; z-index: 20;
+    background: transparent;
+}
+.draggable-cursor .resizer { background: rgba(139, 92, 246, 0.5); width: 8px; }
+.resizer:hover, .resizing { background: var(--primary) !important; }
 
-/* --- MODERN TAKVİM (FLATPICKR - FULL DARK & CLEAN FIX) --- */
+
+/* --- MODERN TAKVİM (FLATPICKR - FULL DARK & TRANSPARENT HEADER) --- */
 
 /* 1. Input */
 .date-picker-wrapper { position: relative; width: 100%; }
@@ -296,45 +306,46 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 
 /* 2. Takvim Penceresi (Ana Kutu) */
 .flatpickr-calendar {
-    background: var(--dash-card) !important; /* Koyu Zemin */
+    background: var(--dash-card) !important; /* Koyu Kart Rengi */
     border: 1px solid var(--border) !important;
     box-shadow: 0 20px 60px rgba(0,0,0,0.7) !important;
     border-radius: 16px !important;
     padding: 20px !important;
     font-family: var(--font-main) !important;
-    width: 340px !important; /* Genişlik Ayarı: Günler sığsın */
-    margin-top: 8px !important;
+    width: 340px !important; margin-top: 8px !important;
 }
-/* Okları (Triangle) Gizle */
 .flatpickr-calendar::before, .flatpickr-calendar::after { display: none !important; }
 
-/* 3. Başlık (Header) - ŞEFFAF ARKA PLAN */
+/* 3. Başlık (Header) - TAM ŞEFFAF */
 .flatpickr-months {
-    background: transparent !important; /* Arka planı kaldır */
+    background: transparent !important; /* Arka plan yok */
     margin-bottom: 20px !important; padding: 0 !important;
     display: flex !important; align-items: center !important; justify-content: space-between !important;
     position: relative !important;
 }
 
-/* Ay/Yıl Metni (Şeffaf Arka Plan) */
+/* Ay/Yıl Metni */
 .flatpickr-current-month {
-    background: transparent !important; /* Kapsayıcı şeffaf */
+    background: transparent !important;
     font-size: 1.1rem !important; padding: 0 !important; color: #fff !important;
     display: flex !important; align-items: center !important; justify-content: center !important;
     position: static !important; flex-grow: 1; order: 2; /* Ortala */
 }
+
+/* Ay Seçimi (Dropdown) */
 .flatpickr-current-month .flatpickr-monthDropdown-months {
-    background: transparent !important; /* Ay seçimi şeffaf */
-    font-weight: 700 !important; color: #fff !important;
-    appearance: none !important; margin: 0 !important;
+    font-weight: 700 !important; 
+    background: transparent !important; /* Şeffaf */
+    color: #fff !important;
+    appearance: none !important; margin: 0 !important; padding: 0 !important; border: none !important;
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months:hover { background: transparent !important; }
 
+/* Yıl Inputu */
 .flatpickr-current-month input.cur-year {
-    background: transparent !important; /* Yıl inputu şeffaf */
-    font-weight: 700 !important; color: #fff !important;
+    background: transparent !important; /* Şeffaf */
+    font-weight: 700 !important; font-size: 1.1rem !important; color: #fff !important; border: none !important;
 }
-.flatpickr-current-month input.cur-year:hover, .flatpickr-current-month input.cur-year:focus { background: transparent !important; }
 
 /* Yıl Oklarını Gizle (Spinner) */
 .flatpickr-current-month .numInputWrapper span { display: none !important; }
@@ -350,20 +361,20 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 .flatpickr-next-month { order: 3; margin-left: 10px !important; }
 .flatpickr-prev-month:hover, .flatpickr-next-month:hover { background: rgba(255,255,255,0.1) !important; fill: #fff !important; }
 
-/* 4. Haftanın Günleri (Pzt, Sal...) - ŞEFFAF ARKA PLAN */
+/* 4. Haftanın Günleri (Pzt, Sal...) - TAM ŞEFFAF */
 .flatpickr-weekdays { background: transparent !important; margin-bottom: 10px !important; }
 span.flatpickr-weekday { background: transparent !important; color: var(--text-muted) !important; font-weight: 600 !important; font-size: 0.85rem !important; }
 
-/* 5. Günler (1, 2, 3...) - TAM SIĞACAK ŞEKİLDE */
+/* 5. Günler (1, 2, 3...) */
 .flatpickr-days { width: 100% !important; background: transparent !important; }
 .dayContainer { width: 100% !important; min-width: 100% !important; max-width: 100% !important; justify-content: space-around !important; }
 
 .flatpickr-day {
     color: #e2e8f0 !important; border-radius: 8px !important; border: none !important;
-    font-weight: 500 !important; height: 38px !important; line-height: 38px !important;
+    font-weight: 500 !important; height: 40px !important; line-height: 40px !important;
     margin-top: 2px !important; transition: all 0.2s !important;
     background: transparent !important; /* Arka plan yok */
-    flex-basis: 13.5% !important; /* %14 yerine %13.5 ile sığmayı garanti et */
+    flex-basis: 13.5% !important; 
     max-width: 38px !important;
 }
 .flatpickr-day:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
