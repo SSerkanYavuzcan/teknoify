@@ -42,7 +42,7 @@
                     <label>Şube Seçiniz</label>
                     <select class="filter-select" id="filter-branch">
                         <option value="all">Tüm Şubeler</option>
-                        </select>
+                    </select>
                 </div>
                 <div class="filter-group">
                     <label>Marka Seçiniz</label>
@@ -65,15 +65,15 @@
                         <tr>
                             <th style="top:50px;">Store Name</th>
                             <th style="top:50px;">SKU</th>
-                            <th style="top:50px;">Ürün Adı</th>
+                            <th style="top:50px;">Product Name</th>
                             
-                            <th style="top:50px;">Normal Fiyat</th>
-                            <th style="top:50px;">İndirimli</th>
-                            <th style="top:50px;">Fark %</th>
+                            <th style="top:50px;">Original Price</th>
+                            <th style="top:50px;">Discount Price</th>
+                            <th style="top:50px;">Weekly Change</th>
                             
-                            <th style="top:50px;">Normal Fiyat</th>
-                            <th style="top:50px;">İndirimli</th>
-                            <th style="top:50px;">Fark %</th>
+                            <th style="top:50px;">Original Price</th>
+                            <th style="top:50px;">Discount Price</th>
+                            <th style="top:50px;">Weekly Change</th>
                             
                             <th style="top:50px;">En Ucuz</th>
                             <th style="top:50px;">Ucuzluk Oranı</th>
@@ -89,7 +89,6 @@
     <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script> 
     <script>
-        // GÜNCEL CSV LINKIN
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -127,49 +126,49 @@
                 let dataCount = 0;
 
                 rows.forEach(row => {
-                    if(!row.trim()) return; // Boş satırı atla
+                    if(!row.trim()) return;
 
-                    // --- GELİŞMİŞ CSV PARÇALAYICI (REGEX) ---
-                    // Tırnak içindeki virgülleri ayırmaz. Örn: "8,75" i tek parça alır.
+                    // Regex ile CSV Parçala (Tırnak hatalarını önler)
                     const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
                     let cols = [];
                     let match;
                     while ((match = regex.exec(row)) !== null) {
-                        // Tırnakları temizle ("8,75" -> 8,75)
                         cols.push(match[0].replace(/^"|"$/g, '').trim());
                     }
 
-                    // Sütun sayısı kontrolü (En az 7-8 sütun dolu olmalı)
                     if (cols.length < 5) return; 
 
-                    // Verileri Eşleştir (Sheet Sırası: B=Store, C=SKU, D=Name, G=TazeyoOrg, H=TazeyoDisc, I=CompOrg, J=CompDisc)
-                    // CSV'de ilk sütun A (index 0) olduğu için B index 1'dir.
+                    // --- VERİ EŞLEŞTİRME (Senin Tablona Göre) ---
                     const storeName = cols[1] || '-';
                     const sku       = cols[2] || '-';
                     const prodName  = cols[3] || 'İsimsiz Ürün';
                     
-                    // Fiyatları işle (Türkçe virgül desteği)
-                    const t_org = parsePrice(cols[6]);
-                    const t_dsc = parsePrice(cols[7]);
-                    const priceBiz = t_dsc > 0 ? t_dsc : t_org;
+                    // --- BİZİM FİYATLAR (Sütun 6 ve 7) ---
+                    const t_org = parsePrice(cols[6]); // Tazeyo Original
+                    const t_dsc = parsePrice(cols[7]); // Tazeyo Discount
                     
-                    const c_org = parsePrice(cols[8]);
-                    const c_dsc = parsePrice(cols[9]);
-                    const priceRakip = c_dsc > 0 ? c_dsc : c_org;
+                    // Hesaplama için geçerli fiyatı belirle (İndirim varsa onu al, yoksa normali)
+                    const effectiveBiz = t_dsc > 0 ? t_dsc : t_org;
+                    
+                    // --- RAKİP FİYATLAR (Sütun 8 ve 9) ---
+                    const c_org = parsePrice(cols[8]); // Competitor Original
+                    const c_dsc = parsePrice(cols[9]); // Competitor Discount
+                    const effectiveRakip = c_dsc > 0 ? c_dsc : c_org;
 
-                    // HESAPLAMALAR
+                    // --- ANALİZ HESAPLAMALARI ---
                     let farkYuzde = 0;
                     let farkClass = "diff-negative"; 
                     
-                    if(priceRakip > 0 && priceBiz > 0) {
-                        farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
+                    // Karşılaştırmayı "Effective" (Geçerli) fiyatlar üzerinden yap
+                    if(effectiveRakip > 0 && effectiveBiz > 0) {
+                        farkYuzde = ((effectiveRakip - effectiveBiz) / effectiveRakip) * 100;
                     }
 
                     let badgeHtml = '';
-                    if (priceBiz > 0 && priceRakip > 0) {
-                        if (priceBiz < priceRakip) {
+                    if (effectiveBiz > 0 && effectiveRakip > 0) {
+                        if (effectiveBiz < effectiveRakip) {
                             badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
-                        } else if (priceBiz > priceRakip) {
+                        } else if (effectiveBiz > effectiveRakip) {
                             badgeHtml = '<span class="badge badge-market">MARKETTEN</span>';
                             farkClass = "diff-positive";
                         } else {
@@ -179,22 +178,18 @@
                          badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">VERİ YOK</span>';
                     }
 
-                    // HTML Oluştur
+                    // --- HTML OLUŞTURMA ---
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${storeName}</td>
                         <td>${sku}</td>
-                        <td title="${prodName}">${prodName.length > 25 ? prodName.substring(0,25)+'...' : prodName}</td>
+                        <td title="${prodName}">${prodName}</td>
                         
                         <td class="price-cell">₺${formatMoney(t_org)}</td>
                         <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
-                        <td class="${farkClass}">%${farkYuzde.toFixed(1)}</td>
-                        
-                        <td class="price-cell">₺${formatMoney(c_org)}</td>
+                        <td>-</td> <td class="price-cell">₺${formatMoney(c_org)}</td>
                         <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
-                        <td class="${farkClass}">%${(-farkYuzde).toFixed(1)}</td>
-                        
-                        <td>${badgeHtml}</td>
+                        <td>-</td> <td>${badgeHtml}</td>
                         <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                     `;
                     tbody.appendChild(tr);
@@ -214,24 +209,20 @@
         // Fiyat Temizleme (TR Format: "8,75" -> 8.75)
         function parsePrice(val) {
             if(!val) return 0;
-            // Tırnakları ve ₺ işaretini temizle
             let clean = val.replace(/["'₺\s]/g, '');
-            // Eğer virgül varsa ve nokta yoksa (TR format: 8,75), virgülü nokta yap
             if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
                 clean = clean.replace(',', '.');
-            } 
-            // Eğer hem nokta hem virgül varsa (1.250,50), noktaları sil virgülü nokta yap
-            else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
+            } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
                 clean = clean.replace(/\./g, '').replace(',', '.');
             }
-            
             let num = parseFloat(clean);
             return isNaN(num) ? 0 : num;
         }
 
-        // Gösterim için format (8.75 -> "8,75")
         function formatMoney(num) {
-            return num.toFixed(2).replace('.', ',');
+            if(num === 0) return '0,00';
+            // Sayıyı TR formatına çevir (Nokta binlik, Virgül ondalık)
+            return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
         }
 
         function logout() {
