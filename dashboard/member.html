@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Dashboard | Teknoify</title>
+    <title>Genel Bakış | Teknoify</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
@@ -14,20 +15,16 @@
         <div class="brand"><i class="fas fa-cube"></i> Teknoify</div>
         <nav>
             <a href="member.html" class="menu-item active"><i class="fas fa-home"></i> Genel Bakış</a>
-            
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
             <a href="analysis.html" class="menu-item"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
-            
-            <a href="#" class="menu-item"><i class="fas fa-file-invoice"></i> Faturalar</a>
-            <a href="#" class="menu-item"><i class="fas fa-cog"></i> Ayarlar</a>
-        </nav>
+            </nav>
         <div class="menu-spacer"></div>
         <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
     </aside>
 
     <main class="main-content">
         <header class="top-bar">
-            <h2 id="welcome-msg">Hoşgeldin</h2>
+            <h2>Hoşgeldin, <span id="user-name-title">...</span></h2>
             <div class="user-profile">
                 <span id="user-name-display">Yükleniyor...</span>
                 <div class="avatar" id="user-avatar">U</div>
@@ -35,58 +32,112 @@
         </header>
 
         <div class="content-scroll">
+            
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
-                    <div class="stat-value" id="val-bots">-</div>
+                    <div class="stat-value">1</div>
                 </div>
+
                 <div class="stat-card">
                     <div class="stat-title">İşlenen Veri</div>
-                    <div class="stat-value" id="val-processed">-</div>
+                    <div class="stat-value" id="processed-data-count">
+                        <i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i>
+                    </div>
                 </div>
+
                 <div class="stat-card">
                     <div class="stat-title">Kazanılan Saat</div>
-                    <div class="stat-value" id="val-saved">-</div>
+                    <div class="stat-value">-</div>
                 </div>
+
                 <div class="stat-card">
                     <div class="stat-title">Sonraki Ödeme</div>
-                    <div class="stat-value" id="val-payment" style="font-size: 1.2rem; line-height: 2.2rem;">-</div>
+                    <div class="stat-value">-</div>
                 </div>
             </div>
 
-            <h3 class="section-title">Son Bildirimler</h3>
-            <table class="data-table">
-                <thead><tr><th>Bildirim Mesajı</th><th>Durum</th></tr></thead>
-                <tbody id="notification-list"></tbody>
-            </table>
+            <div class="section-title">Son Bildirimler</div>
+            <div style="border-radius: 16px; border: 1px solid var(--border); overflow: hidden;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60%;">Bildirim Mesajı</th>
+                            <th style="width: 20%;">Durum</th>
+                            <th style="width: 20%;">Tarih</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Veri Çekme & Analiz hizmeti aktifleştirildi.</td>
+                            <td><span style="color: #ef4444; font-weight: 600;"><i class="fas fa-envelope"></i> Okunmadı</span></td>
+                            <td style="color: var(--text-muted);">07.12.2025</td>
+                        </tr>
+                        <tr>
+                            <td>Sisteme hoşgeldiniz, üyelik kurulumu tamamlandı.</td>
+                            <td><span style="color: #10b981; font-weight: 600;"><i class="fas fa-check-circle"></i> Okundu</span></td>
+                            <td style="color: var(--text-muted);">07.12.2025</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="../js/session-manager.js"></script>
-    <script src="../js/script.js"></script> 
+    <script src="../js/script.js"></script>
+
     <script>
+        // Analysis sayfasındaki aynı veri kaynağını kullanıyoruz
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
+
         document.addEventListener('DOMContentLoaded', () => {
+            // Oturum Kontrolü
             const session = new SessionManager();
             const currentUser = session.validateSession();
             if (!currentUser) { window.location.href = '../index.html'; return; }
 
+            // Kullanıcı Bilgilerini Doldur
             const userDataFull = USER_DB[currentUser.username];
             if (userDataFull) {
                 document.getElementById('user-name-display').textContent = userDataFull.name;
-                document.getElementById('welcome-msg').textContent = `Hoşgeldin, ${userDataFull.name.split(' ')[0]}`;
+                document.getElementById('user-name-title').textContent = userDataFull.name;
                 document.getElementById('user-avatar').textContent = userDataFull.name.charAt(0).toUpperCase();
-                document.getElementById('val-bots').textContent = userDataFull.data.activeBots;
-                document.getElementById('val-processed').textContent = userDataFull.data.totalProcessed;
-                document.getElementById('val-saved').textContent = userDataFull.data.savedHours;
-                document.getElementById('val-payment').textContent = userDataFull.data.nextPayment;
-
-                const list = document.getElementById('notification-list');
-                userDataFull.data.notifications.forEach(note => {
-                    list.innerHTML += `<tr><td>${note}</td><td><span style="color:#10b981; font-size:0.85rem;">● Okundu</span></td></tr>`;
-                });
             }
+
+            // CSV Verisini Çek ve Sayısını Yaz
+            fetchDataCount();
         });
-        function logout() { new SessionManager().destroySession(); window.location.href = '../index.html'; }
+
+        function fetchDataCount() {
+            Papa.parse(SHEET_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    // Sadece geçerli satırları say (Store Name ve Product Name dolu olanlar)
+                    const validData = results.data.filter(row => row['Store Name'] && row['Product Name']);
+                    
+                    // Sayıyı formatla (Binlik ayracı ile: 12.450 gibi)
+                    const count = validData.length;
+                    const formattedCount = new Intl.NumberFormat('tr-TR').format(count);
+                    
+                    // HTML'e yaz
+                    document.getElementById('processed-data-count').textContent = formattedCount;
+                },
+                error: function(err) {
+                    console.error("Veri sayacı hatası:", err);
+                    document.getElementById('processed-data-count').innerText = "0";
+                }
+            });
+        }
+
+        function logout() {
+            new SessionManager().destroySession();
+            window.location.href = '../index.html';
+        }
     </script>
 </body>
 </html>
