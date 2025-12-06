@@ -42,6 +42,7 @@
                     <label>Şube Seçiniz</label>
                     <select class="filter-select" id="filter-branch">
                         <option value="all">Tüm Şubeler</option>
+                        <option>Tazeyo Hızlı Market</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -89,6 +90,7 @@
     <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script> 
     <script>
+        // GÜNCEL CSV LINKI
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -111,16 +113,15 @@
 
         async function fetchData() {
             const tbody = document.querySelector('.comparison-table tbody');
-            tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px;">Veriler Google Sheets\'ten alınıyor...</td></tr>';
+            // DÜZELTME: İstenilen sade mesaj
+            tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px;">Veriler yükleniyor...</td></tr>';
 
             try {
                 const response = await fetch(SHEET_URL);
                 if (!response.ok) throw new Error("Veri kaynağına ulaşılamadı.");
                 
                 const data = await response.text();
-                
-                // Satırlara böl
-                const rows = data.split(/\r?\n/).slice(1);
+                const rows = data.split(/\r?\n/).slice(1); // Başlığı atla
                 
                 tbody.innerHTML = ''; 
                 let dataCount = 0;
@@ -128,47 +129,42 @@
                 rows.forEach(row => {
                     if(!row.trim()) return;
 
-                    // Regex ile CSV Parçala (Tırnak hatalarını önler)
-                    const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
-                    let cols = [];
-                    let match;
-                    while ((match = regex.exec(row)) !== null) {
-                        cols.push(match[0].replace(/^"|"$/g, '').trim());
-                    }
+                    // --- DÜZELTİLMİŞ CSV PARÇALAYICI ---
+                    // Artık kelime boşluklarını bölmez, sadece virgülleri böler.
+                    // Tırnak içindeki virgülleri korur.
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
+                    // Sütun sayısı kontrolü
                     if (cols.length < 5) return; 
 
-                    // --- VERİ EŞLEŞTİRME (Senin Tablona Göre) ---
-                    const storeName = cols[1] || '-';
-                    const sku       = cols[2] || '-';
-                    const prodName  = cols[3] || 'İsimsiz Ürün';
+                    // Tırnak işaretlerini temizle ve veriyi al
+                    // Sütun Sırası: A=0, B=1(Store), C=2(SKU), D=3(Name)...
+                    const storeName = cleanText(cols[1]);
+                    const sku       = cleanText(cols[2]);
+                    const prodName  = cleanText(cols[3]); // Artık tam isim gelecek
                     
-                    // --- BİZİM FİYATLAR (Sütun 6 ve 7) ---
-                    const t_org = parsePrice(cols[6]); // Tazeyo Original
-                    const t_dsc = parsePrice(cols[7]); // Tazeyo Discount
+                    // Fiyatları işle (Türkçe virgül desteği)
+                    const t_org = parsePrice(cols[6]); // G Sütunu
+                    const t_dsc = parsePrice(cols[7]); // H Sütunu
+                    const priceBiz = t_dsc > 0 ? t_dsc : t_org;
                     
-                    // Hesaplama için geçerli fiyatı belirle (İndirim varsa onu al, yoksa normali)
-                    const effectiveBiz = t_dsc > 0 ? t_dsc : t_org;
-                    
-                    // --- RAKİP FİYATLAR (Sütun 8 ve 9) ---
-                    const c_org = parsePrice(cols[8]); // Competitor Original
-                    const c_dsc = parsePrice(cols[9]); // Competitor Discount
-                    const effectiveRakip = c_dsc > 0 ? c_dsc : c_org;
+                    const c_org = parsePrice(cols[8]); // I Sütunu
+                    const c_dsc = parsePrice(cols[9]); // J Sütunu
+                    const priceRakip = c_dsc > 0 ? c_dsc : c_org;
 
-                    // --- ANALİZ HESAPLAMALARI ---
+                    // HESAPLAMALAR
                     let farkYuzde = 0;
                     let farkClass = "diff-negative"; 
                     
-                    // Karşılaştırmayı "Effective" (Geçerli) fiyatlar üzerinden yap
-                    if(effectiveRakip > 0 && effectiveBiz > 0) {
-                        farkYuzde = ((effectiveRakip - effectiveBiz) / effectiveRakip) * 100;
+                    if(priceRakip > 0 && priceBiz > 0) {
+                        farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
                     }
 
                     let badgeHtml = '';
-                    if (effectiveBiz > 0 && effectiveRakip > 0) {
-                        if (effectiveBiz < effectiveRakip) {
+                    if (priceBiz > 0 && priceRakip > 0) {
+                        if (priceBiz < priceRakip) {
                             badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
-                        } else if (effectiveBiz > effectiveRakip) {
+                        } else if (priceBiz > priceRakip) {
                             badgeHtml = '<span class="badge badge-market">MARKETTEN</span>';
                             farkClass = "diff-positive";
                         } else {
@@ -178,7 +174,6 @@
                          badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">VERİ YOK</span>';
                     }
 
-                    // --- HTML OLUŞTURMA ---
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${storeName}</td>
@@ -187,9 +182,13 @@
                         
                         <td class="price-cell">₺${formatMoney(t_org)}</td>
                         <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
-                        <td>-</td> <td class="price-cell">₺${formatMoney(c_org)}</td>
+                        <td>-</td> 
+                        
+                        <td class="price-cell">₺${formatMoney(c_org)}</td>
                         <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
-                        <td>-</td> <td>${badgeHtml}</td>
+                        <td>-</td> 
+                        
+                        <td>${badgeHtml}</td>
                         <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                     `;
                     tbody.appendChild(tr);
@@ -202,14 +201,22 @@
 
             } catch (error) {
                 console.error(error);
-                tbody.innerHTML = '<tr><td colspan="11" style="color:#ef4444; text-align:center;">Bağlantı Hatası: Lütfen internetinizi kontrol edin.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="11" style="color:#ef4444; text-align:center;">Veri hatası. Lütfen sayfayı yenileyin.</td></tr>';
             }
         }
 
-        // Fiyat Temizleme (TR Format: "8,75" -> 8.75)
+        // Tırnak temizleme yardımcısı
+        function cleanText(text) {
+            if (!text) return '-';
+            return text.replace(/^"|"$/g, '').trim();
+        }
+
+        // Fiyat Temizleme (TR Format)
         function parsePrice(val) {
             if(!val) return 0;
+            // Tırnakları ve ₺ işaretini temizle
             let clean = val.replace(/["'₺\s]/g, '');
+            // 8,75 -> 8.75 çevrimi
             if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
                 clean = clean.replace(',', '.');
             } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
@@ -221,7 +228,6 @@
 
         function formatMoney(num) {
             if(num === 0) return '0,00';
-            // Sayıyı TR formatına çevir (Nokta binlik, Virgül ondalık)
             return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
         }
 
