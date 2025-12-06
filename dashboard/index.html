@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yönlendiriliyor... | Teknoify</title>
+    <script src="../js/session-manager.js"></script>
+    <script>
+        // ROUTER: Burası bekleme salonudur. Kimlik kontrolü yapar ve odaya gönderir.
+        const session = new SessionManager();
+        const user = session.validateSession();
+
+        if (!user) {
+            // Giriş yapmamışsa ana sayfaya at
+            window.location.href = '../index.html';
+        } else {
+            // Rolüne göre doğru sayfaya postala
+            if (user.role === 'admin') {
+                window.location.replace('admin.html');
+            } else if (user.role === 'premium') {
+                window.location.replace('premium.html');
+            } else {
+                window.location.replace('member.html');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div style="background:#050505; color:#fff; height:100vh; display:flex; align-items:center; justify-content:center;">
+        <p>Panel Yükleniyor...</p>
+    </div>
+</body>
+</html>
+

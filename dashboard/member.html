@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Üye Paneli | Teknoify</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { background: #050505; color: #fff; padding: 50px; text-align: center; }
+        .dashboard-card { border: 1px solid #6366f1; padding: 40px; border-radius: 20px; background: #111; max-width: 600px; margin: 0 auto; }
+        h1 { color: #6366f1; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-card">
+        <h1><i class="fas fa-user"></i> ÜYE PANELİ</h1>
+        <p>Hoşgeldin. Standart özelliklere erişebilirsin.</p>
+        <hr style="border-color: #333; margin: 20px 0;">
+        <button onclick="logout()" class="btn btn-outline">Çıkış Yap</button>
+    </div>
+
+    <script src="../js/session-manager.js"></script>
+    <script>
+        const session = new SessionManager();
+        const user = session.validateSession();
+        
+        if (!user) {
+            window.location.href = '../index.html';
+        }
+
+        function logout() {
+            session.destroySession();
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>
+
