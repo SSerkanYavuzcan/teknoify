@@ -14,10 +14,12 @@
     <link rel="stylesheet" href="../css/dashboard.css">
     
     <style>
-        /* Flatpickr input özelleştirmesi */
-        .date-picker-wrapper { position: relative; width: 100%; }
-        /* Dropdown seçenekleri için arka plan */
         .filter-select option { background-color: #14161c; color: #fff; padding: 10px; }
+        .limit-warning {
+            background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
+            color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
+            text-align: center; font-size: 0.9rem; display: none;
+        }
     </style>
 </head>
 <body>
@@ -47,7 +49,6 @@
         <div class="content-scroll">
             
             <div class="filter-bar">
-                
                 <div class="filter-group" style="min-width: 260px;">
                     <label>Rapor Tarihi Seçiniz</label>
                     <div class="date-picker-wrapper">
@@ -92,7 +93,7 @@
                         <tr class="no-sort">
                             <th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>
                             <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Tazeyo (Biz)</th>
-                            <th colspan="3" class="th-group-market">Marketten</th>
+                            <th colspan="3" class="th-group-market">Rakip Market</th>
                             <th colspan="2" style="background:#14161c;">Analiz</th>
                         </tr>
                         <tr id="header-row">
@@ -158,7 +159,6 @@
             initCalendar();
             initData();
 
-            // İndirme menüsü dışı tıklama kontrolü
             document.addEventListener('click', function(e) {
                 const wrapper = document.querySelector('.download-wrapper');
                 const menu = document.getElementById('download-menu');
@@ -179,22 +179,18 @@
             });
         }
 
-        // --- VERİ ÇEKME (PapaParse) ---
         function initData() {
             Papa.parse(SHEET_URL, {
                 download: true,
                 header: true, 
                 skipEmptyLines: true, 
                 complete: function(results) {
-                    console.log("Veri Yüklendi:", results.data[0]); 
-                    
+                    // Veri Yüklendi
                     ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
-                    
                     populateBranchFilter();
                     
                     const tbody = document.getElementById('table-body');
                     const branchSelect = document.getElementById('filter-branch');
-                    
                     tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
                     branchSelect.disabled = false;
                 },
@@ -232,7 +228,6 @@
             const btnEdit = document.getElementById('btn-edit');
             const headerTazeyo = document.getElementById('header-tazeyo');
 
-            // Başlık Güncelleme
             if (selectedBranch && selectedBranch !== 'all') {
                 headerTazeyo.textContent = selectedBranch; 
             } else {
@@ -252,11 +247,9 @@
             endDate.setHours(23,59,59,999);
 
             let filteredData = ALL_DATA.filter(row => {
-                // Şube
                 const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const branchMatch = (!selectedBranch || selectedBranch === 'all') || (storeName === selectedBranch);
                 
-                // Tarih (06.12.2025)
                 const dateStr = row['Report Date'];
                 if (!dateStr) return false;
                 const parts = dateStr.split('.'); 
@@ -292,11 +285,13 @@
             tbody.innerHTML = '';
 
             dataRows.forEach(row => {
-                // Sütunlar
                 const reportDate = row['Report Date'];
                 const storeName  = row['Store Name'];
                 const sku        = row['SKU'];
                 const prodName   = row['Product Name'];
+                
+                // YENİ: Rakip Mağaza Adını Çek (Boşsa 'RAKİP' yaz)
+                const compStoreName = row['Competitor Store Name'] ? row['Competitor Store Name'].toUpperCase() : 'RAKİP';
                 
                 const t_org = parsePrice(row['Tazeyo Original Price']);
                 const t_dsc = parsePrice(row['Tazeyo Discount Price']);
@@ -306,7 +301,6 @@
                 const c_dsc = parsePrice(row['Competitor Discount Price']);
                 const priceRakip = c_dsc > 0 ? c_dsc : c_org;
 
-                // Hesaplama
                 let farkYuzde = 0;
                 let farkClass = "diff-negative"; 
                 if(priceRakip > 0 && priceBiz > 0) {
@@ -318,7 +312,8 @@
                     if (priceBiz < priceRakip) {
                         badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
                     } else if (priceBiz > priceRakip) {
-                        badgeHtml = '<span class="badge badge-market">MARKETTEN</span>';
+                        // YENİ: Dinamik Rakip İsmi (MARKETTEN yerine)
+                        badgeHtml = `<span class="badge badge-market">${compStoreName}</span>`;
                         farkClass = "diff-positive";
                     } else {
                         badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
@@ -349,7 +344,7 @@
             });
         }
 
-        // --- YARDIMCILAR ---
+        // --- YARDIMCILAR (Sürükle Bırak, İndirme vb.) ---
         function toggleEditMode() {
             const btn = document.getElementById('btn-edit');
             const headerRow = document.getElementById('header-row');
