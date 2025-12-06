@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="../css/dashboard.css">
     <style>
         .filter-select option { background-color: #14161c; color: #fff; padding: 10px; }
-        /* Toast (Bildirim) Stili */
         .toast-notification {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
             background: rgba(20, 22, 28, 0.95); border: 1px solid var(--border); border-left: 4px solid var(--warning);
@@ -24,7 +23,6 @@
         .toast-icon { font-size: 1.5rem; color: var(--warning); }
         .toast-content h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: #fff; }
         .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
-        
         .limit-warning {
             background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
             color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
@@ -113,7 +111,9 @@
                 <div class="kpi-card">
                     <div class="kpi-title">İndirimdeki Ürünler</div>
                     <div class="kpi-value">
-                        <span style="color:#10b981" id="kpi-disc-us">0</span> <span style="font-size:0.8em; color:#666">vs</span> <span style="color:#f97316" id="kpi-disc-comp">0</span>
+                        <span style="color:#10b981" id="kpi-disc-us">0</span> 
+                        <span style="font-size:0.8em; color:#666">vs</span> 
+                        <span style="color:#f97316" id="kpi-disc-comp">0</span>
                     </div>
                     <div class="kpi-sub">Tazeyo vs Rakip</div>
                 </div>
@@ -318,7 +318,8 @@
             btnDownload.classList.remove('btn-disabled');
             miniDash.style.display = 'grid'; 
             
-            calculateKPIs(filteredData);
+            // KPI Hesapla (Filtrelenmiş veri ile)
+            calculateKPIs(filteredData, selectedCat); // Kategori bilgisini de gönderiyoruz
 
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
@@ -334,7 +335,6 @@
             if(data.length > 0) {
                 const compName = data[0]['Competitor Store Name'];
                 if(compName) {
-                    // Tüm şubeler seçiliyse parantezi sil, değilse tam isim
                     detected = (selectedBranch === 'all') ? cleanName(compName) : compName;
                 }
             }
@@ -370,7 +370,8 @@
             });
         }
 
-        function calculateKPIs(data) {
+        // --- GÜNCELLENMİŞ KPI HESAPLAMA ---
+        function calculateKPIs(data, selectedCat) {
             let totalBiz = 0, totalComp = 0;
             let discountCountBiz = 0, discountCountComp = 0;
             let totalDiscountDepth = 0, depthCount = 0;
@@ -389,9 +390,8 @@
                     totalBiz += bizPrice;
                     totalComp += compPrice;
                     
-                    // DÜZELTME: Kategori adlarını temizle (Trim) ki birleşsinler
                     const catRaw = row['Category Name'] || 'Diğer';
-                    const cat = catRaw.trim(); 
+                    const cat = catRaw.trim(); // Boşlukları temizle!
 
                     if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0 };
                     categoryStats[cat].biz += bizPrice;
@@ -407,15 +407,22 @@
                 if (c_dsc > 0 && c_dsc < c_org) discountCountComp++;
             });
 
+            // 1. Fiyat Rekabeti (Genel)
             const compElem = document.getElementById('kpi-competition');
+            let globalDiff = 0;
+            let isGlobalAdvantage = false;
+
             if (totalBiz < totalComp) {
-                const diff = ((totalComp - totalBiz) / totalComp) * 100;
-                compElem.innerHTML = `<span class="trend-up"><i class="fas fa-arrow-down"></i> %${diff.toFixed(1)}</span> Daha Ucuzuz`;
+                globalDiff = ((totalComp - totalBiz) / totalComp) * 100;
+                isGlobalAdvantage = true;
+                compElem.innerHTML = `<span class="trend-up"><i class="fas fa-arrow-down"></i> %${globalDiff.toFixed(1)}</span> Daha Ucuzuz`;
             } else {
-                const diff = ((totalBiz - totalComp) / totalBiz) * 100;
-                compElem.innerHTML = `<span class="trend-down"><i class="fas fa-arrow-up"></i> %${diff.toFixed(1)}</span> Daha Pahalıyız`;
+                globalDiff = ((totalBiz - totalComp) / totalBiz) * 100;
+                isGlobalAdvantage = false;
+                compElem.innerHTML = `<span class="trend-down"><i class="fas fa-arrow-up"></i> %${globalDiff.toFixed(1)}</span> Daha Pahalıyız`;
             }
 
+            // 2. İndirimler
             document.getElementById('kpi-disc-us').innerText = discountCountBiz;
             document.getElementById('kpi-disc-comp').innerText = discountCountComp;
 
@@ -423,31 +430,44 @@
             document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
             document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
 
-            let bestCat = '-'; let maxDiff = 0; let isAdvantage = true;
-
-            for (const [cat, stats] of Object.entries(categoryStats)) {
-                // (Rakip - Biz) / Rakip
-                const diffPercent = ((stats.comp - stats.biz) / stats.comp) * 100;
-                
-                // Mutlak değerce en büyük farkı bul (En dikkat çekici)
-                if (Math.abs(diffPercent) > Math.abs(maxDiff)) {
-                    maxDiff = diffPercent;
-                    bestCat = cat;
-                    isAdvantage = diffPercent > 0; // Pozitifse biz ucuzuz
-                }
-            }
-
+            // 4. Kategori Kartı Mantığı
             const catTitle = document.querySelector('#kpi-best-cat').parentElement.querySelector('.kpi-title');
             const catSub = document.getElementById('kpi-best-cat-sub');
-            
-            document.getElementById('kpi-best-cat').innerText = bestCat;
+            const catValue = document.getElementById('kpi-best-cat');
 
-            if (isAdvantage) {
-                catTitle.innerText = "En Avantajlı Kategori";
-                catSub.innerHTML = `Rakipten <span class="trend-up">%${maxDiff.toFixed(1)} daha ucuz</span>`;
-            } else {
-                catTitle.innerText = "En Kritik Kategori";
-                catSub.innerHTML = `Rakipten <span class="trend-down">%${Math.abs(maxDiff).toFixed(1)} daha pahalı</span>`;
+            // EĞER KULLANICI ÖZEL BİR KATEGORİ SEÇTİYSE
+            if (selectedCat && selectedCat !== 'all') {
+                catValue.innerText = selectedCat; // Seçilen kategori adını yaz
+                
+                if(isGlobalAdvantage) {
+                    catTitle.innerText = "Mevcut Kategori Durumu";
+                    catSub.innerHTML = `Rakipten <span class="trend-up">%${globalDiff.toFixed(1)} daha ucuz</span>`;
+                } else {
+                    catTitle.innerText = "Mevcut Kategori Durumu";
+                    catSub.innerHTML = `Rakipten <span class="trend-down">%${globalDiff.toFixed(1)} daha pahalı</span>`;
+                }
+            } 
+            // EĞER TÜM KATEGORİLER SEÇİLİYSE (ESKİ MANTIK DEVAM)
+            else {
+                let bestCat = '-'; let maxDiff = 0; let isAdvantage = true;
+
+                for (const [cat, stats] of Object.entries(categoryStats)) {
+                    const diffPercent = ((stats.comp - stats.biz) / stats.comp) * 100;
+                    if (Math.abs(diffPercent) > Math.abs(maxDiff)) {
+                        maxDiff = diffPercent;
+                        bestCat = cat;
+                        isAdvantage = diffPercent > 0;
+                    }
+                }
+
+                catValue.innerText = bestCat;
+                if (isAdvantage) {
+                    catTitle.innerText = "En Avantajlı Kategori";
+                    catSub.innerHTML = `Rakipten <span class="trend-up">%${maxDiff.toFixed(1)} daha ucuz</span>`;
+                } else {
+                    catTitle.innerText = "En Kritik Kategori";
+                    catSub.innerHTML = `Rakipten <span class="trend-down">%${Math.abs(maxDiff).toFixed(1)} daha pahalı</span>`;
+                }
             }
         }
 
