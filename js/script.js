@@ -2,7 +2,7 @@
  * ================================================================
  * [PROJECT] TEKNOIFY v2.0
  * [FILE] js/script.js
- * [VERSION] Full Production Build (No placeholders)
+ * [VERSION] Full Production Build (Updated Credentials)
  * ================================================================
  */
 
@@ -10,7 +10,7 @@
 const USER_DB = {
   // Member Kullanıcısı (Tazeyo)
   'tazeyo': {
-      password: '85T!1s', // Özel Şifre
+      password: '12345', // GÜNCELLENDİ: Basit Şifre
       role: 'member',
       name: 'Tazeyo Ltd.',
       // Kişiye Özel Dashboard Verileri
@@ -27,7 +27,7 @@ const USER_DB = {
   },
   // Admin Kullanıcısı (Serkan)
   'serkanyavuzcan': {
-      password: '335696shm!S', // Özel Şifre
+      password: '335696shm!S', // Admin Şifresi (Aynı kaldı)
       role: 'admin',
       name: 'Serkan Yavuzcan',
       data: {
