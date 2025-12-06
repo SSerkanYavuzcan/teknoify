@@ -804,4 +804,41 @@ span.flatpickr-weekday {
 }
 
 
+/* ================================================================
+   BİLDİRİM VE AKSİYON BUTONLARI
+   ================================================================ */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-text-action {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-main);
+}
+
+.btn-text-action:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.btn-text-action i { font-size: 0.9rem; }
+
 

@@ -17,7 +17,7 @@
             <a href="member.html" class="menu-item active"><i class="fas fa-home"></i> Genel Bakış</a>
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
             <a href="analysis.html" class="menu-item"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
-            </nav>
+        </nav>
         <div class="menu-spacer"></div>
         <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
     </aside>
@@ -42,7 +42,7 @@
                 <div class="stat-card">
                     <div class="stat-title">İşlenen Veri</div>
                     <div class="stat-value" id="processed-data-count">
-                        <i class="fas fa-circle-notch fa-spin" style="font-size: 1.5rem; color: var(--primary);"></i>
+                        0
                     </div>
                 </div>
 
@@ -57,7 +57,13 @@
                 </div>
             </div>
 
-            <div class="section-title">Son Bildirimler</div>
+            <div class="section-header">
+                <h3>Son Bildirimler</h3>
+                <button class="btn-text-action" onclick="markAllAsRead()">
+                    <i class="fas fa-check-double"></i> Tümünü Okundu İşaretle
+                </button>
+            </div>
+
             <div style="border-radius: 16px; border: 1px solid var(--border); overflow: hidden;">
                 <table class="data-table">
                     <thead>
@@ -67,15 +73,23 @@
                             <th style="width: 20%;">Tarih</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
+                    <tbody id="notification-body">
+                        <tr class="notif-row">
                             <td>Veri Çekme & Analiz hizmeti aktifleştirildi.</td>
-                            <td><span style="color: #ef4444; font-weight: 600;"><i class="fas fa-envelope"></i> Okunmadı</span></td>
+                            <td class="status-cell">
+                                <span class="status-unread" style="color: #ef4444; font-weight: 600;">
+                                    <i class="fas fa-envelope"></i> Okunmadı
+                                </span>
+                            </td>
                             <td style="color: var(--text-muted);">07.12.2025</td>
                         </tr>
-                        <tr>
+                        <tr class="notif-row">
                             <td>Sisteme hoşgeldiniz, üyelik kurulumu tamamlandı.</td>
-                            <td><span style="color: #10b981; font-weight: 600;"><i class="fas fa-check-circle"></i> Okundu</span></td>
+                            <td class="status-cell">
+                                <span class="status-read" style="color: #10b981; font-weight: 600;">
+                                    <i class="fas fa-check-circle"></i> Okundu
+                                </span>
+                            </td>
                             <td style="color: var(--text-muted);">07.12.2025</td>
                         </tr>
                     </tbody>
@@ -90,16 +104,13 @@
     <script src="../js/script.js"></script>
 
     <script>
-        // Analysis sayfasındaki aynı veri kaynağını kullanıyoruz
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Oturum Kontrolü
             const session = new SessionManager();
             const currentUser = session.validateSession();
             if (!currentUser) { window.location.href = '../index.html'; return; }
 
-            // Kullanıcı Bilgilerini Doldur
             const userDataFull = USER_DB[currentUser.username];
             if (userDataFull) {
                 document.getElementById('user-name-display').textContent = userDataFull.name;
@@ -107,31 +118,84 @@
                 document.getElementById('user-avatar').textContent = userDataFull.name.charAt(0).toUpperCase();
             }
 
-            // CSV Verisini Çek ve Sayısını Yaz
             fetchDataCount();
         });
 
+        // --- VERİ ÇEKME VE ANİMASYON ---
         function fetchDataCount() {
             Papa.parse(SHEET_URL, {
                 download: true,
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    // Sadece geçerli satırları say (Store Name ve Product Name dolu olanlar)
                     const validData = results.data.filter(row => row['Store Name'] && row['Product Name']);
+                    const finalCount = validData.length;
                     
-                    // Sayıyı formatla (Binlik ayracı ile: 12.450 gibi)
-                    const count = validData.length;
-                    const formattedCount = new Intl.NumberFormat('tr-TR').format(count);
-                    
-                    // HTML'e yaz
-                    document.getElementById('processed-data-count').textContent = formattedCount;
+                    // Animasyonu Başlat (5 saniye = 5000ms)
+                    animateValue("processed-data-count", 0, finalCount, 5000);
                 },
                 error: function(err) {
-                    console.error("Veri sayacı hatası:", err);
+                    console.error("Veri hatası:", err);
                     document.getElementById('processed-data-count').innerText = "0";
                 }
             });
+        }
+
+        // --- SAYAÇ ANİMASYON FONKSİYONU ---
+        function animateValue(id, start, end, duration) {
+            if (start === end) return;
+            const obj = document.getElementById(id);
+            const range = end - start;
+            let current = start;
+            const increment = end > start ? 1 : -1;
+            const stepTime = Math.abs(Math.floor(duration / range));
+            
+            // Eğer sayı çok büyükse (örn 12.000), her adımda 1 artırmak çok yavaş olur.
+            // Bu yüzden requestAnimationFrame kullanarak daha akıcı bir matematiksel artış yapıyoruz.
+            
+            let startTime = null;
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                
+                // Ease-out efekti (yavaşça durması için)
+                // const easeProgress = 1 - Math.pow(1 - progress, 3); 
+                
+                // Linear artış (progress direk kullanılırsa)
+                const currentVal = Math.floor(progress * (end - start) + start);
+                
+                obj.innerHTML = new Intl.NumberFormat('tr-TR').format(currentVal);
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.innerHTML = new Intl.NumberFormat('tr-TR').format(end); // Emin olmak için son değer
+                }
+            }
+
+            window.requestAnimationFrame(step);
+        }
+
+        // --- BİLDİRİMLERİ OKUNDU YAPMA ---
+        function markAllAsRead() {
+            const unreadItems = document.querySelectorAll('.status-unread');
+            
+            unreadItems.forEach(item => {
+                // Rengi ve ikonu değiştir
+                item.style.color = '#10b981'; // Yeşil
+                item.innerHTML = '<i class="fas fa-check-circle"></i> Okundu';
+                
+                // Sınıfı güncelle (tekrar basıldığında seçilmesin diye)
+                item.classList.remove('status-unread');
+                item.classList.add('status-read');
+            });
+
+            // Butona basıldığını hissettir (Opsiyonel: Butonu devre dışı bırakma)
+            const btn = document.querySelector('.btn-text-action');
+            btn.innerHTML = '<i class="fas fa-check-double"></i> Hepsi Okundu';
+            btn.style.opacity = '0.5';
+            btn.style.pointerEvents = 'none';
         }
 
         function logout() {
