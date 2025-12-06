@@ -1,39 +1,66 @@
 /**
  * ================================================================
- * [PROJECT] TEKNOIFY v2.0 - MAIN CONTROLLER
+ * [PROJECT] TEKNOIFY v2.0
  * [FILE] js/script.js
- * [DESC] UI, Auth ve Animasyonları yöneten ana beyin.
+ * [VERSION] Full Production Build (No placeholders)
  * ================================================================
  */
 
+// 1. MOCK DATABASE (Kullanıcı Verileri Burada Tanımlı)
+const USER_DB = {
+  // Member Kullanıcısı (Tazeyo)
+  'tazeyo': {
+      password: '85T!1s', // Özel Şifre
+      role: 'member',
+      name: 'Tazeyo Ltd.',
+      // Kişiye Özel Dashboard Verileri
+      data: {
+          activeBots: 4,
+          totalProcessed: '12.450',
+          savedHours: 320,
+          nextPayment: '15 Ekim 2025',
+          notifications: [
+              'RPA Bot #3 görevi tamamladı.',
+              'Fatura döneminiz yaklaşıyor.'
+          ]
+      }
+  },
+  // Admin Kullanıcısı (Serkan)
+  'serkanyavuzcan': {
+      password: '335696shm!S', // Özel Şifre
+      role: 'admin',
+      name: 'Serkan Yavuzcan',
+      data: {
+          activeBots: 99, // Admin her şeyi görür
+          totalProcessed: '1.2M',
+          savedHours: 9999,
+          nextPayment: '-',
+          notifications: ['Sistem güncellemesi hazır.', 'Yeni üye kaydı: Tazeyo']
+      }
+  }
+};
+
+// Sayfa Yüklendiğinde Başlat
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("🚀 [System] Sayfa yüklendi, Uygulama başlatılıyor...");
   App.init();
 });
 
-/**
-* [CONTROLLER] APP
-* Tüm modülleri başlatan yönetici nesne.
-*/
+// Ana Uygulama Yöneticisi
 const App = {
   init: () => {
-      // 1. Session Manager Kontrolü (Hata Önleyici)
+      // Session Manager Kontrolü (Hata vermemesi için)
       let sessionMgr = null;
-      
-      // SessionManager sınıfı js/session-manager.js dosyasından gelmeli.
-      // Eğer o dosya yüklenmediyse site hata vermesin diye kontrol ediyoruz.
       if (typeof SessionManager !== 'undefined') {
           sessionMgr = new SessionManager();
-          console.log("✅ [Auth] SessionManager aktif.");
       } else {
-          console.error("❌ [Auth] HATA: SessionManager bulunamadı! Lütfen index.html'de script sıralamasını kontrol et.");
+          console.warn("SessionManager bulunamadı. Login çalışmayabilir.");
       }
-      
-      // 2. Sistemleri Başlat
-      new AuthSystem(sessionMgr); // Giriş sistemi
-      new UISystem();             // Menü ve arayüz sistemi
 
-      // 3. Görsel Efektler (Sayfa açılışını yavaşlatmaması için 200ms bekletiyoruz)
+      // Sistemleri Başlat
+      new AuthSystem(sessionMgr);
+      new UISystem();
+      
+      // Görsel Efektler (Performans için gecikmeli)
       setTimeout(() => {
           if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
           if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
@@ -43,55 +70,54 @@ const App = {
 
 /**
 * [MODULE 1] AUTH SYSTEM
-* Giriş yapma, çıkış yapma ve modal pencerelerini yönetir.
+* Giriş, Çıkış ve Modal Yönetimi
 */
 class AuthSystem {
   constructor(sessionManager) {
       this.session = sessionManager;
       this.modal = document.getElementById('loginModal');
-      this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login'); // Header ve Hero butonları
+      this.form = document.getElementById('loginForm');
+      this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login');
       
-      // Eğer kullanıcı zaten giriş yapmışsa UI'ı güncelle
+      // Eğer kullanıcı zaten giriş yapmışsa arayüzü güncelle
       if(this.session) this.checkAuthStatus();
       
       this.bindEvents();
   }
 
   bindEvents() {
-      // "Giriş Yap" butonlarına tıklama olayı
+      // Login butonları
       this.triggers.forEach((btn) => {
           btn.addEventListener('click', (e) => {
               e.preventDefault();
-              
-              // Eğer oturum varsa -> Çıkış/Profil mantığı
+              // Oturum varsa çıkış/profil, yoksa modal aç
               if(this.session && this.session.validateSession()) {
-                 this.handleLogout(); // Veya profile git
-              } 
-              // Oturum yoksa -> Modalı aç
-              else {
+                 this.handleLogout();
+              } else {
                  this.open();
               }
           });
       });
 
-      // Modalı Kapatma (X butonu)
+      // Modal Kapatma Butonu
       const closeBtn = document.querySelector('.modal-close');
       if(closeBtn) {
           closeBtn.addEventListener('click', () => this.close());
       }
-
-      // Modalı Kapatma (Siyah alana tıklama)
+      
+      // Overlay Tıklama (Modal dışına tıklayınca kapat)
       if(this.modal) {
           this.modal.addEventListener('click', (e) => {
               if (e.target === this.modal) this.close();
           });
       }
       
-      // Form Gönderimi (Submit)
-      const form = document.getElementById('loginForm');
-      if(form) form.addEventListener('submit', (e) => this.handleSubmit(e));
-      
-      // ESC tuşu ile kapatma
+      // Form Submit
+      if(this.form) {
+          this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+      }
+
+      // ESC Tuşu ile Kapatma
       document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape' && this.modal && this.modal.classList.contains('active')) {
               this.close();
@@ -99,95 +125,104 @@ class AuthSystem {
       });
   }
 
-  // Modalı Aç
-  open() {
-      if(this.modal) {
-          this.modal.classList.add('active');
-          document.body.style.overflow = 'hidden'; // Arka plan scroll'unu kilitle
-      }
+  open() { 
+      if(this.modal) { 
+          this.modal.classList.add('active'); 
+          document.body.style.overflow = 'hidden'; 
+      } 
   }
 
-  // Modalı Kapat
-  close() {
-      if(this.modal) {
-          this.modal.classList.remove('active');
-          document.body.style.overflow = '';
-      }
+  close() { 
+      if(this.modal) { 
+          this.modal.classList.remove('active'); 
+          document.body.style.overflow = ''; 
+      } 
   }
 
-  // Sayfa yüklendiğinde kullanıcıyı tanı
   checkAuthStatus() {
       const user = this.session.validateSession();
       if (user) {
-          console.log(`👤 [Auth] Hoşgeldin: ${user.name} (${user.role})`);
           this.updateUIForLoggedInUser(user);
       }
   }
 
-  // Giriş Formu Gönderildiğinde Çalışan Fonksiyon
   handleSubmit(e) {
       e.preventDefault();
       
       const btn = document.querySelector('#loginForm button[type="submit"]');
-      const emailVal = document.getElementById('email').value.toLowerCase(); // Küçük harfe çevir
+      const emailInput = document.getElementById('email').value.trim();
+      const passInput = document.getElementById('password').value.trim();
       
-      // Butonu "Yükleniyor" moduna al
+      // Kullanıcı adını al (mailin @ işaretinden önceki kısmı) ve küçük harfe çevir
+      // Örn: Tazeyo@gmail.com -> tazeyo
+      let usernameKey = emailInput;
+      if (emailInput.includes('@')) {
+          usernameKey = emailInput.split('@')[0];
+      }
+      usernameKey = usernameKey.toLowerCase();
+
+      // UI: Yükleniyor
       if(btn) {
           const originalText = btn.innerHTML;
           btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
           btn.disabled = true;
       }
 
-      // Backend Simülasyonu (1 saniye beklet)
       setTimeout(() => {
-          // 1. ROL BELİRLEME MANTIĞI
-          // Veritabanı olmadığı için mail içeriğine bakıyoruz
-          let role = 'member';        // Varsayılan rol
-          let targetPage = 'member.html'; // Varsayılan sayfa
+          // 1. KULLANICI KONTROLÜ (DATABASE)
+          const foundUser = USER_DB[usernameKey];
 
-          if (emailVal.includes('admin')) {
-              role = 'admin';
-              targetPage = 'admin.html';
-          } else if (emailVal.includes('premium')) {
-              role = 'premium';
-              targetPage = 'premium.html';
+          // Kullanıcı bulundu mu VE şifre doğru mu?
+          if (foundUser && foundUser.password === passInput) {
+              
+              // GİRİŞ BAŞARILI
+              if(this.session) {
+                  this.session.startSession({
+                      username: usernameKey, // Veriyi çekmek için anahtar
+                      role: foundUser.role,
+                      name: foundUser.name
+                  });
+              }
+
+              // Buton Başarılı
+              if(btn) btn.innerHTML = '<i class="fas fa-check"></i> Başarılı';
+
+              // Yönlendirme
+              let targetPage = 'member.html';
+              if(foundUser.role === 'admin') targetPage = 'admin.html';
+              if(foundUser.role === 'premium') targetPage = 'premium.html';
+              
+              // 500ms sonra yönlendir
+              setTimeout(() => {
+                  window.location.href = `dashboard/${targetPage}`;
+              }, 500);
+
+          } else {
+              // HATA: Yanlış Bilgi
+              alert("Hatalı Kullanıcı Adı veya Şifre!");
+              if(btn) {
+                  btn.innerHTML = 'Giriş Yap <i class="fas fa-arrow-right"></i>';
+                  btn.disabled = false;
+              }
           }
-
-          // 2. SESSION OLUŞTUR
-          if(this.session) {
-              this.session.startSession({
-                  email: emailVal,
-                  role: role,
-                  name: emailVal.split('@')[0] // Mailin baş kısmını isim yap
-              });
-          }
-
-          // 3. YÖNLENDİRME (Alert YOK!)
-          // Direkt ilgili sayfaya postala
-          console.log(`🚀 [Redirect] Yönlendiriliyor: dashboard/${targetPage}`);
-          window.location.href = `dashboard/${targetPage}`;
-          
-      }, 1000);
+      }, 800);
   }
   
-  // Kullanıcı giriş yapmışsa Header butonunu değiştir
   updateUIForLoggedInUser(user) {
       const loginBtn = document.getElementById('openLoginBtn');
       if(loginBtn) {
           loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${user.name}`;
           loginBtn.classList.remove('btn-outline');
-          loginBtn.classList.add('btn-secondary'); // Daha soft bir renk
+          loginBtn.classList.add('btn-secondary');
           
-          // Hero alanındaki "Hemen Başla" butonunu "Panele Git" yap
+          // Hero alanındaki butonu güncelle
           const heroBtn = document.querySelector('.trigger-login');
           if(heroBtn) {
               heroBtn.textContent = "Panele Git";
-              // Modalı açmasını engelle, direkt panele yönlendir
               heroBtn.classList.remove('trigger-login'); 
               heroBtn.onclick = (e) => {
                   e.preventDefault();
-                  e.stopPropagation();
-                  // Rolüne göre doğru sayfaya gönder
+                  // Rolüne göre yönlendir
                   let target = 'member.html';
                   if(user.role === 'admin') target = 'admin.html';
                   if(user.role === 'premium') target = 'premium.html';
@@ -197,7 +232,6 @@ class AuthSystem {
       }
   }
   
-  // Çıkış Yapma
   handleLogout() {
       if(confirm("Güvenli çıkış yapmak istiyor musunuz?")) {
           if(this.session) this.session.destroySession();
@@ -208,7 +242,7 @@ class AuthSystem {
 
 /**
 * [MODULE 2] UI SYSTEM
-* Navbar, Scroll ve Mobil Menü işlemleri.
+* Navbar, Scroll ve Mobil Menü
 */
 class UISystem {
   constructor() {
@@ -221,10 +255,10 @@ class UISystem {
   }
 
   bindEvents() {
-      // Scroll olunca header'ı karart
+      // Scroll Efekti
       window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
 
-      // Hamburger menü tıklama
+      // Hamburger Menü
       if(this.hamburger) {
           this.hamburger.addEventListener('click', (e) => {
               e.stopPropagation();
@@ -232,14 +266,16 @@ class UISystem {
           });
       }
 
-      // Linke tıklayınca menüyü kapat (Mobil için)
+      // Link Tıklama (Menüyü Kapat)
       this.navLinks.forEach(link => {
           link.addEventListener('click', () => {
-              if(this.navMenu && this.navMenu.classList.contains('active')) this.toggleMenu();
+              if(this.navMenu && this.navMenu.classList.contains('active')) {
+                  this.toggleMenu();
+              }
           });
       });
 
-      // Menü dışına tıklayınca kapat
+      // Dışarı Tıklama (Menüyü Kapat)
       document.addEventListener('click', (e) => {
           if (this.navMenu && this.navMenu.classList.contains('active')) {
               if (!this.navMenu.contains(e.target) && !this.hamburger.contains(e.target)) {
@@ -266,14 +302,13 @@ class UISystem {
 
 /**
 * [MODULE 3] TERMINAL EFFECT
-* Hero alanındaki kod yazma simülasyonu.
+* Hero alanındaki kod yazma simülasyonu
 */
 class TerminalEffect {
   constructor(selector) {
       this.container = document.querySelector(selector);
       if (!this.container) return;
 
-      // Ekrana yazılacak senaryo
       this.lines = [
           { type: 'comment', text: '# Teknoify Core v2.4 initialized' },
           { type: 'code', text: 'import automation_bot as bot' },
@@ -283,8 +318,8 @@ class TerminalEffect {
           { type: 'cursor', text: '_' }
       ];
       
-      this.typeSpeed = 30; // Yazma hızı
-      this.lineDelay = 400; // Satır bekleme süresi
+      this.typeSpeed = 30; 
+      this.lineDelay = 400;
       this.start();
   }
 
@@ -311,13 +346,12 @@ class TerminalEffect {
           this.container.appendChild(lineEl);
 
           if (lineData.type === 'cursor') {
-              lineEl.classList.add('blink-cursor'); // CSS'te yanıp sönme efekti var
+              lineEl.classList.add('blink-cursor');
               lineEl.textContent = lineData.text;
               resolve();
               return;
           }
 
-          // Harf harf yazma efekti
           let i = 0;
           const interval = setInterval(() => {
               lineEl.textContent += lineData.text.charAt(i);
@@ -333,14 +367,13 @@ class TerminalEffect {
 
 /**
 * [MODULE 4] BACKGROUND FX
-* Arka plan yıldız efekti (Performanslı).
+* Arka plan yıldız efekti
 */
 class BackgroundFX {
   constructor(selector) {
       this.container = document.querySelector(selector);
       if (!this.container) return;
       
-      // Mobilde az, masaüstünde çok yıldız
       this.starCount = window.innerWidth < 768 ? 20 : 50; 
       this.init();
   }
@@ -351,7 +384,7 @@ class BackgroundFX {
 
       for (let i = 0; i < this.starCount; i++) {
           const star = document.createElement('div');
-          const size = Math.random() * 2 + 1; // 1px ile 3px arası
+          const size = Math.random() * 2 + 1; 
           
           star.style.cssText = `
               position: absolute;
@@ -362,7 +395,6 @@ class BackgroundFX {
               top: ${Math.random() * 100}%;
               border-radius: 50%;
               pointer-events: none;
-              /* style.css'teki floatParticle animasyonunu kullanır */
               animation: floatParticle ${10 + Math.random() * 20}s linear infinite;
               animation-delay: -${Math.random() * 20}s;
           `;
