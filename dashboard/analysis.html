@@ -67,9 +67,20 @@
                     <i class="fas fa-arrows-alt"></i> Tabloyu Düzenle
                 </button>
                 
-                <button class="btn-download btn-disabled" id="btn-download" onclick="downloadCSV()">
-                    <i class="fas fa-download"></i> İndir
-                </button>
+                <div class="download-wrapper">
+                    <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
+                        <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down" style="font-size:0.8em; margin-left:4px;"></i>
+                    </button>
+                    <div id="download-menu" class="download-menu">
+                        <div class="download-item" onclick="downloadCSV()">
+                            <i class="fas fa-file-csv" style="color:#10b981;"></i> CSV Olarak İndir
+                        </div>
+                        <div class="download-item" onclick="downloadExcel()">
+                            <i class="fas fa-file-excel" style="color:#10b981;"></i> Excel (.xlsx) İndir
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
@@ -77,8 +88,8 @@
                     <thead>
                         <tr class="no-sort">
                             <th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>
-                            <th colspan="3" class="th-group-tazeyo">Tazeyo (Biz)</th>
-                            <th colspan="3" class="th-group-market">Rakip Market</th>
+                            <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Tazeyo (Biz)</th>
+                            <th colspan="3" class="th-group-market">Marketten</th>
                             <th colspan="2" style="background:#14161c;">Analiz</th>
                         </tr>
                         <tr id="header-row">
@@ -116,6 +127,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
     <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script> 
     
@@ -140,6 +153,15 @@
 
             initCalendar();
             initData();
+
+            // İndirme menüsü dışına tıklayınca kapat
+            document.addEventListener('click', function(e) {
+                const wrapper = document.querySelector('.download-wrapper');
+                const menu = document.getElementById('download-menu');
+                if (!wrapper.contains(e.target)) {
+                    menu.classList.remove('show');
+                }
+            });
         });
 
         function initCalendar() {
@@ -157,19 +179,18 @@
                 const response = await fetch(SHEET_URL);
                 if (!response.ok) throw new Error("Veri çekilemedi");
                 const text = await response.text();
+                
                 const rows = text.split(/\r?\n/).slice(1);
 
-                // --- DÜZELTİLMİŞ PARSE MANTIĞI ---
                 ALL_DATA = rows.map(row => {
                     if(!row || row.trim() === "") return null;
-                    
-                    // Regex: Sadece virgülleri böl (Tırnak içindekileri koru)
-                    // Önceki kodda \s (boşluk) vardı, o yüzden isimleri bölüyordu. Kaldırdım.
-                    const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-                    const cols = row.split(regex);
-
-                    // Tırnakları temizle
-                    return cols.map(col => col.replace(/^"|"$/g, '').trim());
+                    const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
+                    let cols = [];
+                    let match;
+                    while ((match = regex.exec(row)) !== null) {
+                        cols.push(match[0].replace(/^"|"$/g, '').trim());
+                    }
+                    return cols;
                 }).filter(cols => cols !== null && cols.length >= 5);
 
                 populateBranchFilter();
@@ -209,6 +230,16 @@
             const limitMsg = document.getElementById('limit-msg');
             const btnDownload = document.getElementById('btn-download');
             const btnEdit = document.getElementById('btn-edit');
+            
+            // BAŞLIK GÜNCELLEME LOGİĞİ
+            const headerTazeyo = document.getElementById('header-tazeyo');
+            if (selectedBranch && selectedBranch !== 'all') {
+                // Parantez içini temizleyelim mi? Örn: "Tazeyo (Batıkent)" -> sadece "Batıkent"
+                // İsteğine göre direkt adı da yazabiliriz. Şimdilik direkt adı yazıyorum.
+                headerTazeyo.textContent = selectedBranch; 
+            } else {
+                headerTazeyo.textContent = "Tazeyo (Biz)";
+            }
 
             if (dateRange.length < 1) {
                 alert("Lütfen bir Tarih Aralığı seçiniz.");
@@ -260,11 +291,10 @@
             tbody.innerHTML = '';
 
             dataRows.forEach(cols => {
-                // EŞLEŞTİRMELER
                 const reportDate = cols[0];
-                const storeName = cols[1]; // Artık tam isim gelecek
+                const storeName = cols[1];
                 const sku = cols[2];
-                const prodName = cols[3];  // Artık tam isim gelecek
+                const prodName = cols[3];
                 
                 const t_org = parsePrice(cols[6]);
                 const t_dsc = parsePrice(cols[7]);
@@ -313,6 +343,57 @@
             });
         }
 
+        // --- İNDİRME FONKSİYONLARI ---
+        function toggleDownloadMenu() {
+            const menu = document.getElementById('download-menu');
+            menu.classList.toggle('show');
+        }
+
+        function downloadCSV() {
+            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "Report Date,Store Name,SKU,Product Name,Brand,Category,Tazeyo Original,Tazeyo Discount,Competitor Original,Competitor Discount\n";
+            window.CURRENT_EXPORT_DATA.forEach(rowArray => {
+                let row = rowArray.map(e => `"${e}"`).join(",");
+                csvContent += row + "\r\n";
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "teknoify_analiz_raporu.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            document.getElementById('download-menu').classList.remove('show');
+        }
+
+        function downloadExcel() {
+            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
+
+            // Veriyi Excel formatına hazırla (Object Array)
+            const exportData = window.CURRENT_EXPORT_DATA.map(cols => ({
+                "Report Date": cols[0],
+                "Store Name": cols[1],
+                "SKU": cols[2],
+                "Product Name": cols[3],
+                "Brand": cols[4],
+                "Category": cols[5],
+                "Tazeyo Orig": parsePrice(cols[6]),
+                "Tazeyo Disc": parsePrice(cols[7]),
+                "Marketten Orig": parsePrice(cols[8]),
+                "Marketten Disc": parsePrice(cols[9])
+            }));
+
+            // SheetJS ile Excel Oluştur
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
+            XLSX.writeFile(wb, "teknoify_analiz_raporu.xlsx");
+            
+            document.getElementById('download-menu').classList.remove('show');
+        }
+
+        // --- YARDIMCILAR ---
         function toggleEditMode() {
             const btn = document.getElementById('btn-edit');
             const headerRow = document.getElementById('header-row');
@@ -367,26 +448,9 @@
             });
         }
 
-        function downloadCSV() {
-            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "Report Date,Store Name,SKU,Product Name,Brand,Category,Tazeyo Original,Tazeyo Discount,Competitor Original,Competitor Discount\n";
-            window.CURRENT_EXPORT_DATA.forEach(rowArray => {
-                let row = rowArray.map(e => `"${e}"`).join(",");
-                csvContent += row + "\r\n";
-            });
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "teknoify_analiz_raporu.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         function parsePrice(val) {
             if(!val) return 0;
-            let clean = val.replace(/["'₺\s]/g, '');
+            let clean = val.toString().replace(/["'₺\s]/g, '');
             if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
                 clean = clean.replace(',', '.');
             } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {

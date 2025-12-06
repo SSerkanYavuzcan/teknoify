@@ -129,7 +129,6 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* 4. DASHBOARD WIDGETS */
-/* İstatistik Kartları */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -230,7 +229,7 @@ select.filter-select {
 .btn-filter { background: var(--primary); color: #fff; }
 .btn-filter:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-.btn-download { background: #10b981; color: #fff; text-decoration: none; }
+.btn-download { background: #10b981; color: #fff; text-decoration: none; position: relative; }
 .btn-download:hover { background: #059669; transform: translateY(-1px); }
 
 .btn-edit { background: #8b5cf6; color: #fff; }
@@ -238,6 +237,48 @@ select.filter-select {
 .btn-edit.active { background: #ef4444; } /* Kırmızı (Bitir modu) */
 
 .btn-disabled { opacity: 0.5; pointer-events: none; background: #374151; }
+
+
+/* --- İNDİRME MENÜSÜ (DROPDOWN) --- */
+.download-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.download-menu {
+    position: absolute;
+    top: 100%; right: 0;
+    margin-top: 8px;
+    background: #1f2937;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    min-width: 180px;
+    display: none;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.download-menu.show {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+.download-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.download-item:last-child { border-bottom: none; }
+.download-item:hover {
+    background: var(--primary);
+}
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
 
 /* 5.2 Excel/Analiz Tablosu */
@@ -258,7 +299,7 @@ select.filter-select {
     border-right: 1px solid var(--border);
     text-align: left;
     position: sticky; top: 0; z-index: 10;
-    user-select: none; /* Sürükleme sırasında metin seçilmesin */
+    user-select: none;
 }
 
 /* Gruplanmış Başlık Renkleri */
@@ -299,8 +340,16 @@ select.filter-select {
     font-size: 0.7rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.05em; display: inline-block;
 }
-.badge-tazeyo { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
-.badge-market { background: rgba(249, 115, 22, 0.15); color: var(--warning); border: 1px solid rgba(249, 115, 22, 0.25); }
+.badge-tazeyo {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.badge-market {
+    background: rgba(249, 115, 22, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+}
 
 /* Limit Uyarısı */
 .limit-warning {
