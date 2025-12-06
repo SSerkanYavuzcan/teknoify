@@ -1,7 +1,7 @@
 /* ================================================================
    [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (CLEAN & FINAL)
    [FILE] css/dashboard.css
-   [UPDATED] Flatpickr Takvim Hizalaması ve Placeholder Rengi Düzeltildi
+   [UPDATED] Dropdown Rengi ve Takvim Arka Planları Düzeltildi
    ================================================================ */
 
    :root {
@@ -51,9 +51,18 @@ a { text-decoration: none; color: inherit; }
 .filter-bar { display: flex; gap: 16px; flex-wrap: wrap; background: var(--dash-card); border: 1px solid var(--border); padding: 20px; border-radius: 16px; margin-bottom: 30px; align-items: flex-end; position: relative; z-index: 30; }
 .filter-group { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 180px; }
 .filter-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: none; letter-spacing: 0.05em; }
+
+/* SELECT BOX STİLLERİ - DÜZELTİLDİ */
 .filter-select, input[type="text"].filter-select { background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: #fff; padding: 12px 16px; border-radius: 10px; font-family: inherit; font-size: 0.9rem; cursor: pointer; transition: 0.2s; height: 47px; width: 100%; }
 .filter-select:hover { background-color: rgba(255,255,255,0.06); border-color: var(--primary); outline: none; }
 select.filter-select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; }
+
+/* ÖNEMLİ: Dropdown Seçeneklerinin Arka Planı (Siyah) */
+.filter-select option { 
+    background-color: #14161c !important; 
+    color: #fff !important; 
+    padding: 10px;
+}
 
 /* Butonlar */
 .btn-filter, .btn-download { border: none; padding: 0 24px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; height: 47px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; position: relative; z-index: 5; }
@@ -103,7 +112,7 @@ select.filter-select { appearance: none; background-image: url("data:image/svg+x
 .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
 /* ================================================================
-   MODERN TAKVİM (FLATPICKR - CLEAN) - REVİZE EDİLMİŞ
+   MODERN TAKVİM (FLATPICKR - CLEAN) - ŞEFFAF ARKA PLAN
    ================================================================ */
 
 /* 1. INPUT VE PLACEHOLDER */
@@ -130,12 +139,7 @@ input.flatpickr-input {
     box-shadow: 0 1px 2px rgba(0,0,0,0.1); 
 }
 
-/* Placeholder Yazı Rengini Düzeltir (Beyaz) */
-input.flatpickr-input::placeholder {
-    color: #fff !important; 
-    opacity: 1 !important;
-}
-
+input.flatpickr-input::placeholder { color: #fff !important; opacity: 1 !important; }
 input.flatpickr-input:hover { border-color: rgba(255, 255, 255, 0.3) !important; }
 input.flatpickr-input:focus { border-color: var(--primary) !important; outline: none !important; }
 
@@ -147,16 +151,16 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     border-radius: 16px !important; 
     padding: 15px !important; 
     font-family: var(--font-main) !important; 
-    width: 340px !important; /* Genişlik Sabitlendi */
+    width: 340px !important; 
     margin-top: 8px !important;
     box-sizing: border-box !important;
 }
 
 .flatpickr-calendar::before, .flatpickr-calendar::after { display: none !important; }
 
-/* 3. AY VE YIL BAŞLIĞI */
-.flatpickr-months { padding-bottom: 10px !important; }
-.flatpickr-month { background: transparent !important; height: 40px !important; }
+/* 3. AY VE YIL BAŞLIĞI - TEMİZLENDİ */
+.flatpickr-months { padding-bottom: 10px !important; background: transparent !important; }
+.flatpickr-month { background: transparent !important; height: 40px !important; color: #fff !important; fill: #fff !important; }
 
 .flatpickr-current-month { 
     font-size: 1.1rem !important; 
@@ -167,9 +171,10 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     justify-content: center !important; 
     width: 100% !important;
     left: 0 !important;
+    background: transparent !important;
 }
 
-.flatpickr-current-month input.cur-year { font-weight: 700 !important; color: #fff !important; }
+.flatpickr-current-month input.cur-year { font-weight: 700 !important; color: #fff !important; background: transparent !important; }
 
 .flatpickr-prev-month, .flatpickr-next-month { 
     padding: 10px !important; 
@@ -184,10 +189,8 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 .flatpickr-prev-month:hover, .flatpickr-next-month:hover { background: var(--primary) !important; fill: #fff !important; }
 .flatpickr-prev-month svg, .flatpickr-next-month svg { width: 12px !important; height: 12px !important; fill: #fff !important; }
 
-/* 4. GÜNLERİN YAPISI (TAM HİZALAMA) */
-.flatpickr-innerContainer { width: 100% !important; }
-.flatpickr-rContainer { width: 100% !important; }
-.flatpickr-days { width: 100% !important; border: none !important; }
+/* 4. GÜNLERİN YAPISI - ARKA PLAN KUTULARI SİLİNDİ */
+.flatpickr-innerContainer, .flatpickr-rContainer, .flatpickr-days { width: 100% !important; background: transparent !important; }
 
 .dayContainer { 
     width: 100% !important; 
@@ -196,33 +199,41 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
     padding: 0 !important; 
     display: flex !important; 
     flex-wrap: wrap !important; 
-    justify-content: flex-start !important; /* Sola yaslı başla */
+    justify-content: flex-start !important;
 }
 
-.flatpickr-weekdays { width: 100% !important; margin-bottom: 10px !important; }
-span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !important; font-size: 0.85rem !important; }
+.flatpickr-weekdays { width: 100% !important; margin-bottom: 10px !important; background: transparent !important; }
+span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !important; font-size: 0.85rem !important; background: transparent !important; }
 
-/* Gün Kutucukları - %14.28 (100/7) Genişlik */
+/* GÜN KUTUCUKLARI - Background Transparent Yapıldı */
 .flatpickr-day { 
     border-radius: 8px !important; 
     border: none !important; 
     font-weight: 500 !important; 
     height: 38px !important; 
     line-height: 38px !important; 
-    margin: 2px 0 !important; /* Yan boşluklar kaldırıldı */
+    margin: 2px 0 !important; 
     flex-basis: 14.28% !important; 
     max-width: 14.28% !important; 
     width: 14.28% !important;
+    background: transparent !important; /* BURASI KRİTİK */
+    box-shadow: none !important;
+    color: #e2e8f0 !important;
 }
 
-.flatpickr-day:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
-.flatpickr-day.today { border: 1px solid var(--primary) !important; color: var(--primary) !important; }
+/* Sadece üzerine gelince hafif parlaklık */
+.flatpickr-day:hover { background: rgba(255, 255, 255, 0.05) !important; color: #fff !important; }
+
+/* Seçili gün stilleri */
+.flatpickr-day.today { border: 1px solid var(--primary) !important; color: var(--primary) !important; background: transparent !important; }
 .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange { 
     background: var(--primary) !important; 
     color: #fff !important; 
     box-shadow: none !important; 
     border: none !important; 
 }
+
+/* Aralık seçimi (Range) ortası */
 .flatpickr-day.inRange { 
     background: rgba(99, 102, 241, 0.15) !important; 
     color: #fff !important; 
