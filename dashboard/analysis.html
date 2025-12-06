@@ -7,12 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-    
     <link rel="stylesheet" href="../css/dashboard.css">
-    
     <style>
         .filter-select option { background-color: #14161c; color: #fff; padding: 10px; }
         .limit-warning {
@@ -47,7 +44,6 @@
         </header>
 
         <div class="content-scroll">
-            
             <div class="filter-bar">
                 <div class="filter-group" style="min-width: 260px;">
                     <label>Rapor Tarihi Seçiniz</label>
@@ -56,22 +52,18 @@
                         <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı..." readonly>
                     </div>
                 </div>
-
                 <div class="filter-group">
                     <label>Şube Seçiniz</label>
                     <select class="filter-select" id="filter-branch" disabled>
                         <option value="" selected>Veriler Yükleniyor...</option>
                     </select>
                 </div>
-
                 <button class="btn-filter" id="btn-load" onclick="applyFilters()">
                     <i class="fas fa-search"></i> Verileri Yükle
                 </button>
-
                 <button class="btn-edit btn-disabled" id="btn-edit" onclick="toggleEditMode()">
                     <i class="fas fa-arrows-alt"></i> Tabloyu Düzenle
                 </button>
-                
                 <div class="download-wrapper">
                     <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
                         <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down" style="font-size:0.8em; margin-left:4px;"></i>
@@ -93,7 +85,7 @@
                         <tr class="no-sort">
                             <th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>
                             <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Tazeyo (Biz)</th>
-                            <th colspan="3" class="th-group-market">Rakip Market</th>
+                            <th colspan="3" class="th-group-market" id="header-competitor">Rakip Market</th>
                             <th colspan="2" style="background:#14161c;">Analiz</th>
                         </tr>
                         <tr id="header-row">
@@ -101,15 +93,12 @@
                             <th data-id="store">Store Name</th>
                             <th data-id="sku">SKU</th>
                             <th data-id="product">Product Name</th>
-                            
                             <th data-id="t_org">Original Price</th>
                             <th data-id="t_dsc">Discount Price</th>
                             <th data-id="t_chg">Weekly Change</th>
-                            
                             <th data-id="c_org">Original Price</th>
                             <th data-id="c_dsc">Discount Price</th>
                             <th data-id="c_chg">Weekly Change</th>
-                            
                             <th data-id="cheapest">En Ucuz</th>
                             <th data-id="ratio">Ucuzluk Oranı</th>
                         </tr>
@@ -124,7 +113,6 @@
                 <i class="fas fa-info-circle"></i> Sonuçlar performans için <strong>250 satır</strong> ile sınırlandırılmıştır. 
                 Tüm veriyi görmek için <strong>İndir</strong> butonunu kullanınız.
             </div>
-
         </div>
     </main>
 
@@ -133,7 +121,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    
     <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script> 
     
@@ -181,14 +168,10 @@
 
         function initData() {
             Papa.parse(SHEET_URL, {
-                download: true,
-                header: true, 
-                skipEmptyLines: true, 
+                download: true, header: true, skipEmptyLines: true, 
                 complete: function(results) {
-                    // Veri Yüklendi
                     ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
                     populateBranchFilter();
-                    
                     const tbody = document.getElementById('table-body');
                     const branchSelect = document.getElementById('filter-branch');
                     tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
@@ -207,11 +190,9 @@
                 const name = row['Store Name']; 
                 if(name) branchSet.add(name.trim());
             });
-
             const branchSelect = document.getElementById('filter-branch');
             branchSelect.innerHTML = '<option value="" disabled selected>Şube Seçiniz</option>';
             branchSelect.innerHTML += '<option value="all">Tüm Şubeler</option>';
-            
             Array.from(branchSet).sort().forEach(branch => {
                 branchSelect.innerHTML += `<option value="${branch}">${branch}</option>`;
             });
@@ -249,15 +230,12 @@
             let filteredData = ALL_DATA.filter(row => {
                 const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const branchMatch = (!selectedBranch || selectedBranch === 'all') || (storeName === selectedBranch);
-                
                 const dateStr = row['Report Date'];
                 if (!dateStr) return false;
                 const parts = dateStr.split('.'); 
                 if(parts.length !== 3) return false; 
                 const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
-                
                 const dateMatch = (rowDate >= startDate && rowDate <= endDate);
-
                 return branchMatch && dateMatch;
             });
 
@@ -273,9 +251,18 @@
 
             btnDownload.classList.remove('btn-disabled');
             btnEdit.classList.remove('btn-disabled');
-            
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
+
+            // --- YENİ: RAKİP ADINI BUL VE BAŞLIĞA YAZ ---
+            let detectedCompetitor = "Rakip Market"; // Varsayılan
+            if (displayData.length > 0) {
+                const firstRowComp = displayData[0]['Competitor Store Name'];
+                if (firstRowComp) {
+                    detectedCompetitor = cleanName(firstRowComp); // Parantezleri temizle
+                }
+            }
+            document.getElementById('header-competitor').textContent = detectedCompetitor;
 
             renderTable(displayData);
         }
@@ -290,9 +277,6 @@
                 const sku        = row['SKU'];
                 const prodName   = row['Product Name'];
                 
-                // YENİ: Rakip Mağaza Adını Çek (Boşsa 'RAKİP' yaz)
-                const compStoreName = row['Competitor Store Name'] ? row['Competitor Store Name'].toUpperCase() : 'RAKİP';
-                
                 const t_org = parsePrice(row['Tazeyo Original Price']);
                 const t_dsc = parsePrice(row['Tazeyo Discount Price']);
                 const priceBiz = t_dsc > 0 ? t_dsc : t_org;
@@ -300,6 +284,10 @@
                 const c_org = parsePrice(row['Competitor Original Price']);
                 const c_dsc = parsePrice(row['Competitor Discount Price']);
                 const priceRakip = c_dsc > 0 ? c_dsc : c_org;
+
+                // --- YENİ: Rakip Adını Çek ve Temizle ---
+                let compName = row['Competitor Store Name'];
+                compName = compName ? cleanName(compName) : 'RAKİP';
 
                 let farkYuzde = 0;
                 let farkClass = "diff-negative"; 
@@ -312,8 +300,8 @@
                     if (priceBiz < priceRakip) {
                         badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
                     } else if (priceBiz > priceRakip) {
-                        // YENİ: Dinamik Rakip İsmi (MARKETTEN yerine)
-                        badgeHtml = `<span class="badge badge-market">${compStoreName}</span>`;
+                        // --- YENİ: Temizlenmiş Rakip Adını Yaz ---
+                        badgeHtml = `<span class="badge badge-market">${compName.toUpperCase()}</span>`;
                         farkClass = "diff-positive";
                     } else {
                         badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
@@ -328,15 +316,12 @@
                     <td>${storeName}</td>
                     <td>${sku}</td>
                     <td title="${prodName}">${prodName}</td>
-                    
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
                     <td>-</td> 
-                    
                     <td class="price-cell">₺${formatMoney(c_org)}</td>
                     <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
                     <td>-</td> 
-                    
                     <td>${badgeHtml}</td>
                     <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                 `;
@@ -344,31 +329,28 @@
             });
         }
 
-        // --- YARDIMCILAR (Sürükle Bırak, İndirme vb.) ---
+        // --- YENİ YARDIMCI: İsim Temizleyici ---
+        // "Migros (Jet)" -> "Migros"
+        function cleanName(name) {
+            if (!name) return "";
+            return name.split('(')[0].trim();
+        }
+
+        // --- DİĞER YARDIMCILAR ---
         function toggleEditMode() {
             const btn = document.getElementById('btn-edit');
             const headerRow = document.getElementById('header-row');
             const tbody = document.getElementById('table-body');
             const ths = headerRow.querySelectorAll('th');
-
             isEditMode = !isEditMode;
-
             if (isEditMode) {
                 btn.innerHTML = '<i class="fas fa-check"></i> Düzenlemeyi Bitir';
                 btn.classList.add('active');
                 headerRow.classList.add('draggable-cursor');
                 tbody.classList.add('draggable-cursor');
                 ths.forEach(th => th.style.cursor = 'grab');
-
-                colSortable = new Sortable(headerRow, {
-                    animation: 150,
-                    ghostClass: 'sortable-ghost',
-                    onEnd: function (evt) { moveTableColumn(evt.oldIndex, evt.newIndex); }
-                });
-                rowSortable = new Sortable(tbody, {
-                    animation: 150,
-                    ghostClass: 'sortable-ghost'
-                });
+                colSortable = new Sortable(headerRow, { animation: 150, ghostClass: 'sortable-ghost', onEnd: function (evt) { moveTableColumn(evt.oldIndex, evt.newIndex); } });
+                rowSortable = new Sortable(tbody, { animation: 150, ghostClass: 'sortable-ghost' });
             } else {
                 btn.innerHTML = '<i class="fas fa-arrows-alt"></i> Tabloyu Düzenle';
                 btn.classList.remove('active');
@@ -387,19 +369,13 @@
                 const cells = Array.from(row.children);
                 if (cells.length > fromIndex && cells.length > toIndex) {
                     const cellToMove = cells[fromIndex];
-                    if (toIndex >= cells.length - 1) {
-                        row.appendChild(cellToMove);
-                    } else {
-                        const referenceNode = (toIndex > fromIndex) ? cells[toIndex].nextSibling : cells[toIndex];
-                        row.insertBefore(cellToMove, referenceNode);
-                    }
+                    if (toIndex >= cells.length - 1) { row.appendChild(cellToMove); } 
+                    else { const referenceNode = (toIndex > fromIndex) ? cells[toIndex].nextSibling : cells[toIndex]; row.insertBefore(cellToMove, referenceNode); }
                 }
             });
         }
 
-        function toggleDownloadMenu() {
-            document.getElementById('download-menu').classList.toggle('show');
-        }
+        function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
 
         function downloadCSV() {
             if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
@@ -424,11 +400,8 @@
         function parsePrice(val) {
             if(!val) return 0;
             let clean = val.toString().replace(/["'₺\s]/g, '');
-            if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
-                clean = clean.replace(',', '.');
-            } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
-                clean = clean.replace(/\./g, '').replace(',', '.');
-            }
+            if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) { clean = clean.replace(',', '.'); } 
+            else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) { clean = clean.replace(/\./g, '').replace(',', '.'); }
             let num = parseFloat(clean);
             return isNaN(num) ? 0 : num;
         }
