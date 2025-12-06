@@ -7,7 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+    
     <style>
         .btn-download {
             background: #10b981; color: #fff; border: none;
@@ -17,7 +19,6 @@
         }
         .btn-download:hover { background: #059669; transform: translateY(-1px); }
         .btn-disabled { opacity: 0.5; pointer-events: none; background: #374151; }
-        
         .limit-warning {
             background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
             color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
@@ -53,19 +54,15 @@
             
             <div class="filter-bar">
                 
-                <div class="filter-label-group">
-                    <label>Başlangıç Tarihi</label>
-                    <input type="date" id="start-date">
-                </div>
-                <div class="filter-label-group">
-                    <label>Bitiş Tarihi</label>
-                    <input type="date" id="end-date">
+                <div class="filter-group" style="min-width: 240px;">
+                    <label>Rapor Tarihi Seçiniz</label>
+                    <input type="text" id="date-range" class="filter-select" placeholder="Tarih Aralığı Seçin..." style="cursor:pointer;">
                 </div>
 
                 <div class="filter-group">
                     <label>Şube Seçiniz</label>
                     <select class="filter-select" id="filter-branch">
-                        <option value="">Veriler Hazırlanıyor...</option>
+                        <option value="">Veriler Yükleniyor...</option>
                     </select>
                 </div>
 
@@ -105,7 +102,7 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <tr><td colspan="11" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağına bağlanılıyor, lütfen bekleyiniz...</td></tr>
+                        <tr><td colspan="11" style="text-align:center; padding:30px; color:#aaa;">Lütfen tarih ve şube seçip "Verileri Yükle" butonuna basınız.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -118,13 +115,15 @@
         </div>
     </main>
 
-    <script src="../js/session-manager.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script> <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script> 
+    
     <script>
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
 
         let ALL_DATA = [];
         let FILTERED_DATA = [];
+        let flatpickrInstance;
 
         document.addEventListener('DOMContentLoaded', () => {
             const session = new SessionManager();
@@ -138,9 +137,23 @@
                 document.getElementById('user-avatar').textContent = userDataFull.name.charAt(0).toUpperCase();
             }
 
-            // Sayfa açılır açılmaz veriyi çek (Ama tabloya basma)
+            // 1. Takvimi Başlat
+            initCalendar();
+
+            // 2. Verileri Arka Planda Çek
             initData();
         });
+
+        function initCalendar() {
+            flatpickrInstance = flatpickr("#date-range", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                locale: "tr",
+                theme: "dark",
+                defaultDate: null,
+                placeholder: "Tarih Aralığı Seçiniz..."
+            });
+        }
 
         async function initData() {
             try {
@@ -151,7 +164,6 @@
 
                 // Ham veriyi işle ve hafızaya al
                 ALL_DATA = rows.map(row => {
-                    // Regex ile güvenli parçalama
                     const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
                     let cols = [];
                     let match;
@@ -161,11 +173,10 @@
                     return cols;
                 }).filter(cols => cols.length >= 10);
 
-                // Filtreleri Doldur
+                // Veri çekildikten SONRA dropdown'ı doldur
                 populateBranchFilter();
                 
-                // Kullanıcıya Hazır Olduğunu Söyle
-                document.getElementById('table-body').innerHTML = '<tr><td colspan="11" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen tarih ve şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
+                document.getElementById('table-body').innerHTML = '<tr><td colspan="11" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Seçim yapabilirsiniz.</td></tr>';
 
             } catch (error) {
                 console.error(error);
@@ -173,57 +184,68 @@
             }
         }
 
-        // Dropdown'ı Google Sheet'teki Şube isimleriyle doldur
+        // Şube Filtresini Doldur (Tekrar edenleri silerek)
         function populateBranchFilter() {
             const branchSet = new Set();
             ALL_DATA.forEach(cols => {
-                if(cols[1]) branchSet.add(cols[1]); // Sütun 1: Store Name
+                // Sütun 1: Store Name
+                if(cols[1] && cols[1] !== "") {
+                    branchSet.add(cols[1]);
+                }
             });
 
             const branchSelect = document.getElementById('filter-branch');
-            branchSelect.innerHTML = '<option value="all">Tüm Şubeler</option>';
+            branchSelect.innerHTML = '<option value="">Şube Seçiniz</option>';
+            branchSelect.innerHTML += '<option value="all">Tüm Şubeler</option>'; // Opsiyonel
+            
             Array.from(branchSet).sort().forEach(branch => {
                 branchSelect.innerHTML += `<option value="${branch}">${branch}</option>`;
             });
         }
 
-        // FİLTRELEME VE TABLO YÜKLEME
         function applyFilters() {
-            const startDateVal = document.getElementById('start-date').value; // YYYY-MM-DD
-            const endDateVal = document.getElementById('end-date').value;     // YYYY-MM-DD
+            const dateRange = flatpickrInstance.selectedDates; // [Date, Date]
             const selectedBranch = document.getElementById('filter-branch').value;
-            
             const tbody = document.getElementById('table-body');
             const limitMsg = document.getElementById('limit-msg');
             const btnDownload = document.getElementById('btn-download');
 
+            // Kontrol
+            if (dateRange.length < 1 || !selectedBranch) {
+                alert("Lütfen Tarih Aralığı ve Şube seçiniz.");
+                return;
+            }
+
             tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
 
-            // FİLTRE MANTIĞI
+            // Tarih Aralığı (Start - End)
+            // Eğer tek gün seçildiyse start = end
+            const startDate = dateRange[0]; 
+            const endDate = dateRange[1] ? dateRange[1] : dateRange[0]; 
+            // Saat farkını sıfırla, sadece günleri karşılaştır
+            startDate.setHours(0,0,0,0);
+            endDate.setHours(23,59,59,999);
+
             FILTERED_DATA = ALL_DATA.filter(cols => {
                 // 1. Şube Kontrolü
                 const branchMatch = (selectedBranch === 'all') || (cols[1] === selectedBranch);
                 
-                // 2. Tarih Kontrolü (Google Sheet Tarih Formatı: DD.MM.YYYY)
-                // JS'in anlayacağı formata (YYYY-MM-DD) çevirmemiz lazım
-                const sheetDateParts = cols[0].split('.'); // ["06", "12", "2025"]
-                // Date objesi oluştururken Ay 0'dan başlar (0=Ocak), o yüzden -1 yapıyoruz
-                const rowDate = new Date(sheetDateParts[2], sheetDateParts[1]-1, sheetDateParts[0]);
-                
-                let dateMatch = true;
-                if (startDateVal) {
-                    const start = new Date(startDateVal);
-                    dateMatch = dateMatch && (rowDate >= start);
-                }
-                if (endDateVal) {
-                    const end = new Date(endDateVal);
-                    dateMatch = dateMatch && (rowDate <= end);
-                }
+                // 2. Tarih Kontrolü
+                // Google Sheet Formatı: "06.12.2025" (DD.MM.YYYY)
+                const dateParts = cols[0].split('.'); 
+                if(dateParts.length !== 3) return false; // Hatalı tarih
+
+                const rowDate = new Date(
+                    parseInt(dateParts[2]), 
+                    parseInt(dateParts[1]) - 1, 
+                    parseInt(dateParts[0])
+                );
+
+                const dateMatch = (rowDate >= startDate && rowDate <= endDate);
 
                 return branchMatch && dateMatch;
             });
 
-            // SONUÇ YOKSA
             if (FILTERED_DATA.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
                 btnDownload.classList.add('btn-disabled');
@@ -231,10 +253,7 @@
                 return;
             }
 
-            // İndirme butonunu aç
             btnDownload.classList.remove('btn-disabled');
-
-            // 250 Satır Sınırı
             const displayData = FILTERED_DATA.slice(0, 250);
             limitMsg.style.display = (FILTERED_DATA.length > 250) ? 'block' : 'none';
 
@@ -246,7 +265,6 @@
             tbody.innerHTML = '';
 
             dataRows.forEach(cols => {
-                // Verileri Eşleştir
                 const storeName = cols[1] || '-';
                 const sku = cols[2] || '-';
                 const prodName = cols[3] || 'İsimsiz';
@@ -261,7 +279,6 @@
 
                 let farkYuzde = 0;
                 let farkClass = "diff-negative"; 
-                
                 if(priceRakip > 0 && priceBiz > 0) {
                     farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
                 }
@@ -285,15 +302,12 @@
                     <td>${storeName}</td>
                     <td>${sku}</td>
                     <td title="${prodName}">${prodName}</td>
-                    
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
                     <td>-</td> 
-                    
                     <td class="price-cell">₺${formatMoney(c_org)}</td>
                     <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
                     <td>-</td> 
-                    
                     <td>${badgeHtml}</td>
                     <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                 `;
@@ -301,21 +315,14 @@
             });
         }
 
-        // İndirme (Tüm Filtrelenmiş Veriyi İndirir)
         function downloadCSV() {
             if (FILTERED_DATA.length === 0) return;
-
-            let csvContent = "data:text/csv;charset=utf-8,";
-            // UTF-8 BOM (Excel'de Türkçe karakter sorunu olmasın diye)
-            csvContent += "\uFEFF"; 
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
             csvContent += "Rapor Tarihi,Magaza,SKU,Urun Adi,Marka,Kategori,Tazeyo Normal,Tazeyo Indirim,Rakip Normal,Rakip Indirim\n";
-
             FILTERED_DATA.forEach(rowArray => {
-                // CSV formatına uygun string birleştirme (Satırdaki virgülleri korumak için tırnak içine alabiliriz)
                 let row = rowArray.map(e => `"${e}"`).join(",");
                 csvContent += row + "\r\n";
             });
-
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -343,8 +350,7 @@
         }
 
         function logout() {
-            const session = new SessionManager();
-            session.destroySession();
+            new SessionManager().destroySession();
             window.location.href = '../index.html';
         }
     </script>
