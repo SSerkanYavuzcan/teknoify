@@ -14,7 +14,7 @@
 
 
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" /> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 
     <link rel="stylesheet" href="css/style.css" />
@@ -41,11 +41,11 @@
                 <li class="nav-item"><a href="#home" class="nav-link">Ana Sayfa</a></li>
                 
                 <li class="nav-item dropdown">
-                    <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down text-xs"></i></a>
+                    <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/urunler/rpa"><i class="fas fa-robot"></i> RPA</a></li>
-                        <li><a href="/urunler/scraping"><i class="fas fa-spider"></i> Veri Kazıma</a></li>
-                        <li><a href="/urunler/finance"><i class="fas fa-chart-line"></i> Finans</a></li>
+                        <li><a href="#"><i class="fas fa-robot"></i> RPA</a></li>
+                        <li><a href="#"><i class="fas fa-spider"></i> Veri Kazıma</a></li>
+                        <li><a href="#"><i class="fas fa-chart-line"></i> Finans</a></li>
                     </ul>
                 </li>
 
@@ -87,7 +87,7 @@
                 <p class="hero-subtitle">Yapay zeka tabanlı otomasyon sistemleri ile işletmenizin verimliliğini maksimum seviyeye çıkarın.</p>
                 
                 <div class="hero-ctas">
-                    <button data-target="#loginModal" class="btn btn-primary trigger-login">Hemen Başla</button>
+                    <button class="btn btn-primary trigger-login">Hemen Başla</button>
                     <a href="#services" class="btn btn-secondary">Çözümlerimiz</a>
                 </div>
             </div>
@@ -108,9 +108,9 @@
 
     <section id="services" class="services">
         <div class="container">
-            <div class="section-header">
-                <h2>Hizmetlerimiz</h2>
-                <p>Uçtan uca dijital dönüşüm araçları.</p>
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Hizmetlerimiz</h2>
+                <p style="color: var(--text-muted);">Uçtan uca dijital dönüşüm araçları.</p>
             </div>
 
 
@@ -118,20 +118,20 @@
                 <article class="service-card">
                     <div class="icon-box"><i class="fas fa-robot"></i></div>
                     <h3>RPA Otomasyon</h3>
-                    <p>Tekrarlayan görevleri robotlara devredin.</p>
+                    <p>Tekrarlayan görevleri robotlara devredin, hata payını sıfıra indirin.</p>
                 </article>
 
 
                 <article class="service-card">
                     <div class="icon-box"><i class="fas fa-spider"></i></div>
                     <h3>Web Scraping</h3>
-                    <p>İnternetin verisini işlenebilir raporlara dönüştürün.</p>
+                    <p>İnternetin verisini işlenebilir raporlara dönüştürün ve rekabet avantajı sağlayın.</p>
                 </article>
                 
                 <article class="service-card">
                     <div class="icon-box"><i class="fas fa-brain"></i></div>
                     <h3>AI Asistan</h3>
-                    <p>7/24 çalışan akıllı müşteri temsilcileri.</p>
+                    <p>7/24 çalışan, öğrenen ve süreçlerinizi yöneten akıllı müşteri temsilcileri.</p>
                 </article>
             </div>
         </div>
@@ -178,6 +178,9 @@
                 
                 <div class="form-footer">
                     <a href="#" class="link-sm">Şifremi Unuttum</a>
+                    <div style="margin-top: 10px; font-size: 0.8rem; color: #666;">
+                        <small>Demo: <b>admin</b> veya <b>premium</b> içeren mail giriniz.</small>
+                    </div>
                 </div>
             </form>
         </div>
@@ -188,10 +191,13 @@
 <footer class="footer">
     <div class="container footer-flex">
         <div class="footer-brand">
-            <span>&copy; 2025 Teknoify.</span>
+            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
         </div>
     </div>
 </footer>
+
+
+<script src="js/session-manager.js"></script>
 
 
 <script src="js/script.js" defer></script>
