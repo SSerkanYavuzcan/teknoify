@@ -53,18 +53,29 @@
                         <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz" readonly>
                     </div>
                 </div>
+
                 <div class="filter-group">
                     <label>Şube Seçiniz</label>
-                    <select class="filter-select" id="filter-branch" disabled>
-                        <option value="" selected>Veriler Yükleniyor...</option>
-                    </select>
+                    <div class="multi-select-wrapper" id="wrapper-branch">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-branch')">
+                            <span id="text-branch">Şubeler Yükleniyor...</span>
+                        </div>
+                        <div class="multi-select-menu" id="menu-branch">
+                            </div>
+                    </div>
                 </div>
+
                 <div class="filter-group">
                     <label>Kategori Seçiniz</label>
-                    <select class="filter-select" id="filter-category" disabled>
-                        <option value="all" selected>Tüm Kategoriler</option>
-                    </select>
+                    <div class="multi-select-wrapper" id="wrapper-category">
+                        <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-category')">
+                            <span id="text-category">Tüm Kategoriler</span>
+                        </div>
+                        <div class="multi-select-menu" id="menu-category">
+                            </div>
+                    </div>
                 </div>
+
                 <button class="btn-filter" id="btn-load" onclick="applyFilters()">
                     <i class="fas fa-search"></i> Verileri Yükle
                 </button>
@@ -163,6 +174,10 @@
 
         let ALL_DATA = [];
         let flatpickrInstance;
+        
+        // Çoklu seçim değişkenleri
+        let SELECTED_BRANCHES = ['all']; 
+        let SELECTED_CATEGORIES = ['all'];
 
         document.addEventListener('DOMContentLoaded', () => {
             const session = new SessionManager();
@@ -178,7 +193,14 @@
             initCalendar();
             initData();
 
+            // Sayfa boşluğuna tıklayınca dropdownları kapat
             document.addEventListener('click', function(e) {
+                // Dropdown menü kapatma
+                if (!e.target.closest('.multi-select-wrapper')) {
+                    document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
+                }
+                
+                // İndirme menüsü kapatma
                 const wrapper = document.querySelector('.download-wrapper');
                 const menu = document.getElementById('download-menu');
                 if (wrapper && !wrapper.contains(e.target)) {
@@ -188,7 +210,6 @@
         });
 
         function initCalendar() {
-            // Placeholder burada güncellendi
             flatpickrInstance = flatpickr("#date-range", {
                 mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null, 
                 placeholder: "Tarih Aralığı Seçiniz" 
@@ -203,12 +224,7 @@
                     populateFilters();
                    
                     const tbody = document.getElementById('table-body');
-                    const branchSelect = document.getElementById('filter-branch');
-                    const catSelect = document.getElementById('filter-category');
-                   
-                    tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Şube seçip "Verileri Yükle" butonuna basınız.</td></tr>';
-                    branchSelect.disabled = false;
-                    catSelect.disabled = false;
+                    tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Kriterleri seçip "Verileri Yükle" butonuna basınız.</td></tr>';
                 },
                 error: function(err) {
                     console.error("CSV Hatası:", err);
@@ -217,6 +233,7 @@
             });
         }
 
+        // --- YENİ ÇOKLU SEÇİM FİLTRE MANTIĞI ---
         function populateFilters() {
             const branchSet = new Set();
             const catSet = new Set();
@@ -226,34 +243,109 @@
                 if(row['Category Name']) catSet.add(row['Category Name'].trim());
             });
 
-            const branchSelect = document.getElementById('filter-branch');
-            branchSelect.innerHTML = '<option value="" disabled selected>Şube Seçiniz</option>';
-            branchSelect.innerHTML += '<option value="all">Tüm Şubeler</option>';
-            Array.from(branchSet).sort().forEach(item => {
-                branchSelect.innerHTML += `<option value="${item}">${item}</option>`;
-            });
+            // Şube Menüsünü Doldur
+            renderMultiSelectOptions('menu-branch', Array.from(branchSet).sort(), 'branch');
+            updateTriggerText('branch', 'Tüm Şubeler');
 
-            const catSelect = document.getElementById('filter-category');
-            catSelect.innerHTML = '<option value="all" selected>Tüm Kategoriler</option>';
-            Array.from(catSet).sort().forEach(item => {
-                catSelect.innerHTML += `<option value="${item}">${item}</option>`;
+            // Kategori Menüsünü Doldur
+            renderMultiSelectOptions('menu-category', Array.from(catSet).sort(), 'category');
+            updateTriggerText('category', 'Tüm Kategoriler');
+        }
+
+        function renderMultiSelectOptions(menuId, items, type) {
+            const menu = document.getElementById(menuId);
+            menu.innerHTML = '';
+
+            // "Tümü" Seçeneği
+            const allDiv = document.createElement('div');
+            allDiv.className = 'multi-option selected';
+            allDiv.onclick = () => selectOption(type, 'all', allDiv);
+            allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
+            menu.appendChild(allDiv);
+
+            // Diğer Seçenekler
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'multi-option';
+                div.onclick = () => selectOption(type, item, div);
+                div.innerHTML = `<span>${item}</span><div class="option-checkbox"></div>`;
+                menu.appendChild(div);
             });
         }
 
+        function selectOption(type, value, element) {
+            let selectedArray = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
+            const menuId = (type === 'branch') ? 'menu-branch' : 'menu-category';
+            const menu = document.getElementById(menuId);
+            const allOption = menu.children[0];
+
+            if (value === 'all') {
+                selectedArray.length = 0;
+                selectedArray.push('all');
+                Array.from(menu.children).forEach(child => child.classList.remove('selected'));
+                allOption.classList.add('selected');
+            } else {
+                if (selectedArray.includes('all')) {
+                    selectedArray.splice(selectedArray.indexOf('all'), 1);
+                    allOption.classList.remove('selected');
+                }
+                if (selectedArray.includes(value)) {
+                    selectedArray.splice(selectedArray.indexOf(value), 1);
+                    element.classList.remove('selected');
+                } else {
+                    selectedArray.push(value);
+                    element.classList.add('selected');
+                }
+                if (selectedArray.length === 0) {
+                    selectedArray.push('all');
+                    allOption.classList.add('selected');
+                }
+            }
+
+            if (type === 'branch') SELECTED_BRANCHES = selectedArray;
+            else SELECTED_CATEGORIES = selectedArray;
+
+            updateTriggerText(type);
+        }
+
+        function updateTriggerText(type) {
+            const arr = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
+            const textId = (type === 'branch') ? 'text-branch' : 'text-category';
+            const label = document.getElementById(textId);
+
+            if (arr.includes('all')) {
+                label.textContent = (type === 'branch') ? "Tüm Şubeler" : "Tüm Kategoriler";
+            } else if (arr.length === 1) {
+                label.textContent = arr[0];
+            } else {
+                label.textContent = `${arr.length} ${type === 'branch' ? 'Şube' : 'Kategori'} Seçildi`;
+            }
+        }
+
+        function toggleMultiSelect(menuId) {
+            const menu = document.getElementById(menuId);
+            const isVisible = menu.classList.contains('show');
+            document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
+            if (!isVisible) {
+                menu.classList.add('show');
+            }
+        }
+
+        // --- VERİ YÜKLEME VE FİLTRELEME ---
         function applyFilters() {
             const dateRange = flatpickrInstance.selectedDates;
-            const selectedBranch = document.getElementById('filter-branch').value;
-            const selectedCat = document.getElementById('filter-category').value;
             const tbody = document.getElementById('table-body');
             const limitMsg = document.getElementById('limit-msg');
             const btnDownload = document.getElementById('btn-download');
             const headerTazeyo = document.getElementById('header-tazeyo');
             const miniDash = document.getElementById('mini-dashboard');
 
-            if (selectedBranch && selectedBranch !== 'all') {
-                headerTazeyo.textContent = selectedBranch;
+            if (SELECTED_BRANCHES.includes('all')) {
+                headerTazeyo.textContent = "Tazeyo (Genel)";
+            } else if (SELECTED_BRANCHES.length === 1) {
+                headerTazeyo.textContent = SELECTED_BRANCHES[0];
             } else {
-                headerTazeyo.textContent = "Tazeyo";
+                headerTazeyo.textContent = "Seçili Şubeler";
             }
 
             if (dateRange.length < 1) {
@@ -272,8 +364,8 @@
                 const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const catName = row['Category Name'] ? row['Category Name'].trim() : "";
                
-                const branchMatch = (!selectedBranch || selectedBranch === 'all') || (storeName === selectedBranch);
-                const catMatch = (selectedCat === 'all') || (catName === selectedCat);
+                const branchMatch = SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.includes(storeName);
+                const catMatch = SELECTED_CATEGORIES.includes('all') || SELECTED_CATEGORIES.includes(catName);
                
                 const dateStr = row['Report Date'];
                 if (!dateStr) return false;
@@ -285,7 +377,7 @@
                 return branchMatch && catMatch && dateMatch;
             });
 
-            if (selectedBranch === 'all') {
+            if (SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.length > 1) {
                 filteredData = aggregateData(filteredData);
             }
 
@@ -301,20 +393,25 @@
 
             btnDownload.classList.remove('btn-disabled');
             miniDash.style.display = 'grid';
+            
+            // Kategori KPI Hesaplaması için parametre belirle
+            const catParam = (SELECTED_CATEGORIES.length === 1 && !SELECTED_CATEGORIES.includes('all')) 
+                             ? SELECTED_CATEGORIES[0] 
+                             : 'all';
            
-            calculateKPIs(filteredData, selectedCat);
+            calculateKPIs(filteredData, catParam);
 
             const displayData = filteredData.slice(0, 250);
             limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
 
-            updateCompetitorHeader(displayData, selectedBranch);
+            const branchParam = SELECTED_BRANCHES.includes('all') ? 'all' : SELECTED_BRANCHES[0];
+            updateCompetitorHeader(displayData, branchParam);
             renderTable(displayData);
         }
 
         function updateCompetitorHeader(data, selectedBranch) {
             const headerComp = document.getElementById('header-competitor');
             let detected = "Rakip Market";
-           
             if(data.length > 0) {
                 const compName = data[0]['Competitor Store Name'];
                 if(compName) {
@@ -426,7 +523,6 @@
             }
             else {
                 let bestCat = '-'; let maxDiff = 0; let isAdvantage = true;
-
                 for (const [cat, stats] of Object.entries(categoryStats)) {
                     const diffPercent = ((stats.comp - stats.biz) / stats.comp) * 100;
                     if (Math.abs(diffPercent) > Math.abs(maxDiff)) {
@@ -435,7 +531,6 @@
                         isAdvantage = diffPercent > 0;
                     }
                 }
-
                 catValue.innerText = bestCat;
                 if (isAdvantage) {
                     catTitle.innerText = "En Avantajlı Kategori";
