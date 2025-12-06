@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veri Çekme & Analiz | Teknoify</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand"><i class="fas fa-cube"></i> Teknoify</div>
+        <nav>
+            <a href="member.html" class="menu-item"><i class="fas fa-home"></i> Genel Bakış</a>
+            
+            <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
+            <a href="analysis.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
+            
+            <a href="#" class="menu-item"><i class="fas fa-file-invoice"></i> Faturalar</a>
+            <a href="#" class="menu-item"><i class="fas fa-cog"></i> Ayarlar</a>
+        </nav>
+        <div class="menu-spacer"></div>
+        <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h2>Pazar Analizi & Fiyat Takibi</h2>
+            <div class="user-profile">
+                <span id="user-name-display">Yükleniyor...</span>
+                <div class="avatar" id="user-avatar">U</div>
+            </div>
+        </header>
+
+        <div class="content-scroll">
+            
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Şube Seçiniz</label>
+                    <select class="filter-select">
+                        <option>Tüm Şubeler</option>
+                        <option>İstanbul - Kadıköy</option>
+                        <option>İstanbul - Beşiktaş</option>
+                        <option>Ankara - Çankaya</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Marka Seçiniz</label>
+                    <select class="filter-select">
+                        <option>Tüm Markalar</option>
+                        <option>ABC Deterjan</option>
+                        <option>7Days</option>
+                        <option>Abant Su</option>
+                        <option>7UP</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Kategori Seçiniz</label>
+                    <select class="filter-select">
+                        <option>Tüm Kategoriler</option>
+                        <option>İçecekler</option>
+                        <option>Temizlik Ürünleri</option>
+                        <option>Atıştırmalık</option>
+                    </select>
+                </div>
+                <button class="btn-filter"><i class="fas fa-filter"></i> Uygula</button>
+            </div>
+
+            <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background:#14161c;">Ürün Bilgileri</th>
+                            <th colspan="3" class="th-group-tazeyo">Tazeyo (Biz)</th>
+                            <th colspan="3" class="th-group-market">Rakip Market</th>
+                            <th colspan="2" style="background:#14161c;">Analiz</th>
+                        </tr>
+                        <tr>
+                            <th style="top:50px;">Store Name</th>
+                            <th style="top:50px;">SKU</th>
+                            <th style="top:50px;">Ürün Adı</th>
+                            
+                            <th style="top:50px;">Normal Fiyat</th>
+                            <th style="top:50px;">İndirimli</th>
+                            <th style="top:50px;">Fark %</th>
+                            
+                            <th style="top:50px;">Normal Fiyat</th>
+                            <th style="top:50px;">İndirimli</th>
+                            <th style="top:50px;">Fark %</th>
+                            
+                            <th style="top:50px;">En Ucuz</th>
+                            <th style="top:50px;">Ucuzluk Oranı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Kadıköy</td>
+                            <td>8690123</td>
+                            <td>Abant Pet Şişe Su 1.5 L</td>
+                            <td class="price-cell">₺8,75</td>
+                            <td class="price-cell">-</td>
+                            <td class="diff-negative">-%</td>
+                            <td class="price-cell">₺9,70</td>
+                            <td class="price-cell">-</td>
+                            <td class="diff-negative">-%</td>
+                            <td><span class="badge badge-tazeyo">Tazeyo</span></td>
+                            <td class="diff-negative">9,79%</td>
+                        </tr>
+                        <tr>
+                            <td>Kadıköy</td>
+                            <td>8690456</td>
+                            <td>ABC Gül Tutkusu Yumuşatıcı 5 L</td>
+                            <td class="price-cell">₺177,90</td>
+                            <td class="price-cell">₺142,32</td>
+                            <td class="diff-negative">-20%</td>
+                            <td class="price-cell">₺175,40</td>
+                            <td class="price-cell">-</td>
+                            <td class="diff-positive">-%</td>
+                            <td><span class="badge badge-tazeyo">Tazeyo</span></td>
+                            <td class="diff-negative">18,86%</td>
+                        </tr>
+                        <tr>
+                            <td>Beşiktaş</td>
+                            <td>8690789</td>
+                            <td>7Days Kruvasan Fındık 60g</td>
+                            <td class="price-cell">₺33,75</td>
+                            <td class="price-cell">-</td>
+                            <td class="diff-positive">-%</td>
+                            <td class="price-cell">₺27,50</td>
+                            <td class="price-cell">-</td>
+                            <td class="diff-negative">-%</td>
+                            <td><span class="badge badge-market">Marketten</span></td>
+                            <td class="diff-positive">18,52%</td>
+                        </tr>
+                        <tr>
+                            <td>Çankaya</td>
+                            <td>8690999</td>
+                            <td>ABC Matik Renkliler 6 Kg</td>
+                            <td class="price-cell">₺321,95</td>
+                            <td class="price-cell">₺257,56</td>
+                            <td class="diff-negative">-20%</td>
+                            <td class="price-cell">₺304,90</td>
+                            <td class="price-cell">-</td>
+                            <td class="diff-positive">-%</td>
+                            <td><span class="badge badge-tazeyo">Tazeyo</span></td>
+                            <td class="diff-negative">15,53%</td>
+                        </tr>
+                         <tr>
+                            <td>Beşiktaş</td>
+                            <td>8690111</td>
+                            <td>7UP Turunçgil Aromalı 1L</td>
+                            <td class="price-cell">₺69,25</td>
+                            <td class="price-cell">-</td>
+                            <td class="diff-positive">-%</td>
+                            <td class="price-cell">₺45,50</td>
+                            <td class="price-cell">-</td>
+                            <td class="diff-negative">-%</td>
+                            <td><span class="badge badge-market">Marketten</span></td>
+                            <td class="diff-positive">34,30%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/session-manager.js"></script>
+    <script src="../js/script.js"></script> 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = new SessionManager();
+            const currentUser = session.validateSession();
+            if (!currentUser) { window.location.href = '../index.html'; return; }
+
+            const userDataFull = USER_DB[currentUser.username];
+            if (userDataFull) {
+                document.getElementById('user-name-display').textContent = userDataFull.name;
+                document.getElementById('user-avatar').textContent = userDataFull.name.charAt(0).toUpperCase();
+            }
+        });
+        function logout() { new SessionManager().destroySession(); window.location.href = '../index.html'; }
+    </script>
+</body>
+</html>
+
