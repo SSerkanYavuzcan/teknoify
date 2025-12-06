@@ -1,6 +1,7 @@
 /* ================================================================
-   [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (FULL & FIXED)
+   [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES
    [FILE] css/dashboard.css
+   [DESC] Yönetim paneli, Analiz, Takvim ve Sürükle-Bırak Stilleri
    ================================================================ */
 
    :root {
@@ -36,7 +37,7 @@ body {
     margin: 0;
     display: flex;
     height: 100vh;
-    overflow: hidden;
+    overflow: hidden; /* Sayfa taşmasını engelle */
 }
 
 a { text-decoration: none; color: inherit; }
@@ -53,9 +54,12 @@ a { text-decoration: none; color: inherit; }
 }
 
 .brand {
-    font-size: 1.25rem; font-weight: 700; color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
     display: flex; align-items: center; gap: 12px;
-    margin-bottom: 40px; letter-spacing: -0.02em;
+    margin-bottom: 40px;
+    letter-spacing: -0.02em;
 }
 .brand i { color: var(--primary); font-size: 1.4rem; }
 
@@ -63,29 +67,45 @@ a { text-decoration: none; color: inherit; }
     display: flex; align-items: center; gap: 12px;
     padding: 12px 16px;
     color: var(--text-muted);
-    font-size: 0.9rem; font-weight: 500;
-    border-radius: 12px; margin-bottom: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 12px;
+    margin-bottom: 4px;
     transition: all 0.2s ease;
 }
 
-.menu-item:hover { background: rgba(255,255,255,0.03); color: #fff; }
-.menu-item.active { background: rgba(99,102,241,0.12); color: var(--primary); font-weight: 600; }
+.menu-item:hover {
+    background: rgba(255,255,255,0.03);
+    color: #fff;
+}
+
+.menu-item.active {
+    background: rgba(99,102,241,0.12);
+    color: var(--primary);
+    font-weight: 600;
+}
 .menu-item.active i { color: var(--primary); }
 
-.menu-spacer { flex: 1; }
+.menu-spacer { flex: 1; } /* Çıkış butonunu en alta iten boşluk */
 
 /* 3. MAIN CONTENT (ANA İÇERİK) */
 .main-content {
-    flex: 1; display: flex; flex-direction: column;
-    overflow: hidden; position: relative;
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    position: relative;
     background: radial-gradient(circle at 50% 0%, rgba(99,102,241,0.03), transparent 40%);
 }
 
+/* 3.1 Top Bar */
 .top-bar {
-    height: 72px; border-bottom: 1px solid var(--border);
+    height: 72px;
+    border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px; background: rgba(5,5,5,0.85);
-    backdrop-filter: blur(12px); z-index: 20;
+    padding: 0 32px;
+    background: rgba(5,5,5,0.85);
+    backdrop-filter: blur(12px);
+    z-index: 20;
 }
 .top-bar h2 { font-size: 1.1rem; font-weight: 600; margin: 0; }
 
@@ -93,27 +113,77 @@ a { text-decoration: none; color: inherit; }
 .avatar {
     width: 38px; height: 38px;
     background: linear-gradient(135deg, var(--primary), #4f46e5);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-weight: 700; color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #fff;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
 }
 
+/* 3.2 Scroll Alanı */
 .content-scroll {
-    padding: 32px; overflow-y: auto; height: 100%;
-    scrollbar-width: thin; scrollbar-color: #333 transparent;
+    padding: 32px;
+    overflow-y: auto;
+    height: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: #333 transparent;
 }
 
-/* 4. ANALİZ SAYFASI ÖZEL STİLLERİ */
+/* 4. DASHBOARD WIDGETS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
 
-/* 4.1 Filtre Barı */
+.stat-card {
+    background: var(--dash-card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+.stat-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+
+.stat-title { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; margin-bottom: 12px; }
+.stat-value { font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+
+.section-title { font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; }
+
+/* Bildirim Tablosu (Basit) */
+.data-table {
+    width: 100%; border-collapse: collapse;
+    background: var(--dash-card); border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border);
+}
+.data-table th, .data-table td {
+    padding: 16px 24px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+.data-table th { background: rgba(255,255,255,0.02); color: var(--text-muted); font-weight: 500; }
+.data-table tr:last-child td { border-bottom: none; }
+
+
+/* =================================================================
+   5. ANALİZ SAYFASI ÖZEL STİLLERİ (Filtreler, Tablo & Düzenleme)
+   ================================================================= */
+
+/* 5.1 Filtre Barı */
 .filter-bar {
     display: flex; gap: 16px; flex-wrap: wrap;
-    background: var(--dash-card); border: 1px solid var(--border);
-    padding: 20px; border-radius: 16px; margin-bottom: 30px;
+    background: var(--dash-card);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 30px;
     align-items: flex-end;
 }
 
 .filter-group {
-    display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 180px;
+    display: flex; flex-direction: column; gap: 8px;
+    flex: 1; min-width: 180px;
 }
 .filter-group label {
     font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
@@ -123,18 +193,39 @@ a { text-decoration: none; color: inherit; }
 .filter-select, input[type="text"].filter-select {
     background: rgba(255,255,255,0.03);
     border: 1px solid var(--border);
-    color: #fff; padding: 12px 16px;
-    border-radius: 10px; font-family: inherit; font-size: 0.9rem;
-    cursor: pointer; transition: 0.2s; height: 47px; width: 100%;
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-family: inherit; font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.2s;
+    height: 47px;
+    width: 100%;
 }
-.filter-select:hover { background-color: rgba(255,255,255,0.06); border-color: var(--primary); outline: none; }
 
-/* Butonlar */
+.filter-select:hover, .filter-select:focus {
+    background-color: rgba(255,255,255,0.06);
+    border-color: var(--primary);
+    outline: none;
+}
+
+/* Select için ok ikonu */
+select.filter-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+}
+
+/* Butonlar (Yükle, İndir, Düzenle) */
 .btn-filter, .btn-download, .btn-edit {
     border: none; padding: 0 24px; border-radius: 10px;
     font-weight: 600; font-size: 0.9rem; height: 47px;
-    cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: 0.2s;
 }
+
 .btn-filter { background: var(--primary); color: #fff; }
 .btn-filter:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
@@ -143,190 +234,299 @@ a { text-decoration: none; color: inherit; }
 
 .btn-edit { background: #8b5cf6; color: #fff; }
 .btn-edit:hover { background: #7c3aed; transform: translateY(-1px); }
-.btn-edit.active { background: #ef4444; }
+.btn-edit.active { background: #ef4444; } /* Kırmızı (Bitir modu) */
 
 .btn-disabled { opacity: 0.5; pointer-events: none; background: #374151; }
 
-/* 4.2 Excel/Analiz Tablosu */
-.comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; white-space: nowrap; }
-.comparison-table th {
-    background: #181a20; color: #fff; padding: 14px 18px;
-    border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);
-    text-align: left; position: sticky; top: 0; z-index: 10; user-select: none;
+
+/* --- İNDİRME MENÜSÜ (DROPDOWN) --- */
+.download-wrapper {
+    position: relative;
+    display: inline-block;
 }
+
+.download-menu {
+    position: absolute;
+    top: 100%; right: 0;
+    margin-top: 8px;
+    background: #1f2937;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    min-width: 180px;
+    display: none;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.download-menu.show {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+.download-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.download-item:last-child { border-bottom: none; }
+.download-item:hover {
+    background: var(--primary);
+}
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+
+
+/* 5.2 Excel/Analiz Tablosu */
+.comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* Başlıklar */
+.comparison-table th {
+    background: #181a20;
+    color: #fff;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    text-align: left;
+    position: sticky; top: 0; z-index: 10;
+    user-select: none;
+}
+
+/* Gruplanmış Başlık Renkleri */
+.th-group-tazeyo {
+    background: rgba(16, 185, 129, 0.08) !important;
+    color: var(--success) !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--success) !important;
+    font-weight: 700;
+}
+.th-group-market {
+    background: rgba(249, 115, 22, 0.08) !important;
+    color: var(--warning) !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--warning) !important;
+    font-weight: 700;
+}
+
+/* Hücreler */
 .comparison-table td {
-    padding: 14px 18px; border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border); background: var(--dash-card);
-    color: var(--text-muted); vertical-align: middle;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    background: var(--dash-card);
+    color: var(--text-muted);
+    vertical-align: middle;
 }
 .comparison-table tr:hover td { background: rgba(255,255,255,0.03); color: #fff; }
 
-.th-group-tazeyo { background: rgba(16, 185, 129, 0.08) !important; color: var(--success) !important; text-align: center !important; border-bottom: 2px solid var(--success) !important; }
-.th-group-market { background: rgba(249, 115, 22, 0.08) !important; color: var(--warning) !important; text-align: center !important; border-bottom: 2px solid var(--warning) !important; }
-
+/* Hücre Stilleri & Renkler */
 .price-cell { font-family: var(--font-mono); font-weight: 600; color: #e5e7eb; }
 .diff-negative { color: var(--success); font-weight: 600; }
 .diff-positive { color: var(--danger); font-weight: 600; }
 
-.badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; display: inline-block; }
-.badge-tazeyo { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
-.badge-market { background: rgba(249, 115, 22, 0.15); color: var(--warning); border: 1px solid rgba(249, 115, 22, 0.25); }
-
-/* İndirme Menüsü */
-.download-wrapper { position: relative; display: inline-block; }
-.download-menu {
-    position: absolute; top: 100%; right: 0; margin-top: 8px;
-    background: #1f2937; border: 1px solid var(--border); border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5); min-width: 180px;
-    display: none; z-index: 100; overflow: hidden;
+/* Badges */
+.badge {
+    padding: 4px 8px; border-radius: 6px;
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; display: inline-block;
 }
-.download-menu.show { display: block; animation: fadeIn 0.2s ease; }
-.download-item {
-    display: flex; align-items: center; gap: 10px; padding: 12px 16px;
-    color: #fff; cursor: pointer; font-size: 0.9rem; transition: 0.2s;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+.badge-tazeyo {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.25);
 }
-.download-item:hover { background: var(--primary); }
-@keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+.badge-market {
+    background: rgba(249, 115, 22, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+}
 
-/* --- DÜZELTİLMİŞ TAKVİM (FLATPICKR) TASARIMI --- */
+/* Limit Uyarısı */
+.limit-warning {
+    background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3);
+    color: #fb923c; padding: 15px; border-radius: 12px; margin-top: 20px;
+    text-align: center; font-size: 0.9rem; display: none;
+}
 
-/* 1. Takvim Input */
-.date-picker-wrapper { position: relative; width: 100%; }
+/* --- TABLO DÜZENLEME (DRAG & DROP) STİLLERİ --- */
+.draggable-cursor { cursor: grab !important; }
+.draggable-cursor:active { cursor: grabbing !important; }
+
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: rgba(139, 92, 246, 0.2) !important;
+}
+.sortable-chosen {
+    background-color: rgba(139, 92, 246, 0.4) !important;
+}
+
+/* --- MODERN TAKVİM (FLATPICKR) DÜZELTİLMİŞ STİLLERİ --- */
+
+/* 1. Takvim Input Alanı (Wrapper) */
+.date-picker-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Input yerine şık bir buton gibi görünsün */
 input.flatpickr-input {
     background-color: rgba(255, 255, 255, 0.03) !important;
     border: 1px solid var(--border) !important;
     border-radius: 12px !important;
-    color: #fff !important;
+    color: #e2e8f0 !important;
     font-family: var(--font-main) !important;
-    font-size: 0.9rem !important; font-weight: 500 !important;
-    padding: 12px 16px 12px 42px !important; /* İkon boşluğu */
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    padding: 12px 16px 12px 42px !important; /* İkon için soldan boşluk */
     cursor: pointer !important;
-    width: 100% !important; height: 47px !important;
+    transition: all 0.2s ease !important;
+    width: 100% !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    height: 47px !important;
 }
-input.flatpickr-input:hover { border-color: rgba(255, 255, 255, 0.3) !important; }
-input.flatpickr-input:focus { border-color: var(--primary) !important; outline: none !important; }
+
+input.flatpickr-input:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+input.flatpickr-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+    outline: none !important;
+}
+
+/* Takvim İkonu */
 .calendar-icon {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    color: var(--text-muted); pointer-events: none; font-size: 1rem; z-index: 2;
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 1rem;
+    z-index: 2;
 }
 
-/* 2. Takvim Penceresi (BEYAZ ZEMİN - GÖRSELDEKİ GİBİ) */
+/* 2. Açılan Takvim Penceresi - GENİŞLİK VE BOŞLUK DÜZELTMESİ */
 .flatpickr-calendar {
-    background: #ffffff !important; /* Beyaz Zemin */
-    border: none !important;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+    background: #14161c !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
     border-radius: 16px !important;
-    padding: 20px !important;
+    padding: 16px !important; /* İç boşluk artırıldı */
     font-family: var(--font-main) !important;
-    width: 320px !important;
-    margin-top: 10px !important;
+    margin-top: 8px !important;
+    width: 310px !important; /* Genişlik artırıldı, günler sıkışmayacak */
 }
-.flatpickr-calendar::before, .flatpickr-calendar::after { display: none !important; }
 
-/* 3. Başlık (Siyah Renk) */
+/* İç Kapsayıcılar */
+.flatpickr-days {
+    width: 100% !important;
+}
+.dayContainer {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Ok (Arrow) Gizle */
+.flatpickr-calendar::before, .flatpickr-calendar::after {
+    display: none !important;
+}
+
+/* Ay ve Yıl Başlığı */
 .flatpickr-months {
     background: transparent !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 15px !important;
     padding: 0 !important;
-    align-items: center !important;
 }
 .flatpickr-month {
-    color: #111827 !important; fill: #111827 !important; height: 40px !important;
+    color: #fff !important;
+    fill: #fff !important;
 }
 .flatpickr-current-month {
-    font-size: 1.1rem !important; padding-top: 0 !important;
-    display: flex !important; justify-content: flex-start !important; /* Sola Hizala */
+    font-size: 1rem !important;
+    padding-top: 0 !important;
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months {
     font-weight: 700 !important;
-    font-size: 1.1rem !important;
+    background: transparent !important;
 }
 .flatpickr-current-month input.cur-year {
     font-weight: 700 !important;
-    font-size: 1.1rem !important;
-    color: #111827 !important;
 }
 
-/* Oklar (Sağda) */
+/* Oklar */
 .flatpickr-prev-month, .flatpickr-next-month {
-    fill: #111827 !important;
+    fill: var(--text-muted) !important;
     padding: 5px !important;
-    position: absolute !important;
 }
-.flatpickr-prev-month { right: 40px !important; left: auto !important; }
-.flatpickr-next-month { right: 10px !important; }
-
 .flatpickr-prev-month:hover, .flatpickr-next-month:hover {
-    background: #f3f4f6 !important;
-    border-radius: 50% !important;
+    fill: #fff !important;
+    background: rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important;
 }
 
-/* 4. Gün İsimleri (Pzt, Sal...) */
+/* Haftanın Günleri */
 .flatpickr-weekdays {
     background: transparent !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 8px !important;
 }
 span.flatpickr-weekday {
-    color: #6b7280 !important; /* Gri */
+    color: var(--text-muted) !important;
     font-weight: 600 !important;
     font-size: 0.85rem !important;
 }
 
-/* 5. Günler (Rakamlar) */
+/* Günler - BOŞLUK VE BOYUTLANDIRMA */
 .flatpickr-day {
-    color: #111827 !important; /* Siyah Rakam */
-    border-radius: 50% !important; /* Yuvarlak */
+    color: #e2e8f0 !important;
+    border-radius: 8px !important;
     border: none !important;
+    transition: 0.2s !important;
     font-weight: 500 !important;
-    height: 38px !important; line-height: 38px !important;
+    height: 38px !important;
+    line-height: 38px !important;
     margin-top: 2px !important;
-    transition: all 0.2s !important;
+    max-width: initial !important; /* Esnek genişlik */
 }
 
 .flatpickr-day:hover {
-    background: #f3f4f6 !important;
-    color: #111827 !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
 }
 
-/* Seçili Gün (MAVİ YUVARLAK) */
+.flatpickr-day.today {
+    border: 1px solid rgba(255,255,255,0.3) !important;
+}
+
+/* Seçili Gün */
 .flatpickr-day.selected, 
 .flatpickr-day.startRange, 
 .flatpickr-day.endRange {
-    background: #2563eb !important; /* Canlı Mavi */
+    background: var(--primary) !important;
     color: #fff !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
     border-color: transparent !important;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
 }
 
-/* Aralık (Range) */
+/* Seçim Aralığı (In Range) */
 .flatpickr-day.inRange {
-    background: #eff6ff !important; /* Çok açık mavi */
-    box-shadow: -5px 0 0 #eff6ff, 5px 0 0 #eff6ff !important;
-    color: #2563eb !important;
-    border-radius: 0 !important;
-}
-.flatpickr-day.startRange { border-radius: 50% 0 0 50% !important; }
-.flatpickr-day.endRange { border-radius: 0 50% 50% 0 !important; }
-.flatpickr-day.startRange.endRange { border-radius: 50% !important; }
-
-/* BUGÜN (Mavi Nokta) */
-.flatpickr-day.today {
-    border-color: transparent !important;
-    position: relative;
-    font-weight: 700 !important;
-}
-.flatpickr-day.today::after {
-    content: '';
-    position: absolute;
-    bottom: 4px; left: 50%; transform: translateX(-50%);
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background-color: #2563eb;
-}
-.flatpickr-day.selected.today::after {
-    background-color: #fff;
+    background: rgba(99, 102, 241, 0.15) !important;
+    box-shadow: -5px 0 0 rgba(99, 102, 241, 0.15), 5px 0 0 rgba(99, 102, 241, 0.15) !important;
+    color: #fff !important;
+    border: none !important;
 }
 
 
