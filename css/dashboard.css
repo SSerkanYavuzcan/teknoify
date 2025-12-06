@@ -506,3 +506,35 @@ span.flatpickr-weekday {
     fill: #fff !important;
 }
 
+/* --- TAKVİM BAŞLIK HİZALAMA (FIX) --- */
+
+/* Ay ve Yılı Kapsayan Kutuyu Esnek Yap */
+.flatpickr-current-month {
+    display: flex !important;
+    align-items: center !important; /* Dikeyde Tam Ortala */
+    justify-content: center !important;
+    height: 40px !important;
+    padding-top: 0 !important;
+}
+
+/* Ay Yazısı (Aralık) */
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
+    top: 1px !important; /* 1px aşağı iterek yıl ile eşitle */
+}
+
+/* Yıl Yazısı (2025) */
+.flatpickr-current-month input.cur-year {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 0 0 5px !important;
+    vertical-align: middle !important;
+}
+
