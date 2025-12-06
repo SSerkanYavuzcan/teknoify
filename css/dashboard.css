@@ -439,4 +439,36 @@ span.flatpickr-weekday {
     border-top: none !important;
 }
 
+/* --- TAKVİM BAŞLIK HİZALAMA DÜZELTMESİ --- */
+
+/* 1. Kapsayıcıyı Esnek Yap ve Ortala */
+.flatpickr-current-month {
+    display: flex !important;
+    align-items: center !important; /* Dikeyde ortala */
+    justify-content: center !important; /* Yatayda ortala */
+    height: 40px !important;
+    padding-top: 0 !important;
+}
+
+/* 2. Ay Seçimini (Aralık) Hizala */
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    position: relative !important;
+    top: 1px !important; /* Sihirli dokunuş: Yazıyı 1px aşağı it */
+}
+
+/* 3. Yıl Girişini (2025) Hizala */
+.flatpickr-current-month input.cur-year {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    vertical-align: middle !important;
+}
+
 
