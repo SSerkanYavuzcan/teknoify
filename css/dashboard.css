@@ -1,5 +1,5 @@
 /* ================================================================
-   [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (MASTER V3)
+   [PROJECT] TEKNOIFY v2.0 - DASHBOARD STYLES (FINAL - AUTO FIT)
    [FILE] css/dashboard.css
    ================================================================ */
 
@@ -103,7 +103,7 @@ a { text-decoration: none; color: inherit; }
     scrollbar-width: thin; scrollbar-color: #333 transparent;
 }
 
-/* 4. DASHBOARD WIDGETS (Member Page) */
+/* 4. DASHBOARD WIDGETS */
 .stats-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 24px; margin-bottom: 40px;
@@ -121,6 +121,7 @@ a { text-decoration: none; color: inherit; }
 
 .section-title { font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; }
 
+/* Bildirim Tablosu */
 .data-table {
     width: 100%; border-collapse: collapse;
     background: var(--dash-card); border-radius: 16px; overflow: hidden;
@@ -135,7 +136,7 @@ a { text-decoration: none; color: inherit; }
 
 
 /* =================================================================
-   5. ANALİZ SAYFASI (Filtreler, Tablo, Takvim & Düzenleme)
+   5. ANALİZ SAYFASI ÖZEL STİLLERİ (Filtreler, Tablo & Düzenleme)
    ================================================================= */
 
 /* 5.1 Filtre Barı */
@@ -143,7 +144,8 @@ a { text-decoration: none; color: inherit; }
     display: flex; gap: 16px; flex-wrap: wrap;
     background: var(--dash-card); border: 1px solid var(--border);
     padding: 20px; border-radius: 16px; margin-bottom: 30px;
-    align-items: flex-end; position: relative; z-index: 30; 
+    align-items: flex-end;
+    position: relative; z-index: 30; 
 }
 
 .filter-group {
@@ -163,6 +165,7 @@ a { text-decoration: none; color: inherit; }
 }
 .filter-select:hover { background-color: rgba(255,255,255,0.06); border-color: var(--primary); outline: none; }
 
+/* Select ikonu */
 select.filter-select {
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -180,12 +183,12 @@ select.filter-select {
 .btn-filter { background: var(--primary); color: #fff; }
 .btn-filter:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-.btn-download { background: #10b981; color: #fff; text-decoration: none; position: relative; }
+.btn-download { background: #10b981; color: #fff; text-decoration: none; }
 .btn-download:hover { background: #059669; transform: translateY(-1px); }
 
 .btn-edit { background: #8b5cf6; color: #fff; }
 .btn-edit:hover { background: #7c3aed; transform: translateY(-1px); }
-.btn-edit.active { background: #ef4444; } 
+.btn-edit.active { background: #ef4444; }
 
 .btn-disabled { opacity: 0.5; pointer-events: none !important; background: #374151 !important; cursor: not-allowed; }
 
@@ -208,31 +211,63 @@ select.filter-select {
 .download-item:hover { background: var(--primary); }
 @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
+/* --- MINI ANALYTICS DASHBOARD --- */
+.mini-dashboard {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 24px; display: none; 
+}
+.kpi-card {
+    background: var(--dash-card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden;
+}
+.kpi-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 8px; }
+.kpi-value { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+.kpi-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+.trend-up { color: var(--success); font-size: 0.9rem; }
+.trend-down { color: var(--danger); font-size: 0.9rem; }
+.trend-neutral { color: var(--warning); font-size: 0.9rem; }
+.progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; }
+.progress-fill { height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 1s ease; }
+@media (max-width: 1024px) { .mini-dashboard { grid-template-columns: repeat(2, 1fr); } }
 
-/* 5.2 Excel/Analiz Tablosu */
-.comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; white-space: nowrap; table-layout: fixed; }
+/* 5. TABLO STİLLERİ (GÜNCELLENDİ: Auto Fit) */
+.comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+    /* white-space: nowrap; <--- KALDIRILDI: Metinler sığsın diye */
+    table-layout: auto; /* <--- EKLENDİ: İçeriğe göre genişle */
+}
+
 .comparison-table th {
     background: #181a20; color: #fff; padding: 14px 18px;
     border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);
     text-align: left; position: sticky; top: 0; z-index: 10; user-select: none;
-    overflow: hidden; text-overflow: ellipsis; position: relative; 
+    white-space: nowrap; /* Başlıklar kırılmasın */
 }
+
 .comparison-table td {
     padding: 14px 18px; border-bottom: 1px solid var(--border);
     border-right: 1px solid var(--border); background: var(--dash-card);
     color: var(--text-muted); vertical-align: middle;
-    overflow: hidden; text-overflow: ellipsis;
+    /* Metinler gerekirse alt satıra insin, taşmasın */
+    white-space: normal; 
+    word-wrap: break-word;
+    max-width: 300px; /* Çok uzun isimleri sınırla */
 }
+
 .comparison-table tr:hover td { background: rgba(255,255,255,0.03); color: #fff; }
 
 .th-group-tazeyo { background: rgba(16, 185, 129, 0.08) !important; color: var(--success) !important; text-align: center !important; border-bottom: 2px solid var(--success) !important; font-weight: 700; }
 .th-group-market { background: rgba(249, 115, 22, 0.08) !important; color: var(--warning) !important; text-align: center !important; border-bottom: 2px solid var(--warning) !important; font-weight: 700; }
 
-.price-cell { font-family: var(--font-mono); font-weight: 600; color: #e5e7eb; }
+.price-cell { font-family: var(--font-mono); font-weight: 600; color: #e5e7eb; white-space: nowrap; /* Fiyatlar kırılmasın */ }
 .diff-negative { color: var(--success); font-weight: 600; }
 .diff-positive { color: var(--danger); font-weight: 600; }
 
-.badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; display: inline-block; }
+.badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; display: inline-block; white-space: nowrap; }
 .badge-tazeyo { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
 .badge-market { background: rgba(249, 115, 22, 0.15); color: var(--warning); border: 1px solid rgba(249, 115, 22, 0.25); }
 
@@ -245,23 +280,11 @@ select.filter-select {
 .limit-warning i { margin-right: 8px; font-size: 1.1em; }
 .limit-warning strong { color: #fff; font-weight: 700; }
 
-
-/* --- DÜZENLEME MODU (DRAG & DROP & RESIZE) --- */
+/* --- DÜZENLEME MODU (Sadece Sürükle Bırak - RESIZE YOK) --- */
 .draggable-cursor { cursor: grab !important; }
 .draggable-cursor:active { cursor: grabbing !important; }
 .sortable-ghost { opacity: 0.4; background-color: rgba(139, 92, 246, 0.2) !important; }
 .sortable-chosen { background-color: rgba(139, 92, 246, 0.4) !important; }
-
-/* Resizer (Sütun Genişletme) */
-.resizer {
-    position: absolute; top: 0; right: 0;
-    width: 5px; cursor: col-resize; user-select: none; height: 100%; z-index: 20;
-    background: transparent;
-}
-/* Sadece düzenleme modunda görünür */
-.draggable-cursor .resizer { background: rgba(139, 92, 246, 0.5); width: 8px; }
-.resizer:hover, .resizing { background: var(--primary) !important; }
-
 
 /* --- MODERN TAKVİM (FLATPICKR) --- */
 .date-picker-wrapper { position: relative; width: 100%; }
@@ -315,33 +338,5 @@ span.flatpickr-weekday { color: #6b7280 !important; font-weight: 600 !important;
 .flatpickr-day.today { border-color: transparent !important; position: relative; font-weight: 700 !important; }
 .flatpickr-day.today::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background-color: #2563eb; }
 .flatpickr-day.selected.today::after { background-color: #fff; }
-
-
-/* --- MINI ANALYTICS DASHBOARD (KPI CARDS) --- */
-.mini-dashboard {
-    display: grid; grid-template-columns: repeat(4, 1fr); 
-    gap: 20px; margin-bottom: 30px; display: none; 
-}
-
-.kpi-card {
-    background: var(--dash-card); border: 1px solid var(--border); border-radius: 16px;
-    padding: 20px; display: flex; flex-direction: column; justify-content: center;
-    position: relative; overflow: hidden; transition: transform 0.2s ease;
-}
-.kpi-card:hover { transform: translateY(-3px); border-color: rgba(99, 102, 241, 0.3); }
-
-.kpi-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 10px; }
-.kpi-value { font-size: 1.5rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; }
-.kpi-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; font-weight: 500; }
-
-.trend-up { color: var(--success); font-weight: 700; font-size: 0.9rem; }
-.trend-down { color: var(--danger); font-weight: 700; font-size: 0.9rem; }
-.trend-neutral { color: var(--warning); font-weight: 700; font-size: 0.9rem; }
-
-.progress-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-top: 10px; overflow: hidden; }
-.progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #8b5cf6); border-radius: 3px; width: 0%; transition: width 1s ease-out; }
-
-@media (max-width: 1024px) { .mini-dashboard { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 600px) { .mini-dashboard { grid-template-columns: 1fr; } }
 
 
