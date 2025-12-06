@@ -40,33 +40,17 @@
             <div class="filter-bar">
                 <div class="filter-group">
                     <label>Şube Seçiniz</label>
-                    <select class="filter-select">
-                        <option>Tüm Şubeler</option>
-                        <option>İstanbul - Kadıköy</option>
-                        <option>İstanbul - Beşiktaş</option>
-                        <option>Ankara - Çankaya</option>
-                    </select>
+                    <select class="filter-select" id="filter-branch">
+                        <option value="all">Tüm Şubeler</option>
+                        </select>
                 </div>
                 <div class="filter-group">
                     <label>Marka Seçiniz</label>
-                    <select class="filter-select">
-                        <option>Tüm Markalar</option>
-                        <option>ABC Deterjan</option>
-                        <option>7Days</option>
-                        <option>Abant Su</option>
-                        <option>7UP</option>
+                    <select class="filter-select" id="filter-brand">
+                        <option value="all">Tüm Markalar</option>
                     </select>
                 </div>
-                <div class="filter-group">
-                    <label>Kategori Seçiniz</label>
-                    <select class="filter-select">
-                        <option>Tüm Kategoriler</option>
-                        <option>İçecekler</option>
-                        <option>Temizlik Ürünleri</option>
-                        <option>Atıştırmalık</option>
-                    </select>
-                </div>
-                <button class="btn-filter"><i class="fas fa-filter"></i> Uygula</button>
+                <button class="btn-filter" onclick="fetchData()"><i class="fas fa-sync-alt"></i> Yenile</button>
             </div>
 
             <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
@@ -96,7 +80,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>
@@ -105,6 +89,7 @@
     <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script> 
     <script>
+        // GÜNCEL CSV LINKIN
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -127,24 +112,43 @@
 
         async function fetchData() {
             const tbody = document.querySelector('.comparison-table tbody');
-            tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px;">Veriler Yükleniyor...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px;">Veriler Google Sheets\'ten alınıyor...</td></tr>';
 
             try {
                 const response = await fetch(SHEET_URL);
+                if (!response.ok) throw new Error("Veri kaynağına ulaşılamadı.");
+                
                 const data = await response.text();
+                
+                // Satırlara böl
                 const rows = data.split(/\r?\n/).slice(1);
                 
                 tbody.innerHTML = ''; 
+                let dataCount = 0;
 
                 rows.forEach(row => {
-                    const cols = row.split(','); 
-                    
-                    if (cols.length < 10) return; 
+                    if(!row.trim()) return; // Boş satırı atla
 
-                    const storeName = cols[1];
-                    const sku = cols[2];
-                    const prodName = cols[3];
+                    // --- GELİŞMİŞ CSV PARÇALAYICI (REGEX) ---
+                    // Tırnak içindeki virgülleri ayırmaz. Örn: "8,75" i tek parça alır.
+                    const regex = /(".*?"|[^",\s]+)(?=\s*,|\s*$)/g;
+                    let cols = [];
+                    let match;
+                    while ((match = regex.exec(row)) !== null) {
+                        // Tırnakları temizle ("8,75" -> 8,75)
+                        cols.push(match[0].replace(/^"|"$/g, '').trim());
+                    }
+
+                    // Sütun sayısı kontrolü (En az 7-8 sütun dolu olmalı)
+                    if (cols.length < 5) return; 
+
+                    // Verileri Eşleştir (Sheet Sırası: B=Store, C=SKU, D=Name, G=TazeyoOrg, H=TazeyoDisc, I=CompOrg, J=CompDisc)
+                    // CSV'de ilk sütun A (index 0) olduğu için B index 1'dir.
+                    const storeName = cols[1] || '-';
+                    const sku       = cols[2] || '-';
+                    const prodName  = cols[3] || 'İsimsiz Ürün';
                     
+                    // Fiyatları işle (Türkçe virgül desteği)
                     const t_org = parsePrice(cols[6]);
                     const t_dsc = parsePrice(cols[7]);
                     const priceBiz = t_dsc > 0 ? t_dsc : t_org;
@@ -153,51 +157,81 @@
                     const c_dsc = parsePrice(cols[9]);
                     const priceRakip = c_dsc > 0 ? c_dsc : c_org;
 
+                    // HESAPLAMALAR
                     let farkYuzde = 0;
                     let farkClass = "diff-negative"; 
                     
-                    if(priceRakip > 0) {
+                    if(priceRakip > 0 && priceBiz > 0) {
                         farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
                     }
 
                     let badgeHtml = '';
-                    if (priceBiz < priceRakip) {
-                        badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
-                    } else if (priceBiz > priceRakip) {
-                        badgeHtml = '<span class="badge badge-market">MARKETTEN</span>';
-                        farkClass = "diff-positive";
+                    if (priceBiz > 0 && priceRakip > 0) {
+                        if (priceBiz < priceRakip) {
+                            badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
+                        } else if (priceBiz > priceRakip) {
+                            badgeHtml = '<span class="badge badge-market">MARKETTEN</span>';
+                            farkClass = "diff-positive";
+                        } else {
+                            badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
+                        }
                     } else {
-                        badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
+                         badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">VERİ YOK</span>';
                     }
 
+                    // HTML Oluştur
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${storeName}</td>
                         <td>${sku}</td>
-                        <td>${prodName}</td>
-                        <td class="price-cell">₺${t_org.toFixed(2)}</td>
-                        <td class="price-cell">${t_dsc > 0 ? '₺'+t_dsc.toFixed(2) : '-'}</td>
+                        <td title="${prodName}">${prodName.length > 25 ? prodName.substring(0,25)+'...' : prodName}</td>
+                        
+                        <td class="price-cell">₺${formatMoney(t_org)}</td>
+                        <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
                         <td class="${farkClass}">%${farkYuzde.toFixed(1)}</td>
-                        <td class="price-cell">₺${c_org.toFixed(2)}</td>
-                        <td class="price-cell">${c_dsc > 0 ? '₺'+c_dsc.toFixed(2) : '-'}</td>
+                        
+                        <td class="price-cell">₺${formatMoney(c_org)}</td>
+                        <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
                         <td class="${farkClass}">%${(-farkYuzde).toFixed(1)}</td>
+                        
                         <td>${badgeHtml}</td>
                         <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
                     `;
                     tbody.appendChild(tr);
+                    dataCount++;
                 });
+
+                if(dataCount === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px;">Tablo boş veya veri formatı uyumsuz.</td></tr>';
+                }
 
             } catch (error) {
                 console.error(error);
-                tbody.innerHTML = '<tr><td colspan="11" style="color:#ef4444; text-align:center;">Veri bağlantı hatası.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="11" style="color:#ef4444; text-align:center;">Bağlantı Hatası: Lütfen internetinizi kontrol edin.</td></tr>';
             }
         }
 
+        // Fiyat Temizleme (TR Format: "8,75" -> 8.75)
         function parsePrice(val) {
             if(!val) return 0;
-            let clean = val.replace(/[^0-9,.-]/g, '').replace(',', '.');
+            // Tırnakları ve ₺ işaretini temizle
+            let clean = val.replace(/["'₺\s]/g, '');
+            // Eğer virgül varsa ve nokta yoksa (TR format: 8,75), virgülü nokta yap
+            if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
+                clean = clean.replace(',', '.');
+            } 
+            // Eğer hem nokta hem virgül varsa (1.250,50), noktaları sil virgülü nokta yap
+            else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
+                clean = clean.replace(/\./g, '').replace(',', '.');
+            }
+            
             let num = parseFloat(clean);
             return isNaN(num) ? 0 : num;
+        }
+
+        // Gösterim için format (8.75 -> "8,75")
+        function formatMoney(num) {
+            return num.toFixed(2).replace('.', ',');
         }
 
         function logout() {
