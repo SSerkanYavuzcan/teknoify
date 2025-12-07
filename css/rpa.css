@@ -120,22 +120,22 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    position: relative; /* Roket ve zone için gerekli */
-    overflow: hidden;   /* Kart dışına taşan animasyonu gizle */
+    position: relative;          /* Roket ve zone için gerekli */
+    overflow: visible;           /* Roket kart dışına taşabilsin */
 }
 
 /* Benefit Icon Stilleri */
 .benefit-icon {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: var(--primary); /* İkon Rengi: Logonun ana rengi */
+    color: var(--primary);       /* İkon Rengi: Logonun ana rengi */
     width: 40px;
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    z-index: 10;
+    z-index: 5;
 }
 
 .benefit-card h4 {
@@ -156,22 +156,23 @@
    GELİŞMİŞ ROKET + STAND ANİMASYONU (Hız Artışı Kartı)
 ================================================================ */
 
-/* Kart içinde sağ alt köşede roket alanı */
+/* Kart içinde sağ üstte roket alanı (ikonun biraz sağ üstünde duracak) */
 #card-speed .rocket-zone {
     position: absolute;
-    right: 16px;
-    bottom: 12px;
+    right: 18px;
+    top: 16px;
     width: 90px;
-    height: 90px;
+    height: 160px;
     pointer-events: none; /* Tıklamayı engelleme */
+    z-index: 10;
 }
 
-/* Stand (platform) */
+/* Stand (platform) – kartın içinde, roketin tutunduğu yer */
 #card-speed .rocket-stand {
     position: absolute;
-    right: 0;
+    right: 4px;
     bottom: 0;
-    width: 78px;
+    width: 80px;
     height: 18px;
     background: linear-gradient(
         90deg,
@@ -187,10 +188,10 @@
 #card-speed .rocket-stand::before {
     content: "";
     position: absolute;
-    right: 10px;
+    right: 14px;
     bottom: 18px;
     width: 8px;
-    height: 40px;
+    height: 44px;
     border-radius: 999px;
     background: linear-gradient(
         180deg,
@@ -200,23 +201,28 @@
     box-shadow: 0 0 10px rgba(124, 93, 255, 0.9);
 }
 
-/* Roket konteyneri – standin üstünde bekliyor */
+/* Roket konteyneri – standin hemen üstünde başlıyor */
 .rocket-container {
     position: absolute;
-    right: 28px;
-    bottom: 18px;
+    right: 34px;
+    bottom: 20px;
     transform-origin: center bottom;
     transform: translate(0, 0) rotate(0deg);
     transition: transform 0.4s ease-out;
+    z-index: 15;
 }
 
-/* Roket ikonu – marka renklerine uygun */
+/* Roket ikonu – daha ince, gradient ve yumuşak glow */
 .rocket-icon {
-    font-size: 2.2rem;
-    color: var(--primary);
+    font-size: 1.8rem;
+    /* gradient ile daha çizgili görünüm */
+    color: transparent;
+    background: linear-gradient(180deg, #e5e7ff, #6366f1);
+    -webkit-background-clip: text;
+    background-clip: text;
     text-shadow:
-        0 0 10px rgba(124, 93, 255, 0.9),
-        0 0 18px rgba(56, 189, 248, 0.7);
+        0 0 4px rgba(124, 93, 255, 0.7),
+        0 0 10px rgba(37, 99, 235, 0.7);
 }
 
 /* Roketin motor kısmından çıkan duman / alev */
@@ -248,9 +254,9 @@
     animation: smokeFlight 0.5s ease-out infinite;
 }
 
-/* Roket uçuş animasyonu – kalkış, üstte U dönüşü, dönerek standa iniş */
+/* Roket uçuş animasyonu – kalkış, üstte uzun U dönüşü, dik iniş */
 .rocket-container.launched {
-    animation: rocketFlight 6s cubic-bezier(0.28, 0.8, 0.32, 1) forwards;
+    animation: rocketFlight 10s cubic-bezier(0.28, 0.8, 0.32, 1) forwards;
 }
 
 /* Hafif titreşimli duruş (isteğe bağlı) */
@@ -265,7 +271,7 @@
     100% { transform: translate(0, 0) rotate(0deg); }
 }
 
-/* Roket uçuş yolu – kalkış, üstte U dönüşü, dik iniş */
+/* Roket uçuş yolu – daha uzun, kartın üstünden net şekilde geçiyor */
 @keyframes rocketFlight {
     /* Stand üstünde dik duruş */
     0% {
@@ -274,38 +280,38 @@
     }
 
     /* Kartın içinden dikey kalkış */
-    12% {
-        transform: translate(-6px, -120px) rotate(-5deg);
+    18% {
+        transform: translate(-8px, -160px) rotate(-8deg);
         opacity: 1;
     }
 
-    /* Daha yukarı – kartın dışına doğru */
-    25% {
-        transform: translate(-18px, -230px) rotate(-15deg);
+    /* Kartın biraz üstünde */
+    35% {
+        transform: translate(-24px, -320px) rotate(-18deg);
         opacity: 1;
     }
 
-    /* U dönüşü için sağ üstte yay çizerken */
-    40% {
-        transform: translate(40px, -310px) rotate(-140deg);
-        opacity: 0.9;
-    }
-
-    /* Ekranın üstünden geri geliş */
-    55% {
-        transform: translate(70px, -260px) rotate(-200deg);
-        opacity: 0.85;
-    }
-
-    /* Kartın üst hizasına inerken dikleşme */
-    72% {
-        transform: translate(20px, -110px) rotate(-300deg);
+    /* Ekranın üst kısmında geniş U dönüşü */
+    50% {
+        transform: translate(60px, -460px) rotate(-150deg);
         opacity: 0.95;
     }
 
+    /* Sağ üstten geri dönüşte */
+    65% {
+        transform: translate(90px, -380px) rotate(-210deg);
+        opacity: 0.9;
+    }
+
+    /* Kartın üst hizasına yaklaşırken */
+    80% {
+        transform: translate(24px, -180px) rotate(-300deg);
+        opacity: 1;
+    }
+
     /* Stand hizasına yaklaşma, neredeyse dik */
-    88% {
-        transform: translate(4px, -30px) rotate(-345deg);
+    92% {
+        transform: translate(6px, -40px) rotate(-345deg);
         opacity: 1;
     }
 
