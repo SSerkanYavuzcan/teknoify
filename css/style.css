@@ -205,6 +205,29 @@ select option {
 }
 
 
+/* 2.3 Form Validation (Hata Durumları) */
+.form-error-msg {
+  color: #ef4444; /* Kırmızı */
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: none; /* JS ile açılacak */
+  padding-left: 0.5rem;
+  font-weight: 500;
+}
+
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+  background-color: rgba(239, 68, 68, 0.05) !important;
+}
+
+
+.input-wrapper.error i {
+  color: #ef4444; /* Hata varken ikonu kırmızı yap */
+}
+
+
 /* ================================================================
 [LAYER 3] LAYOUT MODULES
 ================================================================
@@ -458,7 +481,7 @@ select option {
 
 
 /* ================================================================
-[LAYER 8] CONTACT SECTION
+[LAYER 8] CONTACT SECTION (YENİ)
 Modern İletişim Formu Tasarımı
 ================================================================
 */
