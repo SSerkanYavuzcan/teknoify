@@ -60,8 +60,7 @@
                         <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-branch')">
                             <span id="text-branch">Şubeler Yükleniyor...</span>
                         </div>
-                        <div class="multi-select-menu" id="menu-branch">
-                            </div>
+                        <div class="multi-select-menu" id="menu-branch"></div>
                     </div>
                 </div>
 
@@ -71,15 +70,14 @@
                         <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-category')">
                             <span id="text-category">Tüm Kategoriler</span>
                         </div>
-                        <div class="multi-select-menu" id="menu-category">
-                            </div>
+                        <div class="multi-select-menu" id="menu-category"></div>
                     </div>
                 </div>
 
                 <button class="btn-filter" id="btn-load" onclick="applyFilters()">
                     <i class="fas fa-search"></i> Verileri Yükle
                 </button>
-                
+               
                 <div class="download-wrapper">
                     <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
                         <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down" style="font-size:0.8em; margin-left:4px;"></i>
@@ -128,7 +126,7 @@
                     <thead>
                         <tr class="no-sort">
                             <th colspan="6" style="background:#14161c;">Ürün Bilgileri</th>
-                            <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Tazeyo</th>
+                            <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Bizim Fiyatlar</th>
                             <th colspan="3" class="th-group-market" id="header-competitor">Rakip Market</th>
                             <th colspan="2" style="background:#14161c;">Analiz</th>
                         </tr>
@@ -150,7 +148,7 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <tr><td colspan="14" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağına bağlanılıyor...</td></tr>
+                        <tr><td colspan="14" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağı bekleniyor...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -170,37 +168,59 @@
     <script src="../js/script.js"></script>
    
     <script>
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
-
+        // GLOBAL DEĞİŞKENLER
         let ALL_DATA = [];
         let flatpickrInstance;
-        
-        // Çoklu seçim değişkenleri
-        let SELECTED_BRANCHES = ['all']; 
+        let SELECTED_BRANCHES = ['all'];
         let SELECTED_CATEGORIES = ['all'];
 
         document.addEventListener('DOMContentLoaded', () => {
+            // 1. Session Kontrolü
+            if (typeof SessionManager === 'undefined') return;
             const session = new SessionManager();
             const currentUser = session.validateSession();
             if (!currentUser) { window.location.href = '../index.html'; return; }
 
-            const userDataFull = USER_DB[currentUser.username];
-            if (userDataFull) {
-                document.getElementById('user-name-display').textContent = userDataFull.name;
-                document.getElementById('user-avatar').textContent = userDataFull.name.charAt(0).toUpperCase();
-            }
+            // 2. Users.json'dan Veri Çek ve Yetki Kontrolü
+            fetch('../data/users.json')
+                .then(res => res.json())
+                .then(userDB => {
+                    const userData = userDB[currentUser.username];
 
-            initCalendar();
-            initData();
+                    // A) Yetki Kontrolü
+                    if (!userData || !userData.features || userData.features.analysis !== true) {
+                        alert("Bu hizmete erişim yetkiniz bulunmamaktadır.");
+                        window.location.href = 'member.html';
+                        return;
+                    }
 
-            // Sayfa boşluğuna tıklayınca dropdownları kapat
+                    // B) Profil Bilgilerini Güncelle
+                    if (userData) {
+                        document.getElementById('user-name-display').textContent = userData.name;
+                        document.getElementById('user-avatar').textContent = userData.name.charAt(0).toUpperCase();
+                    }
+
+                    // C) Veri Kaynağını Belirle ve Başlat
+                    initCalendar();
+
+                    if (userData.config && userData.config.sheetUrl && userData.config.sheetUrl !== "") {
+                        // Kullanıcının özel linki varsa veriyi çek
+                        initData(userData.config.sheetUrl);
+                    } else {
+                        // Link yoksa (Yemeksepeti vb.)
+                        showNoDataState();
+                    }
+                })
+                .catch(err => {
+                    console.error("Kullanıcı verisi okunamadı:", err);
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
+                });
+
+            // Dropdown Kapatma Event'leri
             document.addEventListener('click', function(e) {
-                // Dropdown menü kapatma
                 if (!e.target.closest('.multi-select-wrapper')) {
                     document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
                 }
-                
-                // İndirme menüsü kapatma
                 const wrapper = document.querySelector('.download-wrapper');
                 const menu = document.getElementById('download-menu');
                 if (wrapper && !wrapper.contains(e.target)) {
@@ -209,15 +229,31 @@
             });
         });
 
+        // --- VERİ YOKSA (Yemeksepeti Durumu) ---
+        function showNoDataState() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.<br><small>Lütfen yöneticinizle iletişime geçiniz.</small></td></tr>';
+            
+            // Şube ve Kategori yükleniyor yazılarını güncelle
+            document.getElementById('text-branch').textContent = "-";
+            document.getElementById('text-category').textContent = "-";
+            
+            // Butonları pasife al
+            document.getElementById('btn-load').disabled = true;
+            document.getElementById('btn-load').style.opacity = "0.5";
+            document.getElementById('btn-load').style.cursor = "not-allowed";
+        }
+
         function initCalendar() {
             flatpickrInstance = flatpickr("#date-range", {
-                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null, 
-                placeholder: "Tarih Aralığı Seçiniz" 
+                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null,
+                placeholder: "Tarih Aralığı Seçiniz"
             });
         }
 
-        function initData() {
-            Papa.parse(SHEET_URL, {
+        // --- DİNAMİK VERİ ÇEKME (URL Parametresi Eklendi) ---
+        function initData(dynamicUrl) {
+            Papa.parse(dynamicUrl, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
                     ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
@@ -228,26 +264,21 @@
                 },
                 error: function(err) {
                     console.error("CSV Hatası:", err);
-                    document.getElementById('table-body').innerHTML = '<tr><td colspan="14" style="color:#ef4444; text-align:center;">Veri çekilemedi.</td></tr>';
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="14" style="color:#ef4444; text-align:center;">Veri çekilemedi. Bağlantı hatası.</td></tr>';
                 }
             });
         }
 
-        // --- YENİ ÇOKLU SEÇİM FİLTRE MANTIĞI ---
+        // --- FİLTRELEME VE UI FONKSİYONLARI (Aynen Korundu) ---
         function populateFilters() {
             const branchSet = new Set();
             const catSet = new Set();
-
             ALL_DATA.forEach(row => {
                 if(row['Store Name']) branchSet.add(row['Store Name'].trim());
                 if(row['Category Name']) catSet.add(row['Category Name'].trim());
             });
-
-            // Şube Menüsünü Doldur
             renderMultiSelectOptions('menu-branch', Array.from(branchSet).sort(), 'branch');
             updateTriggerText('branch', 'Tüm Şubeler');
-
-            // Kategori Menüsünü Doldur
             renderMultiSelectOptions('menu-category', Array.from(catSet).sort(), 'category');
             updateTriggerText('category', 'Tüm Kategoriler');
         }
@@ -255,15 +286,11 @@
         function renderMultiSelectOptions(menuId, items, type) {
             const menu = document.getElementById(menuId);
             menu.innerHTML = '';
-
-            // "Tümü" Seçeneği
             const allDiv = document.createElement('div');
             allDiv.className = 'multi-option selected';
             allDiv.onclick = () => selectOption(type, 'all', allDiv);
             allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
             menu.appendChild(allDiv);
-
-            // Diğer Seçenekler
             items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'multi-option';
@@ -280,8 +307,7 @@
             const allOption = menu.children[0];
 
             if (value === 'all') {
-                selectedArray.length = 0;
-                selectedArray.push('all');
+                selectedArray.length = 0; selectedArray.push('all');
                 Array.from(menu.children).forEach(child => child.classList.remove('selected'));
                 allOption.classList.add('selected');
             } else {
@@ -301,10 +327,8 @@
                     allOption.classList.add('selected');
                 }
             }
-
             if (type === 'branch') SELECTED_BRANCHES = selectedArray;
             else SELECTED_CATEGORIES = selectedArray;
-
             updateTriggerText(type);
         }
 
@@ -312,26 +336,18 @@
             const arr = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
             const textId = (type === 'branch') ? 'text-branch' : 'text-category';
             const label = document.getElementById(textId);
-
-            if (arr.includes('all')) {
-                label.textContent = (type === 'branch') ? "Tüm Şubeler" : "Tüm Kategoriler";
-            } else if (arr.length === 1) {
-                label.textContent = arr[0];
-            } else {
-                label.textContent = `${arr.length} ${type === 'branch' ? 'Şube' : 'Kategori'} Seçildi`;
-            }
+            if (arr.includes('all')) label.textContent = (type === 'branch') ? "Tüm Şubeler" : "Tüm Kategoriler";
+            else if (arr.length === 1) label.textContent = arr[0];
+            else label.textContent = `${arr.length} ${type === 'branch' ? 'Şube' : 'Kategori'} Seçildi`;
         }
 
         function toggleMultiSelect(menuId) {
             const menu = document.getElementById(menuId);
             const isVisible = menu.classList.contains('show');
             document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
-            if (!isVisible) {
-                menu.classList.add('show');
-            }
+            if (!isVisible) menu.classList.add('show');
         }
 
-        // --- VERİ YÜKLEME VE FİLTRELEME ---
         function applyFilters() {
             const dateRange = flatpickrInstance.selectedDates;
             const tbody = document.getElementById('table-body');
@@ -340,40 +356,29 @@
             const headerTazeyo = document.getElementById('header-tazeyo');
             const miniDash = document.getElementById('mini-dashboard');
 
-            if (SELECTED_BRANCHES.includes('all')) {
-                headerTazeyo.textContent = "Tazeyo (Genel)";
-            } else if (SELECTED_BRANCHES.length === 1) {
-                headerTazeyo.textContent = SELECTED_BRANCHES[0];
-            } else {
-                headerTazeyo.textContent = "Seçili Şubeler";
-            }
+            if (SELECTED_BRANCHES.includes('all')) headerTazeyo.textContent = "Bizim Fiyatlar (Genel)";
+            else if (SELECTED_BRANCHES.length === 1) headerTazeyo.textContent = SELECTED_BRANCHES[0];
+            else headerTazeyo.textContent = "Seçili Şubeler";
 
-            if (dateRange.length < 1) {
-                showToast("Lütfen bir tarih aralığı seçiniz.");
-                return;
-            }
+            if (dateRange.length < 1) { showToast("Lütfen bir tarih aralığı seçiniz."); return; }
 
             tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
 
             const startDate = dateRange[0];
             const endDate = dateRange[1] ? dateRange[1] : dateRange[0];
-            startDate.setHours(0,0,0,0);
-            endDate.setHours(23,59,59,999);
+            startDate.setHours(0,0,0,0); endDate.setHours(23,59,59,999);
 
             let filteredData = ALL_DATA.filter(row => {
                 const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const catName = row['Category Name'] ? row['Category Name'].trim() : "";
-               
                 const branchMatch = SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.includes(storeName);
                 const catMatch = SELECTED_CATEGORIES.includes('all') || SELECTED_CATEGORIES.includes(catName);
-               
                 const dateStr = row['Report Date'];
                 if (!dateStr) return false;
                 const parts = dateStr.split('.');
                 if(parts.length !== 3) return false;
                 const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
                 const dateMatch = (rowDate >= startDate && rowDate <= endDate);
-
                 return branchMatch && catMatch && dateMatch;
             });
 
@@ -394,11 +399,7 @@
             btnDownload.classList.remove('btn-disabled');
             miniDash.style.display = 'grid';
             
-            // Kategori KPI Hesaplaması için parametre belirle
-            const catParam = (SELECTED_CATEGORIES.length === 1 && !SELECTED_CATEGORIES.includes('all')) 
-                             ? SELECTED_CATEGORIES[0] 
-                             : 'all';
-           
+            const catParam = (SELECTED_CATEGORIES.length === 1 && !SELECTED_CATEGORIES.includes('all')) ? SELECTED_CATEGORIES[0] : 'all';
             calculateKPIs(filteredData, catParam);
 
             const displayData = filteredData.slice(0, 250);
@@ -414,9 +415,7 @@
             let detected = "Rakip Market";
             if(data.length > 0) {
                 const compName = data[0]['Competitor Store Name'];
-                if(compName) {
-                    detected = (selectedBranch === 'all') ? cleanName(compName) : compName;
-                }
+                if(compName) detected = (selectedBranch === 'all') ? cleanName(compName) : compName;
             }
             headerComp.textContent = detected;
         }
@@ -427,9 +426,7 @@
                 const key = row['SKU'] || row['Product Name'];
                 if(!grouped[key]) {
                     grouped[key] = {
-                        ...row,
-                        'Store Name': 'Zincir Geneli',
-                        'Competitor Store Name': 'Rakip Zincir',
+                        ...row, 'Store Name': 'Zincir Geneli', 'Competitor Store Name': 'Rakip Zincir',
                         count: 0, t_org: 0, t_dsc: 0, c_org: 0, c_dsc: 0
                     };
                 }
@@ -440,7 +437,6 @@
                 item.c_org += parsePrice(row['Competitor Original Price']);
                 item.c_dsc += parsePrice(row['Competitor Discount Price']);
             });
-
             return Object.values(grouped).map(item => {
                 item['Tazeyo Original Price'] = item.t_org / item.count;
                 item['Tazeyo Discount Price'] = item.t_dsc > 0 ? (item.t_dsc / item.count) : 0;
@@ -460,23 +456,18 @@
                 const t_org = getValue(row['Tazeyo Original Price']);
                 const t_dsc = getValue(row['Tazeyo Discount Price']);
                 const bizPrice = t_dsc > 0 ? t_dsc : t_org;
-
                 const c_org = getValue(row['Competitor Original Price']);
                 const c_dsc = getValue(row['Competitor Discount Price']);
                 const compPrice = c_dsc > 0 ? c_dsc : c_org;
 
                 if (bizPrice > 0 && compPrice > 0) {
-                    totalBiz += bizPrice;
-                    totalComp += compPrice;
-                   
+                    totalBiz += bizPrice; totalComp += compPrice;
                     const catRaw = row['Category Name'] || 'Diğer';
                     const cat = catRaw.trim();
-
                     if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0 };
                     categoryStats[cat].biz += bizPrice;
                     categoryStats[cat].comp += compPrice;
                 }
-
                 if (t_dsc > 0 && t_dsc < t_org) {
                     discountCountBiz++;
                     const depth = ((t_org - t_dsc) / t_org) * 100;
@@ -502,7 +493,6 @@
 
             document.getElementById('kpi-disc-us').innerText = discountCountBiz;
             document.getElementById('kpi-disc-comp').innerText = discountCountComp;
-
             const avgDepth = depthCount > 0 ? (totalDiscountDepth / depthCount) : 0;
             document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
             document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
@@ -520,15 +510,12 @@
                     catTitle.innerText = "Mevcut Kategori Durumu";
                     catSub.innerHTML = `Rakipten <span class="trend-down">%${globalDiff.toFixed(1)} daha pahalı</span>`;
                 }
-            }
-            else {
+            } else {
                 let bestCat = '-'; let maxDiff = 0; let isAdvantage = true;
                 for (const [cat, stats] of Object.entries(categoryStats)) {
                     const diffPercent = ((stats.comp - stats.biz) / stats.comp) * 100;
                     if (Math.abs(diffPercent) > Math.abs(maxDiff)) {
-                        maxDiff = diffPercent;
-                        bestCat = cat;
-                        isAdvantage = diffPercent > 0;
+                        maxDiff = diffPercent; bestCat = cat; isAdvantage = diffPercent > 0;
                     }
                 }
                 catValue.innerText = bestCat;
@@ -545,7 +532,6 @@
         function renderTable(dataRows) {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
-
             dataRows.forEach(row => {
                 const reportDate = row['Report Date'];
                 const storeName = row['Store Name'];
@@ -558,42 +544,26 @@
                 const t_org = getValue(row['Tazeyo Original Price']);
                 const t_dsc = getValue(row['Tazeyo Discount Price']);
                 const priceBiz = t_dsc > 0 ? t_dsc : t_org;
-               
                 const c_org = getValue(row['Competitor Original Price']);
                 const c_dsc = getValue(row['Competitor Discount Price']);
                 const priceRakip = c_dsc > 0 ? c_dsc : c_org;
 
                 let compName = row['Competitor Store Name'];
                 let compBadge = compName ? cleanName(compName).toUpperCase() : 'RAKİP';
-
-                let farkYuzde = 0;
-                let farkClass = "diff-negative";
-                if(priceRakip > 0 && priceBiz > 0) {
-                    farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
-                }
+                let farkYuzde = 0; let farkClass = "diff-negative";
+                if(priceRakip > 0 && priceBiz > 0) farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
 
                 let badgeHtml = '';
                 if (priceBiz > 0 && priceRakip > 0) {
-                    if (priceBiz < priceRakip) {
-                        badgeHtml = '<span class="badge badge-tazeyo">TAZEYO</span>';
-                    } else if (priceBiz > priceRakip) {
-                        badgeHtml = `<span class="badge badge-market">${compBadge}</span>`;
-                        farkClass = "diff-positive";
-                    } else {
-                        badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>';
-                    }
-                } else {
-                    badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">VERİ YOK</span>';
-                }
+                    if (priceBiz < priceRakip) { badgeHtml = '<span class="badge badge-tazeyo">BİZ</span>'; }
+                    else if (priceBiz > priceRakip) { badgeHtml = `<span class="badge badge-market">${compBadge}</span>`; farkClass = "diff-positive"; }
+                    else { badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>'; }
+                } else { badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">VERİ YOK</span>'; }
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="color:#888; font-size:0.85rem;">${reportDate}</td>
-                    <td>${storeName}</td>
-                    <td>${sku}</td>
-                    <td title="${prodName}">${prodName}</td>
-                    <td>${brandName}</td>
-                    <td>${categoryName}</td>
+                    <td>${storeName}</td><td>${sku}</td><td title="${prodName}">${prodName}</td><td>${brandName}</td><td>${categoryName}</td>
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
                     <td>-</td>
@@ -617,7 +587,6 @@
         function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
         function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
         function getValue(val) { return typeof val === 'number' ? val : parsePrice(val); }
-
         function parsePrice(val) {
             if(!val) return 0;
             let clean = val.toString().replace(/["'₺\s]/g, '');
