@@ -160,29 +160,22 @@
 #card-speed .rocket-zone {
     position: absolute;
     right: 22px;
-    bottom: 18px;
-    width: 80px;
+    top: 46px;          /* daha yukarı */
+    width: 70px;
     height: 70px;
     pointer-events: none;
     z-index: 10;
 }
 
+
 /* Stand (platform) */
 #card-speed .rocket-stand {
-    position: absolute;
-    left: 4px;
-    bottom: 4px;
-    width: 72px;
-    height: 16px;
-    background: linear-gradient(
-        90deg,
-        rgba(20, 23, 40, 1),
-        rgba(35, 40, 70, 1)
-    );
-    border-radius: 999px;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(124, 132, 255, 0.4);
+    display: none;
 }
+#card-speed .rocket-stand::before {
+    display: none;
+}
+
 
 /* Standin arka kulesi */
 #card-speed .rocket-stand::before {
@@ -204,13 +197,14 @@
 /* Roket konteyneri – standin hemen üstünde, yatık duruyor */
 .rocket-container {
     position: absolute;
-    left: 22px;
-    bottom: 22px;
+    left: 24px;        /* zone içinde ortalanmış gibi */
+    bottom: 6px;       /* zone’un içinde kalıyor */
     transform-origin: center center;
     transform: translate(0, 0) rotate(-35deg); /* yatık duruş */
     transition: transform 0.3s ease-out;
     z-index: 15;
 }
+
 
 /* Roket her ready/launched olduğunda titremeli */
 .rocket-container.ready,
