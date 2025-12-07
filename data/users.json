@@ -1,34 +1,50 @@
 {
-  "tazeyo": {
-    "password": "12345",
-    "role": "member",
-    "name": "Tazeyo Ltd.",
-    "data": {
-      "activeBots": 4,
-      "totalProcessed": "12.450",
-      "savedHours": 320,
-      "nextPayment": "15 Ekim 2025",
-      "notifications": [
-        "RPA Bot #3 görevi tamamladı.",
-        "Fatura döneminiz yaklaşıyor."
-      ]
-    }
-  },
-  "serkanyavuzcan": {
-    "password": "335696shm!S",
-    "role": "admin",
-    "name": "Serkan Yavuzcan",
-    "data": {
-      "activeBots": 99,
-      "totalProcessed": "1.2M",
-      "savedHours": 9999,
-      "nextPayment": "-",
-      "notifications": [
-        "Sistem güncellemesi hazır.",
-        "Yeni üye kaydı: Tazeyo"
-      ]
+    "tazeyo": {
+      "password": "12345",
+      "role": "member",
+      "name": "Tazeyo",
+      "data": {
+        "activeBots": 4,
+        "totalProcessed": "12.450",
+        "savedHours": 320,
+        "nextPayment": "15 Ekim 2025",
+        "notifications": [
+          "RPA Bot #3 görevi tamamladı.",
+          "Fatura döneminiz yaklaşıyor."
+        ]
+      }
+    },
+    "serkanyavuzcan": {
+      "password": "335696shm!S",
+      "role": "admin",
+      "name": "Serkan Yavuzcan",
+      "data": {
+        "activeBots": 99,
+        "totalProcessed": "1.2M",
+        "savedHours": 9999,
+        "nextPayment": "-",
+        "notifications": [
+          "Sistem güncellemesi hazır.",
+          "Yeni üye kaydı: Tazeyo"
+        ]
+      }
+    },
+    "yemeksepeti": {
+      "password": "2165466shm",
+      "role": "premium",
+      "name": "Yemeksepeti",
+      "data": {
+        "activeBots": 0,
+        "totalProcessed": "0",
+        "savedHours": 0,
+        "nextPayment": "-",
+        "notifications": [
+          "Premium hesabınız aktif edildi.",
+          "Teknoify ailesine hoşgeldiniz!"
+        ]
+      }
     }
   }
-}
-
-
+  
+  
+  
