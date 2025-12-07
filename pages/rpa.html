@@ -48,6 +48,7 @@
         </div>
     </nav>
 </header>
+
 <main class="page-frame">
 
     <section class="rpa-hero">
@@ -66,7 +67,7 @@
             <div class="hero-right">
                 <div class="rpa-illustration-placeholder">
                     <i class="fas fa-cogs" style="font-size: 4rem; color: var(--heading-color);"></i>
-                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -84,16 +85,21 @@
 
                 <div class="benefit-cards-grid">
                     
+                    <!-- HIZ KARTI + GELİŞMİŞ ROKET -->
                     <div class="benefit-card" id="card-speed">
                         <div class="benefit-icon">
                             <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4>Hız Artışı</h4>
+                        <p>İnsan tarafından yapılan işlemleri milisaniyelere indirir ve iş hızınızı %80'e varan oranlarda artırır.</p>
+
+                        <div class="rocket-zone">
+                            <div class="rocket-stand"></div>
                             <div class="rocket-container" id="rocket-container">
                                 <i class="fas fa-rocket rocket-icon"></i>
                                 <div class="smoke-trail"></div>
                             </div>
                         </div>
-                        <h4>Hız Artışı</h4>
-                        <p>İnsan tarafından yapılan işlemleri milisaniyelere indirir ve iş hızınızı %80'e varan oranlarda artırır.</p>
                     </div>
 
                     <div class="benefit-card">
@@ -188,7 +194,7 @@
             rocketLaunched = true;
         }, 100);
         
-        // Roket 5 saniye sonra geri dönecek (SpaceX booster gibi)
+        // Roket 5 saniye sonra geri dönecek
         setTimeout(() => {
             rocket.classList.remove('ready');
             rocket.classList.remove('launched');
@@ -216,12 +222,8 @@
                 
                 // Roket Animasyonu Kontrolü
                 if (id === 'card-speed') {
-                    // Roketi her görünür olduğunda fırlatmak istiyorsak:
                     launchRocket(); 
                 }
-                
-                // Sayfanın geri kalan içeriği için gözlemciyi kes
-                // observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
@@ -236,5 +238,6 @@
 </script>
 </body>
 </html>
+
 
 

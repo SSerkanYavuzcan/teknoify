@@ -5,14 +5,18 @@
 
 /* Renk Güncellemesi: Başlıklar ve Paragraflar için istenen tonlar */
 :root {
-    --heading-color: #7b5dff; /* İstenen mor/mavi ton */
-    --paragraph-color: #c7c9d1; /* İstenen paragraf rengi */
+    --heading-color: #7b5dff;      /* Mor-mavi ton */
+    --paragraph-color: #c7c9d1;    /* Paragraf rengi */
 }
 
 /* Hero Section (Yeni Grid ve Başlık) */
 .rpa-hero {
     padding: 100px 0 60px 0;
-    background-image: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, rgba(5, 5, 5, 0) 100%);
+    background-image: linear-gradient(
+        180deg,
+        rgba(99, 102, 241, 0.05) 0%,
+        rgba(5, 5, 5, 0) 100%
+    );
     border-bottom: 1px solid var(--border-light);
 }
 
@@ -25,14 +29,14 @@
 }
 
 .rpa-hero h1 {
-    font-size: clamp(2rem, 4vw, 3rem); 
+    font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 800;
     margin-bottom: 1rem;
     color: var(--heading-color);
 }
 
 .rpa-hero .main-headline {
-    font-size: 1.1rem; /* Küçültüldü */
+    font-size: 1.1rem;
     color: var(--text-main);
     font-weight: 500;
     margin-bottom: 2rem;
@@ -65,7 +69,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 /* Content Section (Yazı Boyutları Küçültüldü) */
@@ -81,10 +85,10 @@
 }
 
 .main-text h2 {
-    font-size: 1.8rem; /* Küçültüldü */
+    font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: var(--heading-color); 
+    color: var(--heading-color);
 }
 
 .main-text h3 {
@@ -95,7 +99,7 @@
     color: var(--paragraph-color);
     margin-bottom: 1.2rem;
     line-height: 1.8;
-    font-size: 0.95rem; /* Küçültüldü */
+    font-size: 0.95rem;
     text-align: justify;
 }
 
@@ -112,12 +116,12 @@
     border: 1px solid var(--border-light);
     padding: 1.5rem;
     border-radius: var(--radius-md);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     height: 100%;
-    position: relative; /* Roket için */
-    overflow: hidden; /* Roketin başlangıçta görünmemesi için */
+    position: relative; /* Roket ve zone için gerekli */
+    overflow: hidden;   /* Kart dışına taşan animasyonu gizle */
 }
 
 /* Benefit Icon Stilleri */
@@ -125,7 +129,7 @@
     font-size: 2rem;
     margin-bottom: 1rem;
     color: var(--primary); /* İkon Rengi: Logonun ana rengi */
-    width: 40px; 
+    width: 40px;
     height: 40px;
     display: flex;
     align-items: center;
@@ -135,7 +139,7 @@
 }
 
 .benefit-card h4 {
-    font-size: 1.05rem; /* Küçültüldü */
+    font-size: 1.05rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: var(--heading-color);
@@ -148,108 +152,240 @@
     margin-bottom: 0;
 }
 
-/* --- ROKET ANİMASYONU STİLLERİ --- */
+/* ================================================================
+   GELİŞMİŞ ROKET + STAND ANİMASYONU (Hız Artışı Kartı)
+================================================================ */
 
+/* Kart içinde sağ alt köşede roket alanı */
+#card-speed .rocket-zone {
+    position: absolute;
+    right: 16px;
+    bottom: 12px;
+    width: 90px;
+    height: 90px;
+    pointer-events: none; /* Tıklamayı engelleme */
+}
+
+/* Stand (platform) */
+#card-speed .rocket-stand {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 78px;
+    height: 18px;
+    background: linear-gradient(
+        90deg,
+        rgba(20, 23, 40, 1),
+        rgba(35, 40, 70, 1)
+    );
+    border-radius: 999px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(124, 132, 255, 0.4);
+}
+
+/* Standin arka kulesi */
+#card-speed .rocket-stand::before {
+    content: "";
+    position: absolute;
+    right: 10px;
+    bottom: 18px;
+    width: 8px;
+    height: 40px;
+    border-radius: 999px;
+    background: linear-gradient(
+        180deg,
+        rgba(124, 93, 255, 0.9),
+        rgba(99, 102, 241, 0.2)
+    );
+    box-shadow: 0 0 10px rgba(124, 93, 255, 0.9);
+}
+
+/* Roket konteyneri – standin üstünde bekliyor */
 .rocket-container {
     position: absolute;
-    bottom: -150px; /* Başlangıçta kartın altında gizli */
-    left: 20%;
-    transform: rotate(45deg); /* Hafif açıyla bekleme */
-    transition: all 0.5s ease-out;
+    right: 28px;
+    bottom: 18px;
+    transform-origin: center bottom;
+    transform: translate(0, 0) rotate(0deg);
+    transition: transform 0.4s ease-out;
 }
 
+/* Roket ikonu – marka renklerine uygun */
 .rocket-icon {
-    font-size: 2.5rem;
-    color: var(--accent); /* Kırmızı/Turuncu tonunda roket */
+    font-size: 2.2rem;
+    color: var(--primary);
+    text-shadow:
+        0 0 10px rgba(124, 93, 255, 0.9),
+        0 0 18px rgba(56, 189, 248, 0.7);
 }
 
-/* 1. Duman Efekti (Hazır Olma) */
-.rocket-container .smoke-trail {
+/* Roketin motor kısmından çıkan duman / alev */
+.smoke-trail {
     position: absolute;
-    bottom: -10px;
-    left: 5px;
-    width: 10px;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: radial-gradient(
+        circle at 50% 20%,
+        rgba(248, 250, 252, 0.95),
+        rgba(129, 140, 248, 0.7),
+        rgba(15, 23, 42, 0.0) 70%
+    );
     opacity: 0;
-    transition: opacity 0.5s ease;
 }
 
-/* 2. Fırlatma Öncesi Durum */
+/* Roket kart görünür olur olmaz "hazır" mod: küçük dumanlar */
 .rocket-container.ready .smoke-trail {
     opacity: 1;
-    animation: smokePulse 0.5s infinite alternate;
+    animation: smokeIdle 0.6s ease-in-out infinite alternate;
 }
 
-/* 3. Fırlatma ve Uçuş */
-.rocket-container.launched {
-    animation: launchPath 5s ease-in-out forwards;
-    transform: rotate(0deg);
-}
-
+/* Uçuş sırasında daha güçlü iz bırak */
 .rocket-container.launched .smoke-trail {
-    animation: null; /* Duman patlamasını durdur */
+    animation: smokeFlight 0.5s ease-out infinite;
 }
 
-/* Duman Animasyonu */
-@keyframes smokePulse {
-    from { box-shadow: 0 0 10px 5px rgba(255, 165, 0, 0.6); }
-    to { box-shadow: 0 0 15px 8px rgba(255, 165, 0, 0.9); }
+/* Roket uçuş animasyonu – kalkış, üstte U dönüşü, dönerek standa iniş */
+.rocket-container.launched {
+    animation: rocketFlight 6s cubic-bezier(0.28, 0.8, 0.32, 1) forwards;
 }
 
-/* Roket Yolu Animasyonu (SpaceX Booster Landing Simülasyonu) */
-@keyframes launchPath {
-    /* 0. Başlangıç */
-    0% { transform: translateY(0) translateX(0) rotate(45deg); opacity: 1; }
-    
-    /* 1. Kalkış (Yüksek hızda) */
-    10% { transform: translateY(-500px) translateX(200px) rotate(5deg); opacity: 1; } 
-    
-    /* 2. Uzayda Yörünge (Sayfanın dışına çıkar gibi) */
-    40% { transform: translateY(-800px) translateX(400px) rotate(10deg); opacity: 0; } 
-    
-    /* 3. Geri Dönüş Hazırlığı (Sayfanın sağ üstünden girer) */
-    60% { transform: translateY(-800px) translateX(400px) rotate(-90deg); opacity: 0; } 
-    
-    /* 4. İniş (Yavaş ve Kontrollü Dikey İniş) */
-    70% { transform: translateY(-50px) translateX(200px) rotate(-90deg); opacity: 1; } 
-    100% { transform: translateY(0) translateX(0) rotate(-90deg); opacity: 1; } 
+/* Hafif titreşimli duruş (isteğe bağlı) */
+#card-speed .rocket-container:not(.launched):not(.ready) {
+    animation: rocketIdle 4s ease-in-out infinite;
 }
 
+/* Roketin hafif nefes alır gibi sallanması */
+@keyframes rocketIdle {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    50%  { transform: translate(0, -2px) rotate(-2deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
 
-/* Responsive Ayarları */
+/* Roket uçuş yolu – kalkış, üstte U dönüşü, dik iniş */
+@keyframes rocketFlight {
+    /* Stand üstünde dik duruş */
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+
+    /* Kartın içinden dikey kalkış */
+    12% {
+        transform: translate(-6px, -120px) rotate(-5deg);
+        opacity: 1;
+    }
+
+    /* Daha yukarı – kartın dışına doğru */
+    25% {
+        transform: translate(-18px, -230px) rotate(-15deg);
+        opacity: 1;
+    }
+
+    /* U dönüşü için sağ üstte yay çizerken */
+    40% {
+        transform: translate(40px, -310px) rotate(-140deg);
+        opacity: 0.9;
+    }
+
+    /* Ekranın üstünden geri geliş */
+    55% {
+        transform: translate(70px, -260px) rotate(-200deg);
+        opacity: 0.85;
+    }
+
+    /* Kartın üst hizasına inerken dikleşme */
+    72% {
+        transform: translate(20px, -110px) rotate(-300deg);
+        opacity: 0.95;
+    }
+
+    /* Stand hizasına yaklaşma, neredeyse dik */
+    88% {
+        transform: translate(4px, -30px) rotate(-345deg);
+        opacity: 1;
+    }
+
+    /* Tam dik ve standa yumuşak iniş */
+    100% {
+        transform: translate(0, 0) rotate(-360deg);
+        opacity: 1;
+    }
+}
+
+/* Kalkış öncesi küçük duman pıt pıt */
+@keyframes smokeIdle {
+    0% {
+        transform: translate(-50%, 2px) scale(0.6);
+        opacity: 0.4;
+    }
+    100% {
+        transform: translate(-50%, -4px) scale(1);
+        opacity: 0.9;
+    }
+}
+
+/* Uçuş sırasında arka arkaya iz bırakma */
+@keyframes smokeFlight {
+    0% {
+        transform: translate(-50%, 4px) scale(0.7);
+        opacity: 0.9;
+        filter: blur(0px);
+    }
+    100% {
+        transform: translate(-50%, -18px) scale(1.3);
+        opacity: 0;
+        filter: blur(3px);
+    }
+}
+
+/* ================================================================
+   Responsive Ayarları
+================================================================ */
+
 @media (max-width: 968px) {
     .content-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
+
     .rpa-hero .hero-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
         text-align: center;
     }
+
     .rpa-hero .hero-left {
         order: 2;
     }
+
     .rpa-hero .hero-right {
         order: 1;
     }
+
     .rpa-hero .icon-box {
         margin: 0 auto 1rem auto;
     }
+
     .rpa-hero .hero-ctas {
         justify-content: center;
     }
+
     .side-info {
         position: static;
     }
+
     .rpa-hero {
         padding-top: 120px;
     }
+
     .benefit-cards-grid {
-         grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
 }
+
 
 
