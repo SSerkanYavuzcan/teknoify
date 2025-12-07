@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teknoify | Kurumsal Otomasyon & Veri Çözümleri</title>
-    
+   
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
@@ -14,11 +14,12 @@
 
 
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" /> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" /> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 
     <link rel="stylesheet" href="css/style.css" />
-    
+   
     <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 
@@ -39,7 +40,7 @@
 
             <ul class="nav-menu" id="navMenu">
                 <li class="nav-item"><a href="#home" class="nav-link">Ana Sayfa</a></li>
-                
+               
                 <li class="nav-item dropdown">
                     <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
                     <ul class="dropdown-menu">
@@ -75,20 +76,17 @@
 
 
     <section id="home" class="hero">
-        <div id="stars-container" class="hero-surface"></div> 
+        <div id="stars-container" class="hero-surface"></div>
 
 
         <div class="hero-container">
             <div class="hero-left">
-                <div class="hero-eyebrow">
-                    <span class="pill"><i class="fas fa-bolt"></i> v2.0 Yayında</span>
-                </div>
                 <h1 class="hero-title">Geleceğin İş Gücünü <br> <span class="gradient-text">Bugün İnşa Edin</span></h1>
                 <p class="hero-subtitle">Yapay zeka tabanlı otomasyon sistemleri ile işletmenizin verimliliğini maksimum seviyeye çıkarın.</p>
-                
+               
                 <div class="hero-ctas">
                     <button class="btn btn-primary trigger-login">Hemen Başla</button>
-                    <a href="#services" class="btn btn-secondary">Çözümlerimiz</a>
+                    <a href="#services" class="btn btn-secondary">Hizmetlerimiz</a>
                 </div>
             </div>
 
@@ -99,7 +97,7 @@
                         <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
                         <span class="term-title">ai_core.py</span>
                     </div>
-                    <div class="term-body" id="heroTerminal"></div> 
+                    <div class="term-body" id="heroTerminal"></div>
                 </div>
             </div>
         </div>
@@ -108,9 +106,9 @@
 
     <section id="services" class="services">
         <div class="container">
-            <div style="text-align: center; margin-bottom: 3rem;">
-                <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Hizmetlerimiz</h2>
-                <p style="color: var(--text-muted);">Uçtan uca dijital dönüşüm araçları.</p>
+            <div class="section-header">
+                <h2>Hizmetlerimiz</h2>
+                <p>Uçtan uca dijital dönüşüm araçları.</p>
             </div>
 
 
@@ -127,7 +125,7 @@
                     <h3>Web Scraping</h3>
                     <p>İnternetin verisini işlenebilir raporlara dönüştürün ve rekabet avantajı sağlayın.</p>
                 </article>
-                
+               
                 <article class="service-card">
                     <div class="icon-box"><i class="fas fa-brain"></i></div>
                     <h3>AI Asistan</h3>
@@ -144,19 +142,19 @@
 <div id="loginModal" class="modal-overlay" aria-hidden="true">
     <div class="modal-container">
         <button class="modal-close" aria-label="Kapat"><i class="fas fa-times"></i></button>
-        
+       
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Giriş Yap</h3>
                 <p>Teknoify paneline erişmek için bilgilerinizi girin.</p>
             </div>
-            
+           
             <form id="loginForm" class="auth-form">
                 <div class="form-group">
                     <label for="email">Kullanıcı Adı veya E-posta</label>
                     <div class="input-wrapper">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="email" name="email" required placeholder="Örn: tazeyo veya serkan" autocomplete="username">
+                        <input type="text" id="email" name="email" required placeholder="info@teknoify.com" autocomplete="username">
                     </div>
                 </div>
 
@@ -175,7 +173,7 @@
                         <span>Giriş Yap</span> <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
-                
+               
                 <div class="form-footer">
                     <a href="#" class="link-sm">Şifremi Unuttum</a>
                 </div>
@@ -195,8 +193,6 @@
 
 
 <script src="js/session-manager.js"></script>
-
-
 <script src="js/script.js" defer></script>
 
 
