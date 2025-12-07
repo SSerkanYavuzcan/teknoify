@@ -1,86 +1,144 @@
 /* ================================================================
 [FILE] rpa.css
-[AMAÇ] Robotik Süreç Otomasyonu sayfasına özel yerleşim stilleri
+[AMAÇ] Robotik Süreç Otomasyonu sayfasına özel yerleşim ve kart stilleri
 ================================================================ */
 
-/* Genel Sayfa Başlığı Alanı */
+/* Renk Güncellemesi: Başlıklar için daha parlak ton */
+:root {
+    --heading-color: #7b5dff; /* İstenen renge en yakın mor/mavi ton */
+    --paragraph-color: #c7c9d1; /* İstenen paragraf rengi */
+}
+
+/* Hero Section (Yeni Grid ve Başlık) */
 .rpa-hero {
-    padding: 100px 0 60px 0; /* Header yüksekliğini telafi eder */
-    text-align: center;
+    padding: 100px 0 60px 0;
     background-image: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, rgba(5, 5, 5, 0) 100%);
     border-bottom: 1px solid var(--border-light);
+}
+
+.rpa-hero .hero-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr; /* Sol metin, Sağ illüstrasyon */
+    gap: 3rem;
+    align-items: center;
+    text-align: left;
 }
 
 .rpa-hero h1 {
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 800;
     margin-bottom: 1rem;
-    color: var(--text-main);
+    color: var(--heading-color); /* Yeni başlık rengi */
 }
 
-.rpa-hero .subtitle {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    max-width: 700px;
-    margin: 0 auto;
+.rpa-hero .main-headline {
+    font-size: 1.25rem;
+    color: var(--text-main); /* Daha vurucu olması için metin rengi */
+    font-weight: 500;
+    margin-bottom: 2rem;
 }
 
 .rpa-hero .icon-box {
-    margin: 0 auto 1.5rem auto;
-    /* style.css'ten gelen icon-box stilini yeniden kullanır */
+    margin: 0 0 1rem 0;
 }
 
-/* Ana İçerik Alanı */
+/* Yeni Buton Grubu */
+.rpa-hero .hero-ctas {
+    display: flex;
+    gap: 15px;
+    margin-top: 1.5rem;
+}
+
+.rpa-hero .btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* İllüstrasyon Alanı Placeholder */
+.rpa-illustration-placeholder {
+    height: 350px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Content Section (Yeni Renkler) */
 .rpa-content {
     padding: 4rem 0 6rem 0;
 }
 
 .content-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* 2/3 Metin, 1/3 Yan Bilgi */
+    grid-template-columns: 2fr 1fr;
     gap: 4rem;
     align-items: start;
 }
 
-/* Metin Alanı Stilleri */
 .main-text h2 {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: var(--primary); /* Başlık rengi */
+    color: var(--heading-color); /* Yeni renk */
+}
+
+.main-text h3 {
+    color: var(--heading-color); /* Yeni renk */
 }
 
 .main-text p {
-    color: var(--text-muted);
+    color: var(--paragraph-color); /* Yeni paragraf rengi */
     margin-bottom: 1.2rem;
     line-height: 1.8;
+    text-align: justify; /* Okunurluk için iki yana yasla */
 }
 
-.benefit-list {
-    margin-top: 1.5rem;
-    list-style: none;
-    padding-left: 0;
+/* Faydalar (Kart Yapısı) */
+.benefit-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
 }
 
-.benefit-list li {
-    padding-left: 2rem;
-    position: relative;
-    color: var(--text-main);
-    margin-bottom: 0.8rem;
-    font-weight: 500;
-    font-size: 0.95rem;
+.benefit-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.benefit-list li i {
-    color: #10b981; /* Yeşil checkmark */
-    position: absolute;
-    left: 0;
-    top: 5px;
+.benefit-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
 }
 
-/* Yan Bilgi Alanı */
+.benefit-card h4 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--heading-color);
+}
+
+.benefit-card p {
+    font-size: 0.9rem;
+    color: var(--paragraph-color);
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* Yan Bilgi ve Listeler */
 .side-info {
-    position: sticky; /* Sayfa kayarken yanında kalsın */
+    position: sticky;
     top: 100px;
 }
 
@@ -92,32 +150,48 @@
     margin-bottom: 2rem;
 }
 
-.card-feature h3 {
-    font-size: 1.1rem;
-    color: var(--primary);
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: 0.5rem;
-}
-
 .feature-list {
     list-style: none;
     padding-left: 0;
-    color: var(--text-muted);
+    color: var(--paragraph-color);
     line-height: 2;
+}
+.feature-list li {
+    font-size: 0.9rem;
 }
 
 /* Responsive Ayarları */
 @media (max-width: 968px) {
     .content-grid {
-        grid-template-columns: 1fr; /* Mobil görünümde tek sütuna düşür */
+        grid-template-columns: 1fr;
         gap: 2rem;
     }
+    .rpa-hero .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    .rpa-hero .hero-left {
+        order: 2;
+    }
+    .rpa-hero .hero-right {
+        order: 1;
+    }
+    .rpa-hero .icon-box {
+        margin: 0 auto 1rem auto;
+    }
+    .rpa-hero .hero-ctas {
+        justify-content: center;
+    }
     .side-info {
-        position: static; /* Sticky özelliğini kaldır */
+        position: static;
     }
     .rpa-hero {
         padding-top: 120px;
     }
+    .benefit-cards-grid {
+         grid-template-columns: 1fr;
+    }
 }
+
 
