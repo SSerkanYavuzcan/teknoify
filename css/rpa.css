@@ -25,14 +25,14 @@
 }
 
 .rpa-hero h1 {
-    font-size: clamp(2rem, 4vw, 3rem); /* Başlık boyutu korundu */
+    font-size: clamp(2rem, 4vw, 3rem); 
     font-weight: 800;
     margin-bottom: 1rem;
     color: var(--heading-color);
 }
 
 .rpa-hero .main-headline {
-    font-size: 1.1rem; /* Kısmen küçültüldü: 1.25rem -> 1.1rem */
+    font-size: 1.1rem; /* Küçültüldü */
     color: var(--text-main);
     font-weight: 500;
     margin-bottom: 2rem;
@@ -68,7 +68,7 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-/* Content Section (Yeni Renkler ve Küçültmeler) */
+/* Content Section (Yazı Boyutları Küçültüldü) */
 .rpa-content {
     padding: 4rem 0 6rem 0;
 }
@@ -81,7 +81,7 @@
 }
 
 .main-text h2 {
-    font-size: 1.8rem; /* Küçültüldü: 2rem -> 1.8rem */
+    font-size: 1.8rem; /* Küçültüldü */
     font-weight: 700;
     margin-bottom: 1.5rem;
     color: var(--heading-color); 
@@ -92,7 +92,7 @@
 }
 
 .main-text p {
-    color: var(--paragraph-color); /* Yeni paragraf rengi */
+    color: var(--paragraph-color);
     margin-bottom: 1.2rem;
     line-height: 1.8;
     font-size: 0.95rem; /* Küçültüldü */
@@ -116,20 +116,26 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative; /* Roket için */
+    overflow: hidden; /* Roketin başlangıçta görünmemesi için */
 }
 
+/* Benefit Icon Stilleri */
 .benefit-icon {
     font-size: 2rem;
     margin-bottom: 1rem;
     color: var(--primary); /* İkon Rengi: Logonun ana rengi */
-    width: 40px; /* Hizalama için */
+    width: 40px; 
     height: 40px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
 }
 
 .benefit-card h4 {
-    font-size: 1.05rem; /* Küçültüldü: 1.15rem -> 1.05rem */
+    font-size: 1.05rem; /* Küçültüldü */
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: var(--heading-color);
@@ -142,29 +148,75 @@
     margin-bottom: 0;
 }
 
-/* Yan Bilgi ve Listeler */
-.side-info {
-    position: sticky;
-    top: 100px;
+/* --- ROKET ANİMASYONU STİLLERİ --- */
+
+.rocket-container {
+    position: absolute;
+    bottom: -150px; /* Başlangıçta kartın altında gizli */
+    left: 20%;
+    transform: rotate(45deg); /* Hafif açıyla bekleme */
+    transition: all 0.5s ease-out;
 }
 
-.card-feature {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-light);
-    padding: 1.5rem;
-    border-radius: var(--radius-md);
-    margin-bottom: 2rem;
+.rocket-icon {
+    font-size: 2.5rem;
+    color: var(--accent); /* Kırmızı/Turuncu tonunda roket */
 }
 
-.feature-list {
-    list-style: none;
-    padding-left: 0;
-    color: var(--paragraph-color);
-    line-height: 2;
+/* 1. Duman Efekti (Hazır Olma) */
+.rocket-container .smoke-trail {
+    position: absolute;
+    bottom: -10px;
+    left: 5px;
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
-.feature-list li {
-    font-size: 0.9rem;
+
+/* 2. Fırlatma Öncesi Durum */
+.rocket-container.ready .smoke-trail {
+    opacity: 1;
+    animation: smokePulse 0.5s infinite alternate;
 }
+
+/* 3. Fırlatma ve Uçuş */
+.rocket-container.launched {
+    animation: launchPath 5s ease-in-out forwards;
+    transform: rotate(0deg);
+}
+
+.rocket-container.launched .smoke-trail {
+    animation: null; /* Duman patlamasını durdur */
+}
+
+/* Duman Animasyonu */
+@keyframes smokePulse {
+    from { box-shadow: 0 0 10px 5px rgba(255, 165, 0, 0.6); }
+    to { box-shadow: 0 0 15px 8px rgba(255, 165, 0, 0.9); }
+}
+
+/* Roket Yolu Animasyonu (SpaceX Booster Landing Simülasyonu) */
+@keyframes launchPath {
+    /* 0. Başlangıç */
+    0% { transform: translateY(0) translateX(0) rotate(45deg); opacity: 1; }
+    
+    /* 1. Kalkış (Yüksek hızda) */
+    10% { transform: translateY(-500px) translateX(200px) rotate(5deg); opacity: 1; } 
+    
+    /* 2. Uzayda Yörünge (Sayfanın dışına çıkar gibi) */
+    40% { transform: translateY(-800px) translateX(400px) rotate(10deg); opacity: 0; } 
+    
+    /* 3. Geri Dönüş Hazırlığı (Sayfanın sağ üstünden girer) */
+    60% { transform: translateY(-800px) translateX(400px) rotate(-90deg); opacity: 0; } 
+    
+    /* 4. İniş (Yavaş ve Kontrollü Dikey İniş) */
+    70% { transform: translateY(-50px) translateX(200px) rotate(-90deg); opacity: 1; } 
+    100% { transform: translateY(0) translateX(0) rotate(-90deg); opacity: 1; } 
+}
+
 
 /* Responsive Ayarları */
 @media (max-width: 968px) {

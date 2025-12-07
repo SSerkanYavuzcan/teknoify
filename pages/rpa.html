@@ -84,8 +84,14 @@
 
                 <div class="benefit-cards-grid">
                     
-                    <div class="benefit-card">
-                        <div class="benefit-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="benefit-card" id="card-speed">
+                        <div class="benefit-icon">
+                            <i class="fas fa-bolt"></i>
+                            <div class="rocket-container" id="rocket-container">
+                                <i class="fas fa-rocket rocket-icon"></i>
+                                <div class="smoke-trail"></div>
+                            </div>
+                        </div>
                         <h4>Hız Artışı</h4>
                         <p>İnsan tarafından yapılan işlemleri milisaniyelere indirir ve iş hızınızı %80'e varan oranlarda artırır.</p>
                     </div>
@@ -102,9 +108,11 @@
                         <p>İş gücü maliyetini düşürür, operasyon verimliliğini artırır ve yatırım maliyetinizi kısa sürede geri kazandırır.</p>
                     </div>
                     
-                    <div class="benefit-card">
-                        <div class="benefit-icon"><i class="fas fa-sync-alt"></i></div>
-                        <h4>7/24 Operasyon</h4>
+                    <div class="benefit-card" id="card-247">
+                        <div class="benefit-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h4><span id="counter-7">0</span>/<span id="counter-24">0</span> Operasyon</h4>
                         <p>Kesintisiz çalışan dijital iş gücü sayesinde, mesai saatleri dışında bile kritik süreçleriniz durmaz.</p>
                     </div>
                 </div>
@@ -144,8 +152,87 @@
 <script src="../js/script.js" defer></script>
 
 <script>
-    // Navbar fix: Sayfalar arası geçişte 'scrolled' sınıfı korunsun
     document.getElementById('header').classList.add('scrolled');
+    
+    // Animasyonların sadece bir kez tetiklenmesi için bayraklar
+    let rocketLaunched = false;
+    let counterStarted = false;
+
+    // --- 1. Sayaç Animasyonu (7/24 Operasyon) ---
+    function animateCounter(id, start, end, duration) {
+        if (start === end) return;
+        const obj = document.getElementById(id);
+        if(!obj) return;
+        let startTime = null;
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const currentVal = Math.floor(progress * (end - start) + start);
+            obj.textContent = currentVal;
+            if (progress < 1) window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
+    }
+    
+    // --- 2. Roket Animasyonu (Hız Artışı) ---
+    function launchRocket() {
+        if (rocketLaunched) return;
+        
+        const rocket = document.querySelector('.rocket-container');
+        if (!rocket) return;
+        
+        rocket.classList.add('ready'); // Dumanı başlat
+        
+        setTimeout(() => {
+            rocket.classList.add('launched'); // Roketi fırlat
+            rocketLaunched = true;
+        }, 100);
+        
+        // Roket 5 saniye sonra geri dönecek (SpaceX booster gibi)
+        setTimeout(() => {
+            rocket.classList.remove('ready');
+            rocket.classList.remove('launched');
+        }, 5500); 
+    }
+
+    // --- 3. Scroll Gözlemcisi ---
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5 // %50 görünürse tetikle
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+
+                // Sayaç Animasyonu Kontrolü
+                if (id === 'card-247' && !counterStarted) {
+                    animateCounter('counter-7', 0, 7, 2000);
+                    animateCounter('counter-24', 0, 24, 2500);
+                    counterStarted = true;
+                }
+                
+                // Roket Animasyonu Kontrolü
+                if (id === 'card-speed') {
+                    // Roketi her görünür olduğunda fırlatmak istiyorsak:
+                    launchRocket(); 
+                }
+                
+                // Sayfanın geri kalan içeriği için gözlemciyi kes
+                // observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observer'ı ilgili kartlara bağla
+    const card247 = document.getElementById('card-247');
+    if (card247) observer.observe(card247);
+    
+    const cardSpeed = document.getElementById('card-speed');
+    if (cardSpeed) observer.observe(cardSpeed);
+
 </script>
 </body>
 </html>
