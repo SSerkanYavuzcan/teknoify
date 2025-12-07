@@ -2,7 +2,7 @@
  * ================================================================
  * [PROJECT] TEKNOIFY v2.0
  * [FILE] js/script.js
- * [VERSION] Full Production Build (Infinite Loop Edition)
+ * [VERSION] Production Build (Auto-Scroll Fix)
  * ================================================================
  */
 
@@ -219,7 +219,7 @@ class UISystem {
 }
 
 /**
-* [MODULE 3] TERMINAL EFFECT (Infinite Loop & Story Mode)
+* [MODULE 3] TERMINAL EFFECT (Infinite Loop & Auto Scroll)
 */
 class TerminalEffect {
   constructor(selector) {
@@ -267,21 +267,24 @@ class TerminalEffect {
       this.start();
   }
 
+  // Scroll'u en aşağıya çeken yardımcı fonksiyon
+  scrollToBottom() {
+      this.container.scrollTop = this.container.scrollHeight;
+  }
+
   async start() {
-      // Sonsuz Döngü (Infinite Loop)
+      // Sonsuz Döngü
       while (true) {
-          this.container.innerHTML = ''; // Terminali temizle
+          this.container.innerHTML = ''; // Temizle
           
           for (let line of this.lines) {
-              // Eğer imleç ise yanıp sönme efekti için bekle
               if (line.type === 'cursor') {
                   await this.addCursor(line);
               } else {
                   await this.typeLine(line);
               }
           }
-          
-          // Döngü bitince bekle ve temizle
+          // Döngü bitince biraz bekle
           await new Promise(resolve => setTimeout(resolve, this.loopDelay));
       }
   }
@@ -289,18 +292,21 @@ class TerminalEffect {
   typeLine(lineData) {
       return new Promise(resolve => {
           const lineEl = document.createElement('div');
-          lineEl.textContent = ''; // ÖNEMLİ: Bug fix (Çift yazmayı önler)
+          lineEl.textContent = ''; 
           lineEl.style.fontFamily = "'Fira Code', monospace";
           lineEl.style.marginBottom = "4px";
 
           // Renklendirme
-          if (lineData.type === 'comment') lineEl.style.color = '#6b7280'; // Gri
-          if (lineData.type === 'code') lineEl.style.color = '#e2e8f0';    // Beyaz
-          if (lineData.type === 'success') lineEl.style.color = '#10b981'; // Yeşil
-          if (lineData.type === 'output') lineEl.style.color = '#fbbf24';  // Sarı
-          if (lineData.type === 'empty') lineEl.innerHTML = '&nbsp;';      // Boşluk
+          if (lineData.type === 'comment') lineEl.style.color = '#6b7280';
+          if (lineData.type === 'code') lineEl.style.color = '#e2e8f0';
+          if (lineData.type === 'success') lineEl.style.color = '#10b981';
+          if (lineData.type === 'output') lineEl.style.color = '#fbbf24';
+          if (lineData.type === 'empty') lineEl.innerHTML = '&nbsp;';
 
           this.container.appendChild(lineEl);
+          
+          // Satır eklendiği an scroll yap
+          this.scrollToBottom();
 
           if (lineData.type === 'empty') {
               setTimeout(resolve, 100);
@@ -311,8 +317,9 @@ class TerminalEffect {
           const interval = setInterval(() => {
               lineEl.textContent += lineData.text.charAt(i);
               i++;
-              // Satırın sonuna gelince otomatik scroll yap (Terminal hissi)
-              this.container.scrollTop = this.container.scrollHeight;
+              
+              // Her harf yazıldığında scroll yap (Garanti çözüm)
+              this.scrollToBottom();
 
               if (i >= lineData.text.length) {
                   clearInterval(interval);
@@ -329,7 +336,8 @@ class TerminalEffect {
           lineEl.textContent = lineData.text;
           lineEl.style.color = 'var(--primary)';
           this.container.appendChild(lineEl);
-          // İmleci bir süre göster sonra döngüyü bitir
+          this.scrollToBottom(); // Cursor eklendiğinde de scroll yap
+          
           setTimeout(resolve, 2000); 
       });
   }
