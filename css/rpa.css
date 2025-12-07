@@ -120,8 +120,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    position: relative;   /* Roket ve zone için gerekli */
-    overflow: visible;    /* Kart içinde kalacak ama biraz taşsa da görünür olsun */
+    position: relative;   /* Roket için gerekli */
+    overflow: visible;
 }
 
 /* Benefit Icon Stilleri */
@@ -153,120 +153,109 @@
 }
 
 /* ================================================================
-   ROKET + STAND (Kart içinde, yatık ve titreyen)
+   ROKET (Space Shuttle benzeri) – kart içinde yatık ve titreyen
 ================================================================ */
 
-/* Kart içinde sağ alt köşeye yakın roket alanı (metni kaydırmıyoruz) */
+/* Kart içinde sağ tarafa konumlanan roket alanı
+   (metne dokunmuyor, onun biraz sağında-dışında yer alıyor) */
 #card-speed .rocket-zone {
     position: absolute;
-    right: 22px;
-    top: 46px;          /* daha yukarı */
-    width: 70px;
-    height: 70px;
+    right: 18px;
+    top: 42px;          /* yazıyla çakışmasın diye yukarıda */
+    width: 80px;
+    height: 80px;
     pointer-events: none;
     z-index: 10;
 }
 
-
-/* Stand (platform) */
-#card-speed .rocket-stand {
-    display: none;
-}
+/* Stand tamamen kaldırıldı, sadece garanti amaçlı gizli */
+#card-speed .rocket-stand,
 #card-speed .rocket-stand::before {
     display: none;
 }
 
-
-/* Standin arka kulesi */
-#card-speed .rocket-stand::before {
-    content: "";
-    position: absolute;
-    right: 12px;
-    bottom: 16px;
-    width: 7px;
-    height: 36px;
-    border-radius: 999px;
-    background: linear-gradient(
-        180deg,
-        rgba(124, 93, 255, 0.9),
-        rgba(99, 102, 241, 0.2)
-    );
-    box-shadow: 0 0 10px rgba(124, 93, 255, 0.9);
-}
-
-/* Roket konteyneri – standin hemen üstünde, yatık duruyor */
+/* Roket konteyneri – zone içinde, hafif yatık */
 .rocket-container {
     position: absolute;
-    left: 24px;        /* zone içinde ortalanmış gibi */
-    bottom: 6px;       /* zone’un içinde kalıyor */
+    left: 22px;
+    bottom: 12px;
     transform-origin: center center;
-    transform: translate(0, 0) rotate(-35deg); /* yatık duruş */
+    transform: translate(0, 0) rotate(-22deg); /* hafif yatık duruş */
     transition: transform 0.3s ease-out;
     z-index: 15;
 }
 
-
-/* Roket her ready/launched olduğunda titremeli */
+/* Roket hazır/launch olduğunda sürekli hafif titreme */
 .rocket-container.ready,
 .rocket-container.launched {
     animation: rocketShake 3s ease-in-out infinite;
 }
 
-/* ---------- CSS ile çizilmiş roket ---------- */
+/* ---------- CSS ile Space Shuttle tarzı roket ---------- */
+/* Ortada turuncu ana tank, iki yanında beyaz booster, üstte burun konisi */
+
 .rocket-icon {
     position: relative;
-    width: 18px;
-    height: 40px;
-    font-size: 0;          /* emoji görünümünü kapat */
+    width: 26px;
+    height: 46px;
+    font-size: 0; /* font awesome ikonunu gizle, sadece iskeletini kullan */
 }
 
-/* Gövde */
+/* Gövde + yan booster'lar */
 .rocket-icon::before {
     content: "";
     position: absolute;
-    left: 2px;
     top: 8px;
-    width: 14px;
-    height: 26px;
-    border-radius: 8px;
-    background:
-        radial-gradient(circle at 50% 35%, #0f172a 0, #0f172a 52%, transparent 53%),
-        linear-gradient(180deg, #e5e7ff 0%, #6366f1 55%, #4f46e5 100%);
+    left: 9px;                 /* ana tank */
+    width: 8px;
+    height: 28px;
+    border-radius: 10px;
+    background: linear-gradient(
+        180deg,
+        #ffedd5 0%,
+        #f97316 40%,
+        #ea580c 100%
+    );
     box-shadow:
-        0 0 4px rgba(148, 163, 253, 0.7),
-        0 0 10px rgba(59, 130, 246, 0.5);
+        /* sol booster */
+        -9px 3px 0 0 #f9fafb,
+        -9px 3px 4px 0 rgba(15,23,42,0.4),
+        /* sağ booster */
+        9px 3px 0 0 #f9fafb,
+        9px 3px 4px 0 rgba(15,23,42,0.4);
 }
 
-/* Burun ve hafif kanat gölgesi */
+/* Burun konisi ve ufak glow */
 .rocket-icon::after {
     content: "";
     position: absolute;
-    left: 2px;
     top: 0;
+    left: 9px;
     width: 0;
     height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 10px solid #e5e7ff;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 9px solid #f97316;
     box-shadow:
-        -8px 24px 0 -10px rgba(56, 189, 248, 0.8),
-        8px 24px 0 -10px rgba(129, 140, 248, 0.9);
+        0 2px 4px rgba(0,0,0,0.5),
+        0 0 12px rgba(147, 197, 253, 0.6);
 }
 
 /* Roketin motor kısmından çıkan duman / alev */
 .smoke-trail {
     position: absolute;
-    bottom: -4px;
+    bottom: -3px;
     left: 50%;
     transform: translateX(-50%);
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border-radius: 999px;
     background: radial-gradient(
-        circle at 50% 20%,
-        rgba(248, 250, 252, 0.95),
-        rgba(129, 140, 248, 0.7),
-        rgba(15, 23, 42, 0.0) 70%
+        circle at 50% 10%,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(252, 211, 77, 0.95) 25%,
+        rgba(248, 113, 113, 0.9) 50%,
+        rgba(15, 23, 42, 0) 80%
     );
     opacity: 0;
 }
@@ -274,46 +263,48 @@
 /* Hazır modda hafif duman */
 .rocket-container.ready .smoke-trail {
     opacity: 1;
-    animation: smokeIdle 0.6s ease-in-out infinite alternate;
+    animation: smokeIdle 0.7s ease-in-out infinite alternate;
 }
 
 /* Launched olduğunda duman biraz daha hareketli */
 .rocket-container.launched .smoke-trail {
     opacity: 1;
-    animation: smokeFlight 0.7s ease-out infinite;
+    animation: smokeFlight 0.8s ease-out infinite;
 }
 
 /* Roketin yatık halde titreyerek ilerliyormuş gibi görünmesi */
 @keyframes rocketShake {
-    0%   { transform: translate(0, 0) rotate(-35deg); }
-    20%  { transform: translate(3px, -1px) rotate(-32deg); }
-    40%  { transform: translate(5px, 1px) rotate(-35deg); }
-    60%  { transform: translate(3px, 2px) rotate(-38deg); }
-    80%  { transform: translate(1px, 0) rotate(-34deg); }
-    100% { transform: translate(0, 0) rotate(-35deg); }
+    0%   { transform: translate(0, 0) rotate(-22deg); }
+    20%  { transform: translate(3px, -1px) rotate(-18deg); }
+    40%  { transform: translate(5px, 1px) rotate(-22deg); }
+    60%  { transform: translate(3px, 2px) rotate(-26deg); }
+    80%  { transform: translate(1px, 0) rotate(-20deg); }
+    100% { transform: translate(0, 0) rotate(-22deg); }
 }
 
 /* Kalkış öncesi küçük duman pıt pıt */
 @keyframes smokeIdle {
     0% {
-        transform: translate(-50%, 2px) scale(0.6);
+        transform: translate(-50%, 2px) scale(0.7);
         opacity: 0.4;
+        filter: blur(0px);
     }
     100% {
-        transform: translate(-50%, -4px) scale(1);
+        transform: translate(-50%, -3px) scale(1.1);
         opacity: 0.9;
+        filter: blur(1px);
     }
 }
 
-/* Uçuş hissi için kısa duman izi (ama kartın içinde kalıyor) */
+/* Uçuş hissi için kısa duman izi (kart içinde kalıyor) */
 @keyframes smokeFlight {
     0% {
-        transform: translate(-50%, 4px) scale(0.7);
+        transform: translate(-50%, 3px) scale(0.8);
         opacity: 0.9;
         filter: blur(0px);
     }
     100% {
-        transform: translate(-50%, -10px) scale(1.1);
+        transform: translate(-50%, -10px) scale(1.2);
         opacity: 0;
         filter: blur(2px);
     }
