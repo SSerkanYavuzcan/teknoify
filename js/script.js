@@ -2,7 +2,7 @@
  * ================================================================
  * [PROJECT] TEKNOIFY v2.0
  * [FILE] js/script.js
- * [VERSION] Production Build (Contact Form Mailto Integration)
+ * [VERSION] Production Build (Modern Button Feedback)
  * ================================================================
  */
 
@@ -57,6 +57,7 @@ class ContactSystem {
         this.inputService = document.getElementById('service_type');
         this.inputMessage = document.getElementById('message');
         this.errorMsg = document.getElementById('contact-error');
+        this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
         
         if (this.form) {
             this.bindEvents();
@@ -99,7 +100,6 @@ class ContactSystem {
             this.errorMsg.style.display = 'block';
         }
         this.inputContact.classList.add('input-error');
-        // İkonu kırmızı yapmak için parent wrapper'a class ekle
         if(this.inputContact.parentElement) {
             this.inputContact.parentElement.classList.add('error');
         }
@@ -115,19 +115,16 @@ class ContactSystem {
 
     // --- MAIL GÖNDERME FONKSİYONU ---
     sendMail() {
-        // 1. Formdaki Verileri Topla
+        // 1. Verileri Topla
         const name = this.inputName.value;
         const contact = this.inputContact.value;
-        // Select kutusundan seçili olanın metnini al (value'sini değil)
         const service = this.inputService.options[this.inputService.selectedIndex].text;
         const message = this.inputMessage.value;
 
-        // 2. E-posta Konusu ve İçeriğini Hazırla
+        // 2. Mail İçeriğini Hazırla
         const subject = `Yeni Proje Talebi: ${name}`;
-        
-        // Mail içeriği (%0D%0A = Yeni Satır)
         const body = `Merhaba Teknoify Ekibi,%0D%0A%0D%0A` +
-                     `Web siteniz üzerinden yeni bir form dolduruldu. Detaylar aşağıdadır:%0D%0A%0D%0A` +
+                     `Web siteniz üzerinden yeni bir form dolduruldu:%0D%0A` +
                      `----------------------------------------------------%0D%0A` +
                      `👤 Ad Soyad: ${name}%0D%0A` +
                      `📞 İletişim: ${contact}%0D%0A` +
@@ -136,13 +133,33 @@ class ContactSystem {
                      `----------------------------------------------------%0D%0A%0D%0A` +
                      `İyi çalışmalar.`;
 
-        // 3. Kullanıcının Mail Uygulamasını Tetikle
-        // info@teknoify.com adresine yönlendirir
-        window.location.href = `mailto:info@teknoify.com?subject=${encodeURIComponent(subject)}&body=${body}`;
-        
-        // 4. Kullanıcıyı Bilgilendir ve Formu Temizle
-        alert("E-posta uygulamanız açılıyor. Lütfen oluşturulan taslağı kontrol edip 'Gönder' tuşuna basınız.");
-        this.form.reset();
+        // 3. BUTON ANİMASYONU (GÖRSEL GERİ BİLDİRİM) ✨
+        if (this.submitBtn) {
+            const originalText = this.submitBtn.innerHTML;
+            const originalColor = this.submitBtn.style.backgroundColor;
+            const originalBorder = this.submitBtn.style.borderColor;
+
+            // Butonu Yeşil Yap ve Metni Değiştir
+            this.submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mesajınız Hazırlandı';
+            this.submitBtn.style.backgroundColor = '#10b981'; // Yeşil (Emerald-500)
+            this.submitBtn.style.borderColor = '#10b981';
+            this.submitBtn.style.color = '#fff';
+            this.submitBtn.disabled = true; // Tekrar basılmasını engelle
+
+            // 4. Mail Uygulamasını Aç (Yarım saniye gecikmeli, görsel otursun diye)
+            setTimeout(() => {
+                window.location.href = `mailto:info@teknoify.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+            }, 600);
+
+            // 5. Formu ve Butonu Sıfırla (5 saniye sonra eski haline döner)
+            setTimeout(() => {
+                this.form.reset();
+                this.submitBtn.innerHTML = originalText;
+                this.submitBtn.style.backgroundColor = originalColor;
+                this.submitBtn.style.borderColor = originalBorder;
+                this.submitBtn.disabled = false;
+            }, 5000);
+        }
     }
 }
 
