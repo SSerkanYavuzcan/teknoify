@@ -11,14 +11,7 @@
         "sheetUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv"
       },
       "data": {
-        "activeBots": 4,
-        "totalProcessed": "12.450",
-        "savedHours": 320,
-        "nextPayment": "15 Ekim 2025",
-        "notifications": [
-          "RPA Bot #3 görevi tamamladı.",
-          "Fatura döneminiz yaklaşıyor."
-        ]
+        
       }
     },
     "yemeksepeti": {
@@ -30,7 +23,7 @@
         "impersonate": false
       },
       "config": {
-        "sheetUrl": "" 
+        "sheetUrl": ""
       },
       "data": {
         "activeBots": 0,
