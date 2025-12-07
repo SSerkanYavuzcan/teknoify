@@ -1,0 +1,123 @@
+/* ================================================================
+[FILE] rpa.css
+[AMAÇ] Robotik Süreç Otomasyonu sayfasına özel yerleşim stilleri
+================================================================ */
+
+/* Genel Sayfa Başlığı Alanı */
+.rpa-hero {
+    padding: 100px 0 60px 0; /* Header yüksekliğini telafi eder */
+    text-align: center;
+    background-image: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, rgba(5, 5, 5, 0) 100%);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.rpa-hero h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+}
+
+.rpa-hero .subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.rpa-hero .icon-box {
+    margin: 0 auto 1.5rem auto;
+    /* style.css'ten gelen icon-box stilini yeniden kullanır */
+}
+
+/* Ana İçerik Alanı */
+.rpa-content {
+    padding: 4rem 0 6rem 0;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 2/3 Metin, 1/3 Yan Bilgi */
+    gap: 4rem;
+    align-items: start;
+}
+
+/* Metin Alanı Stilleri */
+.main-text h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--primary); /* Başlık rengi */
+}
+
+.main-text p {
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+    line-height: 1.8;
+}
+
+.benefit-list {
+    margin-top: 1.5rem;
+    list-style: none;
+    padding-left: 0;
+}
+
+.benefit-list li {
+    padding-left: 2rem;
+    position: relative;
+    color: var(--text-main);
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.benefit-list li i {
+    color: #10b981; /* Yeşil checkmark */
+    position: absolute;
+    left: 0;
+    top: 5px;
+}
+
+/* Yan Bilgi Alanı */
+.side-info {
+    position: sticky; /* Sayfa kayarken yanında kalsın */
+    top: 100px;
+}
+
+.card-feature {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+}
+
+.card-feature h3 {
+    font-size: 1.1rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 0.5rem;
+}
+
+.feature-list {
+    list-style: none;
+    padding-left: 0;
+    color: var(--text-muted);
+    line-height: 2;
+}
+
+/* Responsive Ayarları */
+@media (max-width: 968px) {
+    .content-grid {
+        grid-template-columns: 1fr; /* Mobil görünümde tek sütuna düşür */
+        gap: 2rem;
+    }
+    .side-info {
+        position: static; /* Sticky özelliğini kaldır */
+    }
+    .rpa-hero {
+        padding-top: 120px;
+    }
+}
+
