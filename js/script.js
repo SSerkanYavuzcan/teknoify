@@ -2,7 +2,7 @@
  * ================================================================
  * [PROJECT] TEKNOIFY v2.0
  * [FILE] js/script.js
- * [VERSION] Production Build (Modern Button Feedback)
+ * [VERSION] Production Build (Final Contact Text Update)
  * ================================================================
  */
 
@@ -140,7 +140,9 @@ class ContactSystem {
             const originalBorder = this.submitBtn.style.borderColor;
 
             // Butonu Yeşil Yap ve Metni Değiştir
-            this.submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mesajınız Hazırlandı';
+            // GÜNCELLEME BURADA YAPILDI 👇
+            this.submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mesajınız Gönderildi';
+            
             this.submitBtn.style.backgroundColor = '#10b981'; // Yeşil (Emerald-500)
             this.submitBtn.style.borderColor = '#10b981';
             this.submitBtn.style.color = '#fff';
