@@ -121,13 +121,7 @@
     flex-direction: column;
     height: 100%;
     position: relative;   /* Roket ve zone için gerekli */
-    overflow: visible;    /* Roket kart dışına taşabilsin */
-}
-
-/* Roket alanı için metni sağdan boşalt */
-#card-speed h4,
-#card-speed p {
-    padding-right: 110px;
+    overflow: visible;    /* Kart içinde kalacak ama biraz taşsa da görünür olsun */
 }
 
 /* Benefit Icon Stilleri */
@@ -159,27 +153,27 @@
 }
 
 /* ================================================================
-   GELİŞMİŞ ROKET + STAND ANİMASYONU (Hız Artışı Kartı)
+   ROKET + STAND (Kart içinde, yatık ve titreyen)
 ================================================================ */
 
-/* Kart içinde sağ üstte roket alanı */
+/* Kart içinde sağ alt köşeye yakın roket alanı (metni kaydırmıyoruz) */
 #card-speed .rocket-zone {
     position: absolute;
-    right: 18px;
-    top: 14px;
-    width: 90px;
-    height: 180px;
+    right: 22px;
+    bottom: 18px;
+    width: 80px;
+    height: 70px;
     pointer-events: none;
     z-index: 10;
 }
 
-/* Stand (platform) – metne çarpmaması için zone içinde yukarıda */
+/* Stand (platform) */
 #card-speed .rocket-stand {
     position: absolute;
-    right: 4px;
-    bottom: 30px; /* biraz yukarı aldık, yazıya oturmasın */
-    width: 80px;
-    height: 18px;
+    left: 4px;
+    bottom: 4px;
+    width: 72px;
+    height: 16px;
     background: linear-gradient(
         90deg,
         rgba(20, 23, 40, 1),
@@ -194,10 +188,10 @@
 #card-speed .rocket-stand::before {
     content: "";
     position: absolute;
-    right: 14px;
-    bottom: 18px;
-    width: 8px;
-    height: 44px;
+    right: 12px;
+    bottom: 16px;
+    width: 7px;
+    height: 36px;
     border-radius: 999px;
     background: linear-gradient(
         180deg,
@@ -207,15 +201,21 @@
     box-shadow: 0 0 10px rgba(124, 93, 255, 0.9);
 }
 
-/* Roket konteyneri – standin hemen üstünde başlıyor */
+/* Roket konteyneri – standin hemen üstünde, yatık duruyor */
 .rocket-container {
     position: absolute;
-    right: 34px;
-    bottom: 48px; /* standin tam üstünde */
-    transform-origin: center bottom;
-    transform: translate(0, 0) rotate(0deg);
-    transition: transform 0.4s ease-out;
+    left: 22px;
+    bottom: 22px;
+    transform-origin: center center;
+    transform: translate(0, 0) rotate(-35deg); /* yatık duruş */
+    transition: transform 0.3s ease-out;
     z-index: 15;
+}
+
+/* Roket her ready/launched olduğunda titremeli */
+.rocket-container.ready,
+.rocket-container.launched {
+    animation: rocketShake 3s ease-in-out infinite;
 }
 
 /* ---------- CSS ile çizilmiş roket ---------- */
@@ -243,7 +243,7 @@
         0 0 10px rgba(59, 130, 246, 0.5);
 }
 
-/* Burun ve kanat efekti */
+/* Burun ve hafif kanat gölgesi */
 .rocket-icon::after {
     content: "";
     position: absolute;
@@ -253,9 +253,7 @@
     height: 0;
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
-    border-bottom: 10px solid #e5e7ff; /* burun konisi */
-
-    /* alt kısımda hafif kanat gölgesi gibi ikinci bir üçgen */
+    border-bottom: 10px solid #e5e7ff;
     box-shadow:
         -8px 24px 0 -10px rgba(56, 189, 248, 0.8),
         8px 24px 0 -10px rgba(129, 140, 248, 0.9);
@@ -279,83 +277,26 @@
     opacity: 0;
 }
 
-/* Roket kart görünür olur olmaz "hazır" mod: küçük dumanlar */
+/* Hazır modda hafif duman */
 .rocket-container.ready .smoke-trail {
     opacity: 1;
     animation: smokeIdle 0.6s ease-in-out infinite alternate;
 }
 
-/* Uçuş sırasında daha güçlü iz bırak */
+/* Launched olduğunda duman biraz daha hareketli */
 .rocket-container.launched .smoke-trail {
-    animation: smokeFlight 0.5s ease-out infinite;
+    opacity: 1;
+    animation: smokeFlight 0.7s ease-out infinite;
 }
 
-/* Roket uçuş animasyonu – kalkış, üstte uzun U dönüşü, dik iniş (10 sn) */
-.rocket-container.launched {
-    animation: rocketFlight 10s cubic-bezier(0.28, 0.8, 0.32, 1) forwards;
-}
-
-/* Hafif titreşimli duruş (isteğe bağlı) */
-#card-speed .rocket-container:not(.launched):not(.ready) {
-    animation: rocketIdle 4s ease-in-out infinite;
-}
-
-/* Roketin hafif nefes alır gibi sallanması */
-@keyframes rocketIdle {
-    0%   { transform: translate(0, 0) rotate(0deg); }
-    50%  { transform: translate(0, -2px) rotate(-2deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-/* Roket uçuş yolu – daha uzun, kartın üstünden net şekilde geçiyor */
-@keyframes rocketFlight {
-    /* Stand üstünde dik duruş */
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-        opacity: 1;
-    }
-
-    /* Kartın içinden dikey kalkış */
-    18% {
-        transform: translate(-8px, -160px) rotate(-8deg);
-        opacity: 1;
-    }
-
-    /* Kartın biraz üstünde */
-    35% {
-        transform: translate(-24px, -320px) rotate(-18deg);
-        opacity: 1;
-    }
-
-    /* Ekranın üst kısmında geniş U dönüşü */
-    50% {
-        transform: translate(60px, -480px) rotate(-150deg);
-        opacity: 0.95;
-    }
-
-    /* Sağ üstten geri dönüşte */
-    65% {
-        transform: translate(90px, -400px) rotate(-210deg);
-        opacity: 0.9;
-    }
-
-    /* Kartın üst hizasına yaklaşırken */
-    80% {
-        transform: translate(24px, -190px) rotate(-300deg);
-        opacity: 1;
-    }
-
-    /* Stand hizasına yaklaşma, neredeyse dik */
-    92% {
-        transform: translate(6px, -50px) rotate(-345deg);
-        opacity: 1;
-    }
-
-    /* Tam dik ve standa yumuşak iniş */
-    100% {
-        transform: translate(0, 0) rotate(-360deg);
-        opacity: 1;
-    }
+/* Roketin yatık halde titreyerek ilerliyormuş gibi görünmesi */
+@keyframes rocketShake {
+    0%   { transform: translate(0, 0) rotate(-35deg); }
+    20%  { transform: translate(3px, -1px) rotate(-32deg); }
+    40%  { transform: translate(5px, 1px) rotate(-35deg); }
+    60%  { transform: translate(3px, 2px) rotate(-38deg); }
+    80%  { transform: translate(1px, 0) rotate(-34deg); }
+    100% { transform: translate(0, 0) rotate(-35deg); }
 }
 
 /* Kalkış öncesi küçük duman pıt pıt */
@@ -370,7 +311,7 @@
     }
 }
 
-/* Uçuş sırasında arka arkaya iz bırakma */
+/* Uçuş hissi için kısa duman izi (ama kartın içinde kalıyor) */
 @keyframes smokeFlight {
     0% {
         transform: translate(-50%, 4px) scale(0.7);
@@ -378,9 +319,9 @@
         filter: blur(0px);
     }
     100% {
-        transform: translate(-50%, -18px) scale(1.3);
+        transform: translate(-50%, -10px) scale(1.1);
         opacity: 0;
-        filter: blur(3px);
+        filter: blur(2px);
     }
 }
 
