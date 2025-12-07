@@ -3,9 +3,9 @@
 [AMAÇ] Robotik Süreç Otomasyonu sayfasına özel yerleşim ve kart stilleri
 ================================================================ */
 
-/* Renk Güncellemesi: Başlıklar için daha parlak ton */
+/* Renk Güncellemesi: Başlıklar ve Paragraflar için istenen tonlar */
 :root {
-    --heading-color: #7b5dff; /* İstenen renge en yakın mor/mavi ton */
+    --heading-color: #7b5dff; /* İstenen mor/mavi ton */
     --paragraph-color: #c7c9d1; /* İstenen paragraf rengi */
 }
 
@@ -25,15 +25,15 @@
 }
 
 .rpa-hero h1 {
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(2rem, 4vw, 3rem); /* Başlık boyutu korundu */
     font-weight: 800;
     margin-bottom: 1rem;
-    color: var(--heading-color); /* Yeni başlık rengi */
+    color: var(--heading-color);
 }
 
 .rpa-hero .main-headline {
-    font-size: 1.25rem;
-    color: var(--text-main); /* Daha vurucu olması için metin rengi */
+    font-size: 1.1rem; /* Kısmen küçültüldü: 1.25rem -> 1.1rem */
+    color: var(--text-main);
     font-weight: 500;
     margin-bottom: 2rem;
 }
@@ -68,7 +68,7 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-/* Content Section (Yeni Renkler) */
+/* Content Section (Yeni Renkler ve Küçültmeler) */
 .rpa-content {
     padding: 4rem 0 6rem 0;
 }
@@ -81,21 +81,22 @@
 }
 
 .main-text h2 {
-    font-size: 2rem;
+    font-size: 1.8rem; /* Küçültüldü: 2rem -> 1.8rem */
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: var(--heading-color); /* Yeni renk */
+    color: var(--heading-color); 
 }
 
 .main-text h3 {
-    color: var(--heading-color); /* Yeni renk */
+    color: var(--heading-color);
 }
 
 .main-text p {
     color: var(--paragraph-color); /* Yeni paragraf rengi */
     margin-bottom: 1.2rem;
     line-height: 1.8;
-    text-align: justify; /* Okunurluk için iki yana yasla */
+    font-size: 0.95rem; /* Küçültüldü */
+    text-align: justify;
 }
 
 /* Faydalar (Kart Yapısı) */
@@ -120,10 +121,15 @@
 .benefit-icon {
     font-size: 2rem;
     margin-bottom: 1rem;
+    color: var(--primary); /* İkon Rengi: Logonun ana rengi */
+    width: 40px; /* Hizalama için */
+    height: 40px;
+    display: flex;
+    align-items: center;
 }
 
 .benefit-card h4 {
-    font-size: 1.15rem;
+    font-size: 1.05rem; /* Küçültüldü: 1.15rem -> 1.05rem */
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: var(--heading-color);
