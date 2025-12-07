@@ -153,6 +153,9 @@ Küçük yapı taşları
   font-size: 0.9rem;
   pointer-events: none;
 }
+
+
+/* Input/Textarea/Select Genel Stilleri */
 input, textarea, select {
   width: 100%;
   padding: 0.85rem 1rem 0.85rem 2.5rem; /* İkon payı */
@@ -163,6 +166,9 @@ input, textarea, select {
   font-family: inherit;
   transition: var(--ease-fast);
 }
+
+
+/* Focus Efektleri */
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary);
@@ -175,10 +181,27 @@ input:focus, textarea:focus, select:focus {
 .textarea-wrapper { align-items: flex-start; }
 .textarea-wrapper i { top: 1rem; }
 textarea { resize: vertical; min-height: 120px; }
+
+
+/* Select (Dropdown) Özelleştirmeleri */
 select { appearance: none; cursor: pointer; }
 .select-arrow {
-  position: absolute; right: 1rem; left: auto;
-  pointer-events: none; font-size: 0.8rem;
+  position: absolute; right: 1rem; left: auto; top: 50%; transform: translateY(-50%);
+  pointer-events: none; font-size: 0.8rem; color: var(--text-muted);
+}
+
+
+/* Select İçindeki Seçeneklerin Rengi (Dark Mode Uyumlu) */
+select option {
+  background-color: #14161c !important;
+  color: #f3f4f6 !important;
+  padding: 10px;
+}
+
+
+/* Placeholder Rengi */
+::placeholder {
+  color: rgba(255, 255, 255, 0.2) !important;
 }
 
 
@@ -435,7 +458,7 @@ select { appearance: none; cursor: pointer; }
 
 
 /* ================================================================
-[LAYER 8] CONTACT SECTION (YENİ)
+[LAYER 8] CONTACT SECTION
 Modern İletişim Formu Tasarımı
 ================================================================
 */
