@@ -2,7 +2,7 @@
  * ================================================================
  * [PROJECT] TEKNOIFY v2.0
  * [FILE] js/script.js
- * [VERSION] Production Build (Final Contact Text Update)
+ * [VERSION] Production Build (Formspree Integration Complete)
  * ================================================================
  */
 
@@ -47,10 +47,13 @@ const App = {
 
 /**
  * [MODULE: CONTACT SYSTEM]
- * İletişim formu verilerini toplayıp Mailto ile gönderir
+ * Formspree ile Arka Planda Mail Gönderimi
  */
 class ContactSystem {
     constructor() {
+        // ✅ FORMSPREE ID ENTEGRE EDİLDİ
+        this.formId = "xvgeborr"; 
+
         this.form = document.querySelector('.contact-form');
         this.inputName = document.getElementById('fullname');
         this.inputContact = document.getElementById('contact_info');
@@ -66,14 +69,12 @@ class ContactSystem {
 
     bindEvents() {
         this.form.addEventListener('submit', (e) => {
-            e.preventDefault(); // Sayfanın yenilenmesini engelle
-            
+            e.preventDefault(); 
             if (this.validateInput()) {
-                this.sendMail(); // Veriler geçerliyse mail işlemini başlat
+                this.sendMail(); 
             }
         });
 
-        // Kullanıcı yazarken hatayı sil
         if(this.inputContact) {
             this.inputContact.addEventListener('input', () => this.clearError());
         }
@@ -81,7 +82,6 @@ class ContactSystem {
 
     validateInput() {
         const val = this.inputContact.value.trim();
-        // Basit telefon (en az 10 hane) veya email (@ işareti) kontrolü
         const phoneDigits = val.replace(/\D/g, ''); 
         const isPhone = phoneDigits.length >= 10;
         const isEmail = val.includes('@');
@@ -113,54 +113,75 @@ class ContactSystem {
         }
     }
 
-    // --- MAIL GÖNDERME FONKSİYONU ---
-    sendMail() {
-        // 1. Verileri Topla
-        const name = this.inputName.value;
-        const contact = this.inputContact.value;
-        const service = this.inputService.options[this.inputService.selectedIndex].text;
-        const message = this.inputMessage.value;
+    // --- MAIL GÖNDERME FONKSİYONU (AJAX / Formspree) ---
+    async sendMail() {
+        if (!this.submitBtn) return;
 
-        // 2. Mail İçeriğini Hazırla
-        const subject = `Yeni Proje Talebi: ${name}`;
-        const body = `Merhaba Teknoify Ekibi,%0D%0A%0D%0A` +
-                     `Web siteniz üzerinden yeni bir form dolduruldu:%0D%0A` +
-                     `----------------------------------------------------%0D%0A` +
-                     `👤 Ad Soyad: ${name}%0D%0A` +
-                     `📞 İletişim: ${contact}%0D%0A` +
-                     `🏷️ İlgilendiği Hizmet: ${service}%0D%0A` +
-                     `📝 Proje/Mesaj Detayı: ${message}%0D%0A` +
-                     `----------------------------------------------------%0D%0A%0D%0A` +
-                     `İyi çalışmalar.`;
+        // 1. Buton Durumunu Değiştir (Yükleniyor)
+        const originalText = this.submitBtn.innerHTML;
+        const originalColor = this.submitBtn.style.backgroundColor;
+        const originalBorder = this.submitBtn.style.borderColor;
 
-        // 3. BUTON ANİMASYONU (GÖRSEL GERİ BİLDİRİM) ✨
-        if (this.submitBtn) {
-            const originalText = this.submitBtn.innerHTML;
-            const originalColor = this.submitBtn.style.backgroundColor;
-            const originalBorder = this.submitBtn.style.borderColor;
+        this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
+        this.submitBtn.disabled = true;
+        this.submitBtn.style.opacity = "0.8";
 
-            // Butonu Yeşil Yap ve Metni Değiştir
-            // GÜNCELLEME BURADA YAPILDI 👇
-            this.submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mesajınız Gönderildi';
-            
-            this.submitBtn.style.backgroundColor = '#10b981'; // Yeşil (Emerald-500)
-            this.submitBtn.style.borderColor = '#10b981';
-            this.submitBtn.style.color = '#fff';
-            this.submitBtn.disabled = true; // Tekrar basılmasını engelle
+        // 2. Verileri Hazırla
+        const formData = new FormData();
+        formData.append("Ad Soyad", this.inputName.value);
+        formData.append("İletişim", this.inputContact.value);
+        formData.append("Hizmet", this.inputService.value);
+        formData.append("Mesaj", this.inputMessage.value);
 
-            // 4. Mail Uygulamasını Aç (Yarım saniye gecikmeli, görsel otursun diye)
-            setTimeout(() => {
-                window.location.href = `mailto:info@teknoify.com?subject=${encodeURIComponent(subject)}&body=${body}`;
-            }, 600);
+        try {
+            // 3. Arka Planda Gönder (Sayfa Yenilenmez)
+            const response = await fetch(`https://formspree.io/f/${this.formId}`, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-            // 5. Formu ve Butonu Sıfırla (5 saniye sonra eski haline döner)
-            setTimeout(() => {
+            if (response.ok) {
+                // BAŞARILI OLURSA
+                this.submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mesajınız Gönderildi';
+                this.submitBtn.style.backgroundColor = '#10b981'; // Yeşil
+                this.submitBtn.style.borderColor = '#10b981';
+                this.submitBtn.style.color = '#fff';
+                this.submitBtn.style.opacity = "1";
+                
                 this.form.reset();
+
+                // 5 saniye sonra butonu eski haline getir
+                setTimeout(() => {
+                    this.submitBtn.innerHTML = originalText;
+                    this.submitBtn.style.backgroundColor = originalColor; // CSS'ten gelen eski renge dön
+                    this.submitBtn.style.borderColor = originalBorder;
+                    this.submitBtn.disabled = false;
+                }, 5000);
+
+            } else {
+                // SUNUCU HATASI OLURSA
+                throw new Error("Gönderim başarısız");
+            }
+
+        } catch (error) {
+            // HATA DURUMU
+            console.error(error);
+            this.submitBtn.innerHTML = '<i class="fas fa-times-circle"></i> Bir Hata Oluştu';
+            this.submitBtn.style.backgroundColor = '#ef4444'; // Kırmızı
+            this.submitBtn.style.borderColor = '#ef4444';
+            this.submitBtn.style.opacity = "1";
+            
+            setTimeout(() => {
                 this.submitBtn.innerHTML = originalText;
                 this.submitBtn.style.backgroundColor = originalColor;
                 this.submitBtn.style.borderColor = originalBorder;
                 this.submitBtn.disabled = false;
-            }, 5000);
+            }, 3000);
+            
+            alert("Mesaj gönderilirken bir sorun oluştu. Lütfen bağlantınızı kontrol edip tekrar deneyin.");
         }
     }
 }
