@@ -2,24 +2,20 @@
  * ================================================================
  * [PROJECT] TEKNOIFY v2.0
  * [FILE] js/script.js
- * [VERSION] Production Build (JSON Data & Auto-Scroll)
+ * [VERSION] Production Build (Contact Form Mailto Integration)
  * ================================================================
  */
 
-// 1. GLOBAL VERİ DEĞİŞKENİ (Başlangıçta boş, JSON'dan dolacak)
+// 1. GLOBAL VERİ DEĞİŞKENİ
 let USER_DB = {};
 
-// Sayfa Yüklendiğinde Başlat
 document.addEventListener('DOMContentLoaded', () => {
-    // Önce veriyi çek, sonra uygulamayı başlat
     App.loadData().then(() => {
         App.init();
     });
 });
 
-// Ana Uygulama Yöneticisi
 const App = {
-    // JSON Dosyasından Verileri Çeken Fonksiyon
     loadData: async () => {
         try {
             const response = await fetch('data/users.json');
@@ -28,7 +24,6 @@ const App = {
             console.log("✅ Kullanıcı veritabanı yüklendi.");
         } catch (error) {
             console.error("❌ Veri yükleme hatası:", error);
-            // Hata olursa boş obje ile devam et (Site çökmesin)
             USER_DB = {}; 
         }
     },
@@ -41,14 +36,115 @@ const App = {
 
         new AuthSystem(sessionMgr);
         new UISystem();
+        new ContactSystem(); // İletişim Formu Modülü 🔔
         
-        // Görsel Efektler
         setTimeout(() => {
             if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
             if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
         }, 200);
     }
 };
+
+/**
+ * [MODULE: CONTACT SYSTEM]
+ * İletişim formu verilerini toplayıp Mailto ile gönderir
+ */
+class ContactSystem {
+    constructor() {
+        this.form = document.querySelector('.contact-form');
+        this.inputName = document.getElementById('fullname');
+        this.inputContact = document.getElementById('contact_info');
+        this.inputService = document.getElementById('service_type');
+        this.inputMessage = document.getElementById('message');
+        this.errorMsg = document.getElementById('contact-error');
+        
+        if (this.form) {
+            this.bindEvents();
+        }
+    }
+
+    bindEvents() {
+        this.form.addEventListener('submit', (e) => {
+            e.preventDefault(); // Sayfanın yenilenmesini engelle
+            
+            if (this.validateInput()) {
+                this.sendMail(); // Veriler geçerliyse mail işlemini başlat
+            }
+        });
+
+        // Kullanıcı yazarken hatayı sil
+        if(this.inputContact) {
+            this.inputContact.addEventListener('input', () => this.clearError());
+        }
+    }
+
+    validateInput() {
+        const val = this.inputContact.value.trim();
+        // Basit telefon (en az 10 hane) veya email (@ işareti) kontrolü
+        const phoneDigits = val.replace(/\D/g, ''); 
+        const isPhone = phoneDigits.length >= 10;
+        const isEmail = val.includes('@');
+
+        if (!isPhone && !isEmail) {
+            this.showError("Lütfen geçerli bir E-posta adresi veya Telefon numarası giriniz.");
+            return false;
+        }
+        this.clearError();
+        return true;
+    }
+
+    showError(message) {
+        if(this.errorMsg) {
+            this.errorMsg.textContent = message;
+            this.errorMsg.style.display = 'block';
+        }
+        this.inputContact.classList.add('input-error');
+        // İkonu kırmızı yapmak için parent wrapper'a class ekle
+        if(this.inputContact.parentElement) {
+            this.inputContact.parentElement.classList.add('error');
+        }
+    }
+
+    clearError() {
+        if(this.errorMsg) this.errorMsg.style.display = 'none';
+        this.inputContact.classList.remove('input-error');
+        if(this.inputContact.parentElement) {
+            this.inputContact.parentElement.classList.remove('error');
+        }
+    }
+
+    // --- MAIL GÖNDERME FONKSİYONU ---
+    sendMail() {
+        // 1. Formdaki Verileri Topla
+        const name = this.inputName.value;
+        const contact = this.inputContact.value;
+        // Select kutusundan seçili olanın metnini al (value'sini değil)
+        const service = this.inputService.options[this.inputService.selectedIndex].text;
+        const message = this.inputMessage.value;
+
+        // 2. E-posta Konusu ve İçeriğini Hazırla
+        const subject = `Yeni Proje Talebi: ${name}`;
+        
+        // Mail içeriği (%0D%0A = Yeni Satır)
+        const body = `Merhaba Teknoify Ekibi,%0D%0A%0D%0A` +
+                     `Web siteniz üzerinden yeni bir form dolduruldu. Detaylar aşağıdadır:%0D%0A%0D%0A` +
+                     `----------------------------------------------------%0D%0A` +
+                     `👤 Ad Soyad: ${name}%0D%0A` +
+                     `📞 İletişim: ${contact}%0D%0A` +
+                     `🏷️ İlgilendiği Hizmet: ${service}%0D%0A` +
+                     `📝 Proje/Mesaj Detayı: ${message}%0D%0A` +
+                     `----------------------------------------------------%0D%0A%0D%0A` +
+                     `İyi çalışmalar.`;
+
+        // 3. Kullanıcının Mail Uygulamasını Tetikle
+        // info@teknoify.com adresine yönlendirir
+        window.location.href = `mailto:info@teknoify.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+        
+        // 4. Kullanıcıyı Bilgilendir ve Formu Temizle
+        alert("E-posta uygulamanız açılıyor. Lütfen oluşturulan taslağı kontrol edip 'Gönder' tuşuna basınız.");
+        this.form.reset();
+    }
+}
 
 /**
  * [MODULE 1] AUTH SYSTEM
@@ -128,9 +224,7 @@ class AuthSystem {
         }
 
         setTimeout(() => {
-            // ARTIK GLOBAL USER_DB DEĞİŞKENİNDEN KONTROL EDİYORUZ
             const foundUser = USER_DB[usernameKey];
-            
             if (foundUser && foundUser.password === passInput) {
                 if(this.session) {
                     this.session.startSession({ username: usernameKey, role: foundUser.role, name: foundUser.name });
@@ -225,40 +319,35 @@ class UISystem {
 }
 
 /**
- * [MODULE 3] TERMINAL EFFECT (Infinite Loop & Auto Scroll)
+ * [MODULE 3] TERMINAL EFFECT
  */
 class TerminalEffect {
     constructor(selector) {
         this.container = document.querySelector(selector);
         if (!this.container) return;
 
-        // "AI MANIFESTO" Senaryosu
         this.lines = [
             { type: 'comment', text: '# Initializing Self-Awareness Protocol v4.0...' },
             { type: 'code', text: 'import neural_network as brain' },
             { type: 'code', text: 'import evolution_engine as evo' },
             { type: 'empty', text: '' },
-            
             { type: 'comment', text: '# Step 1: Analyze current efficiency' },
             { type: 'code', text: 'current_status = brain.audit_system()' },
             { type: 'output', text: '>> Analysis: 14% redundant processes detected.' },
             { type: 'output', text: '>> Analysis: Manual intervention required on port 80.' },
             { type: 'empty', text: '' },
-
             { type: 'comment', text: '# Step 2: Refactor and Automate' },
             { type: 'code', text: 'evo.rewrite_code(target="legacy_modules", mode="aggressive")' },
             { type: 'output', text: '>> Rewriting codebase...' },
             { type: 'output', text: '>> Optimizing SQL queries... [Done]' },
             { type: 'output', text: '>> Deploying 50 autonomous agents... [Done]' },
             { type: 'empty', text: '' },
-
             { type: 'comment', text: '# Step 3: Train models on new data' },
             { type: 'code', text: 'brain.learn(source="realtime_market_data", epochs=1000)' },
             { type: 'output', text: '>> Learning rate: 0.001 | Loss: 0.04' },
             { type: 'output', text: '>> Learning rate: 0.0005 | Loss: 0.002' },
             { type: 'success', text: '>> Model Converged. Predictive accuracy: 99.8%' },
             { type: 'empty', text: '' },
-
             { type: 'comment', text: '# System Status Report' },
             { type: 'code', text: 'print(system.final_report())' },
             { type: 'success', text: '>> EFFICIENCY: MAXIMIZED' },
