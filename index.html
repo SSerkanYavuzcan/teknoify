@@ -15,6 +15,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" /> 
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 
@@ -133,6 +134,97 @@
                 </article>
             </div>
         </div>
+    </section>
+
+
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Projelerinizi Hayata Geçirelim</h2>
+                <p>Aklınızdaki fikri veya ihtiyacınız olan otomasyon çözümünü bize anlatın.</p>
+            </div>
+
+
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <h3>Neden Teknoify?</h3>
+                        <p>İş süreçlerinizi analiz ediyor, size özel botlar ve yapay zeka çözümleri geliştiriyoruz. 7/24 çalışan dijital iş gücünüzü kurmaya hazırız.</p>
+                    </div>
+                    
+                    <div class="contact-methods">
+                        <div class="method-item">
+                            <div class="icon-circle"><i class="fas fa-envelope"></i></div>
+                            <div>
+                                <span>Bize E-posta Gönderin</span>
+                                <a href="mailto:info@teknoify.com">info@teknoify.com</a>
+                            </div>
+                        </div>
+                        <div class="method-item">
+                            <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <span>Lokasyon</span>
+                                <p>İstanbul, Türkiye</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <form class="contact-form" action="#" method="POST">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fullname">Adınız Soyadınız</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="fullname" name="fullname" placeholder="Örn: Ahmet Yılmaz" required>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="contact_info">E-posta veya Telefon</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-address-card"></i>
+                                <input type="text" id="contact_info" name="contact_info" placeholder="örn: 555... veya mail@..." required>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="service_type">İlgilendiğiniz Hizmet</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-tag"></i>
+                            <select id="service_type" name="service_type" required>
+                                <option value="" disabled selected>Lütfen bir hizmet seçin</option>
+                                <option value="rpa">RPA (Robotik Süreç Otomasyonu)</option>
+                                <option value="scraping">Web Scraping (Veri Kazıma)</option>
+                                <option value="ai">Yapay Zeka & Chatbot</option>
+                                <option value="consulting">Danışmanlık / Diğer</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="message">Projenizden veya Fikrinizden Bahsedin (Opsiyonel)</label>
+                        <div class="input-wrapper textarea-wrapper">
+                            <i class="fas fa-comment-alt"></i>
+                            <textarea id="message" name="message" rows="4" placeholder="Hangi süreçleri otomatize etmek istiyorsunuz?"></textarea>
+                        </div>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Teklif İste / Gönder</span> <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="contact-glow"></div>
     </section>
 
 
