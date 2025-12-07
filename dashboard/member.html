@@ -64,9 +64,14 @@
 
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem;">
                 <h3>Son Bildirimler</h3>
-                <button class="btn-text-action" onclick="markAllAsRead()" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500;">
-                    <i class="fas fa-check-double"></i> Tümünü Okundu İşaretle
-                </button>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <span id="live-indicator" style="font-size:0.8rem; color:#666; display:none;">
+                        <i class="fas fa-circle-notch fa-spin"></i> Veri kontrol ediliyor...
+                    </span>
+                    <button class="btn-text-action" onclick="markAllAsRead()" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500;">
+                        <i class="fas fa-check-double"></i> Tümünü Okundu İşaretle
+                    </button>
+                </div>
             </div>
 
             <div style="border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; background: rgba(255,255,255,0.02);">
@@ -92,9 +97,6 @@
     <script src="../js/script.js"></script>
 
     <script>
-        // Google Sheet Linki (Sadece Tazeyo/Config için)
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
-
         document.addEventListener('DOMContentLoaded', () => {
             // 1. Session Kontrolü
             if (typeof SessionManager === 'undefined') { console.error("SessionManager Eksik!"); return; }
@@ -118,51 +120,32 @@
                         setText('user-name-title', userDataFull.name);
                         if(userDataFull.name) setText('user-avatar', userDataFull.name.charAt(0).toUpperCase());
 
-                        // --- B) MENÜ YETKİ KONTROLÜ ---
+                        // B) MENÜ YETKİ KONTROLÜ
                         const analysisLink = document.getElementById('nav-link-analysis');
                         if (analysisLink) {
-                            if (features.analysis === true) {
-                                analysisLink.style.display = 'flex';
-                            } else {
-                                analysisLink.style.display = 'none';
-                            }
+                            analysisLink.style.display = (features.analysis === true) ? 'flex' : 'none';
                         }
 
-                        // --- C) İSTATİSTİKLER (MANTIK BURADA) ---
-
-                        // 1. AKTİF HİZMET SAYISI HESAPLAMA
-                        // Özelliklerden kaç tanesi 'true' ise o kadar hizmet var demektir.
+                        // C) İSTATİSTİKLER
                         let activeServicesCount = 0;
                         if (features.analysis) activeServicesCount++;
-                        if (features.rpa) activeServicesCount++; // İleride RPA eklenirse otomatik artar
-                        
+                        if (features.rpa) activeServicesCount++;
                         setText('stat-active-services', activeServicesCount);
 
-                        // 2. KAZANILAN SAAT
-                        // Kural: RPA hizmeti açıksa hesaplanır (veya JSON'dan gelir), değilse "-" yazar.
-                        if (features.rpa === true) {
-                            // RPA var, veriyi göster (Veri yoksa 0)
-                            setText('stat-saved-hours', data.savedHours || "0");
-                        } else {
-                            // RPA yok, tire bas
-                            setText('stat-saved-hours', "-");
-                        }
-
-                        // 3. SONRAKİ ÖDEME
-                        // Varsayılan tire, veri varsa onu yaz
+                        setText('stat-saved-hours', (features.rpa === true) ? (data.savedHours || "0") : "-");
                         setText('stat-next-payment', data.nextPayment || "-");
-                        
-                        // 4. İŞLENEN VERİ
-                        // Önce JSON'dan geleni yaz (varsa), birazdan Sheet verisi bunu ezebilir
                         setText('processed-data-count', data.totalProcessed || "-");
 
-
-                        // D) BİLDİRİMLER
+                        // D) BİLDİRİMLER (Standart + Otomatik)
                         renderNotifications(data.notifications);
 
-                        // E) CANLI VERİ (Sadece sheetUrl tanımlıysa)
+                        // E) CANLI VERİ KONTROLÜ & OTOMATİK BİLDİRİM SİSTEMİ 🔔
                         if(userDataFull.config && userDataFull.config.sheetUrl) {
+                            // 1. İstatistik için veriyi çek
                             fetchDataCount(userDataFull.config.sheetUrl);
+                            
+                            // 2. Otomatik bildirim servisini başlat
+                            initAutoNotificationService(userDataFull.config.sheetUrl);
                         }
                     }
                 })
@@ -171,6 +154,90 @@
                     setText('user-name-title', currentUser.username);
                 });
         });
+
+        // --- OTOMATİK BİLDİRİM SİSTEMİ ---
+        function initAutoNotificationService(sheetUrl) {
+            // İlk açılışta hemen bir kontrol yap
+            checkSheetForToday(sheetUrl);
+
+            // 10:00 - 11:00 arası 5 dakikada bir kontrol (300.000 ms)
+            setInterval(() => {
+                const now = new Date();
+                const hour = now.getHours();
+
+                // Sadece 10:00 - 11:00 arasında çalış
+                if (hour >= 10 && hour < 11) {
+                    checkSheetForToday(sheetUrl);
+                } else {
+                    console.log("Otomatik kontrol saati dışında (10:00-11:00).");
+                }
+            }, 300000); // 5 Dakika
+        }
+
+        function checkSheetForToday(url) {
+            const indicator = document.getElementById('live-indicator');
+            if(indicator) indicator.style.display = 'block'; // "Kontrol ediliyor" ikonunu aç
+
+            Papa.parse(url, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if(indicator) indicator.style.display = 'none'; // İkonu kapat
+
+                    // Bugünkü tarihi al (DD.MM.YYYY formatında)
+                    const today = new Date();
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const yyyy = today.getFullYear();
+                    const todayStr = `${dd}.${mm}.${yyyy}`;
+
+                    // Veri içinde bugünün tarihi var mı?
+                    const hasDataForToday = results.data.some(row => row['Report Date'] && row['Report Date'].includes(todayStr));
+
+                    if (hasDataForToday) {
+                        addDynamicNotification(todayStr);
+                    }
+                },
+                error: function() {
+                    if(indicator) indicator.style.display = 'none';
+                }
+            });
+        }
+
+        function addDynamicNotification(dateStr) {
+            // Eğer bu bildirim zaten gösterilmişse (localStorage kontrolü) tekrar ekleme
+            const storageKey = `notif_seen_${dateStr}`;
+            if (localStorage.getItem(storageKey)) return;
+
+            const tbody = document.getElementById('notification-body');
+            
+            // Eğer tabloda "Bildirim yok" yazısı varsa temizle
+            if (tbody.children.length === 1 && tbody.children[0].innerText.includes("bildirim yok")) {
+                tbody.innerHTML = '';
+            }
+
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            tr.style.backgroundColor = 'rgba(16, 185, 129, 0.1)'; // Yeni olduğunu belli etmek için hafif yeşil zemin
+            
+            tr.innerHTML = `
+                <td style="padding: 1rem;"><strong><i class="fas fa-bolt" style="color:#F59E0B;"></i> YENİ:</strong> ${dateStr} tarihli web scraping sonuçları siteye yüklenmiştir.</td>
+                <td class="status-cell" style="padding: 1rem;">
+                    <span class="status-unread" style="color: #ef4444; font-weight: 600;">
+                        <i class="fas fa-envelope"></i> Okunmadı
+                    </span>
+                </td>
+                <td style="padding: 1rem; color: #888;">${dateStr}</td>
+            `;
+
+            // En başa ekle
+            tbody.prepend(tr);
+
+            // Tarayıcıya "Bu tarihin bildirimini gösterdim" diye not düş (Sayfa yenilenince tekrar çıkmasın diye)
+            // Eğer her girişte tekrar çıksın istersen aşağıdaki satırı silebilirsin.
+            localStorage.setItem(storageKey, 'true'); 
+        }
 
         // --- YARDIMCI FONKSİYONLAR ---
 
@@ -208,37 +275,15 @@
         }
 
         function fetchDataCount(url) {
-            // URL yoksa veya varsayılan kullanılacaksa
-            const targetUrl = url || SHEET_URL;
-            
             if(typeof Papa === 'undefined') return;
-            Papa.parse(targetUrl, {
+            Papa.parse(url, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
                     const count = results.data.filter(r => r['Store Name'] && r['Product Name']).length;
-                    animateValue("processed-data-count", 0, count, 5000);
-                },
-                error: function() {
-                    // Hata olursa (örneğin boş URL), mevcut değeri koru veya 0 yap
-                    // document.getElementById('processed-data-count').innerText = "0"; 
+                    const el = document.getElementById('processed-data-count');
+                    if(el) el.innerHTML = new Intl.NumberFormat('tr-TR').format(count);
                 }
             });
-        }
-
-        function animateValue(id, start, end, duration) {
-            if (start === end) return;
-            const obj = document.getElementById(id);
-            if(!obj) return;
-            let startTime = null;
-            function step(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const progress = Math.min((timestamp - startTime) / duration, 1);
-                const currentVal = Math.floor(progress * (end - start) + start);
-                obj.innerHTML = new Intl.NumberFormat('tr-TR').format(currentVal);
-                if (progress < 1) window.requestAnimationFrame(step);
-                else obj.innerHTML = new Intl.NumberFormat('tr-TR').format(end);
-            }
-            window.requestAnimationFrame(step);
         }
 
         function markAllAsRead() {
