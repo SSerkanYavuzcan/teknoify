@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <link rel="stylesheet" href="../css/dashboard.css">
-    </head>
+</head>
 <body>
 
     <aside class="sidebar">
@@ -21,7 +21,7 @@
             
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
             
-            <a href="analysis.html" class="menu-item"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
+            <a href="analysis.html" class="menu-item" id="nav-link-analysis"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
         </nav>
         
         <div class="menu-spacer"></div>
@@ -43,7 +43,7 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
-                    <div class="stat-value" id="stat-active-bots">-</div>
+                    <div class="stat-value" id="stat-active-services">-</div>
                 </div>
 
                 <div class="stat-card">
@@ -92,53 +92,83 @@
     <script src="../js/script.js"></script>
 
     <script>
-        // Google Sheet Linki (Sadece Tazeyo için kullanılacak)
+        // Google Sheet Linki (Sadece Tazeyo/Config için)
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv';
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Session Manager Kontrolü
+            // 1. Session Kontrolü
             if (typeof SessionManager === 'undefined') { console.error("SessionManager Eksik!"); return; }
             const session = new SessionManager();
             const currentUser = session.validateSession();
             
-            // Oturum yoksa at
             if (!currentUser) { window.location.href = '../index.html'; return; }
 
-            // 2. Verileri JSON Dosyasından Çek
+            // 2. Verileri Çek
             fetch('../data/users.json')
                 .then(res => res.json())
                 .then(userDB => {
-                    // Kullanıcı verisini bul
                     const userDataFull = userDB[currentUser.username];
                     
                     if (userDataFull) {
-                        const data = userDataFull.data;
+                        const data = userDataFull.data || {};
+                        const features = userDataFull.features || {};
 
                         // A) HEADER BİLGİLERİ
                         setText('user-name-display', userDataFull.name);
                         setText('user-name-title', userDataFull.name);
                         if(userDataFull.name) setText('user-avatar', userDataFull.name.charAt(0).toUpperCase());
 
-                        // B) İSTATİSTİKLER (Dinamik)
-                        setText('stat-active-bots', data.activeBots);
-                        setText('stat-saved-hours', data.savedHours);
-                        setText('stat-next-payment', data.nextPayment);
-                        
-                        // İşlenen Veri: Önce JSON verisini yaz
-                        setText('processed-data-count', data.totalProcessed || "0");
+                        // --- B) MENÜ YETKİ KONTROLÜ ---
+                        const analysisLink = document.getElementById('nav-link-analysis');
+                        if (analysisLink) {
+                            if (features.analysis === true) {
+                                analysisLink.style.display = 'flex';
+                            } else {
+                                analysisLink.style.display = 'none';
+                            }
+                        }
 
-                        // C) BİLDİRİMLERİ OLUŞTUR
+                        // --- C) İSTATİSTİKLER (MANTIK BURADA) ---
+
+                        // 1. AKTİF HİZMET SAYISI HESAPLAMA
+                        // Özelliklerden kaç tanesi 'true' ise o kadar hizmet var demektir.
+                        let activeServicesCount = 0;
+                        if (features.analysis) activeServicesCount++;
+                        if (features.rpa) activeServicesCount++; // İleride RPA eklenirse otomatik artar
+                        
+                        setText('stat-active-services', activeServicesCount);
+
+                        // 2. KAZANILAN SAAT
+                        // Kural: RPA hizmeti açıksa hesaplanır (veya JSON'dan gelir), değilse "-" yazar.
+                        if (features.rpa === true) {
+                            // RPA var, veriyi göster (Veri yoksa 0)
+                            setText('stat-saved-hours', data.savedHours || "0");
+                        } else {
+                            // RPA yok, tire bas
+                            setText('stat-saved-hours', "-");
+                        }
+
+                        // 3. SONRAKİ ÖDEME
+                        // Varsayılan tire, veri varsa onu yaz
+                        setText('stat-next-payment', data.nextPayment || "-");
+                        
+                        // 4. İŞLENEN VERİ
+                        // Önce JSON'dan geleni yaz (varsa), birazdan Sheet verisi bunu ezebilir
+                        setText('processed-data-count', data.totalProcessed || "-");
+
+
+                        // D) BİLDİRİMLER
                         renderNotifications(data.notifications);
 
-                        // D) CANLI VERİ KONTROLÜ (Sadece Tazeyo ise çalışsın)
-                        if(currentUser.username === 'tazeyo') {
-                            fetchDataCount(); // Google Sheet animasyonunu başlat
+                        // E) CANLI VERİ (Sadece sheetUrl tanımlıysa)
+                        if(userDataFull.config && userDataFull.config.sheetUrl) {
+                            fetchDataCount(userDataFull.config.sheetUrl);
                         }
                     }
                 })
                 .catch(err => {
                     console.error("Veri okuma hatası:", err);
-                    setText('user-name-title', currentUser.username); // Hata olsa bile en azından ID yazsın
+                    setText('user-name-title', currentUser.username);
                 });
         });
 
@@ -149,12 +179,10 @@
             if(el) el.textContent = value;
         }
 
-        // Bildirim Tablosunu Oluşturan Fonksiyon
         function renderNotifications(notifArray) {
             const tbody = document.getElementById('notification-body');
             if(!tbody) return;
-
-            tbody.innerHTML = ''; // Temizle
+            tbody.innerHTML = ''; 
 
             if(!notifArray || notifArray.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Henüz bildirim yok.</td></tr>';
@@ -179,19 +207,24 @@
             });
         }
 
-        // Google Sheets Canlı Veri Fonksiyonu
-        function fetchDataCount() {
+        function fetchDataCount(url) {
+            // URL yoksa veya varsayılan kullanılacaksa
+            const targetUrl = url || SHEET_URL;
+            
             if(typeof Papa === 'undefined') return;
-            Papa.parse(SHEET_URL, {
+            Papa.parse(targetUrl, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
                     const count = results.data.filter(r => r['Store Name'] && r['Product Name']).length;
                     animateValue("processed-data-count", 0, count, 5000);
+                },
+                error: function() {
+                    // Hata olursa (örneğin boş URL), mevcut değeri koru veya 0 yap
+                    // document.getElementById('processed-data-count').innerText = "0"; 
                 }
             });
         }
 
-        // Sayaç Animasyonu
         function animateValue(id, start, end, duration) {
             if (start === end) return;
             const obj = document.getElementById(id);
@@ -208,7 +241,6 @@
             window.requestAnimationFrame(step);
         }
 
-        // Bildirimleri Okundu İşaretle
         function markAllAsRead() {
             document.querySelectorAll('.status-unread').forEach(item => {
                 item.style.color = '#10b981';
@@ -223,7 +255,6 @@
             }
         }
 
-        // Çıkış Yap
         function logout() {
             if(confirm("Çıkış yapmak istediğinize emin misiniz?")) {
                 new SessionManager().destroySession();
