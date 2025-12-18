@@ -23,11 +23,39 @@
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
 
-        /* --- SIDEBAR TOGGLE & LAYOUT DÜZENLEMELERİ --- */
-        .sidebar, .main-content {
+        /* --- SIDEBAR TOGGLE & LAYOUT DÜZENLEMELERİ (GÜNCELLENDİ) --- */
+        
+        /* Sidebar Genel Ayarlar */
+        .sidebar {
+            width: 260px; /* Genişlik sabit */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000; /* Her zaman üstte */
+        }
+
+        /* Ana İçerik Genel Ayarlar */
+        .main-content {
+            /* Başlangıçta sidebar kadar soldan itiyoruz */
+            margin-left: 260px !important; 
+            width: calc(100% - 260px) !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* --- GİZLENME DURUMU (ÖNEMLİ KISIM) --- */
+        
+        /* Body'de sidebar-closed class'ı varsa Sidebar'ı sola ötele */
+        body.sidebar-closed .sidebar {
+            transform: translateX(-100%);
+            width: 0 !important;
+        }
+        
+        /* Body'de sidebar-closed class'ı varsa Main Content'i sola yapıştır */
+        body.sidebar-closed .main-content {
+            margin-left: 0 !important; /* SOL BOŞLUĞU SIFIRLA */
+            width: 100% !important; /* TAM EKRAN YAP */
+            padding-left: 20px; /* Çok yapışmaması için hafif iç boşluk */
+        }
+
+        /* Sidebar Footer Düzeni */
         .sidebar-footer {
             display: flex;
             align-items: center;
@@ -61,11 +89,12 @@
             color: #fff;
         }
 
+        /* Yüzen Açma Butonu */
         #floating-toggle-btn {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            z-index: 1000;
+            z-index: 1001;
             background: #2f3349;
             border: 1px solid #444;
             color: #fff;
@@ -74,7 +103,7 @@
             border-radius: 50%;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             cursor: pointer;
-            display: none;
+            display: none; /* Başlangıçta gizli */
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
@@ -85,15 +114,7 @@
             transform: scale(1.1);
         }
 
-        body.sidebar-closed .sidebar {
-            transform: translateX(-100%);
-        }
-        
-        body.sidebar-closed .main-content {
-            margin-left: 0 !important;
-            width: 100% !important;
-        }
-
+        /* Sidebar kapalıyken yüzen butonu göster */
         body.sidebar-closed #floating-toggle-btn {
             display: flex;
             animation: fadeIn 0.4s ease;
@@ -536,8 +557,7 @@
             theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
             staticCols.forEach(col => { theadBottom.innerHTML += `<th>${col}</th>`; });
 
-            // Bizim Fiyatlar (REVİZE: Dinamik İsim)
-            // Filtrelenen verinin ilk satırındaki mağaza adını alıyoruz
+            // Bizim Fiyatlar
             let myStoreLabel = 'Bizim Fiyatlar';
             if(dataRows.length > 0 && dataRows[0]['Store Name']) {
                 myStoreLabel = dataRows[0]['Store Name'];
