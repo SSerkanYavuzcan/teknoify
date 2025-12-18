@@ -13,111 +13,104 @@
     <link rel="stylesheet" href="../css/dashboard.css">
 
     <style>
-        /* =========================================================================
-           1.1: SYSTEM RESET (DASHBOARD.CSS ETKİSİZ HALE GETİRME)
-           ========================================================================= */
-        
+        /* --- 1.1: LAYOUT RESET (KESİN ÇÖZÜM) --- */
         * { box-sizing: border-box; }
-
-        /* BODY AYARLARI (KRİTİK: Flex'i kapat, Scroll'u aç) */
+        
+        /* Body Ayarları: Flex iptal, Scroll aktif */
         html, body {
-            display: block !important; /* Flex yapısını kır */
+            display: block !important;
             height: auto !important;
             min-height: 100vh !important;
-            overflow-y: auto !important; /* Ana scroll burada */
-            overflow-x: hidden !important;
+            overflow-y: auto !important; /* Dikey scroll sayfada */
+            overflow-x: hidden !important; /* Yatay scroll yok */
             background-color: #0b0e11;
             margin: 0; padding: 0;
         }
 
-        /* SIDEBAR (Tamamen Sabit) */
+        /* Sidebar: Tamamen Sabit */
         .sidebar {
             position: fixed !important;
             top: 0; left: 0; 
-            width: 260px !important;
-            height: 100vh !important;
+            width: 260px !important; height: 100vh !important;
             z-index: 10000 !important;
             background: #14161c; border-right: 1px solid #333;
             transition: transform 0.3s ease !important;
             display: flex; flex-direction: column;
         }
 
-        /* MAIN CONTENT (İçerik Alanı - Sidebar Yanı) */
+        /* Main Content: Sidebar'ın yanına, akışkan genişlik */
         .main-content {
             display: block !important;
-            position: relative !important;
-            margin-left: 260px !important; /* Sidebar kadar boşluk */
-            width: calc(100% - 260px) !important;
+            margin-left: 260px !important; /* Sidebar boşluğu */
+            width: calc(100% - 260px) !important; /* Kalan alan */
             height: auto !important;
             min-height: 100vh;
             overflow: visible !important; /* Sticky header için şart */
             padding: 0 !important;
-            transition: margin-left 0.3s ease, width 0.3s ease !important;
+            position: relative !important;
         }
 
-        /* Top Bar (Akışkan) */
+        /* Top Bar: Akışkan (Scroll ile gider) */
         .top-bar {
-            position: relative !important;
-            width: 100% !important;
-            z-index: 50;
+            position: relative !important; 
+            width: 100% !important; 
+            z-index: 50; 
             background: #14161c !important;
         }
 
-        /* İçerik Kutusu */
         .content-scroll {
-            height: auto !important;
+            height: auto !important; 
             overflow: visible !important;
-            padding: 30px !important;
-            padding-bottom: 80px !important; /* Alt kısım rahatlasın */
+            padding: 30px !important; 
+            padding-bottom: 80px !important;
         }
 
-        /* --- 1.2: SIDEBAR GİZLEME (TOGGLE) --- */
+        /* Sidebar Toggle Durumu */
         body.sidebar-closed .sidebar { transform: translateX(-100%) !important; }
-        
-        body.sidebar-closed .main-content { 
-            margin-left: 0 !important; 
-            width: 100% !important; 
-        }
+        body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
 
         /* =========================================================================
-           1.3: TABLO VE STICKY HEADER (KESİN ÇÖZÜM)
+           1.2: GELİŞMİŞ TABLO SABİTLEME (Sticky Headers & Columns)
            ========================================================================= */
         
-        /* Tabloyu saran kutu: Sadece YATAY scroll yapar, DİKEYİ body'e bırakır */
+        /* Tabloyu saran kutu: DİKEY scroll YOK, YATAY scroll VAR */
+        /* Sticky header'ın çalışması için parent'ta overflow: hidden/auto OLMAMALI (Dikeyde) */
         .table-responsive-wrapper {
             display: block;
             width: 100%;
-            overflow-x: auto; /* Yatay kaydırma */
-            overflow-y: visible; /* Dikey kaydırma yok (Body yapar) */
+            /* Bu kısım önemli: Dikey scroll body'de kalsın diye wrapper overflow'u visible yapıyoruz.
+               Yatay taşma için tablo genişliğini min-width ile zorluyoruz. */
+            overflow-x: auto; 
             border-radius: 16px; 
             border: 1px solid var(--border);
             margin-bottom: 20px;
             background: #14161c;
+            position: relative; /* Z-index bağlamı */
         }
 
         .comparison-table {
             border-collapse: separate; 
             border-spacing: 0;
             width: 100%;
-            min-width: 1200px; /* Tablo büzülmesin */
+            min-width: max-content; /* Tablo içeriği kadar genişlesin */
         }
 
-        /* --- 1. SATIR: RAKİPLER (EN TEPEYE YAPIŞIR) --- */
+        /* --- BAŞLIKLAR (YUKARI YAPIŞIR) --- */
+        
+        /* 1. Satır (Rakipler) */
         #header-row-top th {
-            position: sticky !important;
-            top: 0 !important; 
+            position: sticky !important; top: 0 !important;
             z-index: 1000;
             height: 50px;
-            background-color: #14161c !important; 
+            background-color: #14161c !important;
             border-bottom: 1px solid #333;
             box-shadow: 0 1px 0 #333; 
         }
 
-        /* --- 2. SATIR: ORIGINAL/DISCOUNT (1. SATIRIN ALTINA) --- */
+        /* 2. Satır (Fiyat Başlıkları) */
         #header-row-bottom th {
-            position: sticky !important;
-            top: 50px !important; /* 1. Satırın boyu kadar boşluk */
+            position: sticky !important; top: 50px !important;
             z-index: 900;
             height: 45px;
             background-color: #14161c !important;
@@ -125,43 +118,64 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        /* --- SOL SÜTUN SABİTLEME (ÜRÜN ADI) --- */
-        td.sticky-col, th.sticky-col {
-            position: sticky !important;
-            left: 0 !important;
-            z-index: 100;
-            background-color: #14161c !important;
-            border-right: 2px solid #444;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* Kesişim Noktaları (Sol Üst Köşeler) */
-        #header-row-top th:last-child { z-index: 1100 !important; } /* Ürün Bilgileri Başlığı */
+        /* --- İLK 2 SÜTUN (SOLA YAPIŞIR) --- */
         
-        #header-row-bottom th.sticky-col { 
-            top: 50px !important; 
-            z-index: 1100 !important; /* Ürün Adı Başlığı */
+        /* 1. Sütun: Rapor Tarihi */
+        .comparison-table th:nth-child(1),
+        .comparison-table td:nth-child(1) {
+            position: sticky !important; left: 0 !important;
+            z-index: 800; /* Verinin üstünde */
+            background-color: #14161c !important;
+            width: 120px; min-width: 120px;
+            border-right: 1px solid #333;
         }
 
-        tr:hover td { background-color: #1a1d24; }
-        tr:hover td.sticky-col { background-color: #1a1d24 !important; }
+        /* 2. Sütun: Mağaza Adı */
+        .comparison-table th:nth-child(2),
+        .comparison-table td:nth-child(2) {
+            position: sticky !important; left: 120px !important; /* 1. sütun genişliği */
+            z-index: 800;
+            background-color: #14161c !important;
+            width: 180px; min-width: 180px;
+            border-right: 2px solid #444; 
+            box-shadow: 4px 0 5px rgba(0,0,0,0.5);
+        }
+
+        /* --- KESİŞİM NOKTALARI (SOL ÜST) --- */
+        /* Hem yukarı hem sola yapışan hücreler en üstte olmalı */
+        
+        /* 1. Satırın Sol Başlıkları */
+        #header-row-top th:nth-child(1),
+        #header-row-top th:nth-child(2) {
+            z-index: 1500 !important; /* En yüksek */
+            left: 0 !important; /* JS ile veya CSS ile sabitlenecek */
+        }
+        /* 2. Mağaza başlığı için özel left */
+        #header-row-top th:nth-child(2) { left: 120px !important; }
+
+        /* 2. Satırın Sol Başlıkları */
+        #header-row-bottom th:nth-child(1) {
+            z-index: 1500 !important; top: 50px !important; left: 0 !important;
+        }
+        #header-row-bottom th:nth-child(2) {
+            z-index: 1500 !important; top: 50px !important; left: 120px !important;
+        }
+
+        /* Hover */
+        tr:hover td { background-color: #1a1d24 !important; }
 
 
-        /* =========================================================================
-           1.4: DİĞER BİLEŞENLER (Dropdown, Buton)
-           ========================================================================= */
+        /* --- 1.3: DİĞER BİLEŞENLER --- */
         
         .filter-bar { position: relative; z-index: 2000; margin-bottom: 20px; }
         .multi-select-wrapper { position: relative; }
 
-        /* Dropdown Menü (250px Genişlik) */
         .multi-select-menu {
             position: absolute; top: 100%; left: 0; margin-top: 8px;
             width: 250px; max-height: 400px;
             display: none; flex-direction: column;
             background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-            z-index: 99999 !important; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 99999 !important; overflow: hidden;
         }
         .multi-select-menu.show { display: flex; }
 
@@ -169,12 +183,8 @@
         .dropdown-search-wrapper { padding: 10px; }
         .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; outline: none; }
         .dropdown-search-input:focus { border-color: #7367f0; }
-
         .scrollable-options-area { flex-grow: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1f232c; }
-        .scrollable-options-area::-webkit-scrollbar { width: 6px; }
-        .scrollable-options-area::-webkit-scrollbar-track { background: #1f232c; }
-        .scrollable-options-area::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-
+        
         .multi-option { padding: 10px 14px; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }
         .multi-option:hover { background: rgba(255,255,255,0.1); color: #fff; }
         .multi-option.selected { background: rgba(115, 103, 240, 0.1); color: #fff; }
@@ -182,7 +192,6 @@
         .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
         .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
 
-        /* Yüzen Buton */
         #floating-toggle-btn {
             position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px;
             background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%;
@@ -193,16 +202,13 @@
         #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
         body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
 
-        /* Sidebar Footer */
         .sidebar-footer { margin-top: auto; padding: 20px; display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
         .sidebar-footer .menu-item { flex: 1; margin: 0; justify-content: center; }
         .btn-collapse-sidebar { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Uyarı Mesajı (Altta Sabit Değil) */
         #limit-msg { position: static !important; margin-top: 20px; width: 100%; text-align: center; }
 
-        /* Renkler */
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
@@ -662,7 +668,6 @@
             };
         }
 
-        // 3.3: Tablo Render
         function renderTable(dataRows, competitorNames) {
             const theadTop = document.getElementById('header-row-top');
             const theadBottom = document.getElementById('header-row-bottom');
@@ -674,39 +679,54 @@
 
             // HEADER (STICKY LOGIC BURADA)
             const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Marka', 'Kategori', 'Ürün Adı'];
-            theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
             
-            staticCols.forEach((col, index) => { 
-                if (index === staticCols.length - 1) { 
-                    theadBottom.innerHTML += `<th class="sticky-col">${col}</th>`;
-                } else {
-                    theadBottom.innerHTML += `<th>${col}</th>`;
-                }
-            });
-
+            // --- 1. SATIR ---
+            let headerTopHtml = '';
+            // Rapor Tarihi ve Mağaza (İlk 2)
+            headerTopHtml += `<th rowspan="2">Rapor Tarihi</th>`;
+            headerTopHtml += `<th rowspan="2">Mağaza</th>`;
+            
+            // Diğer Ürün Bilgileri (SKU, Marka, Kategori, Ürün Adı)
+            headerTopHtml += `<th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>`;
+            
             // Bizim Fiyatlar
             let myStoreLabel = 'Bizim Fiyatlar';
             if(dataRows.length > 0 && dataRows[0]['Store Name']) {
                 myStoreLabel = dataRows[0]['Store Name'];
             }
             const tazeyoBg = `linear-gradient(rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.05)), #14161c`;
-            theadTop.innerHTML += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
-            theadBottom.innerHTML += `<th>Original</th><th>Discount</th>`;
+            headerTopHtml += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
 
             // Rakipler
             competitorNames.forEach(compName => {
                 const brandColor = getBrandColor(compName);
                 const bgRgba = hexToRgba(brandColor, 0.05);
                 const solidBg = `linear-gradient(${bgRgba}, ${bgRgba}), #14161c`;
-                
                 const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background: ${solidBg}; border-left: 2px solid #444;`;
-                theadTop.innerHTML += `<th colspan="2" style="${styleStr}">${compName}</th>`;
-                theadBottom.innerHTML += `<th class="border-left-light">Original</th><th>Discount</th>`;
+                headerTopHtml += `<th colspan="2" style="${styleStr}">${compName}</th>`;
             });
 
             // Analiz
-            theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
-            theadBottom.innerHTML += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
+            headerTopHtml += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
+            theadTop.innerHTML = headerTopHtml;
+
+            // --- 2. SATIR ---
+            let headerBottomHtml = '';
+            // SKU, Marka, Kategori, Ürün Adı
+            headerBottomHtml += `<th>SKU</th><th>Marka</th><th>Kategori</th><th>Ürün Adı</th>`;
+            
+            // Bizim Fiyatlar (Altı)
+            headerBottomHtml += `<th>Original</th><th>Discount</th>`;
+
+            // Rakipler (Altı)
+            competitorNames.forEach(() => {
+                headerBottomHtml += `<th class="border-left-light">Original</th><th>Discount</th>`;
+            });
+
+            // Analiz (Altı)
+            headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
+            theadBottom.innerHTML = headerBottomHtml;
+
 
             // DATA
             dataRows.forEach(row => {
@@ -718,7 +738,7 @@
                     <td>${row['SKU']}</td>
                     <td>${row['Brand Name'] || '-'}</td>
                     <td>${row['Category Name'] || '-'}</td>
-                    <td class="sticky-col" title="${row['Product Name']}">${row['Product Name']}</td>
+                    <td title="${row['Product Name']}">${row['Product Name']}</td>
                 `;
 
                 const t_org = row.tazeyo_price_org;
@@ -920,7 +940,7 @@
             XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
             XLSX.writeFile(wb, "teknoify_pivot_analiz.xlsx");
             document.getElementById('download-menu').classList.remove('show');
-        }
+        } 
 
         function flattenForExport(dataObj) {
             return dataObj.rows.map(row => {
