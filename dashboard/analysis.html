@@ -16,18 +16,16 @@
         /* --- 1.1: LAYOUT RESET (TAM SAYFA SCROLL) --- */
         * { box-sizing: border-box; }
         
-        /* Sayfa Scroll'u Aktif */
         html, body {
             height: auto !important;
             min-height: 100vh !important;
-            overflow-y: auto !important; /* Dikey scroll sayfada */
+            overflow-y: auto !important;
             overflow-x: hidden !important;
             background-color: #0b0e11;
             margin: 0; padding: 0;
             display: block !important;
         }
 
-        /* Sidebar Sabit */
         .sidebar {
             position: fixed !important; top: 0; left: 0; 
             width: 260px !important; height: 100vh !important;
@@ -36,20 +34,17 @@
             display: flex; flex-direction: column;
         }
 
-        /* Ana İçerik */
         .main-content {
             margin-left: 260px !important; width: calc(100% - 260px) !important;
             min-height: 100vh; display: block !important; position: relative !important;
             padding: 0 !important;
         }
 
-        /* Üst Bar (Akışkan) */
         .top-bar { 
             position: relative !important; width: 100%; z-index: 50; 
             background: #14161c !important; height: 60px;
         }
 
-        /* İçerik Alanı */
         .content-scroll {
             display: block !important; height: auto !important; overflow: visible !important;
             padding: 20px !important; padding-bottom: 80px !important;
@@ -60,15 +55,14 @@
 
 
         /* =========================================================================
-           1.2: TABLO YAPISI (STICKY HEADER & 250 SATIR GÖRÜNÜMÜ)
+           1.2: TABLO YAPISI (HİZALAMA DÜZELTMESİ)
            ========================================================================= */
         
-        /* Tablo Kapsayıcısı: Yükseklik sınırı YOK, sayfa uzadıkça uzar */
         .table-responsive-wrapper {
             display: block;
             width: 100%;
-            overflow-x: auto; /* Yatay scroll */
-            overflow-y: visible; /* Dikey scroll body'de */
+            overflow-x: auto; 
+            overflow-y: visible; 
             border: 1px solid #333;
             border-radius: 12px;
             background: #14161c;
@@ -89,7 +83,7 @@
             text-align: center; vertical-align: middle;
         }
 
-        /* 2. Satır: 40px yükseklik (Toplam 90px sticky alan) */
+        /* 2. Satır: 40px yükseklik */
         #header-row-bottom th {
             position: sticky !important; top: 50px !important; z-index: 900; height: 40px;
             background-color: #14161c !important; border-bottom: 2px solid #333;
@@ -108,15 +102,16 @@
             text-align: left !important; padding-left: 15px !important;
         }
 
-        /* Kesişim Noktaları */
-        #header-row-top th:first-child { z-index: 1200 !important; left: 0; } 
-        #header-row-bottom th.sticky-product { top: 50px; z-index: 1200 !important; }
+        /* Kesişim Noktası: Sol Üst (Ürün Adı Başlığı) */
+        #header-row-top th:first-child { 
+            z-index: 1200 !important; left: 0 !important; 
+            /* Rowspan olduğu için yükseklik otomatik ayarlanır, ekstra top gerekmez */
+        } 
 
         tr:hover td { background-color: #1a1d24 !important; }
         tr:hover td.sticky-product { background-color: #1a1d24 !important; }
 
-        /* Hücre Ayarları */
-        .comparison-table td { padding: 10px; height: 45px; border-bottom: 1px solid #2a2a2a; }
+        .comparison-table td { padding: 8px 10px; height: 45px; border-bottom: 1px solid #2a2a2a; font-size: 0.85rem; }
         .price-cell { min-width: 100px; text-align: center; font-family: 'Fira Code', monospace; }
 
 
@@ -139,7 +134,6 @@
         .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
         .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
 
-        /* Yüzen Buton (Sidebar Kapalıyken Görünür) */
         #floating-toggle-btn { 
             position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px; 
             background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%; 
@@ -620,17 +614,21 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // HEADER (1. SATIR)
+            // --- HEADER ---
+            // 1. SATIR: Ürün Bilgileri Başlığı (Sola Yapışık), Fiyatlar ve Rakipler
+            // Ürün Adı'nı en başa alıyoruz (Görsel tutarlılık için)
             let headerTopHtml = '';
-            // Ürün Adı (Sola yapışık)
             headerTopHtml += `<th class="sticky-product" style="z-index:1200 !important; top:0 !important; text-align:left;">Ürün Adı</th>`; 
-            // Diğer bilgiler
-            headerTopHtml += `<th>Rapor Tarihi</th><th>Mağaza</th><th>SKU</th><th>Marka</th><th>Kategori</th>`;
+            
+            // Diğer sabit olmayan ürün bilgileri (colspan=5)
+            headerTopHtml += `<th colspan="5" style="background:#14161c; text-align:center;">Ürün Detayları</th>`;
+            
             // Bizim Fiyatlar
             let myStoreLabel = 'Bizim Fiyatlar';
             if(dataRows.length > 0 && dataRows[0]['Store Name']) myStoreLabel = dataRows[0]['Store Name'];
             const tazeyoBg = `linear-gradient(rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.05)), #14161c`;
             headerTopHtml += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
+
             // Rakipler
             competitorNames.forEach(compName => {
                 const brandColor = getBrandColor(compName);
@@ -639,34 +637,66 @@
                 const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background: ${solidBg}; border-left: 2px solid #444;`;
                 headerTopHtml += `<th colspan="2" style="${styleStr}">${compName}</th>`;
             });
+
             // Analiz
             headerTopHtml += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadTop.innerHTML = headerTopHtml;
 
-            // HEADER (2. SATIR)
+            // 2. SATIR
             let headerBottomHtml = '';
-            // Ürün Adı altı boş (JS ile rowspan verilecek)
-            headerBottomHtml += `<th class="sticky-product"></th>`; 
-            // Diğer bilgiler altı boş
-            headerBottomHtml += `<th></th><th></th><th></th><th></th><th></th>`; 
+            // Burada Ürün Adı ve Diğer Detaylar için boş TH koymak yerine, 
+            // Direkt 2. satırda başlıkları yazıyoruz.
+            // Ama yukarıdaki colspan ile çakışmaması için, yukarıdaki th'lere rowspan=2 verip, 
+            // 2. satırda bu sütunları hiç yazmayacağız.
+            
             // Bizim Fiyatlar
             headerBottomHtml += `<th>Original</th><th>Discount</th>`;
+
             // Rakipler
             competitorNames.forEach(() => {
                 headerBottomHtml += `<th class="border-left-light">Original</th><th>Discount</th>`;
             });
-            // Analiz
+
             headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
             theadBottom.innerHTML = headerBottomHtml;
             
-            // ROWSPAN ve TEMİZLİK (Hizalama Düzeltmesi)
+            // ROWSPAN AYARLARI (Hizalama Düzeltmesi)
             const firstRowCells = theadTop.querySelectorAll('th');
-            // İlk 6 hücreye (Ürün Adı + Diğer Bilgiler) rowspan=2 veriyoruz
-            for(let i=0; i<6; i++) { firstRowCells[i].setAttribute('rowspan', '2'); }
+            // "Ürün Adı" (index 0) ve "Ürün Detayları" (index 1) hücrelerine rowspan=2 veriyoruz.
+            // Ancak "Ürün Detayları" tek bir hücrede "Ürün Detayları" yazıyor, altındaki Rapor Tarihi vb. gözükmüyor.
+            // İSTEĞİNİZ: Altında başlıklar olsun.
             
-            // İkinci satırdaki ilk 6 boş hücreyi siliyoruz ki Original/Discount sola kaysın
-            const secondRowCells = theadBottom.querySelectorAll('th');
-            for(let i=0; i<6; i++) { secondRowCells[0].remove(); } 
+            // DÜZELTME: "Ürün Detayları" yerine tek tek başlıkları 1. satıra koyalım, rowspan=2 yapalım.
+            // Bu en temiz yöntem.
+            
+            let correctedHeaderTop = '';
+            // 1. Ürün Adı (Sticky)
+            correctedHeaderTop += `<th class="sticky-product" rowspan="2" style="z-index:1200 !important; top:0 !important; text-align:left;">Ürün Adı</th>`;
+            // 2. Diğer Bilgiler (Tek tek)
+            correctedHeaderTop += `<th rowspan="2">Rapor Tarihi</th><th rowspan="2">Mağaza</th><th rowspan="2">SKU</th><th rowspan="2">Marka</th><th rowspan="2">Kategori</th>`;
+            
+            // Bizim Fiyatlar (colspan=2, rowspan=1)
+            correctedHeaderTop += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
+            
+            // Rakipler
+            competitorNames.forEach(compName => {
+                const brandColor = getBrandColor(compName);
+                const bgRgba = hexToRgba(brandColor, 0.05);
+                const solidBg = `linear-gradient(${bgRgba}, ${bgRgba}), #14161c`;
+                const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background: ${solidBg}; border-left: 2px solid #444;`;
+                correctedHeaderTop += `<th colspan="2" style="${styleStr}">${compName}</th>`;
+            });
+            
+            // Analiz
+            correctedHeaderTop += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
+            
+            theadTop.innerHTML = correctedHeaderTop;
+            
+            // 2. Satır (Sadece Fiyatlar ve Analiz alt başlıkları)
+            // Ürün bilgileri rowspan ile kaplandığı için burada yazmaya gerek yok.
+            // headerBottomHtml zaten doğru.
+            theadBottom.innerHTML = headerBottomHtml;
+
 
             // DATA
             dataRows.forEach(row => {
