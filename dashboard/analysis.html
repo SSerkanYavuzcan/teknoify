@@ -13,14 +13,14 @@
     <link rel="stylesheet" href="../css/dashboard.css">
 
     <style>
-        /* --- 1.2: GENEL SIFIRLAMA VE LAYOUT OVERRIDE (DASHBOARD.CSS DÜZELTMELERİ) --- */
+        /* --- 1.1: LAYOUT RESET (DASHBOARD.CSS DÜZELTMELERİ) --- */
         * { box-sizing: border-box; }
         
         /* Sayfanın kendisine scroll veriyoruz (Sticky Header için şart) */
         html, body {
             height: auto !important;
             min-height: 100vh !important;
-            overflow-y: auto !important;
+            overflow-y: auto !important; /* Ana kaydırma burada */
             overflow-x: hidden !important;
             background-color: #0b0e11;
             margin: 0; padding: 0;
@@ -50,7 +50,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Üst Bar: Sabitlik Kaldırıldı (Akışkan) */
+        /* Üst Bar: Sabitlik Kaldırıldı (Akışkan - Scroll ile gider) */
         .top-bar {
             position: relative !important;
             top: auto !important; left: auto !important;
@@ -65,7 +65,7 @@
             padding: 30px !important;
         }
 
-        /* --- 1.3: SIDEBAR GİZLEME (TOGGLE) --- */
+        /* --- 1.2: SIDEBAR GİZLEME (TOGGLE) --- */
         body.sidebar-closed .sidebar { transform: translateX(-260px); }
         body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
@@ -76,7 +76,7 @@
             background: #2f3349; color: #fff;
             border: 1px solid #444; border-radius: 50%;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            z-index: 10001; /* Sidebar'dan da yüksek */
+            z-index: 10001;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem;
             opacity: 0; visibility: hidden; transform: scale(0.8);
@@ -85,7 +85,6 @@
         #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
         body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
 
-        /* Sidebar Alt Butonlar */
         .sidebar-footer {
             margin-top: auto; padding: 20px;
             display: flex; gap: 10px;
@@ -99,7 +98,7 @@
         }
         .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* --- 1.4: TABLO STICKY HEADERS (SABİT BAŞLIKLAR) --- */
+        /* --- 1.3: TABLO STICKY HEADERS (SABİT BAŞLIKLAR) --- */
         .comparison-table {
             border-collapse: separate; 
             border-spacing: 0;
@@ -108,33 +107,32 @@
 
         /* 1. Satır: Rakipler (En Tepeye Yapışır) */
         #header-row-top th {
-            position: sticky; top: 0; z-index: 100; height: 50px;
+            position: sticky; top: 0; z-index: 1000; height: 50px;
             background-color: #14161c; border-bottom: 1px solid #333;
             box-shadow: 0 1px 0 #333;
         }
 
         /* 2. Satır: Fiyat Başlıkları (1. Satırın Altına) */
         #header-row-bottom th {
-            position: sticky; top: 50px; z-index: 90; height: 45px;
+            position: sticky; top: 50px; z-index: 900; height: 45px;
             background-color: #14161c; border-bottom: 2px solid #333;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
         /* SOL SÜTUN SABİTLEME (ÜRÜN ADI) */
         td.sticky-col {
-            position: sticky; left: 0; z-index: 10;
+            position: sticky; left: 0; z-index: 100;
             background-color: #14161c; border-right: 2px solid #444;
             box-shadow: 4px 0 10px rgba(0,0,0,0.5);
         }
         
-        /* Kesişim Noktaları (Hem Üst Hem Sol) */
-        #header-row-top th:last-child { z-index: 110 !important; } 
+        /* Kesişim Noktaları (Hem Üst Hem Sol - En Üstte) */
+        #header-row-top th:last-child { z-index: 1100 !important; } 
         #header-row-bottom th.sticky-col { 
-            position: sticky; left: 0; top: 50px; z-index: 110 !important; 
+            position: sticky; left: 0; top: 50px; z-index: 1100 !important; 
             background-color: #14161c; border-right: 2px solid #444;
         }
 
-        /* Hover Efekti */
         tr:hover td { background-color: #1a1d24; }
         tr:hover td.sticky-col { background-color: #1a1d24; }
 
@@ -150,14 +148,14 @@
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
 
-        /* --- 1.5: DROPDOWN (GELİŞMİŞ MENU) --- */
-        .filter-bar { position: relative; z-index: 500; margin-bottom: 20px; }
+        /* --- 1.4: DROPDOWN (GELİŞMİŞ MENU) --- */
+        .filter-bar { position: relative; z-index: 2000; margin-bottom: 20px; } /* Tablodan yüksek olmalı */
         .multi-select-wrapper { position: relative; }
 
         .multi-select-menu {
             position: absolute; top: 100%; left: 0; margin-top: 8px;
-            min-width: 100%; width: 280px; max-height: 400px;
-            display: none; flex-direction: column; /* Flex Yapı */
+            width: 280px; max-height: 400px;
+            display: none; flex-direction: column;
             background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.9);
             z-index: 99999 !important; overflow: hidden;
@@ -651,8 +649,7 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // --- HEADER ---
-            // Ürün Adı en sağda (Sticky Column)
+            // HEADER (STICKY LOGIC BURADA)
             const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Marka', 'Kategori', 'Ürün Adı'];
             theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
             
@@ -688,7 +685,7 @@
             theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadBottom.innerHTML += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
 
-            // --- DATA ---
+            // DATA
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 
