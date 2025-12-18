@@ -10,6 +10,23 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+    <style>
+        /* Dinamik Tablo Stilleri */
+        .th-group-market { text-align: center; color: #f97316; border-bottom: 1px solid #333; background-color: rgba(249, 115, 22, 0.05); }
+        .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
+        
+        /* Badge Stilleri */
+        .badge-tazeyo { background-color: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+        .badge-market { background-color: rgba(249, 115, 22, 0.2); color: #f97316; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+        
+        /* Fark Renklendirmeleri */
+        .diff-positive { color: #ef4444; font-weight: bold; } /* Biz pahalıysak kırmızı */
+        .diff-negative { color: #10b981; font-weight: bold; } /* Biz ucuzsak yeşil */
+        
+        /* Tablo Çizgileri */
+        .border-left-strong { border-left: 2px solid #444; }
+        .border-left-light { border-left: 1px solid #333; }
+    </style>
 </head>
 <body>
 
@@ -27,7 +44,7 @@
             <a href="member.html" class="menu-item"><i class="fas fa-home"></i> Genel Bakış</a>
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
             <a href="analysis.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
-            </nav>
+        </nav>
         <div class="menu-spacer"></div>
         <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
     </aside>
@@ -122,31 +139,11 @@
             <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
                 <table class="comparison-table" id="main-table">
                     <thead>
-                        <tr class="no-sort">
-                            <th colspan="6" style="background:#14161c;">Ürün Bilgileri</th>
-                            <th colspan="3" class="th-group-tazeyo" id="header-tazeyo">Bizim Fiyatlar</th>
-                            <th colspan="3" class="th-group-market" id="header-competitor">Rakip Market</th>
-                            <th colspan="2" style="background:#14161c;">Analiz</th>
-                        </tr>
-                        <tr>
-                            <th>Report Date</th>
-                            <th>Store Name</th>
-                            <th>SKU</th>
-                            <th>Product Name</th>
-                            <th>Brand</th>
-                            <th>Category</th>
-                            <th>Original Price</th>
-                            <th>Discount Price</th>
-                            <th>Weekly Change</th>
-                            <th>Original Price</th>
-                            <th>Discount Price</th>
-                            <th>Weekly Change</th>
-                            <th>En Ucuz</th>
-                            <th>Ucuzluk Oranı</th>
-                        </tr>
+                        <tr id="header-row-top"></tr>
+                        <tr id="header-row-bottom"></tr>
                     </thead>
                     <tbody id="table-body">
-                        <tr><td colspan="14" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağı bekleniyor...</td></tr>
+                        <tr><td colspan="100%" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağı bekleniyor...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -166,11 +163,12 @@
     <script src="../js/script.js"></script>
    
     <script>
-        // GLOBAL DEĞİŞKENLER
+        // --- GLOBAL DEĞİŞKENLER ---
         let ALL_DATA = [];
         let flatpickrInstance;
         let SELECTED_BRANCHES = ['all'];
         let SELECTED_CATEGORIES = ['all'];
+        let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
 
         document.addEventListener('DOMContentLoaded', () => {
             // 1. Session Kontrolü
@@ -179,42 +177,40 @@
             const currentUser = session.validateSession();
             if (!currentUser) { window.location.href = '../index.html'; return; }
 
-            // 2. Users.json'dan Veri Çek ve Yetki Kontrolü
+            // 2. Kullanıcı Verilerini Çek
             fetch('../data/users.json')
                 .then(res => res.json())
                 .then(userDB => {
                     const userData = userDB[currentUser.username];
 
-                    // A) Yetki Kontrolü
+                    // Yetki Kontrolü
                     if (!userData || !userData.features || userData.features.analysis !== true) {
                         alert("Bu hizmete erişim yetkiniz bulunmamaktadır.");
                         window.location.href = 'member.html';
                         return;
                     }
 
-                    // B) Profil Bilgilerini Güncelle
+                    // Profil Güncelle
                     if (userData) {
                         document.getElementById('user-name-display').textContent = userData.name;
                         document.getElementById('user-avatar').textContent = userData.name.charAt(0).toUpperCase();
                     }
 
-                    // C) Veri Kaynağını Belirle ve Başlat
+                    // Takvim ve Veri Başlatma
                     initCalendar();
 
                     if (userData.config && userData.config.sheetUrl && userData.config.sheetUrl !== "") {
-                        // Kullanıcının özel linki varsa veriyi çek
                         initData(userData.config.sheetUrl);
                     } else {
-                        // Link yoksa (Yemeksepeti vb.)
                         showNoDataState();
                     }
                 })
                 .catch(err => {
                     console.error("Kullanıcı verisi okunamadı:", err);
-                    document.getElementById('table-body').innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
                 });
 
-            // Dropdown Kapatma Event'leri
+            // UI Event Listener'lar
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.multi-select-wrapper')) {
                     document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
@@ -227,16 +223,12 @@
             });
         });
 
-        // --- VERİ YOKSA (Yemeksepeti Durumu) ---
+        // --- BAŞLANGIÇ FONKSİYONLARI ---
         function showNoDataState() {
             const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.<br><small>Lütfen yöneticinizle iletişime geçiniz.</small></td></tr>';
-            
-            // Şube ve Kategori yükleniyor yazılarını güncelle
+            tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.<br><small>Lütfen yöneticinizle iletişime geçiniz.</small></td></tr>';
             document.getElementById('text-branch').textContent = "-";
             document.getElementById('text-category').textContent = "-";
-            
-            // Butonları pasife al
             document.getElementById('btn-load').disabled = true;
             document.getElementById('btn-load').style.opacity = "0.5";
             document.getElementById('btn-load').style.cursor = "not-allowed";
@@ -249,25 +241,23 @@
             });
         }
 
-        // --- DİNAMİK VERİ ÇEKME (URL Parametresi Eklendi) ---
         function initData(dynamicUrl) {
             Papa.parse(dynamicUrl, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
                     ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
                     populateFilters();
-                   
                     const tbody = document.getElementById('table-body');
-                    tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Kriterleri seçip "Verileri Yükle" butonuna basınız.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Kriterleri seçip "Verileri Yükle" butonuna basınız.</td></tr>';
                 },
                 error: function(err) {
                     console.error("CSV Hatası:", err);
-                    document.getElementById('table-body').innerHTML = '<tr><td colspan="14" style="color:#ef4444; text-align:center;">Veri çekilemedi. Bağlantı hatası.</td></tr>';
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="color:#ef4444; text-align:center;">Veri çekilemedi. Bağlantı hatası.</td></tr>';
                 }
             });
         }
 
-        // --- FİLTRELEME VE UI FONKSİYONLARI (Aynen Korundu) ---
+        // --- FİLTRE & UI YÖNETİMİ ---
         function populateFilters() {
             const branchSet = new Set();
             const catSet = new Set();
@@ -346,48 +336,44 @@
             if (!isVisible) menu.classList.add('show');
         }
 
+        // --- ANA FİLTRELEME MANTIĞI ---
         function applyFilters() {
             const dateRange = flatpickrInstance.selectedDates;
             const tbody = document.getElementById('table-body');
             const limitMsg = document.getElementById('limit-msg');
             const btnDownload = document.getElementById('btn-download');
-            const headerTazeyo = document.getElementById('header-tazeyo');
             const miniDash = document.getElementById('mini-dashboard');
-
-            if (SELECTED_BRANCHES.includes('all')) headerTazeyo.textContent = "Bizim Fiyatlar (Genel)";
-            else if (SELECTED_BRANCHES.length === 1) headerTazeyo.textContent = SELECTED_BRANCHES[0];
-            else headerTazeyo.textContent = "Seçili Şubeler";
 
             if (dateRange.length < 1) { showToast("Lütfen bir tarih aralığı seçiniz."); return; }
 
-            tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
 
             const startDate = dateRange[0];
             const endDate = dateRange[1] ? dateRange[1] : dateRange[0];
             startDate.setHours(0,0,0,0); endDate.setHours(23,59,59,999);
 
+            // 1. Veriyi Süz
             let filteredData = ALL_DATA.filter(row => {
                 const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const catName = row['Category Name'] ? row['Category Name'].trim() : "";
                 const branchMatch = SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.includes(storeName);
                 const catMatch = SELECTED_CATEGORIES.includes('all') || SELECTED_CATEGORIES.includes(catName);
+                
                 const dateStr = row['Report Date'];
                 if (!dateStr) return false;
-                const parts = dateStr.split('.');
+                const parts = dateStr.split('.'); // Tarih formatı: GG.AA.YYYY varsayılıyor
                 if(parts.length !== 3) return false;
                 const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
-                const dateMatch = (rowDate >= startDate && rowDate <= endDate);
-                return branchMatch && catMatch && dateMatch;
+                
+                return branchMatch && catMatch && (rowDate >= startDate && rowDate <= endDate);
             });
 
-            if (SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.length > 1) {
-                filteredData = aggregateData(filteredData);
-            }
+            // 2. Veriyi Grupla (Pivot)
+            const aggregatedResult = aggregateData(filteredData);
+            CURRENT_PROCESSED_DATA = aggregatedResult; // İndirme için sakla
 
-            window.CURRENT_EXPORT_DATA = filteredData;
-
-            if (filteredData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
+            if (aggregatedResult.rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
                 btnDownload.classList.add('btn-disabled');
                 limitMsg.style.display = 'none';
                 miniDash.style.display = 'none';
@@ -396,54 +382,169 @@
 
             btnDownload.classList.remove('btn-disabled');
             miniDash.style.display = 'grid';
-            
+
+            // 3. KPI ve Tablo Çizimi
             const catParam = (SELECTED_CATEGORIES.length === 1 && !SELECTED_CATEGORIES.includes('all')) ? SELECTED_CATEGORIES[0] : 'all';
-            calculateKPIs(filteredData, catParam);
+            calculateKPIs(aggregatedResult.rows, catParam);
 
-            const displayData = filteredData.slice(0, 250);
-            limitMsg.style.display = (filteredData.length > 250) ? 'block' : 'none';
+            // Performans için limitli gösterim
+            const displayData = aggregatedResult.rows.slice(0, 250);
+            limitMsg.style.display = (aggregatedResult.rows.length > 250) ? 'block' : 'none';
 
-            const branchParam = SELECTED_BRANCHES.includes('all') ? 'all' : SELECTED_BRANCHES[0];
-            updateCompetitorHeader(displayData, branchParam);
-            renderTable(displayData);
+            renderTable(displayData, aggregatedResult.competitorNames);
         }
 
-        function updateCompetitorHeader(data, selectedBranch) {
-            const headerComp = document.getElementById('header-competitor');
-            let detected = "Rakip Market";
-            if(data.length > 0) {
-                const compName = data[0]['Competitor Store Name'];
-                if(compName) detected = (selectedBranch === 'all') ? cleanName(compName) : compName;
-            }
-            headerComp.textContent = detected;
-        }
-
+        // --- AGGREGATE (PIVOT) MANTIĞI ---
         function aggregateData(data) {
             const grouped = {};
+            const allCompetitors = new Set();
+
             data.forEach(row => {
                 const key = row['SKU'] || row['Product Name'];
-                if(!grouped[key]) {
+                if (!key) return;
+
+                // Rakip ismini temizle (Parantezleri at)
+                let rawCompName = row['Competitor Store Name'];
+                let compName = rawCompName ? cleanName(rawCompName) : 'Bilinmeyen';
+                
+                if(compName && compName !== 'Bilinmeyen') {
+                    allCompetitors.add(compName);
+                }
+
+                if (!grouped[key]) {
                     grouped[key] = {
-                        ...row, 'Store Name': 'Zincir Geneli', 'Competitor Store Name': 'Rakip Zincir',
-                        count: 0, t_org: 0, t_dsc: 0, c_org: 0, c_dsc: 0
+                        ...row,
+                        tazeyo_price_org: parsePrice(row['Tazeyo Original Price']),
+                        tazeyo_price_dsc: parsePrice(row['Tazeyo Discount Price']),
+                        competitors: {}
                     };
                 }
-                const item = grouped[key];
-                item.count++;
-                item.t_org += parsePrice(row['Tazeyo Original Price']);
-                item.t_dsc += parsePrice(row['Tazeyo Discount Price']);
-                item.c_org += parsePrice(row['Competitor Original Price']);
-                item.c_dsc += parsePrice(row['Competitor Discount Price']);
+
+                // Rakibin fiyatını o ismin altına kaydet
+                grouped[key].competitors[compName] = {
+                    org: parsePrice(row['Competitor Original Price']),
+                    dsc: parsePrice(row['Competitor Discount Price'])
+                };
             });
-            return Object.values(grouped).map(item => {
-                item['Tazeyo Original Price'] = item.t_org / item.count;
-                item['Tazeyo Discount Price'] = item.t_dsc > 0 ? (item.t_dsc / item.count) : 0;
-                item['Competitor Original Price'] = item.c_org / item.count;
-                item['Competitor Discount Price'] = item.c_dsc > 0 ? (item.c_dsc / item.count) : 0;
-                return item;
+
+            return {
+                rows: Object.values(grouped),
+                competitorNames: Array.from(allCompetitors).sort()
+            };
+        }
+
+        // --- TABLO ÇİZİMİ (DİNAMİK) ---
+        function renderTable(dataRows, competitorNames) {
+            const theadTop = document.getElementById('header-row-top');
+            const theadBottom = document.getElementById('header-row-bottom');
+            const tbody = document.getElementById('table-body');
+
+            tbody.innerHTML = '';
+            theadTop.innerHTML = '';
+            theadBottom.innerHTML = '';
+
+            // --- HEADER ---
+            // A) Sabit
+            const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Ürün Adı', 'Marka', 'Kategori'];
+            theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
+            staticCols.forEach(col => { theadBottom.innerHTML += `<th>${col}</th>`; });
+
+            // B) Bizim
+            theadTop.innerHTML += `<th colspan="3" class="th-group-tazeyo">Bizim Fiyatlar</th>`;
+            theadBottom.innerHTML += `<th>Original</th><th>Discount</th><th>W.Chg</th>`;
+
+            // C) Rakipler (Döngü)
+            competitorNames.forEach(compName => {
+                theadTop.innerHTML += `<th colspan="3" class="th-group-market border-left-strong">${compName.toUpperCase()}</th>`;
+                theadBottom.innerHTML += `<th class="border-left-light">Original</th><th>Discount</th><th>W.Chg</th>`;
+            });
+
+            // D) Analiz
+            theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">Analiz</th>`;
+            theadBottom.innerHTML += `<th class="border-left-light">Durum</th><th>Fark</th>`;
+
+            // --- DATA ---
+            dataRows.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                // 1. Ürün Bilgisi
+                let html = `
+                    <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
+                    <td>${row['Store Name']}</td>
+                    <td>${row['SKU']}</td>
+                    <td title="${row['Product Name']}">${row['Product Name']}</td>
+                    <td>${row['Brand Name'] || '-'}</td>
+                    <td>${row['Category Name'] || '-'}</td>
+                `;
+
+                // 2. Bizim Fiyat
+                const t_org = row.tazeyo_price_org;
+                const t_dsc = row.tazeyo_price_dsc;
+                const bizPrice = t_dsc > 0 ? t_dsc : t_org;
+
+                html += `
+                    <td class="price-cell">₺${formatMoney(t_org)}</td>
+                    <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
+                    <td>-</td>
+                `;
+
+                // 3. Rakipler
+                let enUcuzRakipFiyati = Infinity;
+                let enUcuzRakipIsmi = '';
+
+                competitorNames.forEach(compName => {
+                    const compData = row.competitors[compName];
+                    if (compData) {
+                        const c_org = compData.org;
+                        const c_dsc = compData.dsc;
+                        const rakipSatis = c_dsc > 0 ? c_dsc : c_org;
+
+                        if (rakipSatis > 0 && rakipSatis < enUcuzRakipFiyati) {
+                            enUcuzRakipFiyati = rakipSatis;
+                            enUcuzRakipIsmi = compName;
+                        }
+
+                        html += `
+                            <td class="price-cell border-left-light">₺${formatMoney(c_org)}</td>
+                            <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
+                            <td>-</td>
+                        `;
+                    } else {
+                        html += `<td colspan="3" class="border-left-light" style="text-align:center; color:#444; font-size:0.8em;">Veri Yok</td>`;
+                    }
+                });
+
+                // 4. Analiz
+                let badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">-</span>';
+                let farkYuzde = 0;
+                let farkClass = "";
+
+                if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
+                    if (bizPrice < enUcuzRakipFiyati) {
+                        badgeHtml = '<span class="badge badge-tazeyo">EN UCUZ BİZ</span>';
+                        farkYuzde = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
+                        farkClass = "diff-negative"; 
+                    } else if (bizPrice > enUcuzRakipFiyati) {
+                        const displayName = enUcuzRakipIsmi.length > 12 ? enUcuzRakipIsmi.substring(0,10)+'..' : enUcuzRakipIsmi;
+                        badgeHtml = `<span class="badge badge-market" title="${enUcuzRakipIsmi}">${displayName.toUpperCase()}</span>`;
+                        farkYuzde = ((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100;
+                        farkClass = "diff-positive"; 
+                    } else {
+                        badgeHtml = '<span class="badge" style="background:#555;">EŞİT</span>';
+                    }
+                }
+
+                html += `
+                    <td class="border-left-strong">${badgeHtml}</td>
+                    <td class="${farkClass}">${farkYuzde > 0 ? '%' + farkYuzde.toFixed(1) : '-'}</td>
+                `;
+
+                tr.innerHTML = html;
+                tbody.appendChild(tr);
             });
         }
 
+        // --- KPI HESAPLAMA ---
         function calculateKPIs(data, selectedCat) {
             let totalBiz = 0, totalComp = 0;
             let discountCountBiz = 0, discountCountComp = 0;
@@ -451,42 +552,59 @@
             let categoryStats = {};
 
             data.forEach(row => {
-                const t_org = getValue(row['Tazeyo Original Price']);
-                const t_dsc = getValue(row['Tazeyo Discount Price']);
-                const bizPrice = t_dsc > 0 ? t_dsc : t_org;
-                const c_org = getValue(row['Competitor Original Price']);
-                const c_dsc = getValue(row['Competitor Discount Price']);
-                const compPrice = c_dsc > 0 ? c_dsc : c_org;
+                const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
+                
+                // En ucuz rakip fiyatını bul (Analiz için)
+                let minCompPrice = Infinity;
+                let hasComp = false;
+                let anyCompDiscount = false;
 
-                if (bizPrice > 0 && compPrice > 0) {
-                    totalBiz += bizPrice; totalComp += compPrice;
-                    const catRaw = row['Category Name'] || 'Diğer';
-                    const cat = catRaw.trim();
+                Object.values(row.competitors).forEach(comp => {
+                    const price = comp.dsc > 0 ? comp.dsc : comp.org;
+                    if (price > 0 && price < minCompPrice) {
+                        minCompPrice = price;
+                        hasComp = true;
+                    }
+                    if (comp.dsc > 0 && comp.dsc < comp.org) anyCompDiscount = true;
+                });
+                
+                if (!hasComp) minCompPrice = 0;
+
+                if (bizPrice > 0 && minCompPrice > 0) {
+                    totalBiz += bizPrice;
+                    totalComp += minCompPrice;
+                    const cat = (row['Category Name'] || 'Diğer').trim();
                     if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0 };
                     categoryStats[cat].biz += bizPrice;
-                    categoryStats[cat].comp += compPrice;
+                    categoryStats[cat].comp += minCompPrice;
                 }
-                if (t_dsc > 0 && t_dsc < t_org) {
+
+                if (row.tazeyo_price_dsc > 0 && row.tazeyo_price_dsc < row.tazeyo_price_org) {
                     discountCountBiz++;
-                    const depth = ((t_org - t_dsc) / t_org) * 100;
+                    const depth = ((row.tazeyo_price_org - row.tazeyo_price_dsc) / row.tazeyo_price_org) * 100;
                     totalDiscountDepth += depth;
                     depthCount++;
                 }
-                if (c_dsc > 0 && c_dsc < c_org) discountCountComp++;
+                if (anyCompDiscount) discountCountComp++;
             });
 
+            // UI Güncelleme
             const compElem = document.getElementById('kpi-competition');
             let globalDiff = 0;
             let isGlobalAdvantage = false;
 
-            if (totalBiz < totalComp) {
-                globalDiff = ((totalComp - totalBiz) / totalComp) * 100;
-                isGlobalAdvantage = true;
-                compElem.innerHTML = `<span class="trend-up"><i class="fas fa-arrow-down"></i> %${globalDiff.toFixed(1)}</span> Daha Ucuzuz`;
+            if (totalBiz > 0 && totalComp > 0) {
+                if (totalBiz < totalComp) {
+                    globalDiff = ((totalComp - totalBiz) / totalComp) * 100;
+                    isGlobalAdvantage = true;
+                    compElem.innerHTML = `<span class="trend-up"><i class="fas fa-arrow-down"></i> %${globalDiff.toFixed(1)}</span> Daha Ucuzuz`;
+                } else {
+                    globalDiff = ((totalBiz - totalComp) / totalBiz) * 100;
+                    isGlobalAdvantage = false;
+                    compElem.innerHTML = `<span class="trend-down"><i class="fas fa-arrow-up"></i> %${globalDiff.toFixed(1)}</span> Daha Pahalıyız`;
+                }
             } else {
-                globalDiff = ((totalBiz - totalComp) / totalBiz) * 100;
-                isGlobalAdvantage = false;
-                compElem.innerHTML = `<span class="trend-down"><i class="fas fa-arrow-up"></i> %${globalDiff.toFixed(1)}</span> Daha Pahalıyız`;
+                compElem.innerHTML = "Veri Yetersiz";
             }
 
             document.getElementById('kpi-disc-us').innerText = discountCountBiz;
@@ -495,96 +613,46 @@
             document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
             document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
 
+            // En avantajlı kategori
             const catTitle = document.querySelector('#kpi-best-cat').parentElement.querySelector('.kpi-title');
             const catSub = document.getElementById('kpi-best-cat-sub');
             const catValue = document.getElementById('kpi-best-cat');
 
             if (selectedCat && selectedCat !== 'all') {
                 catValue.innerText = selectedCat;
-                if(isGlobalAdvantage) {
-                    catTitle.innerText = "Mevcut Kategori Durumu";
-                    catSub.innerHTML = `Rakipten <span class="trend-up">%${globalDiff.toFixed(1)} daha ucuz</span>`;
-                } else {
-                    catTitle.innerText = "Mevcut Kategori Durumu";
-                    catSub.innerHTML = `Rakipten <span class="trend-down">%${globalDiff.toFixed(1)} daha pahalı</span>`;
-                }
+                catSub.innerHTML = isGlobalAdvantage 
+                    ? `Rakipten <span class="trend-up">%${globalDiff.toFixed(1)} daha ucuz</span>` 
+                    : `Rakipten <span class="trend-down">%${globalDiff.toFixed(1)} daha pahalı</span>`;
             } else {
-                let bestCat = '-'; let maxDiff = 0; let isAdvantage = true;
+                let bestCat = '-'; let maxDiff = -Infinity; let isAdvantage = false;
                 for (const [cat, stats] of Object.entries(categoryStats)) {
+                    if (stats.comp <= 0) continue;
                     const diffPercent = ((stats.comp - stats.biz) / stats.comp) * 100;
-                    if (Math.abs(diffPercent) > Math.abs(maxDiff)) {
-                        maxDiff = diffPercent; bestCat = cat; isAdvantage = diffPercent > 0;
+                    if (diffPercent > maxDiff) {
+                        maxDiff = diffPercent;
+                        bestCat = cat;
+                        isAdvantage = diffPercent > 0;
                     }
                 }
-                catValue.innerText = bestCat;
-                if (isAdvantage) {
-                    catTitle.innerText = "En Avantajlı Kategori";
-                    catSub.innerHTML = `Rakipten <span class="trend-up">%${maxDiff.toFixed(1)} daha ucuz</span>`;
+                if (bestCat !== '-') {
+                    catValue.innerText = bestCat;
+                    catTitle.innerText = isAdvantage ? "En Avantajlı Kategori" : "En Kritik Kategori";
+                    catSub.innerHTML = `Rakipten <span class="${isAdvantage ? 'trend-up' : 'trend-down'}">%${Math.abs(maxDiff).toFixed(1)} daha ${isAdvantage ? 'ucuz' : 'pahalı'}</span>`;
                 } else {
-                    catTitle.innerText = "En Kritik Kategori";
-                    catSub.innerHTML = `Rakipten <span class="trend-down">%${Math.abs(maxDiff).toFixed(1)} daha pahalı</span>`;
+                    catValue.innerText = "-"; catSub.innerHTML = "";
                 }
             }
         }
 
-        function renderTable(dataRows) {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
-            dataRows.forEach(row => {
-                const reportDate = row['Report Date'];
-                const storeName = row['Store Name'];
-                const sku = row['SKU'];
-                const prodName = row['Product Name'];
-                let brandName = row['Brand Name'] || '-';
-                if (brandName.toLowerCase().trim() === 'unbranded') brandName = '-';
-                const categoryName = row['Category Name'] || '-';
-               
-                const t_org = getValue(row['Tazeyo Original Price']);
-                const t_dsc = getValue(row['Tazeyo Discount Price']);
-                const priceBiz = t_dsc > 0 ? t_dsc : t_org;
-                const c_org = getValue(row['Competitor Original Price']);
-                const c_dsc = getValue(row['Competitor Discount Price']);
-                const priceRakip = c_dsc > 0 ? c_dsc : c_org;
-
-                let compName = row['Competitor Store Name'];
-                let compBadge = compName ? cleanName(compName).toUpperCase() : 'RAKİP';
-                let farkYuzde = 0; let farkClass = "diff-negative";
-                if(priceRakip > 0 && priceBiz > 0) farkYuzde = ((priceRakip - priceBiz) / priceRakip) * 100;
-
-                let badgeHtml = '';
-                if (priceBiz > 0 && priceRakip > 0) {
-                    if (priceBiz < priceRakip) { badgeHtml = '<span class="badge badge-tazeyo">BİZ</span>'; }
-                    else if (priceBiz > priceRakip) { badgeHtml = `<span class="badge badge-market">${compBadge}</span>`; farkClass = "diff-positive"; }
-                    else { badgeHtml = '<span class="badge" style="background:#333; color:#fff;">EŞİT</span>'; }
-                } else { badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">VERİ YOK</span>'; }
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="color:#888; font-size:0.85rem;">${reportDate}</td>
-                    <td>${storeName}</td><td>${sku}</td><td title="${prodName}">${prodName}</td><td>${brandName}</td><td>${categoryName}</td>
-                    <td class="price-cell">₺${formatMoney(t_org)}</td>
-                    <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
-                    <td>-</td>
-                    <td class="price-cell">₺${formatMoney(c_org)}</td>
-                    <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
-                    <td>-</td>
-                    <td>${badgeHtml}</td>
-                    <td class="${farkClass}">%${Math.abs(farkYuzde).toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
+        // --- YARDIMCI FONKSİYONLAR ---
         function showToast(message) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').textContent = message;
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
-
         function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
         function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
-        function getValue(val) { return typeof val === 'number' ? val : parsePrice(val); }
         function parsePrice(val) {
             if(!val) return 0;
             let clean = val.toString().replace(/["'₺\s]/g, '');
@@ -595,24 +663,48 @@
         function formatMoney(num) { return num === 0 ? '0,00' : new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(num); }
         function logout() { new SessionManager().destroySession(); window.location.href = '../index.html'; }
 
+        // --- İNDİRME FONKSİYONLARI ---
         function downloadCSV() {
-            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
-            const csv = Papa.unparse(window.CURRENT_EXPORT_DATA);
+            if (!CURRENT_PROCESSED_DATA.rows || CURRENT_PROCESSED_DATA.rows.length === 0) return;
+            const flatData = flattenForExport(CURRENT_PROCESSED_DATA);
+            const csv = Papa.unparse(flatData);
             const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = "teknoify_analiz_raporu.csv";
+            link.download = "teknoify_pivot_analiz.csv";
             link.click();
             document.getElementById('download-menu').classList.remove('show');
         }
 
         function downloadExcel() {
-            if (!window.CURRENT_EXPORT_DATA || window.CURRENT_EXPORT_DATA.length === 0) return;
-            const ws = XLSX.utils.json_to_sheet(window.CURRENT_EXPORT_DATA);
+            if (!CURRENT_PROCESSED_DATA.rows || CURRENT_PROCESSED_DATA.rows.length === 0) return;
+            const flatData = flattenForExport(CURRENT_PROCESSED_DATA);
+            const ws = XLSX.utils.json_to_sheet(flatData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
-            XLSX.writeFile(wb, "teknoify_analiz_raporu.xlsx");
+            XLSX.writeFile(wb, "teknoify_pivot_analiz.xlsx");
             document.getElementById('download-menu').classList.remove('show');
+        }
+
+        function flattenForExport(dataObj) {
+            return dataObj.rows.map(row => {
+                const flatRow = {
+                    'Report Date': row['Report Date'],
+                    'Store Name': row['Store Name'],
+                    'SKU': row['SKU'],
+                    'Product Name': row['Product Name'],
+                    'Brand': row['Brand Name'],
+                    'Category': row['Category Name'],
+                    'Bizim Original': row.tazeyo_price_org,
+                    'Bizim Discount': row.tazeyo_price_dsc
+                };
+                dataObj.competitorNames.forEach(comp => {
+                    const cData = row.competitors[comp];
+                    flatRow[`${comp} Original`] = cData ? cData.org : '';
+                    flatRow[`${comp} Discount`] = cData ? cData.dsc : '';
+                });
+                return flatRow;
+            });
         }
     </script>
 </body>
