@@ -24,36 +24,31 @@
         .col-analysis-status { min-width: 140px; }
 
         /* --- SIDEBAR TOGGLE & LAYOUT DÜZENLEMELERİ --- */
-        
-        /* 1. Geçiş Efektleri */
         .sidebar, .main-content {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 2. Sidebar Footer Düzeni (Çıkış ve Ok Butonu) */
         .sidebar-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px 20px 20px;
-            margin-top: auto; /* En alta iter */
+            margin-top: auto; 
             gap: 10px;
         }
 
-        /* Çıkış butonu genişlesin */
         .sidebar-footer .menu-item {
             flex-grow: 1;
-            margin: 0; /* Sidebar css'inden gelen margin'i sıfırla */
+            margin: 0; 
             white-space: nowrap;
         }
 
-        /* Gizleme Butonu (Küçük Ok) */
         .btn-collapse-sidebar {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
             color: #888;
             width: 40px;
-            height: 48px; /* Menu item yüksekliği ile uyumlu */
+            height: 48px;
             border-radius: 12px;
             cursor: pointer;
             display: flex;
@@ -66,13 +61,12 @@
             color: #fff;
         }
 
-        /* 3. Floating Open Button (Panel kapalıyken çıkan buton) */
         #floating-toggle-btn {
             position: fixed;
             bottom: 20px;
             left: 20px;
             z-index: 1000;
-            background: #2f3349; /* Tema rengi */
+            background: #2f3349;
             border: 1px solid #444;
             color: #fff;
             width: 50px;
@@ -80,29 +74,28 @@
             border-radius: 50%;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             cursor: pointer;
-            display: none; /* Başlangıçta gizli */
+            display: none;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
             transition: 0.3s;
         }
         #floating-toggle-btn:hover {
-            background: #7367f0; /* Vurgu rengi */
+            background: #7367f0;
             transform: scale(1.1);
         }
 
-        /* 4. Sidebar Kapalı Durumu (.sidebar-closed body'ye eklenince) */
         body.sidebar-closed .sidebar {
-            transform: translateX(-100%); /* Sola kaybol */
+            transform: translateX(-100%);
         }
         
         body.sidebar-closed .main-content {
-            margin-left: 0 !important; /* İçeriği sola yasla */
+            margin-left: 0 !important;
             width: 100% !important;
         }
 
         body.sidebar-closed #floating-toggle-btn {
-            display: flex; /* Yüzen butonu göster */
+            display: flex;
             animation: fadeIn 0.4s ease;
         }
 
@@ -309,9 +302,6 @@
         // --- SIDEBAR TOGGLE FONKSİYONU ---
         function toggleSidebar() {
             document.body.classList.toggle('sidebar-closed');
-            // İsteğe bağlı: Kullanıcının tercihini kaydetmek için
-            // const isClosed = document.body.classList.contains('sidebar-closed');
-            // localStorage.setItem('sidebarState', isClosed ? 'closed' : 'open');
         }
 
         // --- RENK YÖNETİM SİSTEMİ ---
@@ -319,6 +309,8 @@
             if (!fullName) return '#f97316';
             const lowerName = fullName.toLowerCase();
             if (lowerName.includes('carrefoursa')) return '#005daa';
+            // Buraya yeni markalar eklenebilir:
+            // if (lowerName.includes('migros')) return '#ff8000';
             return '#f97316'; 
         }
 
@@ -544,8 +536,13 @@
             theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
             staticCols.forEach(col => { theadBottom.innerHTML += `<th>${col}</th>`; });
 
-            // Bizim Fiyatlar
-            theadTop.innerHTML += `<th colspan="3" class="th-group-tazeyo">Bizim Fiyatlar</th>`;
+            // Bizim Fiyatlar (REVİZE: Dinamik İsim)
+            // Filtrelenen verinin ilk satırındaki mağaza adını alıyoruz
+            let myStoreLabel = 'Bizim Fiyatlar';
+            if(dataRows.length > 0 && dataRows[0]['Store Name']) {
+                myStoreLabel = dataRows[0]['Store Name'];
+            }
+            theadTop.innerHTML += `<th colspan="3" class="th-group-tazeyo">${myStoreLabel}</th>`;
             theadBottom.innerHTML += `<th>Original</th><th>Discount</th><th>W.Chg</th>`;
 
             // Rakipler
