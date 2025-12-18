@@ -16,162 +16,120 @@
         /* --- 1.1: LAYOUT RESET --- */
         * { box-sizing: border-box; }
         
+        /* Body Scroll'u kapatıyoruz, scroll tablo içinde olacak */
         html, body {
-            display: block !important;
-            height: auto !important;
-            min-height: 100vh !important;
-            overflow-y: auto !important; /* Dikey scroll sayfada */
-            overflow-x: hidden !important;
+            height: 100vh !important;
+            overflow: hidden !important; 
             background-color: #0b0e11;
             margin: 0; padding: 0;
         }
 
-        /* Sidebar Sabitleme */
+        /* Sidebar Sabit */
         .sidebar {
-            position: fixed !important;
-            top: 0; left: 0; 
+            position: fixed !important; top: 0; left: 0; 
             width: 260px !important; height: 100vh !important;
-            z-index: 10000 !important;
-            background: #14161c; border-right: 1px solid #333;
+            z-index: 10000 !important; background: #14161c; border-right: 1px solid #333;
             transition: transform 0.3s ease !important;
+        }
+
+        /* Ana İçerik */
+        .main-content {
+            margin-left: 260px !important; width: calc(100% - 260px) !important;
+            height: 100vh; display: flex; flex-direction: column;
+            transition: margin-left 0.3s ease, width 0.3s ease !important;
+        }
+
+        .top-bar { flex-shrink: 0; width: 100%; z-index: 2; background: #14161c !important; }
+
+        /* İçerik Alanı */
+        .content-scroll {
+            flex-grow: 1; overflow-y: auto; padding: 20px !important;
             display: flex; flex-direction: column;
         }
 
-        /* İçerik */
-        .main-content {
-            display: block !important;
-            margin-left: 260px !important; 
-            width: calc(100% - 260px) !important;
-            height: auto !important;
-            overflow: visible !important;
-            padding: 0 !important;
-            position: relative !important;
-        }
-
-        .top-bar {
-            position: relative !important; width: 100% !important; z-index: 50; background: #14161c !important;
-        }
-
-        .content-scroll {
-            height: auto !important; overflow: visible !important;
-            padding: 30px !important; padding-bottom: 80px !important;
-        }
-
+        /* Sidebar Toggle */
         body.sidebar-closed .sidebar { transform: translateX(-100%) !important; }
         body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
 
         /* =========================================================================
-           1.2: TABLO SABİTLEME AYARLARI (GÜNCELLENDİ)
+           1.2: TABLO SCROLL VE STICKY AYARLARI (KESİN ÇÖZÜM)
            ========================================================================= */
         
-        /* Tabloyu saran kutu: Sadece YATAY scroll */
+        /* Tablo Çerçevesi: Hem Yatay Hem Dikey Scroll Burada */
         .table-responsive-wrapper {
-            display: block;
-            width: 100%;
-            overflow-x: auto; 
-            overflow-y: visible; 
-            border-radius: 16px; 
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
+            flex-grow: 1; /* Ekranın kalanını kapla */
+            overflow: auto; /* Scroll çubukları çıksın */
+            border: 1px solid #333;
+            border-radius: 12px;
             background: #14161c;
+            /* Yükseklik Sınırı: Başlıkların yapışması için şart */
+            max-height: calc(100vh - 300px); 
+            min-height: 400px;
+            position: relative;
         }
 
         .comparison-table {
-            border-collapse: separate; 
-            border-spacing: 0;
-            width: 100%;
-            min-width: max-content; 
+            border-collapse: separate; border-spacing: 0; width: 100%;
+            min-width: max-content; /* İçerik kadar genişle */
         }
 
-        /* --- STICKY HEADER (YUKARI YAPIŞMA - 1. ve 2. SATIR) --- */
+        /* --- STICKY HEADER (YUKARI YAPIŞMA) --- */
         
         /* 1. Satır: En Üst Başlıklar */
         #header-row-top th {
-            position: sticky !important; top: 0 !important;
-            z-index: 1000; 
-            height: 50px;
-            background-color: #14161c !important; 
-            border-bottom: 1px solid #333;
-            box-shadow: 0 1px 0 #333; 
+            position: sticky; top: 0; z-index: 1000; height: 50px;
+            background-color: #14161c; border-bottom: 1px solid #333;
+            box-shadow: 0 1px 0 #333;
         }
 
         /* 2. Satır: Alt Başlıklar */
         #header-row-bottom th {
-            position: sticky !important; top: 50px !important;
-            z-index: 900;
-            height: 45px;
-            background-color: #14161c !important;
-            border-bottom: 2px solid #333;
+            position: sticky; top: 50px; z-index: 900; height: 45px;
+            background-color: #14161c; border-bottom: 2px solid #333;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        /* --- STICKY COLUMN (SADECE ÜRÜN ADI - SOLA YAPIŞMA) --- */
+        /* --- STICKY COLUMN (ÜRÜN ADI - SOLA YAPIŞMA) --- */
         
-        /* JS ile "sticky-product" class'ını sadece Ürün Adı'na vereceğiz */
+        /* Ürün Adı'nı en başa alacağız ve sabitleyeceğiz */
         th.sticky-product, td.sticky-product {
-            position: sticky !important;
-            left: 0 !important; /* Sol kenara yapış */
-            z-index: 800; /* Header'ın altında, diğer verilerin üstünde */
-            background-color: #14161c !important;
-            border-right: 2px solid #444; /* Sağ tarafına belirgin çizgi */
-            box-shadow: 4px 0 10px rgba(0,0,0,0.5); /* Sağ tarafına gölge */
+            position: sticky; left: 0; z-index: 1100;
+            background-color: #14161c; 
+            border-right: 2px solid #444;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.5);
+            min-width: 250px; max-width: 250px; /* Genişlik sabit */
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
 
-        /* Kesişim Noktası: Ürün Adı Başlığı (Hem yukarı hem sola yapışır) */
+        /* Kesişim Noktası: Ürün Adı Başlığı */
         #header-row-bottom th.sticky-product {
-            top: 50px !important;
-            z-index: 1100 !important; /* En üstte kalsın */
+            top: 50px; z-index: 1200; /* En üstte */
         }
+        #header-row-top th:first-child { z-index: 1200; left: 0; } /* Sol üst köşe */
 
-        /* Hover efekti */
-        tr:hover td { background-color: #1a1d24 !important; }
-        tr:hover td.sticky-product { background-color: #1a1d24 !important; }
+        tr:hover td { background-color: #1a1d24; }
+        tr:hover td.sticky-product { background-color: #1a1d24; }
 
 
         /* --- 1.3: DİĞER BİLEŞENLER --- */
-        
-        .filter-bar { position: relative; z-index: 2000; margin-bottom: 20px; }
+        .filter-bar { flex-shrink: 0; margin-bottom: 20px; }
         .multi-select-wrapper { position: relative; }
-
-        .multi-select-menu {
-            position: absolute; top: 100%; left: 0; margin-top: 8px;
-            width: 250px; max-height: 400px;
-            display: none; flex-direction: column;
-            background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 99999 !important; overflow: hidden;
-        }
+        .multi-select-menu { position: absolute; top: 100%; left: 0; width: 250px; max-height: 400px; display: none; flex-direction: column; background: #1f232c; border: 1px solid #333; z-index: 9999; }
         .multi-select-menu.show { display: flex; }
-
-        .fixed-dropdown-header { flex-shrink: 0; background: #1f232c; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 20; }
+        .fixed-dropdown-header { flex-shrink: 0; background: #1f232c; border-bottom: 1px solid #333; }
+        .scrollable-options-area { flex-grow: 1; overflow-y: auto; }
         .dropdown-search-wrapper { padding: 10px; }
-        .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; outline: none; }
-        .dropdown-search-input:focus { border-color: #7367f0; }
-        .scrollable-options-area { flex-grow: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1f232c; }
-        
-        .multi-option { padding: 10px 14px; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }
+        .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; }
+        .multi-option { padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; color: #ccc; }
         .multi-option:hover { background: rgba(255,255,255,0.1); color: #fff; }
         .multi-option.selected { background: rgba(115, 103, 240, 0.1); color: #fff; }
-        .option-checkbox { width: 18px; height: 18px; min-width: 18px; border: 2px solid #555; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
+        .option-checkbox { width: 18px; height: 18px; border: 2px solid #555; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
         .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
         .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
 
-        #floating-toggle-btn {
-            position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px;
-            background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 10001;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease;
-        }
-        #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
-        body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
-
-        .sidebar-footer { margin-top: auto; padding: 20px; display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .sidebar-footer .menu-item { flex: 1; margin: 0; justify-content: center; }
-        .btn-collapse-sidebar { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
-
-        #limit-msg { position: static !important; margin-top: 20px; width: 100%; text-align: center; }
+        #floating-toggle-btn { position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px; background: #2f3349; color: #fff; border-radius: 50%; z-index: 10001; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; }
 
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
@@ -640,22 +598,22 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // HEADER
-            const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Marka', 'Kategori', 'Ürün Adı'];
-            
-            // 1. SATIR
+            // --- HEADER ---
+            // 1. SATIR: Ürün Bilgileri Başlığı (Sola Yapışık), Fiyatlar ve Rakipler
+            // Ürün Adı'nı en başa alıyoruz (Görsel tutarlılık için)
             let headerTopHtml = '';
-            headerTopHtml += `<th>Rapor Tarihi</th>`; 
-            headerTopHtml += `<th>Mağaza</th>`;
-            headerTopHtml += `<th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>`;
+            headerTopHtml += `<th class="sticky-product" style="z-index:1200 !important; top:0 !important;">Ürün Adı</th>`; 
             
+            // Diğer sabit olmayan ürün bilgileri
+            headerTopHtml += `<th>Rapor Tarihi</th><th>Mağaza</th><th>SKU</th><th>Marka</th><th>Kategori</th>`;
+            
+            // Bizim Fiyatlar
             let myStoreLabel = 'Bizim Fiyatlar';
-            if(dataRows.length > 0 && dataRows[0]['Store Name']) {
-                myStoreLabel = dataRows[0]['Store Name'];
-            }
+            if(dataRows.length > 0 && dataRows[0]['Store Name']) myStoreLabel = dataRows[0]['Store Name'];
             const tazeyoBg = `linear-gradient(rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.05)), #14161c`;
             headerTopHtml += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
 
+            // Rakipler
             competitorNames.forEach(compName => {
                 const brandColor = getBrandColor(compName);
                 const bgRgba = hexToRgba(brandColor, 0.05);
@@ -664,17 +622,20 @@
                 headerTopHtml += `<th colspan="2" style="${styleStr}">${compName}</th>`;
             });
 
+            // Analiz
             headerTopHtml += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadTop.innerHTML = headerTopHtml;
 
             // 2. SATIR
             let headerBottomHtml = '';
-            // Rapor Tarihi ve Mağaza için boş hücre değil, JS ile kaldırıyoruz.
-            // Önce placeholder ekleyip aşağıda sileceğiz.
-            headerBottomHtml += `<th></th><th></th>`; 
-            headerBottomHtml += `<th>SKU</th><th>Marka</th><th>Kategori</th><th class="sticky-product">Ürün Adı</th>`;
+            // Ürün Adı (Altı Boş - JS ile yukarıdakine rowspan verilecek)
+            headerBottomHtml += `<th class="sticky-product"></th>`; 
+            headerBottomHtml += `<th></th><th></th><th></th><th></th><th></th>`; // Diğer bilgiler için boş
+            
+            // Bizim Fiyatlar
             headerBottomHtml += `<th>Original</th><th>Discount</th>`;
 
+            // Rakipler
             competitorNames.forEach(() => {
                 headerBottomHtml += `<th class="border-left-light">Original</th><th>Discount</th>`;
             });
@@ -682,26 +643,27 @@
             headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
             theadBottom.innerHTML = headerBottomHtml;
             
-            // ROWSPAN AYARLARI
+            // ROWSPAN AYARLARI (Görünüm Düzeltmesi)
             const firstRowCells = theadTop.querySelectorAll('th');
-            firstRowCells[0].setAttribute('rowspan', '2'); // Rapor Tarihi
-            firstRowCells[1].setAttribute('rowspan', '2'); // Mağaza
+            // İlk 6 hücreyi (Ürün Adı + Diğer Bilgiler) 2 satır yüksekliğinde yap
+            for(let i=0; i<6; i++) { firstRowCells[i].setAttribute('rowspan', '2'); }
             
+            // İkinci satırdaki ilk 6 boş hücreyi sil (Çünkü üsttekiler kapladı)
             const secondRowCells = theadBottom.querySelectorAll('th');
-            secondRowCells[0].remove();
-            secondRowCells[1].remove(); 
+            for(let i=0; i<6; i++) { secondRowCells[0].remove(); } 
 
             // DATA
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 
+                // Ürün Adı'nı EN BAŞA aldık ve sabitledik
                 let html = `
+                    <td class="sticky-product" title="${row['Product Name']}">${row['Product Name']}</td>
                     <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
                     <td>${row['Store Name']}</td>
                     <td>${row['SKU']}</td>
                     <td>${row['Brand Name'] || '-'}</td>
                     <td>${row['Category Name'] || '-'}</td>
-                    <td class="sticky-product" title="${row['Product Name']}">${row['Product Name']}</td>
                 `;
 
                 const t_org = row.tazeyo_price_org;
