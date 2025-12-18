@@ -22,96 +22,47 @@
             z-index: 1;
         }
 
-        /* --- DROPDOWN (MULTI SELECT) GELİŞMİŞ TASARIM --- */
-        
-        .multi-select-wrapper {
-            position: relative; /* Menünün buna göre konumlanması için */
+        /* --- FILTRE BAR (TABLO ÜZERİNDE KALSIN DİYE) --- */
+        .filter-bar {
+            position: relative;
+            z-index: 500; /* Tablo sticky header'dan (110) yüksek olmalı */
         }
 
-        /* 1. Menü Genişliği ve Z-Index */
+        /* --- DROPDOWN (MULTI SELECT) İYİLEŞTİRMELERİ --- */
+        
+        .multi-select-wrapper { position: relative; }
+
+        /* 1. Menü Genişliği (Daraltıldı: 280px) */
         .multi-select-menu {
             position: absolute;
             top: 100%;
             left: 0;
             margin-top: 8px;
-            /* REVİZE: Daha geniş ve sabit bir yapı */
-            min-width: 100%; /* En az buton kadar geniş olsun */
-            width: 340px;    /* Ama ideal olarak daha geniş olsun (Okunabilirlik için) */
+            /* REVİZE: Genişlik 280px yapıldı (daha kompakt) */
+            min-width: 100%; 
+            width: 280px;    
             max-height: 400px;
-            overflow-y: auto;
+            overflow-y: auto; /* Scroll sadece burada çalışır */
             background-color: #1f232c;
             border: 1px solid #333;
             border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); /* Gölge artırıldı */
             z-index: 99999 !important;
-            display: none; /* JS ile show class'ı eklenince görünür */
+            display: none;
         }
         
         .multi-select-menu.show { display: block; }
 
-        /* 2. Seçenek Satırları */
-        .multi-option {
-            padding: 12px 16px;
-            font-size: 0.95rem;
-            color: #ccc;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            transition: background 0.2s;
-            
-            /* Flexbox ile hizalama (Kutucuk ve Yazı) */
-            display: flex;
-            align-items: center; 
-            justify-content: space-between;
-            gap: 15px; /* Yazı ile kutu arası boşluk */
-        }
-
-        .multi-option:hover { background-color: rgba(255,255,255,0.1); color: #fff; }
-        
-        .multi-option.selected {
-            background-color: rgba(115, 103, 240, 0.08);
-            color: #fff;
-        }
-
-        /* 3. Checkbox (Kutucuk) Tasarımı - SABİT BOYUT */
-        .option-checkbox {
-            width: 20px;
-            height: 20px;
-            min-width: 20px; /* Asla küçülmesin */
-            border: 2px solid #555;
-            border-radius: 6px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* Seçili Durumda Kutucuk */
-        .multi-option.selected .option-checkbox {
-            background-color: #7367f0;
-            border-color: #7367f0;
-        }
-
-        /* Tık İşareti (Pseudo-element) */
-        .multi-option.selected .option-checkbox::after {
-            content: '\f00c'; /* FontAwesome Check Icon */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            font-size: 12px;
-            color: white;
-        }
-
-        /* "Tümü" seçeneği için özel ayar gerekmez, yukarıdaki flex yapısı ikisini de eşitler */
-
-
-        /* 4. Arama Çubuğu */
+        /* 2. Arama Çubuğu (Sabitlik Sorunu Giderildi) */
         .dropdown-search-wrapper {
             position: sticky;
             top: 0;
-            background-color: #1f232c;
+            /* REVİZE: Arkaplan ve Z-Index güçlendirildi */
+            background-color: #1f232c; 
             padding: 12px;
-            z-index: 10;
+            z-index: 100; /* Liste elemanlarının (z-index: 0) üstünde kalsın */
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Altına hafif gölge */
         }
         
         .dropdown-search-input {
@@ -125,6 +76,42 @@
             outline: none;
         }
         .dropdown-search-input:focus { border-color: #7367f0; }
+
+        /* 3. Seçenek Satırları */
+        .multi-option {
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            color: #ccc;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center; 
+            justify-content: space-between;
+            gap: 15px;
+            position: relative;
+            z-index: 1; /* Arama çubuğunun (100) altında kalsın */
+        }
+
+        .multi-option:hover { background-color: rgba(255,255,255,0.1); color: #fff; }
+        
+        .multi-option.selected {
+            background-color: rgba(115, 103, 240, 0.08);
+            color: #fff;
+        }
+
+        /* 4. Checkbox */
+        .option-checkbox {
+            width: 20px; height: 20px; min-width: 20px;
+            border: 2px solid #555; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .multi-option.selected .option-checkbox {
+            background-color: #7367f0; border-color: #7367f0;
+        }
+        .multi-option.selected .option-checkbox::after {
+            content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 12px; color: white;
+        }
 
 
         /* --- DİNAMİK RENK SİSTEMİ --- */
@@ -457,41 +444,38 @@
             updateTriggerText('category', 'Tüm Kategoriler');
         }
 
-        // --- GÜNCELLENEN RENDER MULTI SELECT (ARAMA VE STİL İYİLEŞTİRMELERİ) ---
         function renderMultiSelectOptions(menuId, items, type) {
             const menu = document.getElementById(menuId);
             menu.innerHTML = '';
 
-            // 1. Arama Çubuğu Ekle (Sticky Header olarak)
+            // Arama Çubuğu
             const searchWrapper = document.createElement('div');
             searchWrapper.className = 'dropdown-search-wrapper';
             const searchInput = document.createElement('input');
             searchInput.type = 'text';
             searchInput.className = 'dropdown-search-input';
             searchInput.placeholder = 'Ara...';
-            // Arama Fonksiyonu
             searchInput.addEventListener('keyup', function() {
                 const filter = this.value.toLowerCase();
-                const options = menu.querySelectorAll('.multi-option:not(.all-option)'); // "Tümü" hariç diğerleri
+                const options = menu.querySelectorAll('.multi-option:not(.all-option)');
                 options.forEach(opt => {
                     const text = opt.textContent.toLowerCase();
                     if (text.includes(filter)) opt.style.display = "flex"; 
                     else opt.style.display = "none";
                 });
             });
-            // Tıklayınca kapanmasını engelle
             searchInput.onclick = (e) => e.stopPropagation();
             searchWrapper.appendChild(searchInput);
             menu.appendChild(searchWrapper);
 
-            // 2. "Tümü" Seçeneği
+            // Tümü Seçeneği
             const allDiv = document.createElement('div');
             allDiv.className = 'multi-option all-option selected';
             allDiv.onclick = () => selectOption(type, 'all', allDiv);
             allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
             menu.appendChild(allDiv);
 
-            // 3. Diğer Seçenekler
+            // Diğer Seçenekler
             items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'multi-option';
@@ -505,12 +489,10 @@
             let selectedArray = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
             const menuId = (type === 'branch') ? 'menu-branch' : 'menu-category';
             const menu = document.getElementById(menuId);
-            // "Tümü" seçeneği her zaman arama çubuğundan sonra gelen ilk elemandır (searchWrapper -> All -> Options)
             const allOption = menu.querySelector('.all-option');
 
             if (value === 'all') {
                 selectedArray.length = 0; selectedArray.push('all');
-                // Sadece options class'ına sahip olanları temizle
                 menu.querySelectorAll('.multi-option').forEach(child => child.classList.remove('selected'));
                 allOption.classList.add('selected');
             } else {
@@ -550,7 +532,6 @@
             document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
             if (!isVisible) {
                 menu.classList.add('show');
-                // Menü açılınca arama kutusuna odaklan (Varsa)
                 const input = menu.querySelector('input');
                 if(input) input.focus();
             }
