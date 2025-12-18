@@ -23,7 +23,7 @@
             margin: 0; padding: 0;
         }
 
-        /* Sidebar */
+        /* Sidebar Sabit */
         .sidebar {
             position: fixed !important; top: 0; left: 0; 
             width: 260px !important; height: 100vh !important;
@@ -51,7 +51,7 @@
 
 
         /* =========================================================================
-           1.2: TABLO YAPISI (HİZALAMA DÜZELTMESİ)
+           1.2: TABLO YAPISI VE GÖRÜNMEZLİK DÜZELTMESİ (OPAKLIK AYARI)
            ========================================================================= */
         
         .table-responsive-wrapper {
@@ -72,39 +72,42 @@
         }
 
         /* --- STICKY HEADER (YUKARI YAPIŞMA) --- */
+        /* background-color: #14161c !important; komutu, arkadan geçen yazıların görünmesini engeller */
+
+        /* 1. Satır: En Üst Başlıklar */
         #header-row-top th {
             position: sticky; top: 0; z-index: 1000; height: 50px;
-            background-color: #14161c; border-bottom: 1px solid #333;
+            background-color: #14161c !important; /* KESİN OPAK */
+            border-bottom: 1px solid #333;
             box-shadow: 0 1px 0 #333;
-            text-align: center; /* Başlıkları ortala */
         }
+
+        /* 2. Satır: Alt Başlıklar */
         #header-row-bottom th {
             position: sticky; top: 50px; z-index: 900; height: 45px;
-            background-color: #14161c; border-bottom: 2px solid #333;
+            background-color: #14161c !important; /* KESİN OPAK */
+            border-bottom: 2px solid #333;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            text-align: center; /* Alt başlıkları ortala */
         }
 
         /* --- STICKY COLUMN (ÜRÜN ADI - SOLA YAPIŞMA) --- */
+        
         th.sticky-product, td.sticky-product {
             position: sticky; left: 0; z-index: 1100;
-            background-color: #14161c; 
+            background-color: #14161c !important; /* KESİN OPAK */
             border-right: 2px solid #444;
             box-shadow: 4px 0 10px rgba(0,0,0,0.5);
             min-width: 280px; max-width: 280px; 
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-            text-align: left !important; /* Ürün adı sola dayalı */
         }
 
         /* Kesişim Noktası */
-        #header-row-bottom th.sticky-product { top: 50px; z-index: 1200 !important; }
-        #header-row-top th.sticky-product { z-index: 1200 !important; left: 0; }
+        #header-row-top th:first-child { z-index: 1200 !important; left: 0; background-color: #14161c !important; } 
+        #header-row-bottom th.sticky-product { top: 50px; z-index: 1200 !important; background-color: #14161c !important; }
 
         tr:hover td { background-color: #1a1d24; }
-        tr:hover td.sticky-product { background-color: #1a1d24; }
-
-        /* Fiyat Sütunları İçin Genişlik Ayarı (Kaymayı Önler) */
-        .price-col { min-width: 100px; text-align: center; }
+        /* Sticky olanlar hover'da da opak kalmalı, yoksa arkası görünür */
+        tr:hover td.sticky-product { background-color: #1a1d24 !important; opacity: 1; }
 
 
         /* --- 1.3: DİĞER BİLEŞENLER --- */
@@ -126,13 +129,15 @@
         .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
         .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
 
-        /* Yüzen Buton (Düzeltildi: Kapalıyken Görünür) */
+        /* Yüzen Buton (Varsayılan GİZLİ) */
         #floating-toggle-btn { 
             position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px; 
             background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%; 
             z-index: 10001; display: flex; justify-content: center; align-items: center; cursor: pointer;
-            font-size: 1.2rem; opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease; 
+            font-size: 1.2rem; 
+            opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease; 
         }
+        /* Sadece Sidebar Kapalıyken Görünür */
         body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
 
         .sidebar-footer { margin-top: auto; padding: 20px; display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
@@ -141,7 +146,7 @@
         .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
-        .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
+        .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05) !important; } /* Opaklık için important */
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
         .badge-tazeyo { background-color: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .badge-market { white-space: nowrap; border: 1px solid transparent; }
@@ -607,14 +612,15 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // --- HEADER ---
-            // 1. SATIR: Ürün Bilgileri Başlığı (Sola Yapışık), Fiyatlar ve Rakipler
-            // Ürün Adı'nı en başa alıyoruz (Görsel tutarlılık için)
+            // HEADER
+            const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Marka', 'Kategori', 'Ürün Adı'];
+            
+            // 1. SATIR
             let headerTopHtml = '';
             headerTopHtml += `<th class="sticky-product" style="z-index:1200 !important; top:0 !important; text-align:left;">Ürün Adı</th>`; 
             
-            // Diğer sabit olmayan ürün bilgileri (colspan=5)
-            headerTopHtml += `<th colspan="5" style="background:#14161c; text-align:center;">Ürün Detayları</th>`;
+            // Diğer sabit olmayan ürün bilgileri
+            headerTopHtml += `<th>Rapor Tarihi</th><th>Mağaza</th><th>SKU</th><th>Marka</th><th>Kategori</th>`;
             
             // Bizim Fiyatlar
             let myStoreLabel = 'Bizim Fiyatlar';
@@ -637,29 +643,23 @@
 
             // 2. SATIR
             let headerBottomHtml = '';
-            // Ürün Adı (Altı Boş - JS ile yukarıdakine rowspan verilecek)
             headerBottomHtml += `<th class="sticky-product"></th>`; 
-            headerBottomHtml += `<th>Rapor Tarihi</th><th>Mağaza</th><th>SKU</th><th>Marka</th><th>Kategori</th>`; 
+            headerBottomHtml += `<th></th><th></th><th></th><th></th><th></th>`; 
             
-            // Bizim Fiyatlar
-            headerBottomHtml += `<th class="price-col">Original</th><th class="price-col">Discount</th>`;
+            headerBottomHtml += `<th>Original</th><th>Discount</th>`;
 
-            // Rakipler
             competitorNames.forEach(() => {
-                headerBottomHtml += `<th class="price-col border-left-light">Original</th><th class="price-col">Discount</th>`;
+                headerBottomHtml += `<th class="border-left-light">Original</th><th>Discount</th>`;
             });
 
             headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
             theadBottom.innerHTML = headerBottomHtml;
             
-            // ROWSPAN AYARLARI (Başlık Hücresini 2 satıra yayma)
             const firstRowCells = theadTop.querySelectorAll('th');
-            // Sadece ilk hücreye (Ürün Adı) rowspan veriyoruz
-            firstRowCells[0].setAttribute('rowspan', '2'); 
+            for(let i=0; i<6; i++) { firstRowCells[i].setAttribute('rowspan', '2'); }
             
-            // İkinci satırdaki ilk boş hücreyi siliyoruz
             const secondRowCells = theadBottom.querySelectorAll('th');
-            secondRowCells[0].remove(); 
+            for(let i=0; i<6; i++) { secondRowCells[0].remove(); } 
 
             // DATA
             dataRows.forEach(row => {
