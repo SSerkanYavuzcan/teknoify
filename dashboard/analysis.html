@@ -13,44 +13,41 @@
     <link rel="stylesheet" href="../css/dashboard.css">
 
     <style>
-        /* --- 1.1: LAYOUT RESET (DASHBOARD.CSS DÜZELTMELERİ) --- */
+        /* --- 1.1: LAYOUT RESET (DASHBOARD.CSS DÜZELTMELERİ - KESİN ÇÖZÜM) --- */
         * { box-sizing: border-box; }
         
-        /* Sayfanın kendisine scroll veriyoruz (Sticky Header için KİLİT NOKTA) */
+        /* Sayfanın kendisine scroll veriyoruz. dashboard.css'deki overflow:hidden'ı eziyoruz */
         html, body {
             height: auto !important;
             min-height: 100vh !important;
-            overflow-y: auto !important; /* Ana kaydırma burada */
-            overflow-x: hidden !important;
+            overflow-y: auto !important; /* Ana dikey scroll burada */
             background-color: #0b0e11;
             margin: 0; padding: 0;
         }
 
-        /* Sidebar: Ekrana Sabitlendi (Fixed) */
+        /* İçerik kapsayıcılarının scroll özelliklerini ve yükseklik kısıtlamalarını kaldırıyoruz */
+        .main-content, .content-scroll {
+            display: block !important;
+            height: auto !important;
+            overflow: visible !important; /* KİLİT NOKTA: Bu visible olmazsa başlık yapışmaz */
+            position: static !important;
+            padding: 0 !important;
+            margin-left: 260px; /* Sidebar boşluğu */
+            width: calc(100% - 260px);
+        }
+        
+        .content-scroll { padding: 30px !important; }
+
+        /* Sidebar'ı Ekrana Çivile */
         .sidebar {
             position: fixed !important;
-            top: 0; left: 0;
-            width: 260px; height: 100vh !important;
-            z-index: 10000 !important; /* En üstte */
-            display: flex; flex-direction: column;
+            top: 0; left: 0; height: 100vh !important;
+            width: 260px; z-index: 10000 !important;
             background: #14161c; border-right: 1px solid #333;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Ana İçerik: Sidebar Yanına Yerleşti ve Scroll Kilidi Açıldı */
-        .main-content {
-            display: block !important;
-            position: relative;
-            margin-left: 260px; /* Sidebar boşluğu */
-            width: calc(100% - 260px);
-            height: auto !important;
-            min-height: 100vh;
-            overflow: visible !important; /* Scroll kilidi açıldı, sticky çalışır */
-            padding: 0 !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Üst Bar: Sabitlik Kaldırıldı (Akışkan - Scroll ile yukarı gider) */
+        /* Üst Bar (Top Bar) - Sayfayla beraber yukarı kaysın (Sticky değil) */
         .top-bar {
             position: relative !important;
             top: auto !important; left: auto !important;
@@ -58,94 +55,58 @@
             background: #14161c !important;
         }
 
-        /* İçerik Kutusu */
-        .content-scroll {
-            height: auto !important;
-            overflow: visible !important;
-            padding: 30px !important;
-        }
-
-        /* --- 1.2: SIDEBAR GİZLEME (TOGGLE) --- */
+        /* Sidebar Gizleme Durumu */
         body.sidebar-closed .sidebar { transform: translateX(-260px); }
         body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
-        /* Yüzen Buton (Sidebar Kapalıyken Çıkar) */
-        #floating-toggle-btn {
-            position: fixed; bottom: 25px; left: 25px;
-            width: 50px; height: 50px;
-            background: #2f3349; color: #fff;
-            border: 1px solid #444; border-radius: 50%;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            z-index: 10001;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem;
-            opacity: 0; visibility: hidden; transform: scale(0.8);
-            transition: all 0.3s ease;
-        }
-        #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
-        body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
 
-        .sidebar-footer {
-            margin-top: auto; padding: 20px;
-            display: flex; gap: 10px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-        .sidebar-footer .menu-item { flex: 1; margin: 0; justify-content: center; }
-        .btn-collapse-sidebar {
-            width: 40px; height: 40px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
-
-        /* --- 1.3: TABLO STICKY HEADERS (2 SATIR SABİTLEME) --- */
+        /* --- 1.2: TABLO STICKY HEADERS (BAŞLIKLARI SABİTLEME) --- */
+        
         .comparison-table {
             border-collapse: separate; 
             border-spacing: 0;
             width: 100%;
         }
 
-        /* 1. SATIR: Rakipler (En Tepeye Yapışır - TOP: 0) */
+        /* --- 1. SATIR: RAKİP İSİMLERİ (EN TEPEYE YAPIŞIR) --- */
         #header-row-top th {
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
+            position: sticky !important;
+            top: 0 !important; /* Ekranın en tepesi */
+            z-index: 1000;
             height: 50px;
             background-color: #14161c; /* Arkası görünmesin */
             border-bottom: 1px solid #333;
-            box-shadow: 0 1px 0 #333;
+            box-shadow: 0 1px 0 #333; 
         }
 
-        /* 2. SATIR: Fiyat Başlıkları (1. Satırın Altına - TOP: 50px) */
+        /* --- 2. SATIR: ORIGINAL/DISCOUNT (1. SATIRIN ALTINA YAPIŞIR) --- */
         #header-row-bottom th {
-            position: sticky; 
-            top: 50px; 
-            z-index: 900; 
+            position: sticky !important;
+            top: 50px !important; /* 1. Satırın yüksekliği kadar aşağıda */
+            z-index: 900;
             height: 45px;
-            background-color: #14161c; 
+            background-color: #14161c;
             border-bottom: 2px solid #333;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        /* SOL SÜTUN SABİTLEME (ÜRÜN ADI) */
+        /* --- SOL SÜTUN SABİTLEME (ÜRÜN ADI) --- */
         td.sticky-col {
-            position: sticky; 
-            left: 0; 
+            position: sticky !important;
+            left: 0 !important;
             z-index: 100;
-            background-color: #14161c; 
+            background-color: #14161c;
             border-right: 2px solid #444;
             box-shadow: 4px 0 10px rgba(0,0,0,0.5);
         }
-        
-        /* Kesişim Noktaları (Hem Üst Hem Sol - En Üstte) */
-        /* Köşedeki "Ürün Bilgileri" yazısı */
+
+        /* --- KESİŞİM NOKTALARI --- */
         #header-row-top th:last-child { z-index: 1100 !important; } 
         
-        /* Köşedeki "Ürün Adı" yazısı */
         #header-row-bottom th.sticky-col { 
-            position: sticky; 
-            left: 0; 
-            top: 50px; 
+            position: sticky !important; 
+            left: 0 !important; 
+            top: 50px !important; 
             z-index: 1100 !important; 
             background-color: #14161c; 
             border-right: 2px solid #444;
@@ -154,7 +115,50 @@
         tr:hover td { background-color: #1a1d24; }
         tr:hover td.sticky-col { background-color: #1a1d24; }
 
-        /* Renkler & Badge */
+
+        /* --- 1.3: DİĞER BİLEŞENLER --- */
+        
+        .filter-bar { position: relative; z-index: 2000; margin-bottom: 20px; }
+        .multi-select-wrapper { position: relative; }
+
+        .multi-select-menu {
+            position: absolute; top: 100%; left: 0; margin-top: 8px;
+            width: 250px; max-height: 400px;
+            display: none; flex-direction: column;
+            background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 99999 !important; overflow: hidden;
+        }
+        .multi-select-menu.show { display: flex; }
+
+        .fixed-dropdown-header { flex-shrink: 0; background: #1f232c; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 20; }
+        .dropdown-search-wrapper { padding: 10px; }
+        .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; outline: none; }
+        .dropdown-search-input:focus { border-color: #7367f0; }
+
+        .scrollable-options-area { flex-grow: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1f232c; }
+        .multi-option { padding: 10px 14px; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }
+        .multi-option:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .multi-option.selected { background: rgba(115, 103, 240, 0.1); color: #fff; }
+        .option-checkbox { width: 18px; height: 18px; min-width: 18px; border: 2px solid #555; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
+        .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
+        .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
+
+        #floating-toggle-btn {
+            position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px;
+            background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 10001;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease;
+        }
+        #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
+        body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
+
+        .sidebar-footer { margin-top: auto; padding: 20px; display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-footer .menu-item { flex: 1; margin: 0; justify-content: center; }
+        .btn-collapse-sidebar { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
@@ -165,43 +169,6 @@
         .border-left-strong { border-left: 2px solid #444; }
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
-
-        /* --- 1.4: DROPDOWN (GELİŞMİŞ MENU) --- */
-        .filter-bar { position: relative; z-index: 2000; margin-bottom: 20px; } /* Tablodan yüksek olmalı */
-        .multi-select-wrapper { position: relative; }
-
-        .multi-select-menu {
-            position: absolute; top: 100%; left: 0; margin-top: 8px;
-            width: 280px; max-height: 400px;
-            display: none; flex-direction: column; /* Flex Yapı */
-            background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-            z-index: 99999 !important; overflow: hidden;
-        }
-        .multi-select-menu.show { display: flex; }
-
-        /* Sabit Başlık (Arama + Tümü) */
-        .fixed-dropdown-header { flex-shrink: 0; background: #1f232c; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 20; }
-        .dropdown-search-wrapper { padding: 10px; }
-        .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; outline: none; }
-        .dropdown-search-input:focus { border-color: #7367f0; }
-
-        /* Kaydırılabilir Liste */
-        .scrollable-options-area { 
-            flex-grow: 1; overflow-y: auto; 
-            scrollbar-width: thin; scrollbar-color: #444 #1f232c; 
-        }
-        .scrollable-options-area::-webkit-scrollbar { width: 6px; }
-        .scrollable-options-area::-webkit-scrollbar-track { background: #1f232c; }
-        .scrollable-options-area::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-
-        .multi-option { padding: 10px 14px; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }
-        .multi-option:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .multi-option.selected { background: rgba(115, 103, 240, 0.1); color: #fff; }
-        
-        .option-checkbox { width: 18px; height: 18px; min-width: 18px; border: 2px solid #555; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
-        .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
-        .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
     </style>
 </head>
 
@@ -225,9 +192,7 @@
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
             <a href="analysis.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
         </nav>
-        
         <div class="menu-spacer" style="flex-grow: 1;"></div>
-
         <div class="sidebar-footer">
             <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
             <button class="btn-collapse-sidebar" onclick="toggleSidebar()" title="Paneli Gizle">
@@ -323,7 +288,7 @@
                 </div>
             </div>
 
-            <div style="overflow-x: auto; border-radius: 16px; border: 1px solid var(--border);">
+            <div style="border-radius: 16px; border: 1px solid var(--border);">
                 <table class="comparison-table" id="main-table">
                     <thead>
                         <tr id="header-row-top"></tr>
