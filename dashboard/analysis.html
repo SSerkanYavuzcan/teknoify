@@ -11,32 +11,110 @@
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <style>
-        /* Dinamik Tablo Stilleri */
-        /* Not: Renkler artık JS'den dinamik geliyor, buradaki sabit renkleri kaldırdık */
+        /* --- DİNAMİK RENK SİSTEMİ --- */
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
-        
-        /* Badge Stilleri */
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
-        
-        /* Tazeyo Badge Sabit */
         .badge-tazeyo { background-color: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-        
-        /* Market Badge (Dinamik renklendirilecek ama base style kalsın) */
         .badge-market { white-space: nowrap; border: 1px solid transparent; }
-        
-        /* Fark Renklendirmeleri */
-        .diff-positive { color: #ef4444; font-weight: bold; } /* Biz pahalıysak kırmızı */
-        .diff-negative { color: #10b981; font-weight: bold; } /* Biz ucuzsak yeşil */
-        
-        /* Tablo Çizgileri */
+        .diff-positive { color: #ef4444; font-weight: bold; }
+        .diff-negative { color: #10b981; font-weight: bold; }
         .border-left-strong { border-left: 2px solid #444; }
         .border-left-light { border-left: 1px solid #333; }
-        
         .col-analysis-status { min-width: 140px; }
+
+        /* --- SIDEBAR TOGGLE & LAYOUT DÜZENLEMELERİ --- */
+        
+        /* 1. Geçiş Efektleri */
+        .sidebar, .main-content {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 2. Sidebar Footer Düzeni (Çıkış ve Ok Butonu) */
+        .sidebar-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px 20px 20px;
+            margin-top: auto; /* En alta iter */
+            gap: 10px;
+        }
+
+        /* Çıkış butonu genişlesin */
+        .sidebar-footer .menu-item {
+            flex-grow: 1;
+            margin: 0; /* Sidebar css'inden gelen margin'i sıfırla */
+            white-space: nowrap;
+        }
+
+        /* Gizleme Butonu (Küçük Ok) */
+        .btn-collapse-sidebar {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #888;
+            width: 40px;
+            height: 48px; /* Menu item yüksekliği ile uyumlu */
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .btn-collapse-sidebar:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        /* 3. Floating Open Button (Panel kapalıyken çıkan buton) */
+        #floating-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: #2f3349; /* Tema rengi */
+            border: 1px solid #444;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
+            display: none; /* Başlangıçta gizli */
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+        #floating-toggle-btn:hover {
+            background: #7367f0; /* Vurgu rengi */
+            transform: scale(1.1);
+        }
+
+        /* 4. Sidebar Kapalı Durumu (.sidebar-closed body'ye eklenince) */
+        body.sidebar-closed .sidebar {
+            transform: translateX(-100%); /* Sola kaybol */
+        }
+        
+        body.sidebar-closed .main-content {
+            margin-left: 0 !important; /* İçeriği sola yasla */
+            width: 100% !important;
+        }
+
+        body.sidebar-closed #floating-toggle-btn {
+            display: flex; /* Yüzen butonu göster */
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
     </style>
 </head>
 <body>
+
+    <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
+        <i class="fas fa-bars"></i>
+    </button>
 
     <div id="toast" class="toast-notification">
         <div class="toast-icon"><i class="fas fa-exclamation-circle"></i></div>
@@ -53,8 +131,15 @@
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
             <a href="analysis.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
         </nav>
+        
         <div class="menu-spacer"></div>
-        <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+
+        <div class="sidebar-footer">
+            <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+            <button class="btn-collapse-sidebar" onclick="toggleSidebar()" title="Paneli Gizle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
     </aside>
 
     <main class="main-content">
@@ -221,25 +306,22 @@
             });
         });
 
-        // --- RENK YÖNETİM SİSTEMİ (BURAYA YENİ RAKİP EKLENEBİLİR) ---
-        function getBrandColor(fullName) {
-            if (!fullName) return '#f97316'; // Varsayılan Turuncu
-            const lowerName = fullName.toLowerCase();
-            
-            // 1. CARREFOURSA (Mavi #005daa)
-            if (lowerName.includes('carrefoursa')) return '#005daa';
-            
-            // 2. MIGROS (Örnek Turuncu/Sarı) - İleride aktif edebilirsiniz
-            // if (lowerName.includes('migros')) return '#ff8000';
-            
-            // 3. SOK (Örnek Sarı)
-            // if (lowerName.includes('sok')) return '#fcd308';
+        // --- SIDEBAR TOGGLE FONKSİYONU ---
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-closed');
+            // İsteğe bağlı: Kullanıcının tercihini kaydetmek için
+            // const isClosed = document.body.classList.contains('sidebar-closed');
+            // localStorage.setItem('sidebarState', isClosed ? 'closed' : 'open');
+        }
 
-            // Varsayılan (Marketten ve diğerleri için Turuncu)
+        // --- RENK YÖNETİM SİSTEMİ ---
+        function getBrandColor(fullName) {
+            if (!fullName) return '#f97316';
+            const lowerName = fullName.toLowerCase();
+            if (lowerName.includes('carrefoursa')) return '#005daa';
             return '#f97316'; 
         }
 
-        // Hex rengini (Örn: #005daa) alıp RGBA (Yarı şeffaf) yapan yardımcı fonksiyon
         function hexToRgba(hex, alpha) {
             let c;
             if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
@@ -250,10 +332,9 @@
                 c= '0x'+c.join('');
                 return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
             }
-            return hex; // Dönüştüremezse orijinalini döndür
+            return hex;
         }
 
-        // --- DİĞER FONKSİYONLAR ---
         function showNoDataState() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.</td></tr>';
@@ -449,7 +530,6 @@
             };
         }
 
-        // --- RENDER TABLE (DİNAMİK RENKLİ) ---
         function renderTable(dataRows, competitorNames) {
             const theadTop = document.getElementById('header-row-top');
             const theadBottom = document.getElementById('header-row-bottom');
@@ -460,29 +540,24 @@
             theadBottom.innerHTML = '';
 
             // --- HEADER ---
-            // 1. Ürün Bilgileri
             const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Ürün Adı', 'Marka', 'Kategori'];
             theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
             staticCols.forEach(col => { theadBottom.innerHTML += `<th>${col}</th>`; });
 
-            // 2. Bizim Fiyatlar
+            // Bizim Fiyatlar
             theadTop.innerHTML += `<th colspan="3" class="th-group-tazeyo">Bizim Fiyatlar</th>`;
             theadBottom.innerHTML += `<th>Original</th><th>Discount</th><th>W.Chg</th>`;
 
-            // 3. Rakipler (Dinamik Renkli)
+            // Rakipler
             competitorNames.forEach(compName => {
-                // Rakip rengini bul
                 const brandColor = getBrandColor(compName);
-                const bgRgba = hexToRgba(brandColor, 0.05); // Hafif arka plan
-                
-                // Style attribute ile rengi gömüyoruz
+                const bgRgba = hexToRgba(brandColor, 0.05);
                 const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background-color: ${bgRgba}; border-left: 2px solid #444;`;
-
                 theadTop.innerHTML += `<th colspan="3" style="${styleStr}">${compName}</th>`;
                 theadBottom.innerHTML += `<th class="border-left-light">Original</th><th>Discount</th><th>W.Chg</th>`;
             });
 
-            // 4. Analiz -> En Ucuz Kanal
+            // Analiz
             theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadBottom.innerHTML += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
 
@@ -490,7 +565,6 @@
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 
-                // Ürün
                 let html = `
                     <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
                     <td>${row['Store Name']}</td>
@@ -500,7 +574,6 @@
                     <td>${row['Category Name'] || '-'}</td>
                 `;
 
-                // Bizim Fiyat
                 const t_org = row.tazeyo_price_org;
                 const t_dsc = row.tazeyo_price_dsc;
                 const bizPrice = t_dsc > 0 ? t_dsc : t_org;
@@ -511,7 +584,6 @@
                     <td>-</td>
                 `;
 
-                // Rakipler
                 let enUcuzRakipFiyati = Infinity;
                 let enUcuzRakipIsmi = '';
 
@@ -537,25 +609,20 @@
                     }
                 });
 
-                // Analiz
                 let badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">-</span>';
                 let farkYuzde = 0;
                 let farkClass = "";
 
                 if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
                     if (bizPrice < enUcuzRakipFiyati) {
-                        // BİZ UCUZUZ -> "Tazeyo"
                         badgeHtml = '<span class="badge badge-tazeyo">Tazeyo</span>';
                         farkYuzde = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
                         farkClass = "diff-negative"; 
                     } else if (bizPrice > enUcuzRakipFiyati) {
-                        // RAKİP UCUZ -> Rengin ve ismin dinamik ayarlanması
                         const shortName = cleanName(enUcuzRakipIsmi); 
                         const brandColor = getBrandColor(enUcuzRakipIsmi);
                         const bgRgba = hexToRgba(brandColor, 0.2);
                         const borderRgba = hexToRgba(brandColor, 0.3);
-
-                        // Dinamik Stil
                         const badgeStyle = `background-color: ${bgRgba}; color: ${brandColor}; border: 1px solid ${borderRgba};`;
                         
                         badgeHtml = `<span class="badge badge-market" style="${badgeStyle}" title="${enUcuzRakipIsmi}">${shortName}</span>`;
