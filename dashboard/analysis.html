@@ -4,86 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veri Çekme & Analiz | Teknoify</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+
     <style>
-        /* --- CSS SIFIRLAMA VE TEMEL AYARLAR --- */
+        /* --- 1.2: GENEL SIFIRLAMA VE LAYOUT OVERRIDE (DASHBOARD.CSS DÜZELTMELERİ) --- */
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; overflow-x: hidden; background-color: #0b0e11; }
-
-        /* --- ÜST BAR AYARI (KESİN ÇÖZÜM) --- */
-        /* !important ile dashboard.css'i eziyoruz, böylece scroll ile yukarı kayıyor */
-        .top-bar {
-            position: static !important; 
-            width: 100%;
-            z-index: 1;
-            /* Sticky veya Fixed varsa iptal et */
-            top: auto !important; 
-            left: auto !important;
+        
+        /* Sayfanın kendisine scroll veriyoruz (Sticky Header için şart) */
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background-color: #0b0e11;
+            margin: 0; padding: 0;
         }
 
-        /* --- FILTRE BAR --- */
-        .filter-bar {
+        /* Sidebar: Ekrana Sabitlendi (Fixed) */
+        .sidebar {
+            position: fixed !important;
+            top: 0; left: 0;
+            width: 260px; height: 100vh !important;
+            z-index: 10000 !important; /* En üstte */
+            display: flex; flex-direction: column;
+            background: #14161c; border-right: 1px solid #333;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Ana İçerik: Sidebar Yanına Yerleşti ve Scroll Kilidi Açıldı */
+        .main-content {
+            display: block !important;
             position: relative;
-            z-index: 500; /* Tablo başlıklarının üstünde kalsın */
+            margin-left: 260px; /* Sidebar boşluğu */
+            width: calc(100% - 260px);
+            height: auto !important;
+            min-height: 100vh;
+            overflow: visible !important; /* Scroll kilidi açıldı */
+            padding: 0 !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* --- DROPDOWN (MULTI SELECT) --- */
-        .multi-select-wrapper { position: relative; }
-
-        .multi-select-menu {
-            position: absolute; top: 100%; left: 0; margin-top: 8px;
-            min-width: 100%; width: 250px; max-height: 400px;
-            display: none; flex-direction: column; 
-            background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            z-index: 99999 !important; overflow: hidden;
-        }
-        .multi-select-menu.show { display: flex; }
-
-        /* Dropdown Sabit Alanlar */
-        .fixed-dropdown-header {
-            flex-shrink: 0; background-color: #1f232c;
-            border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 20;
-        }
-        .dropdown-search-wrapper { padding: 10px; }
-        .dropdown-search-input {
-            width: 100%; background: #14161c; border: 1px solid #333; color: #fff;
-            padding: 8px 10px; border-radius: 6px; font-size: 0.9rem; outline: none;
-        }
-        .dropdown-search-input:focus { border-color: #7367f0; }
-
-        /* Dropdown Scroll Alanı */
-        .scrollable-options-area {
-            flex-grow: 1; overflow-y: auto;
-            scrollbar-width: thin; scrollbar-color: #444 #1f232c;
-        }
-        .scrollable-options-area::-webkit-scrollbar { width: 6px; }
-        .scrollable-options-area::-webkit-scrollbar-track { background: #1f232c; }
-        .scrollable-options-area::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-
-        /* Seçenekler */
-        .multi-option {
-            padding: 10px 14px; font-size: 0.9rem; color: #ccc;
-            border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;
-            transition: background 0.2s; display: flex; align-items: center; justify-content: space-between; gap: 10px;
-        }
-        .multi-option:hover { background-color: rgba(255,255,255,0.1); color: #fff; }
-        .multi-option.selected { background-color: rgba(115, 103, 240, 0.08); color: #fff; }
-        .option-checkbox {
-            width: 18px; height: 18px; min-width: 18px; border: 2px solid #555; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .multi-option.selected .option-checkbox { background-color: #7367f0; border-color: #7367f0; }
-        .multi-option.selected .option-checkbox::after {
-            content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white;
+        /* Üst Bar: Sabitlik Kaldırıldı (Akışkan) */
+        .top-bar {
+            position: relative !important;
+            top: auto !important; left: auto !important;
+            width: 100%; z-index: 1;
+            background: #14161c !important;
         }
 
-        /* --- DİNAMİK RENK SİSTEMİ --- */
+        /* İçerik Kutusu */
+        .content-scroll {
+            height: auto !important;
+            overflow: visible !important;
+            padding: 30px !important;
+        }
+
+        /* --- 1.3: SIDEBAR GİZLEME (TOGGLE) --- */
+        body.sidebar-closed .sidebar { transform: translateX(-260px); }
+        body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
+
+        /* Yüzen Buton (Sidebar Kapalıyken Çıkar) */
+        #floating-toggle-btn {
+            position: fixed; bottom: 25px; left: 25px;
+            width: 50px; height: 50px;
+            background: #2f3349; color: #fff;
+            border: 1px solid #444; border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            z-index: 10001; /* Sidebar'dan da yüksek */
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            opacity: 0; visibility: hidden; transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+        #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
+        body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
+
+        /* Sidebar Alt Butonlar */
+        .sidebar-footer {
+            margin-top: auto; padding: 20px;
+            display: flex; gap: 10px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .sidebar-footer .menu-item { flex: 1; margin: 0; justify-content: center; }
+        .btn-collapse-sidebar {
+            width: 40px; height: 40px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        /* --- 1.4: TABLO STICKY HEADERS (SABİT BAŞLIKLAR) --- */
+        .comparison-table {
+            border-collapse: separate; 
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        /* 1. Satır: Rakipler (En Tepeye Yapışır) */
+        #header-row-top th {
+            position: sticky; top: 0; z-index: 100; height: 50px;
+            background-color: #14161c; border-bottom: 1px solid #333;
+            box-shadow: 0 1px 0 #333;
+        }
+
+        /* 2. Satır: Fiyat Başlıkları (1. Satırın Altına) */
+        #header-row-bottom th {
+            position: sticky; top: 50px; z-index: 90; height: 45px;
+            background-color: #14161c; border-bottom: 2px solid #333;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        /* SOL SÜTUN SABİTLEME (ÜRÜN ADI) */
+        td.sticky-col {
+            position: sticky; left: 0; z-index: 10;
+            background-color: #14161c; border-right: 2px solid #444;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.5);
+        }
+        
+        /* Kesişim Noktaları (Hem Üst Hem Sol) */
+        #header-row-top th:last-child { z-index: 110 !important; } 
+        #header-row-bottom th.sticky-col { 
+            position: sticky; left: 0; top: 50px; z-index: 110 !important; 
+            background-color: #14161c; border-right: 2px solid #444;
+        }
+
+        /* Hover Efekti */
+        tr:hover td { background-color: #1a1d24; }
+        tr:hover td.sticky-col { background-color: #1a1d24; }
+
+        /* Renkler & Badge */
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
@@ -95,90 +150,46 @@
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
 
-        /* --- TABLO STICKY HEADERS (ÖNEMLİ KISIM) --- */
-        /* Tablo kenarlıkları çakışmasın diye */
-        .comparison-table { border-collapse: separate; border-spacing: 0; }
+        /* --- 1.5: DROPDOWN (GELİŞMİŞ MENU) --- */
+        .filter-bar { position: relative; z-index: 500; margin-bottom: 20px; }
+        .multi-select-wrapper { position: relative; }
 
-        /* 1. Satır: Rakip İsimleri (En Tepeye Yapışır) */
-        #header-row-top th {
-            position: sticky;
-            top: 0; /* Ekranın en tepesi */
-            z-index: 100;
-            height: 45px;
-            background-color: #14161c; /* Şeffaf olmasın, arkası görünmesin */
-            border-bottom: 1px solid #333;
+        .multi-select-menu {
+            position: absolute; top: 100%; left: 0; margin-top: 8px;
+            min-width: 100%; width: 280px; max-height: 400px;
+            display: none; flex-direction: column; /* Flex Yapı */
+            background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 99999 !important; overflow: hidden;
         }
+        .multi-select-menu.show { display: flex; }
 
-        /* 2. Satır: Original / Discount (1. Satırın Altına Yapışır) */
-        #header-row-bottom th {
-            position: sticky;
-            top: 45px; /* Üst satırın yüksekliği kadar boşluk bırak */
-            z-index: 90;
-            height: 40px;
-            background-color: #14161c;
-            border-bottom: 2px solid #333;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+        /* Sabit Başlık (Arama + Tümü) */
+        .fixed-dropdown-header { flex-shrink: 0; background: #1f232c; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 20; }
+        .dropdown-search-wrapper { padding: 10px; }
+        .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; outline: none; }
+        .dropdown-search-input:focus { border-color: #7367f0; }
 
-        /* --- STICKY SÜTUN (ÜRÜN ADI) --- */
-        /* Tablo gövdesindeki Ürün Adı */
-        td.sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 10;
-            background-color: #14161c;
-            border-right: 2px solid #444;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.5);
+        /* Kaydırılabilir Liste */
+        .scrollable-options-area { 
+            flex-grow: 1; overflow-y: auto; 
+            scrollbar-width: thin; scrollbar-color: #444 #1f232c; 
         }
+        .scrollable-options-area::-webkit-scrollbar { width: 6px; }
+        .scrollable-options-area::-webkit-scrollbar-track { background: #1f232c; }
+        .scrollable-options-area::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
 
-        /* Başlıklardaki Ürün Bilgileri (Kesişim Noktası) */
-        /* Hem üstte hem solda sabit kalmalı, Z-Index en yüksek olmalı */
-        #header-row-top th:last-child { z-index: 110 !important; } 
-        #header-row-bottom th.sticky-col { 
-            position: sticky; left: 0; z-index: 110 !important; 
-            background-color: #14161c; border-right: 2px solid #444; 
-        }
-
-        /* Hover efekti */
-        tr:hover td { background-color: #1a1d24; }
-        tr:hover td.sticky-col { background-color: #1a1d24; }
-
-        /* --- LAYOUT SİSTEMİ --- */
-        .sidebar {
-            width: 260px; height: 100vh; position: fixed; top: 0; left: 0; z-index: 1000;
-            display: flex; flex-direction: column; background: #14161c; border-right: 1px solid #333;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .main-content {
-            margin-left: 260px; width: calc(100% - 260px); min-height: 100vh; padding: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        body.sidebar-closed .sidebar { transform: translateX(-260px); }
-        body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
-
-        /* --- BUTONLAR --- */
-        .sidebar-footer { margin-top: auto; padding: 20px; display: flex; gap: 10px; border-top: 1px solid #222; }
-        .sidebar-footer .menu-item { flex: 1; margin: 0; justify-content: center; }
-        .btn-collapse-sidebar {
-            width: 40px; height: 40px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        #floating-toggle-btn {
-            position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px;
-            background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 9999;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; opacity: 0; visibility: hidden; transform: scale(0.8);
-            transition: all 0.3s ease;
-        }
-        #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
-        body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
+        .multi-option { padding: 10px 14px; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }
+        .multi-option:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .multi-option.selected { background: rgba(115, 103, 240, 0.1); color: #fff; }
+        
+        .option-checkbox { width: 18px; height: 18px; min-width: 18px; border: 2px solid #555; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
+        .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
+        .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
     </style>
 </head>
-<body>
 
+<body>
     <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
         <i class="fas fa-bars"></i>
     </button>
@@ -315,7 +326,7 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -323,7 +334,7 @@
     <script src="../js/script.js"></script>
    
     <script>
-        // --- GLOBAL DEĞİŞKENLER ---
+        // 3.1: Global Değişkenler ve Başlangıç
         let ALL_DATA = [];
         let flatpickrInstance;
         let SELECTED_BRANCHES = ['all'];
@@ -375,7 +386,7 @@
 
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
 
-        // --- RENK YÖNETİMİ ---
+        // Renk Yönetimi
         function getBrandColor(fullName) {
             if (!fullName) return '#f97316';
             const lowerName = fullName.toLowerCase();
@@ -439,12 +450,12 @@
             updateTriggerText('category', 'Tüm Kategoriler');
         }
 
-        // --- RENDER MULTI SELECT ---
+        // 3.2: Dropdown Render Logic
         function renderMultiSelectOptions(menuId, items, type) {
             const menu = document.getElementById(menuId);
             menu.innerHTML = '';
 
-            // A) SABİT ALAN (Header)
+            // A) SABİT ALAN
             const fixedHeader = document.createElement('div');
             fixedHeader.className = 'fixed-dropdown-header';
 
@@ -477,7 +488,7 @@
 
             menu.appendChild(fixedHeader);
 
-            // B) KAYDIRILABİLİR ALAN (Body)
+            // B) KAYDIRILABİLİR ALAN
             const scrollContainer = document.createElement('div');
             scrollContainer.className = 'scrollable-options-area';
 
@@ -630,6 +641,7 @@
             };
         }
 
+        // 3.3: Tablo Render
         function renderTable(dataRows, competitorNames) {
             const theadTop = document.getElementById('header-row-top');
             const theadBottom = document.getElementById('header-row-bottom');
