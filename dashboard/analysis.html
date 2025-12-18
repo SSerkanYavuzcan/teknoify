@@ -20,13 +20,13 @@
             display: block !important;
             height: auto !important;
             min-height: 100vh !important;
-            overflow-y: auto !important;
+            overflow-y: auto !important; /* Dikey scroll sayfada */
             overflow-x: hidden !important;
             background-color: #0b0e11;
             margin: 0; padding: 0;
         }
 
-        /* Sidebar Sabit */
+        /* Sidebar Sabitleme */
         .sidebar {
             position: fixed !important;
             top: 0; left: 0; 
@@ -49,28 +49,23 @@
         }
 
         .top-bar {
-            position: relative !important; 
-            width: 100% !important; z-index: 50; 
-            background: #14161c !important;
+            position: relative !important; width: 100% !important; z-index: 50; background: #14161c !important;
         }
 
         .content-scroll {
-            height: auto !important; 
-            overflow: visible !important;
-            padding: 30px !important; 
-            padding-bottom: 80px !important;
+            height: auto !important; overflow: visible !important;
+            padding: 30px !important; padding-bottom: 80px !important;
         }
 
-        /* Sidebar Toggle */
         body.sidebar-closed .sidebar { transform: translateX(-100%) !important; }
         body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
 
         /* =========================================================================
-           1.2: TABLO AYARLARI (DÜZELTİLMİŞ)
+           1.2: TABLO SABİTLEME AYARLARI (GÜNCELLENDİ)
            ========================================================================= */
         
-        /* Tabloyu saran kutu: Yatay scroll yapar */
+        /* Tabloyu saran kutu: Sadece YATAY scroll */
         .table-responsive-wrapper {
             display: block;
             width: 100%;
@@ -86,13 +81,12 @@
             border-collapse: separate; 
             border-spacing: 0;
             width: 100%;
-            /* Tablo içeriği sığsın diye min-width */
             min-width: max-content; 
         }
 
-        /* --- STICKY HEADER (SADECE YUKARI) --- */
+        /* --- STICKY HEADER (YUKARI YAPIŞMA - 1. ve 2. SATIR) --- */
         
-        /* 1. Satır (Rakipler) */
+        /* 1. Satır: En Üst Başlıklar */
         #header-row-top th {
             position: sticky !important; top: 0 !important;
             z-index: 1000; 
@@ -102,7 +96,7 @@
             box-shadow: 0 1px 0 #333; 
         }
 
-        /* 2. Satır (Alt Başlıklar) */
+        /* 2. Satır: Alt Başlıklar */
         #header-row-bottom th {
             position: sticky !important; top: 50px !important;
             z-index: 900;
@@ -112,20 +106,27 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        /* --- SOLA YAPIŞMAYI İPTAL ETTİK --- */
-        /* Artık Rapor Tarihi ve Mağaza normal akışta */
-        td.sticky-col, th.sticky-col {
-            position: static !important; /* Yapışkanlık yok */
-            left: auto !important;
-            z-index: auto !important;
-            box-shadow: none !important;
-            border-right: 1px solid #333 !important; /* Normal kenarlık */
+        /* --- STICKY COLUMN (SADECE ÜRÜN ADI - SOLA YAPIŞMA) --- */
+        
+        /* JS ile "sticky-product" class'ını sadece Ürün Adı'na vereceğiz */
+        th.sticky-product, td.sticky-product {
+            position: sticky !important;
+            left: 0 !important; /* Sol kenara yapış */
+            z-index: 800; /* Header'ın altında, diğer verilerin üstünde */
+            background-color: #14161c !important;
+            border-right: 2px solid #444; /* Sağ tarafına belirgin çizgi */
+            box-shadow: 4px 0 10px rgba(0,0,0,0.5); /* Sağ tarafına gölge */
         }
 
-        /* Sadece Ürün Adı'nı sabitlemek isterseniz burayı açabilirsiniz. 
-           Şimdilik isteğinize göre hepsini kaldırdım. */
+        /* Kesişim Noktası: Ürün Adı Başlığı (Hem yukarı hem sola yapışır) */
+        #header-row-bottom th.sticky-product {
+            top: 50px !important;
+            z-index: 1100 !important; /* En üstte kalsın */
+        }
 
+        /* Hover efekti */
         tr:hover td { background-color: #1a1d24 !important; }
+        tr:hover td.sticky-product { background-color: #1a1d24 !important; }
 
 
         /* --- 1.3: DİĞER BİLEŞENLER --- */
@@ -639,17 +640,15 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // HEADER (STICKY LOGIC BURADA)
+            // HEADER
             const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Marka', 'Kategori', 'Ürün Adı'];
             
-            // --- 1. SATIR ---
+            // 1. SATIR
             let headerTopHtml = '';
             headerTopHtml += `<th>Rapor Tarihi</th>`; 
             headerTopHtml += `<th>Mağaza</th>`;
-            
             headerTopHtml += `<th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>`;
             
-            // Bizim Fiyatlar
             let myStoreLabel = 'Bizim Fiyatlar';
             if(dataRows.length > 0 && dataRows[0]['Store Name']) {
                 myStoreLabel = dataRows[0]['Store Name'];
@@ -657,7 +656,6 @@
             const tazeyoBg = `linear-gradient(rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.05)), #14161c`;
             headerTopHtml += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
 
-            // Rakipler
             competitorNames.forEach(compName => {
                 const brandColor = getBrandColor(compName);
                 const bgRgba = hexToRgba(brandColor, 0.05);
@@ -666,49 +664,32 @@
                 headerTopHtml += `<th colspan="2" style="${styleStr}">${compName}</th>`;
             });
 
-            // Analiz
             headerTopHtml += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadTop.innerHTML = headerTopHtml;
 
-            // --- 2. SATIR ---
+            // 2. SATIR
             let headerBottomHtml = '';
-            // Boş hücreler (Üstteki başlıklara denk gelenler) - HTML yapısını korumak için gerekli
-            // Ancak yapışkanlık için th'leri tekrar tanımlıyoruz.
-            
-            // 1. Rapor Tarihi ve Mağaza (Boş geçiyoruz çünkü üstte tanımlı ama hizalama için th lazım)
-            // ÇÖZÜM: 2. Satırda bu hücreleri "display:none" yapıp üstteki hücreye "rowspan=2" verirsek daha temiz olur ama 
-            // sticky yapısında rowspan bazen sorun çıkarır. O yüzden 2. satırı boş bırakıyoruz.
-            // DÜZELTME: En temiz sticky yapısı için 1. satırda başlıkları verip 2. satırda boş geçmek yerine,
-            // 2. satırda ilgili başlıkları tekrar tanımlayıp (görünmez yaparak) hizalamayı korumaktır.
-            // FAKAT burada basitlik adına:
-            
-            headerBottomHtml += `<th></th><th></th>`; // Rapor ve Mağaza altı boş
-            headerBottomHtml += `<th>SKU</th><th>Marka</th><th>Kategori</th><th>Ürün Adı</th>`;
-            
-            // Bizim Fiyatlar
+            // Rapor Tarihi ve Mağaza için boş hücre değil, JS ile kaldırıyoruz.
+            // Önce placeholder ekleyip aşağıda sileceğiz.
+            headerBottomHtml += `<th></th><th></th>`; 
+            headerBottomHtml += `<th>SKU</th><th>Marka</th><th>Kategori</th><th class="sticky-product">Ürün Adı</th>`;
             headerBottomHtml += `<th>Original</th><th>Discount</th>`;
 
-            // Rakipler
             competitorNames.forEach(() => {
                 headerBottomHtml += `<th class="border-left-light">Original</th><th>Discount</th>`;
             });
 
-            // Analiz
             headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
-            
             theadBottom.innerHTML = headerBottomHtml;
             
-            // HEADER DÜZELTMESİ (Javscript ile Rowspan Ayarı)
-            // İlk satırdaki Rapor Tarihi ve Mağaza'yı 2 satır kaplayacak şekilde ayarlıyoruz
+            // ROWSPAN AYARLARI
             const firstRowCells = theadTop.querySelectorAll('th');
             firstRowCells[0].setAttribute('rowspan', '2'); // Rapor Tarihi
             firstRowCells[1].setAttribute('rowspan', '2'); // Mağaza
             
-            // İkinci satırdaki ilk 2 boş hücreyi siliyoruz ki kayma olmasın
             const secondRowCells = theadBottom.querySelectorAll('th');
             secondRowCells[0].remove();
-            secondRowCells[1].remove(); // Artık 2. satır SKU ile başlıyor
-
+            secondRowCells[1].remove(); 
 
             // DATA
             dataRows.forEach(row => {
@@ -720,7 +701,7 @@
                     <td>${row['SKU']}</td>
                     <td>${row['Brand Name'] || '-'}</td>
                     <td>${row['Category Name'] || '-'}</td>
-                    <td title="${row['Product Name']}">${row['Product Name']}</td>
+                    <td class="sticky-product" title="${row['Product Name']}">${row['Product Name']}</td>
                 `;
 
                 const t_org = row.tazeyo_price_org;
