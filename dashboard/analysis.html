@@ -13,48 +13,46 @@
     <link rel="stylesheet" href="../css/dashboard.css">
 
     <style>
-        /* --- 1.1: LAYOUT RESET (KESİN ÇÖZÜM) --- */
+        /* --- 1.1: SAYFA VE SCROLL AYARLARI (Sticky Header İçin Şart) --- */
         * { box-sizing: border-box; }
         
-        /* Body Ayarları: Flex iptal, Scroll aktif */
+        /* Sayfanın kendisine scroll veriyoruz. dashboard.css'i eziyoruz. */
         html, body {
             display: block !important;
             height: auto !important;
             min-height: 100vh !important;
-            overflow-y: auto !important; /* Dikey scroll sayfada */
-            overflow-x: hidden !important; /* Yatay scroll yok */
+            overflow-y: auto !important; /* Dikey scroll pencerede */
+            overflow-x: hidden !important;
             background-color: #0b0e11;
             margin: 0; padding: 0;
         }
 
-        /* Sidebar: Tamamen Sabit */
+        /* Sidebar Sabitleme */
         .sidebar {
             position: fixed !important;
-            top: 0; left: 0; 
-            width: 260px !important; height: 100vh !important;
+            top: 0; left: 0; height: 100vh !important;
+            width: 260px !important;
             z-index: 10000 !important;
             background: #14161c; border-right: 1px solid #333;
             transition: transform 0.3s ease !important;
             display: flex; flex-direction: column;
         }
 
-        /* Main Content: Sidebar'ın yanına, akışkan genişlik */
+        /* İçerik Alanı */
         .main-content {
             display: block !important;
-            margin-left: 260px !important; /* Sidebar boşluğu */
-            width: calc(100% - 260px) !important; /* Kalan alan */
+            margin-left: 260px !important; 
+            width: calc(100% - 260px) !important;
             height: auto !important;
-            min-height: 100vh;
-            overflow: visible !important; /* Sticky header için şart */
+            overflow: visible !important; /* Sticky için visible olmak zorunda */
             padding: 0 !important;
             position: relative !important;
         }
 
-        /* Top Bar: Akışkan (Scroll ile gider) */
+        /* Üst Bar (Sayfayla beraber yukarı kaysın) */
         .top-bar {
             position: relative !important; 
-            width: 100% !important; 
-            z-index: 50; 
+            width: 100% !important; z-index: 50; 
             background: #14161c !important;
         }
 
@@ -65,52 +63,50 @@
             padding-bottom: 80px !important;
         }
 
-        /* Sidebar Toggle Durumu */
+        /* Sidebar Kapalıyken */
         body.sidebar-closed .sidebar { transform: translateX(-100%) !important; }
         body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
 
         /* =========================================================================
-           1.2: GELİŞMİŞ TABLO SABİTLEME (Sticky Headers & Columns)
+           1.2: TABLO BAŞLIKLARINI SABİTLEME (ROW STICKY) - ÇÖZÜM BURADA
            ========================================================================= */
         
-        /* Tabloyu saran kutu: DİKEY scroll YOK, YATAY scroll VAR */
-        /* Sticky header'ın çalışması için parent'ta overflow: hidden/auto OLMAMALI (Dikeyde) */
+        /* Tabloyu saran kutu: Yatay scroll var, dikey scroll yok (body yapıyor) */
         .table-responsive-wrapper {
             display: block;
             width: 100%;
-            /* Bu kısım önemli: Dikey scroll body'de kalsın diye wrapper overflow'u visible yapıyoruz.
-               Yatay taşma için tablo genişliğini min-width ile zorluyoruz. */
-            overflow-x: auto; 
+            overflow-x: auto; /* Sağa kaydırma */
+            overflow-y: visible; 
             border-radius: 16px; 
             border: 1px solid var(--border);
             margin-bottom: 20px;
             background: #14161c;
-            position: relative; /* Z-index bağlamı */
         }
 
         .comparison-table {
             border-collapse: separate; 
             border-spacing: 0;
             width: 100%;
-            min-width: max-content; /* Tablo içeriği kadar genişlesin */
+            /* Tablo içeriği sıkışmasın diye min-width */
+            min-width: max-content; 
         }
 
-        /* --- BAŞLIKLAR (YUKARI YAPIŞIR) --- */
-        
-        /* 1. Satır (Rakipler) */
+        /* --- 1. SATIR: EN ÜST BAŞLIKLAR (Rakipler, Ürün Bilgileri) --- */
         #header-row-top th {
-            position: sticky !important; top: 0 !important;
-            z-index: 1000;
+            position: sticky !important;
+            top: 0 !important; /* Ekranın en tepesine yapış */
+            z-index: 1000; 
             height: 50px;
-            background-color: #14161c !important;
+            background-color: #14161c !important; 
             border-bottom: 1px solid #333;
             box-shadow: 0 1px 0 #333; 
         }
 
-        /* 2. Satır (Fiyat Başlıkları) */
+        /* --- 2. SATIR: ALT BAŞLIKLAR (Original, Discount, SKU vb.) --- */
         #header-row-bottom th {
-            position: sticky !important; top: 50px !important;
+            position: sticky !important;
+            top: 50px !important; /* 1. Satırın (50px) altına yapış */
             z-index: 900;
             height: 45px;
             background-color: #14161c !important;
@@ -118,51 +114,28 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        /* --- İLK 2 SÜTUN (SOLA YAPIŞIR) --- */
-        
-        /* 1. Sütun: Rapor Tarihi */
-        .comparison-table th:nth-child(1),
-        .comparison-table td:nth-child(1) {
-            position: sticky !important; left: 0 !important;
-            z-index: 800; /* Verinin üstünde */
+        /* --- SOLA YAPIŞAN SÜTUN (ÜRÜN ADI) --- */
+        /* Bunu da tuttum çünkü tablo genişleyince ürün adını görmek isteyeceksiniz */
+        td.sticky-col, th.sticky-col {
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 100;
             background-color: #14161c !important;
-            width: 120px; min-width: 120px;
-            border-right: 1px solid #333;
+            border-right: 2px solid #444;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.5);
         }
 
-        /* 2. Sütun: Mağaza Adı */
-        .comparison-table th:nth-child(2),
-        .comparison-table td:nth-child(2) {
-            position: sticky !important; left: 120px !important; /* 1. sütun genişliği */
-            z-index: 800;
+        /* Kesişim Noktaları (Sol Üst Köşeler - En Üstte Durmalı) */
+        #header-row-top th:last-child { z-index: 1100 !important; } 
+        #header-row-bottom th.sticky-col { 
+            top: 50px !important; 
+            z-index: 1100 !important; 
             background-color: #14161c !important;
-            width: 180px; min-width: 180px;
-            border-right: 2px solid #444; 
-            box-shadow: 4px 0 5px rgba(0,0,0,0.5);
         }
 
-        /* --- KESİŞİM NOKTALARI (SOL ÜST) --- */
-        /* Hem yukarı hem sola yapışan hücreler en üstte olmalı */
-        
-        /* 1. Satırın Sol Başlıkları */
-        #header-row-top th:nth-child(1),
-        #header-row-top th:nth-child(2) {
-            z-index: 1500 !important; /* En yüksek */
-            left: 0 !important; /* JS ile veya CSS ile sabitlenecek */
-        }
-        /* 2. Mağaza başlığı için özel left */
-        #header-row-top th:nth-child(2) { left: 120px !important; }
-
-        /* 2. Satırın Sol Başlıkları */
-        #header-row-bottom th:nth-child(1) {
-            z-index: 1500 !important; top: 50px !important; left: 0 !important;
-        }
-        #header-row-bottom th:nth-child(2) {
-            z-index: 1500 !important; top: 50px !important; left: 120px !important;
-        }
-
-        /* Hover */
+        /* Satır Hover */
         tr:hover td { background-color: #1a1d24 !important; }
+        tr:hover td.sticky-col { background-color: #1a1d24 !important; }
 
 
         /* --- 1.3: DİĞER BİLEŞENLER --- */
@@ -170,12 +143,14 @@
         .filter-bar { position: relative; z-index: 2000; margin-bottom: 20px; }
         .multi-select-wrapper { position: relative; }
 
+        /* Dropdown Menü */
         .multi-select-menu {
             position: absolute; top: 100%; left: 0; margin-top: 8px;
             width: 250px; max-height: 400px;
             display: none; flex-direction: column;
             background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 99999 !important; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 99999 !important; overflow: hidden;
         }
         .multi-select-menu.show { display: flex; }
 
@@ -192,6 +167,7 @@
         .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
         .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
 
+        /* Yüzen Buton */
         #floating-toggle-btn {
             position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px;
             background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%;
@@ -207,8 +183,10 @@
         .btn-collapse-sidebar { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
+        /* Uyarı Mesajı */
         #limit-msg { position: static !important; margin-top: 20px; width: 100%; text-align: center; }
 
+        /* Renkler */
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
@@ -365,7 +343,6 @@
     <script src="../js/script.js"></script>
    
     <script>
-        // GLOBAL DEĞİŞKENLER
         let ALL_DATA = [];
         let flatpickrInstance;
         let SELECTED_BRANCHES = ['all'];
@@ -682,11 +659,11 @@
             
             // --- 1. SATIR ---
             let headerTopHtml = '';
-            // Rapor Tarihi ve Mağaza (İlk 2)
-            headerTopHtml += `<th rowspan="2">Rapor Tarihi</th>`;
-            headerTopHtml += `<th rowspan="2">Mağaza</th>`;
+            // Rapor Tarihi ve Mağaza (İlk 2) - rowspan gerekmiyor, JS ile tek tek yazacağız.
+            headerTopHtml += `<th>Rapor Tarihi</th>`; // Placeholder, CSS ile yapışacak
+            headerTopHtml += `<th>Mağaza</th>`;
             
-            // Diğer Ürün Bilgileri (SKU, Marka, Kategori, Ürün Adı)
+            // Diğer Ürün Bilgileri (SKU, Marka, Kategori, Ürün Adı) - Boş bırakarak alt satırda tanımlıyoruz
             headerTopHtml += `<th colspan="4" style="background:#14161c;">Ürün Bilgileri</th>`;
             
             // Bizim Fiyatlar
@@ -712,19 +689,41 @@
 
             // --- 2. SATIR ---
             let headerBottomHtml = '';
-            // SKU, Marka, Kategori, Ürün Adı
-            headerBottomHtml += `<th>SKU</th><th>Marka</th><th>Kategori</th><th>Ürün Adı</th>`;
+            // İlk iki sütun boş, çünkü yukarıda kapladık ama hizalama için th gerekli
+            // Ancak CSS grid olmadığı için colspan ile yönetmek zor.
+            // EN İYİ YÖNTEM: İlk satırda colspan kullanmayıp, ikinci satırda başlıkları vermek.
+            // DÜZELTME: İlk satırda "Ürün Bilgileri" colspan="6" yapıp, ikinci satırda tek tek yazalım.
             
-            // Bizim Fiyatlar (Altı)
-            headerBottomHtml += `<th>Original</th><th>Discount</th>`;
+            // YENİDEN RENDER MANTIĞI:
+            theadTop.innerHTML = `<th colspan="6" style="background:#14161c; z-index:1100 !important; left:0 !important; position:sticky !important;">Ürün Bilgileri</th>`;
+            // Bizim Fiyatlar
+            theadTop.innerHTML += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
+            // Rakipler
+            competitorNames.forEach(compName => {
+                const brandColor = getBrandColor(compName);
+                const bgRgba = hexToRgba(brandColor, 0.05);
+                const solidBg = `linear-gradient(${bgRgba}, ${bgRgba}), #14161c`;
+                const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background: ${solidBg}; border-left: 2px solid #444;`;
+                theadTop.innerHTML += `<th colspan="2" style="${styleStr}">${compName}</th>`;
+            });
+            // Analiz
+            theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
 
-            // Rakipler (Altı)
+
+            // 2. SATIR (ASIL SÜTUN İSİMLERİ)
+            headerBottomHtml += `<th class="sticky-col" style="left:0 !important; z-index:1100 !important;">Rapor Tarihi</th>`;
+            headerBottomHtml += `<th class="sticky-col" style="left:120px !important; z-index:1100 !important;">Mağaza</th>`;
+            headerBottomHtml += `<th>SKU</th><th>Marka</th><th>Kategori</th><th class="sticky-col" style="left:300px !important; z-index:1100 !important; border-right:2px solid #444;">Ürün Adı</th>`;
+            
+            // Bizim
+            headerBottomHtml += `<th>Original</th><th>Discount</th>`;
+            // Rakipler
             competitorNames.forEach(() => {
                 headerBottomHtml += `<th class="border-left-light">Original</th><th>Discount</th>`;
             });
-
-            // Analiz (Altı)
+            // Analiz
             headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
+            
             theadBottom.innerHTML = headerBottomHtml;
 
 
@@ -732,13 +731,14 @@
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 
+                // Ürün Adı da sticky olsun istendiği için ona da class veriyoruz
                 let html = `
-                    <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
-                    <td>${row['Store Name']}</td>
+                    <td class="sticky-col" style="left:0 !important; z-index:100 !important; background-color:#14161c;">${row['Report Date']}</td>
+                    <td class="sticky-col" style="left:120px !important; z-index:100 !important; background-color:#14161c;">${row['Store Name']}</td>
                     <td>${row['SKU']}</td>
                     <td>${row['Brand Name'] || '-'}</td>
                     <td>${row['Category Name'] || '-'}</td>
-                    <td title="${row['Product Name']}">${row['Product Name']}</td>
+                    <td class="sticky-col" style="left:300px !important; z-index:100 !important; border-right:2px solid #444; background-color:#14161c;" title="${row['Product Name']}">${row['Product Name']}</td>
                 `;
 
                 const t_org = row.tazeyo_price_org;
@@ -940,7 +940,7 @@
             XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
             XLSX.writeFile(wb, "teknoify_pivot_analiz.xlsx");
             document.getElementById('download-menu').classList.remove('show');
-        } 
+        }
 
         function flattenForExport(dataObj) {
             return dataObj.rows.map(row => {
