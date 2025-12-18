@@ -11,7 +11,14 @@
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <style>
-        /* --- DİNAMİK RENK SİSTEMİ --- */
+        /* --- TEMEL AYARLAR --- */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Yatay scroll barı engelle */
+        }
+
+        /* --- DİNAMİK RENK SİSTEMİ (TABLO İÇİN) --- */
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
@@ -23,61 +30,76 @@
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
 
-        /* --- SIDEBAR TOGGLE & LAYOUT DÜZENLEMELERİ (GÜNCELLENDİ) --- */
-        
-        /* Sidebar Genel Ayarlar */
+
+        /* --- YENİ LAYOUT SİSTEMİ (KESİN ÇÖZÜM) --- */
+
+        /* 1. Sidebar: Sabit Genişlik ve Pozisyon */
         .sidebar {
-            width: 260px; /* Genişlik sabit */
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000; /* Her zaman üstte */
+            width: 260px;
+            height: 100vh;
+            position: fixed; /* Sayfadan bağımsız sabit */
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            background: #14161c; /* Sidebar arkaplan rengi (temanıza göre ayarlayın) */
+            border-right: 1px solid #333;
+            transition: transform 0.3s ease; /* Sadece hareket animasyonu */
         }
 
-        /* Ana İçerik Genel Ayarlar */
+        /* 2. Main Content: Sidebar'ın yanına yerleş */
         .main-content {
-            /* Başlangıçta sidebar kadar soldan itiyoruz */
-            margin-left: 260px !important; 
-            width: calc(100% - 260px) !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            margin-left: 260px; /* Sidebar kadar boşluk bırak */
+            width: calc(100% - 260px); /* Kalan genişliği tam doldur */
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box; /* Padding dahil genişlik hesabı */
+            transition: all 0.3s ease; /* Genişleme animasyonu */
         }
 
-        /* --- GİZLENME DURUMU (ÖNEMLİ KISIM) --- */
-        
-        /* Body'de sidebar-closed class'ı varsa Sidebar'ı sola ötele */
+        /* --- SIDEBAR KAPALI DURUMU (.sidebar-closed) --- */
+
+        /* Sidebar'ı ekrandan sola at */
         body.sidebar-closed .sidebar {
-            transform: translateX(-100%);
-            width: 0 !important;
-        }
-        
-        /* Body'de sidebar-closed class'ı varsa Main Content'i sola yapıştır */
-        body.sidebar-closed .main-content {
-            margin-left: 0 !important; /* SOL BOŞLUĞU SIFIRLA */
-            width: 100% !important; /* TAM EKRAN YAP */
-            padding-left: 20px; /* Çok yapışmaması için hafif iç boşluk */
+            transform: translateX(-260px);
         }
 
-        /* Sidebar Footer Düzeni */
+        /* Main Content'i sola yasla ve tam ekran yap */
+        body.sidebar-closed .main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding-left: 80px; /* Yüzen butona çarpmaması için biraz pay */
+        }
+
+
+        /* --- BUTONLAR --- */
+
+        /* Sidebar Footer (Çıkış ve Gizle Butonu) */
         .sidebar-footer {
+            margin-top: auto; /* En alta it */
+            padding: 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 20px 20px 20px;
-            margin-top: auto; 
             gap: 10px;
+            border-top: 1px solid #222;
         }
 
         .sidebar-footer .menu-item {
-            flex-grow: 1;
-            margin: 0; 
-            white-space: nowrap;
+            flex: 1;
+            margin: 0;
+            justify-content: center;
         }
 
+        /* Gizleme Butonu (<) */
         .btn-collapse-sidebar {
+            width: 40px;
+            height: 40px;
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
-            color: #888;
-            width: 40px;
-            height: 48px;
-            border-radius: 12px;
+            color: #aaa;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -89,38 +111,43 @@
             color: #fff;
         }
 
-        /* Yüzen Açma Butonu */
+        /* Yüzen Açma Butonu (Hamburger) */
         #floating-toggle-btn {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: #2f3349;
-            border: 1px solid #444;
-            color: #fff;
+            bottom: 25px;
+            left: 25px;
             width: 50px;
             height: 50px;
+            background: #2f3349; /* Tema rengi */
+            color: #fff;
+            border: 1px solid #444;
             border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            z-index: 9999; /* En üstte */
             cursor: pointer;
-            display: none; /* Başlangıçta gizli */
+            display: flex; /* Flex ama opacity ile gizleyeceğiz */
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            transition: 0.3s;
+            
+            /* Animasyon Ayarları */
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
         }
+
         #floating-toggle-btn:hover {
             background: #7367f0;
             transform: scale(1.1);
         }
 
-        /* Sidebar kapalıyken yüzen butonu göster */
+        /* Sidebar kapalıyken butonu görünür yap */
         body.sidebar-closed #floating-toggle-btn {
-            display: flex;
-            animation: fadeIn 0.4s ease;
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
         }
-
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
     </style>
 </head>
@@ -146,10 +173,10 @@
             <a href="analysis.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
         </nav>
         
-        <div class="menu-spacer"></div>
+        <div class="menu-spacer" style="flex-grow: 1;"></div>
 
         <div class="sidebar-footer">
-            <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+            <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
             <button class="btn-collapse-sidebar" onclick="toggleSidebar()" title="Paneli Gizle">
                 <i class="fas fa-chevron-left"></i>
             </button>
@@ -320,18 +347,16 @@
             });
         });
 
-        // --- SIDEBAR TOGGLE FONKSİYONU ---
+        // --- SIDEBAR TOGGLE ---
         function toggleSidebar() {
             document.body.classList.toggle('sidebar-closed');
         }
 
-        // --- RENK YÖNETİM SİSTEMİ ---
+        // --- RENK YÖNETİMİ ---
         function getBrandColor(fullName) {
             if (!fullName) return '#f97316';
             const lowerName = fullName.toLowerCase();
             if (lowerName.includes('carrefoursa')) return '#005daa';
-            // Buraya yeni markalar eklenebilir:
-            // if (lowerName.includes('migros')) return '#ff8000';
             return '#f97316'; 
         }
 
