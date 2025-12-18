@@ -16,7 +16,7 @@
         /* --- 1.1: LAYOUT RESET (DASHBOARD.CSS DÜZELTMELERİ) --- */
         * { box-sizing: border-box; }
         
-        /* Sayfanın kendisine scroll veriyoruz (Sticky Header için şart) */
+        /* Sayfanın kendisine scroll veriyoruz (Sticky Header için KİLİT NOKTA) */
         html, body {
             height: auto !important;
             min-height: 100vh !important;
@@ -45,12 +45,12 @@
             width: calc(100% - 260px);
             height: auto !important;
             min-height: 100vh;
-            overflow: visible !important; /* Scroll kilidi açıldı */
+            overflow: visible !important; /* Scroll kilidi açıldı, sticky çalışır */
             padding: 0 !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Üst Bar: Sabitlik Kaldırıldı (Akışkan - Scroll ile gider) */
+        /* Üst Bar: Sabitlik Kaldırıldı (Akışkan - Scroll ile yukarı gider) */
         .top-bar {
             position: relative !important;
             top: auto !important; left: auto !important;
@@ -98,39 +98,57 @@
         }
         .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* --- 1.3: TABLO STICKY HEADERS (SABİT BAŞLIKLAR) --- */
+        /* --- 1.3: TABLO STICKY HEADERS (2 SATIR SABİTLEME) --- */
         .comparison-table {
             border-collapse: separate; 
             border-spacing: 0;
             width: 100%;
         }
 
-        /* 1. Satır: Rakipler (En Tepeye Yapışır) */
+        /* 1. SATIR: Rakipler (En Tepeye Yapışır - TOP: 0) */
         #header-row-top th {
-            position: sticky; top: 0; z-index: 1000; height: 50px;
-            background-color: #14161c; border-bottom: 1px solid #333;
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            height: 50px;
+            background-color: #14161c; /* Arkası görünmesin */
+            border-bottom: 1px solid #333;
             box-shadow: 0 1px 0 #333;
         }
 
-        /* 2. Satır: Fiyat Başlıkları (1. Satırın Altına) */
+        /* 2. SATIR: Fiyat Başlıkları (1. Satırın Altına - TOP: 50px) */
         #header-row-bottom th {
-            position: sticky; top: 50px; z-index: 900; height: 45px;
-            background-color: #14161c; border-bottom: 2px solid #333;
+            position: sticky; 
+            top: 50px; 
+            z-index: 900; 
+            height: 45px;
+            background-color: #14161c; 
+            border-bottom: 2px solid #333;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
         /* SOL SÜTUN SABİTLEME (ÜRÜN ADI) */
         td.sticky-col {
-            position: sticky; left: 0; z-index: 100;
-            background-color: #14161c; border-right: 2px solid #444;
+            position: sticky; 
+            left: 0; 
+            z-index: 100;
+            background-color: #14161c; 
+            border-right: 2px solid #444;
             box-shadow: 4px 0 10px rgba(0,0,0,0.5);
         }
         
         /* Kesişim Noktaları (Hem Üst Hem Sol - En Üstte) */
+        /* Köşedeki "Ürün Bilgileri" yazısı */
         #header-row-top th:last-child { z-index: 1100 !important; } 
+        
+        /* Köşedeki "Ürün Adı" yazısı */
         #header-row-bottom th.sticky-col { 
-            position: sticky; left: 0; top: 50px; z-index: 1100 !important; 
-            background-color: #14161c; border-right: 2px solid #444;
+            position: sticky; 
+            left: 0; 
+            top: 50px; 
+            z-index: 1100 !important; 
+            background-color: #14161c; 
+            border-right: 2px solid #444;
         }
 
         tr:hover td { background-color: #1a1d24; }
@@ -155,7 +173,7 @@
         .multi-select-menu {
             position: absolute; top: 100%; left: 0; margin-top: 8px;
             width: 280px; max-height: 400px;
-            display: none; flex-direction: column;
+            display: none; flex-direction: column; /* Flex Yapı */
             background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.9);
             z-index: 99999 !important; overflow: hidden;
