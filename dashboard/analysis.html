@@ -13,107 +13,162 @@
     <link rel="stylesheet" href="../css/dashboard.css">
 
     <style>
-        /* --- 1.1: TEMEL SIFIRLAMA --- */
+        /* --- 1.1: LAYOUT RESET (KESİN ÇÖZÜM) --- */
         * { box-sizing: border-box; }
         
-        body { 
-            background-color: #0b0e11; margin: 0; padding: 0; 
-            overflow: hidden; /* Sayfa değil, içerik kayacak */
+        /* Sayfa Kaydırma (Body Scroll) Aktif */
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important; /* Dikey kaydırma sayfada */
+            overflow-x: hidden !important; /* Yatay taşmayı engelle */
+            background-color: #0b0e11;
+            margin: 0; padding: 0;
+        }
+
+        /* İçerik Kapsayıcılarını Serbest Bırak */
+        .main-content, .content-scroll {
+            display: block !important;
+            height: auto !important;
+            overflow: visible !important;
+            position: static !important;
+            padding: 0 !important;
+            margin-left: 260px; /* Sidebar payı */
+            width: calc(100% - 260px);
+        }
+        
+        .content-scroll { 
+            padding: 30px !important; 
+            padding-bottom: 60px !important; /* Alt kısım rahatlasın */
         }
 
         /* Sidebar Sabitleme */
         .sidebar {
-            position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 260px !important;
-            z-index: 1000 !important; background: #14161c; border-right: 1px solid #333;
-            transition: transform 0.3s ease !important;
+            position: fixed !important;
+            top: 0; left: 0; height: 100vh !important;
+            width: 260px; z-index: 10000 !important;
+            background: #14161c; border-right: 1px solid #333;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Ana İçerik */
-        .main-content {
-            margin-left: 260px !important; width: calc(100% - 260px) !important;
-            height: 100vh; display: flex; flex-direction: column;
-            transition: margin-left 0.3s ease, width 0.3s ease !important;
+        /* Üst Bar (Akışkan - Scroll ile gider) */
+        .top-bar {
+            position: relative !important;
+            width: 100%; z-index: 1;
+            background: #14161c !important;
         }
 
-        /* Üst Bar */
-        .top-bar { flex-shrink: 0; width: 100%; z-index: 2; background: #14161c !important; }
+        /* Sidebar Gizleme */
+        body.sidebar-closed .sidebar { transform: translateX(-260px); }
+        body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
-        /* İçerik Alanı (Scroll Burada Olacak ama Tablo Hariç) */
-        .content-scroll {
-            flex-grow: 1; overflow-y: auto; padding: 30px !important;
-            display: flex; flex-direction: column;
-        }
 
-        /* --- 1.2: TABLO İÇİN ÖZEL SCROLL KUTUSU (ÇÖZÜM BURADA) --- */
+        /* --- 1.2: TABLO YAPISI VE KAYDIRMA --- */
+        
+        /* Tabloyu saran kutu: Sadece YATAY kaydırma yapar */
         .table-responsive-wrapper {
-            /* Bu kutu tabloyu sarar ve scroll barındırır */
-            flex-grow: 1; /* Kalan tüm yüksekliği kapla */
-            overflow: auto; /* Hem yatay hem dikey scroll */
-            border: 1px solid #333;
-            border-radius: 16px;
-            position: relative;
+            display: block;
+            width: 100%;
+            overflow-x: auto; /* Yatay scroll */
+            border-radius: 16px; 
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
             background: #14161c;
-            /* Tablonun minimum yüksekliği olsun ki sticky çalışsın */
-            min-height: 400px; 
-            max-height: 70vh; /* Ekranın %70'ini geçmesin */
         }
 
         .comparison-table {
-            border-collapse: separate; border-spacing: 0; width: 100%;
+            border-collapse: separate; 
+            border-spacing: 0;
+            width: 100%;
+            min-width: 1200px; /* Tablonun büzülmesini engelle */
         }
 
-        /* --- 1.3: STICKY HEADERS (TABLO İÇİNDE) --- */
+        /* --- 1.3: STICKY HEADER (ÜSTTEN SABİTLEME) --- */
         
-        /* 1. Satır: Rakipler (Tepeye Yapışır) */
+        /* 1. Satır: Rakipler (En Tepe) */
         #header-row-top th {
-            position: sticky; top: 0; z-index: 100; height: 50px;
-            background-color: #14161c; border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 50px;
+            background-color: #14161c;
+            border-bottom: 1px solid #333;
             box-shadow: 0 1px 0 #333;
         }
 
-        /* 2. Satır: Fiyatlar (1. Satırın Altına Yapışır) */
+        /* 2. Satır: Fiyatlar (Altına) */
         #header-row-bottom th {
-            position: sticky; top: 50px; z-index: 90; height: 45px;
-            background-color: #14161c; border-bottom: 2px solid #333;
+            position: sticky;
+            top: 50px;
+            z-index: 900;
+            height: 45px;
+            background-color: #14161c;
+            border-bottom: 2px solid #333;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        /* Sol Sütun: Ürün Adı (Sola Yapışır) */
-        td.sticky-col {
-            position: sticky; left: 0; z-index: 50;
-            background-color: #14161c; border-right: 2px solid #444;
+        /* --- 1.4: STICKY COLUMN (SOLDAN SABİTLEME - Ürün Adı) --- */
+        /* Bu sınıfı JS ile Ürün Adı hücresine veriyoruz */
+        td.sticky-col, th.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 800; /* Verinin üstünde, Header'ın altında */
+            background-color: #14161c;
+            border-right: 2px solid #444;
             box-shadow: 4px 0 10px rgba(0,0,0,0.5);
         }
 
-        /* Kesişim Noktaları (Sol Üst Köşeler - En Üstte) */
-        #header-row-top th:last-child { z-index: 110 !important; } 
+        /* Kesişim Noktaları (Sol Üst Köşeler) - En Üst Katman */
+        #header-row-top th:last-child { z-index: 1100 !important; } /* "Ürün Bilgileri" Başlığı */
+        
         #header-row-bottom th.sticky-col { 
-            position: sticky; left: 0; top: 50px; z-index: 110 !important; 
-            background-color: #14161c; border-right: 2px solid #444;
+            position: sticky; 
+            left: 0; 
+            top: 50px; 
+            z-index: 1100 !important; /* "Ürün Adı" Başlığı */
+            background-color: #14161c; 
+            border-right: 2px solid #444;
         }
 
+        /* Hover Efekti (Sticky hücreler dahil) */
         tr:hover td { background-color: #1a1d24; }
         tr:hover td.sticky-col { background-color: #1a1d24; }
 
-        /* --- 1.4: DİĞER BİLEŞENLER --- */
-        body.sidebar-closed .sidebar { transform: translateX(-100%) !important; }
-        body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
-        .filter-bar { flex-shrink: 0; position: relative; z-index: 500; margin-bottom: 20px; }
-        
+        /* --- 1.5: UYARI MESAJI (SABİT OLMAYACAK) --- */
+        #limit-msg {
+            position: static !important; /* Asla yapışmasın */
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+            /* Dashboard.css'den gelen fixed özellikleri ez */
+            bottom: auto !important;
+            left: auto !important;
+            transform: none !important;
+        }
+
+
+        /* --- 1.6: DİĞER BİLEŞENLER (Dropdown, Buton) --- */
+        .filter-bar { position: relative; z-index: 2000; margin-bottom: 20px; }
+        .multi-select-wrapper { position: relative; }
+
+        /* Dropdown Menü (Daraltıldı: 250px) */
         .multi-select-menu {
             position: absolute; top: 100%; left: 0; margin-top: 8px;
             width: 250px; max-height: 400px;
             display: none; flex-direction: column;
             background-color: #1f232c; border: 1px solid #333; border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 99999 !important; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 99999 !important; overflow: hidden;
         }
         .multi-select-menu.show { display: flex; }
+
         .fixed-dropdown-header { flex-shrink: 0; background: #1f232c; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 20; }
-        .scrollable-options-area { flex-grow: 1; overflow-y: auto; }
         .dropdown-search-wrapper { padding: 10px; }
         .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; outline: none; }
-        
+        .dropdown-search-input:focus { border-color: #7367f0; }
+
+        .scrollable-options-area { flex-grow: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 #1f232c; }
         .multi-option { padding: 10px 14px; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }
         .multi-option:hover { background: rgba(255,255,255,0.1); color: #fff; }
         .multi-option.selected { background: rgba(115, 103, 240, 0.1); color: #fff; }
@@ -128,6 +183,7 @@
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem; opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease;
         }
+        #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
         body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
 
         .sidebar-footer { margin-top: auto; padding: 20px; display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
@@ -135,7 +191,6 @@
         .btn-collapse-sidebar { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Renkler */
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
@@ -595,6 +650,7 @@
             };
         }
 
+        // 3.3: Tablo Render
         function renderTable(dataRows, competitorNames) {
             const theadTop = document.getElementById('header-row-top');
             const theadBottom = document.getElementById('header-row-bottom');
@@ -604,7 +660,7 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // --- HEADER ---
+            // HEADER (STICKY LOGIC BURADA)
             const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Marka', 'Kategori', 'Ürün Adı'];
             theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
             
@@ -640,7 +696,7 @@
             theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadBottom.innerHTML += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
 
-            // --- DATA ---
+            // DATA
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 
