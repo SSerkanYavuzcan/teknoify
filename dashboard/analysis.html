@@ -15,9 +15,10 @@
         .th-group-market { text-align: center; color: #f97316; border-bottom: 1px solid #333; background-color: rgba(249, 115, 22, 0.05); }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         
-        /* Badge Stilleri */
-        .badge-tazeyo { background-color: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
-        .badge-market { background-color: rgba(249, 115, 22, 0.2); color: #f97316; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+        /* Badge Stilleri - Güncellendi (Sığması için) */
+        .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
+        .badge-tazeyo { background-color: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-market { background-color: rgba(249, 115, 22, 0.2); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); white-space: nowrap; }
         
         /* Fark Renklendirmeleri */
         .diff-positive { color: #ef4444; font-weight: bold; } /* Biz pahalıysak kırmızı */
@@ -26,6 +27,9 @@
         /* Tablo Çizgileri */
         .border-left-strong { border-left: 2px solid #444; }
         .border-left-light { border-left: 1px solid #333; }
+        
+        /* Analiz Sütunu Genişliği */
+        .col-analysis-status { min-width: 140px; }
     </style>
 </head>
 <body>
@@ -171,34 +175,27 @@
         let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Session Kontrolü
+            // Session Kontrolü
             if (typeof SessionManager === 'undefined') return;
             const session = new SessionManager();
             const currentUser = session.validateSession();
             if (!currentUser) { window.location.href = '../index.html'; return; }
 
-            // 2. Kullanıcı Verilerini Çek
+            // Kullanıcı Verisi
             fetch('../data/users.json')
                 .then(res => res.json())
                 .then(userDB => {
                     const userData = userDB[currentUser.username];
-
-                    // Yetki Kontrolü
                     if (!userData || !userData.features || userData.features.analysis !== true) {
                         alert("Bu hizmete erişim yetkiniz bulunmamaktadır.");
                         window.location.href = 'member.html';
                         return;
                     }
-
-                    // Profil Güncelle
                     if (userData) {
                         document.getElementById('user-name-display').textContent = userData.name;
                         document.getElementById('user-avatar').textContent = userData.name.charAt(0).toUpperCase();
                     }
-
-                    // Takvim ve Veri Başlatma
                     initCalendar();
-
                     if (userData.config && userData.config.sheetUrl && userData.config.sheetUrl !== "") {
                         initData(userData.config.sheetUrl);
                     } else {
@@ -206,11 +203,11 @@
                     }
                 })
                 .catch(err => {
-                    console.error("Kullanıcı verisi okunamadı:", err);
+                    console.error("Hata:", err);
                     document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
                 });
 
-            // UI Event Listener'lar
+            // UI Events
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.multi-select-wrapper')) {
                     document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
@@ -223,21 +220,18 @@
             });
         });
 
-        // --- BAŞLANGIÇ FONKSİYONLARI ---
         function showNoDataState() {
             const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.<br><small>Lütfen yöneticinizle iletişime geçiniz.</small></td></tr>';
+            tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.</td></tr>';
             document.getElementById('text-branch').textContent = "-";
             document.getElementById('text-category').textContent = "-";
             document.getElementById('btn-load').disabled = true;
             document.getElementById('btn-load').style.opacity = "0.5";
-            document.getElementById('btn-load').style.cursor = "not-allowed";
         }
 
         function initCalendar() {
             flatpickrInstance = flatpickr("#date-range", {
-                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null,
-                placeholder: "Tarih Aralığı Seçiniz"
+                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark", defaultDate: null, placeholder: "Tarih Aralığı Seçiniz"
             });
         }
 
@@ -247,8 +241,7 @@
                 complete: function(results) {
                     ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
                     populateFilters();
-                    const tbody = document.getElementById('table-body');
-                    tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Kriterleri seçip "Verileri Yükle" butonuna basınız.</td></tr>';
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#fff;">Veri hazır. Lütfen Tarih ve Kriterleri seçip "Verileri Yükle" butonuna basınız.</td></tr>';
                 },
                 error: function(err) {
                     console.error("CSV Hatası:", err);
@@ -257,7 +250,6 @@
             });
         }
 
-        // --- FİLTRE & UI YÖNETİMİ ---
         function populateFilters() {
             const branchSet = new Set();
             const catSet = new Set();
@@ -336,7 +328,7 @@
             if (!isVisible) menu.classList.add('show');
         }
 
-        // --- ANA FİLTRELEME MANTIĞI ---
+        // --- ANA FONKSİYONLAR ---
         function applyFilters() {
             const dateRange = flatpickrInstance.selectedDates;
             const tbody = document.getElementById('table-body');
@@ -352,25 +344,22 @@
             const endDate = dateRange[1] ? dateRange[1] : dateRange[0];
             startDate.setHours(0,0,0,0); endDate.setHours(23,59,59,999);
 
-            // 1. Veriyi Süz
             let filteredData = ALL_DATA.filter(row => {
                 const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
                 const catName = row['Category Name'] ? row['Category Name'].trim() : "";
                 const branchMatch = SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.includes(storeName);
                 const catMatch = SELECTED_CATEGORIES.includes('all') || SELECTED_CATEGORIES.includes(catName);
-                
                 const dateStr = row['Report Date'];
                 if (!dateStr) return false;
-                const parts = dateStr.split('.'); // Tarih formatı: GG.AA.YYYY varsayılıyor
+                const parts = dateStr.split('.');
                 if(parts.length !== 3) return false;
                 const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
-                
                 return branchMatch && catMatch && (rowDate >= startDate && rowDate <= endDate);
             });
 
-            // 2. Veriyi Grupla (Pivot)
+            // Gruplama (Aggregate)
             const aggregatedResult = aggregateData(filteredData);
-            CURRENT_PROCESSED_DATA = aggregatedResult; // İndirme için sakla
+            CURRENT_PROCESSED_DATA = aggregatedResult;
 
             if (aggregatedResult.rows.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
@@ -383,18 +372,15 @@
             btnDownload.classList.remove('btn-disabled');
             miniDash.style.display = 'grid';
 
-            // 3. KPI ve Tablo Çizimi
             const catParam = (SELECTED_CATEGORIES.length === 1 && !SELECTED_CATEGORIES.includes('all')) ? SELECTED_CATEGORIES[0] : 'all';
             calculateKPIs(aggregatedResult.rows, catParam);
 
-            // Performans için limitli gösterim
             const displayData = aggregatedResult.rows.slice(0, 250);
             limitMsg.style.display = (aggregatedResult.rows.length > 250) ? 'block' : 'none';
 
             renderTable(displayData, aggregatedResult.competitorNames);
         }
 
-        // --- AGGREGATE (PIVOT) MANTIĞI ---
         function aggregateData(data) {
             const grouped = {};
             const allCompetitors = new Set();
@@ -403,9 +389,10 @@
                 const key = row['SKU'] || row['Product Name'];
                 if (!key) return;
 
-                // Rakip ismini temizle (Parantezleri at)
+                // REVİZE: Rakip ismini olduğu gibi (Raw) alıyoruz, temizleme yapmıyoruz.
+                // Böylece sütun başlığında tam isim görünecek.
                 let rawCompName = row['Competitor Store Name'];
-                let compName = rawCompName ? cleanName(rawCompName) : 'Bilinmeyen';
+                let compName = rawCompName ? rawCompName.trim() : 'Bilinmeyen';
                 
                 if(compName && compName !== 'Bilinmeyen') {
                     allCompetitors.add(compName);
@@ -420,7 +407,6 @@
                     };
                 }
 
-                // Rakibin fiyatını o ismin altına kaydet
                 grouped[key].competitors[compName] = {
                     org: parsePrice(row['Competitor Original Price']),
                     dsc: parsePrice(row['Competitor Discount Price'])
@@ -433,7 +419,6 @@
             };
         }
 
-        // --- TABLO ÇİZİMİ (DİNAMİK) ---
         function renderTable(dataRows, competitorNames) {
             const theadTop = document.getElementById('header-row-top');
             const theadBottom = document.getElementById('header-row-bottom');
@@ -444,30 +429,31 @@
             theadBottom.innerHTML = '';
 
             // --- HEADER ---
-            // A) Sabit
+            // 1. Ürün Bilgileri
             const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Ürün Adı', 'Marka', 'Kategori'];
             theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
             staticCols.forEach(col => { theadBottom.innerHTML += `<th>${col}</th>`; });
 
-            // B) Bizim
+            // 2. Bizim Fiyatlar
             theadTop.innerHTML += `<th colspan="3" class="th-group-tazeyo">Bizim Fiyatlar</th>`;
             theadBottom.innerHTML += `<th>Original</th><th>Discount</th><th>W.Chg</th>`;
 
-            // C) Rakipler (Döngü)
+            // 3. Rakipler (Dinamik - TAM İSİM)
             competitorNames.forEach(compName => {
-                theadTop.innerHTML += `<th colspan="3" class="th-group-market border-left-strong">${compName.toUpperCase()}</th>`;
+                // Burada compName artık CSV'deki uzun isim
+                theadTop.innerHTML += `<th colspan="3" class="th-group-market border-left-strong">${compName}</th>`;
                 theadBottom.innerHTML += `<th class="border-left-light">Original</th><th>Discount</th><th>W.Chg</th>`;
             });
 
-            // D) Analiz
-            theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">Analiz</th>`;
-            theadBottom.innerHTML += `<th class="border-left-light">Durum</th><th>Fark</th>`;
+            // 4. Analiz -> En Ucuz Kanal (REVİZE)
+            theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
+            theadBottom.innerHTML += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
 
             // --- DATA ---
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 
-                // 1. Ürün Bilgisi
+                // Ürün
                 let html = `
                     <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
                     <td>${row['Store Name']}</td>
@@ -477,7 +463,7 @@
                     <td>${row['Category Name'] || '-'}</td>
                 `;
 
-                // 2. Bizim Fiyat
+                // Bizim Fiyat
                 const t_org = row.tazeyo_price_org;
                 const t_dsc = row.tazeyo_price_dsc;
                 const bizPrice = t_dsc > 0 ? t_dsc : t_org;
@@ -488,9 +474,9 @@
                     <td>-</td>
                 `;
 
-                // 3. Rakipler
+                // Rakipler
                 let enUcuzRakipFiyati = Infinity;
-                let enUcuzRakipIsmi = '';
+                let enUcuzRakipIsmi = ''; // Bu artık uzun isim
 
                 competitorNames.forEach(compName => {
                     const compData = row.competitors[compName];
@@ -514,19 +500,21 @@
                     }
                 });
 
-                // 4. Analiz
+                // Analiz (REVİZE EDİLDİ)
                 let badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">-</span>';
                 let farkYuzde = 0;
                 let farkClass = "";
 
                 if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
                     if (bizPrice < enUcuzRakipFiyati) {
-                        badgeHtml = '<span class="badge badge-tazeyo">EN UCUZ BİZ</span>';
+                        // BİZ UCUZUZ -> "Tazeyo" yaz
+                        badgeHtml = '<span class="badge badge-tazeyo">Tazeyo</span>';
                         farkYuzde = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
                         farkClass = "diff-negative"; 
                     } else if (bizPrice > enUcuzRakipFiyati) {
-                        const displayName = enUcuzRakipIsmi.length > 12 ? enUcuzRakipIsmi.substring(0,10)+'..' : enUcuzRakipIsmi;
-                        badgeHtml = `<span class="badge badge-market" title="${enUcuzRakipIsmi}">${displayName.toUpperCase()}</span>`;
+                        // RAKİP UCUZ -> Sadece İsmi Yaz (Parantezsiz)
+                        const shortName = cleanName(enUcuzRakipIsmi); // Parantezleri at
+                        badgeHtml = `<span class="badge badge-market" title="${enUcuzRakipIsmi}">${shortName}</span>`;
                         farkYuzde = ((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100;
                         farkClass = "diff-positive"; 
                     } else {
@@ -535,7 +523,7 @@
                 }
 
                 html += `
-                    <td class="border-left-strong">${badgeHtml}</td>
+                    <td class="border-left-strong" style="text-align:center;">${badgeHtml}</td>
                     <td class="${farkClass}">${farkYuzde > 0 ? '%' + farkYuzde.toFixed(1) : '-'}</td>
                 `;
 
@@ -554,7 +542,6 @@
             data.forEach(row => {
                 const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
                 
-                // En ucuz rakip fiyatını bul (Analiz için)
                 let minCompPrice = Infinity;
                 let hasComp = false;
                 let anyCompDiscount = false;
@@ -588,7 +575,6 @@
                 if (anyCompDiscount) discountCountComp++;
             });
 
-            // UI Güncelleme
             const compElem = document.getElementById('kpi-competition');
             let globalDiff = 0;
             let isGlobalAdvantage = false;
@@ -613,7 +599,6 @@
             document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
             document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
 
-            // En avantajlı kategori
             const catTitle = document.querySelector('#kpi-best-cat').parentElement.querySelector('.kpi-title');
             const catSub = document.getElementById('kpi-best-cat-sub');
             const catValue = document.getElementById('kpi-best-cat');
@@ -652,7 +637,10 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
         function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
+        
+        // Temiz isim fonksiyonu (Sadece Badge için kullanılır)
         function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
+        
         function parsePrice(val) {
             if(!val) return 0;
             let clean = val.toString().replace(/["'₺\s]/g, '');
@@ -663,7 +651,6 @@
         function formatMoney(num) { return num === 0 ? '0,00' : new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(num); }
         function logout() { new SessionManager().destroySession(); window.location.href = '../index.html'; }
 
-        // --- İNDİRME FONKSİYONLARI ---
         function downloadCSV() {
             if (!CURRENT_PROCESSED_DATA.rows || CURRENT_PROCESSED_DATA.rows.length === 0) return;
             const flatData = flattenForExport(CURRENT_PROCESSED_DATA);
