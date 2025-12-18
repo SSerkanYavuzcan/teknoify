@@ -11,11 +11,62 @@
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <style>
-        /* --- TEMEL AYARLAR --- */
+        /* --- CSS SIFIRLAMA VE TEMEL AYARLAR --- */
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; overflow-x: hidden; background-color: #0b0e11; }
 
-        /* --- DİNAMİK RENK VE BADGE SİSTEMİ --- */
+        /* --- DROPDOWN (MULTI SELECT) İYİLEŞTİRMELERİ --- */
+        
+        /* 1. Dropdown Z-Index (Tablonun üzerine çıkması için) */
+        .multi-select-menu {
+            z-index: 9999 !important; /* Tablo sticky header'ı 110, bu ondan çok yüksek olmalı */
+            max-height: 350px; /* Çok uzamasın, scroll çıksın */
+            overflow-y: auto;
+        }
+
+        /* 2. Seçenek Boyutları (Daha büyük ve okunabilir) */
+        .multi-option {
+            padding: 12px 16px; /* Boşluklar artırıldı */
+            font-size: 0.95rem; /* Yazı büyütüldü */
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .multi-option:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        /* 3. Arama Çubuğu Stilleri */
+        .dropdown-search-wrapper {
+            position: sticky;
+            top: 0;
+            background-color: #1f232c; /* Dropdown arkaplanı ile aynı olmalı */
+            padding: 10px;
+            z-index: 10;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .dropdown-search-input {
+            width: 100%;
+            background: #14161c;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .dropdown-search-input:focus {
+            border-color: #7367f0;
+        }
+
+
+        /* --- DİNAMİK RENK SİSTEMİ --- */
+        .th-group-market { text-align: center; border-bottom: 1px solid #333; }
+        .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
         .badge-tazeyo { background-color: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .badge-market { white-space: nowrap; border: 1px solid transparent; }
@@ -25,83 +76,42 @@
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
 
-        /* --- TABLO STİLLERİ --- */
-        .comparison-table {
-            border-collapse: separate; /* Sticky header için gerekli */
-            border-spacing: 0;
-            width: 100%;
-        }
-
-        /* --- SABİT BAŞLIKLAR (STICKY HEADERS) --- */
-        
-        /* 1. Satır: Rakip İsimleri */
-        #header-row-top th {
-            position: sticky;
-            top: 0;
-            z-index: 100; /* En üstte */
-            height: 45px;
-            /* Arkaplan JS ile dinamik solid renk verilecek, burada default */
-            background-color: #14161c; 
-            border-bottom: 1px solid #333;
-        }
-
-        /* 2. Satır: Original / Discount */
-        #header-row-bottom th {
-            position: sticky;
-            top: 45px; /* Üst satırın yüksekliği kadar aşağıda */
-            z-index: 90;
-            height: 40px;
-            background-color: #14161c; /* Yazılar birbirine girmesin diye solid renk */
-            border-bottom: 2px solid #333;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Hafif gölge */
-        }
-
-        /* --- SABİT SÜTUN (STICKY COLUMN - Ürün Adı) --- */
-        
-        /* Tablo Gövdesindeki Ürün Adı */
-        td.sticky-col {
+        /* --- SABİT SÜTUN (STICKY COLUMN) --- */
+        th.sticky-col, td.sticky-col {
             position: sticky;
             left: 0;
-            z-index: 80;
-            background-color: #14161c;
-            border-right: 2px solid #444;
+            z-index: 10; 
+            border-right: 2px solid #444; 
+            box-shadow: 4px 0 10px rgba(0,0,0,0.5); 
         }
-        
-        /* Başlıktaki Ürün Bilgileri (Kesişim Noktası) */
-        /* Bu kısım hem üstte hem solda sabit kalmalı */
-        #header-row-top th:first-child { 
-            z-index: 110 !important; /* Her şeyin en üstünde */
-        }
-        
-        #header-row-bottom th.sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 110 !important;
-            background-color: #14161c;
-            border-right: 2px solid #444;
-        }
-
-        /* Satır Hover Efekti (Sticky hücreyi de boya) */
-        tr:hover td { background-color: #1a1d24; }
+        th.sticky-col { background-color: #14161c; } 
+        td.sticky-col { background-color: #14161c; } 
         tr:hover td.sticky-col { background-color: #1a1d24; }
 
+        /* --- TABLO BAŞLIKLARI (STICKY HEADERS) --- */
+        #header-row-top th {
+            position: sticky; top: 0; z-index: 100; height: 45px;
+            background-color: #14161c; border-bottom: 1px solid #333;
+        }
+        #header-row-bottom th {
+            position: sticky; top: 45px; z-index: 90; height: 40px;
+            background-color: #14161c; border-bottom: 2px solid #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        #header-row-top th:first-child { z-index: 110 !important; }
+        #header-row-bottom th.sticky-col { position: sticky; left: 0; z-index: 110 !important; background-color: #14161c; border-right: 2px solid #444; }
+        tr:hover td { background-color: #1a1d24; }
 
         /* --- LAYOUT SİSTEMİ (FIXED SIDEBAR) --- */
         .sidebar {
-            width: 260px; height: 100vh;
-            position: fixed; top: 0; left: 0; z-index: 1000;
-            display: flex; flex-direction: column;
-            background: #14161c; border-right: 1px solid #333;
+            width: 260px; height: 100vh; position: fixed; top: 0; left: 0; z-index: 1000;
+            display: flex; flex-direction: column; background: #14161c; border-right: 1px solid #333;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .main-content {
-            margin-left: 260px; 
-            width: calc(100% - 260px);
-            min-height: 100vh; padding: 20px;
+            margin-left: 260px; width: calc(100% - 260px); min-height: 100vh; padding: 20px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         body.sidebar-closed .sidebar { transform: translateX(-260px); }
         body.sidebar-closed .main-content { margin-left: 0 !important; width: 100% !important; }
 
@@ -114,11 +124,9 @@
             cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
         .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
-
         #floating-toggle-btn {
-            position: fixed; bottom: 25px; left: 25px;
-            width: 50px; height: 50px; background: #2f3349; color: #fff;
-            border: 1px solid #444; border-radius: 50%;
+            position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px;
+            background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 9999;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem; opacity: 0; visibility: hidden; transform: scale(0.8);
@@ -334,7 +342,6 @@
             return '#f97316'; 
         }
 
-        // Hex'i yarı saydam yap (Gradient ile solid background üstüne koymak için)
         function hexToRgba(hex, alpha) {
             let c;
             if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
@@ -391,14 +398,41 @@
             updateTriggerText('category', 'Tüm Kategoriler');
         }
 
+        // --- GÜNCELLENEN RENDER MULTI SELECT (ARAMA EKLENDİ) ---
         function renderMultiSelectOptions(menuId, items, type) {
             const menu = document.getElementById(menuId);
             menu.innerHTML = '';
+
+            // 1. Arama Çubuğu Ekle (Sticky Header olarak)
+            const searchWrapper = document.createElement('div');
+            searchWrapper.className = 'dropdown-search-wrapper';
+            const searchInput = document.createElement('input');
+            searchInput.type = 'text';
+            searchInput.className = 'dropdown-search-input';
+            searchInput.placeholder = 'Ara...';
+            // Arama Fonksiyonu
+            searchInput.addEventListener('keyup', function() {
+                const filter = this.value.toLowerCase();
+                const options = menu.querySelectorAll('.multi-option:not(.all-option)'); // "Tümü" hariç diğerleri
+                options.forEach(opt => {
+                    const text = opt.textContent.toLowerCase();
+                    if (text.includes(filter)) opt.style.display = ""; 
+                    else opt.style.display = "none";
+                });
+            });
+            // Tıklayınca kapanmasını engelle
+            searchInput.onclick = (e) => e.stopPropagation();
+            searchWrapper.appendChild(searchInput);
+            menu.appendChild(searchWrapper);
+
+            // 2. "Tümü" Seçeneği
             const allDiv = document.createElement('div');
-            allDiv.className = 'multi-option selected';
+            allDiv.className = 'multi-option all-option selected';
             allDiv.onclick = () => selectOption(type, 'all', allDiv);
             allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
             menu.appendChild(allDiv);
+
+            // 3. Diğer Seçenekler
             items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'multi-option';
@@ -412,11 +446,13 @@
             let selectedArray = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
             const menuId = (type === 'branch') ? 'menu-branch' : 'menu-category';
             const menu = document.getElementById(menuId);
-            const allOption = menu.children[0];
+            // "Tümü" seçeneği her zaman arama çubuğundan sonra gelen ilk elemandır (searchWrapper -> All -> Options)
+            const allOption = menu.querySelector('.all-option');
 
             if (value === 'all') {
                 selectedArray.length = 0; selectedArray.push('all');
-                Array.from(menu.children).forEach(child => child.classList.remove('selected'));
+                // Sadece options class'ına sahip olanları temizle
+                menu.querySelectorAll('.multi-option').forEach(child => child.classList.remove('selected'));
                 allOption.classList.add('selected');
             } else {
                 if (selectedArray.includes('all')) {
@@ -453,7 +489,12 @@
             const menu = document.getElementById(menuId);
             const isVisible = menu.classList.contains('show');
             document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
-            if (!isVisible) menu.classList.add('show');
+            if (!isVisible) {
+                menu.classList.add('show');
+                // Menü açılınca arama kutusuna odaklan (Varsa)
+                const input = menu.querySelector('input');
+                if(input) input.focus();
+            }
         }
 
         function applyFilters() {
@@ -553,12 +594,11 @@
             theadBottom.innerHTML = '';
 
             // --- HEADER ---
-            // Ürün Adı'nı en sona (sağa) aldık
             const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Marka', 'Kategori', 'Ürün Adı'];
             theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
             
             staticCols.forEach((col, index) => { 
-                if (index === staticCols.length - 1) { // Ürün Adı Sticky
+                if (index === staticCols.length - 1) { 
                     theadBottom.innerHTML += `<th class="sticky-col">${col}</th>`;
                 } else {
                     theadBottom.innerHTML += `<th>${col}</th>`;
@@ -570,7 +610,6 @@
             if(dataRows.length > 0 && dataRows[0]['Store Name']) {
                 myStoreLabel = dataRows[0]['Store Name'];
             }
-            // Bizim fiyatlar için dinamik renkli/solid arka plan
             const tazeyoBg = `linear-gradient(rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.05)), #14161c`;
             theadTop.innerHTML += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
             theadBottom.innerHTML += `<th>Original</th><th>Discount</th>`;
@@ -579,7 +618,6 @@
             competitorNames.forEach(compName => {
                 const brandColor = getBrandColor(compName);
                 const bgRgba = hexToRgba(brandColor, 0.05);
-                // SOLID ARKA PLAN İÇİN TRICK: Linear Gradient ile renk katıp, arkasına solid siyah koyuyoruz
                 const solidBg = `linear-gradient(${bgRgba}, ${bgRgba}), #14161c`;
                 
                 const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background: ${solidBg}; border-left: 2px solid #444;`;
