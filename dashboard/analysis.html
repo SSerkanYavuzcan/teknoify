@@ -16,14 +16,16 @@
         /* --- 1.1: LAYOUT RESET --- */
         * { box-sizing: border-box; }
         
+        /* Sayfayı Ekrana Kilitliyoruz (Scroll içeride olacak) */
         html, body {
             height: 100vh !important;
             overflow: hidden !important; 
             background-color: #0b0e11;
             margin: 0; padding: 0;
+            font-size: 14px; /* Genel font küçültme */
         }
 
-        /* Sidebar Sabit */
+        /* Sidebar */
         .sidebar {
             position: fixed !important; top: 0; left: 0; 
             width: 260px !important; height: 100vh !important;
@@ -39,10 +41,16 @@
             transition: margin-left 0.3s ease, width 0.3s ease !important;
         }
 
-        .top-bar { flex-shrink: 0; width: 100%; z-index: 2; background: #14161c !important; }
+        .top-bar { 
+            flex-shrink: 0; width: 100%; z-index: 2; 
+            background: #14161c !important; height: 60px; /* Daha ince üst bar */
+        }
 
+        /* İçerik Taşıyıcı: Flex ile alanı dolduracak */
         .content-scroll {
-            flex-grow: 1; overflow-y: auto; padding: 20px !important;
+            flex-grow: 1; 
+            overflow: hidden; /* Taşmayı engelle, scroll wrapper'da */
+            padding: 15px !important; /* Padding azaltıldı */
             display: flex; flex-direction: column;
         }
 
@@ -51,19 +59,19 @@
 
 
         /* =========================================================================
-           1.2: TABLO YAPISI VE GÖRÜNMEZLİK DÜZELTMESİ (OPAKLIK AYARI)
+           1.2: TABLO YAPISI (DAHA FAZLA ÜRÜN GÖSTERİMİ)
            ========================================================================= */
         
+        /* Tablo Çerçevesi: Ekranın altına kadar uzar */
         .table-responsive-wrapper {
-            flex-grow: 1; 
-            overflow: auto; 
+            flex-grow: 1; /* Kalan tüm alanı kapla */
+            overflow: auto; /* Scroll burada */
             border: 1px solid #333;
             border-radius: 12px;
             background: #14161c;
-            max-height: calc(100vh - 300px); 
-            min-height: 400px;
+            /* Max-height kaldırdık, flex-grow ile yönettik */
             position: relative;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .comparison-table {
@@ -71,90 +79,94 @@
             min-width: max-content; 
         }
 
-        /* --- STICKY HEADER (YUKARI YAPIŞMA) --- */
-        /* background-color: #14161c !important; komutu, arkadan geçen yazıların görünmesini engeller */
-
-        /* 1. Satır: En Üst Başlıklar */
+        /* --- STICKY HEADER (BAŞLIKLAR) --- */
         #header-row-top th {
-            position: sticky; top: 0; z-index: 1000; height: 50px;
-            background-color: #14161c !important; /* KESİN OPAK */
-            border-bottom: 1px solid #333;
+            position: sticky; top: 0; z-index: 1000; height: 40px; /* Yükseklik azaltıldı */
+            background-color: #14161c !important; border-bottom: 1px solid #333;
             box-shadow: 0 1px 0 #333;
+            padding: 8px; /* Padding azaltıldı */
         }
-
-        /* 2. Satır: Alt Başlıklar */
         #header-row-bottom th {
-            position: sticky; top: 50px; z-index: 900; height: 45px;
-            background-color: #14161c !important; /* KESİN OPAK */
-            border-bottom: 2px solid #333;
+            position: sticky; top: 40px; /* 1. satır boyu */
+            z-index: 900; height: 35px; /* Yükseklik azaltıldı */
+            background-color: #14161c !important; border-bottom: 2px solid #333;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            padding: 8px;
         }
 
-        /* --- STICKY COLUMN (ÜRÜN ADI - SOLA YAPIŞMA) --- */
-        
+        /* --- STICKY COLUMN (SADECE ÜRÜN ADI) --- */
         th.sticky-product, td.sticky-product {
             position: sticky; left: 0; z-index: 1100;
-            background-color: #14161c !important; /* KESİN OPAK */
+            background-color: #14161c !important; 
             border-right: 2px solid #444;
             box-shadow: 4px 0 10px rgba(0,0,0,0.5);
-            min-width: 280px; max-width: 280px; 
+            min-width: 250px; max-width: 250px; 
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            text-align: left !important;
         }
 
-        /* Kesişim Noktası */
-        #header-row-top th:first-child { z-index: 1200 !important; left: 0; background-color: #14161c !important; } 
-        #header-row-bottom th.sticky-product { top: 50px; z-index: 1200 !important; background-color: #14161c !important; }
+        /* Kesişim Noktaları */
+        #header-row-top th:first-child { z-index: 1200 !important; left: 0; background-color:#14161c !important; } 
+        #header-row-bottom th.sticky-product { top: 40px; z-index: 1200 !important; background-color:#14161c !important; }
 
         tr:hover td { background-color: #1a1d24; }
-        /* Sticky olanlar hover'da da opak kalmalı, yoksa arkası görünür */
-        tr:hover td.sticky-product { background-color: #1a1d24 !important; opacity: 1; }
+        tr:hover td.sticky-product { background-color: #1a1d24 !important; }
+
+        /* SIKIŞTIRILMIŞ HÜCRELER (DAHA FAZLA SATIR İÇİN) */
+        .comparison-table td {
+            padding: 8px 10px !important; /* Dikey boşluk azaltıldı */
+            height: 40px !important; /* Satır yüksekliği sabitlendi */
+            font-size: 0.85rem;
+            vertical-align: middle;
+        }
+        .comparison-table th { font-size: 0.85rem; }
+        .price-cell { font-family: 'Fira Code', monospace; font-size: 0.9rem; }
 
 
         /* --- 1.3: DİĞER BİLEŞENLER --- */
-        #limit-msg { flex-shrink: 0; width: 100%; text-align: center; margin-top: 5px; }
-        .filter-bar { flex-shrink: 0; margin-bottom: 20px; }
-        .mini-dashboard { flex-shrink: 0; }
+        #limit-msg { flex-shrink: 0; width: 100%; text-align: center; margin-top: 5px; font-size: 0.8rem; color:#666; }
+        .filter-bar { flex-shrink: 0; margin-bottom: 15px; padding: 10px !important; }
+        .mini-dashboard { flex-shrink: 0; margin-bottom: 15px; gap: 10px; }
+        .kpi-card { padding: 12px; } /* Kartları küçült */
+        .kpi-value { font-size: 1.1rem; }
 
         .multi-select-wrapper { position: relative; }
         .multi-select-menu { position: absolute; top: 100%; left: 0; width: 250px; max-height: 400px; display: none; flex-direction: column; background: #1f232c; border: 1px solid #333; z-index: 9999; }
         .multi-select-menu.show { display: flex; }
         .fixed-dropdown-header { flex-shrink: 0; background: #1f232c; border-bottom: 1px solid #333; }
         .scrollable-options-area { flex-grow: 1; overflow-y: auto; }
-        .dropdown-search-wrapper { padding: 10px; }
-        .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; }
-        .multi-option { padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; color: #ccc; }
+        .dropdown-search-wrapper { padding: 8px; }
+        .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 6px; border-radius: 6px; font-size: 0.85rem; }
+        .multi-option { padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; color: #ccc; font-size: 0.85rem; }
         .multi-option:hover { background: rgba(255,255,255,0.1); color: #fff; }
         .multi-option.selected { background: rgba(115, 103, 240, 0.1); color: #fff; }
-        .option-checkbox { width: 18px; height: 18px; border: 2px solid #555; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
+        .option-checkbox { width: 16px; height: 16px; border: 2px solid #555; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
         .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
-        .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
+        .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 9px; color: white; }
 
-        /* Yüzen Buton (Varsayılan GİZLİ) */
         #floating-toggle-btn { 
-            position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px; 
+            position: fixed; bottom: 20px; left: 20px; width: 45px; height: 45px; 
             background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%; 
             z-index: 10001; display: flex; justify-content: center; align-items: center; cursor: pointer;
-            font-size: 1.2rem; 
-            opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease; 
+            font-size: 1.1rem; opacity: 0; visibility: hidden; transform: scale(0.8); transition: all 0.3s ease; 
         }
-        /* Sadece Sidebar Kapalıyken Görünür */
         body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
 
-        .sidebar-footer { margin-top: auto; padding: 20px; display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-footer { margin-top: auto; padding: 15px; display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
         .sidebar-footer .menu-item { flex: 1; margin: 0; justify-content: center; }
-        .btn-collapse-sidebar { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-collapse-sidebar { width: 35px; height: 35px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
-        .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05) !important; } /* Opaklık için important */
-        .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
+        .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05) !important; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-align: center; min-width: 70px; }
         .badge-tazeyo { background-color: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .badge-market { white-space: nowrap; border: 1px solid transparent; }
         .diff-positive { color: #ef4444; font-weight: bold; }
         .diff-negative { color: #10b981; font-weight: bold; }
         .border-left-strong { border-left: 2px solid #444; }
         .border-left-light { border-left: 1px solid #333; }
-        .col-analysis-status { min-width: 140px; }
+        .col-analysis-status { min-width: 120px; }
     </style>
 </head>
 
@@ -199,7 +211,7 @@
         <div class="content-scroll">
            
             <div class="filter-bar">
-                <div class="filter-group" style="min-width: 260px;">
+                <div class="filter-group" style="min-width: 240px;">
                     <label>Rapor Tarihi Seçiniz</label>
                     <div class="date-picker-wrapper">
                         <i class="fas fa-calendar-alt calendar-icon"></i>
