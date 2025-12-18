@@ -15,26 +15,34 @@
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; overflow-x: hidden; background-color: #0b0e11; }
 
-        /* --- ÜST BAR --- */
-        .top-bar { position: relative !important; width: 100%; z-index: 1; }
+        /* --- ÜST BAR AYARI (SABİT DEĞİL, AKIŞKAN) --- */
+        .top-bar {
+            position: relative; /* Fixed değil, Relative. Sayfayla beraber kaybolur. */
+            width: 100%;
+            z-index: 1;
+        }
 
         /* --- FILTRE BAR (Z-INDEX AYARI) --- */
-        .filter-bar { position: relative; z-index: 500; }
+        /* Dropdownlar tablonun altında kalmasın diye */
+        .filter-bar {
+            position: relative;
+            z-index: 500; 
+        }
 
-        /* --- DROPDOWN (MULTI SELECT) YAPISAL DEĞİŞİKLİKLER --- */
+        /* --- DROPDOWN (MULTI SELECT) İÇİN KESİN ÇÖZÜM --- */
         
         .multi-select-wrapper { position: relative; }
 
-        /* 1. Menü Çerçevesi (Scroll BURADA DEĞİL) */
+        /* 1. Menü Çerçevesi (Scroll YOK, Flex Var) */
         .multi-select-menu {
             position: absolute;
             top: 100%;
             left: 0;
             margin-top: 8px;
-            /* REVİZE: Genişlik 250px yapıldı (Daha dar) */
+            /* Genişlik Daraltıldı */
             min-width: 100%; 
-            width: 250px;    
-            max-height: 400px;
+            width: 260px;    
+            max-height: 400px; /* Toplam maks yükseklik */
             /* Flex yapı: Üst kısım sabit, alt kısım kayar */
             display: none; 
             flex-direction: column; 
@@ -42,19 +50,22 @@
             border: 1px solid #333;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            z-index: 99999 !important;
+            z-index: 99999 !important; /* En üstte */
             overflow: hidden; /* Dışarı taşmayı engelle */
         }
         
-        .multi-select-menu.show { display: flex; } /* Block yerine Flex */
+        .multi-select-menu.show { display: flex; } 
 
-        /* 2. Sabit Arama Alanı (Sticky değil, Flex item) */
-        .dropdown-search-wrapper {
-            flex-shrink: 0; /* Asla küçülme */
-            background-color: #1f232c; 
-            padding: 10px;
+        /* 2. Sabit Kısım (Arama + Tümü) */
+        .fixed-dropdown-header {
+            flex-shrink: 0; /* Asla büzülme */
+            background-color: #1f232c;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             z-index: 20;
+        }
+
+        .dropdown-search-wrapper {
+            padding: 10px;
         }
         
         .dropdown-search-input {
@@ -69,26 +80,17 @@
         }
         .dropdown-search-input:focus { border-color: #7367f0; }
 
-        /* 3. Sabit "Tümü" Seçeneği */
-        .fixed-options-area {
-            flex-shrink: 0;
-            background-color: #1f232c;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            z-index: 15;
-        }
-
-        /* 4. KAYDIRILABİLİR ALAN (SCROLL BURADA) */
+        /* 3. KAYDIRILABİLİR ALAN (Scroll SADECE BURADA) */
         .scrollable-options-area {
             flex-grow: 1; /* Kalan boşluğu doldur */
             overflow-y: auto; /* Sadece burası kaydırılsın */
-            max-height: 250px; /* İçerik uzarsa scroll çıkar */
+            /* Scrollbar tasarımı */
+            scrollbar-width: thin;
+            scrollbar-color: #444 #1f232c;
         }
-
-        /* Scrollbar Tasarımı (Opsiyonel: Daha şık görünüm için) */
         .scrollable-options-area::-webkit-scrollbar { width: 6px; }
         .scrollable-options-area::-webkit-scrollbar-track { background: #1f232c; }
         .scrollable-options-area::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-        .scrollable-options-area::-webkit-scrollbar-thumb:hover { background: #555; }
 
         /* Seçenek Satırları */
         .multi-option {
@@ -127,27 +129,51 @@
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
 
-        /* --- SABİT SÜTUN & BAŞLIKLAR --- */
+        /* --- TABLO BAŞLIKLARI (STICKY HEADERS) --- */
+        /* ÖNEMLİ: Tablo başlıklarını window'a yapıştırmak için position: sticky ve top değerleri */
+        
+        /* 1. Satır: Rakip İsimleri (En Tepeye Yapışır) */
+        #header-row-top th {
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            height: 45px;
+            background-color: #14161c; /* Arkası görünmesin diye renk verildi */
+            border-bottom: 1px solid #333;
+        }
+
+        /* 2. Satır: Original / Discount (1. Satırın Altına Yapışır) */
+        #header-row-bottom th {
+            position: sticky; 
+            top: 45px; /* Üst satır yüksekliği kadar aşağıda */
+            z-index: 90; 
+            height: 40px;
+            background-color: #14161c; 
+            border-bottom: 2px solid #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Gölge */
+        }
+
+        /* --- SOLA SABİTLENEN SÜTUN (ÜRÜN ADI) --- */
         th.sticky-col, td.sticky-col {
-            position: sticky; left: 0; z-index: 10; 
-            border-right: 2px solid #444; box-shadow: 4px 0 10px rgba(0,0,0,0.5); 
+            position: sticky; 
+            left: 0; 
+            z-index: 10; 
+            border-right: 2px solid #444; 
+            box-shadow: 4px 0 10px rgba(0,0,0,0.5); 
         }
         th.sticky-col { background-color: #14161c; } 
         td.sticky-col { background-color: #14161c; } 
-        tr:hover td.sticky-col { background-color: #1a1d24; }
-
-        #header-row-top th {
-            position: sticky; top: 0; z-index: 100; height: 45px;
-            background-color: #14161c; border-bottom: 1px solid #333;
-        }
-        #header-row-bottom th {
-            position: sticky; top: 45px; z-index: 90; height: 40px;
-            background-color: #14161c; border-bottom: 2px solid #333;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+        
+        /* KESİŞİM NOKTALARI (Hem Üstte Hem Solda Duranlar) */
+        /* Ürün Adı Başlığı En Üstte Kalmalı */
         #header-row-top th:last-child { z-index: 110 !important; } 
-        #header-row-bottom th.sticky-col { position: sticky; left: 0; z-index: 110 !important; background-color: #14161c; border-right: 2px solid #444; }
+        #header-row-bottom th.sticky-col { 
+            position: sticky; left: 0; z-index: 110 !important; 
+            background-color: #14161c; border-right: 2px solid #444; 
+        }
+        
         tr:hover td { background-color: #1a1d24; }
+        tr:hover td.sticky-col { background-color: #1a1d24; }
 
         /* --- LAYOUT SİSTEMİ --- */
         .sidebar {
@@ -445,12 +471,16 @@
             updateTriggerText('category', 'Tüm Kategoriler');
         }
 
-        // --- GÜNCELLENEN RENDER MULTI SELECT (KESİN ÇÖZÜM: SCROLL AYRI KUTUDA) ---
+        // --- RENDER MULTI SELECT (SABİT BAŞLIK + KAYAR LİSTE YAPISI) ---
         function renderMultiSelectOptions(menuId, items, type) {
             const menu = document.getElementById(menuId);
             menu.innerHTML = '';
 
-            // 1. Arama Çubuğu (Sabit Alana Eklenecek)
+            // A) SABİT ALAN (Header)
+            const fixedHeader = document.createElement('div');
+            fixedHeader.className = 'fixed-dropdown-header';
+
+            // 1. Arama Çubuğu
             const searchWrapper = document.createElement('div');
             searchWrapper.className = 'dropdown-search-wrapper';
             const searchInput = document.createElement('input');
@@ -461,7 +491,6 @@
             // Arama Fonksiyonu
             searchInput.addEventListener('keyup', function() {
                 const filter = this.value.toLowerCase();
-                // Sadece scrollable area içindeki optionları filtrele (All seçeneği hariç)
                 const scrollContainer = menu.querySelector('.scrollable-options-area');
                 const options = scrollContainer.querySelectorAll('.multi-option');
                 options.forEach(opt => {
@@ -472,20 +501,18 @@
             });
             searchInput.onclick = (e) => e.stopPropagation();
             searchWrapper.appendChild(searchInput);
-            menu.appendChild(searchWrapper);
+            fixedHeader.appendChild(searchWrapper);
 
-            // 2. "Tümü" Seçeneği (Sabit Alana Eklenecek)
-            const fixedArea = document.createElement('div');
-            fixedArea.className = 'fixed-options-area';
-            
+            // 2. "Tümü" Seçeneği
             const allDiv = document.createElement('div');
             allDiv.className = 'multi-option all-option selected';
             allDiv.onclick = () => selectOption(type, 'all', allDiv);
             allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
-            fixedArea.appendChild(allDiv);
-            menu.appendChild(fixedArea);
+            fixedHeader.appendChild(allDiv);
 
-            // 3. Diğer Seçenekler (Scroll Edilebilir Ayrı Alana Eklenecek)
+            menu.appendChild(fixedHeader);
+
+            // B) KAYDIRILABİLİR ALAN (Body)
             const scrollContainer = document.createElement('div');
             scrollContainer.className = 'scrollable-options-area';
 
