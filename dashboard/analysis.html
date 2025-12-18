@@ -11,14 +11,11 @@
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <style>
-        /* --- TEMEL AYARLAR --- */
-        body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* Yatay scroll barı engelle */
-        }
+        /* --- CSS SIFIRLAMA VE TEMEL AYARLAR --- */
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; overflow-x: hidden; background-color: #0b0e11; }
 
-        /* --- DİNAMİK RENK SİSTEMİ (TABLO İÇİN) --- */
+        /* --- DİNAMİK RENK SİSTEMİ --- */
         .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
@@ -30,125 +27,99 @@
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
 
+        /* --- SABİT SÜTUN (STICKY COLUMN) --- */
+        /* Ürün Adı sütunu için özel stil */
+        th.sticky-col, td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 10; /* Diğer hücrelerin üstünde durması için */
+            border-right: 2px solid #444; /* Ayrımı belli etmek için sağ çizgi */
+            box-shadow: 4px 0 10px rgba(0,0,0,0.5); /* Hafif gölge */
+        }
+        /* Sticky hücrelerin arkasının görünmemesi için arkaplan rengi şart */
+        th.sticky-col { background-color: #14161c; } 
+        td.sticky-col { background-color: #14161c; } 
+        /* Satır hover olduğunda sticky hücrenin de rengi değişmeli */
+        tr:hover td.sticky-col { background-color: #1a1d24; }
 
-        /* --- YENİ LAYOUT SİSTEMİ (KESİN ÇÖZÜM) --- */
 
-        /* 1. Sidebar: Sabit Genişlik ve Pozisyon */
+        /* --- LAYOUT SİSTEMİ (FIXED SIDEBAR) --- */
+        
         .sidebar {
             width: 260px;
             height: 100vh;
-            position: fixed; /* Sayfadan bağımsız sabit */
+            position: fixed;
             top: 0;
             left: 0;
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            background: #14161c; /* Sidebar arkaplan rengi (temanıza göre ayarlayın) */
+            background: #14161c;
             border-right: 1px solid #333;
-            transition: transform 0.3s ease; /* Sadece hareket animasyonu */
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 2. Main Content: Sidebar'ın yanına yerleş */
         .main-content {
-            position: relative;
-            margin-left: 260px; /* Sidebar kadar boşluk bırak */
-            width: calc(100% - 260px); /* Kalan genişliği tam doldur */
+            margin-left: 260px; /* Sidebar kadar boşluk */
+            width: calc(100% - 260px); /* Kalan alanı tam doldur */
             min-height: 100vh;
             padding: 20px;
-            box-sizing: border-box; /* Padding dahil genişlik hesabı */
-            transition: all 0.3s ease; /* Genişleme animasyonu */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* --- SIDEBAR KAPALI DURUMU (.sidebar-closed) --- */
-
-        /* Sidebar'ı ekrandan sola at */
+        /* --- SIDEBAR KAPALI DURUMU --- */
         body.sidebar-closed .sidebar {
-            transform: translateX(-260px);
+            transform: translateX(-260px); /* Ekrandan dışarı at */
         }
-
-        /* Main Content'i sola yasla ve tam ekran yap */
+        
         body.sidebar-closed .main-content {
-            margin-left: 0 !important;
-            width: 100% !important;
-            padding-left: 80px; /* Yüzen butona çarpmaması için biraz pay */
+            margin-left: 0 !important; /* Boşluğu sıfırla */
+            width: 100% !important; /* Tam ekran yap */
         }
-
 
         /* --- BUTONLAR --- */
-
-        /* Sidebar Footer (Çıkış ve Gizle Butonu) */
         .sidebar-footer {
-            margin-top: auto; /* En alta it */
+            margin-top: auto;
             padding: 20px;
             display: flex;
-            align-items: center;
             gap: 10px;
             border-top: 1px solid #222;
         }
 
-        .sidebar-footer .menu-item {
-            flex: 1;
-            margin: 0;
-            justify-content: center;
-        }
+        .sidebar-footer .menu-item { flex: 1; margin: 0; justify-content: center; }
 
-        /* Gizleme Butonu (<) */
         .btn-collapse-sidebar {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
             color: #aaa;
             border-radius: 8px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             transition: 0.2s;
         }
-        .btn-collapse-sidebar:hover {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
+        .btn-collapse-sidebar:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* Yüzen Açma Butonu (Hamburger) */
+        /* Yüzen Açma Butonu */
         #floating-toggle-btn {
             position: fixed;
-            bottom: 25px;
-            left: 25px;
-            width: 50px;
-            height: 50px;
-            background: #2f3349; /* Tema rengi */
-            color: #fff;
-            border: 1px solid #444;
-            border-radius: 50%;
+            bottom: 25px; left: 25px;
+            width: 50px; height: 50px;
+            background: #2f3349; color: #fff;
+            border: 1px solid #444; border-radius: 50%;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            z-index: 9999; /* En üstte */
+            z-index: 9999;
             cursor: pointer;
-            display: flex; /* Flex ama opacity ile gizleyeceğiz */
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem;
-            
-            /* Animasyon Ayarları */
-            opacity: 0;
-            visibility: hidden;
-            transform: scale(0.8);
+            opacity: 0; visibility: hidden; transform: scale(0.8);
             transition: all 0.3s ease;
         }
+        #floating-toggle-btn:hover { background: #7367f0; transform: scale(1.1); }
 
-        #floating-toggle-btn:hover {
-            background: #7367f0;
-            transform: scale(1.1);
-        }
-
-        /* Sidebar kapalıyken butonu görünür yap */
         body.sidebar-closed #floating-toggle-btn {
-            opacity: 1;
-            visibility: visible;
-            transform: scale(1);
+            opacity: 1; visibility: visible; transform: scale(1);
         }
-
     </style>
 </head>
 <body>
@@ -577,55 +548,71 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // --- HEADER ---
-            const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Ürün Adı', 'Marka', 'Kategori'];
-            theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
-            staticCols.forEach(col => { theadBottom.innerHTML += `<th>${col}</th>`; });
+            // --- HEADER OLUŞTURMA ---
 
-            // Bizim Fiyatlar
+            // 1. Ürün Bilgileri (Sabit Sütunlar)
+            // Ürün Adı'nı en sona (sağa) aldık
+            const staticCols = ['Rapor Tarihi', 'Mağaza', 'SKU', 'Marka', 'Kategori', 'Ürün Adı'];
+            theadTop.innerHTML += `<th colspan="${staticCols.length}" style="background:#14161c;">Ürün Bilgileri</th>`;
+            
+            staticCols.forEach((col, index) => { 
+                // Son sütun (Ürün Adı) ise sticky class ekle
+                if (index === staticCols.length - 1) {
+                    theadBottom.innerHTML += `<th class="sticky-col">${col}</th>`;
+                } else {
+                    theadBottom.innerHTML += `<th>${col}</th>`;
+                }
+            });
+
+            // 2. Bizim Fiyatlar
             let myStoreLabel = 'Bizim Fiyatlar';
             if(dataRows.length > 0 && dataRows[0]['Store Name']) {
                 myStoreLabel = dataRows[0]['Store Name'];
             }
-            theadTop.innerHTML += `<th colspan="3" class="th-group-tazeyo">${myStoreLabel}</th>`;
-            theadBottom.innerHTML += `<th>Original</th><th>Discount</th><th>W.Chg</th>`;
+            theadTop.innerHTML += `<th colspan="2" class="th-group-tazeyo">${myStoreLabel}</th>`;
+            // W.Chg Kaldırıldı
+            theadBottom.innerHTML += `<th>Original</th><th>Discount</th>`;
 
-            // Rakipler
+            // 3. Rakipler
             competitorNames.forEach(compName => {
                 const brandColor = getBrandColor(compName);
                 const bgRgba = hexToRgba(brandColor, 0.05);
                 const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background-color: ${bgRgba}; border-left: 2px solid #444;`;
-                theadTop.innerHTML += `<th colspan="3" style="${styleStr}">${compName}</th>`;
-                theadBottom.innerHTML += `<th class="border-left-light">Original</th><th>Discount</th><th>W.Chg</th>`;
+                theadTop.innerHTML += `<th colspan="2" style="${styleStr}">${compName}</th>`;
+                // W.Chg Kaldırıldı
+                theadBottom.innerHTML += `<th class="border-left-light">Original</th><th>Discount</th>`;
             });
 
-            // Analiz
+            // 4. Analiz
             theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadBottom.innerHTML += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
 
-            // --- DATA ---
+            // --- SATIRLARI DOLDURMA ---
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 
+                // Ürün Bilgileri (Sıra değişti, Ürün Adı en sonda ve sticky)
                 let html = `
                     <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
                     <td>${row['Store Name']}</td>
                     <td>${row['SKU']}</td>
-                    <td title="${row['Product Name']}">${row['Product Name']}</td>
                     <td>${row['Brand Name'] || '-'}</td>
                     <td>${row['Category Name'] || '-'}</td>
+                    <td class="sticky-col" title="${row['Product Name']}">${row['Product Name']}</td>
                 `;
 
+                // Bizim Fiyat
                 const t_org = row.tazeyo_price_org;
                 const t_dsc = row.tazeyo_price_dsc;
                 const bizPrice = t_dsc > 0 ? t_dsc : t_org;
 
+                // W.Chg hücresi silindi
                 html += `
                     <td class="price-cell">₺${formatMoney(t_org)}</td>
                     <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
-                    <td>-</td>
                 `;
 
+                // Rakipler
                 let enUcuzRakipFiyati = Infinity;
                 let enUcuzRakipIsmi = '';
 
@@ -641,16 +628,17 @@
                             enUcuzRakipIsmi = compName;
                         }
 
+                        // W.Chg hücresi silindi
                         html += `
                             <td class="price-cell border-left-light">₺${formatMoney(c_org)}</td>
                             <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
-                            <td>-</td>
                         `;
                     } else {
-                        html += `<td colspan="3" class="border-left-light" style="text-align:center; color:#444; font-size:0.8em;">Veri Yok</td>`;
+                        html += `<td colspan="2" class="border-left-light" style="text-align:center; color:#444; font-size:0.8em;">Veri Yok</td>`;
                     }
                 });
 
+                // Analiz
                 let badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">-</span>';
                 let farkYuzde = 0;
                 let farkClass = "";
