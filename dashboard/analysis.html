@@ -15,36 +15,101 @@
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; overflow-x: hidden; background-color: #0b0e11; }
 
-        /* --- DROPDOWN (MULTI SELECT) İYİLEŞTİRMELERİ --- */
-        
-        /* 1. Dropdown Z-Index (Tablonun üzerine çıkması için) */
-        .multi-select-menu {
-            z-index: 9999 !important; /* Tablo sticky header'ı 110, bu ondan çok yüksek olmalı */
-            max-height: 350px; /* Çok uzamasın, scroll çıksın */
-            overflow-y: auto;
+        /* --- ÜST BAR AYARI --- */
+        .top-bar {
+            position: relative !important;
+            width: 100%;
+            z-index: 1;
         }
 
-        /* 2. Seçenek Boyutları (Daha büyük ve okunabilir) */
+        /* --- DROPDOWN (MULTI SELECT) GELİŞMİŞ TASARIM --- */
+        
+        .multi-select-wrapper {
+            position: relative; /* Menünün buna göre konumlanması için */
+        }
+
+        /* 1. Menü Genişliği ve Z-Index */
+        .multi-select-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 8px;
+            /* REVİZE: Daha geniş ve sabit bir yapı */
+            min-width: 100%; /* En az buton kadar geniş olsun */
+            width: 340px;    /* Ama ideal olarak daha geniş olsun (Okunabilirlik için) */
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: #1f232c;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 99999 !important;
+            display: none; /* JS ile show class'ı eklenince görünür */
+        }
+        
+        .multi-select-menu.show { display: block; }
+
+        /* 2. Seçenek Satırları */
         .multi-option {
-            padding: 12px 16px; /* Boşluklar artırıldı */
-            font-size: 0.95rem; /* Yazı büyütüldü */
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            color: #ccc;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             cursor: pointer;
             transition: background 0.2s;
-        }
-        .multi-option:hover {
-            background-color: rgba(255,255,255,0.05);
+            
+            /* Flexbox ile hizalama (Kutucuk ve Yazı) */
+            display: flex;
+            align-items: center; 
+            justify-content: space-between;
+            gap: 15px; /* Yazı ile kutu arası boşluk */
         }
 
-        /* 3. Arama Çubuğu Stilleri */
+        .multi-option:hover { background-color: rgba(255,255,255,0.1); color: #fff; }
+        
+        .multi-option.selected {
+            background-color: rgba(115, 103, 240, 0.08);
+            color: #fff;
+        }
+
+        /* 3. Checkbox (Kutucuk) Tasarımı - SABİT BOYUT */
+        .option-checkbox {
+            width: 20px;
+            height: 20px;
+            min-width: 20px; /* Asla küçülmesin */
+            border: 2px solid #555;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Seçili Durumda Kutucuk */
+        .multi-option.selected .option-checkbox {
+            background-color: #7367f0;
+            border-color: #7367f0;
+        }
+
+        /* Tık İşareti (Pseudo-element) */
+        .multi-option.selected .option-checkbox::after {
+            content: '\f00c'; /* FontAwesome Check Icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 12px;
+            color: white;
+        }
+
+        /* "Tümü" seçeneği için özel ayar gerekmez, yukarıdaki flex yapısı ikisini de eşitler */
+
+
+        /* 4. Arama Çubuğu */
         .dropdown-search-wrapper {
             position: sticky;
             top: 0;
-            background-color: #1f232c; /* Dropdown arkaplanı ile aynı olmalı */
-            padding: 10px;
+            background-color: #1f232c;
+            padding: 12px;
             z-index: 10;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
@@ -54,14 +119,12 @@
             background: #14161c;
             border: 1px solid #333;
             color: #fff;
-            padding: 8px 12px;
+            padding: 10px 12px;
             border-radius: 6px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             outline: none;
         }
-        .dropdown-search-input:focus {
-            border-color: #7367f0;
-        }
+        .dropdown-search-input:focus { border-color: #7367f0; }
 
 
         /* --- DİNAMİK RENK SİSTEMİ --- */
@@ -76,19 +139,15 @@
         .border-left-light { border-left: 1px solid #333; }
         .col-analysis-status { min-width: 140px; }
 
-        /* --- SABİT SÜTUN (STICKY COLUMN) --- */
+        /* --- SABİT SÜTUN & BAŞLIKLAR --- */
         th.sticky-col, td.sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 10; 
-            border-right: 2px solid #444; 
-            box-shadow: 4px 0 10px rgba(0,0,0,0.5); 
+            position: sticky; left: 0; z-index: 10; 
+            border-right: 2px solid #444; box-shadow: 4px 0 10px rgba(0,0,0,0.5); 
         }
         th.sticky-col { background-color: #14161c; } 
         td.sticky-col { background-color: #14161c; } 
         tr:hover td.sticky-col { background-color: #1a1d24; }
 
-        /* --- TABLO BAŞLIKLARI (STICKY HEADERS) --- */
         #header-row-top th {
             position: sticky; top: 0; z-index: 100; height: 45px;
             background-color: #14161c; border-bottom: 1px solid #333;
@@ -98,7 +157,7 @@
             background-color: #14161c; border-bottom: 2px solid #333;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        #header-row-top th:first-child { z-index: 110 !important; }
+        #header-row-top th:last-child { z-index: 110 !important; } 
         #header-row-bottom th.sticky-col { position: sticky; left: 0; z-index: 110 !important; background-color: #14161c; border-right: 2px solid #444; }
         tr:hover td { background-color: #1a1d24; }
 
@@ -398,7 +457,7 @@
             updateTriggerText('category', 'Tüm Kategoriler');
         }
 
-        // --- GÜNCELLENEN RENDER MULTI SELECT (ARAMA EKLENDİ) ---
+        // --- GÜNCELLENEN RENDER MULTI SELECT (ARAMA VE STİL İYİLEŞTİRMELERİ) ---
         function renderMultiSelectOptions(menuId, items, type) {
             const menu = document.getElementById(menuId);
             menu.innerHTML = '';
@@ -416,7 +475,7 @@
                 const options = menu.querySelectorAll('.multi-option:not(.all-option)'); // "Tümü" hariç diğerleri
                 options.forEach(opt => {
                     const text = opt.textContent.toLowerCase();
-                    if (text.includes(filter)) opt.style.display = ""; 
+                    if (text.includes(filter)) opt.style.display = "flex"; 
                     else opt.style.display = "none";
                 });
             });
