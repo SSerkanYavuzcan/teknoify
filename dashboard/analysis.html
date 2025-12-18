@@ -12,13 +12,18 @@
     <link rel="stylesheet" href="../css/dashboard.css">
     <style>
         /* Dinamik Tablo Stilleri */
-        .th-group-market { text-align: center; color: #f97316; border-bottom: 1px solid #333; background-color: rgba(249, 115, 22, 0.05); }
+        /* Not: Renkler artık JS'den dinamik geliyor, buradaki sabit renkleri kaldırdık */
+        .th-group-market { text-align: center; border-bottom: 1px solid #333; }
         .th-group-tazeyo { text-align: center; color: #10b981; border-bottom: 1px solid #333; background-color: rgba(16, 185, 129, 0.05); }
         
-        /* Badge Stilleri - Güncellendi (Sığması için) */
+        /* Badge Stilleri */
         .badge { display: inline-block; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-align: center; min-width: 80px; }
+        
+        /* Tazeyo Badge Sabit */
         .badge-tazeyo { background-color: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-market { background-color: rgba(249, 115, 22, 0.2); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); white-space: nowrap; }
+        
+        /* Market Badge (Dinamik renklendirilecek ama base style kalsın) */
+        .badge-market { white-space: nowrap; border: 1px solid transparent; }
         
         /* Fark Renklendirmeleri */
         .diff-positive { color: #ef4444; font-weight: bold; } /* Biz pahalıysak kırmızı */
@@ -28,7 +33,6 @@
         .border-left-strong { border-left: 2px solid #444; }
         .border-left-light { border-left: 1px solid #333; }
         
-        /* Analiz Sütunu Genişliği */
         .col-analysis-status { min-width: 140px; }
     </style>
 </head>
@@ -175,13 +179,11 @@
         let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Session Kontrolü
             if (typeof SessionManager === 'undefined') return;
             const session = new SessionManager();
             const currentUser = session.validateSession();
             if (!currentUser) { window.location.href = '../index.html'; return; }
 
-            // Kullanıcı Verisi
             fetch('../data/users.json')
                 .then(res => res.json())
                 .then(userDB => {
@@ -207,7 +209,6 @@
                     document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
                 });
 
-            // UI Events
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.multi-select-wrapper')) {
                     document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
@@ -220,6 +221,39 @@
             });
         });
 
+        // --- RENK YÖNETİM SİSTEMİ (BURAYA YENİ RAKİP EKLENEBİLİR) ---
+        function getBrandColor(fullName) {
+            if (!fullName) return '#f97316'; // Varsayılan Turuncu
+            const lowerName = fullName.toLowerCase();
+            
+            // 1. CARREFOURSA (Mavi #005daa)
+            if (lowerName.includes('carrefoursa')) return '#005daa';
+            
+            // 2. MIGROS (Örnek Turuncu/Sarı) - İleride aktif edebilirsiniz
+            // if (lowerName.includes('migros')) return '#ff8000';
+            
+            // 3. SOK (Örnek Sarı)
+            // if (lowerName.includes('sok')) return '#fcd308';
+
+            // Varsayılan (Marketten ve diğerleri için Turuncu)
+            return '#f97316'; 
+        }
+
+        // Hex rengini (Örn: #005daa) alıp RGBA (Yarı şeffaf) yapan yardımcı fonksiyon
+        function hexToRgba(hex, alpha) {
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+            }
+            return hex; // Dönüştüremezse orijinalini döndür
+        }
+
+        // --- DİĞER FONKSİYONLAR ---
         function showNoDataState() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.</td></tr>';
@@ -328,7 +362,6 @@
             if (!isVisible) menu.classList.add('show');
         }
 
-        // --- ANA FONKSİYONLAR ---
         function applyFilters() {
             const dateRange = flatpickrInstance.selectedDates;
             const tbody = document.getElementById('table-body');
@@ -357,7 +390,6 @@
                 return branchMatch && catMatch && (rowDate >= startDate && rowDate <= endDate);
             });
 
-            // Gruplama (Aggregate)
             const aggregatedResult = aggregateData(filteredData);
             CURRENT_PROCESSED_DATA = aggregatedResult;
 
@@ -389,8 +421,6 @@
                 const key = row['SKU'] || row['Product Name'];
                 if (!key) return;
 
-                // REVİZE: Rakip ismini olduğu gibi (Raw) alıyoruz, temizleme yapmıyoruz.
-                // Böylece sütun başlığında tam isim görünecek.
                 let rawCompName = row['Competitor Store Name'];
                 let compName = rawCompName ? rawCompName.trim() : 'Bilinmeyen';
                 
@@ -419,6 +449,7 @@
             };
         }
 
+        // --- RENDER TABLE (DİNAMİK RENKLİ) ---
         function renderTable(dataRows, competitorNames) {
             const theadTop = document.getElementById('header-row-top');
             const theadBottom = document.getElementById('header-row-bottom');
@@ -438,14 +469,20 @@
             theadTop.innerHTML += `<th colspan="3" class="th-group-tazeyo">Bizim Fiyatlar</th>`;
             theadBottom.innerHTML += `<th>Original</th><th>Discount</th><th>W.Chg</th>`;
 
-            // 3. Rakipler (Dinamik - TAM İSİM)
+            // 3. Rakipler (Dinamik Renkli)
             competitorNames.forEach(compName => {
-                // Burada compName artık CSV'deki uzun isim
-                theadTop.innerHTML += `<th colspan="3" class="th-group-market border-left-strong">${compName}</th>`;
+                // Rakip rengini bul
+                const brandColor = getBrandColor(compName);
+                const bgRgba = hexToRgba(brandColor, 0.05); // Hafif arka plan
+                
+                // Style attribute ile rengi gömüyoruz
+                const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background-color: ${bgRgba}; border-left: 2px solid #444;`;
+
+                theadTop.innerHTML += `<th colspan="3" style="${styleStr}">${compName}</th>`;
                 theadBottom.innerHTML += `<th class="border-left-light">Original</th><th>Discount</th><th>W.Chg</th>`;
             });
 
-            // 4. Analiz -> En Ucuz Kanal (REVİZE)
+            // 4. Analiz -> En Ucuz Kanal
             theadTop.innerHTML += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadBottom.innerHTML += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
 
@@ -476,7 +513,7 @@
 
                 // Rakipler
                 let enUcuzRakipFiyati = Infinity;
-                let enUcuzRakipIsmi = ''; // Bu artık uzun isim
+                let enUcuzRakipIsmi = '';
 
                 competitorNames.forEach(compName => {
                     const compData = row.competitors[compName];
@@ -500,21 +537,28 @@
                     }
                 });
 
-                // Analiz (REVİZE EDİLDİ)
+                // Analiz
                 let badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">-</span>';
                 let farkYuzde = 0;
                 let farkClass = "";
 
                 if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
                     if (bizPrice < enUcuzRakipFiyati) {
-                        // BİZ UCUZUZ -> "Tazeyo" yaz
+                        // BİZ UCUZUZ -> "Tazeyo"
                         badgeHtml = '<span class="badge badge-tazeyo">Tazeyo</span>';
                         farkYuzde = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
                         farkClass = "diff-negative"; 
                     } else if (bizPrice > enUcuzRakipFiyati) {
-                        // RAKİP UCUZ -> Sadece İsmi Yaz (Parantezsiz)
-                        const shortName = cleanName(enUcuzRakipIsmi); // Parantezleri at
-                        badgeHtml = `<span class="badge badge-market" title="${enUcuzRakipIsmi}">${shortName}</span>`;
+                        // RAKİP UCUZ -> Rengin ve ismin dinamik ayarlanması
+                        const shortName = cleanName(enUcuzRakipIsmi); 
+                        const brandColor = getBrandColor(enUcuzRakipIsmi);
+                        const bgRgba = hexToRgba(brandColor, 0.2);
+                        const borderRgba = hexToRgba(brandColor, 0.3);
+
+                        // Dinamik Stil
+                        const badgeStyle = `background-color: ${bgRgba}; color: ${brandColor}; border: 1px solid ${borderRgba};`;
+                        
+                        badgeHtml = `<span class="badge badge-market" style="${badgeStyle}" title="${enUcuzRakipIsmi}">${shortName}</span>`;
                         farkYuzde = ((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100;
                         farkClass = "diff-positive"; 
                     } else {
@@ -532,7 +576,6 @@
             });
         }
 
-        // --- KPI HESAPLAMA ---
         function calculateKPIs(data, selectedCat) {
             let totalBiz = 0, totalComp = 0;
             let discountCountBiz = 0, discountCountComp = 0;
@@ -541,7 +584,6 @@
 
             data.forEach(row => {
                 const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
-                
                 let minCompPrice = Infinity;
                 let hasComp = false;
                 let anyCompDiscount = false;
@@ -554,7 +596,6 @@
                     }
                     if (comp.dsc > 0 && comp.dsc < comp.org) anyCompDiscount = true;
                 });
-                
                 if (!hasComp) minCompPrice = 0;
 
                 if (bizPrice > 0 && minCompPrice > 0) {
@@ -629,7 +670,6 @@
             }
         }
 
-        // --- YARDIMCI FONKSİYONLAR ---
         function showToast(message) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').textContent = message;
@@ -637,10 +677,7 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
         function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
-        
-        // Temiz isim fonksiyonu (Sadece Badge için kullanılır)
         function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
-        
         function parsePrice(val) {
             if(!val) return 0;
             let clean = val.toString().replace(/["'₺\s]/g, '');
