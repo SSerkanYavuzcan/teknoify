@@ -459,6 +459,7 @@
         let ALL_DATA = [];
         let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
         let GRAPH_FILTERED_DATA = null; // Grafik filtresi için
+        let activeCategoryFilter = null; // Kategori filtresinin toggle durumu için
         let flatpickrInstance;
         let SELECTED_BRANCHES = ['all'];
         let SELECTED_CATEGORIES = ['all'];
@@ -590,6 +591,8 @@
         function clearGraphFilters() {
             document.getElementById('active-filter-banner').style.display = 'none';
             GRAPH_FILTERED_DATA = null;
+            activeCategoryFilter = null; // Hafızayı sıfırla
+
             // Orijinal veriyi geri yükle
             const displayData = CURRENT_PROCESSED_DATA.rows.slice(0, 250);
             renderTable(displayData, CURRENT_PROCESSED_DATA.competitorNames);
@@ -682,7 +685,7 @@
             renderPieChart(countCheaper, countEqual, countExpensive);
         }
 
-function renderCategoryChart(categoryStats) {
+        function renderCategoryChart(categoryStats) {
             const categories = Object.keys(categoryStats);
             const seriesData = categories.map(cat => {
                 const stats = categoryStats[cat];
@@ -690,7 +693,7 @@ function renderCategoryChart(categoryStats) {
                 return parseFloat(((stats.comp - stats.biz) / stats.comp * 100).toFixed(1));
             });
 
-            // Renkler (Pozitif Yeşil, Negatif Kırmızı)
+            // Renkler
             const colors = seriesData.map(val => val >= 0 ? '#10b981' : '#ef4444');
 
             const options = {
@@ -702,13 +705,22 @@ function renderCategoryChart(categoryStats) {
                     background: 'transparent',
                     fontFamily: 'Inter Tight, sans-serif',
                     events: {
-                        // REVİZE 1: dataPointSelection yerine 'click' kullanıyoruz.
-                        // Bu sayede bara denk getiremese bile o sütuna tıklaması yeterli olur.
+                        // ÖNEMLİ: Tıklama Olayı (Toggle ve Geniş Alan Tıklaması)
                         click: function(event, chartContext, config) {
                             // config.dataPointIndex, tıklanan sütunun indeksini verir (boşluğa tıklansa bile)
                             if (config.dataPointIndex !== undefined && config.dataPointIndex > -1) {
                                 const selectedCat = categories[config.dataPointIndex];
-                                filterTableByGraph('CATEGORY', selectedCat);
+                                
+                                // TOGGLE MANTIĞI:
+                                // Eğer tıklanan kategori zaten aktifse -> Filtreyi kaldır
+                                if (activeCategoryFilter === selectedCat) {
+                                    clearGraphFilters();
+                                } 
+                                // Değilse -> Filtreyi uygula
+                                else {
+                                    activeCategoryFilter = selectedCat;
+                                    filterTableByGraph('CATEGORY', selectedCat);
+                                }
                             }
                         }
                     }
@@ -718,20 +730,22 @@ function renderCategoryChart(categoryStats) {
                         colors: {
                             ranges: [{ from: -100, to: -0.1, color: '#ef4444' }, { from: 0, to: 100, color: '#10b981' }]
                         },
-                        columnWidth: '55%', // Barı biraz daha dolgun gösterir
+                        columnWidth: '60%', // Bar genişliği arttırıldı (daha dolgun görünüm)
                         borderRadius: 4,
-                        dataLabels: { position: 'top' } // Etiket pozisyonu
                     }
                 },
-                // REVİZE 2: Hover Efekti (Daha profesyonel, ışık hüzmesi yok)
+                // GÖRSEL EFEKTLER
                 states: {
+                    // Normal duruş
                     normal: { filter: { type: 'none', value: 0 } },
+                    // Üzerine gelince (Sadece hafif parlaklık, beyaz ışık yok)
                     hover: { 
-                        filter: { type: 'brightness', value: 1.1 }, // Hafifçe parlatır (beyaz ışık olmadan)
+                        filter: { type: 'brightness', value: 1.15 } 
                     },
+                    // Tıklanınca
                     active: { 
                         allowMultipleDataPointsSelection: false,
-                        filter: { type: 'darken', value: 0.8 } // Tıklanınca hafif koyulaşır (tepki verir)
+                        filter: { type: 'darken', value: 0.8 } 
                     }
                 },
                 dataLabels: { enabled: false },
@@ -744,14 +758,11 @@ function renderCategoryChart(categoryStats) {
                     },
                     axisBorder: { show: false }, 
                     axisTicks: { show: false },
-                    // REVİZE 3: O "Beyaz Işık" (crosshairs) arkadaki gri sütunu kaldırır.
-                    crosshairs: {
-                        show: false, 
-                    },
-                    // Kullanıcının boşluğa tıklayabilmesi için tooltip tetikleyicisini genişletiyoruz
-                    tooltip: {
-                        enabled: false // X ekseni tooltip'ini kapattık, ana tooltip çalışacak
-                    }
+                    
+                    // İSTEMEDİĞİN BEYAZ IŞIK/SÜTUN BURADA KAPATILIYOR:
+                    crosshairs: { show: false },
+                    
+                    tooltip: { enabled: false } // X-ekseni tooltip'ini kapattık
                 },
                 yaxis: {
                     labels: { 
@@ -764,14 +775,15 @@ function renderCategoryChart(categoryStats) {
                     borderColor: '#333', 
                     strokeDashArray: 4,
                     yaxis: { lines: { show: true } },
-                    xaxis: { lines: { show: false } }, // Dikey çizgileri kapattık, daha temiz görünüm
+                    xaxis: { lines: { show: false } }, // Dikey çizgileri kapattık
                     padding: { top: 0, right: 0, bottom: 0, left: 10 }
                 },
-                // REVİZE 4: Tooltip Ayarları (Boşlukta bile çalışması için)
+                // TOOLTIP (İPUCU KUTUSU) AYARLARI
                 tooltip: {
                     theme: 'dark',
-                    intersect: false, // FALSE yaparak, direkt barın üstüne gelmese bile o hizadaysa göster diyoruz.
-                    shared: true,     // Aynı hizadaki veriyi yakalar.
+                    // intersect: false -> Mouse tam barın üstünde olmasa bile, o sütundaysa göster.
+                    intersect: false, 
+                    shared: true,     
                     style: { fontSize: '12px' },
                     x: { show: true },
                     y: {
@@ -780,6 +792,10 @@ function renderCategoryChart(categoryStats) {
                         }
                     },
                     marker: { show: true },
+                    fixed: {
+                        enabled: false, // Mouse'u takip etsin
+                        position: 'topRight'
+                    }
                 }
             };
 
@@ -1203,9 +1219,5 @@ function renderCategoryChart(categoryStats) {
     </script>
 </body>
 </html>
-
-
-
-
 
 
