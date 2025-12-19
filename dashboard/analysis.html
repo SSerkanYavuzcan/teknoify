@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    
     <link rel="stylesheet" href="../css/dashboard.css">
 
     <style>
@@ -19,8 +18,10 @@
         * { box-sizing: border-box; }
         
         html, body {
-            height: 100vh !important;
-            overflow: hidden !important; 
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important; /* Dikey scroll pencerede */
+            overflow-x: hidden !important;
             background-color: #0b0e11;
             margin: 0; padding: 0;
             display: block !important;
@@ -57,14 +58,13 @@
 
 
         /* =========================================================================
-           1.2: DASHBOARD & GRAFİK ALANI (YENİ TASARIM)
+           1.2: DASHBOARD & GRAFİK ALANI
            ========================================================================= */
         
         .dashboard-container {
-            display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px;
+            display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px;
         }
 
-        /* KPI Kartları */
         .kpi-grid {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
         }
@@ -81,14 +81,13 @@
         .kpi-title { font-size: 0.85rem; color: #888; margin-bottom: 8px; font-weight: 500; }
         .kpi-value { font-size: 1.4rem; font-weight: 700; color: #fff; }
         .kpi-trend { font-size: 0.8rem; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
-        .trend-up { color: #10b981; } /* Yeşil (İyi) */
-        .trend-down { color: #ef4444; } /* Kırmızı (Kötü) */
+        .trend-up { color: #10b981; } 
+        .trend-down { color: #ef4444; } 
         .trend-neutral { color: #888; }
 
-        /* Grafik Alanı */
         .charts-grid {
             display: grid; grid-template-columns: 2fr 1fr; gap: 15px;
-            height: 320px; /* Sabit yükseklik */
+            height: 320px;
         }
         .chart-box {
             background: #1f232c; border: 1px solid #333; border-radius: 12px;
@@ -100,13 +99,12 @@
         }
         .chart-title { font-size: 0.95rem; font-weight: 600; color: #fff; }
         
-        /* ApexCharts Dark Theme Fix */
         .apexcharts-tooltip { background: #14161c !important; border-color: #333 !important; color: #fff; }
         .apexcharts-tooltip-title { background: #0b0e11 !important; border-bottom: 1px solid #333 !important; }
 
 
         /* =========================================================================
-           1.3: TABLO YAPISI (STICKY KORUNDU)
+           1.3: TABLO YAPISI (GERİ GELDİ & DÜZELTİLDİ)
            ========================================================================= */
         
         .table-responsive-wrapper {
@@ -114,6 +112,7 @@
             overflow-x: auto; overflow-y: visible;
             border: 1px solid #333; border-radius: 12px;
             background: #14161c; margin-bottom: 20px;
+            /* Yükseklik sınırı yok, aşağı kadar uzar */
         }
         .comparison-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: max-content; }
 
@@ -167,7 +166,6 @@
         .multi-option.selected .option-checkbox { background: #7367f0; border-color: #7367f0; }
         .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 10px; color: white; }
 
-        /* Yüzen Buton */
         #floating-toggle-btn { 
             position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px; 
             background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%; 
@@ -359,7 +357,6 @@
         let SELECTED_BRANCHES = ['all'];
         let SELECTED_CATEGORIES = ['all'];
         
-        // Grafik Örnekleri
         let chartCategory = null;
         let chartPie = null;
 
@@ -406,18 +403,12 @@
             });
         });
 
-        // --- DASHBOARD GÜNCELLEME FONKSİYONU ---
         function updateDashboard(dataRows) {
-            // 1. KPI Hesaplamaları (Eskisiyle aynı mantık ama yeni UI'a basacak)
             let totalBiz = 0, totalComp = 0;
             let discountCountBiz = 0;
             let totalDiscountDepth = 0, depthCount = 0;
             let categoryStats = {};
-            
-            // Pie Chart Verileri
-            let countCheaper = 0;
-            let countEqual = 0;
-            let countExpensive = 0;
+            let countCheaper = 0, countEqual = 0, countExpensive = 0;
 
             dataRows.forEach(row => {
                 const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
@@ -432,25 +423,21 @@
                     }
                 });
                 
-                // İstatistikler
                 if (bizPrice > 0 && hasComp && minCompPrice < Infinity) {
                     totalBiz += bizPrice;
                     totalComp += minCompPrice;
                     
-                    // Kategori Analizi
                     const cat = (row['Category Name'] || 'Diğer').trim();
                     if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0, count: 0 };
                     categoryStats[cat].biz += bizPrice;
                     categoryStats[cat].comp += minCompPrice;
                     categoryStats[cat].count++;
 
-                    // Konumlandırma
                     if (bizPrice < minCompPrice) countCheaper++;
                     else if (bizPrice > minCompPrice) countExpensive++;
                     else countEqual++;
                 }
 
-                // İndirim Derinliği
                 if (row.tazeyo_price_dsc > 0 && row.tazeyo_price_dsc < row.tazeyo_price_org) {
                     discountCountBiz++;
                     const depth = ((row.tazeyo_price_org - row.tazeyo_price_dsc) / row.tazeyo_price_org) * 100;
@@ -459,7 +446,6 @@
                 }
             });
 
-            // KPI'ları Yaz
             const compElem = document.getElementById('kpi-competition');
             const compSub = document.getElementById('kpi-competition-sub');
             
@@ -483,7 +469,6 @@
             document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
             document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
 
-            // En Avantajlı Kategori
             let bestCat = '-'; let maxDiff = -Infinity;
             for (const [cat, stats] of Object.entries(categoryStats)) {
                 if (stats.comp <= 0) continue;
@@ -495,8 +480,6 @@
                 ? (maxDiff > 0 ? `<span class="trend-up">+%${maxDiff.toFixed(1)} Avantaj</span>` : `<span class="trend-down">%${maxDiff.toFixed(1)} Dezavantaj</span>`)
                 : '-';
 
-
-            // --- GRAFİKLERİ ÇİZ ---
             renderCategoryChart(categoryStats);
             renderPieChart(countCheaper, countEqual, countExpensive);
         }
@@ -506,14 +489,9 @@
             const seriesData = categories.map(cat => {
                 const stats = categoryStats[cat];
                 if(stats.comp === 0) return 0;
-                // Pozitif ise biz ucuzuz, negatif ise biz pahalıyız (Görsel algı için ters mantık)
-                // Formül: (Rakip - Biz) / Rakip * 100
-                // Sonuç +5 ise -> Rakip 105, Biz 100 -> Biz %5 ucuzuz (Yeşil Çubuk)
-                // Sonuç -5 ise -> Rakip 95, Biz 100 -> Biz %5 pahalıyız (Kırmızı Çubuk)
                 return parseFloat(((stats.comp - stats.biz) / stats.comp * 100).toFixed(1));
             });
 
-            // Renkleri belirle (Pozitif Yeşil, Negatif Kırmızı)
             const colors = seriesData.map(val => val >= 0 ? '#10b981' : '#ef4444');
 
             const options = {
@@ -521,9 +499,7 @@
                 chart: { type: 'bar', height: 280, toolbar: { show: false }, background: 'transparent' },
                 plotOptions: {
                     bar: {
-                        colors: {
-                            ranges: [{ from: -100, to: -0.1, color: '#ef4444' }, { from: 0, to: 100, color: '#10b981' }]
-                        },
+                        colors: { ranges: [{ from: -100, to: -0.1, color: '#ef4444' }, { from: 0, to: 100, color: '#10b981' }] },
                         columnWidth: '50%', borderRadius: 4
                     }
                 },
@@ -533,9 +509,7 @@
                     labels: { style: { colors: '#888', fontSize: '11px' } },
                     axisBorder: { show: false }, axisTicks: { show: false }
                 },
-                yaxis: { 
-                    labels: { style: { colors: '#888' }, formatter: (val) => `%${val}` } 
-                },
+                yaxis: { labels: { style: { colors: '#888' }, formatter: (val) => `%${val}` } },
                 grid: { borderColor: '#333', strokeDashArray: 4 },
                 theme: { mode: 'dark' }
             };
@@ -581,7 +555,6 @@
             chartPie.render();
         }
 
-        // --- DİĞER FONKSİYONLAR ---
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
         function getBrandColor(fullName) {
             if (!fullName) return '#f97316';
@@ -629,7 +602,7 @@
                 }
             });
         }
-        function populateFilters() {
+        function populateFilters() { /* ... */
             const branchSet = new Set();
             const catSet = new Set();
             ALL_DATA.forEach(row => {
@@ -641,7 +614,7 @@
             renderMultiSelectOptions('menu-category', Array.from(catSet).sort(), 'category');
             updateTriggerText('category', 'Tüm Kategoriler');
         }
-        function renderMultiSelectOptions(menuId, items, type) { /* ... (Aynı) ... */ 
+        function renderMultiSelectOptions(menuId, items, type) { /* ... */ 
             const menu = document.getElementById(menuId);
             menu.innerHTML = '';
             const fixedHeader = document.createElement('div');
@@ -682,7 +655,7 @@
             });
             menu.appendChild(scrollContainer);
         }
-        function selectOption(type, value, element) { /* ... (Aynı) ... */
+        function selectOption(type, value, element) { /* ... */
             let selectedArray = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
             const menuId = (type === 'branch') ? 'menu-branch' : 'menu-category';
             const menu = document.getElementById(menuId);
@@ -712,7 +685,7 @@
             else SELECTED_CATEGORIES = selectedArray;
             updateTriggerText(type);
         }
-        function updateTriggerText(type) { /* ... (Aynı) ... */
+        function updateTriggerText(type) { /* ... */
             const arr = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
             const textId = (type === 'branch') ? 'text-branch' : 'text-category';
             const label = document.getElementById(textId);
@@ -720,7 +693,7 @@
             else if (arr.length === 1) label.textContent = arr[0];
             else label.textContent = `${arr.length} ${type === 'branch' ? 'Şube' : 'Kategori'} Seçildi`;
         }
-        function toggleMultiSelect(menuId) { /* ... (Aynı) ... */
+        function toggleMultiSelect(menuId) { /* ... */
             const menu = document.getElementById(menuId);
             const isVisible = menu.classList.contains('show');
             document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
@@ -730,205 +703,15 @@
                 if(input) input.focus();
             }
         }
-        function applyFilters() {
-            const dateRange = flatpickrInstance.selectedDates;
-            const tbody = document.getElementById('table-body');
-            const limitMsg = document.getElementById('limit-msg');
-            const btnDownload = document.getElementById('btn-download');
-            
-            // Eğer tarih yoksa uyarı verme, varsayılanı kullan (ama flatpickr zaten dolu gelecek)
-            if (dateRange.length < 1) { showToast("Lütfen bir tarih aralığı seçiniz."); return; }
-
-            tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
-
-            const startDate = dateRange[0];
-            const endDate = dateRange[1] ? dateRange[1] : dateRange[0];
-            startDate.setHours(0,0,0,0); endDate.setHours(23,59,59,999);
-
-            let filteredData = ALL_DATA.filter(row => {
-                const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
-                const catName = row['Category Name'] ? row['Category Name'].trim() : "";
-                const branchMatch = SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.includes(storeName);
-                const catMatch = SELECTED_CATEGORIES.includes('all') || SELECTED_CATEGORIES.includes(catName);
-                const dateStr = row['Report Date'];
-                if (!dateStr) return false;
-                const parts = dateStr.split('.');
-                if(parts.length !== 3) return false;
-                const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
-                return branchMatch && catMatch && (rowDate >= startDate && rowDate <= endDate);
-            });
-
-            const aggregatedResult = aggregateData(filteredData);
-            CURRENT_PROCESSED_DATA = aggregatedResult;
-
-            if (aggregatedResult.rows.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
-                btnDownload.classList.add('btn-disabled');
-                limitMsg.style.display = 'none';
-                return;
-            }
-
-            btnDownload.classList.remove('btn-disabled');
-            
-            // Dashboard'u Güncelle (KPI + Charts)
-            updateDashboard(aggregatedResult.rows);
-
-            const displayData = aggregatedResult.rows.slice(0, 250);
-            limitMsg.style.display = (aggregatedResult.rows.length > 250) ? 'block' : 'none';
-
-            renderTable(displayData, aggregatedResult.competitorNames);
-        }
-        function aggregateData(data) { /* ... (Aynı) ... */
-            const grouped = {};
-            const allCompetitors = new Set();
-            data.forEach(row => {
-                const key = row['SKU'] || row['Product Name'];
-                if (!key) return;
-                let rawCompName = row['Competitor Store Name'];
-                let compName = rawCompName ? rawCompName.trim() : 'Bilinmeyen';
-                if(compName && compName !== 'Bilinmeyen') { allCompetitors.add(compName); }
-                if (!grouped[key]) {
-                    grouped[key] = {
-                        ...row,
-                        tazeyo_price_org: parsePrice(row['Tazeyo Original Price']),
-                        tazeyo_price_dsc: parsePrice(row['Tazeyo Discount Price']),
-                        competitors: {}
-                    };
-                }
-                grouped[key].competitors[compName] = {
-                    org: parsePrice(row['Competitor Original Price']),
-                    dsc: parsePrice(row['Competitor Discount Price'])
-                };
-            });
-            return {
-                rows: Object.values(grouped),
-                competitorNames: Array.from(allCompetitors).sort()
-            };
-        }
-        function renderTable(dataRows, competitorNames) { /* ... (Aynı) ... */
-            const theadTop = document.getElementById('header-row-top');
-            const theadBottom = document.getElementById('header-row-bottom');
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
-            theadTop.innerHTML = '';
-            theadBottom.innerHTML = '';
-
-            // HEADER (1. SATIR)
-            let headerTopHtml = '';
-            headerTopHtml += `<th class="sticky-product" style="z-index:1200 !important; top:0 !important; text-align:left;">Ürün Adı</th>`; 
-            headerTopHtml += `<th rowspan="2">Rapor Tarihi</th><th rowspan="2">Mağaza</th><th rowspan="2">SKU</th><th rowspan="2">Marka</th><th rowspan="2">Kategori</th>`;
-            
-            let myStoreLabel = 'Bizim Fiyatlar';
-            if(dataRows.length > 0 && dataRows[0]['Store Name']) myStoreLabel = dataRows[0]['Store Name'];
-            const tazeyoBg = `linear-gradient(rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.05)), #14161c`;
-            headerTopHtml += `<th colspan="2" class="th-group-tazeyo" style="background: ${tazeyoBg}">${myStoreLabel}</th>`;
-
-            competitorNames.forEach(compName => {
-                const brandColor = getBrandColor(compName);
-                const bgRgba = hexToRgba(brandColor, 0.05);
-                const solidBg = `linear-gradient(${bgRgba}, ${bgRgba}), #14161c`;
-                const styleStr = `color: ${brandColor}; border-bottom: 1px solid #333; background: ${solidBg}; border-left: 2px solid #444;`;
-                headerTopHtml += `<th colspan="2" style="${styleStr}">${compName}</th>`;
-            });
-            headerTopHtml += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
-            theadTop.innerHTML = headerTopHtml;
-
-            // HEADER (2. SATIR)
-            let headerBottomHtml = '';
-            // Ürün Adı ve Detaylar için yer tutucu (Aslında bunlar rowspan ile kaplandı ama hizalama için boş TH gerekebilir)
-            // Sticky yapısı için Ürün Adı'nın altını boş bir sticky hücre yapıyoruz.
-            // Diğer rowspan olanları siliyoruz (JS ile)
-            
-            // Bizim Fiyatlar
-            headerBottomHtml += `<th>Original</th><th>Discount</th>`;
-            // Rakipler
-            competitorNames.forEach(() => {
-                headerBottomHtml += `<th class="border-left-light">Original</th><th>Discount</th>`;
-            });
-            headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
-            theadBottom.innerHTML = headerBottomHtml;
-            
-            // ROWSPAN AYARLARI
-            const firstRowCells = theadTop.querySelectorAll('th');
-            // İlk hücre (Ürün Adı) rowspan=2
-            firstRowCells[0].setAttribute('rowspan', '2'); 
-            
-            // DATA
-            dataRows.forEach(row => {
-                const tr = document.createElement('tr');
-                let html = `
-                    <td class="sticky-product" title="${row['Product Name']}">${row['Product Name']}</td>
-                    <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
-                    <td>${row['Store Name']}</td>
-                    <td>${row['SKU']}</td>
-                    <td>${row['Brand Name'] || '-'}</td>
-                    <td>${row['Category Name'] || '-'}</td>
-                `;
-                const t_org = row.tazeyo_price_org;
-                const t_dsc = row.tazeyo_price_dsc;
-                const bizPrice = t_dsc > 0 ? t_dsc : t_org;
-                html += `
-                    <td class="price-cell">₺${formatMoney(t_org)}</td>
-                    <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
-                `;
-                let enUcuzRakipFiyati = Infinity;
-                let enUcuzRakipIsmi = '';
-                competitorNames.forEach(compName => {
-                    const compData = row.competitors[compName];
-                    if (compData) {
-                        const c_org = compData.org;
-                        const c_dsc = compData.dsc;
-                        const rakipSatis = c_dsc > 0 ? c_dsc : c_org;
-                        if (rakipSatis > 0 && rakipSatis < enUcuzRakipFiyati) {
-                            enUcuzRakipFiyati = rakipSatis;
-                            enUcuzRakipIsmi = compName;
-                        }
-                        html += `
-                            <td class="price-cell border-left-light">₺${formatMoney(c_org)}</td>
-                            <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
-                        `;
-                    } else {
-                        html += `<td colspan="2" class="border-left-light" style="text-align:center; color:#444; font-size:0.8em;">Veri Yok</td>`;
-                    }
-                });
-                let badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">-</span>';
-                let farkYuzde = 0;
-                let farkClass = "";
-                if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
-                    if (bizPrice < enUcuzRakipFiyati) {
-                        badgeHtml = '<span class="badge badge-tazeyo">Tazeyo</span>';
-                        farkYuzde = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
-                        farkClass = "diff-negative"; 
-                    } else if (bizPrice > enUcuzRakipFiyati) {
-                        const shortName = cleanName(enUcuzRakipIsmi); 
-                        const brandColor = getBrandColor(enUcuzRakipIsmi);
-                        const bgRgba = hexToRgba(brandColor, 0.2);
-                        const borderRgba = hexToRgba(brandColor, 0.3);
-                        const badgeStyle = `background-color: ${bgRgba}; color: ${brandColor}; border: 1px solid ${borderRgba};`;
-                        badgeHtml = `<span class="badge badge-market" style="${badgeStyle}" title="${enUcuzRakipIsmi}">${shortName}</span>`;
-                        farkYuzde = ((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100;
-                        farkClass = "diff-positive"; 
-                    } else {
-                        badgeHtml = '<span class="badge" style="background:#555;">EŞİT</span>';
-                    }
-                }
-                html += `
-                    <td class="border-left-strong" style="text-align:center;">${badgeHtml}</td>
-                    <td class="${farkClass}">${farkYuzde > 0 ? '%' + farkYuzde.toFixed(1) : '-'}</td>
-                `;
-                tr.innerHTML = html;
-                tbody.appendChild(tr);
-            });
-        }
         function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
         function parsePrice(val) { if(!val) return 0; let clean = val.toString().replace(/["'₺\s]/g, ''); if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) { clean = clean.replace(',', '.'); } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) { clean = clean.replace(/\./g, '').replace(',', '.'); } return parseFloat(clean) || 0; }
         function formatMoney(num) { return num === 0 ? '0,00' : new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(num); }
         function logout() { new SessionManager().destroySession(); window.location.href = '../index.html'; }
         function showToast(message) { const toast = document.getElementById('toast'); document.getElementById('toast-message').textContent = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
         function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
-        function downloadCSV() { /* ... (Aynı) ... */ if (!CURRENT_PROCESSED_DATA.rows || CURRENT_PROCESSED_DATA.rows.length === 0) return; const flatData = flattenForExport(CURRENT_PROCESSED_DATA); const csv = Papa.unparse(flatData); const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "teknoify_pivot_analiz.csv"; link.click(); document.getElementById('download-menu').classList.remove('show'); }
-        function downloadExcel() { /* ... (Aynı) ... */ if (!CURRENT_PROCESSED_DATA.rows || CURRENT_PROCESSED_DATA.rows.length === 0) return; const flatData = flattenForExport(CURRENT_PROCESSED_DATA); const ws = XLSX.utils.json_to_sheet(flatData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi"); XLSX.writeFile(wb, "teknoify_pivot_analiz.xlsx"); document.getElementById('download-menu').classList.remove('show'); }
-        function flattenForExport(dataObj) { /* ... (Aynı) ... */ return dataObj.rows.map(row => { const flatRow = { 'Report Date': row['Report Date'], 'Store Name': row['Store Name'], 'SKU': row['SKU'], 'Product Name': row['Product Name'], 'Brand': row['Brand Name'], 'Category': row['Category Name'], 'Bizim Original': row.tazeyo_price_org, 'Bizim Discount': row.tazeyo_price_dsc }; dataObj.competitorNames.forEach(comp => { const cData = row.competitors[comp]; flatRow[`${comp} Original`] = cData ? cData.org : ''; flatRow[`${comp} Discount`] = cData ? cData.dsc : ''; }); return flatRow; }); }
+        function downloadCSV() { if (!CURRENT_PROCESSED_DATA.rows || CURRENT_PROCESSED_DATA.rows.length === 0) return; const flatData = flattenForExport(CURRENT_PROCESSED_DATA); const csv = Papa.unparse(flatData); const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "teknoify_pivot_analiz.csv"; link.click(); document.getElementById('download-menu').classList.remove('show'); }
+        function downloadExcel() { if (!CURRENT_PROCESSED_DATA.rows || CURRENT_PROCESSED_DATA.rows.length === 0) return; const flatData = flattenForExport(CURRENT_PROCESSED_DATA); const ws = XLSX.utils.json_to_sheet(flatData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi"); XLSX.writeFile(wb, "teknoify_pivot_analiz.xlsx"); document.getElementById('download-menu').classList.remove('show'); }
+        function flattenForExport(dataObj) { return dataObj.rows.map(row => { const flatRow = { 'Report Date': row['Report Date'], 'Store Name': row['Store Name'], 'SKU': row['SKU'], 'Product Name': row['Product Name'], 'Brand': row['Brand Name'], 'Category': row['Category Name'], 'Bizim Original': row.tazeyo_price_org, 'Bizim Discount': row.tazeyo_price_dsc }; dataObj.competitorNames.forEach(comp => { const cData = row.competitors[comp]; flatRow[`${comp} Original`] = cData ? cData.org : ''; flatRow[`${comp} Discount`] = cData ? cData.dsc : ''; }); return flatRow; }); }
     </script>
 </body>
 </html>
