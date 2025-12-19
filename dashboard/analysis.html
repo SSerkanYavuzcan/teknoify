@@ -860,8 +860,13 @@
         function getBrandColor(fullName) {
             if (!fullName) return '#f97316';
             const lowerName = fullName.toLowerCase();
-            if (lowerName.includes('carrefoursa')) return '#005daa';
-            return '#f97316';
+            
+            // YENİ RENK MANTIĞI VE SIRALAMA UYUMU
+            if (lowerName.includes('migros')) return '#f5821f';
+            if (lowerName.includes('carrefour')) return '#005daa';
+            if (lowerName.includes('marketten')) return '#E30613'; // Tahmini Marketten kırmızısı (Standard)
+            
+            return '#f97316'; // Varsayılan Turuncu
         }
         function hexToRgba(hex, alpha) {
             let c;
@@ -1074,9 +1079,33 @@
                     dsc: parsePrice(row['Competitor Discount Price'])
                 };
             });
+            
+            // YENİ SIRALAMA MANTIĞI: Marketten -> Carrefour -> Migros -> Diğerleri
+            const sortOrder = ['marketten', 'carrefour', 'migros'];
+            const sortedCompetitors = Array.from(allCompetitors).sort((a, b) => {
+                const aLower = a.toLowerCase();
+                const bLower = b.toLowerCase();
+                
+                // Öncelik sırasını bul
+                let idxA = sortOrder.findIndex(key => aLower.includes(key));
+                let idxB = sortOrder.findIndex(key => bLower.includes(key));
+                
+                // Listede yoksa sona at (99 gibi yüksek bir index vererek)
+                if (idxA === -1) idxA = 99;
+                if (idxB === -1) idxB = 99;
+                
+                // Eğer ikisi de listede varsa veya yoksa kendi aralarında sırala
+                if (idxA !== idxB) {
+                    return idxA - idxB;
+                }
+                
+                // Aynı öncelikteyse (örneğin ikisi de 'Diğer' grubundaysa) alfabetik sırala
+                return a.localeCompare(b);
+            });
+
             return {
                 rows: Object.values(grouped),
-                competitorNames: Array.from(allCompetitors).sort()
+                competitorNames: sortedCompetitors
             };
         }
 
