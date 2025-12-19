@@ -450,7 +450,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="../js/session-manager.js"></script>
     <script src="../js/script.js"></script>
@@ -1219,9 +1219,9 @@
         function logout() { new SessionManager().destroySession(); window.location.href = '../index.html'; }
         function showToast(message) { const toast = document.getElementById('toast'); document.getElementById('toast-message').textContent = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
         function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
-function downloadCSV() { 
-            // REVİZE: Artık grafik filtresi (GRAPH_FILTERED_DATA) olsa bile
-            // her zaman ana rapor verisini (CURRENT_PROCESSED_DATA) indiriyoruz.
+        
+        function downloadCSV() { 
+            // Grafik seçimlerini yoksay, her zaman tam listeyi indir.
             const dataToExport = CURRENT_PROCESSED_DATA;
             
             if (!dataToExport.rows || dataToExport.rows.length === 0) {
@@ -1234,7 +1234,6 @@ function downloadCSV() {
             const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            // Dosya ismine tarih ekleyelim ki karışmasın
             const dateStr = flatpickrInstance.selectedDates[0] ? flatpickrInstance.selectedDates[0].toLocaleDateString('tr-TR') : 'rapor';
             link.download = `teknoify_analiz_${dateStr}.csv`;
             link.click();
@@ -1242,7 +1241,6 @@ function downloadCSV() {
         }
 
         function downloadExcel() { 
-            // REVİZE: Grafik seçimlerini yoksay, her zaman tam listeyi indir.
             const dataToExport = CURRENT_PROCESSED_DATA;
 
             if (!dataToExport.rows || dataToExport.rows.length === 0) {
@@ -1252,6 +1250,23 @@ function downloadCSV() {
 
             const flatData = flattenForExport(dataToExport);
             const ws = XLSX.utils.json_to_sheet(flatData);
+
+            // STİL AYARLARI (xlsx-js-style kütüphanesi gerekli)
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let C = range.s.c; C <= range.e.c; ++C) {
+                const address = XLSX.utils.encode_cell({ r: 0, c: C });
+                if (!ws[address]) continue;
+                ws[address].s = {
+                    fill: { fgColor: { rgb: "1F232C" } }, // Koyu arka plan
+                    font: { color: { rgb: "FFFFFF" }, bold: true } // Beyaz ve kalın yazı
+                };
+            }
+            
+            // Sütun genişliklerini ayarla
+            const wscols = [];
+            for (let i = 0; i <= range.e.c; i++) { wscols.push({ wch: 20 }); }
+            ws['!cols'] = wscols;
+
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
             
@@ -1260,11 +1275,40 @@ function downloadCSV() {
             
             document.getElementById('download-menu').classList.remove('show');
         }
-        function flattenForExport(dataObj) { return dataObj.rows.map(row => { const flatRow = { 'Report Date': row['Report Date'], 'Store Name': row['Store Name'], 'SKU': row['SKU'], 'Product Name': row['Product Name'], 'Brand': row['Brand Name'], 'Category': row['Category Name'], 'Bizim Original': row.tazeyo_price_org, 'Bizim Discount': row.tazeyo_price_dsc }; dataObj.competitorNames.forEach(comp => { const cData = row.competitors[comp]; flatRow[`${comp} Original`] = cData ? cData.org : ''; flatRow[`${comp} Discount`] = cData ? cData.dsc : ''; }); return flatRow; }); }
+
+        function flattenForExport(dataObj) { 
+            return dataObj.rows.map(row => { 
+                // 0 değerlerini boş stringe çeviren yardımcı fonksiyon
+                const formatVal = (val) => (val === 0 || val === "0") ? "" : val;
+
+                // "Bizim" mağaza adını dinamik al
+                const myStoreName = row['Store Name'] || "Mağaza";
+
+                const flatRow = { 
+                    'Report Date': row['Report Date'], 
+                    'Store Name': row['Store Name'], 
+                    'SKU': row['SKU'], 
+                    'Product Name': row['Product Name'], 
+                    'Brand': row['Brand Name'], 
+                    'Category': row['Category Name']
+                };
+
+                // Dinamik Key'ler: "StoreName Original Price"
+                flatRow[`${myStoreName} Original Price`] = formatVal(row.tazeyo_price_org);
+                flatRow[`${myStoreName} Discount Price`] = formatVal(row.tazeyo_price_dsc);
+
+                // Rakipler
+                dataObj.competitorNames.forEach(comp => { 
+                    const cData = row.competitors[comp]; 
+                    flatRow[`${comp} Original Price`] = cData ? formatVal(cData.org) : ''; 
+                    flatRow[`${comp} Discount Price`] = cData ? formatVal(cData.dsc) : ''; 
+                }); 
+                
+                return flatRow; 
+            }); 
+        }
     </script>
 </body>
 </html>
-
-
 
 
