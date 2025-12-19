@@ -101,6 +101,7 @@
             margin-bottom: 6px;
         }
 
+        /* Input ve Dropdown Kutuları (HEPSİ SİYAH/KOYU GRİ) */
         .filter-select, 
         .multi-select-trigger,
         .flatpickr-input[readonly] {
@@ -173,6 +174,7 @@
         .progress-bg { width: 100%; height: 4px; background: #333; border-radius: 2px; margin-top: 10px; overflow: hidden; }
         .progress-fill { height: 100%; background: #10b981; transition: width 0.5s ease; }
 
+        /* GRAFİK GRID YAPISI: Yan Yana Kalmaya Zorlama */
         .charts-grid { 
             display: grid; 
             grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); 
@@ -181,6 +183,7 @@
             width: 100%;
         }
 
+        /* Sadece ÇOK küçük ekranlarda alt alta geç */
         @media (max-width: 992px) {
             .charts-grid { grid-template-columns: 1fr; }
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -213,7 +216,7 @@
             justify-content: space-between;
         }
         #active-filter-banner button {
-            background: none; border: none; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.2rem;
+            background: none; border: none; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;
         }
        
         .apexcharts-tooltip { background: #14161c !important; border-color: #333 !important; color: #fff; }
@@ -274,6 +277,7 @@
         
         #limit-msg { width: 100%; text-align: center; margin-top: 5px; position: static !important; color: #666; font-size: 0.8rem; }
         
+        /* Yüzen Buton */
         #floating-toggle-btn {
             position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px;
             background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 50%;
@@ -458,7 +462,7 @@
     <script>
         let ALL_DATA = [];
         let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
-        let GRAPH_FILTERED_DATA = null; // Grafik filtresi için
+        let GRAPH_FILTERED_DATA = null;
         let flatpickrInstance;
         let SELECTED_BRANCHES = ['all'];
         let SELECTED_CATEGORIES = ['all'];
@@ -541,10 +545,8 @@
 
         // --- TABLO FİLTRELEME MANTIĞI (GRAFİKTEN GELEN) ---
         function filterTableByGraph(filterType, filterValue) {
-            // Eğer veri yoksa işlem yapma
             if(!CURRENT_PROCESSED_DATA || CURRENT_PROCESSED_DATA.rows.length === 0) return;
 
-            // Filtreleme Banner'ını Göster
             const banner = document.getElementById('active-filter-banner');
             const bannerText = document.getElementById('active-filter-text');
             banner.style.display = 'flex';
@@ -558,7 +560,6 @@
                     return catName === filterValue;
                 });
             } else if (filterType === 'POSITION') {
-                // filterValue: 'Daha Ucuzuz', 'Eşit', 'Daha Pahalıyız'
                 bannerText.innerHTML = `Pazar Konumu: <strong>${filterValue}</strong>`;
                 filteredRows = CURRENT_PROCESSED_DATA.rows.filter(row => {
                     const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
@@ -578,11 +579,8 @@
                 });
             }
 
-            // Global değişkeni güncelleme ama tabloyu güncelle
             GRAPH_FILTERED_DATA = filteredRows;
             renderTable(filteredRows.slice(0, 250), CURRENT_PROCESSED_DATA.competitorNames);
-            
-            // Limit mesajını güncelle
             const limitMsg = document.getElementById('limit-msg');
             limitMsg.style.display = (filteredRows.length > 250) ? 'block' : 'none';
         }
@@ -590,7 +588,6 @@
         function clearGraphFilters() {
             document.getElementById('active-filter-banner').style.display = 'none';
             GRAPH_FILTERED_DATA = null;
-            // Orijinal veriyi geri yükle
             const displayData = CURRENT_PROCESSED_DATA.rows.slice(0, 250);
             renderTable(displayData, CURRENT_PROCESSED_DATA.competitorNames);
             const limitMsg = document.getElementById('limit-msg');
@@ -690,7 +687,6 @@
                 return parseFloat(((stats.comp - stats.biz) / stats.comp * 100).toFixed(1));
             });
 
-            // Renkler
             const colors = seriesData.map(val => val >= 0 ? '#10b981' : '#ef4444');
 
             const options = {
@@ -714,23 +710,15 @@
                         },
                         columnWidth: '50%', 
                         borderRadius: 4,
-                        distributed: true // Her çubuğun rengini bağımsız yönetmek için
+                        distributed: true
                     }
                 },
-                colors: colors, // Renk dizisini buraya da ekliyoruz
-                
-                // --- HOVER EFEKTİ DÜZELTME (BEYAZLIK KALKTI) ---
+                colors: colors,
                 states: {
                     normal: { filter: { type: 'none', value: 0 } },
-                    hover: { 
-                        filter: { type: 'darken', value: 0.8 } // Beyazlaşma yerine hafif koyulaşma/parlama
-                    },
-                    active: { 
-                        allowMultipleDataPointsSelection: false, 
-                        filter: { type: 'none', value: 0 } 
-                    }
+                    hover: { filter: { type: 'darken', value: 0.8 } },
+                    active: { allowMultipleDataPointsSelection: false, filter: { type: 'none', value: 0 } }
                 },
-                
                 dataLabels: { enabled: false },
                 xaxis: {
                     categories: categories,
@@ -742,11 +730,7 @@
                 },
                 grid: { borderColor: '#333', strokeDashArray: 4 },
                 theme: { mode: 'dark' },
-                tooltip: {
-                    theme: 'dark',
-                    style: { fontSize: '12px' },
-                    x: { show: true }
-                }
+                tooltip: { theme: 'dark', style: { fontSize: '12px' }, x: { show: true } }
             };
 
             if (chartCategory) { chartCategory.destroy(); }
@@ -790,17 +774,14 @@
                         }
                     }
                 },
-                
-                // --- HOVER EFEKTİ DÜZELTME (PASTA İÇİN) ---
                 states: {
                     normal: { filter: { type: 'none', value: 0 } },
-                    hover: { filter: { type: 'none', value: 0 } }, // Pasta diliminde efekt tamamen kapalı
+                    hover: { filter: { type: 'none', value: 0 } },
                     active: { filter: { type: 'none', value: 0 } }
                 },
-
                 dataLabels: { enabled: false },
                 legend: { position: 'bottom', labels: { colors: '#ccc' } },
-                stroke: { show: false }, // Dilimler arası çizgiyi kaldırır
+                stroke: { show: false },
                 theme: { mode: 'dark' }
             };
 
@@ -958,7 +939,6 @@
             }
         }
         function downloadCSV() { 
-            // İndirme işlemi her zaman mevcut FİLTRELENMİŞ veri setini kullanmalı
             const dataToExport = GRAPH_FILTERED_DATA ? { rows: GRAPH_FILTERED_DATA, competitorNames: CURRENT_PROCESSED_DATA.competitorNames } : CURRENT_PROCESSED_DATA;
             
             if (!dataToExport.rows || dataToExport.rows.length === 0) return;
