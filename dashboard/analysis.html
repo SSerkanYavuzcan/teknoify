@@ -62,7 +62,7 @@
             margin-left: 260px !important; width: calc(100% - 260px) !important;
             min-height: 100vh; display: block !important; position: relative !important;
             padding: 0 !important;
-            transition: margin-left 0.3s ease, width 0.3s ease; /* Yumuşak geçiş */
+            transition: margin-left 0.3s ease, width 0.3s ease;
         }
 
         body.sidebar-closed .sidebar { transform: translateX(-100%) !important; }
@@ -84,7 +84,7 @@
         }
 
         /* =========================================================================
-           4. FİLTRE ÇUBUĞU
+           4. FİLTRE ÇUBUĞU (GÜNCELLENDİ)
            ========================================================================= */
         .filter-bar { 
             margin-bottom: 20px; position: relative; z-index: 2000; 
@@ -94,7 +94,6 @@
         
         .filter-group { display: flex; flex-direction: column; gap: 5px; }
         
-        /* Label Stilleri (Baş harf büyük) */
         .filter-group label { 
             font-size: 0.75rem; 
             color: #888; 
@@ -175,19 +174,22 @@
         .progress-bg { width: 100%; height: 4px; background: #333; border-radius: 2px; margin-top: 10px; overflow: hidden; }
         .progress-fill { height: 100%; background: #10b981; transition: width 0.5s ease; }
 
-        /* GÜNCELLEME: GRAFİK GRID YAPISI */
+        /* GRAFİK GRID YAPISI: Yan Yana Kalmaya Zorlama */
         .charts-grid { 
             display: grid; 
-            grid-template-columns: 2fr 1fr; /* Normalde 2'ye 1 */
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); /* 2'ye 1 oran, minmax overflow'u önler */
             gap: 15px; 
             min-height: 320px;
-            width: 100%; /* Sığdırma garantisi */
+            width: 100%;
         }
 
-        /* GÜNCELLEME: EKRAN DARALINCA GRAFİKLERİ ALT ALTA AL (TAŞMAYI ÖNLER) */
-        @media (max-width: 1400px) {
+        /* Sadece ÇOK küçük ekranlarda alt alta geç (Laptopta yan yana kalır) */
+        @media (max-width: 992px) {
             .charts-grid {
-                grid-template-columns: 1fr; /* Tek kolon (Alt alta) */
+                grid-template-columns: 1fr;
+            }
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -198,7 +200,7 @@
             padding: 15px; 
             display: flex; 
             flex-direction: column;
-            min-width: 0; /* KRİTİK: Grid içinde taşmayı önleyen sihirli kod */
+            min-width: 0; /* KRİTİK: Flex/Grid içinde taşmayı önler */
         }
         
         .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -449,6 +451,38 @@
         let chartCategory = null;
         let chartPie = null;
 
+        // --- KATEGORİ EŞLEŞTİRME HARİTASI (L2 -> L1) ---
+        const CATEGORY_MAPPING = {
+            "Taze Meyve": "Meyve & Sebze", "Taze Sebze": "Meyve & Sebze", "Taze Ot & Yeşillik": "Meyve & Sebze", "Patates, Soğan & Sarımsak": "Meyve & Sebze", "Kullanıma Hazır Meyve & Sebze": "Meyve & Sebze",
+            "Dana Eti": "Et, Tavuk & Şarküteri", "Kuzu Eti": "Et, Tavuk & Şarküteri", "Tavuk Eti": "Et, Tavuk & Şarküteri", "Kıyma": "Et, Tavuk & Şarküteri", "Pişirilmeye Hazır Etler": "Et, Tavuk & Şarküteri", "Diğer Et Ürünleri": "Et, Tavuk & Şarküteri", "Sucuk & Sosis": "Et, Tavuk & Şarküteri", "Salam & Jambon": "Et, Tavuk & Şarküteri", "Kavurma & Pastırma": "Et, Tavuk & Şarküteri", "Diğer Şarküteri Ürünleri": "Et, Tavuk & Şarküteri", "Sakatat Ürünleri": "Et, Tavuk & Şarküteri",
+            "Süt": "Süt & Süt Ürünleri", "Beyaz Peynir": "Süt & Süt Ürünleri", "Kaşar Peyniri": "Süt & Süt Ürünleri", "Diğer Peynirler": "Süt & Süt Ürünleri", "Tereyağı & Margarin": "Süt & Süt Ürünleri", "Yoğurt": "Süt & Süt Ürünleri", "Süt Ürünleri": "Süt & Süt Ürünleri",
+            "Yumurta": "Kahvaltılık", "Zeytin": "Kahvaltılık", "Bal & Reçel": "Kahvaltılık", "Çikolata & Ezme": "Kahvaltılık", "Tahin & Pekmez": "Kahvaltılık", "Kahvaltılık Gevrek": "Kahvaltılık", "Kahvaltılık Sos": "Kahvaltılık",
+            "Makarna & Mantı": "Temel Gıda", "Pirinç & Bakliyat": "Temel Gıda", "Un & Harçlar": "Temel Gıda", "Tuz & Şeker": "Temel Gıda", "Sıvı Yağ": "Temel Gıda", "Salça & Sos": "Temel Gıda", "Sirke & Salata Sosu": "Temel Gıda", "Baharat & Çeşniler": "Temel Gıda", "Hazır Çorba & Bulyon": "Temel Gıda", "Konserve & Turşu": "Temel Gıda", "Tatlı Malzemeleri": "Temel Gıda", "Aktar Ürünleri": "Temel Gıda",
+            "Çikolata": "Atıştırmalık", "Kaplamalı & Bar Çikolata": "Atıştırmalık", "Gofret": "Atıştırmalık", "Kek": "Atıştırmalık", "Bisküvi": "Atıştırmalık", "Cips & Patlamış Mısır": "Atıştırmalık", "Kraker & Kurabiye": "Atıştırmalık", "Kuru Yemiş": "Atıştırmalık", "Helva & Krokan": "Atıştırmalık", "Sakız": "Atıştırmalık", "Şekerleme": "Atıştırmalık", "Tatlı": "Atıştırmalık",
+            "Su": "Su & İçecek", "Gazlı İçecek": "Su & İçecek", "Maden Suyu": "Su & İçecek", "Meyve Suyu": "Su & İçecek", "Soğuk Çay & Kahve": "Su & İçecek", "Ayran & Kefir": "Su & İçecek", "Enerji İçeceği": "Su & İçecek", "Hazır & Toz İçecekler": "Su & İçecek", "Diğer İçecekler": "Su & İçecek",
+            "Siyah Çay": "Çay & Kahve", "Kahve": "Çay & Kahve", "Bitki Çayı": "Çay & Kahve",
+            "Taze Fırın": "Fırından", "Paketli Ekmekler": "Fırından", "Unlu Mamuller": "Fırından", "Tatlı Unlu Mamuller": "Fırından",
+            "Kutu Dondurma": "Dondurma", "Çubuk Dondurma": "Dondurma", "Çoklu Dondurma": "Dondurma", "Dondurma Bar": "Dondurma", "Külah Dondurma": "Dondurma",
+            "Donuk Hamur İşleri": "Dondurulmuş Gıda", "Donuk Et, Tavuk & Balık": "Dondurulmuş Gıda", "Donuk Patates, Meyve & Sebze": "Dondurulmuş Gıda", "Donuk Tatlı & Atıştırmalık": "Dondurulmuş Gıda",
+            "Sandviç": "Hızlı Yemek", "Hazır Yemek": "Hızlı Yemek", "Taze Meze": "Hızlı Yemek",
+            "Sağlıklı Atıştırmalıklar": "Sağlıklı Yaşam", "Granola & Tahıllı Gevrek": "Sağlıklı Yaşam", "Fit Süt & Süt Ürünleri": "Sağlıklı Yaşam", "Organik": "Sağlıklı Yaşam", "Vegan": "Sağlıklı Yaşam", "Glütensiz": "Sağlıklı Yaşam", "Gıda Takviyeleri & Vitaminler": "Sağlıklı Yaşam",
+            "Taze Balık": "Balık & Deniz Ürünleri", "Deniz Ürünleri": "Balık & Deniz Ürünleri",
+            "Çamaşır": "Ev Bakım", "Bulaşık": "Ev Bakım", "Mutfak & Banyo": "Ev Bakım", "Temizlik": "Ev Bakım", "Oda Kokusu": "Ev Bakım", "Böcek İlacı": "Ev Bakım", "Tek Kullanımlık Mutfak Ürünleri": "Ev Bakım", "Buzdolabı & Çöp Poşeti": "Ev Bakım", "Diğer Tek Kullanımlık Ürünler": "Ev Bakım",
+            "Tuvalet Kağıdı": "Kağıt Ürünleri", "Kağıt Havlu & Peçete": "Kağıt Ürünleri", "Islak Mendil & Havlu": "Kağıt Ürünleri",
+            "Şampuan & Saç Kremi": "Kişisel Bakım", "Saç Bakımı": "Kişisel Bakım", "Ağız & Diş Bakımı": "Kişisel Bakım", "Parfüm & Deodorant": "Kişisel Bakım", "Sabun": "Kişisel Bakım", "Duş & Banyo": "Kişisel Bakım", "Hijyenik Ped": "Kişisel Bakım", "Yüz, Cilt & Vücut Bakımı": "Kişisel Bakım", "Tıraş & Epilasyon": "Kişisel Bakım", "Ağda & Tüy Dökücü": "Kişisel Bakım", "Kolonya": "Kişisel Bakım", "Sağlık Ürünleri": "Kişisel Bakım", "Cinsel Sağlık": "Kişisel Bakım", "Bakım & Aksesuar Ürünleri": "Kişisel Bakım",
+            "Saç Boyası": "Kozmetik", "Makyaj Malzemeleri": "Kozmetik", "Makyaj Temizleme": "Kozmetik", "Oje & Aseton": "Kozmetik",
+            "Bebek Beslenme": "Bebek", "Bebek Bezi": "Bebek", "Bebek Bakım Ürünleri": "Bebek", "Diğer Bebek Ürünleri": "Bebek",
+            "Kedi": "Evcil Hayvan", "Köpek": "Evcil Hayvan", "Pet Aksesuarları & Diğerleri": "Evcil Hayvan",
+            "Ev Gereçleri": "Ev & Yaşam", "Sofra & Mutfak": "Ev & Yaşam", "Bahçe": "Ev & Yaşam", "Dergi, Gazete & Kitap": "Ev & Yaşam", "Oyuncak & Kutu Oyunları": "Ev & Yaşam", "Parti Malzemeleri": "Ev & Yaşam", "Kırtasiye Ürünleri": "Ev & Yaşam", "Telefon & Bilgisayar Aksesuarları": "Ev & Yaşam", "Elektrikli Ev Aletleri": "Ev & Yaşam", "Elektrik & Aydınlatma": "Ev & Yaşam", "Pil": "Ev & Yaşam", "Oto Bakım Ürünleri": "Ev & Yaşam",
+            "Giyim & Tekstil": "Giyim & Aksesuar", "Takı & Aksesuar": "Giyim & Aksesuar", "Spor & Outdoor": "Giyim & Aksesuar"
+        };
+
+        function getMainCategory(l2Name) {
+            if (!l2Name) return "Diğer";
+            const cleanName = l2Name.trim();
+            return CATEGORY_MAPPING[cleanName] || "Diğer";
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof SessionManager === 'undefined') return;
             const session = new SessionManager();
@@ -519,7 +553,10 @@
                     totalBiz += bizPrice;
                     totalComp += minCompPrice;
                    
-                    const cat = (row['Category Name'] || 'Diğer').trim();
+                    // --- GÜNCELLEME: L1 Kategori Kullanımı ---
+                    const l2Name = row['Category Name'];
+                    const cat = getMainCategory(l2Name); // Haritadan L1 bul
+
                     if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0, count: 0 };
                     categoryStats[cat].biz += bizPrice;
                     categoryStats[cat].comp += minCompPrice;
