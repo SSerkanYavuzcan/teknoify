@@ -682,7 +682,7 @@
             renderPieChart(countCheaper, countEqual, countExpensive);
         }
 
-        function renderCategoryChart(categoryStats) {
+function renderCategoryChart(categoryStats) {
             const categories = Object.keys(categoryStats);
             const seriesData = categories.map(cat => {
                 const stats = categoryStats[cat];
@@ -690,7 +690,7 @@
                 return parseFloat(((stats.comp - stats.biz) / stats.comp * 100).toFixed(1));
             });
 
-            // Renkler
+            // Renkler (Pozitif Yeşil, Negatif Kırmızı)
             const colors = seriesData.map(val => val >= 0 ? '#10b981' : '#ef4444');
 
             const options = {
@@ -700,10 +700,16 @@
                     height: 280, 
                     toolbar: { show: false }, 
                     background: 'transparent',
+                    fontFamily: 'Inter Tight, sans-serif',
                     events: {
-                        dataPointSelection: function(event, chartContext, config) {
-                            const selectedCat = categories[config.dataPointIndex];
-                            filterTableByGraph('CATEGORY', selectedCat);
+                        // REVİZE 1: dataPointSelection yerine 'click' kullanıyoruz.
+                        // Bu sayede bara denk getiremese bile o sütuna tıklaması yeterli olur.
+                        click: function(event, chartContext, config) {
+                            // config.dataPointIndex, tıklanan sütunun indeksini verir (boşluğa tıklansa bile)
+                            if (config.dataPointIndex !== undefined && config.dataPointIndex > -1) {
+                                const selectedCat = categories[config.dataPointIndex];
+                                filterTableByGraph('CATEGORY', selectedCat);
+                            }
                         }
                     }
                 },
@@ -712,26 +718,69 @@
                         colors: {
                             ranges: [{ from: -100, to: -0.1, color: '#ef4444' }, { from: 0, to: 100, color: '#10b981' }]
                         },
-                        columnWidth: '50%', 
-                        borderRadius: 4
+                        columnWidth: '55%', // Barı biraz daha dolgun gösterir
+                        borderRadius: 4,
+                        dataLabels: { position: 'top' } // Etiket pozisyonu
                     }
                 },
-                // HOVER EFEKTİ DÜZELTME
+                // REVİZE 2: Hover Efekti (Daha profesyonel, ışık hüzmesi yok)
                 states: {
-                    hover: { filter: { type: 'lighten', value: 0.05 } }, // Beyazlık yerine hafif açılma
-                    active: { filter: { type: 'none' } }
+                    normal: { filter: { type: 'none', value: 0 } },
+                    hover: { 
+                        filter: { type: 'brightness', value: 1.1 }, // Hafifçe parlatır (beyaz ışık olmadan)
+                    },
+                    active: { 
+                        allowMultipleDataPointsSelection: false,
+                        filter: { type: 'darken', value: 0.8 } // Tıklanınca hafif koyulaşır (tepki verir)
+                    }
                 },
                 dataLabels: { enabled: false },
                 xaxis: {
                     categories: categories,
-                    labels: { style: { colors: '#888', fontSize: '11px' } },
-                    axisBorder: { show: false }, axisTicks: { show: false }
+                    labels: { 
+                        style: { colors: '#888', fontSize: '11px', fontWeight: 500 },
+                        rotate: -45,
+                        trim: true 
+                    },
+                    axisBorder: { show: false }, 
+                    axisTicks: { show: false },
+                    // REVİZE 3: O "Beyaz Işık" (crosshairs) arkadaki gri sütunu kaldırır.
+                    crosshairs: {
+                        show: false, 
+                    },
+                    // Kullanıcının boşluğa tıklayabilmesi için tooltip tetikleyicisini genişletiyoruz
+                    tooltip: {
+                        enabled: false // X ekseni tooltip'ini kapattık, ana tooltip çalışacak
+                    }
                 },
                 yaxis: {
-                    labels: { style: { colors: '#888' }, formatter: (val) => `%${val}` }
+                    labels: { 
+                        style: { colors: '#888', fontFamily: 'Fira Code, monospace' }, 
+                        formatter: (val) => `%${val}` 
+                    },
+                    axisBorder: { show: false }
                 },
-                grid: { borderColor: '#333', strokeDashArray: 4 },
-                theme: { mode: 'dark' }
+                grid: { 
+                    borderColor: '#333', 
+                    strokeDashArray: 4,
+                    yaxis: { lines: { show: true } },
+                    xaxis: { lines: { show: false } }, // Dikey çizgileri kapattık, daha temiz görünüm
+                    padding: { top: 0, right: 0, bottom: 0, left: 10 }
+                },
+                // REVİZE 4: Tooltip Ayarları (Boşlukta bile çalışması için)
+                tooltip: {
+                    theme: 'dark',
+                    intersect: false, // FALSE yaparak, direkt barın üstüne gelmese bile o hizadaysa göster diyoruz.
+                    shared: true,     // Aynı hizadaki veriyi yakalar.
+                    style: { fontSize: '12px' },
+                    x: { show: true },
+                    y: {
+                        formatter: function (val) {
+                            return "%" + val;
+                        }
+                    },
+                    marker: { show: true },
+                }
             };
 
             if (chartCategory) { chartCategory.destroy(); }
@@ -1154,5 +1203,9 @@
     </script>
 </body>
 </html>
+
+
+
+
 
 
