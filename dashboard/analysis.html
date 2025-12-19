@@ -1061,50 +1061,53 @@
             const grouped = {};
             const allCompetitors = new Set();
             data.forEach(row => {
-                const key = row['SKU'] || row['Product Name'];
-                if (!key) return;
+                // REVİZE: Key artık Tarih + Ürün. Böylece her gün için ayrı satır oluşur.
+                const productKey = row['SKU'] || row['Product Name'];
+                if (!productKey) return;
+                const uniqueKey = `${row['Report Date']}_${productKey}`;
+
                 let rawCompName = row['Competitor Store Name'];
                 let compName = rawCompName ? rawCompName.trim() : 'Bilinmeyen';
                 if(compName && compName !== 'Bilinmeyen') { allCompetitors.add(compName); }
-                if (!grouped[key]) {
-                    grouped[key] = {
+                
+                if (!grouped[uniqueKey]) {
+                    grouped[uniqueKey] = {
                         ...row,
                         tazeyo_price_org: parsePrice(row['Tazeyo Original Price']),
                         tazeyo_price_dsc: parsePrice(row['Tazeyo Discount Price']),
                         competitors: {}
                     };
                 }
-                grouped[key].competitors[compName] = {
+                grouped[uniqueKey].competitors[compName] = {
                     org: parsePrice(row['Competitor Original Price']),
                     dsc: parsePrice(row['Competitor Discount Price'])
                 };
             });
             
-            // YENİ SIRALAMA MANTIĞI: Marketten -> Carrefour -> Migros -> Diğerleri
             const sortOrder = ['marketten', 'carrefour', 'migros'];
             const sortedCompetitors = Array.from(allCompetitors).sort((a, b) => {
                 const aLower = a.toLowerCase();
                 const bLower = b.toLowerCase();
-                
-                // Öncelik sırasını bul
                 let idxA = sortOrder.findIndex(key => aLower.includes(key));
                 let idxB = sortOrder.findIndex(key => bLower.includes(key));
-                
-                // Listede yoksa sona at (99 gibi yüksek bir index vererek)
                 if (idxA === -1) idxA = 99;
                 if (idxB === -1) idxB = 99;
-                
-                // Eğer ikisi de listede varsa veya yoksa kendi aralarında sırala
-                if (idxA !== idxB) {
-                    return idxA - idxB;
-                }
-                
-                // Aynı öncelikteyse (örneğin ikisi de 'Diğer' grubundaysa) alfabetik sırala
+                if (idxA !== idxB) return idxA - idxB;
                 return a.localeCompare(b);
             });
 
+            // REVİZE: Tarihe göre (Yeniden Eskiye) Sıralama
+            const sortedRows = Object.values(grouped).sort((a, b) => {
+                // dd.mm.yyyy formatını parse et
+                const partsA = a['Report Date'].split('.');
+                const dateA = new Date(partsA[2], partsA[1]-1, partsA[0]);
+                const partsB = b['Report Date'].split('.');
+                const dateB = new Date(partsB[2], partsB[1]-1, partsB[0]);
+                return dateB - dateA; // Büyükten küçüğe
+            });
+
             return {
-                rows: Object.values(grouped),
+                rows: sortedRows,
                 competitorNames: sortedCompetitors
             };
         }
@@ -1251,7 +1254,7 @@
             const flatData = flattenForExport(dataToExport);
             const ws = XLSX.utils.json_to_sheet(flatData);
 
-            // STİL AYARLARI (xlsx-js-style kütüphanesi gerekli)
+            // STİL AYARLARI
             const range = XLSX.utils.decode_range(ws['!ref']);
             for (let C = range.s.c; C <= range.e.c; ++C) {
                 const address = XLSX.utils.encode_cell({ r: 0, c: C });
@@ -1262,7 +1265,6 @@
                 };
             }
             
-            // Sütun genişliklerini ayarla
             const wscols = [];
             for (let i = 0; i <= range.e.c; i++) { wscols.push({ wch: 20 }); }
             ws['!cols'] = wscols;
@@ -1278,10 +1280,7 @@
 
         function flattenForExport(dataObj) { 
             return dataObj.rows.map(row => { 
-                // 0 değerlerini boş stringe çeviren yardımcı fonksiyon
                 const formatVal = (val) => (val === 0 || val === "0") ? "" : val;
-
-                // "Bizim" mağaza adını dinamik al
                 const myStoreName = row['Store Name'] || "Mağaza";
 
                 const flatRow = { 
@@ -1293,11 +1292,9 @@
                     'Category': row['Category Name']
                 };
 
-                // Dinamik Key'ler: "StoreName Original Price"
                 flatRow[`${myStoreName} Original Price`] = formatVal(row.tazeyo_price_org);
                 flatRow[`${myStoreName} Discount Price`] = formatVal(row.tazeyo_price_dsc);
 
-                // Rakipler
                 dataObj.competitorNames.forEach(comp => { 
                     const cData = row.competitors[comp]; 
                     flatRow[`${comp} Original Price`] = cData ? formatVal(cData.org) : ''; 
