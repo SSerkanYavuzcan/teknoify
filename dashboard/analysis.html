@@ -17,11 +17,11 @@
         /* --- 1.1: LAYOUT RESET --- */
         * { box-sizing: border-box; }
        
-        /* Scroll kilidini kaldırdık (hidden -> auto yaptık) */
+        /* Scroll kilidini kaldırdık */
         html, body {
             height: auto !important;
             min-height: 100vh !important;
-            overflow-y: auto !important; /* Dikey kaydırmaya izin ver */
+            overflow-y: auto !important;
             overflow-x: hidden !important;
             background-color: #0b0e11;
             margin: 0; padding: 0;
@@ -87,8 +87,8 @@
         .kpi-title { font-size: 0.85rem; color: #888; margin-bottom: 8px; font-weight: 500; }
         .kpi-value { font-size: 1.4rem; font-weight: 700; color: #fff; }
         .kpi-trend { font-size: 0.8rem; margin-top: 5px; display: flex; align-items: center; gap: 5px; color: #aaa; }
-        .trend-up { color: #10b981; font-weight: 600; } /* Yeşil */
-        .trend-down { color: #ef4444; font-weight: 600; } /* Kırmızı */
+        .trend-up { color: #10b981; font-weight: 600; }
+        .trend-down { color: #ef4444; font-weight: 600; }
         .trend-neutral { color: #888; }
         
         .progress-bg { width: 100%; height: 4px; background: #333; border-radius: 2px; margin-top: 10px; overflow: hidden; }
@@ -162,18 +162,57 @@
         .price-cell { min-width: 100px; text-align: center; font-family: 'Fira Code', monospace; }
 
 
-        /* --- 1.4: DİĞER BİLEŞENLER --- */
+        /* --- 1.4: DİĞER BİLEŞENLER VE FİLTRE DÜZENLEMELERİ --- */
         #limit-msg { width: 100%; text-align: center; margin-top: 5px; position: static !important; color: #666; font-size: 0.8rem; }
-        .filter-bar { margin-bottom: 20px; position: relative; z-index: 2000; display: flex; flex-wrap: wrap; gap: 15px; background: #1f232c; padding: 15px; border-radius: 12px; border: 1px solid #333; }
+        
+        /* Filtre Bar Konteyner */
+        .filter-bar { 
+            margin-bottom: 20px; position: relative; z-index: 2000; 
+            display: flex; flex-wrap: wrap; gap: 15px; 
+            background: #1f232c; padding: 15px; border-radius: 12px; border: 1px solid #333; 
+        }
+        
         .filter-group { display: flex; flex-direction: column; gap: 5px; }
-        .filter-group label { font-size: 0.75rem; color: #888; font-weight: 600; text-transform: uppercase; }
-        .filter-select { background: #14161c; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 6px; min-width: 200px; cursor: pointer; }
+        
+        /* GÜNCELLEME: Label Stilleri (Baş harf büyük, uppercase kalktı) */
+        .filter-group label { 
+            font-size: 0.75rem; 
+            color: #888; 
+            font-weight: 600; 
+            margin-bottom: 6px;
+        }
+
+        /* GÜNCELLEME: Input ve Dropdown Kutuları (Eşitlendi) */
+        .filter-select, 
+        .multi-select-trigger {
+            background-color: #14161c !important; /* Koyu arka plan */
+            border: 1px solid #333 !important;
+            color: #fff;
+            padding: 0 12px;
+            border-radius: 6px;
+            height: 42px; /* Sabit yükseklik */
+            width: 100%;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+            min-width: 200px;
+            cursor: pointer;
+        }
+
+        .filter-select:hover, 
+        .multi-select-trigger:hover {
+            border-color: #555 !important;
+        }
+
         .date-picker-wrapper { position: relative; }
         .calendar-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none; }
         
         .multi-select-wrapper { position: relative; min-width: 200px; }
-        .multi-select-trigger { background: #14161c; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        
+        .multi-select-trigger { justify-content: space-between; } /* Dropdown oku için */
         .multi-select-trigger::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 0.8em; color: #666; }
+        
         .multi-select-menu { position: absolute; top: 100%; left: 0; width: 100%; max-height: 300px; display: none; flex-direction: column; background: #1f232c; border: 1px solid #333; z-index: 9999; border-radius: 6px; margin-top: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .multi-select-menu.show { display: flex; }
         .fixed-dropdown-header { flex-shrink: 0; background: #1f232c; border-bottom: 1px solid #333; padding: 5px; }
@@ -187,12 +226,12 @@
         .multi-option.selected .option-checkbox { background: #10b981; border-color: #10b981; }
         .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 9px; color: white; }
 
-        .btn-filter { background: #7367f0; color: white; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-top: auto; height: 40px; transition: 0.2s; }
+        .btn-filter { background: #7367f0; color: white; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-top: auto; height: 42px; transition: 0.2s; }
         .btn-filter:hover { background: #6052d6; }
         .btn-filter:disabled { background: #333; cursor: not-allowed; }
 
         .download-wrapper { margin-left: auto; position: relative; display: flex; align-items: flex-end; }
-        .btn-download { background: #2f3349; color: #fff; border: 1px solid #444; padding: 0 15px; border-radius: 6px; height: 40px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .btn-download { background: #2f3349; color: #fff; border: 1px solid #444; padding: 0 15px; border-radius: 6px; height: 42px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         .btn-download.btn-disabled { opacity: 0.5; pointer-events: none; }
         .download-menu { position: absolute; top: 100%; right: 0; width: 180px; background: #1f232c; border: 1px solid #333; border-radius: 6px; display: none; z-index: 2000; margin-top: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .download-menu.show { display: block; }
@@ -401,12 +440,10 @@
    
     <script>
         let ALL_DATA = [];
-        let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] }; // Eksikti, eklendi
+        let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
         let flatpickrInstance;
         let SELECTED_BRANCHES = ['all'];
         let SELECTED_CATEGORIES = ['all'];
-       
-        // Grafik Örnekleri
         let chartCategory = null;
         let chartPie = null;
 
@@ -455,13 +492,10 @@
 
         // --- DASHBOARD GÜNCELLEME FONKSİYONU ---
         function updateDashboard(dataRows) {
-            // 1. KPI Hesaplamaları
             let totalBiz = 0, totalComp = 0;
             let discountCountBiz = 0;
             let totalDiscountDepth = 0, depthCount = 0;
             let categoryStats = {};
-           
-            // Pie Chart Verileri
             let countCheaper = 0;
             let countEqual = 0;
             let countExpensive = 0;
@@ -479,25 +513,21 @@
                     }
                 });
                
-                // İstatistikler
                 if (bizPrice > 0 && hasComp && minCompPrice < Infinity) {
                     totalBiz += bizPrice;
                     totalComp += minCompPrice;
                    
-                    // Kategori Analizi
                     const cat = (row['Category Name'] || 'Diğer').trim();
                     if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0, count: 0 };
                     categoryStats[cat].biz += bizPrice;
                     categoryStats[cat].comp += minCompPrice;
                     categoryStats[cat].count++;
 
-                    // Konumlandırma
                     if (bizPrice < minCompPrice) countCheaper++;
                     else if (bizPrice > minCompPrice) countExpensive++;
                     else countEqual++;
                 }
 
-                // İndirim Derinliği
                 if (row.tazeyo_price_dsc > 0 && row.tazeyo_price_dsc < row.tazeyo_price_org) {
                     discountCountBiz++;
                     const depth = ((row.tazeyo_price_org - row.tazeyo_price_dsc) / row.tazeyo_price_org) * 100;
@@ -506,7 +536,6 @@
                 }
             });
 
-            // KPI'ları Yaz
             const compElem = document.getElementById('kpi-competition');
             const compSub = document.getElementById('kpi-competition-sub');
            
@@ -530,7 +559,6 @@
             document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
             document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
 
-            // En Avantajlı Kategori
             let bestCat = '-'; let maxDiff = -Infinity;
             for (const [cat, stats] of Object.entries(categoryStats)) {
                 if (stats.comp <= 0) continue;
@@ -542,8 +570,6 @@
                 ? (maxDiff > 0 ? `<span class="trend-up">+%${maxDiff.toFixed(1)} Avantaj</span>` : `<span class="trend-down">%${maxDiff.toFixed(1)} Dezavantaj</span>`)
                 : '-';
 
-
-            // --- GRAFİKLERİ ÇİZ ---
             renderCategoryChart(categoryStats);
             renderPieChart(countCheaper, countEqual, countExpensive);
         }
@@ -553,12 +579,8 @@
             const seriesData = categories.map(cat => {
                 const stats = categoryStats[cat];
                 if(stats.comp === 0) return 0;
-                // Pozitif ise biz ucuzuz, negatif ise biz pahalıyız (Görsel algı için ters mantık)
                 return parseFloat(((stats.comp - stats.biz) / stats.comp * 100).toFixed(1));
             });
-
-            // Renkleri belirle (Pozitif Yeşil, Negatif Kırmızı)
-            const colors = seriesData.map(val => val >= 0 ? '#10b981' : '#ef4444');
 
             const options = {
                 series: [{ name: 'Fiyat Avantajı (%)', data: seriesData }],
@@ -625,7 +647,6 @@
             chartPie.render();
         }
 
-        // --- DİĞER FONKSİYONLAR (Önceki koddan geri getirildi) ---
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
         function getBrandColor(fullName) {
             if (!fullName) return '#f97316';
@@ -774,8 +795,6 @@
                 if(input) input.focus();
             }
         }
-        
-        // FİLTRELEME VE TABLO RENDER (En Kritik Kısım)
         function applyFilters() {
             const dateRange = flatpickrInstance.selectedDates;
             const tbody = document.getElementById('table-body');
@@ -804,30 +823,22 @@
             });
 
             const aggregatedResult = aggregateData(filteredData);
-            CURRENT_PROCESSED_DATA = aggregatedResult; // İndirme işlemleri için global'e ata
+            CURRENT_PROCESSED_DATA = aggregatedResult;
 
             if (aggregatedResult.rows.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
                 btnDownload.classList.add('btn-disabled');
                 limitMsg.style.display = 'none';
-                
-                // Grafik verisi yoksa boşalt
                 if(chartCategory) chartCategory.updateSeries([{ data: [] }]);
                 if(chartPie) chartPie.updateSeries([0,0,0]);
                 document.getElementById('kpi-competition').innerText = "-";
-                
                 return;
             }
 
             btnDownload.classList.remove('btn-disabled');
-           
-            // 1. Dashboard'u Güncelle (KPI + Charts)
             updateDashboard(aggregatedResult.rows);
-
-            // 2. Tabloyu Güncelle
             const displayData = aggregatedResult.rows.slice(0, 250);
             limitMsg.style.display = (aggregatedResult.rows.length > 250) ? 'block' : 'none';
-
             renderTable(displayData, aggregatedResult.competitorNames);
         }
 
@@ -867,7 +878,6 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // HEADER (1. SATIR)
             let headerTopHtml = '';
             headerTopHtml += `<th class="sticky-product" style="z-index:1200 !important; top:0 !important; text-align:left;">Ürün Adı</th>`;
             headerTopHtml += `<th rowspan="2">Rapor Tarihi</th><th rowspan="2">Mağaza</th><th rowspan="2">SKU</th><th rowspan="2">Marka</th><th rowspan="2">Kategori</th>`;
@@ -887,7 +897,6 @@
             headerTopHtml += `<th colspan="2" style="background:#14161c;" class="border-left-strong">En Ucuz Kanal</th>`;
             theadTop.innerHTML = headerTopHtml;
 
-            // HEADER (2. SATIR)
             let headerBottomHtml = '';
             headerBottomHtml += `<th>Original</th><th>Discount</th>`;
             competitorNames.forEach(() => {
@@ -899,7 +908,6 @@
             const firstRowCells = theadTop.querySelectorAll('th');
             firstRowCells[0].setAttribute('rowspan', '2');
            
-            // DATA
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 let html = `
