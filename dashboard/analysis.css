@@ -136,42 +136,22 @@
 
 
 /* ----------------------------------------------------------------
-   4. KARŞILAŞTIRMA TABLOSU - HTML YAPISINA ÖZEL FİNAL ÇÖZÜM
+   4. KARŞILAŞTIRMA TABLOSU - KESİN ÇÖZÜM (SPLIT HEADER)
    ---------------------------------------------------------------- */
-
-
-/* 1. TABLO & KAPSAYICI AYARLARI */
-.table-responsive-wrapper {
-    display: block;
-    width: 100%;
-    overflow: auto; /* Scroll yönetimi burada */
-    max-height: 65vh;
-    border: 1px solid var(--border);
-    border-radius: 0 0 12px 12px;
-    background: var(--dash-card);
-    position: relative; /* Sticky için referans noktası */
-}
 
 
 .comparison-table {
     width: 100%;
-    border-collapse: separate; /* Sticky'nin çalışması için ZORUNLU */
-    border-spacing: 0; /* Hücre aralarını kapatır */
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 0.75rem;
     table-layout: auto;
 }
 
 
-/* ----------------------------------------------------------------
-   2. KATMAN MİMARİSİ (Z-INDEX)
-   
-   Mantık: Sol Ürün Sütunu > Üst Başlıklar > Veriler
-   ---------------------------------------------------------------- */
-
-
-/* A) GENEL BAŞLIK STİLİ (Tüm TH'ler) */
+/* --- TÜM BAŞLIKLAR GENEL AYAR --- */
 .comparison-table th {
-    background-color: var(--dash-sidebar) !important; /* Arka plan şeffaf olmamalı */
+    background-color: var(--dash-sidebar) !important;
     color: #fff;
     padding: 8px 6px;
     border-bottom: 1px solid var(--border);
@@ -179,65 +159,62 @@
     text-align: center;
     font-weight: 600;
     white-space: nowrap;
-    background-clip: padding-box; /* Kenarlık çakışmasını önler */
+    background-clip: padding-box;
    
-    /* Varsayılan olarak tüm başlıklar yukarı yapışsın */
+    /* Hepsi dikeyde (yukarı) yapışsın */
     position: sticky;
     top: 0;
-    z-index: 100; /* Düşük öncelikli başlıklar */
-}
-
-
-/* B) 1. SATIR: MARKET İSİMLERİ (En Üst) */
-#header-row-top th {
-    top: 0;
-    height: 45px;
-    z-index: 100; /* Sol sütunun altında kalmalı */
-}
-
-
-/* C) 2. SATIR: ALT DETAYLAR (Price, Discount vb.) */
-#header-row-bottom th {
-    top: 45px; /* Üst satırın yüksekliği kadar aşağıda */
-    height: 40px;
-    z-index: 100;
-    color: var(--text-muted);
+    z-index: 100; /* Standart katman */
 }
 
 
 /* ----------------------------------------------------------------
-   3. KRİTİK BÖLGE: SOL SÜTUN SABİTLEME (Ürün Adı)
+   KRİTİK BÖLGE: SOL TARAFTAKİ SABİT SÜTUNLAR
    ---------------------------------------------------------------- */
 
 
-/* Sol Üst Köşe: "Ürün Adı" BAŞLIĞI */
-/* Bu hücre hem YUKARI hem SOLA yapışık olmalı ve HER ŞEYİN ÜSTÜNDE durmalı */
+/* 1. SOL ÜST KÖŞE (1. Satır, 1. Sütun - "Ürün" yazan yer) */
+.th-fixed-corner {
+    position: sticky !important;
+    left: 0 !important;   /* Sola yapışık */
+    top: 0 !important;    /* Yukarı yapışık */
+    z-index: 600 !important; /* EN YÜKSEK KATMAN (Her şeyin üstünde) */
+   
+    background-color: var(--dash-sidebar) !important;
+    border-right: 2px solid #555 !important;
+    min-width: 220px;
+    max-width: 220px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5); /* Derinlik hissi */
+}
+
+
+/* 2. SOL ALT BAŞLIK (2. Satır, 1. Sütun - "Ürün Adı" yazan yer) */
 th.sticky-product {
     position: sticky !important;
     left: 0 !important;
-    top: 45px !important; /* 2. Satırda olduğu için */
-    z-index: 500 !important; /* EN YÜKSEK KATMAN (Overlap'i çözen satır) */
+    top: 45px !important; /* 1. satırın altından başlar */
+    z-index: 600 !important; /* En yüksek katman */
    
     background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #555 !important; /* Ayrımı netleştiren çizgi */
+    border-right: 2px solid #555 !important;
     min-width: 220px;
     max-width: 220px;
     text-align: left !important;
     padding-left: 12px !important;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5); /* Sola yapıştığını hissettiren gölge */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
 }
 
 
-/* Sol Sütun: VERİ HÜCRELERİ (Ürün İsimleri) */
+/* 3. SOL SÜTUN VERİLERİ (Satırlar - Ürün İsimleri) */
 td.sticky-product {
     position: sticky !important;
     left: 0 !important;
-    z-index: 400 !important; /* Başlıkların altında, ama verilerin üstünde */
+    z-index: 400 !important; /* Verilerin en üstü (Fiyatların üstüne biner) */
    
-    background-color: var(--dash-card) !important; /* Şeffaflığı önle */
+    background-color: var(--dash-card) !important; /* Arka plan şart */
     border-right: 2px solid #555 !important;
     border-bottom: 1px solid #2a2a2a;
-   
+    color: #fff;
     min-width: 220px;
     max-width: 220px;
     overflow: hidden;
@@ -245,28 +222,45 @@ td.sticky-product {
     white-space: nowrap;
     text-align: left !important;
     padding-left: 12px !important;
-    color: #fff;
 }
 
 
 /* ----------------------------------------------------------------
-   4. DİĞER HÜCRE STILLERI
+   DİĞER BAŞLIKLAR (Sola yapışmayanlar)
    ---------------------------------------------------------------- */
+
+
+/* "Detaylar" grubu ve diğer Market İsimleri (1. Satır) */
+/* Bunların left:0 özelliği YOK, z-index düşük. Sağa kayınca kaybolurlar. */
+.th-scrollable-group,
+#header-row-top th:not(.th-fixed-corner) {
+    z-index: 100;
+}
+
+
+/* Alt satırdaki detay başlıkları (Fiyat, SKU vs.) */
+#header-row-bottom th:not(.sticky-product) {
+    top: 45px;
+    z-index: 100;
+}
+
+
+/* Hücre Genel Ayarları */
 .comparison-table td {
-    padding: 6px 8px;
-    height: 35px;
+    background-color: var(--dash-card);
     border-bottom: 1px solid #2a2a2a;
     border-right: 1px solid var(--border);
     vertical-align: middle;
-    background-color: var(--dash-card); /* Scroll sırasında arkadan yazı görünmemesi için */
+    padding: 6px 8px;
 }
 
 
-/* Hover Efekti - Sol sütun dahil tüm satırı parlatır */
+/* Hover Efekti */
 .comparison-table tbody tr:hover td {
     background-color: #2f3349 !important;
-    color: #fff;
 }
+
+
 /* ----------------------------------------------------------------
    5. HÜCRE STILLERI & RENKLENDİRME
    ---------------------------------------------------------------- */
