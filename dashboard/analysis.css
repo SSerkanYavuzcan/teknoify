@@ -126,7 +126,7 @@
 
 /* TÜM BAŞLIK HÜCRELERİ (GENEL) */
 .comparison-table th {
-    background-color: var(--dash-sidebar); /* Arka plan şart */
+    background-color: var(--dash-sidebar); /* Arka plan rengi */
     color: #fff;
     padding: 8px 6px;
     border-bottom: 1px solid var(--border);
@@ -146,6 +146,7 @@
     height: 45px;
     vertical-align: middle;
     box-shadow: 0 1px 0 var(--border); /* Alt çizgi görünümü */
+    background-color: var(--dash-sidebar); /* Arka plan rengi eklendi */
 }
 
 /* --- SATIR 2: PRICE / DISCOUNT --- */
@@ -157,6 +158,7 @@
     color: var(--text-muted);
     font-size: 0.7rem;
     box-shadow: 0 1px 0 var(--border);
+    background-color: var(--dash-sidebar); /* Arka plan rengi eklendi */
 }
 
 /* --- SÜTUN 1: ÜRÜN ADI (Hem Sola Hem Üste Yapışık) --- */
@@ -183,6 +185,7 @@ th.sticky-product, td.sticky-product {
     z-index: 1500 !important; 
     top: 0 !important;
     left: 0 !important;
+    background-color: var(--dash-sidebar) !important; /* Arka plan rengi eklendi */
 }
 
 /* "Ürün Adı"nın altındaki boşluk veya alt başlık */
@@ -190,6 +193,7 @@ th.sticky-product, td.sticky-product {
     z-index: 1500 !important; 
     top: 45px !important;
     left: 0 !important;
+    background-color: var(--dash-sidebar) !important; /* Arka plan rengi eklendi */
 }
 
 /* 5. HÜCRELER VE RENKLENDİRME */
