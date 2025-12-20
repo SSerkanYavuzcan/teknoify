@@ -1,6 +1,6 @@
 /* ================================================================
    [FILE] css/analysis.css
-   [STATUS] FINAL V8 - OVERLAP DÜZELTİLDİ & STICKY BAŞLIKLAR
+   [STATUS] FINAL V9 - TAM ÇÖZÜM: STICKY + NO OVERLAP
    ================================================================ */
 
 /* ----------------------------------------------------------------
@@ -122,7 +122,7 @@
 
 
 /* ----------------------------------------------------------------
-   4. KARŞILAŞTIRMA TABLOSU (OVERLAP DÜZELTİLDİ)
+   4. KARŞILAŞTIRMA TABLOSU (TAMAMEN DÜZELTİLDİ)
    ---------------------------------------------------------------- */
 .comparison-table {
     width: 100%;
@@ -132,7 +132,15 @@
     table-layout: auto;
 }
 
-/* --- GENEL BAŞLIK HÜCRELERİ (TH) --- */
+/* =================================================================
+   BAŞLIK STRATEJİSİ:
+   - 1. satır (mağaza isimleri): top: 0, z-index: 100
+   - 2. satır (detaylar): top: 45px, z-index: 100
+   - "Ürün Adı" hücresi: left: 0, top: 45px, z-index: 250 (EN YÜKSEK)
+   - "Ürün Bilgileri" YATAYDA SABİT OLMADIĞI için left YOK
+   ================================================================= */
+
+/* --- TÜM TH'LAR İÇİN ORTAK AYARLAR --- */
 .comparison-table th {
     background-color: var(--dash-sidebar);
     color: #fff;
@@ -140,55 +148,55 @@
     border-bottom: 1px solid var(--border);
     border-right: 1px solid var(--border);
     text-align: center !important;
-    position: sticky;
     user-select: none;
     white-space: nowrap;
     font-weight: 600;
+    /* position: sticky TÜM TH'LAR İÇİN AÇIK */
+    position: sticky !important;
 }
 
-/* --- SATIR 1: MAĞAZA İSİMLERİ (EN ÜST) --- */
+/* --- SATIR 1: EN ÜST (Mağaza İsimleri, Ürün Bilgileri Grubu) --- */
 #header-row-top th {
-    top: 0;
-    z-index: 90; /* Ürün Bilgileri'nden DÜŞÜK olmalı */
+    top: 0 !important;
+    z-index: 100 !important;
     height: 45px;
     vertical-align: middle;
-    box-shadow: 0 1px 0 var(--border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* --- SATIR 2: DETAYLAR & FİYATLAR --- */
+/* --- SATIR 2: İKİNCİ SATIR (Discount Price, Price, Durum, Fark vb.) --- */
 #header-row-bottom th {
-    top: 45px;
-    z-index: 90; /* Ürün Bilgileri'nden DÜŞÜK olmalı */
+    top: 45px !important;
+    z-index: 100 !important;
     height: 40px;
     vertical-align: middle;
     color: var(--text-muted);
     font-size: 0.7rem;
-    box-shadow: 0 1px 0 var(--border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* --- KRİTİK: "ÜRÜN BİLGİLERİ" GRUP BAŞLIĞI --- */
-/* Bu başlık SADECE DİKEYDE SABİT (yatayda değil) */
-/* Z-index'i diğer başlıklardan YÜKSEK olmalı ama "Ürün Adı"ndan düşük */
+/* --- "ÜRÜN BİLGİLERİ" GRUP BAŞLIĞI --- */
+/* SADECE YUKARIDA SABİT (left YOK!) */
 .th-product-info-group {
     background-color: var(--dash-sidebar) !important;
     border-right: 2px solid #444 !important;
-    top: 0 !important; /* Dikeyde en tepeye yapış */
-    z-index: 95 !important; /* Mağaza başlıklarından (90) YÜKSEK ama Ürün Adı'ndan (200) DÜŞÜK */
-    position: sticky !important;
+    /* top: 0 zaten #header-row-top'tan geliyor */
+    /* left YOK - yatayda kaymaya izin ver */
+    z-index: 100 !important; /* Diğer mağazalarla aynı seviye */
 }
 
 /* --- SOL SÜTUN: "ÜRÜN ADI" (HEM YATAY HEM DİKEY SABİT) --- */
 
-/* 1. "Ürün Adı" BAŞLIĞI (Row 2, Col 1) */
+/* 1. "Ürün Adı" BAŞLIĞI (2. Satır, 1. Sütun) */
 th.sticky-product {
     position: sticky !important;
     left: 0 !important;
     top: 45px !important;
-    z-index: 200 !important; /* EN YÜKSEK - Her şeyin üstünde */
+    z-index: 250 !important; /* EN YÜKSEK - Tüm başlıkların üstünde */
     
     background-color: var(--dash-sidebar) !important;
     border-right: 2px solid #444 !important;
-    box-shadow: 4px 0 8px rgba(0,0,0,0.3) !important;
+    box-shadow: 4px 0 8px rgba(0,0,0,0.4) !important;
     
     min-width: 220px;
     max-width: 220px;
@@ -196,15 +204,15 @@ th.sticky-product {
     padding-left: 12px !important;
 }
 
-/* 2. "Ürün Adı" VERİ HÜCRESİ (Body) */
+/* 2. "Ürün Adı" VERİ HÜCRELERİ (Body) */
 td.sticky-product {
     position: sticky !important;
     left: 0 !important;
-    z-index: 150 !important; /* Verilerin üstünde, başlıkların altında */
+    z-index: 50 !important; /* Normal verilerden yüksek, başlıklardan düşük */
     
     background-color: var(--dash-sidebar) !important;
     border-right: 2px solid #444;
-    box-shadow: 4px 0 8px rgba(0,0,0,0.3);
+    box-shadow: 4px 0 8px rgba(0,0,0,0.4);
     
     min-width: 220px;
     max-width: 220px;
@@ -228,6 +236,7 @@ td.sticky-product {
     font-size: 0.75rem;
     color: #ccc;
     vertical-align: middle;
+    background-color: var(--dash-card);
 }
 
 /* Başlık Grubu Renkleri */
@@ -255,11 +264,11 @@ td.sticky-product {
 .col-analysis-status { min-width: 120px; text-align: center; }
 
 /* Tablo Hover Efektleri */
-.comparison-table tr:hover td {
+.comparison-table tbody tr:hover td {
     background-color: #2f3349 !important;
     color: #fff;
 }
-.comparison-table tr:hover td.sticky-product {
+.comparison-table tbody tr:hover td.sticky-product {
     background-color: #2f3349 !important;
 }
 
