@@ -205,12 +205,7 @@
     <script src="../js/script.js"></script>
    
     <script>
-        // ... (Eski kodundaki tüm JavaScript buraya aynen gelecek) ...
-        // Sayfa boyutunu küçültmemek adına JS kodlarını kopyalamadım,
-        // sendeki çalışan JS bloğunun tamamını buraya yapıştırabilirsin.
-        // Fonksiyonlar değişmedi.
-        
-        // --- SADECE ŞUNU EKLEMEYİ UNUTMA (Toggle Fonksiyonu) ---
+        // --- MENÜ GİZLEME FONKSİYONU ---
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
         
         let ALL_DATA = [];
@@ -244,14 +239,11 @@
 
         // Tablo genişliği değiştikçe üst scrollbar'ın içindeki div'i güncelle
         function updateTopScrollWidth() {
-            // Tablonun gerçek genişliğini al (paddingler dahil)
             const tableWidth = mainTable.scrollWidth;
             topScrollContent.style.width = tableWidth + 'px';
         }
         
-        // Pencere yeniden boyutlandırılırsa da güncelle
         window.addEventListener('resize', updateTopScrollWidth);
-
 
         const CATEGORY_MAPPING = {
             "Taze Meyve": "Meyve & Sebze", "Taze Sebze": "Meyve & Sebze", "Taze Ot & Yeşillik": "Meyve & Sebze", "Patates, Soğan & Sarımsak": "Meyve & Sebze", "Kullanıma Hazır Meyve & Sebze": "Meyve & Sebze",
@@ -820,6 +812,7 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
+            // --- ÜST SATIR (ROW 1) ---
             let headerTopHtml = '';
             headerTopHtml += `<th class="sticky-product" style="z-index:1200 !important; top:0 !important; text-align:left;">Ürün Adı</th>`;
             headerTopHtml += `<th rowspan="2">Rapor Tarihi</th><th rowspan="2">Mağaza</th><th rowspan="2">SKU</th><th rowspan="2">Marka</th><th rowspan="2">Kategori</th>`;
@@ -839,17 +832,20 @@
             headerTopHtml += `<th colspan="2" style="background:#14161c; border-left:2px solid #444;">En Ucuz Kanal</th>`;
             theadTop.innerHTML = headerTopHtml;
 
+            // --- ALT SATIR (ROW 2) - GÜNCEL İSİMLER ---
             let headerBottomHtml = '';
-            headerBottomHtml += `<th>Original</th><th>Discount</th>`;
+            headerBottomHtml += `<th>Price</th><th>Discount Price</th>`;
+            
             competitorNames.forEach(() => {
-                headerBottomHtml += `<th style="border-left:1px solid #333;">Original</th><th>Discount</th>`;
+                headerBottomHtml += `<th class="border-left-light">Price</th><th>Discount Price</th>`;
             });
-            headerBottomHtml += `<th style="border-left:1px solid #333; min-width:140px;">Durum</th><th>Fark</th>`;
+            headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
             theadBottom.innerHTML = headerBottomHtml;
            
             const firstRowCells = theadTop.querySelectorAll('th');
             firstRowCells[0].setAttribute('rowspan', '2');
            
+            // --- VERİ SATIRLARI ---
             dataRows.forEach(row => {
                 const tr = document.createElement('tr');
                 let html = `
