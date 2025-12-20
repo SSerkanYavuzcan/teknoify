@@ -136,107 +136,107 @@
 
 
 /* ----------------------------------------------------------------
-   4. KARŞILAŞTIRMA TABLOSU - FİNAL (Sol Üst Köşe Sabitlemesi İptal)
+   4. KARŞILAŞTIRMA TABLOSU - HTML YAPISINA ÖZEL FİNAL ÇÖZÜM
    ---------------------------------------------------------------- */
-.comparison-table {
+
+
+/* 1. TABLO & KAPSAYICI AYARLARI */
+.table-responsive-wrapper {
+    display: block;
     width: 100%;
-    border-collapse: separate; /* Sticky headerların düzgün çalışması için şart */
-    border-spacing: 0;
-    font-size: 0.75rem;
-    table-layout: auto;
-    position: relative;
+    overflow: auto; /* Scroll yönetimi burada */
+    max-height: 65vh;
+    border: 1px solid var(--border);
+    border-radius: 0 0 12px 12px;
+    background: var(--dash-card);
+    position: relative; /* Sticky için referans noktası */
 }
 
 
-/* =================================================================
-   Z-INDEX HİYERARŞİSİ (KATMANLAR)
+.comparison-table {
+    width: 100%;
+    border-collapse: separate; /* Sticky'nin çalışması için ZORUNLU */
+    border-spacing: 0; /* Hücre aralarını kapatır */
+    font-size: 0.75rem;
+    table-layout: auto;
+}
+
+
+/* ----------------------------------------------------------------
+   2. KATMAN MİMARİSİ (Z-INDEX)
    
-   300: SOL SÜTUN (Ürün İsimleri) -> En üstte durur, diğerleri altından geçer.
-   200: ÜST BAŞLIKLAR (Marketler, Fiyat Başlıkları, Grup Başlığı)
-   10:  SOL SÜTUN VERİLERİ (Sticky Data)
-   1:   Normal Veri Hücreleri
-   ================================================================= */
+   Mantık: Sol Ürün Sütunu > Üst Başlıklar > Veriler
+   ---------------------------------------------------------------- */
 
 
-/* --- TÜM BAŞLIKLAR (TH) ORTAK AYARLAR --- */
+/* A) GENEL BAŞLIK STİLİ (Tüm TH'ler) */
 .comparison-table th {
-    background-color: var(--dash-sidebar) !important;
+    background-color: var(--dash-sidebar) !important; /* Arka plan şeffaf olmamalı */
     color: #fff;
     padding: 8px 6px;
     border-bottom: 1px solid var(--border);
     border-right: 1px solid var(--border);
-    text-align: center !important;
-    position: sticky !important;
-    user-select: none;
-    white-space: nowrap;
+    text-align: center;
     font-weight: 600;
-    background-clip: padding-box;
-}
-
-
-/* --- 1. SATIR: EN ÜST (Mağaza İsimleri ve Grup Başlığı) --- */
-#header-row-top th {
-    top: 0 !important;
-    z-index: 200; /* Sol sütunun (300) altında kalır */
-    height: 45px;
-    vertical-align: middle;
-}
-
-
-/* --- 2. SATIR: ALT BAŞLIKLAR (Discount Price, Price vb.) --- */
-#header-row-bottom th {
-    top: 45px !important;
-    z-index: 200;
-    height: 40px;
-    vertical-align: middle;
-    color: var(--text-muted);
-    font-size: 0.7rem;
-}
-
-
-/* --- ÖZEL: SOL ÜST KÖŞE ("ÜRÜN BİLGİLERİ" GRUP BAŞLIĞI) --- */
-/* İSTEK: Sola sabitleme KALDIRILDI. Sağa scroll edince kaybolacak. */
-.th-product-info-group {
-    /* Sadece yukarı yapışık, sola değil */
-    position: sticky !important;
-    top: 0 !important;
-    left: auto !important; /* Serbest bıraktık */
+    white-space: nowrap;
+    background-clip: padding-box; /* Kenarlık çakışmasını önler */
    
-    z-index: 200 !important; /* Diğer başlıklarla aynı seviyede */
-    background-color: var(--dash-sidebar) !important;
-    border-right: 1px solid var(--border) !important;
-    border-bottom: 1px solid var(--border) !important;
+    /* Varsayılan olarak tüm başlıklar yukarı yapışsın */
+    position: sticky;
+    top: 0;
+    z-index: 100; /* Düşük öncelikli başlıklar */
 }
 
 
-/* --- SOL SÜTUN: "ÜRÜN ADI" BAŞLIĞI (2. Satır, 1. Sütun) --- */
-/* KRİTİK NOKTA: Burası sabit kalmalı ve katmanı (z-index) yüksek olmalı */
+/* B) 1. SATIR: MARKET İSİMLERİ (En Üst) */
+#header-row-top th {
+    top: 0;
+    height: 45px;
+    z-index: 100; /* Sol sütunun altında kalmalı */
+}
+
+
+/* C) 2. SATIR: ALT DETAYLAR (Price, Discount vb.) */
+#header-row-bottom th {
+    top: 45px; /* Üst satırın yüksekliği kadar aşağıda */
+    height: 40px;
+    z-index: 100;
+    color: var(--text-muted);
+}
+
+
+/* ----------------------------------------------------------------
+   3. KRİTİK BÖLGE: SOL SÜTUN SABİTLEME (Ürün Adı)
+   ---------------------------------------------------------------- */
+
+
+/* Sol Üst Köşe: "Ürün Adı" BAŞLIĞI */
+/* Bu hücre hem YUKARI hem SOLA yapışık olmalı ve HER ŞEYİN ÜSTÜNDE durmalı */
 th.sticky-product {
     position: sticky !important;
     left: 0 !important;
-    top: 45px !important;
-   
-    /* Z-Index 300 sayesinde sağdan gelen başlıklar bunun ALTINA girer */
-    z-index: 300 !important;
+    top: 45px !important; /* 2. Satırda olduğu için */
+    z-index: 500 !important; /* EN YÜKSEK KATMAN (Overlap'i çözen satır) */
    
     background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444 !important; /* Ayrımı netleştiren kalın çizgi */
-   
+    border-right: 2px solid #555 !important; /* Ayrımı netleştiren çizgi */
     min-width: 220px;
     max-width: 220px;
     text-align: left !important;
     padding-left: 12px !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5); /* Sola yapıştığını hissettiren gölge */
 }
 
 
-/* --- SOL SÜTUN: "ÜRÜN ADI" VERİ HÜCRELERİ --- */
+/* Sol Sütun: VERİ HÜCRELERİ (Ürün İsimleri) */
 td.sticky-product {
     position: sticky !important;
     left: 0 !important;
-    z-index: 10 !important; /* Normal verilerin üstünde */
+    z-index: 400 !important; /* Başlıkların altında, ama verilerin üstünde */
    
-    background-color: var(--dash-sidebar) !important; /* Arka plan şart yoksa yazılar karışır */
-    border-right: 2px solid #444 !important;
+    background-color: var(--dash-card) !important; /* Şeffaflığı önle */
+    border-right: 2px solid #555 !important;
+    border-bottom: 1px solid #2a2a2a;
    
     min-width: 220px;
     max-width: 220px;
@@ -249,6 +249,24 @@ td.sticky-product {
 }
 
 
+/* ----------------------------------------------------------------
+   4. DİĞER HÜCRE STILLERI
+   ---------------------------------------------------------------- */
+.comparison-table td {
+    padding: 6px 8px;
+    height: 35px;
+    border-bottom: 1px solid #2a2a2a;
+    border-right: 1px solid var(--border);
+    vertical-align: middle;
+    background-color: var(--dash-card); /* Scroll sırasında arkadan yazı görünmemesi için */
+}
+
+
+/* Hover Efekti - Sol sütun dahil tüm satırı parlatır */
+.comparison-table tbody tr:hover td {
+    background-color: #2f3349 !important;
+    color: #fff;
+}
 /* ----------------------------------------------------------------
    5. HÜCRE STILLERI & RENKLENDİRME
    ---------------------------------------------------------------- */
