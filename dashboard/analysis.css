@@ -1,0 +1,210 @@
+/* ================================================================
+   [FILE] css/analysis.css
+   [DESC] Sadece Analysis sayfasına özel stiller (Tablo, Grafik, Scroll)
+   ================================================================ */
+
+/* 1. GRAFİK IZGARASI VE KUTULARI */
+.charts-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 15px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.chart-box {
+    background: var(--dash-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.chart-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* ApexCharts Tooltip Özelleştirme */
+.apexcharts-tooltip {
+    background: var(--dash-sidebar) !important;
+    border-color: var(--border) !important;
+    color: #fff;
+}
+.apexcharts-tooltip-title {
+    background: var(--dash-bg) !important;
+    border-bottom: 1px solid var(--border) !important;
+}
+.apexcharts-legend-text {
+    color: var(--text-muted) !important;
+}
+
+/* Responsive Grafik */
+@media (max-width: 992px) {
+    .charts-grid { grid-template-columns: 1fr; }
+}
+
+/* 2. AKTİF FİLTRE UYARISI */
+#active-filter-banner {
+    display: none;
+    background: rgba(115, 103, 240, 0.15);
+    border: 1px solid var(--primary);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    align-items: center;
+    justify-content: space-between;
+}
+#active-filter-banner button {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* 3. ÇİFT SCROLLBAR YAPISI (Senkronize Scroll) */
+.top-scroll-wrapper {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background: var(--dash-sidebar);
+    height: 15px;
+}
+.top-scroll-content { height: 1px; }
+
+.table-responsive-wrapper {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background: var(--dash-card);
+    margin-bottom: 20px;
+}
+
+/* 4. KARŞILAŞTIRMA TABLOSU (Sticky Header/Column) */
+.comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+    table-layout: auto;
+}
+
+/* Tablo Başlıkları (Sticky Header) */
+.comparison-table th {
+    background: var(--dash-sidebar);
+    color: #fff;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    user-select: none;
+    white-space: nowrap;
+}
+
+/* Sticky olan Üst Başlıklar (Row 1) */
+#header-row-top th {
+    top: 0 !important;
+    z-index: 1000;
+    height: 50px;
+    box-shadow: 0 1px 0 var(--border);
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Sticky olan Alt Başlıklar (Row 2) */
+#header-row-bottom th {
+    top: 50px !important;
+    z-index: 900;
+    height: 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    text-align: center;
+    vertical-align: middle;
+    color: var(--text-muted);
+}
+
+/* İlk Sütun (Ürün Adı) Sabitleme */
+th.sticky-product, td.sticky-product {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 1100;
+    background-color: var(--dash-sidebar) !important;
+    border-right: 2px solid #444;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.5);
+    min-width: 250px;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left !important;
+    padding-left: 15px !important;
+    color: #fff;
+}
+
+/* Köşe Çakışmaları için Z-Index Ayarı */
+#header-row-top th:first-child { z-index: 1200 !important; left: 0 !important; }
+#header-row-bottom th.sticky-product { top: 50px !important; z-index: 1200 !important; }
+
+/* Hücreler */
+.comparison-table td {
+    padding: 8px 10px;
+    height: 45px;
+    border-bottom: 1px solid #2a2a2a;
+    border-right: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+/* Hover Efekti */
+.comparison-table tr:hover td { background-color: #2f3349 !important; }
+.comparison-table tr:hover td.sticky-product { background-color: #2f3349 !important; }
+
+/* 5. TABLO RENKLENDİRMELERİ */
+.th-group-tazeyo {
+    text-align: center;
+    color: var(--success) !important;
+    border-bottom: 1px solid var(--border);
+    background-color: rgba(16, 185, 129, 0.05) !important;
+}
+.th-group-market {
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+.price-cell {
+    min-width: 100px;
+    text-align: center;
+    font-family: var(--font-mono);
+}
+.border-left-strong { border-left: 2px solid #444; }
+.border-left-light { border-left: 1px solid var(--border); }
+.col-analysis-status { min-width: 140px; }
+
+
