@@ -1,352 +1,344 @@
 /* ================================================================
    [FILE] css/analysis.css
-   [STATUS] FINAL V8 - BOTH HEADER ROWS STICKY + NO OVERLAP + LESS JITTER
+   [STATUS] FINAL V9 - FULL FILE (2-row sticky header + no overlap)
    ================================================================ */
 
 /* ----------------------------------------------------------------
-   0. STICKY AYAR DEĞİŞKENLERİ
+   0. STICKY/BOYUT DEĞİŞKENLERİ
    ---------------------------------------------------------------- */
 :root{
-  --header-top-h: 45px;
-  --header-bottom-h: 35px;
+  --h1: 45px;       /* header-row-top yüksekliği */
+  --h2: 35px;       /* header-row-bottom yüksekliği */
+  --leftW: 260px;   /* Ürün adı kolon genişliği */
 }
 
 /* ----------------------------------------------------------------
    1. GRAFİK ALANI (CHARTS)
    ---------------------------------------------------------------- */
 .charts-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    gap: 15px;
-    margin-bottom: 24px;
-    width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 15px;
+  margin-bottom: 24px;
+  width: 100%;
 }
 
 .chart-card {
-    border: 1px solid var(--border);
-    background: var(--dash-card);
-    border-radius: 12px;
-    padding: 16px;
-    min-height: 350px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  background: var(--dash-card);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 350px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .chart-card h4 {
-    margin: 0 0 12px 0;
-    font-size: 0.9rem;
-    color: #fff;
+  margin: 0 0 12px 0;
+  font-size: 0.9rem;
+  color: #fff;
 }
 
 /* ----------------------------------------------------------------
    2. ÖZET METRİK KARTLARI
    ---------------------------------------------------------------- */
 .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    margin-bottom: 24px;
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-bottom: 24px;
+  width: 100%;
 }
 
 .metric-card {
-    border: 1px solid var(--border);
-    background: var(--dash-card);
-    border-radius: 12px;
-    padding: 14px 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  border: 1px solid var(--border);
+  background: var(--dash-card);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 .metric-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: 6px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
 }
 
 .metric-value {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
 }
 
 .metric-sub {
-    margin-top: 6px;
-    font-size: 0.7rem;
-    color: var(--text-muted);
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
 }
 
 /* ----------------------------------------------------------------
    3. TABLO KART / WRAPPER
    ---------------------------------------------------------------- */
 .table-card {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--dash-card);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--dash-card);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 .table-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    background: var(--dash-sidebar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--dash-sidebar);
 }
 
 .table-card-header h3 {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #fff;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
 }
 
-/* Scroll container */
+/* Scroll container: sticky için kritik */
 .table-responsive-wrapper {
-    display: block;
-    width: 100%;
-    overflow: auto;
-    max-height: 65vh;
-    border: 1px solid var(--border);
-    border-top: none;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    background: var(--dash-card);
-    margin-bottom: 20px;
-    position: relative;
+  display: block;
+  width: 100%;
+  overflow: auto;
+  max-height: 65vh;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  background: var(--dash-card);
+  margin-bottom: 20px;
+  position: relative;
 
-    /* Sticky katmanlarını stabil yapar */
-    isolation: isolate;
+  /* z-index/sticky çakışmalarını stabilize eder */
+  isolation: isolate;
 
-    /* Mobil/Chrome daha stabil */
-    -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ----------------------------------------------------------------
-   4. TABLO STİLLERİ (STABLE STICKY HEADER + STICKY FIRST COL)
+   4. TABLO STİLLERİ (FINAL STICKY FIX)
    ---------------------------------------------------------------- */
 .comparison-table {
-    width: 100%;
-    border-collapse: separate; /* Sticky için gerekli */
-    border-spacing: 0;
-    font-size: 0.75rem; /* 12px */
-    table-layout: auto;
+  width: 100%;
+  border-collapse: separate; /* sticky için şart */
+  border-spacing: 0;
+  font-size: 0.75rem;
+  table-layout: auto;
 }
 
-/* Genel border davranışı */
+/* Border + background clip */
 .comparison-table th,
 .comparison-table td {
-    border-bottom: 1px solid #2a2a2a;
-    border-right: 1px solid var(--border);
-    background-clip: padding-box;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid #2a2a2a;
+  background-clip: padding-box;
 }
 
-/* ❗️ÖNEMLİ: th için GENEL sticky yok (overlap kaynağıydı) */
+/* ❗️GENEL th sticky YOK (overlap’ın ana sebebi buydu) */
 .comparison-table th {
-    background-color: var(--dash-sidebar);
-    color: #fff;
-    padding: 8px 6px;
-    text-align: center !important;
-    position: relative; /* sticky değil */
-    z-index: 1;
-    user-select: none;
-    white-space: nowrap;
-    font-weight: 600;
+  position: relative;
+  z-index: 1;
+  background: var(--dash-sidebar);
+  color: #fff;
+  padding: 8px 6px;
+  white-space: nowrap;
+  text-align: center;
+  user-select: none;
+  font-weight: 600;
 }
 
 /* Sticky sadece THEAD içinde */
-.comparison-table thead th{
-    position: sticky;
-    background-color: var(--dash-sidebar);
-
-    /* jitter azaltma */
-    transform: translateZ(0);
-    will-change: transform;
+.comparison-table thead th {
+  position: sticky;
+  top: 0; /* satır bazlı override edilecek */
+  background: var(--dash-sidebar);
+  box-shadow: none !important; /* jitter azaltma */
 }
 
-/* --- SATIR 1: ÜST GRUP BAŞLIKLARI (sticky) --- */
-#header-row-top th {
-    top: 0;
-    height: var(--header-top-h);
-    vertical-align: middle;
-    z-index: 40;                  /* üst satır */
-    box-shadow: none !important;  /* jitter fix */
+/* --------- 1. HEADER SATIRI (GRUPLAR) ---------- */
+.comparison-table thead tr#header-row-top th {
+  top: 0;
+  height: var(--h1);
+  z-index: 30;
+  vertical-align: middle;
 }
 
-/* --- SATIR 2: ALT BAŞLIK (sticky) --- */
-#header-row-bottom th {
-    top: var(--header-top-h);
-    height: var(--header-bottom-h);
-    vertical-align: middle;
-    z-index: 30;
-    color: var(--text-muted);
-    font-size: 0.7rem;
-    box-shadow: none !important;  /* jitter fix */
+/* --------- 2. HEADER SATIRI (KOLON BAŞLIKLARI) ---------- */
+.comparison-table thead tr#header-row-bottom th {
+  top: var(--h1);
+  height: var(--h2);
+  z-index: 25;
+  vertical-align: middle;
+  color: var(--text-muted);
+  font-size: 0.7rem;
 }
 
-/* --- "ÜRÜN BİLGİLERİ" GRUP BAŞLIĞI (COLSPAN) --- */
+/* “Ürün Bilgileri” (colspan) sadece top-sticky, left-sticky ASLA yok */
 .th-product-info-group {
-    z-index: 40 !important;
-    background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444 !important;
-    left: auto !important; /* asla left sticky olmasın */
+  left: auto !important;
+  z-index: 30 !important;
+  background: var(--dash-sidebar) !important;
+  border-right: 2px solid #444 !important;
+}
+
+/* =========================================================
+   STICKY LEFT: SADECE 1. KOLON (first-child) KİLİT
+   - Üst satırda left-sticky kesinlikle kapalı
+   ========================================================= */
+
+/* ÜST SATIRDA 1. KOLON ASLA left sticky OLMASIN */
+.comparison-table thead tr#header-row-top th:first-child {
+  left: auto !important;
+  z-index: 30; /* top satır seviyesinde */
+}
+
+/* ALT SATIRDA 1. KOLON (Ürün Adı başlığı): top+left kesişim */
+.comparison-table thead tr#header-row-bottom th:first-child {
+  left: 0;
+  min-width: var(--leftW);
+  max-width: var(--leftW);
+  text-align: left;
+  padding-left: 12px;
+  z-index: 60; /* en üst */
+}
+
+/* BODY: 1. KOLON left sticky */
+.comparison-table tbody td:first-child {
+  position: sticky;
+  left: 0;
+  min-width: var(--leftW);
+  max-width: var(--leftW);
+  text-align: left;
+  padding-left: 12px;
+  z-index: 10; /* headerların altında */
+  background: var(--dash-sidebar);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+}
+
+/* JITTER azalt: box-shadow yerine separator çizgisi */
+.comparison-table thead tr#header-row-bottom th:first-child::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 2px;
+  height: 100%;
+  background: #444;
+}
+
+.comparison-table tbody td:first-child::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 2px;
+  height: 100%;
+  background: #444;
 }
 
 /* ----------------------------------------------------------------
-   4.1 SOL STICKY KOLON (ÜRÜN ADI)
-   ---------------------------------------------------------------- */
-
-/* Header'da "Ürün Adı" (ALT satırda) - hem top hem left sticky */
-#header-row-bottom th.sticky-product{
-    position: sticky !important;
-    left: 0 !important;
-    top: var(--header-top-h) !important;
-    z-index: 60 !important;       /* her şeyin üstünde */
-    background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444 !important;
-    box-shadow: none !important;
-
-    min-width: 220px;
-    max-width: 220px;
-    text-align: left !important;
-    padding-left: 12px !important;
-
-    transform: translateZ(0);
-    will-change: transform;
-}
-
-/* Eğer üst satırda da sticky-product class’ı olursa (olmasa da sorun yok)
-   kesişimde düzgün dursun, ama overlap yapmasın */
-#header-row-top th.sticky-product{
-    position: sticky !important;
-    left: 0 !important;
-    top: 0 !important;
-    z-index: 70 !important;       /* üst satır + sol kesişim */
-    background-color: var(--dash-sidebar) !important;
-    box-shadow: none !important;
-
-    min-width: 220px;
-    max-width: 220px;
-    text-align: left !important;
-    padding-left: 12px !important;
-
-    transform: translateZ(0);
-    will-change: transform;
-}
-
-/* Body'de ürün adı kolonu sticky */
-td.sticky-product {
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 20;                  /* headerların altında, datanın üstünde */
-    background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444;
-    box-shadow: none !important;  /* jitter fix */
-
-    min-width: 220px;
-    max-width: 220px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: left !important;
-    padding-left: 12px !important;
-    color: #fff;
-
-    transform: translateZ(0);
-    will-change: transform;
-}
-
-/* ----------------------------------------------------------------
-   4.2 TD GENEL
+   4.1 TD GENEL
    ---------------------------------------------------------------- */
 .comparison-table td {
-    padding: 8px 6px;
-    text-align: center;
-    background: #14161c;
-    font-size: 0.75rem;
-    color: #ccc;
-    vertical-align: middle;
+  padding: 8px 6px;
+  text-align: center;
+  background: #14161c;
+  font-size: 0.75rem;
+  color: #ccc;
+  vertical-align: middle;
 }
 
-/* Başlık Grubu Renkleri (sende bazıları inline geliyor, yine de dursun) */
+/* Başlık grubu renkleri (inline style olsa da dursun) */
 .th-group-tazeyo {
-    color: var(--success) !important;
-    background-color: #14161c !important;
-    border-bottom: 2px solid var(--success) !important;
+  color: var(--success) !important;
+  background-color: #14161c !important;
+  border-bottom: 2px solid var(--success) !important;
 }
 
 .th-group-migros {
-    color: #ff9800 !important;
-    background-color: #14161c !important;
-    border-bottom: 2px solid #ff9800 !important;
+  color: #ff9800 !important;
+  background-color: #14161c !important;
+  border-bottom: 2px solid #ff9800 !important;
 }
 
 .th-group-carrefour {
-    color: #2196f3 !important;
-    background-color: #14161c !important;
-    border-bottom: 2px solid #2196f3 !important;
+  color: #2196f3 !important;
+  background-color: #14161c !important;
+  border-bottom: 2px solid #2196f3 !important;
 }
 
 .th-group-cheapest {
-    color: #fff !important;
-    background-color: #14161c !important;
-    border-bottom: 2px solid #fff !important;
+  color: #fff !important;
+  background-color: #14161c !important;
+  border-bottom: 2px solid #fff !important;
 }
 
-/* Fiyat yazı tipi */
+/* Fiyat yazıları */
 .price {
-    font-weight: 700;
-    color: #fff;
+  font-weight: 700;
+  color: #fff;
 }
 .discount-price {
-    font-weight: 700;
-    color: #ffd54f;
+  font-weight: 700;
+  color: #ffd54f;
 }
 
 /* Veri yok */
 .no-data {
-    color: #666 !important;
-    font-style: italic;
+  color: #666 !important;
+  font-style: italic;
 }
 
-/* Kanal Durum Badge */
+/* Kanal badge */
 .channel-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .badge-tazeyo {
-    background: rgba(0, 200, 83, 0.12);
-    color: var(--success);
-    border: 1px solid rgba(0, 200, 83, 0.35);
+  background: rgba(0, 200, 83, 0.12);
+  color: var(--success);
+  border: 1px solid rgba(0, 200, 83, 0.35);
 }
+
 .badge-migros {
-    background: rgba(255, 152, 0, 0.12);
-    color: #ff9800;
-    border: 1px solid rgba(255, 152, 0, 0.35);
+  background: rgba(255, 152, 0, 0.12);
+  color: #ff9800;
+  border: 1px solid rgba(255, 152, 0, 0.35);
 }
+
 .badge-carrefour {
-    background: rgba(33, 150, 243, 0.12);
-    color: #2196f3;
-    border: 1px solid rgba(33, 150, 243, 0.35);
+  background: rgba(33, 150, 243, 0.12);
+  color: #2196f3;
+  border: 1px solid rgba(33, 150, 243, 0.35);
 }
 
 /* Fark yüzdesi */
 .diff {
-    font-weight: 800;
-    color: #fff;
+  font-weight: 800;
+  color: #fff;
 }
 
 /* ----------------------------------------------------------------
-   5. EK TABLO / KOLON GENİŞLİKLERİ
+   5. KOLON GENİŞLİKLERİ (opsiyonel)
    ---------------------------------------------------------------- */
-.col-product { min-width: 220px; text-align: left; }
+.col-product { min-width: var(--leftW); text-align: left; }
 .col-price { min-width: 110px; }
 .col-discount { min-width: 110px; }
 .col-analysis-status { min-width: 120px; text-align: center; }
@@ -359,11 +351,11 @@ td.sticky-product {
    6. HOVER
    ---------------------------------------------------------------- */
 .comparison-table tbody tr:hover td {
-    background-color: #2f3349 !important;
-    color: #fff;
+  background-color: #2f3349 !important;
+  color: #fff;
 }
-.comparison-table tbody tr:hover td.sticky-product {
-    background-color: #2f3349 !important;
+.comparison-table tbody tr:hover td:first-child {
+  background-color: #2f3349 !important;
 }
 
 
