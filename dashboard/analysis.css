@@ -104,54 +104,54 @@
     border-bottom-right-radius: 12px;
     background: var(--dash-card);
     margin-bottom: 20px;
+    max-height: 800px; /* İsteğe bağlı: Tablo çok uzunsa sayfa scroll'u yerine kendi içinde dönsün */
 }
 
-/* 4. KARŞILAŞTIRMA TABLOSU (Sticky Header/Column) */
+/* 4. KARŞILAŞTIRMA TABLOSU (Compact & Sticky Header) */
 .comparison-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 0.85rem;
+    font-size: 0.75rem; /* Font küçültüldü (12px) */
     table-layout: auto;
 }
 
-/* Tablo Başlıkları (Sticky Header) */
+/* Tablo Başlıkları (Genel) */
 .comparison-table th {
     background: var(--dash-sidebar);
     color: #fff;
-    padding: 14px 18px;
+    padding: 8px 6px; /* Padding azaltıldı */
     border-bottom: 1px solid var(--border);
     border-right: 1px solid var(--border);
-    text-align: left;
+    text-align: center !important; /* Başlıklar Ortalı */
     position: sticky;
-    top: 0;
     z-index: 10;
     user-select: none;
     white-space: nowrap;
+    font-weight: 600;
 }
 
-/* Sticky olan Üst Başlıklar (Row 1) */
+/* 1. Satır Başlıkları (En Üst) - Sabit */
 #header-row-top th {
     top: 0 !important;
     z-index: 1000;
-    height: 50px;
+    height: 40px; /* Yükseklik sabitlendi */
     box-shadow: 0 1px 0 var(--border);
-    text-align: center;
     vertical-align: middle;
 }
 
-/* Sticky olan Alt Başlıklar (Row 2) */
+/* 2. Satır Başlıkları (Price/Discount) - Sabit */
 #header-row-bottom th {
-    top: 50px !important;
+    top: 40px !important; /* Üst satırın yüksekliği kadar aşağıda */
     z-index: 900;
-    height: 40px;
+    height: 35px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    text-align: center;
     vertical-align: middle;
     color: var(--text-muted);
+    font-size: 0.7rem; /* Alt başlıklar bir tık daha küçük */
 }
 
-/* İlk Sütun (Ürün Adı) Sabitleme */
+/* Sol Sütun (Ürün Adı) - Hem Sola Hem Üste Sabit */
 th.sticky-product, td.sticky-product {
     position: sticky !important;
     left: 0 !important;
@@ -159,28 +159,36 @@ th.sticky-product, td.sticky-product {
     background-color: var(--dash-sidebar) !important;
     border-right: 2px solid #444;
     box-shadow: 4px 0 10px rgba(0,0,0,0.5);
-    min-width: 250px;
-    max-width: 250px;
+    min-width: 220px; /* Genişlik biraz daraltıldı */
+    max-width: 220px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    text-align: left !important;
-    padding-left: 15px !important;
+    text-align: left !important; /* Ürün adı sola dayalı kalsın */
+    padding-left: 10px !important;
     color: #fff;
 }
 
-/* Köşe Çakışmaları için Z-Index Ayarı */
-#header-row-top th:first-child { z-index: 1200 !important; left: 0 !important; }
-#header-row-bottom th.sticky-product { top: 50px !important; z-index: 1200 !important; }
+/* Köşe Çakışmaları için Z-Index Ayarı (En üst sol köşe) */
+#header-row-top th:first-child { 
+    z-index: 1200 !important; 
+    left: 0 !important; 
+    top: 0 !important;
+}
+#header-row-bottom th.sticky-product { 
+    top: 40px !important; 
+    z-index: 1200 !important; 
+}
 
-/* Hücreler */
+/* Veri Hücreleri */
 .comparison-table td {
-    padding: 8px 10px;
-    height: 45px;
+    padding: 6px 8px; /* Hücre boşlukları azaltıldı */
+    height: 35px; /* Satır yüksekliği azaltıldı */
     border-bottom: 1px solid #2a2a2a;
     border-right: 1px solid var(--border);
-    font-size: 0.85rem;
+    font-size: 0.75rem; /* Font küçültüldü */
     color: #ccc;
+    vertical-align: middle;
 }
 
 /* Hover Efekti */
@@ -199,12 +207,12 @@ th.sticky-product, td.sticky-product {
     border-bottom: 1px solid var(--border);
 }
 .price-cell {
-    min-width: 100px;
+    min-width: 90px; /* Biraz daraltıldı */
     text-align: center;
     font-family: var(--font-mono);
 }
 .border-left-strong { border-left: 2px solid #444; }
 .border-left-light { border-left: 1px solid var(--border); }
-.col-analysis-status { min-width: 140px; }
+.col-analysis-status { min-width: 120px; text-align: center; }
 
 
