@@ -14,6 +14,10 @@
 </head>
 <body>
 
+    <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <aside class="sidebar">
         <div class="brand">
             <i class="fas fa-cube"></i> <span>Teknoify</span>
@@ -39,7 +43,7 @@
             <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
                 <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
             </a>
-            <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Daralt">
+            <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
                 <i class="fas fa-chevron-left"></i>
             </button>
         </div>
@@ -113,7 +117,7 @@
     <script src="../js/script.js"></script>
 
     <script>
-        // --- MENÜ DARALTMA FONKSİYONU ---
+        // --- MENÜ GİZLEME / AÇMA FONKSİYONU ---
         function toggleSidebar() {
             document.body.classList.toggle('sidebar-closed');
         }
@@ -157,15 +161,12 @@
                         setText('stat-next-payment', data.nextPayment || "-");
                         setText('processed-data-count', data.totalProcessed || "-");
 
-                        // D) BİLDİRİMLER (Standart + Otomatik)
+                        // D) BİLDİRİMLER
                         renderNotifications(data.notifications);
 
-                        // E) CANLI VERİ KONTROLÜ & OTOMATİK BİLDİRİM SİSTEMİ 🔔
+                        // E) CANLI VERİ & OTOMATİK KONTROL
                         if(userDataFull.config && userDataFull.config.sheetUrl) {
-                            // 1. İstatistik için veriyi çek
                             fetchDataCount(userDataFull.config.sheetUrl);
-                           
-                            // 2. Otomatik bildirim servisini başlat
                             initAutoNotificationService(userDataFull.config.sheetUrl);
                         }
                     }
@@ -176,90 +177,51 @@
                 });
         });
 
-        // --- OTOMATİK BİLDİRİM SİSTEMİ ---
+        // --- YARDIMCI FONKSİYONLAR ---
         function initAutoNotificationService(sheetUrl) {
-            // İlk açılışta hemen bir kontrol yap
             checkSheetForToday(sheetUrl);
-
-            // 10:00 - 11:00 arası 5 dakikada bir kontrol (300.000 ms)
             setInterval(() => {
                 const now = new Date();
                 const hour = now.getHours();
-
-                // Sadece 10:00 - 11:00 arasında çalış
-                if (hour >= 10 && hour < 11) {
-                    checkSheetForToday(sheetUrl);
-                } else {
-                    console.log("Otomatik kontrol saati dışında (10:00-11:00).");
-                }
-            }, 300000); // 5 Dakika
+                if (hour >= 10 && hour < 11) { checkSheetForToday(sheetUrl); }
+            }, 300000);
         }
 
         function checkSheetForToday(url) {
             const indicator = document.getElementById('live-indicator');
-            if(indicator) indicator.style.display = 'block'; // "Kontrol ediliyor" ikonunu aç
-
+            if(indicator) indicator.style.display = 'block';
             Papa.parse(url, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
+                download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
-                    if(indicator) indicator.style.display = 'none'; // İkonu kapat
-
-                    // Bugünkü tarihi al (DD.MM.YYYY formatında)
+                    if(indicator) indicator.style.display = 'none';
                     const today = new Date();
                     const dd = String(today.getDate()).padStart(2, '0');
                     const mm = String(today.getMonth() + 1).padStart(2, '0');
                     const yyyy = today.getFullYear();
                     const todayStr = `${dd}.${mm}.${yyyy}`;
-
-                    // Veri içinde bugünün tarihi var mı?
                     const hasDataForToday = results.data.some(row => row['Report Date'] && row['Report Date'].includes(todayStr));
-
-                    if (hasDataForToday) {
-                        addDynamicNotification(todayStr);
-                    }
+                    if (hasDataForToday) { addDynamicNotification(todayStr); }
                 },
-                error: function() {
-                    if(indicator) indicator.style.display = 'none';
-                }
+                error: function() { if(indicator) indicator.style.display = 'none'; }
             });
         }
 
         function addDynamicNotification(dateStr) {
-            // Eğer bu bildirim zaten gösterilmişse (localStorage kontrolü) tekrar ekleme
             const storageKey = `notif_seen_${dateStr}`;
             if (localStorage.getItem(storageKey)) return;
-
             const tbody = document.getElementById('notification-body');
-           
-            // Eğer tabloda "Bildirim yok" yazısı varsa temizle
-            if (tbody.children.length === 1 && tbody.children[0].innerText.includes("bildirim yok")) {
-                tbody.innerHTML = '';
-            }
-
+            if (tbody.children.length === 1 && tbody.children[0].innerText.includes("bildirim yok")) { tbody.innerHTML = ''; }
             const tr = document.createElement('tr');
             tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-            tr.style.backgroundColor = 'rgba(16, 185, 129, 0.1)'; // Yeni olduğunu belli etmek için hafif yeşil zemin
-           
+            tr.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
             tr.innerHTML = `
                 <td style="padding: 1rem;"><strong><i class="fas fa-bolt" style="color:#F59E0B;"></i> YENİ:</strong> ${dateStr} tarihli web scraping sonuçları siteye yüklenmiştir.</td>
-                <td class="status-cell" style="padding: 1rem;">
-                    <span class="status-unread" style="color: #ef4444; font-weight: 600;">
-                        <i class="fas fa-envelope"></i> Okunmadı
-                    </span>
-                </td>
+                <td class="status-cell" style="padding: 1rem;"><span class="status-unread" style="color: #ef4444; font-weight: 600;"><i class="fas fa-envelope"></i> Okunmadı</span></td>
                 <td style="padding: 1rem; color: #888;">${dateStr}</td>
             `;
-
-            // En başa ekle
             tbody.prepend(tr);
-
-            // Tarayıcıya "Bu tarihin bildirimini gösterdim" diye not düş (Sayfa yenilenince tekrar çıkmasın diye)
             localStorage.setItem(storageKey, 'true');
         }
-
-        // --- YARDIMCI FONKSİYONLAR ---
 
         function setText(id, value) {
             const el = document.getElementById(id);
@@ -270,26 +232,15 @@
             const tbody = document.getElementById('notification-body');
             if(!tbody) return;
             tbody.innerHTML = '';
-
             if(!notifArray || notifArray.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Henüz bildirim yok.</td></tr>';
                 return;
             }
-
             notifArray.forEach(msg => {
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
                 const today = new Date().toLocaleDateString('tr-TR');
-
-                tr.innerHTML = `
-                    <td style="padding: 1rem;">${msg}</td>
-                    <td class="status-cell" style="padding: 1rem;">
-                        <span class="status-unread" style="color: #ef4444; font-weight: 600;">
-                            <i class="fas fa-envelope"></i> Okunmadı
-                        </span>
-                    </td>
-                    <td style="padding: 1rem; color: #888;">${today}</td>
-                `;
+                tr.innerHTML = `<td style="padding: 1rem;">${msg}</td><td class="status-cell" style="padding: 1rem;"><span class="status-unread" style="color: #ef4444; font-weight: 600;"><i class="fas fa-envelope"></i> Okunmadı</span></td><td style="padding: 1rem; color: #888;">${today}</td>`;
                 tbody.appendChild(tr);
             });
         }
