@@ -15,18 +15,34 @@
 <body>
 
     <aside class="sidebar">
-        <div class="brand"><i class="fas fa-cube"></i> Teknoify</div>
+        <div class="brand">
+            <i class="fas fa-cube"></i> <span>Teknoify</span>
+        </div>
+        
         <nav>
-            <a href="member.html" class="menu-item active"><i class="fas fa-home"></i> Genel Bakış</a>
+            <a href="member.html" class="menu-item active">
+                <i class="fas fa-home"></i> <span>Genel Bakış</span>
+            </a>
            
-            <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
+            <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">
+                <span>Hizmetler</span>
+            </div>
            
-            <a href="analysis.html" class="menu-item" id="nav-link-analysis"><i class="fas fa-chart-pie"></i> Web Scraping</a>
+            <a href="analysis.html" class="menu-item" id="nav-link-analysis">
+                <i class="fas fa-chart-pie"></i> <span>Web Scraping</span>
+            </a>
         </nav>
        
         <div class="menu-spacer"></div>
        
-        <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+        <div class="sidebar-footer">
+            <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
+                <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
+            </a>
+            <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Daralt">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
     </aside>
 
     <main class="main-content">
@@ -97,6 +113,11 @@
     <script src="../js/script.js"></script>
 
     <script>
+        // --- MENÜ DARALTMA FONKSİYONU ---
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-closed');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // 1. Session Kontrolü
             if (typeof SessionManager === 'undefined') { console.error("SessionManager Eksik!"); return; }
@@ -235,7 +256,6 @@
             tbody.prepend(tr);
 
             // Tarayıcıya "Bu tarihin bildirimini gösterdim" diye not düş (Sayfa yenilenince tekrar çıkmasın diye)
-            // Eğer her girişte tekrar çıksın istersen aşağıdaki satırı silebilirsin.
             localStorage.setItem(storageKey, 'true');
         }
 
