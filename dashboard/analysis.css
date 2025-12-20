@@ -1,7 +1,15 @@
 /* ================================================================
    [FILE] css/analysis.css
-   [STATUS] FINAL V6 - COMPLETE & FIXED (Only bottom header sticky)
+   [STATUS] FINAL V7 - BOTH HEADER ROWS STICKY + NO JITTER + NO OVERLAP
    ================================================================ */
+
+/* ----------------------------------------------------------------
+   0. STICKY AYAR DEĞİŞKENLERİ
+   ---------------------------------------------------------------- */
+:root{
+  --header-top-h: 45px;
+  --header-bottom-h: 35px;
+}
 
 /* ----------------------------------------------------------------
    1. GRAFİK ALANI (CHARTS)
@@ -72,7 +80,7 @@
 .table-card {
     border: 1px solid var(--border);
     border-radius: 12px;
-    overflow: hidden; /* header radius için */
+    overflow: hidden;
     background: var(--dash-card);
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
@@ -97,11 +105,8 @@
 .table-responsive-wrapper {
     display: block;
     width: 100%;
-
-    /* HEM YATAY HEM DİKEY SCROLL BURADA OLACAK */
     overflow: auto;
-    max-height: 65vh; /* taşarsa scroll çıkar */
-
+    max-height: 65vh;
     border: 1px solid var(--border);
     border-top: none;
     border-bottom-left-radius: 12px;
@@ -110,104 +115,73 @@
     margin-bottom: 20px;
     position: relative;
 
-    /* z-index / sticky katmanlarını stabilize eder */
+    /* Sticky + z-index çakışmalarını stabilize eder */
     isolation: isolate;
+
+    /* Bazı tarayıcılarda scroll daha stabil */
+    -webkit-overflow-scrolling: touch;
 }
 
-
 /* ----------------------------------------------------------------
-   4. TABLO STİLLERİ (COMPLEX STICKY HEADER)
-   NOT: Aşağı kaydırınca sadece #header-row-bottom sticky kalır.
+   4. TABLO (STICKY HEADER + STICKY FIRST COL)
    ---------------------------------------------------------------- */
 .comparison-table {
     width: 100%;
-    border-collapse: separate; /* Sticky için zorunlu */
+    border-collapse: separate;     /* sticky için gerekli */
     border-spacing: 0;
-    font-size: 0.75rem; /* 12px Font */
+    font-size: 0.75rem;
     table-layout: auto;
 }
 
-/* --- TÜM BAŞLIKLAR (GENEL) --- */
-.comparison-table th {
-    background-color: var(--dash-sidebar); /* Arka plan şeffaf olmamalı */
+/* Genel hücreler */
+.comparison-table th,
+.comparison-table td {
+    border-bottom: 1px solid #2a2a2a;
+    border-right: 1px solid var(--border);
+    background-clip: padding-box; /* overlap hissini azaltır */
+}
+
+/* --- THEAD: sticky sadece burada uygulanacak --- */
+.comparison-table thead th{
+    position: sticky;             /* ✅ artık thead th sticky */
+    background-color: var(--dash-sidebar);
     color: #fff;
     padding: 8px 6px;
-    border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border);
     text-align: center !important;
-
-    /* Sticky sadece header satırlarına uygulanacak */
-    position: relative;
-    z-index: 1;
-
-    user-select: none;
     white-space: nowrap;
-    font-weight: 600;
+    user-select: none;
+
+    /* jitter azaltma */
+    transform: translateZ(0);
+    will-change: transform;
 }
 
-/* --- SATIR 1: ÜRÜN BİLGİLERİ & MAĞAZA İSİMLERİ (EN ÜST) --- */
-/* ✅ Bu satır sticky OLMAYACAK -> sağa kaydırınca başlıkların üstüne binmez */
-#header-row-top th {
-    position: static !important; /* Grup başlığı satırı sticky olmayacak */
-    top: 0; /* (static olduğu için etkisiz kalır) */
-    z-index: 5;
-    height: 45px;
-    vertical-align: middle;
-    box-shadow: 0 1px 0 var(--border);
+/* --- SATIR 1 (ÜST GRUP BAŞLIKLARI) sticky --- */
+#header-row-top th{
+    top: 0;
+    height: var(--header-top-h);
+    z-index: 40;                  /* ✅ en üst */
+    box-shadow: none !important;  /* ✅ jitter kaynağıydı */
 }
 
-/* --- SATIR 2: DETAYLAR (PRICE, SKU, CATEGORY) --- */
-/* ✅ Sadece bu satır aşağı kaydırınca sabit kalsın */
-#header-row-bottom th {
-    position: sticky;
-    top: 0; /* Sayfa aşağı kayınca sadece bu satır sabit kalsın */
-    z-index: 20;
-    height: 35px;
-    vertical-align: middle;
+/* --- SATIR 2 (ALT DETAY BAŞLIKLAR) sticky --- */
+#header-row-bottom th{
+    top: var(--header-top-h);
+    height: var(--header-bottom-h);
+    z-index: 30;
     color: var(--text-muted);
     font-size: 0.7rem;
-    box-shadow: 0 1px 0 var(--border);
+    box-shadow: none !important;  /* ✅ jitter kaynağıydı */
 }
 
-/* --- "ÜRÜN BİLGİLERİ" GRUP BAŞLIĞI (ROW 1, COLSPAN 6) --- */
-/* Bu başlık sticky değil, sadece normal akışta yatayda kayar */
-.th-product-info-group {
-    position: static !important;
-    z-index: 5 !important;
+/* ----------------------------------------------------------------
+   4.1 SOL STICKY KOLON (ÜRÜN ADI)
+   ---------------------------------------------------------------- */
+td.sticky-product{
+    position: sticky;
+    left: 0;
+    z-index: 20;                  /* headerların altında, datanın üstünde */
     background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444 !important;
-}
-
-/* --- "ÜRÜN ADI" BAŞLIĞI (ROW 2, SOL) --- */
-/* Bu hücre hem sola hem üste yapışmalı ve en üstte durmalı (kesişim) */
-th.sticky-product {
-    position: sticky !important;
-    left: 0 !important;
-    top: 0 !important; /* Alt başlık satırı ile hizalı */
-    z-index: 30 !important;
-
-    background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444 !important;
-    box-shadow: 4px 0 8px rgba(0,0,0,0.3) !important;
-
-    min-width: 220px;
-    max-width: 220px;
-    text-align: left !important;
-    padding-left: 12px !important;
-}
-
-/* --- "ÜRÜN ADI" VERİ HÜCRELERİ (SOL SÜTUN) --- */
-td.sticky-product {
-    position: sticky !important;
-    left: 0 !important;
-
-    /* ✅ Header'ın altında kalmalı */
-    z-index: 15;
-
-    background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444;
-    box-shadow: 4px 0 8px rgba(0,0,0,0.3);
-
     min-width: 220px;
     max-width: 220px;
     overflow: hidden;
@@ -215,22 +189,47 @@ td.sticky-product {
     white-space: nowrap;
     text-align: left !important;
     padding-left: 12px !important;
-    color: #fff;
+
+    /* jitter azaltma */
+    transform: translateZ(0);
+    will-change: transform;
 }
 
-/* --- TD GENEL --- */
-.comparison-table td {
-    padding: 8px 6px;
-    text-align: center;
-    background: #14161c;
-    border-bottom: 1px solid #2a2a2a;
-    border-right: 1px solid var(--border);
-    font-size: 0.75rem;
-    color: #ccc;
-    vertical-align: middle;
+/* Kesişim: ALT başlık satırındaki "Ürün Adı" hücresi (hem top hem left) */
+#header-row-bottom th.sticky-product{
+    position: sticky !important;
+    left: 0 !important;
+    top: var(--header-top-h) !important;
+    z-index: 50 !important;       /* ✅ her şeyin üstünde */
+    background-color: var(--dash-sidebar) !important;
+    min-width: 220px;
+    max-width: 220px;
+    text-align: left !important;
+    padding-left: 12px !important;
+    box-shadow: none !important;  /* jitter yok */
 }
 
-/* Başlık Grubu Renkleri */
+/* ÜST satırda sol tarafta bir hücre varsa (bazı yapılarda boş/geçiş hücresi)
+   onun da diğerlerinin üstüne çıkmaması için */
+#header-row-top th.sticky-product{
+    position: sticky !important;
+    left: 0 !important;
+    top: 0 !important;
+    z-index: 60 !important;       /* ✅ üst satır + sol kesişim */
+    background-color: var(--dash-sidebar) !important;
+    box-shadow: none !important;
+}
+
+/* ----------------------------------------------------------------
+   4.2 BAŞLIK GRUP RENKLERİ
+   ---------------------------------------------------------------- */
+.th-product-info-group{
+    /* Bu hücre sticky (thead th) ama left asla yok; sadece top sticky */
+    left: auto !important;
+    z-index: 40 !important;
+    background-color: var(--dash-sidebar) !important;
+}
+
 .th-group-tazeyo {
     color: var(--success) !important;
     background-color: #14161c !important;
@@ -255,12 +254,23 @@ td.sticky-product {
     border-bottom: 2px solid #fff !important;
 }
 
+/* ----------------------------------------------------------------
+   4.3 TD GENEL
+   ---------------------------------------------------------------- */
+.comparison-table td {
+    padding: 8px 6px;
+    text-align: center;
+    background: #14161c;
+    font-size: 0.75rem;
+    color: #ccc;
+    vertical-align: middle;
+}
+
 /* Fiyat Yazı Tipi */
 .price {
     font-weight: 700;
     color: #fff;
 }
-
 .discount-price {
     font-weight: 700;
     color: #ffd54f;
@@ -309,7 +319,7 @@ td.sticky-product {
 }
 
 /* ----------------------------------------------------------------
-   5. EK TABLO / KOLON GENİŞLİKLERİ
+   5. KOLON GENİŞLİKLERİ
    ---------------------------------------------------------------- */
 .col-product { min-width: 220px; text-align: left; }
 .col-price { min-width: 110px; }
@@ -321,15 +331,15 @@ td.sticky-product {
 .border-left-light { border-left: 1px solid var(--border); }
 
 /* ----------------------------------------------------------------
-   6. TABLO HOVER EFEKTLERİ
+   6. HOVER (JITTER YAPMAYACAK ŞEKİLDE)
    ---------------------------------------------------------------- */
-.comparison-table tr:hover td {
+.comparison-table tbody tr:hover td {
     background-color: #2f3349 !important;
     color: #fff;
 }
 
-/* Sticky sütun hover olduğunda da renk değişmeli */
-.comparison-table tr:hover td.sticky-product {
+/* Sticky sol kolon hover */
+.comparison-table tbody tr:hover td.sticky-product {
     background-color: #2f3349 !important;
 }
 
