@@ -1,22 +1,21 @@
 /* ================================================================
-   [PROJECT] TEKNOIFY v2.2 - DASHBOARD STYLES (MERGED & FINAL)
-   [NOTE] Analysis.html tasarımı (Renkler & Sidebar) ana yapıya entegre edildi.
-   [STATUS] Tüm fonksiyonlar (Takvim, Toast, Select) korundu.
+   [PROJECT] TEKNOIFY v2.3 - DASHBOARD STYLES (FINAL & COMPLETE)
+   [NOTE] Analysis.html renkleri, Kutulu Footer ve Gelişmiş Sidebar
    ================================================================ */
 
 :root {
     /* --- ANALYSIS TEMA RENKLERİ --- */
-    --dash-bg: #0b0e11;        /* Koyu Arka Plan */
+    --dash-bg: #0b0e11;        /* Ana Arka Plan */
     --dash-sidebar: #14161c;   /* Sidebar ve Topbar */
     --dash-card: #1f232c;      /* Kartlar ve Tablolar */
     
-    --primary: #7367f0;        /* Analysis Moru */
+    --primary: #7367f0;        /* Ana Mor Renk */
     --primary-hover: #6052d6;
     
     --text-main: #f3f4f6;
     --text-muted: #a1a1aa;
     
-    --border: #2f3349;         /* Daha belirgin border rengi */
+    --border: rgba(255,255,255,0.08); /* İnce sınır çizgileri */
     
     --success: #10b981; 
     --warning: #f97316; 
@@ -41,7 +40,7 @@ body {
 a { text-decoration: none; color: inherit; }
 
 /* ================================================================
-   SIDEBAR (ANALYSIS TASARIMI)
+   SIDEBAR (GELİŞMİŞ TASARIM)
    ================================================================ */
 .sidebar {
     width: 260px;
@@ -49,12 +48,13 @@ a { text-decoration: none; color: inherit; }
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    padding: 0; /* Padding kaldırıldı, iç elementlere verildi */
+    padding: 0;
     flex-shrink: 0;
-    transition: 0.3s ease;
+    transition: width 0.3s ease, transform 0.3s ease;
     z-index: 50;
 }
 
+/* MARKA ALANI */
 .brand {
     font-size: 1.25rem;
     font-weight: 700;
@@ -62,55 +62,130 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 20px; /* Analysis stili */
-    margin-bottom: 10px;
+    padding: 24px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    letter-spacing: -0.02em;
+    white-space: nowrap; /* Metin taşmasın */
+    overflow: hidden;
 }
+.brand i { color: var(--primary); font-size: 1.4rem; min-width: 24px; text-align: center; }
 
-.brand i { color: var(--primary); font-size: 1.4rem; }
-
+/* MENÜ LİSTESİ */
 .sidebar nav {
-    padding: 0 10px;
+    padding: 20px 12px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
+    flex: 1; /* Menüyü yukarı iter, footer aşağıda kalır */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
+/* MENÜ ELEMANLARI (Görseldeki Sol Şeritli Tasarım) */
 .menu-item {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    border-radius: 0 6px 6px 0; /* Analysis gibi köşeli yapı */
-    margin-bottom: 2px;
+    border-radius: 8px; /* Hafif yuvarlak köşe */
     transition: all 0.2s ease;
-    border-right: 3px solid transparent; /* Aktiflik çizgisi için yer */
+    border-left: 4px solid transparent; /* Sol şerit için yer tutucu */
+    background: transparent;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.menu-item:hover { 
-    background: rgba(115, 103, 240, 0.1); 
-    color: #fff; 
-}
+.menu-item i { width: 24px; text-align: center; font-size: 1rem; transition: 0.2s; flex-shrink: 0; }
 
-/* Analysis Active Stili: Sağda çizgi ve mor zemin */
+/* HEM ACTIVE HEM DE HOVER DURUMU */
+.menu-item:hover, 
 .menu-item.active {
-    background: linear-gradient(90deg, rgba(115,103,240,0.1) 0%, rgba(115,103,240,0.05) 100%);
+    background: linear-gradient(90deg, rgba(115,103,240,0.15) 0%, rgba(115,103,240,0.02) 100%);
     color: var(--primary);
+    border-left-color: var(--primary); /* Sol mor şerit */
     font-weight: 600;
-    border-right: 3px solid var(--primary);
 }
 
-.menu-item.active i { color: var(--primary); }
+.menu-item:hover i,
+.menu-item.active i {
+    color: var(--primary);
+    transform: scale(1.1);
+}
+
 .menu-spacer { flex: 1; }
 
+/* FOOTER ALANI (KUTULU ÇIKIŞ & GİZLEME BUTONLARI) */
 .sidebar-footer {
-    padding: 20px;
+    padding: 16px;
     border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--dash-sidebar);
 }
+
+/* Çıkış Butonu (Dikdörtgen Kutu) */
+.btn-logout {
+    flex: 1; /* Boşluğu doldurur */
+    background: #1f232c; /* Koyu gri kutu */
+    border: 1px solid var(--border);
+    color: #ef4444; /* Kırmızı metin */
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.btn-logout:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+}
+
+/* Gizleme Butonu (Kare Kutu) */
+.btn-collapse {
+    width: 42px;
+    height: 42px;
+    background: #1f232c;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+.btn-collapse:hover {
+    background: #2a2e3a;
+    color: #fff;
+    border-color: #555;
+}
+
+/* ================================================================
+   SIDEBAR KAPALI DURUM (JAVASCRIPT class="sidebar-closed" eklerse)
+   ================================================================ */
+body.sidebar-closed .sidebar { width: 80px; }
+body.sidebar-closed .brand span,
+body.sidebar-closed .menu-item span,
+body.sidebar-closed .btn-logout span { display: none; }
+body.sidebar-closed .brand { justify-content: center; padding-left: 0; padding-right: 0; }
+body.sidebar-closed .menu-item { justify-content: center; padding-left: 0; padding-right: 0; border-left: none; border-radius: 8px; }
+body.sidebar-closed .menu-item.active { border-left: none; background: rgba(115,103,240,0.15); } /* Kapalıyken border yerine full bg */
+body.sidebar-closed .sidebar-footer { flex-direction: column; padding: 10px; gap: 10px; }
+body.sidebar-closed .btn-logout { width: 100%; padding: 12px 0; justify-content: center; }
+body.sidebar-closed .btn-collapse { width: 100%; height: 40px; }
+body.sidebar-closed .btn-collapse i { transform: rotate(180deg); }
 
 /* ================================================================
    MAIN CONTENT & TOP BAR
@@ -121,17 +196,17 @@ a { text-decoration: none; color: inherit; }
     flex-direction: column;
     overflow: hidden;
     position: relative;
-    background: var(--dash-bg); /* Solid renk yapıldı */
+    background: var(--dash-bg);
 }
 
 .top-bar {
-    height: 64px; /* Analysis yüksekliği */
+    height: 64px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 32px;
-    background: var(--dash-sidebar); /* Solid renk */
+    background: var(--dash-sidebar);
     z-index: 40;
 }
 
@@ -216,7 +291,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ================================================================
-   TABLO STİLLERİ (Analysis Sticky Header Uyumlu)
+   TABLO STİLLERİ (Sticky Header Uyumlu)
    ================================================================ */
 .data-table {
     width: 100%;
@@ -235,7 +310,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .data-table th {
-    background: var(--dash-sidebar); /* Analysis header rengi */
+    background: var(--dash-sidebar);
     color: #fff;
     font-weight: 600;
 }
@@ -243,7 +318,7 @@ a { text-decoration: none; color: inherit; }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tr:hover td { background: rgba(255,255,255,0.02); }
 
-/* Analysis Sayfası İçin Özel Tablo Sınıfları */
+/* Analysis Sayfası Tablosu */
 .comparison-table {
     width: 100%;
     border-collapse: separate;
@@ -284,7 +359,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ================================================================
-   ANALİZ FİLTRE BAR & INPUTLAR
+   ANALİZ FİLTRE BAR & AKSİYONLAR
    ================================================================ */
 .filter-bar {
     display: flex;
@@ -312,8 +387,6 @@ a { text-decoration: none; color: inherit; }
     font-size: 0.8rem;
     color: var(--text-muted);
     font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0.05em;
 }
 
 /* BUTONLAR */
@@ -325,44 +398,26 @@ a { text-decoration: none; color: inherit; }
     font-size: 0.9rem;
     height: 47px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
     transition: 0.2s;
     position: relative;
     z-index: 5;
 }
 
-.btn-filter {
-    background: var(--primary);
-    color: #fff;
-}
+.btn-filter { background: var(--primary); color: #fff; }
 .btn-filter:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-.btn-download {
-    background: #2f3349; /* Koyu tema butonu */
-    border: 1px solid var(--border);
-    color: #fff;
-}
+.btn-download { background: #2f3349; border: 1px solid var(--border); color: #fff; }
 .btn-download:hover { background: #3f445e; transform: translateY(-1px); }
 .btn-disabled { opacity: 0.5; pointer-events: none !important; cursor: not-allowed; }
 
-/* ================================================================
-   İNDİRME MENÜSÜ & AKSİYONLAR
-   ================================================================ */
+/* İndirme Menüsü */
 .download-wrapper { position: relative; display: inline-block; z-index: 50; }
 .download-menu {
-    position: absolute;
-    top: 100%; right: 0;
-    margin-top: 8px;
-    background: var(--dash-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    min-width: 180px;
-    display: none;
-    z-index: 100;
-    overflow: hidden;
+    position: absolute; top: 100%; right: 0; margin-top: 8px;
+    background: var(--dash-card); border: 1px solid var(--border);
+    border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    min-width: 180px; display: none; z-index: 100; overflow: hidden;
 }
 .download-menu.show { display: block; animation: fadeIn 0.2s ease; }
 .download-item {
@@ -374,42 +429,31 @@ a { text-decoration: none; color: inherit; }
 .download-item:last-child { border-bottom: none; }
 .download-item:hover { background: rgba(115, 103, 240, 0.1); color: var(--primary); }
 
-@keyframes fadeIn {
-    from { opacity:0; transform:translateY(-10px); }
-    to   { opacity:1; transform:translateY(0); }
-}
+@keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 
 /* ================================================================
-   MINI DASHBOARD (KPI CARDS)
+   MINI DASHBOARD (KPI)
    ================================================================ */
 .mini-dashboard {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-    display: none;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 24px; display: none;
 }
 .kpi-card {
-    background: var(--dash-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
+    background: var(--dash-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px;
     display: flex; flex-direction: column; justify-content: center;
     position: relative; overflow: hidden;
 }
 .kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
 .kpi-value { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
 .kpi-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-.trend-up { color: var(--success); font-size: 0.9rem; }
-.trend-down { color: var(--danger); font-size: 0.9rem; }
-.trend-neutral { color: var(--warning); font-size: 0.9rem; }
+.trend-up { color: var(--success); } .trend-down { color: var(--danger); } .trend-neutral { color: var(--warning); }
 .progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; }
 .progress-fill { height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 1s ease; }
-
 @media (max-width: 1024px) { .mini-dashboard { grid-template-columns: repeat(2, 1fr); } }
 
 /* ================================================================
-   MODERN TAKVİM (FLATPICKR) - FIX & ABSOLUTE CENTER
+   FLATPICKR (TAKVİM) - ORTALANMIŞ & MODERN
    ================================================================ */
 .date-picker-wrapper { position: relative; width: 100%; }
 .calendar-icon {
@@ -417,7 +461,6 @@ a { text-decoration: none; color: inherit; }
     color: var(--text-muted); pointer-events: none; font-size: 1rem; z-index: 2;
 }
 
-/* 1. Input Stili (Analysis Renkleri) */
 input.flatpickr-input {
     background-color: var(--dash-sidebar) !important;
     border: 1px solid var(--border) !important;
@@ -435,162 +478,84 @@ input.flatpickr-input {
 input.flatpickr-input:hover { border-color: #555 !important; }
 input.flatpickr-input:focus { border-color: var(--primary) !important; outline: none !important; }
 
-/* 2. Takvim Dış Kutu */
 .flatpickr-calendar {
-    background: var(--dash-card) !important;
-    border: 1px solid var(--border) !important;
+    background: var(--dash-card) !important; border: 1px solid var(--border) !important;
     box-shadow: 0 20px 60px rgba(0,0,0,0.7) !important;
-    border-radius: 12px !important;
-    padding: 15px !important;
-    font-family: var(--font-main) !important;
-    width: 340px !important;
-    margin-top: 8px !important;
+    border-radius: 12px !important; padding: 15px !important;
+    font-family: var(--font-main) !important; width: 340px !important; margin-top: 8px !important;
 }
 .flatpickr-calendar::before, .flatpickr-calendar::after { display: none !important; }
 
-/* 3. Ay/Yıl Başlık Konteyneri */
-.flatpickr-months {
-    background: transparent !important; border: none !important;
-    position: relative !important; display: flex !important;
-    align-items: center !important; justify-content: center !important;
-    height: 50px !important; margin-bottom: 10px !important;
-}
-.flatpickr-months .flatpickr-month {
-    background: transparent !important; display: flex !important;
-    align-items: center !important; justify-content: center !important;
-    flex: 1 1 auto !important; padding: 0 !important; margin: 0 !important;
-    position: relative !important;
-}
-
-/* OKLARIN YERLEŞİMİ - ABSOLUTE CENTER */
+/* Ay/Yıl/Oklar - Absolute Center */
+.flatpickr-months { background: transparent !important; border: none !important; position: relative !important; display: flex !important; height: 50px !important; margin-bottom: 10px !important; }
+.flatpickr-months .flatpickr-month { background: transparent !important; }
 .flatpickr-prev-month, .flatpickr-next-month {
     position: absolute !important; top: 50% !important; transform: translateY(-50%) !important;
     z-index: 100 !important; height: 32px !important; width: 32px !important;
-    padding: 0 !important; display: flex !important;
-    align-items: center !important; justify-content: center !important;
-    border-radius: 8px !important; background: rgba(255,255,255,0.05) !important;
-    cursor: pointer !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    border-radius: 8px !important; background: rgba(255,255,255,0.05) !important; padding: 0 !important;
 }
-.flatpickr-prev-month { left: 10px !important; }
-.flatpickr-next-month { right: 10px !important; }
+.flatpickr-prev-month { left: 10px !important; } .flatpickr-next-month { right: 10px !important; }
 .flatpickr-prev-month:hover, .flatpickr-next-month:hover { background: var(--primary) !important; fill: #fff !important; }
 .flatpickr-prev-month svg, .flatpickr-next-month svg { width: 12px !important; height: 12px !important; fill: #fff !important; }
 
-/* ORTA KISIM (AY + YIL TAM ORTADA) */
 .flatpickr-current-month {
     position: absolute !important; top: 50% !important; left: 50% !important;
     transform: translate(-50%, -50%) !important; display: flex !important;
-    align-items: center !important; justify-content: center !important;
-    gap: 6px !important; width: auto !important; height: auto !important;
-    padding: 0 !important; margin: 0 !important; background: transparent !important;
-    pointer-events: none !important;
+    gap: 6px !important; width: auto !important; height: auto !important; padding: 0 !important; margin: 0 !important;
 }
-.flatpickr-monthDropdown-months {
-    appearance: none !important; background: transparent !important; border: none !important;
-    color: #fff !important; font-weight: 700 !important; font-size: 1.1rem !important;
-    padding: 0 !important; margin: 0 !important; cursor: default !important; text-align: center !important;
+.flatpickr-monthDropdown-months, .flatpickr-current-month input.cur-year {
+    color: #fff !important; font-weight: 700 !important; font-size: 1.1rem !important; background: transparent !important; border: none !important; padding: 0 !important; margin: 0 !important;
 }
-.flatpickr-current-month .numInputWrapper { width: auto !important; margin: 0 !important; }
-.flatpickr-current-month input.cur-year {
-    font-weight: 700 !important; color: #fff !important; background: transparent !important;
-    border: none !important; padding: 0 !important; margin: 0 !important;
-    font-size: 1.1rem !important; text-align: center !important;
-}
-.numInputWrapper span.arrowUp, .numInputWrapper span.arrowDown { display: none !important; }
+.numInputWrapper { width: auto !important; } .numInputWrapper span { display: none !important; }
 
-/* 4. Günlerin Başlıkları (Pzt, Sal...) */
-.flatpickr-weekdays { width: 100% !important; margin-bottom: 10px !important; background: transparent !important; border: none !important; }
-span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !important; font-size: 0.85rem !important; background: transparent !important; }
-
-/* 5. Gün Kutucukları */
+.flatpickr-weekdays { width: 100% !important; margin-bottom: 10px !important; }
+span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !important; font-size: 0.85rem !important; }
 .flatpickr-day {
     border-radius: 8px !important; border: none !important; font-weight: 500 !important;
     height: 38px !important; line-height: 38px !important; margin: 2px 0 !important;
-    flex-basis: 14.28% !important; max-width: 14.28% !important; width: 14.28% !important;
-    background: transparent !important; box-shadow: none !important; color: #e2e8f0 !important;
+    color: #e2e8f0 !important; background: transparent !important; box-shadow: none !important;
+    max-width: 14.28% !important;
 }
 .flatpickr-day:hover { background: rgba(255, 255, 255, 0.05) !important; color: #fff !important; }
-.flatpickr-day.today { border: 1px solid var(--primary) !important; color: var(--primary) !important; background: transparent !important; }
-.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-    background: var(--primary) !important; color: #fff !important; box-shadow: none !important; border: none !important;
-}
-.flatpickr-day.inRange {
-    background: rgba(115, 103, 240, 0.15) !important; color: #fff !important; border: none !important;
-    box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important;
-}
+.flatpickr-day.today { border: 1px solid var(--primary) !important; color: var(--primary) !important; }
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange { background: var(--primary) !important; color: #fff !important; border: none !important; }
+.flatpickr-day.inRange { background: rgba(115, 103, 240, 0.15) !important; color: #fff !important; border: none !important; box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important; }
 
 /* ================================================================
-   MULTI-SELECT (ÇOKLU SEÇİM) DROPDOWN
+   MULTI-SELECT & DİĞERLERİ
    ================================================================ */
 .multi-select-wrapper { position: relative; width: 100%; user-select: none; }
-
 .multi-select-trigger {
-    background: var(--dash-sidebar);
-    border: 1px solid var(--border);
-    color: #fff;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: flex; justify-content: space-between; align-items: center;
+    background: var(--dash-sidebar); border: 1px solid var(--border); color: #fff;
+    padding: 12px 16px; border-radius: 8px; font-size: 0.9rem;
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
     height: 47px; transition: 0.2s;
 }
 .multi-select-trigger:hover { border-color: #555; }
-.multi-select-trigger::after {
-    content: '\f078'; font-family: "Font Awesome 6 Free";
-    font-weight: 900; font-size: 0.8rem; color: var(--text-muted);
-}
+.multi-select-trigger::after { content: '\f078'; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 0.8rem; color: var(--text-muted); }
 
 .multi-select-menu {
-    position: absolute; top: 105%; left: 0; width: 100%;
-    background: var(--dash-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 8px;
-    display: none; z-index: 100;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    max-height: 300px; overflow-y: auto;
+    position: absolute; top: 105%; left: 0; width: 100%; background: var(--dash-card);
+    border: 1px solid var(--border); border-radius: 12px; padding: 8px; display: none; z-index: 100;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); max-height: 300px; overflow-y: auto;
 }
 .multi-select-menu.show { display: block; animation: fadeIn 0.2s ease; }
-
 .multi-option {
-    padding: 10px 12px; border-radius: 6px; cursor: pointer;
-    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
     color: var(--text-muted); font-size: 0.9rem; transition: 0.2s; margin-bottom: 2px;
 }
 .multi-option:hover { background: rgba(255,255,255,0.03); color: #fff; }
 .multi-option.selected { background: rgba(115, 103, 240, 0.1); color: #fff; font-weight: 500; }
-
 .option-checkbox {
-    width: 18px; height: 18px;
-    border: 2px solid var(--border); border-radius: 4px;
+    width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px;
     display: flex; align-items: center; justify-content: center; transition: 0.2s;
 }
-.multi-option.selected .option-checkbox {
-    background: var(--primary); border-color: var(--primary);
-    box-shadow: 0 0 10px rgba(115, 103, 240, 0.4);
-}
-.option-checkbox::after {
-    content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900;
-    color: #fff; font-size: 0.7rem; opacity: 0; transform: scale(0.5); transition: 0.2s;
-}
+.multi-option.selected .option-checkbox { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px rgba(115, 103, 240, 0.4); }
+.option-checkbox::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: #fff; font-size: 0.7rem; opacity: 0; transform: scale(0.5); transition: 0.2s; }
 .multi-option.selected .option-checkbox::after { opacity: 1; transform: scale(1); }
 
-/* ================================================================
-   BİLDİRİM VE AKSİYON BUTONLARI & TOAST
-   ================================================================ */
-.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.section-header h3 { font-size: 1.1rem; font-weight: 600; margin: 0; }
-
-.btn-text-action {
-    background: transparent; border: none; color: var(--primary);
-    font-size: 0.85rem; font-weight: 600; cursor: pointer;
-    transition: 0.2s; display: flex; align-items: center; gap: 6px;
-}
-.btn-text-action:hover { color: #fff; text-decoration: underline; }
-.btn-text-action i { font-size: 0.9rem; }
-
-/* TOAST NOTIFICATION */
+/* TOAST & HELPER CLASSES */
 .toast-notification {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
     background: #1f232c; border: 1px solid var(--border); border-left: 4px solid var(--warning);
@@ -603,16 +568,16 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 .toast-content h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: #fff; }
 .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
-/* EKSTRA YARDIMCI SINIFLAR */
 .th-group-tazeyo { background: rgba(16, 185, 129, 0.08) !important; color: var(--success) !important; text-align: center !important; border-bottom: 2px solid var(--success) !important; font-weight: 700; }
 .th-group-market { background: rgba(249, 115, 22, 0.08) !important; color: var(--warning) !important; text-align: center !important; border-bottom: 2px solid var(--warning) !important; font-weight: 700; }
 .price-cell { font-family: var(--font-mono); font-weight: 600; color: #e5e7eb; white-space: nowrap; }
-.diff-negative { color: var(--success); font-weight: 600; }
-.diff-positive { color: var(--danger); font-weight: 600; }
+.diff-negative { color: var(--success); font-weight: 600; } .diff-positive { color: var(--danger); font-weight: 600; }
 .limit-warning {
     background: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.4);
     color: #fdba74; padding: 15px; border-radius: 12px; margin-top: 20px;
     text-align: center; font-size: 0.9rem; display: none; font-weight: 500;
 }
+.btn-text-action { background: transparent; border: none; color: var(--primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+.btn-text-action:hover { color: #fff; text-decoration: underline; } .btn-text-action i { font-size: 0.9rem; }
 
 
