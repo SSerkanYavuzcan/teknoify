@@ -1,10 +1,10 @@
 /* ================================================================
-   [PROJECT] TEKNOIFY v2.3 - DASHBOARD STYLES (FINAL & COMPLETE)
-   [NOTE] Analysis.html renkleri, Kutulu Footer ve Gelişmiş Sidebar
+   [PROJECT] TEKNOIFY v3.0 - DASHBOARD STYLES (FULL HIDDEN SIDEBAR)
+   [NOTE] Tamamen gizlenen panel, Yüzen buton, Analysis teması.
    ================================================================ */
 
 :root {
-    /* --- ANALYSIS TEMA RENKLERİ --- */
+    /* --- RENK PALETİ (Analysis Teması) --- */
     --dash-bg: #0b0e11;        /* Ana Arka Plan */
     --dash-sidebar: #14161c;   /* Sidebar ve Topbar */
     --dash-card: #1f232c;      /* Kartlar ve Tablolar */
@@ -40,7 +40,48 @@ body {
 a { text-decoration: none; color: inherit; }
 
 /* ================================================================
-   SIDEBAR (GELİŞMİŞ TASARIM)
+   1. YÜZEN AÇMA BUTONU (PANEL KAPALIYKEN GÖRÜNÜR)
+   ================================================================ */
+#floating-toggle-btn {
+    position: fixed;
+    bottom: 25px; /* Sol alt köşe */
+    left: 25px;
+    width: 50px;
+    height: 50px;
+    background: #2f3349; /* Tema ile uyumlu koyu gri */
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%; /* Tam yuvarlak */
+    z-index: 10001; /* En üstte */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    
+    /* Animasyonlu Görünürlük */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+#floating-toggle-btn:hover {
+    background: var(--primary);
+    transform: scale(1.1);
+    border-color: var(--primary);
+}
+
+/* Sidebar Kapandığında Butonu Göster */
+body.sidebar-closed #floating-toggle-btn {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+/* ================================================================
+   2. SIDEBAR (YAN PANEL)
    ================================================================ */
 .sidebar {
     width: 260px;
@@ -50,8 +91,21 @@ a { text-decoration: none; color: inherit; }
     flex-direction: column;
     padding: 0;
     flex-shrink: 0;
-    transition: width 0.3s ease, transform 0.3s ease;
+    
+    /* Geçiş Animasyonu */
+    transition: all 0.3s ease;
+    overflow: hidden; /* İçerik taşmasın */
     z-index: 50;
+    opacity: 1;
+}
+
+/* Sidebar Kapandığında (TAMAMEN GİZLE) */
+body.sidebar-closed .sidebar {
+    width: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    opacity: 0;
+    pointer-events: none; /* Tıklamayı engelle */
 }
 
 /* MARKA ALANI */
@@ -64,8 +118,7 @@ a { text-decoration: none; color: inherit; }
     gap: 12px;
     padding: 24px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    white-space: nowrap; /* Metin taşmasın */
-    overflow: hidden;
+    white-space: nowrap;
 }
 .brand i { color: var(--primary); font-size: 1.4rem; min-width: 24px; text-align: center; }
 
@@ -75,12 +128,12 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     flex-direction: column;
     gap: 8px;
-    flex: 1; /* Menüyü yukarı iter, footer aşağıda kalır */
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
-/* MENÜ ELEMANLARI (Görseldeki Sol Şeritli Tasarım) */
+/* MENÜ ELEMANLARI */
 .menu-item {
     display: flex;
     align-items: center;
@@ -89,22 +142,21 @@ a { text-decoration: none; color: inherit; }
     color: var(--text-muted);
     font-size: 0.95rem;
     font-weight: 500;
-    border-radius: 8px; /* Hafif yuvarlak köşe */
+    border-radius: 8px;
     transition: all 0.2s ease;
-    border-left: 4px solid transparent; /* Sol şerit için yer tutucu */
+    border-left: 4px solid transparent; /* Sol şerit */
     background: transparent;
     white-space: nowrap;
-    overflow: hidden;
 }
 
 .menu-item i { width: 24px; text-align: center; font-size: 1rem; transition: 0.2s; flex-shrink: 0; }
 
-/* HEM ACTIVE HEM DE HOVER DURUMU */
+/* HOVER & ACTIVE DURUMU */
 .menu-item:hover, 
 .menu-item.active {
     background: linear-gradient(90deg, rgba(115,103,240,0.15) 0%, rgba(115,103,240,0.02) 100%);
     color: var(--primary);
-    border-left-color: var(--primary); /* Sol mor şerit */
+    border-left-color: var(--primary);
     font-weight: 600;
 }
 
@@ -116,7 +168,7 @@ a { text-decoration: none; color: inherit; }
 
 .menu-spacer { flex: 1; }
 
-/* FOOTER ALANI (KUTULU ÇIKIŞ & GİZLEME BUTONLARI) */
+/* FOOTER ALANI (KUTULU BUTONLAR) */
 .sidebar-footer {
     padding: 16px;
     border-top: 1px solid rgba(255,255,255,0.05);
@@ -126,12 +178,12 @@ a { text-decoration: none; color: inherit; }
     background: var(--dash-sidebar);
 }
 
-/* Çıkış Butonu (Dikdörtgen Kutu) */
+/* Çıkış Butonu (Dikdörtgen) */
 .btn-logout {
-    flex: 1; /* Boşluğu doldurur */
-    background: #1f232c; /* Koyu gri kutu */
+    flex: 1;
+    background: #1f232c;
     border: 1px solid var(--border);
-    color: #ef4444; /* Kırmızı metin */
+    color: #ef4444;
     padding: 10px;
     border-radius: 8px;
     font-weight: 600;
@@ -144,14 +196,13 @@ a { text-decoration: none; color: inherit; }
     font-size: 0.9rem;
     text-decoration: none;
     white-space: nowrap;
-    overflow: hidden;
 }
 .btn-logout:hover {
     background: rgba(239, 68, 68, 0.1);
     border-color: #ef4444;
 }
 
-/* Gizleme Butonu (Kare Kutu) */
+/* Gizleme Butonu (Kare) */
 .btn-collapse {
     width: 42px;
     height: 42px;
@@ -173,22 +224,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ================================================================
-   SIDEBAR KAPALI DURUM (JAVASCRIPT class="sidebar-closed" eklerse)
-   ================================================================ */
-body.sidebar-closed .sidebar { width: 80px; }
-body.sidebar-closed .brand span,
-body.sidebar-closed .menu-item span,
-body.sidebar-closed .btn-logout span { display: none; }
-body.sidebar-closed .brand { justify-content: center; padding-left: 0; padding-right: 0; }
-body.sidebar-closed .menu-item { justify-content: center; padding-left: 0; padding-right: 0; border-left: none; border-radius: 8px; }
-body.sidebar-closed .menu-item.active { border-left: none; background: rgba(115,103,240,0.15); } /* Kapalıyken border yerine full bg */
-body.sidebar-closed .sidebar-footer { flex-direction: column; padding: 10px; gap: 10px; }
-body.sidebar-closed .btn-logout { width: 100%; padding: 12px 0; justify-content: center; }
-body.sidebar-closed .btn-collapse { width: 100%; height: 40px; }
-body.sidebar-closed .btn-collapse i { transform: rotate(180deg); }
-
-/* ================================================================
-   MAIN CONTENT & TOP BAR
+   3. ANA İÇERİK & ÜST BAR
    ================================================================ */
 .main-content {
     flex: 1;
@@ -247,7 +283,7 @@ body.sidebar-closed .btn-collapse i { transform: rotate(180deg); }
 }
 
 /* ================================================================
-   DASHBOARD WIDGETS & CARDS
+   4. DASHBOARD WIDGETS & KARTLAR
    ================================================================ */
 .stats-grid {
     display: grid;
@@ -291,7 +327,7 @@ body.sidebar-closed .btn-collapse i { transform: rotate(180deg); }
 }
 
 /* ================================================================
-   TABLO STİLLERİ (Sticky Header Uyumlu)
+   5. TABLO STİLLERİ (STICKY HEADER)
    ================================================================ */
 .data-table {
     width: 100%;
@@ -318,7 +354,7 @@ body.sidebar-closed .btn-collapse i { transform: rotate(180deg); }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tr:hover td { background: rgba(255,255,255,0.02); }
 
-/* Analysis Sayfası Tablosu */
+/* Analysis Tablosu (Sticky) */
 .comparison-table {
     width: 100%;
     border-collapse: separate;
@@ -359,7 +395,7 @@ body.sidebar-closed .btn-collapse i { transform: rotate(180deg); }
 }
 
 /* ================================================================
-   ANALİZ FİLTRE BAR & AKSİYONLAR
+   6. FİLTRELER & BUTONLAR
    ================================================================ */
 .filter-bar {
     display: flex;
@@ -389,7 +425,6 @@ body.sidebar-closed .btn-collapse i { transform: rotate(180deg); }
     font-weight: 600;
 }
 
-/* BUTONLAR */
 .btn-filter, .btn-download {
     border: none;
     padding: 0 24px;
@@ -411,49 +446,8 @@ body.sidebar-closed .btn-collapse i { transform: rotate(180deg); }
 .btn-download:hover { background: #3f445e; transform: translateY(-1px); }
 .btn-disabled { opacity: 0.5; pointer-events: none !important; cursor: not-allowed; }
 
-/* İndirme Menüsü */
-.download-wrapper { position: relative; display: inline-block; z-index: 50; }
-.download-menu {
-    position: absolute; top: 100%; right: 0; margin-top: 8px;
-    background: var(--dash-card); border: 1px solid var(--border);
-    border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    min-width: 180px; display: none; z-index: 100; overflow: hidden;
-}
-.download-menu.show { display: block; animation: fadeIn 0.2s ease; }
-.download-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 16px; color: #fff; cursor: pointer;
-    font-size: 0.9rem; transition: 0.2s;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.download-item:last-child { border-bottom: none; }
-.download-item:hover { background: rgba(115, 103, 240, 0.1); color: var(--primary); }
-
-@keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
-
 /* ================================================================
-   MINI DASHBOARD (KPI)
-   ================================================================ */
-.mini-dashboard {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 16px; margin-bottom: 24px; display: none;
-}
-.kpi-card {
-    background: var(--dash-card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px;
-    display: flex; flex-direction: column; justify-content: center;
-    position: relative; overflow: hidden;
-}
-.kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
-.kpi-value { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
-.kpi-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-.trend-up { color: var(--success); } .trend-down { color: var(--danger); } .trend-neutral { color: var(--warning); }
-.progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; }
-.progress-fill { height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 1s ease; }
-@media (max-width: 1024px) { .mini-dashboard { grid-template-columns: repeat(2, 1fr); } }
-
-/* ================================================================
-   FLATPICKR (TAKVİM) - ORTALANMIŞ & MODERN
+   7. FLATPICKR (TAKVİM) - ORTALANMIŞ
    ================================================================ */
 .date-picker-wrapper { position: relative; width: 100%; }
 .calendar-icon {
@@ -486,7 +480,7 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 }
 .flatpickr-calendar::before, .flatpickr-calendar::after { display: none !important; }
 
-/* Ay/Yıl/Oklar - Absolute Center */
+/* Takvim İç Yapısı */
 .flatpickr-months { background: transparent !important; border: none !important; position: relative !important; display: flex !important; height: 50px !important; margin-bottom: 10px !important; }
 .flatpickr-months .flatpickr-month { background: transparent !important; }
 .flatpickr-prev-month, .flatpickr-next-month {
@@ -523,7 +517,7 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 .flatpickr-day.inRange { background: rgba(115, 103, 240, 0.15) !important; color: #fff !important; border: none !important; box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important; }
 
 /* ================================================================
-   MULTI-SELECT & DİĞERLERİ
+   8. DİĞER BİLEŞENLER (Multi-Select, Toast vb.)
    ================================================================ */
 .multi-select-wrapper { position: relative; width: 100%; user-select: none; }
 .multi-select-trigger {
@@ -555,7 +549,35 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 .option-checkbox::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: #fff; font-size: 0.7rem; opacity: 0; transform: scale(0.5); transition: 0.2s; }
 .multi-option.selected .option-checkbox::after { opacity: 1; transform: scale(1); }
 
-/* TOAST & HELPER CLASSES */
+.download-wrapper { position: relative; display: inline-block; z-index: 50; }
+.download-menu {
+    position: absolute; top: 100%; right: 0; margin-top: 8px;
+    background: var(--dash-card); border: 1px solid var(--border);
+    border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    min-width: 180px; display: none; z-index: 100; overflow: hidden;
+}
+.download-menu.show { display: block; animation: fadeIn 0.2s ease; }
+.download-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; color: #fff; cursor: pointer;
+    font-size: 0.9rem; transition: 0.2s;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.download-item:last-child { border-bottom: none; }
+.download-item:hover { background: rgba(115, 103, 240, 0.1); color: var(--primary); }
+
+/* Mini Dashboard */
+.mini-dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; display: none; }
+.kpi-card { background: var(--dash-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+.kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+.kpi-value { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+.kpi-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+.trend-up { color: var(--success); } .trend-down { color: var(--danger); } .trend-neutral { color: var(--warning); }
+.progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; }
+.progress-fill { height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 1s ease; }
+@media (max-width: 1024px) { .mini-dashboard { grid-template-columns: repeat(2, 1fr); } }
+
+/* Toast */
 .toast-notification {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
     background: #1f232c; border: 1px solid var(--border); border-left: 4px solid var(--warning);
@@ -568,6 +590,7 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 .toast-content h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: #fff; }
 .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
+/* Helper Classes */
 .th-group-tazeyo { background: rgba(16, 185, 129, 0.08) !important; color: var(--success) !important; text-align: center !important; border-bottom: 2px solid var(--success) !important; font-weight: 700; }
 .th-group-market { background: rgba(249, 115, 22, 0.08) !important; color: var(--warning) !important; text-align: center !important; border-bottom: 2px solid var(--warning) !important; font-weight: 700; }
 .price-cell { font-family: var(--font-mono); font-weight: 600; color: #e5e7eb; white-space: nowrap; }
@@ -579,5 +602,7 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 }
 .btn-text-action { background: transparent; border: none; color: var(--primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
 .btn-text-action:hover { color: #fff; text-decoration: underline; } .btn-text-action i { font-size: 0.9rem; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.section-header h3 { font-size: 1.1rem; font-weight: 600; margin: 0; }
 
 
