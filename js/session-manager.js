@@ -1,136 +1,94 @@
+/**
+ * ================================================================
+ * [MODULE] SESSION MANAGER (REDIS SIMULATION)
+ * Güvenli, şifreli ve zaman ayarlı oturum yönetimi.
+ * ================================================================
+ */
+
 class SessionManager {
-    constructor(options = {}) {
-        this.timeoutMinutes = options.timeout || 5;
-        this.TIMEOUT_MS = this.timeoutMinutes * 60 * 1000;
-        this.STORAGE_KEY = 'teknoify_secure_v2';
-        
-        this.onSessionExpired = options.onExpired || (() => {});
-        this.checkInterval = null;
-
-
-        this._setupActivityListeners();
-        
-        if (this.getSession()) {
-            this._startWatchdog();
-        }
+    constructor() {
+        // AYAR: Oturum kaç dakika sürecek? (5 Dakika = 300.000 ms)
+        this.TIMEOUT_MS = 5 * 60 * 1000; 
+        this.STORAGE_KEY = 'teknoify_secure_session';
     }
 
-
+    /**
+     * [CORE] Oturumu Başlat (Login anında çağrılır)
+     * @param {Object} userData - Kullanıcı verileri (rol, isim vb.)
+     */
     startSession(userData) {
         const sessionData = {
             user: userData,
-            token: this._generateFakeToken(),
-            lastActive: Date.now()
+            createdAt: Date.now(),    // İlk giriş saati
+            lastActive: Date.now()    // Son işlem saati
         };
 
-
         this._saveToStorage(sessionData);
-        this._startWatchdog();
+        console.log("🔒 Güvenli Oturum Başlatıldı (TTL: 5dk)");
     }
 
-
-    getSession() {
+    /**
+     * [CORE] Oturumu Kontrol Et (Her sayfa açılışında çağrılır)
+     * @returns {Object|null} - Geçerliyse kullanıcı verisi, değilse null
+     */
+    validateSession() {
         const encryptedData = localStorage.getItem(this.STORAGE_KEY);
-        if (!encryptedData) return null;
-
+        if (!encryptedData) return null; // Hiç veri yok
 
         const session = this._decrypt(encryptedData);
-        if (!session) return null;
-
+        if (!session) return null; // Veri bozuk
 
         const now = Date.now();
-        
-        if (now - session.lastActive > this.TIMEOUT_MS) {
-            this.destroySession("timeout"); 
-            return null;
+        const diff = now - session.lastActive;
+
+        // 1. KURAL: 5 Dakika geçti mi?
+        if (diff > this.TIMEOUT_MS) {
+            console.warn("⚠️ Oturum zaman aşımına uğradı. (Browser kapalıydı)");
+            this.destroySession(); // Veriyi sil
+            return null; // Oturumu geçersiz say
         }
 
-
-        return session.user;
-    }
-
-
-    _startWatchdog() {
-        if (this.checkInterval) clearInterval(this.checkInterval);
-
-
-        this.checkInterval = setInterval(() => {
-            const encryptedData = localStorage.getItem(this.STORAGE_KEY);
-            if (!encryptedData) {
-                this.destroySession("manual");
-                return;
-            }
-
-
-            const session = this._decrypt(encryptedData);
-            const now = Date.now();
-            
-            if (now - session.lastActive > this.TIMEOUT_MS) {
-                this.destroySession("timeout");
-            }
-        }, 10000); 
-    }
-
-
-    _setupActivityListeners() {
-        const resetTimer = () => this._refreshSession();
+        // 2. KURAL: Süre dolmadıysa süreyi uzat (Refresh)
+        session.lastActive = now;
+        this._saveToStorage(session); // Yeni saati kaydet
         
-        window.addEventListener('mousemove', resetTimer);
-        window.addEventListener('keydown', resetTimer);
-        window.addEventListener('click', resetTimer);
+        return session.user; // Kullanıcıyı içeri al
     }
 
-
-    _refreshSession() {
-        const encryptedData = localStorage.getItem(this.STORAGE_KEY);
-        if (!encryptedData) return;
-
-
-        const session = this._decrypt(encryptedData);
-        
-        if (!session) return;
-
-
-        session.lastActive = Date.now();
-        this._saveToStorage(session);
-    }
-
-
-    destroySession(reason = "manual") {
+    /**
+     * [ACTION] Çıkış Yap
+     */
+    destroySession() {
         localStorage.removeItem(this.STORAGE_KEY);
-        if (this.checkInterval) clearInterval(this.checkInterval);
-        
-        if (reason === "timeout") {
-            this.onSessionExpired(); 
-        }
+        console.log("🔓 Oturum Sonlandırıldı.");
     }
 
-
+    /**
+     * [INTERNAL] Veriyi Şifreleyip Kaydet (Mock Encryption)
+     * Gerçek projede crypto-js kullanılır. Burada Base64 ile simüle ediyoruz.
+     */
     _saveToStorage(data) {
         try {
-            const stringData = JSON.stringify(data);
-            const obfuscated = btoa(stringData.split('').reverse().join(''));
-            localStorage.setItem(this.STORAGE_KEY, obfuscated);
+            const jsonString = JSON.stringify(data);
+            // Basit bir şifreleme (Base64) - Gözle okumayı engeller
+            const encrypted = btoa(unescape(encodeURIComponent(jsonString)));
+            localStorage.setItem(this.STORAGE_KEY, encrypted);
         } catch (e) {
-            console.error("Storage Error", e);
+            console.error("Session Save Error:", e);
         }
     }
 
-
+    /**
+     * [INTERNAL] Veriyi Çöz (Decryption)
+     */
     _decrypt(encryptedString) {
         try {
-            const decoded = atob(encryptedString).split('').reverse().join('');
-            return JSON.parse(decoded);
+            const jsonString = decodeURIComponent(escape(atob(encryptedString)));
+            return JSON.parse(jsonString);
         } catch (e) {
+            console.error("Session Tampered!", e);
             return null;
         }
     }
-
-
-    _generateFakeToken() {
-        return Math.random().toString(36).substr(2) + Date.now().toString(36);
-    }
 }
-
-
 
