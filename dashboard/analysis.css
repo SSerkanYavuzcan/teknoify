@@ -136,11 +136,11 @@
 
 
 /* ----------------------------------------------------------------
-   4. KARŞILAŞTIRMA TABLOSU - DÜZELTİLMİŞ VERSİYON
+   4. KARŞILAŞTIRMA TABLOSU - FİNAL (Sol Üst Köşe Sabitlemesi İptal)
    ---------------------------------------------------------------- */
 .comparison-table {
     width: 100%;
-    border-collapse: separate;
+    border-collapse: separate; /* Sticky headerların düzgün çalışması için şart */
     border-spacing: 0;
     font-size: 0.75rem;
     table-layout: auto;
@@ -149,16 +149,16 @@
 
 
 /* =================================================================
-   KRİTİK: Z-INDEX HİYERARŞİSİ (YENİDEN DÜZENLENDİ)
+   Z-INDEX HİYERARŞİSİ (KATMANLAR)
    
-   400: SOL ÜST KÖŞE (Kesişim Noktası - "Ürün Bilgileri" Ana Başlık)
-   300: SOL SÜTUN (Ürün İsimleri)
-   200: ÜST BAŞLIKLAR (Market İsimleri, Fiyat Başlıkları)
-   10:  Normal Hücreler (Gerekirse)
+   300: SOL SÜTUN (Ürün İsimleri) -> En üstte durur, diğerleri altından geçer.
+   200: ÜST BAŞLIKLAR (Marketler, Fiyat Başlıkları, Grup Başlığı)
+   10:  SOL SÜTUN VERİLERİ (Sticky Data)
+   1:   Normal Veri Hücreleri
    ================================================================= */
 
 
-/* --- TÜM BAŞLIKLAR (TH) GENEL AYARLAR --- */
+/* --- TÜM BAŞLIKLAR (TH) ORTAK AYARLAR --- */
 .comparison-table th {
     background-color: var(--dash-sidebar) !important;
     color: #fff;
@@ -166,18 +166,18 @@
     border-bottom: 1px solid var(--border);
     border-right: 1px solid var(--border);
     text-align: center !important;
-    position: sticky !important; /* Hepsi sticky */
+    position: sticky !important;
     user-select: none;
     white-space: nowrap;
     font-weight: 600;
-    background-clip: padding-box; /* Kenarlık çakışmalarını önler */
+    background-clip: padding-box;
 }
 
 
-/* --- 1. SATIR: EN ÜST (Mağaza İsimleri) --- */
+/* --- 1. SATIR: EN ÜST (Mağaza İsimleri ve Grup Başlığı) --- */
 #header-row-top th {
     top: 0 !important;
-    z-index: 200; /* Sol sütunun altında kalmalı ki kayınca altına girsin */
+    z-index: 200; /* Sol sütunun (300) altında kalır */
     height: 45px;
     vertical-align: middle;
 }
@@ -194,33 +194,33 @@
 }
 
 
-/* --- KRİTİK DÜZELTME: SOL ÜST KÖŞE ("ÜRÜN BİLGİLERİ" GRUP BAŞLIĞI) ---
-   Bu hücre hem yukarıda hem solda sabit kalmalı ve HER ŞEYİN ÜSTÜNDE olmalı.
-*/
+/* --- ÖZEL: SOL ÜST KÖŞE ("ÜRÜN BİLGİLERİ" GRUP BAŞLIĞI) --- */
+/* İSTEK: Sola sabitleme KALDIRILDI. Sağa scroll edince kaybolacak. */
 .th-product-info-group {
+    /* Sadece yukarı yapışık, sola değil */
     position: sticky !important;
     top: 0 !important;
-    left: 0 !important; /* ARTIK SOLA YAPIŞIK */
-    z-index: 400 !important; /* EN YÜKSEK KATMAN */
+    left: auto !important; /* Serbest bıraktık */
    
+    z-index: 200 !important; /* Diğer başlıklarla aynı seviyede */
     background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444 !important;
+    border-right: 1px solid var(--border) !important;
     border-bottom: 1px solid var(--border) !important;
-   
-    /* Eğer bu başlık çok genişse (colspan varsa) ve diğer sütunları kapatıyorsa
-       HTML tarafında colspan'ı 1 veya 2 yapıp sadece donan sütunları kapsamasını sağla. */
 }
 
 
 /* --- SOL SÜTUN: "ÜRÜN ADI" BAŞLIĞI (2. Satır, 1. Sütun) --- */
+/* KRİTİK NOKTA: Burası sabit kalmalı ve katmanı (z-index) yüksek olmalı */
 th.sticky-product {
     position: sticky !important;
     left: 0 !important;
     top: 45px !important;
-    z-index: 300 !important; /* Köşeden düşük, diğer başlıklardan yüksek */
+   
+    /* Z-Index 300 sayesinde sağdan gelen başlıklar bunun ALTINA girer */
+    z-index: 300 !important;
    
     background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #444 !important;
+    border-right: 2px solid #444 !important; /* Ayrımı netleştiren kalın çizgi */
    
     min-width: 220px;
     max-width: 220px;
@@ -233,9 +233,9 @@ th.sticky-product {
 td.sticky-product {
     position: sticky !important;
     left: 0 !important;
-    z-index: 10 !important; /* Verilerin üzerinde kalması için */
+    z-index: 10 !important; /* Normal verilerin üstünde */
    
-    background-color: var(--dash-sidebar) !important;
+    background-color: var(--dash-sidebar) !important; /* Arka plan şart yoksa yazılar karışır */
     border-right: 2px solid #444 !important;
    
     min-width: 220px;
@@ -247,8 +247,6 @@ td.sticky-product {
     padding-left: 12px !important;
     color: #fff;
 }
-
-
 
 
 /* ----------------------------------------------------------------
