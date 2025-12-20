@@ -1,6 +1,6 @@
 /* ================================================================
    [FILE] css/analysis.css
-   [STATUS] FINAL V15 - KESİN ÇÖZÜM (Scroll Fix + Sticky Header)
+   [STATUS] FINAL V17 - TAM SÜRÜM (Renk, Font ve Çizgi Revizeli)
    ================================================================ */
 
 /* ----------------------------------------------------------------
@@ -135,34 +135,41 @@
 
 
 /* ----------------------------------------------------------------
-   4. KARŞILAŞTIRMA TABLOSU (MİMARİ)
+   4. KARŞILAŞTIRMA TABLOSU - GENEL YAPILANDIRMA
    ---------------------------------------------------------------- */
 .comparison-table {
     width: 100%;
     border-collapse: separate; /* Sticky header için ZORUNLU */
     border-spacing: 0;
-    font-size: 0.75rem;
     table-layout: auto;
 }
 
-/* ================================================================
-   Z-INDEX (KATMAN) PLANI - KARIŞIKLIĞI ÖNLEMEK İÇİN
-   900: SOL ÜST KÖŞE & SOL BAŞLIK (En Üst)
-   250: 1. SATIR BAŞLIKLARI (Market İsimleri)
-   200: 2. SATIR BAŞLIKLARI (Fiyat, SKU vs.)
-   100: SOL SÜTUN VERİLERİ (Kayarken diğerlerinin üstünde kalsın)
+/* Z-INDEX (KATMAN) PLANI:
+   900: SOL ÜST KÖŞE (En Üst)
+   900: SOL SÜTUN BAŞLIĞI
+   250: 1. SATIR BAŞLIKLARI
+   200: 2. SATIR BAŞLIKLARI
+   100: SOL SÜTUN VERİLERİ (Sticky Data)
    1:   NORMAL VERİLER
-   ================================================================ */
+*/
 
-/* --- TÜM BAŞLIKLAR (TH) GENEL --- */
+/* ----------------------------------------------------------------
+   5. BAŞLIKLAR (TH) STİLLERİ
+   ---------------------------------------------------------------- */
 .comparison-table th {
-    background-color: var(--dash-sidebar) !important; /* Arka plan şart */
+    background-color: var(--dash-sidebar) !important;
     color: #fff;
-    padding: 0 6px;
-    border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+    padding: 0 8px; /* Genişlik hissi için padding artırıldı */
+    
+    /* GÖRSEL İSTEKLER: BÜYÜK VE KALIN */
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    
+    /* NET AYRIM İÇİN KENARLIKLAR */
+    border-bottom: 1px solid #555;
+    border-right: 1px solid #555 !important; /* Dikey ayrım çizgisi */
+    
     text-align: center;
-    font-weight: 600;
     white-space: nowrap;
     background-clip: padding-box;
     
@@ -184,18 +191,20 @@
     top: 45px !important; /* 1. satırın hemen altına yapış */
     height: 40px;
     line-height: 40px;
-    color: var(--text-muted);
+    
+    color: #ddd; /* Alt başlıklar biraz daha parlak */
+    font-size: 0.8rem !important; /* Alt başlıklar bir tık küçük olabilir */
+    
     /* Veri ile karışmasın diye gölge */
     box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
 }
 
 
 /* ----------------------------------------------------------------
-   5. SOL SÜTUN SABİTLEME (KÖŞELER)
+   6. SABİT SOL SÜTUNLAR (YATAY SCROLL İÇİN)
    ---------------------------------------------------------------- */
 
 /* SOL ÜST KÖŞE: "Ürün" (1. Satır, 1. Sütun) */
-/* Bu hücre hem YUKARI hem SOLA yapışık olmalı */
 .th-fixed-corner {
     position: sticky !important;
     left: 0 !important;
@@ -203,9 +212,7 @@
     z-index: 900 !important; /* EN YÜKSEK KATMAN */
     
     background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #555 !important;
-    min-width: 220px;
-    max-width: 220px;
+    border-right: 2px solid #777 !important; /* Sabit kısım ayrımı daha kalın */
 }
 
 /* SOL ALT BAŞLIK: "Ürün Adı" (2. Satır, 1. Sütun) */
@@ -216,9 +223,8 @@ th.sticky-product {
     z-index: 900 !important; /* Köşe ile aynı seviye */
     
     background-color: var(--dash-sidebar) !important;
-    border-right: 2px solid #555 !important;
-    min-width: 220px;
-    max-width: 220px;
+    border-right: 2px solid #777 !important;
+    
     text-align: left !important;
     padding-left: 12px !important;
 }
@@ -229,14 +235,16 @@ td.sticky-product {
     position: sticky !important;
     left: 0 !important;
     
-    /* Z-Index 200'den KÜÇÜK olmalı ki başlıkların altına girsin */
-    /* Z-Index 1'den BÜYÜK olmalı ki fiyatların üstüne binsin */
+    /* Z-Index: Başlıkların (200) altı, Verilerin üstü */
     z-index: 100 !important; 
     
     background-color: var(--dash-card) !important;
-    border-right: 2px solid #555 !important;
+    border-right: 2px solid #777 !important; /* Sabit kısım ayrımı */
     border-bottom: 1px solid #2a2a2a;
     color: #fff;
+    
+    /* Veri Font Ayarı */
+    font-weight: 500;
     
     min-width: 220px;
     max-width: 220px;
@@ -249,39 +257,48 @@ td.sticky-product {
 
 
 /* ----------------------------------------------------------------
-   6. DİĞER HÜCRE STILLERI & RENKLENDİRME
+   7. DİĞER HÜCRE STILLERI & RENKLENDİRME
    ---------------------------------------------------------------- */
 .comparison-table td {
     padding: 6px 8px;
     height: 35px;
+    
+    /* GÖRSEL İSTEKLER: VERİ BOYUTU */
+    font-size: 0.75rem !important; 
+    font-weight: 400;
+    
     border-bottom: 1px solid #2a2a2a;
-    border-right: 1px solid var(--border);
+    /* DİKEY ÇİZGİLER: NET AYRIM */
+    border-right: 1px solid #444 !important; 
+    
     vertical-align: middle;
     background-color: var(--dash-card);
 }
 
-/* Başlık Grubu Renkleri */
+/* --- ÖZEL RENK AYARLARI --- */
+
+/* TAZEYO BAŞLIK RENGİ (GÜNCELLENDİ) */
 .th-group-tazeyo {
-    color: var(--success) !important;
-    background-color: #14161c !important;
-    border-bottom: 2px solid var(--success) !important;
+    color: #fff !important;
+    background-color: #14373b !important; /* İstenen Koyu Yeşil */
+    border-bottom: 2px solid #10b981 !important;
 }
+
+/* MARKET BAŞLIKLARI (Genel Sınıf) */
 .th-group-market {
     color: var(--warning) !important;
     background-color: #14161c !important;
-    border-bottom: 2px solid var(--warning) !important;
 }
 
-/* Fiyat Yazı Tipi */
+/* Fiyat Yazı Tipi (Hizalama için Mono) */
 .price-cell {
     min-width: 90px;
     text-align: center;
-    font-family: var(--font-mono);
+    font-family: 'Fira Code', monospace;
+    font-weight: 500;
 }
 
 /* Yardımcı Kenarlıklar */
-.border-left-strong { border-left: 2px solid #444; }
-.border-left-light { border-left: 1px solid var(--border); }
 .col-analysis-status { min-width: 120px; text-align: center; }
 
 /* Tablo Hover Efektleri */
