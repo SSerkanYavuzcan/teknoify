@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Veri Çekme & Analiz | Teknoify</title>
+    <title>Fiyat Karşılaştırma | Teknoify</title>
    
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -328,8 +328,16 @@
         <div class="brand"><i class="fas fa-cube"></i> Teknoify</div>
         <nav>
             <a href="member.html" class="menu-item"><i class="fas fa-home"></i> Genel Bakış</a>
-            <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
-            <a href="analysis.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
+            
+            <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Web Scraping</div>
+            
+            <a href="analysis.html" class="menu-item active" id="nav-comparison">
+                <i class="fas fa-tags"></i> Fiyat Karşılaştırma
+            </a>
+            
+            <a href="market-analysis.html" class="menu-item" id="nav-market">
+                <i class="fas fa-chart-line"></i> Pazar Analizi
+            </a>
         </nav>
         <div class="menu-spacer" style="flex-grow: 1;"></div>
         <div class="sidebar-footer">
@@ -342,7 +350,7 @@
 
     <main class="main-content">
         <header class="top-bar">
-            <h2>Pazar Analizi & Fiyat Takibi</h2>
+            <h2>Fiyat Karşılaştırma</h2>
             <div class="user-profile">
                 <span id="user-name-display">Yükleniyor...</span>
                 <div class="avatar" id="user-avatar">U</div>
