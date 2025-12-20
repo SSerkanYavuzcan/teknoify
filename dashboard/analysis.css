@@ -133,27 +133,47 @@
 }
 
 
-
-
 /* ----------------------------------------------------------------
-   4. KARŞILAŞTIRMA TABLOSU - KESİN ÇÖZÜM (SPLIT HEADER)
+   4. KARŞILAŞTIRMA TABLOSU - FİNAL (Hem Yatay Hem Dikey Sabit)
    ---------------------------------------------------------------- */
+
+
+/* 1. SCROLL KAPSAYICISI */
+/* Bu alanın yüksekliği (max-height) olmazsa dikey sabitleme çalışmaz! */
+.table-responsive-wrapper {
+    display: block;
+    width: 100%;
+    max-height: 68vh; /* Ekranın %68'i kadar yer kaplar, sonrası scroll olur */
+    overflow: auto;   /* Hem yatay hem dikey scroll açar */
+    border: 1px solid var(--border);
+    border-radius: 0 0 12px 12px;
+    background: var(--dash-card);
+    position: relative;
+    /* Scrollbar Tasarımı (Opsiyonel) */
+    scrollbar-width: thin;
+    scrollbar-color: #444 #1f232c;
+}
 
 
 .comparison-table {
     width: 100%;
-    border-collapse: separate;
+    border-collapse: separate; /* Sticky için şart */
     border-spacing: 0;
     font-size: 0.75rem;
     table-layout: auto;
 }
 
 
-/* --- TÜM BAŞLIKLAR GENEL AYAR --- */
+/* ----------------------------------------------------------------
+   2. BAŞLIKLARIN SABİTLENMESİ (STICKY HEADERS)
+   ---------------------------------------------------------------- */
+
+
+/* --- TÜM BAŞLIK HÜCRELERİ İÇİN ORTAK AYAR --- */
 .comparison-table th {
-    background-color: var(--dash-sidebar) !important;
+    background-color: var(--dash-sidebar) !important; /* Arka plan şart (yazılar karışmasın) */
     color: #fff;
-    padding: 8px 6px;
+    padding: 0 6px; /* Padding'i azalttık, height ile ortalayacağız */
     border-bottom: 1px solid var(--border);
     border-right: 1px solid var(--border);
     text-align: center;
@@ -161,39 +181,57 @@
     white-space: nowrap;
     background-clip: padding-box;
    
-    /* Hepsi dikeyde (yukarı) yapışsın */
+    /* DİKEY SABİTLEME (Aşağı inince tepede kalsınlar) */
     position: sticky;
-    top: 0;
-    z-index: 100; /* Standart katman */
+    z-index: 100; /* Verilerin (z-index:10) üstünde kalsın */
+}
+
+
+/* --- 1. SATIR (En Üst - Market İsimleri, Grup Başlıkları) --- */
+#header-row-top th {
+    top: 0 !important; /* En tepeye yapışır */
+    height: 45px;      /* Yüksekliği sabitledik */
+    line-height: 45px; /* Dikey ortalama */
+}
+
+
+/* --- 2. SATIR (Alt Detaylar - Price, SKU, Mağaza vb.) --- */
+#header-row-bottom th {
+    top: 45px !important; /* 1. Satırın (45px) hemen altına yapışır */
+    height: 40px;
+    line-height: 40px;
+    color: var(--text-muted);
+    /* Altına hafif gölge ekleyelim ki veriyle karıştığı belli olsun */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 
 /* ----------------------------------------------------------------
-   KRİTİK BÖLGE: SOL TARAFTAKİ SABİT SÜTUNLAR
+   3. SOL ÜST KÖŞELER (HEM YATAY HEM DİKEY SABİT)
    ---------------------------------------------------------------- */
 
 
-/* 1. SOL ÜST KÖŞE (1. Satır, 1. Sütun - "Ürün" yazan yer) */
+/* KÖŞE 1: "Ürün" (1. Satır, 1. Sütun) */
 .th-fixed-corner {
     position: sticky !important;
     left: 0 !important;   /* Sola yapışık */
     top: 0 !important;    /* Yukarı yapışık */
-    z-index: 600 !important; /* EN YÜKSEK KATMAN (Her şeyin üstünde) */
+    z-index: 600 !important; /* EN EN ÜST KATMAN */
    
     background-color: var(--dash-sidebar) !important;
     border-right: 2px solid #555 !important;
     min-width: 220px;
     max-width: 220px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5); /* Derinlik hissi */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5); /* Hem sağa hem aşağı gölge */
 }
 
 
-/* 2. SOL ALT BAŞLIK (2. Satır, 1. Sütun - "Ürün Adı" yazan yer) */
+/* KÖŞE 2: "Ürün Adı" (2. Satır, 1. Sütun) */
 th.sticky-product {
     position: sticky !important;
     left: 0 !important;
-    top: 45px !important; /* 1. satırın altından başlar */
-    z-index: 600 !important; /* En yüksek katman */
+    top: 45px !important; /* 1. satırın altında */
+    z-index: 600 !important;
    
     background-color: var(--dash-sidebar) !important;
     border-right: 2px solid #555 !important;
@@ -201,17 +239,22 @@ th.sticky-product {
     max-width: 220px;
     text-align: left !important;
     padding-left: 12px !important;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
 }
 
 
-/* 3. SOL SÜTUN VERİLERİ (Satırlar - Ürün İsimleri) */
+/* ----------------------------------------------------------------
+   4. SOL SÜTUN VERİLERİ (SADECE YATAY SABİT)
+   ---------------------------------------------------------------- */
+/* Bu hücreler aşağı kayınca BAŞLIKLARIN ALTINA girmeli, ama sağa kayınca GÖRÜNMELİ */
 td.sticky-product {
     position: sticky !important;
     left: 0 !important;
-    z-index: 400 !important; /* Verilerin en üstü (Fiyatların üstüne biner) */
    
-    background-color: var(--dash-card) !important; /* Arka plan şart */
+    /* ÖNEMLİ: Z-Index 100'den küçük olmalı ki başlıkların (100) altına girsin */
+    z-index: 50 !important;
+   
+    background-color: var(--dash-card) !important;
     border-right: 2px solid #555 !important;
     border-bottom: 1px solid #2a2a2a;
     color: #fff;
@@ -226,32 +269,15 @@ td.sticky-product {
 
 
 /* ----------------------------------------------------------------
-   DİĞER BAŞLIKLAR (Sola yapışmayanlar)
+   5. GENEL HÜCRE AYARLARI
    ---------------------------------------------------------------- */
-
-
-/* "Detaylar" grubu ve diğer Market İsimleri (1. Satır) */
-/* Bunların left:0 özelliği YOK, z-index düşük. Sağa kayınca kaybolurlar. */
-.th-scrollable-group,
-#header-row-top th:not(.th-fixed-corner) {
-    z-index: 100;
-}
-
-
-/* Alt satırdaki detay başlıkları (Fiyat, SKU vs.) */
-#header-row-bottom th:not(.sticky-product) {
-    top: 45px;
-    z-index: 100;
-}
-
-
-/* Hücre Genel Ayarları */
 .comparison-table td {
     background-color: var(--dash-card);
     border-bottom: 1px solid #2a2a2a;
     border-right: 1px solid var(--border);
     vertical-align: middle;
     padding: 6px 8px;
+    height: 35px;
 }
 
 
