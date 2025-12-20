@@ -1,21 +1,21 @@
 /* ================================================================
-   [PROJECT] TEKNOIFY v3.0 - DASHBOARD STYLES (FULL HIDDEN SIDEBAR)
-   [NOTE] Tamamen gizlenen panel, Yüzen buton, Analysis teması.
+   [PROJECT] TEKNOIFY v3.1 - DASHBOARD STYLES
+   [UPDATE] Çıkış butonu rengi beyaza çekildi (Hover'da kırmızı).
    ================================================================ */
 
 :root {
-    /* --- RENK PALETİ (Analysis Teması) --- */
-    --dash-bg: #0b0e11;        /* Ana Arka Plan */
-    --dash-sidebar: #14161c;   /* Sidebar ve Topbar */
-    --dash-card: #1f232c;      /* Kartlar ve Tablolar */
+    /* --- RENK PALETİ --- */
+    --dash-bg: #0b0e11;
+    --dash-sidebar: #14161c;
+    --dash-card: #1f232c;
     
-    --primary: #7367f0;        /* Ana Mor Renk */
+    --primary: #7367f0;
     --primary-hover: #6052d6;
     
     --text-main: #f3f4f6;
     --text-muted: #a1a1aa;
     
-    --border: rgba(255,255,255,0.08); /* İnce sınır çizgileri */
+    --border: rgba(255,255,255,0.08);
     
     --success: #10b981; 
     --warning: #f97316; 
@@ -40,27 +40,25 @@ body {
 a { text-decoration: none; color: inherit; }
 
 /* ================================================================
-   1. YÜZEN AÇMA BUTONU (PANEL KAPALIYKEN GÖRÜNÜR)
+   1. YÜZEN AÇMA BUTONU
    ================================================================ */
 #floating-toggle-btn {
     position: fixed;
-    bottom: 25px; /* Sol alt köşe */
+    bottom: 25px;
     left: 25px;
     width: 50px;
     height: 50px;
-    background: #2f3349; /* Tema ile uyumlu koyu gri */
+    background: #2f3349;
     color: #fff;
     border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 50%; /* Tam yuvarlak */
-    z-index: 10001; /* En üstte */
+    border-radius: 50%;
+    z-index: 10001;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     font-size: 1.2rem;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    
-    /* Animasyonlu Görünürlük */
     opacity: 0;
     visibility: hidden;
     transform: scale(0.8);
@@ -73,7 +71,6 @@ a { text-decoration: none; color: inherit; }
     border-color: var(--primary);
 }
 
-/* Sidebar Kapandığında Butonu Göster */
 body.sidebar-closed #floating-toggle-btn {
     opacity: 1;
     visibility: visible;
@@ -81,7 +78,7 @@ body.sidebar-closed #floating-toggle-btn {
 }
 
 /* ================================================================
-   2. SIDEBAR (YAN PANEL)
+   2. SIDEBAR
    ================================================================ */
 .sidebar {
     width: 260px;
@@ -91,24 +88,20 @@ body.sidebar-closed #floating-toggle-btn {
     flex-direction: column;
     padding: 0;
     flex-shrink: 0;
-    
-    /* Geçiş Animasyonu */
     transition: all 0.3s ease;
-    overflow: hidden; /* İçerik taşmasın */
+    overflow: hidden;
     z-index: 50;
     opacity: 1;
 }
 
-/* Sidebar Kapandığında (TAMAMEN GİZLE) */
 body.sidebar-closed .sidebar {
     width: 0 !important;
     padding: 0 !important;
     border: none !important;
     opacity: 0;
-    pointer-events: none; /* Tıklamayı engelle */
+    pointer-events: none;
 }
 
-/* MARKA ALANI */
 .brand {
     font-size: 1.25rem;
     font-weight: 700;
@@ -122,7 +115,6 @@ body.sidebar-closed .sidebar {
 }
 .brand i { color: var(--primary); font-size: 1.4rem; min-width: 24px; text-align: center; }
 
-/* MENÜ LİSTESİ */
 .sidebar nav {
     padding: 20px 12px;
     display: flex;
@@ -133,7 +125,6 @@ body.sidebar-closed .sidebar {
     overflow-x: hidden;
 }
 
-/* MENÜ ELEMANLARI */
 .menu-item {
     display: flex;
     align-items: center;
@@ -144,14 +135,13 @@ body.sidebar-closed .sidebar {
     font-weight: 500;
     border-radius: 8px;
     transition: all 0.2s ease;
-    border-left: 4px solid transparent; /* Sol şerit */
+    border-left: 4px solid transparent;
     background: transparent;
     white-space: nowrap;
 }
 
 .menu-item i { width: 24px; text-align: center; font-size: 1rem; transition: 0.2s; flex-shrink: 0; }
 
-/* HOVER & ACTIVE DURUMU */
 .menu-item:hover, 
 .menu-item.active {
     background: linear-gradient(90deg, rgba(115,103,240,0.15) 0%, rgba(115,103,240,0.02) 100%);
@@ -168,7 +158,7 @@ body.sidebar-closed .sidebar {
 
 .menu-spacer { flex: 1; }
 
-/* FOOTER ALANI (KUTULU BUTONLAR) */
+/* FOOTER ALANI */
 .sidebar-footer {
     padding: 16px;
     border-top: 1px solid rgba(255,255,255,0.05);
@@ -178,12 +168,12 @@ body.sidebar-closed .sidebar {
     background: var(--dash-sidebar);
 }
 
-/* Çıkış Butonu (Dikdörtgen) */
+/* Çıkış Butonu (BEYAZ YAPILDI) */
 .btn-logout {
     flex: 1;
     background: #1f232c;
     border: 1px solid var(--border);
-    color: #ef4444;
+    color: #fff; /* <-- BURASI BEYAZ OLDU */
     padding: 10px;
     border-radius: 8px;
     font-weight: 600;
@@ -197,12 +187,15 @@ body.sidebar-closed .sidebar {
     text-decoration: none;
     white-space: nowrap;
 }
+
+/* Hover durumunda Kırmızıya Dönüş (Uyarı Hissi) */
 .btn-logout:hover {
     background: rgba(239, 68, 68, 0.1);
     border-color: #ef4444;
+    color: #ef4444;
 }
 
-/* Gizleme Butonu (Kare) */
+/* Gizleme Butonu */
 .btn-collapse {
     width: 42px;
     height: 42px;
@@ -224,7 +217,7 @@ body.sidebar-closed .sidebar {
 }
 
 /* ================================================================
-   3. ANA İÇERİK & ÜST BAR
+   3. ANA İÇERİK
    ================================================================ */
 .main-content {
     flex: 1;
@@ -283,7 +276,7 @@ body.sidebar-closed .sidebar {
 }
 
 /* ================================================================
-   4. DASHBOARD WIDGETS & KARTLAR
+   4. KARTLAR & WIDGETLAR
    ================================================================ */
 .stats-grid {
     display: grid;
@@ -327,7 +320,7 @@ body.sidebar-closed .sidebar {
 }
 
 /* ================================================================
-   5. TABLO STİLLERİ (STICKY HEADER)
+   5. TABLOLAR
    ================================================================ */
 .data-table {
     width: 100%;
@@ -447,7 +440,7 @@ body.sidebar-closed .sidebar {
 .btn-disabled { opacity: 0.5; pointer-events: none !important; cursor: not-allowed; }
 
 /* ================================================================
-   7. FLATPICKR (TAKVİM) - ORTALANMIŞ
+   7. FLATPICKR (TAKVİM)
    ================================================================ */
 .date-picker-wrapper { position: relative; width: 100%; }
 .calendar-icon {
@@ -480,7 +473,6 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 }
 .flatpickr-calendar::before, .flatpickr-calendar::after { display: none !important; }
 
-/* Takvim İç Yapısı */
 .flatpickr-months { background: transparent !important; border: none !important; position: relative !important; display: flex !important; height: 50px !important; margin-bottom: 10px !important; }
 .flatpickr-months .flatpickr-month { background: transparent !important; }
 .flatpickr-prev-month, .flatpickr-next-month {
@@ -517,7 +509,7 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 .flatpickr-day.inRange { background: rgba(115, 103, 240, 0.15) !important; color: #fff !important; border: none !important; box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important; }
 
 /* ================================================================
-   8. DİĞER BİLEŞENLER (Multi-Select, Toast vb.)
+   8. DİĞER BİLEŞENLER
    ================================================================ */
 .multi-select-wrapper { position: relative; width: 100%; user-select: none; }
 .multi-select-trigger {
@@ -566,7 +558,6 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 .download-item:last-child { border-bottom: none; }
 .download-item:hover { background: rgba(115, 103, 240, 0.1); color: var(--primary); }
 
-/* Mini Dashboard */
 .mini-dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; display: none; }
 .kpi-card { background: var(--dash-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
 .kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
@@ -577,7 +568,6 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 .progress-fill { height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 1s ease; }
 @media (max-width: 1024px) { .mini-dashboard { grid-template-columns: repeat(2, 1fr); } }
 
-/* Toast */
 .toast-notification {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
     background: #1f232c; border: 1px solid var(--border); border-left: 4px solid var(--warning);
@@ -590,7 +580,6 @@ span.flatpickr-weekday { color: var(--text-muted) !important; font-weight: 600 !
 .toast-content h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: #fff; }
 .toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
-/* Helper Classes */
 .th-group-tazeyo { background: rgba(16, 185, 129, 0.08) !important; color: var(--success) !important; text-align: center !important; border-bottom: 2px solid var(--success) !important; font-weight: 700; }
 .th-group-market { background: rgba(249, 115, 22, 0.08) !important; color: var(--warning) !important; text-align: center !important; border-bottom: 2px solid var(--warning) !important; font-weight: 700; }
 .price-cell { font-family: var(--font-mono); font-weight: 600; color: #e5e7eb; white-space: nowrap; }
