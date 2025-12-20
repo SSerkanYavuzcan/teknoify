@@ -221,14 +221,34 @@
         .apexcharts-legend-text { color: #ccc !important; }
 
         /* =========================================================================
-           6. TABLO YAPISI (STICKY HEADER)
+           6. TABLO YAPISI (STICKY HEADER) & ÇİFT SCROLLBAR
            ========================================================================= */
+        
+        /* Üst Scrollbar Kapsayıcısı */
+        .top-scroll-wrapper {
+            display: block; width: 100%; overflow-x: auto; overflow-y: hidden;
+            border: 1px solid #333;
+            border-bottom: none; /* Alt sınır yok, tabloyla birleşsin */
+            border-top-left-radius: 12px; border-top-right-radius: 12px;
+            background: #14161c;
+            height: 15px; /* Standart scrollbar yüksekliği kadar bir alan */
+        }
+        
+        /* Sahte içerik (genişliği JS ile ayarlanacak) */
+        .top-scroll-content { height: 1px; }
+
+        /* Asıl Tablo Kapsayıcısı (Alt Scrollbar) */
         .table-responsive-wrapper {
             display: block; width: 100%;
             overflow-x: auto; overflow-y: visible;
-            border: 1px solid #333; border-radius: 12px;
+            border: 1px solid #333; 
+            /* Üst kenarları düzleştir, üst scrollbar ile birleşsin */
+            border-top: none; 
+            border-top-left-radius: 0; border-top-right-radius: 0;
+            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
             background: #14161c; margin-bottom: 20px;
         }
+
         .comparison-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: max-content; }
 
         #header-row-top th {
@@ -429,7 +449,11 @@
                 </div>
             </div>
 
-            <div class="table-responsive-wrapper">
+            <div id="top-scroll-wrapper" class="top-scroll-wrapper">
+                <div id="top-scroll-content" class="top-scroll-content"></div>
+            </div>
+
+            <div class="table-responsive-wrapper" id="table-scroll-container">
                 <table class="comparison-table" id="main-table">
                     <thead>
                         <tr id="header-row-top"></tr>
@@ -458,13 +482,43 @@
     <script>
         let ALL_DATA = [];
         let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
-        let GRAPH_FILTERED_DATA = null; // Grafik filtresi için
-        let activeCategoryFilter = null; // Kategori filtresinin toggle durumu için
+        let GRAPH_FILTERED_DATA = null;
+        let activeCategoryFilter = null;
         let flatpickrInstance;
         let SELECTED_BRANCHES = ['all'];
         let SELECTED_CATEGORIES = ['all'];
         let chartCategory = null;
         let chartPie = null;
+
+        // SCROLL SENKRONİZASYON DEĞİŞKENLERİ
+        const topScrollWrapper = document.getElementById('top-scroll-wrapper');
+        const topScrollContent = document.getElementById('top-scroll-content');
+        const tableScrollContainer = document.getElementById('table-scroll-container');
+        const mainTable = document.getElementById('main-table');
+
+        // Scroll Olaylarını Bağla
+        topScrollWrapper.addEventListener('scroll', function(e) {
+            if(tableScrollContainer.scrollLeft !== topScrollWrapper.scrollLeft) {
+                tableScrollContainer.scrollLeft = topScrollWrapper.scrollLeft;
+            }
+        });
+
+        tableScrollContainer.addEventListener('scroll', function(e) {
+            if(topScrollWrapper.scrollLeft !== tableScrollContainer.scrollLeft) {
+                topScrollWrapper.scrollLeft = tableScrollContainer.scrollLeft;
+            }
+        });
+
+        // Tablo genişliği değiştikçe üst scrollbar'ın içindeki div'i güncelle
+        function updateTopScrollWidth() {
+            // Tablonun gerçek genişliğini al (paddingler dahil)
+            const tableWidth = mainTable.scrollWidth;
+            topScrollContent.style.width = tableWidth + 'px';
+        }
+        
+        // Pencere yeniden boyutlandırılırsa da güncelle
+        window.addEventListener('resize', updateTopScrollWidth);
+
 
         const CATEGORY_MAPPING = {
             "Taze Meyve": "Meyve & Sebze", "Taze Sebze": "Meyve & Sebze", "Taze Ot & Yeşillik": "Meyve & Sebze", "Patates, Soğan & Sarımsak": "Meyve & Sebze", "Kullanıma Hazır Meyve & Sebze": "Meyve & Sebze",
@@ -540,12 +594,9 @@
             });
         });
 
-        // --- TABLO FİLTRELEME MANTIĞI (GRAFİKTEN GELEN) ---
         function filterTableByGraph(filterType, filterValue) {
-            // Eğer veri yoksa işlem yapma
             if(!CURRENT_PROCESSED_DATA || CURRENT_PROCESSED_DATA.rows.length === 0) return;
 
-            // Filtreleme Banner'ını Göster
             const banner = document.getElementById('active-filter-banner');
             const bannerText = document.getElementById('active-filter-text');
             banner.style.display = 'flex';
@@ -559,7 +610,6 @@
                     return catName === filterValue;
                 });
             } else if (filterType === 'POSITION') {
-                // filterValue: 'Daha Ucuzuz', 'Eşit', 'Daha Pahalıyız'
                 bannerText.innerHTML = `Pazar Konumu: <strong>${filterValue}</strong>`;
                 filteredRows = CURRENT_PROCESSED_DATA.rows.filter(row => {
                     const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
@@ -579,11 +629,8 @@
                 });
             }
 
-            // Global değişkeni güncelleme ama tabloyu güncelle
             GRAPH_FILTERED_DATA = filteredRows;
             renderTable(filteredRows.slice(0, 250), CURRENT_PROCESSED_DATA.competitorNames);
-            
-            // Limit mesajını güncelle
             const limitMsg = document.getElementById('limit-msg');
             limitMsg.style.display = (filteredRows.length > 250) ? 'block' : 'none';
         }
@@ -591,9 +638,8 @@
         function clearGraphFilters() {
             document.getElementById('active-filter-banner').style.display = 'none';
             GRAPH_FILTERED_DATA = null;
-            activeCategoryFilter = null; // Hafızayı sıfırla
+            activeCategoryFilter = null;
 
-            // Orijinal veriyi geri yükle
             const displayData = CURRENT_PROCESSED_DATA.rows.slice(0, 250);
             renderTable(displayData, CURRENT_PROCESSED_DATA.competitorNames);
             const limitMsg = document.getElementById('limit-msg');
@@ -693,7 +739,6 @@
                 return parseFloat(((stats.comp - stats.biz) / stats.comp * 100).toFixed(1));
             });
 
-            // Renkler
             const colors = seriesData.map(val => val >= 0 ? '#10b981' : '#ef4444');
 
             const options = {
@@ -705,19 +750,12 @@
                     background: 'transparent',
                     fontFamily: 'Inter Tight, sans-serif',
                     events: {
-                        // ÖNEMLİ: Tıklama Olayı (Toggle ve Geniş Alan Tıklaması)
                         click: function(event, chartContext, config) {
-                            // config.dataPointIndex, tıklanan sütunun indeksini verir (boşluğa tıklansa bile)
                             if (config.dataPointIndex !== undefined && config.dataPointIndex > -1) {
                                 const selectedCat = categories[config.dataPointIndex];
-                                
-                                // TOGGLE MANTIĞI:
-                                // Eğer tıklanan kategori zaten aktifse -> Filtreyi kaldır
                                 if (activeCategoryFilter === selectedCat) {
                                     clearGraphFilters();
-                                } 
-                                // Değilse -> Filtreyi uygula
-                                else {
+                                } else {
                                     activeCategoryFilter = selectedCat;
                                     filterTableByGraph('CATEGORY', selectedCat);
                                 }
@@ -730,72 +768,38 @@
                         colors: {
                             ranges: [{ from: -100, to: -0.1, color: '#ef4444' }, { from: 0, to: 100, color: '#10b981' }]
                         },
-                        columnWidth: '60%', // Bar genişliği arttırıldı (daha dolgun görünüm)
+                        columnWidth: '60%',
                         borderRadius: 4,
                     }
                 },
-                // GÖRSEL EFEKTLER
                 states: {
-                    // Normal duruş
                     normal: { filter: { type: 'none', value: 0 } },
-                    // Üzerine gelince (Sadece hafif parlaklık, beyaz ışık yok)
-                    hover: { 
-                        filter: { type: 'brightness', value: 1.15 } 
-                    },
-                    // Tıklanınca
-                    active: { 
-                        allowMultipleDataPointsSelection: false,
-                        filter: { type: 'darken', value: 0.8 } 
-                    }
+                    hover: { filter: { type: 'brightness', value: 1.15 } },
+                    active: { allowMultipleDataPointsSelection: false, filter: { type: 'darken', value: 0.8 } }
                 },
                 dataLabels: { enabled: false },
                 xaxis: {
                     categories: categories,
-                    labels: { 
-                        style: { colors: '#888', fontSize: '11px', fontWeight: 500 },
-                        rotate: -45,
-                        trim: true 
-                    },
+                    labels: { style: { colors: '#888', fontSize: '11px', fontWeight: 500 }, rotate: -45, trim: true },
                     axisBorder: { show: false }, 
                     axisTicks: { show: false },
-                    
-                    // İSTEMEDİĞİN BEYAZ IŞIK/SÜTUN BURADA KAPATILIYOR:
                     crosshairs: { show: false },
-                    
-                    tooltip: { enabled: false } // X-ekseni tooltip'ini kapattık
+                    tooltip: { enabled: false }
                 },
                 yaxis: {
-                    labels: { 
-                        style: { colors: '#888', fontFamily: 'Fira Code, monospace' }, 
-                        formatter: (val) => `%${val}` 
-                    },
+                    labels: { style: { colors: '#888', fontFamily: 'Fira Code, monospace' }, formatter: (val) => `%${val}` },
                     axisBorder: { show: false }
                 },
                 grid: { 
-                    borderColor: '#333', 
-                    strokeDashArray: 4,
-                    yaxis: { lines: { show: true } },
-                    xaxis: { lines: { show: false } }, // Dikey çizgileri kapattık
+                    borderColor: '#333', strokeDashArray: 4,
+                    yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } },
                     padding: { top: 0, right: 0, bottom: 0, left: 10 }
                 },
-                // TOOLTIP (İPUCU KUTUSU) AYARLARI
                 tooltip: {
-                    theme: 'dark',
-                    // intersect: false -> Mouse tam barın üstünde olmasa bile, o sütundaysa göster.
-                    intersect: false, 
-                    shared: true,     
-                    style: { fontSize: '12px' },
+                    theme: 'dark', intersect: false, shared: true, style: { fontSize: '12px' },
                     x: { show: true },
-                    y: {
-                        formatter: function (val) {
-                            return "%" + val;
-                        }
-                    },
-                    marker: { show: true },
-                    fixed: {
-                        enabled: false, // Mouse'u takip etsin
-                        position: 'topRight'
-                    }
+                    y: { formatter: function (val) { return "%" + val; } },
+                    marker: { show: true }, fixed: { enabled: false, position: 'topRight' }
                 }
             };
 
@@ -829,22 +833,14 @@
                         donut: {
                             size: '70%',
                             labels: {
-                                show: true,
-                                name: { color: '#888' },
+                                show: true, name: { color: '#888' },
                                 value: { color: '#fff', fontSize: '20px', fontWeight: 700 },
-                                total: {
-                                    show: true, showAlways: true, label: 'Toplam Ürün', color: '#888',
-                                    formatter: function (w) { return total }
-                                }
+                                total: { show: true, showAlways: true, label: 'Toplam Ürün', color: '#888', formatter: function (w) { return total } }
                             }
                         }
                     }
                 },
-                // HOVER EFEKTİ DÜZELTME
-                states: {
-                    hover: { filter: { type: 'none' } }, // Efekt yok, sadece büyüme
-                    active: { filter: { type: 'none' } }
-                },
+                states: { hover: { filter: { type: 'none' } }, active: { filter: { type: 'none' } } },
                 dataLabels: { enabled: false },
                 legend: { position: 'bottom', labels: { colors: '#ccc' } },
                 stroke: { show: false },
@@ -860,13 +856,10 @@
         function getBrandColor(fullName) {
             if (!fullName) return '#f97316';
             const lowerName = fullName.toLowerCase();
-            
-            // YENİ RENK MANTIĞI VE SIRALAMA UYUMU
             if (lowerName.includes('migros')) return '#f5821f';
             if (lowerName.includes('carrefour')) return '#005daa';
-            if (lowerName.includes('marketten')) return '#E30613'; // Tahmini Marketten kırmızısı (Standard)
-            
-            return '#f97316'; // Varsayılan Turuncu
+            if (lowerName.includes('marketten')) return '#E30613';
+            return '#f97316';
         }
         function hexToRgba(hex, alpha) {
             let c;
@@ -1010,7 +1003,7 @@
             }
         }
         function applyFilters() {
-            clearGraphFilters(); // Önceki grafik filtresini temizle
+            clearGraphFilters(); 
             const dateRange = flatpickrInstance.selectedDates;
             const tbody = document.getElementById('table-body');
             const limitMsg = document.getElementById('limit-msg');
@@ -1061,7 +1054,6 @@
             const grouped = {};
             const allCompetitors = new Set();
             data.forEach(row => {
-                // REVİZE: Key artık Tarih + Ürün. Böylece her gün için ayrı satır oluşur.
                 const productKey = row['SKU'] || row['Product Name'];
                 if (!productKey) return;
                 const uniqueKey = `${row['Report Date']}_${productKey}`;
@@ -1096,14 +1088,12 @@
                 return a.localeCompare(b);
             });
 
-            // REVİZE: Tarihe göre (Yeniden Eskiye) Sıralama
             const sortedRows = Object.values(grouped).sort((a, b) => {
-                // dd.mm.yyyy formatını parse et
                 const partsA = a['Report Date'].split('.');
                 const dateA = new Date(partsA[2], partsA[1]-1, partsA[0]);
                 const partsB = b['Report Date'].split('.');
                 const dateB = new Date(partsB[2], partsB[1]-1, partsB[0]);
-                return dateB - dateA; // Büyükten küçüğe
+                return dateB - dateA;
             });
 
             return {
@@ -1215,6 +1205,9 @@
                 tr.innerHTML = html;
                 tbody.appendChild(tr);
             });
+
+            // Tablo render edildikten sonra üst scrollbar genişliğini güncelle
+            updateTopScrollWidth();
         }
         function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
         function parsePrice(val) { if(!val) return 0; let clean = val.toString().replace(/["'₺\s]/g, ''); if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) { clean = clean.replace(',', '.'); } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) { clean = clean.replace(/\./g, '').replace(',', '.'); } return parseFloat(clean) || 0; }
@@ -1223,45 +1216,32 @@
         function showToast(message) { const toast = document.getElementById('toast'); document.getElementById('toast-message').textContent = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
         function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
         
-        // ================================================================
-        // REVİZE EDİLEN İNDİRME FONKSİYONLARI (Filtre Duyarlı)
-        // ================================================================
-
         function getActiveDataForExport() {
-            // Eğer grafikten veya tablodan bir filtreleme yapılmışsa (GRAPH_FILTERED_DATA doluysa)
-            // Onu kullan, yoksa ana işlem verisini (CURRENT_PROCESSED_DATA) kullan.
             let activeRows = [];
-            
             if (GRAPH_FILTERED_DATA && GRAPH_FILTERED_DATA.length > 0) {
                 activeRows = GRAPH_FILTERED_DATA;
             } else {
                 activeRows = CURRENT_PROCESSED_DATA.rows;
             }
-
             return {
                 rows: activeRows,
-                competitorNames: CURRENT_PROCESSED_DATA.competitorNames // Rakip isimleri değişmez
+                competitorNames: CURRENT_PROCESSED_DATA.competitorNames
             };
         }
 
         function downloadCSV() { 
             const dataToExport = getActiveDataForExport();
-            
             if (!dataToExport.rows || dataToExport.rows.length === 0) {
                 showToast("İndirilecek veri bulunamadı.");
                 return;
             }
-
             const flatData = flattenForExport(dataToExport);
             const csv = Papa.unparse(flatData);
             const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            
-            // Dosya ismine filtre detayı ekleyelim
             let filterSuffix = "";
             if (activeCategoryFilter) filterSuffix = `_${activeCategoryFilter.replace(/\s/g, '')}`;
-            
             const dateStr = flatpickrInstance.selectedDates[0] ? flatpickrInstance.selectedDates[0].toLocaleDateString('tr-TR') : 'rapor';
             link.download = `teknoify_analiz_${dateStr}${filterSuffix}.csv`;
             link.click();
@@ -1270,40 +1250,30 @@
 
         function downloadExcel() { 
             const dataToExport = getActiveDataForExport();
-
             if (!dataToExport.rows || dataToExport.rows.length === 0) {
                 showToast("İndirilecek veri bulunamadı.");
                 return;
             }
-
             const flatData = flattenForExport(dataToExport);
             const ws = XLSX.utils.json_to_sheet(flatData);
-
-            // STİL AYARLARI
             const range = XLSX.utils.decode_range(ws['!ref']);
             for (let C = range.s.c; C <= range.e.c; ++C) {
                 const address = XLSX.utils.encode_cell({ r: 0, c: C });
                 if (!ws[address]) continue;
                 ws[address].s = {
-                    fill: { fgColor: { rgb: "1F232C" } }, // Koyu arka plan
-                    font: { color: { rgb: "FFFFFF" }, bold: true } // Beyaz ve kalın yazı
+                    fill: { fgColor: { rgb: "1F232C" } },
+                    font: { color: { rgb: "FFFFFF" }, bold: true }
                 };
             }
-            
             const wscols = [];
             for (let i = 0; i <= range.e.c; i++) { wscols.push({ wch: 20 }); }
             ws['!cols'] = wscols;
-
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
-            
-            // Dosya ismine filtre detayı ekleyelim
             let filterSuffix = "";
             if (activeCategoryFilter) filterSuffix = `_${activeCategoryFilter.replace(/\s/g, '')}`;
-
             const dateStr = flatpickrInstance.selectedDates[0] ? flatpickrInstance.selectedDates[0].toLocaleDateString('tr-TR') : 'rapor';
             XLSX.writeFile(wb, `teknoify_analiz_${dateStr}${filterSuffix}.xlsx`);
-            
             document.getElementById('download-menu').classList.remove('show');
         }
 
@@ -1311,7 +1281,6 @@
             return dataObj.rows.map(row => { 
                 const formatVal = (val) => (val === 0 || val === "0") ? "" : val;
                 const myStoreName = row['Store Name'] || "Mağaza";
-
                 const flatRow = { 
                     'Report Date': row['Report Date'], 
                     'Store Name': row['Store Name'], 
@@ -1320,16 +1289,13 @@
                     'Brand': row['Brand Name'], 
                     'Category': row['Category Name']
                 };
-
                 flatRow[`${myStoreName} Original Price`] = formatVal(row.tazeyo_price_org);
                 flatRow[`${myStoreName} Discount Price`] = formatVal(row.tazeyo_price_dsc);
-
                 dataObj.competitorNames.forEach(comp => { 
                     const cData = row.competitors[comp]; 
                     flatRow[`${comp} Original Price`] = cData ? formatVal(cData.org) : ''; 
                     flatRow[`${comp} Discount Price`] = cData ? formatVal(cData.dsc) : ''; 
                 }); 
-                
                 return flatRow; 
             }); 
         }
