@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genel Bakış | Teknoify</title>
-    
+   
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
+   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+   
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
@@ -18,14 +18,14 @@
         <div class="brand"><i class="fas fa-cube"></i> Teknoify</div>
         <nav>
             <a href="member.html" class="menu-item active"><i class="fas fa-home"></i> Genel Bakış</a>
-            
+           
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">Hizmetler</div>
-            
-            <a href="analysis.html" class="menu-item" id="nav-link-analysis"><i class="fas fa-chart-pie"></i> Veri Çekme & Analiz</a>
+           
+            <a href="analysis.html" class="menu-item" id="nav-link-analysis"><i class="fas fa-chart-pie"></i> Web Scraping</a>
         </nav>
-        
+       
         <div class="menu-spacer"></div>
-        
+       
         <a href="#" onclick="logout()" class="menu-item"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
     </aside>
 
@@ -102,7 +102,7 @@
             if (typeof SessionManager === 'undefined') { console.error("SessionManager Eksik!"); return; }
             const session = new SessionManager();
             const currentUser = session.validateSession();
-            
+           
             if (!currentUser) { window.location.href = '../index.html'; return; }
 
             // 2. Verileri Çek
@@ -110,7 +110,7 @@
                 .then(res => res.json())
                 .then(userDB => {
                     const userDataFull = userDB[currentUser.username];
-                    
+                   
                     if (userDataFull) {
                         const data = userDataFull.data || {};
                         const features = userDataFull.features || {};
@@ -143,7 +143,7 @@
                         if(userDataFull.config && userDataFull.config.sheetUrl) {
                             // 1. İstatistik için veriyi çek
                             fetchDataCount(userDataFull.config.sheetUrl);
-                            
+                           
                             // 2. Otomatik bildirim servisini başlat
                             initAutoNotificationService(userDataFull.config.sheetUrl);
                         }
@@ -211,7 +211,7 @@
             if (localStorage.getItem(storageKey)) return;
 
             const tbody = document.getElementById('notification-body');
-            
+           
             // Eğer tabloda "Bildirim yok" yazısı varsa temizle
             if (tbody.children.length === 1 && tbody.children[0].innerText.includes("bildirim yok")) {
                 tbody.innerHTML = '';
@@ -220,7 +220,7 @@
             const tr = document.createElement('tr');
             tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
             tr.style.backgroundColor = 'rgba(16, 185, 129, 0.1)'; // Yeni olduğunu belli etmek için hafif yeşil zemin
-            
+           
             tr.innerHTML = `
                 <td style="padding: 1rem;"><strong><i class="fas fa-bolt" style="color:#F59E0B;"></i> YENİ:</strong> ${dateStr} tarihli web scraping sonuçları siteye yüklenmiştir.</td>
                 <td class="status-cell" style="padding: 1rem;">
@@ -236,7 +236,7 @@
 
             // Tarayıcıya "Bu tarihin bildirimini gösterdim" diye not düş (Sayfa yenilenince tekrar çıkmasın diye)
             // Eğer her girişte tekrar çıksın istersen aşağıdaki satırı silebilirsin.
-            localStorage.setItem(storageKey, 'true'); 
+            localStorage.setItem(storageKey, 'true');
         }
 
         // --- YARDIMCI FONKSİYONLAR ---
@@ -249,7 +249,7 @@
         function renderNotifications(notifArray) {
             const tbody = document.getElementById('notification-body');
             if(!tbody) return;
-            tbody.innerHTML = ''; 
+            tbody.innerHTML = '';
 
             if(!notifArray || notifArray.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Henüz bildirim yok.</td></tr>';
