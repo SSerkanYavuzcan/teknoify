@@ -14,13 +14,11 @@
    
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
    
-    <link rel="stylesheet" href="../css/dashboard.css?v=7">
-    <link rel="stylesheet" href="../css/analysis.css?v=7"> 
+    <link rel="stylesheet" href="../css/dashboard.css?v=8">
+    <link rel="stylesheet" href="../css/analysis.css?v=8"> 
 
     <style>
-        /* -----------------------------------------------------------
-           1. TAKVİM TASARIMI (MODERN & NEON)
-        ----------------------------------------------------------- */
+        /* 1. Takvim Çerçevesi */
         .flatpickr-calendar {
             background: #1f232c !important; 
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -33,6 +31,7 @@
         
         .flatpickr-calendar:before, .flatpickr-calendar:after { display: none !important; }
 
+        /* 2. Header (Ay ve Yıl) */
         .flatpickr-months {
             background: transparent !important;
             margin-bottom: 20px !important;
@@ -72,9 +71,10 @@
             filter: drop-shadow(0 0 5px rgba(115, 103, 240, 0.8));
         }
 
+        /* 3. Gün İsimleri */
         .flatpickr-weekdays { margin-bottom: 10px; }
         span.flatpickr-weekday {
-            color: #888 !important;
+            color: #aaa !important; /* Biraz daha parlak gri */
             font-weight: 600 !important;
             font-size: 0.9rem !important;
         }
@@ -87,11 +87,12 @@
             justify-content: space-between !important;
         }
 
+        /* 4. GENEL GÜN STİLİ */
         .flatpickr-day {
             border-radius: 8px !important;
             background: transparent !important;
             border: 1px solid transparent !important;
-            color: #ccc !important;
+            color: #ddd !important; /* Daha okunabilir gri */
             font-weight: 500 !important;
             margin: 4px 0 !important;
             height: 38px !important;
@@ -108,45 +109,42 @@
             border-color: rgba(255,255,255,0.1) !important;
         }
 
-        /* Başlangıç Günü (Neon Mor) */
-        .flatpickr-day.startRange {
+        /* --- SEÇİLİ GÜNLER (OKUNABİLİRLİK İÇİN GÜNCELLENDİ) --- */
+
+        /* Başlangıç Günü */
+        .flatpickr-day.startRange, 
+        .flatpickr-day.endRange, 
+        .flatpickr-day.selected {
             background: linear-gradient(135deg, #7367f0, #584cd1) !important;
-            color: #fff !important;
+            color: #ffffff !important; /* TAM BEYAZ */
+            font-weight: 800 !important; /* KALIN FONT */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important; /* YAZI GÖLGESİ (OKUNABİLİRLİK İÇİN) */
             border: none !important;
-            border-radius: 8px 0 0 8px !important;
-            box-shadow: 0 0 15px rgba(115, 103, 240, 0.5) !important;
+            box-shadow: 0 0 15px rgba(115, 103, 240, 0.6) !important; /* Neon Glow */
             z-index: 2;
             position: relative;
         }
 
-        /* Bitiş Günü (Neon Mor) */
-        .flatpickr-day.endRange {
-            background: linear-gradient(135deg, #7367f0, #584cd1) !important;
-            color: #fff !important;
-            border: none !important;
-            border-radius: 0 8px 8px 0 !important;
-            box-shadow: 0 0 15px rgba(115, 103, 240, 0.5) !important;
-            z-index: 2;
-            position: relative;
-        }
+        .flatpickr-day.startRange { border-radius: 8px 0 0 8px !important; }
+        .flatpickr-day.endRange { border-radius: 0 8px 8px 0 !important; }
+        .flatpickr-day.startRange.endRange, .flatpickr-day.selected { border-radius: 8px !important; }
 
         /* Aradaki Günler (Şerit) */
         .flatpickr-day.inRange {
-            background: rgba(115, 103, 240, 0.15) !important;
-            color: #fff !important;
+            background: rgba(115, 103, 240, 0.25) !important; /* Biraz daha belirgin mor */
+            color: #ffffff !important; /* Beyaz yazı */
+            font-weight: 600 !important;
             border: none !important;
             border-radius: 0 !important;
-            box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important; 
+            box-shadow: -5px 0 0 rgba(115, 103, 240, 0.25), 5px 0 0 rgba(115, 103, 240, 0.25) !important; 
             z-index: 1;
         }
 
-        .flatpickr-day.startRange.endRange {
-            border-radius: 8px !important;
-        }
-
+        /* Bugün */
         .flatpickr-day.today {
-            border: 1px solid rgba(115, 103, 240, 0.5) !important;
-            color: #7367f0 !important;
+            border: 1px solid rgba(115, 103, 240, 0.8) !important;
+            color: #fff !important;
+            font-weight: 700 !important;
         }
         
         .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
@@ -154,24 +152,18 @@
         }
 
         /* -----------------------------------------------------------
-           2. FİLTRE MENÜSÜ RENK GÜNCELLEMESİ (MOR TEMA)
+           5. FİLTRE MENÜSÜ RENK GÜNCELLEMESİ
         ----------------------------------------------------------- */
-        
-        /* Seçili Satırın Arka Planı (Mor) */
         .multi-option.selected {
-            background: rgba(115, 103, 240, 0.15) !important; /* Mor Opak */
+            background: rgba(115, 103, 240, 0.15) !important;
             color: #fff !important;
             font-weight: 500;
         }
-
-        /* Checkbox Kutusu (Mor) */
         .multi-option.selected .option-checkbox {
-            background: #7367f0 !important; /* MOR */
+            background: #7367f0 !important;
             border-color: #7367f0 !important;
-            box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important; /* Mor Parlama */
+            box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important;
         }
-
-        /* Hover Durumu */
         .multi-option:hover {
             background: rgba(255, 255, 255, 0.05);
             color: #fff;
@@ -406,7 +398,7 @@
         }
         window.addEventListener('resize', updateTopScrollWidth);
 
-        // --- KATEGORİ HARİTALAMA (EKSİKSİZ) ---
+        // --- KATEGORİ HARİTALAMA ---
         const CATEGORY_MAPPING = {
             "Taze Meyve": "Meyve & Sebze", "Taze Sebze": "Meyve & Sebze", "Taze Ot & Yeşillik": "Meyve & Sebze", "Patates, Soğan & Sarımsak": "Meyve & Sebze", "Kullanıma Hazır Meyve & Sebze": "Meyve & Sebze",
             "Dana Eti": "Et, Tavuk & Şarküteri", "Kuzu Eti": "Et, Tavuk & Şarküteri", "Tavuk Eti": "Et, Tavuk & Şarküteri", "Kıyma": "Et, Tavuk & Şarküteri", "Pişirilmeye Hazır Etler": "Et, Tavuk & Şarküteri", "Diğer Et Ürünleri": "Et, Tavuk & Şarküteri", "Sucuk & Sosis": "Et, Tavuk & Şarküteri", "Salam & Jambon": "Et, Tavuk & Şarküteri", "Kavurma & Pastırma": "Et, Tavuk & Şarküteri", "Diğer Şarküteri Ürünleri": "Et, Tavuk & Şarküteri", "Sakatat Ürünleri": "Et, Tavuk & Şarküteri",
@@ -1165,6 +1157,7 @@
             };
         }
 
+        // --- EXCEL EXPORT (Merged, Colored, Hidden Zeros) ---
         function downloadExcel() {
             const dataToExport = getActiveDataForExport();
             if (!dataToExport.rows || dataToExport.rows.length === 0) {
