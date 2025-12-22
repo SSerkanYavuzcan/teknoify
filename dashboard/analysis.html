@@ -207,9 +207,10 @@
     <script src="../js/script.js"></script>
    
     <script>
-        // --- TEMEL FONKSİYONLAR ---
+        // --- TEMEL UI FONKSİYONLARI ---
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
        
+        // --- GLOBAL DEĞİŞKENLER ---
         let ALL_DATA = [];
         let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
         let GRAPH_FILTERED_DATA = null;
@@ -220,7 +221,7 @@
         let chartCategory = null;
         let chartPie = null;
 
-        // SCROLL SENKRONİZASYON
+        // --- SCROLL SENKRONİZASYON ---
         const topScrollWrapper = document.getElementById('top-scroll-wrapper');
         const topScrollContent = document.getElementById('top-scroll-content');
         const tableScrollContainer = document.getElementById('table-scroll-container');
@@ -244,7 +245,7 @@
         }
         window.addEventListener('resize', updateTopScrollWidth);
 
-        // KATEGORİ HARİTALAMA
+        // --- KATEGORİ HARİTALAMA ---
         const CATEGORY_MAPPING = {
             "Taze Meyve": "Meyve & Sebze", "Taze Sebze": "Meyve & Sebze", "Taze Ot & Yeşillik": "Meyve & Sebze", "Patates, Soğan & Sarımsak": "Meyve & Sebze", "Kullanıma Hazır Meyve & Sebze": "Meyve & Sebze",
             "Dana Eti": "Et, Tavuk & Şarküteri", "Kuzu Eti": "Et, Tavuk & Şarküteri", "Tavuk Eti": "Et, Tavuk & Şarküteri", "Kıyma": "Et, Tavuk & Şarküteri", "Pişirilmeye Hazır Etler": "Et, Tavuk & Şarküteri", "Diğer Et Ürünleri": "Et, Tavuk & Şarküteri", "Sucuk & Sosis": "Et, Tavuk & Şarküteri", "Salam & Jambon": "Et, Tavuk & Şarküteri", "Kavurma & Pastırma": "Et, Tavuk & Şarküteri", "Diğer Şarküteri Ürünleri": "Et, Tavuk & Şarküteri", "Sakatat Ürünleri": "Et, Tavuk & Şarküteri",
@@ -276,7 +277,7 @@
             return CATEGORY_MAPPING[cleanName] || "Diğer";
         }
 
-        // --- SAYFA YÜKLENMESİ VE AUTH ---
+        // --- INIT & AUTH ---
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof SessionManager === 'undefined') return;
             const session = new SessionManager();
@@ -320,7 +321,7 @@
             });
         });
 
-        // --- GRAFİK FİLTRELEME MANTIĞI ---
+        // --- FILTERING ---
         function filterTableByGraph(filterType, filterValue) {
             if(!CURRENT_PROCESSED_DATA || CURRENT_PROCESSED_DATA.rows.length === 0) return;
 
@@ -373,7 +374,7 @@
             limitMsg.style.display = (CURRENT_PROCESSED_DATA.rows.length > 250) ? 'block' : 'none';
         }
 
-        // --- DASHBOARD VE KPI GÜNCELLEME ---
+        // --- DASHBOARD CALCS ---
         function updateDashboard(dataRows) {
             let totalBiz = 0, totalComp = 0;
             let discountCountBiz = 0;
@@ -459,7 +460,7 @@
             renderPieChart(countCheaper, countEqual, countExpensive);
         }
 
-        // --- GRAFİKLER ---
+        // --- CHARTS RENDER ---
         function renderCategoryChart(categoryStats) {
             const categories = Object.keys(categoryStats);
             const seriesData = categories.map(cat => {
@@ -571,13 +572,13 @@
             chartPie.render();
         }
 
-        // --- YARDIMCI FONKSİYONLAR ---
+        // --- HELPER FUNCTIONS ---
         function getBrandColor(fullName) {
             if (!fullName) return '#f97316';
             const lowerName = fullName.toLowerCase();
             if (lowerName.includes('migros')) return '#f5821f';
             if (lowerName.includes('carrefour')) return '#005daa';
-            if (lowerName.includes('marketten')) return '#DC6727'; // GÜNCELLENEN RENK
+            if (lowerName.includes('marketten')) return '#DC6727'; // TURUNCU
             return '#f97316';
         }
 
@@ -813,7 +814,7 @@
             };
         }
 
-        // --- GÜNCELLENEN RENDER TABLE FONKSİYONU ---
+        // --- RENDER TABLE (Split Header + Sticky) ---
         function renderTable(dataRows, competitorNames) {
             const theadTop = document.getElementById('header-row-top');
             const theadBottom = document.getElementById('header-row-bottom');
@@ -823,22 +824,16 @@
             theadTop.innerHTML = '';
             theadBottom.innerHTML = '';
 
-            // --- SATIR 1 (ÜST BAŞLIKLAR) ---
+            // --- 1. SATIR BAŞLIKLAR ---
             let headerTopHtml = '';
-           
-            // 1. SOL KÖŞE (SABİT): "Ürün" - Sadece Ürün Adı sütununun üstü
             headerTopHtml += `<th class="th-fixed-corner">Ürün</th>`;
-           
-            // 2. KAYAN GRUP (SAĞA GİDER): Tarih, Mağaza, SKU vb. detayların üstü
             headerTopHtml += `<th colspan="5" class="th-scrollable-group">Ürün Detayları</th>`;
            
             let myStoreLabel = 'Bizim Fiyatlar';
             if(dataRows.length > 0 && dataRows[0]['Store Name']) myStoreLabel = dataRows[0]['Store Name'];
            
-            // Bizim Mağaza Başlığı
             headerTopHtml += `<th colspan="2" class="th-group-tazeyo">${myStoreLabel}</th>`;
 
-            // Rakip Mağaza Başlıkları
             competitorNames.forEach(compName => {
                 const brandColor = getBrandColor(compName);
                 const bgRgba = hexToRgba(brandColor, 0.08);
@@ -846,30 +841,20 @@
                 headerTopHtml += `<th colspan="2" style="${styleStr}">${compName}</th>`;
             });
            
-            // En Ucuz Kanal Başlığı
             headerTopHtml += `<th colspan="2" style="background:#14161c; border-left:2px solid #444; color:#fff;">En Ucuz Kanal</th>`;
             theadTop.innerHTML = headerTopHtml;
 
-            // --- SATIR 2 (ALT BAŞLIKLAR) ---
+            // --- 2. SATIR BAŞLIKLAR ---
             let headerBottomHtml = '';
-           
-            // 1. Ürün Adı (Sola ve Üste Yapışık - Sticky)
             headerBottomHtml += `<th class="sticky-product">Ürün Adı</th>`;
-           
-            // 2. Diğer Ürün Detayları (Bunlar artık kayan grubun altında)
             headerBottomHtml += `<th>Rapor Tarihi</th><th>Mağaza</th><th>SKU</th><th>Marka</th><th>Kategori</th>`;
-           
-            // 3. Bizim Fiyatlar Alt Başlıkları
             headerBottomHtml += `<th>Price</th><th>Discount Price</th>`;
            
-            // 4. Rakiplerin Alt Başlıkları
             competitorNames.forEach(() => {
                 headerBottomHtml += `<th class="border-left-light">Price</th><th>Discount Price</th>`;
             });
            
-            // 5. En Ucuz Kanal Alt Başlıkları
             headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
-           
             theadBottom.innerHTML = headerBottomHtml;
            
             // --- VERİ SATIRLARI ---
@@ -972,7 +957,7 @@
             };
         }
 
-        // --- GÜNCELLENEN EXCEL İNDİRME FONKSİYONU ---
+        // --- EXCEL EXPORT (Merged, Colored, Hidden Zeros) ---
         function downloadExcel() {
             const dataToExport = getActiveDataForExport();
             if (!dataToExport.rows || dataToExport.rows.length === 0) {
@@ -983,12 +968,11 @@
             const rows = [];
             const merges = [];
            
-            // --- SATIR 1: ÜST GRUP BAŞLIKLARI ---
             const row1 = [
-                "Ürün Bilgileri", "", "", "", "", "", // İlk 6 Sütun
-                dataToExport.rows[0]['Store Name'] || "Bizim Fiyatlar", "", // Bizim Mağaza
+                "Ürün Bilgileri", "", "", "", "", "",
+                dataToExport.rows[0]['Store Name'] || "Bizim Fiyatlar", "",
             ];
-           
+            
             dataToExport.competitorNames.forEach(comp => {
                 row1.push(comp, "");
             });
@@ -996,7 +980,6 @@
             row1.push("En Ucuz Kanal", "");
             rows.push(row1);
 
-            // --- SATIR 2: ALT DETAY BAŞLIKLARI ---
             const row2 = [
                 "Ürün Adı", "Rapor Tarihi", "Mağaza", "SKU", "Marka", "Kategori",
                 "Fiyat", "İndirimli Fiyat"
@@ -1008,8 +991,7 @@
             row2.push("Durum", "Fark");
             rows.push(row2);
 
-            // --- MERGE AYARLARI ---
-            merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } });
+            merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }); 
             merges.push({ s: { r: 0, c: 6 }, e: { r: 0, c: 7 } });
 
             let colIndex = 8;
@@ -1020,8 +1002,10 @@
 
             merges.push({ s: { r: 0, c: colIndex }, e: { r: 0, c: colIndex + 1 } });
 
-            // --- VERİ SATIRLARI ---
             dataToExport.rows.forEach(row => {
+                const bizOrg = parsePrice(row.tazeyo_price_org);
+                const bizDsc = parsePrice(row.tazeyo_price_dsc);
+
                 const rowData = [
                     row['Product Name'],
                     row['Report Date'],
@@ -1029,29 +1013,26 @@
                     row['SKU'],
                     row['Brand Name'] || '-',
                     row['Category Name'] || '-',
-                    parsePrice(row.tazeyo_price_org),
-                    parsePrice(row.tazeyo_price_dsc)
+                    bizOrg || "", 
+                    bizDsc || ""
                 ];
 
-                const t_org = row.tazeyo_price_org;
-                const t_dsc = row.tazeyo_price_dsc;
-                const bizPrice = t_dsc > 0 ? t_dsc : t_org;
-
+                const bizPrice = bizDsc > 0 ? bizDsc : bizOrg;
                 let enUcuzRakipFiyati = Infinity;
                 let enUcuzRakipIsmi = '';
 
                 dataToExport.competitorNames.forEach(comp => {
                     const cData = row.competitors[comp];
                     if (cData) {
-                        const c_org = cData.org;
-                        const c_dsc = cData.dsc;
+                        const c_org = parsePrice(cData.org);
+                        const c_dsc = parsePrice(cData.dsc);
                         const rakipSatis = c_dsc > 0 ? c_dsc : c_org;
 
                         if (rakipSatis > 0 && rakipSatis < enUcuzRakipFiyati) {
                             enUcuzRakipFiyati = rakipSatis;
                             enUcuzRakipIsmi = comp;
                         }
-                        rowData.push(parsePrice(c_org), parsePrice(c_dsc));
+                        rowData.push(c_org || "", c_dsc || "");
                     } else {
                         rowData.push("", "");
                     }
@@ -1079,7 +1060,6 @@
                 rows.push(rowData);
             });
 
-            // --- DOSYAYI OLUŞTURMA VE KAYDETME ---
             const ws = XLSX.utils.aoa_to_sheet(rows);
             ws['!merges'] = merges;
 
@@ -1103,24 +1083,23 @@
                 if (!ws[addr1]) ws[addr1] = { t: 's', v: '' };
                
                 let headerColor = "1F232C";
-                if (C >= range.e.c - 1) {
-                    headerColor = "14161c";
-                }
+                if (C >= range.e.c - 1) { headerColor = "14161c"; }
 
-                ws[addr1].s = {
+                const styleObj = {
                     fill: { fgColor: { rgb: headerColor } },
-                    font: { color: { rgb: "FFFFFF" }, bold: true, sz: 12 },
+                    font: { color: { rgb: "FFFFFF" }, bold: true },
                     alignment: { horizontal: "center", vertical: "center" },
-                    border: { bottom: { style: "thin", color: { rgb: "FFFFFF" } } }
+                    border: { 
+                        bottom: { style: "thin", color: { rgb: "555555" } },
+                        right: { style: "thin", color: { rgb: "555555" } }
+                    }
                 };
+
+                ws[addr1].s = { ...styleObj, font: { ...styleObj.font, sz: 12 } };
 
                 const addr2 = XLSX.utils.encode_cell({ r: 1, c: C });
                 if (!ws[addr2]) continue;
-                ws[addr2].s = {
-                    fill: { fgColor: { rgb: "444444" } },
-                    font: { color: { rgb: "FFFFFF" }, bold: true },
-                    alignment: { horizontal: "center" }
-                };
+                ws[addr2].s = styleObj;
             }
 
             const wb = XLSX.utils.book_new();
