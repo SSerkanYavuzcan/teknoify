@@ -1,6 +1,6 @@
 /* ================================================================
    [FILE] css/analysis.css
-   [STATUS] FINAL V18 - TAM SÜRÜM (Scroll, Sticky, Colors, Borders)
+   [STATUS] FINAL V19 - TAKVİM (FLATPICKR) DÜZELTİLDİ
    ================================================================ */
 
 /* ----------------------------------------------------------------
@@ -118,7 +118,7 @@
 
 
 /* ----------------------------------------------------------------
-   4. KARŞILAŞTIRMA TABLOSU (Görsel ve Yapısal Ayarlar)
+   4. KARŞILAŞTIRMA TABLOSU
    ---------------------------------------------------------------- */
 .comparison-table {
     width: 100%;
@@ -135,7 +135,6 @@
     font-size: 0.85rem !important;
     font-weight: 700 !important;
     
-    /* Çizgiler: Yarı Saydam Beyaz (Daha Net) */
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
     
@@ -146,7 +145,7 @@
     z-index: 200; 
 }
 
-/* 1. Satır (Market İsimleri) */
+/* 1. Satır */
 #header-row-top th {
     top: 0 !important;
     height: 45px;
@@ -154,7 +153,7 @@
     z-index: 250;
 }
 
-/* 2. Satır (Detaylar) */
+/* 2. Satır */
 #header-row-bottom th {
     top: 45px !important;
     height: 40px;
@@ -167,19 +166,17 @@
 
 /* --- SABİT SOL SÜTUNLAR --- */
 
-/* SOL ÜST KÖŞE ("Ürün") */
+/* Sol Üst Köşe */
 .th-fixed-corner {
     position: sticky !important;
     left: 0 !important;
     top: 0 !important;
     z-index: 900 !important;
     background-color: var(--dash-sidebar) !important;
-    
-    /* Ayrım Çizgisi Daha Kalın */
     border-right: 2px solid rgba(255, 255, 255, 0.4) !important;
 }
 
-/* SOL ALT BAŞLIK ("Ürün Adı") */
+/* Sol Alt Başlık */
 th.sticky-product {
     position: sticky !important;
     left: 0 !important;
@@ -191,18 +188,16 @@ th.sticky-product {
     padding-left: 12px !important;
 }
 
-/* SOL SÜTUN VERİLERİ (Ürün İsimleri) */
+/* Sol Sütun Verileri */
 td.sticky-product {
     position: sticky !important;
     left: 0 !important;
     z-index: 100 !important;
     background-color: var(--dash-card) !important;
-    
     border-right: 2px solid rgba(255, 255, 255, 0.4) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     color: #fff;
     font-weight: 500;
-    
     min-width: 220px;
     max-width: 220px;
     overflow: hidden;
@@ -221,22 +216,16 @@ td.sticky-product {
     font-weight: 400;
     vertical-align: middle;
     background-color: var(--dash-card);
-    
-    /* GÖRÜNÜR ÇİZGİLER (Yarı Saydam Beyaz) */
     border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 /* --- RENKLENDİRME --- */
-
-/* Tazeyo Başlık Rengi (#14373b) */
 .th-group-tazeyo {
     color: #fff !important;
     background-color: #14373b !important;
     border-bottom: 2px solid #10b981 !important;
 }
-
-/* Market Başlıkları */
 .th-group-market {
     color: var(--warning) !important;
     background-color: #14161c !important;
@@ -251,10 +240,107 @@ td.sticky-product {
 
 .col-analysis-status { min-width: 120px; text-align: center; }
 
-/* Satır Hover Efekti */
 .comparison-table tbody tr:hover td {
     background-color: #2f3349 !important;
     color: #fff;
+}
+
+/* =================================================================
+   5. FLATPICKR TAKVİM ÖZELLEŞTİRMESİ (YENİ EKLENDİ)
+   Bu bölüm, varsayılan koyu temadaki gri arka planları ezer.
+   ================================================================= */
+
+/* Takvim Ana Kutusu */
+.flatpickr-calendar {
+    background: #2f3349 !important; /* Dashboard kart rengi */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5) !important;
+    font-family: 'Inter Tight', sans-serif !important;
+}
+
+/* Üst Kısım (Ay/Yıl) */
+.flatpickr-months {
+    background: #2f3349 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+    color: #fff !important;
+    font-weight: 600;
+}
+
+/* Haftanın Günleri (Pzt, Sal...) */
+.flatpickr-weekdays {
+    background: #2f3349 !important;
+}
+span.flatpickr-weekday {
+    background: transparent !important;
+    color: #a0a0a0 !important;
+    font-weight: 600;
+}
+
+/* --- GÜNLER --- */
+
+/* Normal Günler */
+.flatpickr-day {
+    color: #e0e0e0 !important;
+    border-radius: 8px !important; /* Kareye yakın yumuşak köşe */
+    border: 1px solid transparent !important; /* Kenarlıkları sıfırla */
+}
+
+/* Hover (Fareyle üzerine gelince) */
+.flatpickr-day:hover,
+.flatpickr-day.prevMonthDay:hover,
+.flatpickr-day.nextMonthDay:hover,
+.flatpickr-day:focus {
+    background: rgba(115, 103, 240, 0.2) !important; /* Hafif Mor */
+    border-color: transparent !important;
+}
+
+/* SEÇİLİ GÜNLER (Başlangıç ve Bitiş) */
+.flatpickr-day.selected, 
+.flatpickr-day.startRange, 
+.flatpickr-day.endRange, 
+.flatpickr-day.selected.inRange, 
+.flatpickr-day.startRange.inRange, 
+.flatpickr-day.endRange.inRange {
+    background: #7367f0 !important; /* BİZİM MORUMUZ */
+    color: #fff !important;
+    border-color: #7367f0 !important;
+    box-shadow: none !important;
+}
+
+/* ARALIKTAKİ GÜNLER (Range) - Griliği Kaldırdık */
+.flatpickr-day.inRange {
+    background: rgba(115, 103, 240, 0.15) !important; /* Çok şeffaf mor */
+    border-color: transparent !important;
+    box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important; /* Boşlukları doldur */
+    color: #fff !important;
+}
+
+/* BUGÜN (Today) - Gri çerçeveyi kaldırdık */
+.flatpickr-day.today {
+    border-color: #7367f0 !important; /* Sadece mor çerçeve */
+    background: transparent !important;
+}
+.flatpickr-day.today:hover {
+    background: rgba(115, 103, 240, 0.1) !important;
+    color: #fff !important;
+}
+
+/* Diğer aydan gelen günler */
+.flatpickr-day.prevMonthDay, 
+.flatpickr-day.nextMonthDay {
+    color: #555 !important;
+}
+
+/* Ok İşaretleri */
+.flatpickr-prev-month, .flatpickr-next-month {
+    fill: #fff !important;
+    color: #fff !important;
+}
+.flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg {
+    fill: #7367f0 !important;
 }
 
 
