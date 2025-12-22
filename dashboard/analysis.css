@@ -1,6 +1,6 @@
 /* ================================================================
    [FILE] css/analysis.css
-   [STATUS] FINAL V21 - TAM SÜRÜM (Table Scroll + Calendar Fix)
+   [STATUS] FINAL V22 - TAKVİM TAMAMEN MOR TEMA (Gri Yok)
    ================================================================ */
 
 /* ----------------------------------------------------------------
@@ -78,7 +78,6 @@
 /* ----------------------------------------------------------------
    3. SCROLL YÖNETİMİ
    ---------------------------------------------------------------- */
-/* Üstteki İnce Scrollbar */
 .top-scroll-wrapper {
     display: block;
     width: 100%;
@@ -95,16 +94,12 @@
 }
 .top-scroll-content { height: 1px; }
 
-/* Ana Tablo Kapsayıcısı */
 .table-responsive-wrapper {
     display: block;
     width: 100%;
-    
-    /* YÜKSEKLİK SINIRI (Sticky Header İçin Şart) */
     height: 65vh;
     max-height: 800px;
     min-height: 400px;
-    
     overflow: auto;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-top: none;
@@ -113,14 +108,13 @@
     background: var(--dash-card);
     margin-bottom: 20px;
     position: relative;
-    
     scrollbar-width: thin;
     scrollbar-color: #888 #1f232c;
 }
 
 
 /* ----------------------------------------------------------------
-   4. KARŞILAŞTIRMA TABLOSU (MİMARİ)
+   4. KARŞILAŞTIRMA TABLOSU
    ---------------------------------------------------------------- */
 .comparison-table {
     width: 100%;
@@ -136,11 +130,8 @@
     padding: 0 8px;
     font-size: 0.85rem !important;
     font-weight: 700 !important;
-    
-    /* GÖRÜNÜR ÇİZGİLER (Yarı Saydam Beyaz) */
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
-    
     text-align: center;
     white-space: nowrap;
     background-clip: padding-box;
@@ -148,7 +139,7 @@
     z-index: 200; 
 }
 
-/* 1. Satır (Marketler) */
+/* 1. Satır */
 #header-row-top th {
     top: 0 !important;
     height: 45px;
@@ -156,7 +147,7 @@
     z-index: 250;
 }
 
-/* 2. Satır (Detaylar) */
+/* 2. Satır */
 #header-row-bottom th {
     top: 45px !important;
     height: 40px;
@@ -168,18 +159,15 @@
 
 
 /* --- SABİT SOL SÜTUNLAR --- */
-
-/* Sol Üst Köşe ("Ürün") */
 .th-fixed-corner {
     position: sticky !important;
     left: 0 !important;
     top: 0 !important;
-    z-index: 900 !important; /* En Üst Katman */
+    z-index: 900 !important;
     background-color: var(--dash-sidebar) !important;
     border-right: 2px solid rgba(255, 255, 255, 0.4) !important;
 }
 
-/* Sol Alt Başlık ("Ürün Adı") */
 th.sticky-product {
     position: sticky !important;
     left: 0 !important;
@@ -191,7 +179,6 @@ th.sticky-product {
     padding-left: 12px !important;
 }
 
-/* Sol Sütun Verileri */
 td.sticky-product {
     position: sticky !important;
     left: 0 !important;
@@ -219,8 +206,6 @@ td.sticky-product {
     font-weight: 400;
     vertical-align: middle;
     background-color: var(--dash-card);
-    
-    /* GÖRÜNÜR ÇİZGİLER */
     border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
@@ -252,35 +237,37 @@ td.sticky-product {
 
 
 /* =================================================================
-   5. FLATPICKR TAKVİM (GRİLİKLER TEMİZLENDİ)
+   5. FLATPICKR TAKVİM (MOR TEMA & GRİ DÜZELTME)
    ================================================================= */
 
-/* Ana Takvim Kutusu */
+/* 1. Takvim Ana Kutusu */
 .flatpickr-calendar {
-    background: #2f3349 !important; /* Kart Rengi */
-    border: 1px solid rgba(115, 103, 240, 0.2) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+    background: #1f232c !important; /* Dash Card Rengi (Daha koyu) */
+    border: 1px solid rgba(115, 103, 240, 0.3) !important; /* Hafif Mor Çerçeve */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
     font-family: 'Inter Tight', sans-serif !important;
+    color: #fff !important;
     
-    /* Ok işaretinin (arrow) arkasındaki griliği sil */
-    &:before, &:after { border-bottom-color: #2f3349 !important; }
+    /* Üstteki üçgen ok işareti */
+    &:before, &:after { border-bottom-color: #1f232c !important; }
 }
 
-/* Üst Kısım (Ay/Yıl) - Grilik Silindi */
+/* 2. Üst Kısım (Ay ve Yıl) */
 .flatpickr-months {
-    background: transparent !important;
+    background: #1f232c !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-top: 10px;
 }
-
 .flatpickr-current-month .flatpickr-monthDropdown-months,
 .flatpickr-current-month input.cur-year {
-    background: transparent !important;
     color: #fff !important;
     font-weight: 700;
+    background: transparent !important;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months:hover {
+    background: transparent !important;
 }
 
-/* Ok İşaretleri */
+/* Oklar */
 .flatpickr-prev-month, .flatpickr-next-month {
     fill: #fff !important;
     color: #fff !important;
@@ -289,72 +276,74 @@ td.sticky-product {
     fill: #7367f0 !important;
 }
 
-/* Gün İsimleri (Pzt, Sal...) - Grilik Silindi */
+/* 3. Haftanın Günleri (Pzt, Sal...) */
 .flatpickr-weekdays {
-    background: transparent !important;
-    margin-top: 5px;
+    background: #1f232c !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 span.flatpickr-weekday {
     background: transparent !important;
-    color: #a0a0a0 !important;
+    color: #888 !important;
     font-weight: 600;
 }
 
-/* Günlerin Olduğu Alan */
+/* 4. Günlerin Alanı */
 .flatpickr-days, .dayContainer {
-    background: transparent !important;
+    background: #1f232c !important;
 }
 
-/* --- GÜN KUTULARI --- */
+/* --- GÜN HÜCRELERİ VE SEÇİM --- */
 
-/* Normal Günler */
+/* Normal Gün */
 .flatpickr-day {
+    color: #e0e0e0 !important;
     background: transparent !important;
     border: 1px solid transparent !important;
-    color: #e0e0e0 !important;
-    box-shadow: none !important; /* Varsayılan gri gölgeyi öldür */
+    box-shadow: none !important; /* Varsayılan gri gölgeyi temizle */
+    font-weight: 500;
 }
 
-/* Hover */
+/* Hover (Mouse ile üstüne gelince) */
 .flatpickr-day:hover,
 .flatpickr-day.prevMonthDay:hover,
 .flatpickr-day.nextMonthDay:hover {
-    background: rgba(115, 103, 240, 0.2) !important;
+    background: rgba(115, 103, 240, 0.2) !important; /* Açık Mor */
     border-color: transparent !important;
+    color: #fff !important;
 }
 
-/* SEÇİLİ GÜNLER (Başlangıç ve Bitiş) */
+/* SEÇİLİ GÜN (Başlangıç ve Bitiş) */
 .flatpickr-day.selected, 
 .flatpickr-day.startRange, 
 .flatpickr-day.endRange,
 .flatpickr-day.selected.inRange,
 .flatpickr-day.startRange.inRange,
 .flatpickr-day.endRange.inRange {
-    background: #7367f0 !important; /* Mor */
+    background: #7367f0 !important; /* CANLI MOR */
     color: #fff !important;
     border-color: #7367f0 !important;
     box-shadow: none !important;
 }
 
-/* ARALIKTAKİ GÜNLER (Range) - GRİLİK YERİNE ŞEFFAF MOR */
+/* ARALIKTAKİ GÜNLER (Range) - GRİLİĞİ YOK EDEN KISIM */
 .flatpickr-day.inRange {
-    background: rgba(115, 103, 240, 0.15) !important; /* Çok açık mor */
+    background: rgba(115, 103, 240, 0.15) !important; /* Şeffaf Mor */
     border-color: transparent !important;
+    color: #fff !important;
     
-    /* ÖNEMLİ: Gri gölgeyi mor yaptık, böylece kutular birleşir */
+    /* İŞTE SİHİRLİ KOD: Gri gölgeyi MOR yapıyoruz */
     -webkit-box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important;
     box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important;
-    
-    color: #fff !important;
 }
 
 /* Bugün (Today) */
 .flatpickr-day.today {
-    border-color: rgba(115, 103, 240, 0.8) !important;
+    border-color: #7367f0 !important; /* Sadece mor çerçeve */
     background: transparent !important;
 }
 .flatpickr-day.today:hover {
     background: rgba(115, 103, 240, 0.1) !important;
+    color: #fff !important;
 }
 
 /* Pasif (Diğer Ay) */
@@ -362,6 +351,7 @@ span.flatpickr-weekday {
 .flatpickr-day.nextMonthDay {
     color: #444 !important;
     background: transparent !important;
+    border-color: transparent !important;
 }
 
 
