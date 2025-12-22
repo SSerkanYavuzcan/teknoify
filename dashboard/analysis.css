@@ -1,6 +1,6 @@
 /* ================================================================
    [FILE] css/analysis.css
-   [STATUS] FINAL V26 - SİTE UYUMLU TAKVİM TASARIMI
+   [STATUS] FINAL V26 - SİYAH KÜP TAKVİM & TABLO MİMARİSİ
    ================================================================ */
 
 /* ----------------------------------------------------------------
@@ -251,66 +251,55 @@ td.sticky-product {
 }
 
 
-/* ================================================================= 
-   5. FLATPICKR TAKVİM - SİTE UYUMLU KÜP TASARIM
-================================================================= */
+/* =================================================================
+   5. FLATPICKR TAKVİM (ÖZEL KÜP TASARIM - LOGO KONSEPTİ)
+   ================================================================= */
 
-/* 1. Takvim Ana Kutusu - Sitenin Arka Planı ile Uyumlu */
+/* 1. Takvim Çerçevesi - Tam Siyah */
 .flatpickr-calendar {
-    background: #1a1d29 !important;
+    background: #0b0e11 !important; /* Sitenin en koyu siyahı */
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
-    font-family: 'Inter Tight', sans-serif !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.9) !important;
     border-radius: 12px !important;
-    padding: 12px !important;
+    padding: 10px !important;
+    font-family: 'Inter Tight', sans-serif !important;
     width: auto !important;
 }
 
-.flatpickr-calendar:before, 
-.flatpickr-calendar:after { 
-    display: none !important; 
+/* Üst ve Alt Okları Gizle */
+.flatpickr-calendar:before, .flatpickr-calendar:after {
+    display: none !important;
 }
 
-/* 2. Üst Kısım (Ay ve Yıl) */
+/* 2. Ay ve Yıl Kısmı */
 .flatpickr-months {
     background: transparent !important;
     margin-bottom: 10px !important;
-    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-    padding-bottom: 8px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 5px;
 }
-
 .flatpickr-current-month span.cur-month, 
 .flatpickr-current-month input.cur-year {
     color: #fff !important;
     font-weight: 700 !important;
-    font-size: 1rem !important;
 }
-
-.flatpickr-prev-month, 
-.flatpickr-next-month {
-    fill: #999 !important;
-    padding: 10px !important;
-    transition: all 0.2s ease !important;
+.flatpickr-prev-month, .flatpickr-next-month {
+    fill: #fff !important;
 }
-
-.flatpickr-prev-month:hover svg, 
-.flatpickr-next-month:hover svg {
+.flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg {
     fill: #7367f0 !important;
 }
 
-/* 3. Haftanın Günleri */
+/* 3. Gün İsimleri (Pzt, Sal...) */
 span.flatpickr-weekday {
     color: #888 !important;
     font-weight: 600 !important;
-    font-size: 0.85rem !important;
-    text-transform: uppercase !important;
 }
 
-/* 4. GÜN KUTUCUKLARI (CUBE EFFECT) */
+/* 4. GÜN KUTUCUKLARI - AYRIK KÜP TASARIMI */
 .flatpickr-days {
     width: 310px !important;
 }
-
 .dayContainer {
     width: 310px !important;
     min-width: 310px !important;
@@ -319,30 +308,26 @@ span.flatpickr-weekday {
 }
 
 .flatpickr-day {
-    border-radius: 6px !important;
-    background: rgba(255,255,255,0.05) !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    color: #bbb !important;
+    border-radius: 6px !important; /* Kareye yakın yumuşak köşe */
+    background: rgba(255,255,255,0.05) !important; /* Silik kutu */
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    color: #ccc !important;
     font-weight: 500 !important;
     
-    /* Küp Efekti */
-    margin: 3px !important;
-    height: 38px !important;
-    line-height: 38px !important;
-    flex-basis: 38px !important;
-    max-width: 38px !important;
-    box-shadow: none !important;
-    
-    transition: all 0.2s ease !important;
+    /* KÜP GÖRÜNÜMÜNÜ SAĞLAYAN KISIM */
+    margin: 4px !important; /* Kutuları birbirinden ayırır */
+    height: 36px !important;
+    line-height: 36px !important;
+    flex-basis: 36px !important;
+    max-width: 36px !important;
+    box-shadow: none !important; /* Bitişik gölgeyi kaldırır */
 }
 
-/* Hover Efekti */
+/* Hover (Üzerine Gelince) */
 .flatpickr-day:hover {
-    background: rgba(115, 103, 240, 0.2) !important;
-    border-color: rgba(115, 103, 240, 0.4) !important;
+    background: rgba(115, 103, 240, 0.3) !important;
     color: #fff !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 2px 8px rgba(115, 103, 240, 0.3) !important;
+    border-color: #7367f0 !important;
 }
 
 /* SEÇİLİ GÜN (Teknoify Moru) */
@@ -353,86 +338,28 @@ span.flatpickr-weekday {
     color: #fff !important;
     border-color: #7367f0 !important;
     font-weight: bold !important;
-    box-shadow: 0 4px 12px rgba(115, 103, 240, 0.5) !important;
-    transform: translateY(0) !important;
+    box-shadow: 0 0 10px rgba(115, 103, 240, 0.5) !important;
 }
 
-/* ARALIKTAKİ GÜNLER - AYRIK KUTULAR */
+/* ARALIKTAKİ GÜNLER (Range) - AYRIK KUTU OLARAK */
 .flatpickr-day.inRange {
-    background: rgba(115, 103, 240, 0.15) !important;
-    border: 1px solid rgba(115, 103, 240, 0.3) !important;
-    color: #e0e0e0 !important;
-    box-shadow: none !important;
+    background: rgba(115, 103, 240, 0.15) !important; /* Şeffaf mor iç */
+    border: 1px solid rgba(115, 103, 240, 0.3) !important; /* İnce mor çerçeve */
+    color: #fff !important;
+    box-shadow: none !important; /* Birleşmeyi engelle */
     border-radius: 6px !important;
 }
 
-/* BUGÜN */
+/* Bugün */
 .flatpickr-day.today {
-    border: 2px solid #7367f0 !important;
+    border: 1px dashed #7367f0 !important;
     color: #7367f0 !important;
-    background: rgba(115, 103, 240, 0.08) !important;
-    font-weight: 600 !important;
-}
-
-.flatpickr-day.today:hover {
-    background: rgba(115, 103, 240, 0.25) !important;
-    color: #fff !important;
-}
-
-/* Pasif Günler (Diğer Aylar) */
-.flatpickr-day.prevMonthDay, 
-.flatpickr-day.nextMonthDay {
-    opacity: 0.25 !important;
-    color: #555 !important;
-    pointer-events: none !important;
     background: transparent !important;
-    border-color: rgba(255,255,255,0.03) !important;
 }
 
-/* Disabled Günler */
-.flatpickr-day.flatpickr-disabled {
-    color: #444 !important;
-    background: rgba(255,255,255,0.02) !important;
-    cursor: not-allowed !important;
-    opacity: 0.3 !important;
-}
-
-/* Seçili Gün Hover */
-.flatpickr-day.selected:hover,
-.flatpickr-day.startRange:hover, 
-.flatpickr-day.endRange:hover {
-    background: #8577f5 !important;
-}
-
-/* Aralık Başlangıç ve Bitiş Yuvarlatma */
-.flatpickr-day.startRange {
-    border-radius: 6px !important;
-}
-
-.flatpickr-day.endRange {
-    border-radius: 6px !important;
-}
-
-/* Time Picker (Saat Seçici) */
-.flatpickr-time {
-    background: transparent !important;
-    border-top: 1px solid rgba(255,255,255,0.1) !important;
-}
-
-.flatpickr-time input {
-    background: rgba(255,255,255,0.05) !important;
-    color: #fff !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-}
-
-.flatpickr-time .flatpickr-time-separator,
-.flatpickr-time .flatpickr-am-pm {
-    color: #bbb !important;
-}
-
-/* Input içindeki takvim ikonu */
-.flatpickr-calendar.open {
-    z-index: 9999 !important;
+/* Diğer ayın günlerini gizle */
+.flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+    visibility: hidden !important;
 }
 
 

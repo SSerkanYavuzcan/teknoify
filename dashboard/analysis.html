@@ -9,12 +9,122 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
    
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
    
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/analysis.css"> 
+
+    <style>
+        /* 1. Takvim Çerçevesi - Tam Siyah */
+        .flatpickr-calendar {
+            background: #0b0e11 !important; /* Sitenin en koyu siyahı */
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9) !important;
+            border-radius: 12px !important;
+            padding: 10px !important;
+            font-family: 'Inter Tight', sans-serif !important;
+            width: auto !important;
+        }
+        
+        /* Üst ve Alt Okları Gizle */
+        .flatpickr-calendar:before, .flatpickr-calendar:after {
+            display: none !important;
+        }
+
+        /* 2. Ay ve Yıl Kısmı */
+        .flatpickr-months {
+            background: transparent !important;
+            margin-bottom: 10px !important;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 5px;
+        }
+        .flatpickr-current-month span.cur-month, 
+        .flatpickr-current-month input.cur-year {
+            color: #fff !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-prev-month, .flatpickr-next-month {
+            fill: #fff !important;
+        }
+        .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg {
+            fill: #7367f0 !important;
+        }
+
+        /* 3. Gün İsimleri (Pzt, Sal...) */
+        span.flatpickr-weekday {
+            color: #888 !important;
+            font-weight: 600 !important;
+        }
+
+        /* 4. GÜN KUTUCUKLARI - AYRIK KÜP TASARIMI */
+        .flatpickr-days {
+            width: 310px !important;
+        }
+        .dayContainer {
+            width: 310px !important;
+            min-width: 310px !important;
+            padding: 0 !important;
+            justify-content: space-between !important;
+        }
+
+        .flatpickr-day {
+            border-radius: 6px !important; /* Kareye yakın yumuşak köşe */
+            background: rgba(255,255,255,0.05) !important; /* Silik kutu */
+            border: 1px solid rgba(255,255,255,0.05) !important;
+            color: #ccc !important;
+            font-weight: 500 !important;
+            
+            /* KÜP GÖRÜNÜMÜNÜ SAĞLAYAN KISIM */
+            margin: 4px !important; /* Kutuları birbirinden ayırır */
+            height: 36px !important;
+            line-height: 36px !important;
+            flex-basis: 36px !important;
+            max-width: 36px !important;
+            box-shadow: none !important; /* Bitişik gölgeyi kaldırır */
+        }
+
+        /* Hover (Üzerine Gelince) */
+        .flatpickr-day:hover {
+            background: rgba(115, 103, 240, 0.3) !important;
+            color: #fff !important;
+            border-color: #7367f0 !important;
+        }
+
+        /* SEÇİLİ GÜN (Teknoify Moru) */
+        .flatpickr-day.selected, 
+        .flatpickr-day.startRange, 
+        .flatpickr-day.endRange {
+            background: #7367f0 !important;
+            color: #fff !important;
+            border-color: #7367f0 !important;
+            font-weight: bold !important;
+            box-shadow: 0 0 10px rgba(115, 103, 240, 0.5) !important;
+        }
+
+        /* ARALIKTAKİ GÜNLER (Range) - AYRIK KUTU OLARAK */
+        .flatpickr-day.inRange {
+            background: rgba(115, 103, 240, 0.15) !important; /* Şeffaf mor iç */
+            border: 1px solid rgba(115, 103, 240, 0.3) !important; /* İnce mor çerçeve */
+            color: #fff !important;
+            box-shadow: none !important; /* Birleşmeyi engelle */
+            border-radius: 6px !important;
+        }
+
+        /* Bugün */
+        .flatpickr-day.today {
+            border: 1px dashed #7367f0 !important;
+            color: #7367f0 !important;
+            background: transparent !important;
+        }
+        
+        /* Diğer ayın günlerini gizle */
+        .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+            visibility: hidden !important;
+        }
+    </style>
 </head>
 
 <body>
