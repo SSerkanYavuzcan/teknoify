@@ -14,11 +14,13 @@
    
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
    
-    <link rel="stylesheet" href="../css/dashboard.css?v=5">
-    <link rel="stylesheet" href="../css/analysis.css?v=5"> 
+    <link rel="stylesheet" href="../css/dashboard.css?v=7">
+    <link rel="stylesheet" href="../css/analysis.css?v=7"> 
 
     <style>
-        /* 1. Takvim Çerçevesi - Kart Rengiyle Aynı (#1f232c) */
+        /* -----------------------------------------------------------
+           1. TAKVİM TASARIMI (MODERN & NEON)
+        ----------------------------------------------------------- */
         .flatpickr-calendar {
             background: #1f232c !important; 
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -26,12 +28,11 @@
             border-radius: 16px !important;
             padding: 15px !important;
             font-family: 'Inter Tight', sans-serif !important;
-            width: 340px !important; /* Biraz daha geniş ve ferah */
+            width: 340px !important;
         }
         
         .flatpickr-calendar:before, .flatpickr-calendar:after { display: none !important; }
 
-        /* 2. HEADER (AY ve YIL) */
         .flatpickr-months {
             background: transparent !important;
             margin-bottom: 20px !important;
@@ -48,7 +49,6 @@
             align-items: center;
         }
 
-        /* Ay Seçimini Kilitleme (Sadece Görsel) */
         .flatpickr-current-month .flatpickr-monthDropdown-months,
         .flatpickr-current-month input.cur-year {
             color: #fff !important;
@@ -61,7 +61,6 @@
         }
         .numInputWrapper span { display: none !important; }
         
-        /* Oklar (Daha Büyük ve Belirgin) */
         .flatpickr-prev-month, .flatpickr-next-month {
             fill: #fff !important;
             padding: 10px !important;
@@ -73,7 +72,6 @@
             filter: drop-shadow(0 0 5px rgba(115, 103, 240, 0.8));
         }
 
-        /* 3. Gün İsimleri */
         .flatpickr-weekdays { margin-bottom: 10px; }
         span.flatpickr-weekday {
             color: #888 !important;
@@ -81,7 +79,6 @@
             font-size: 0.9rem !important;
         }
 
-        /* 4. GÜNLER ALANI */
         .flatpickr-days { width: 100% !important; }
         .dayContainer {
             width: 100% !important;
@@ -90,17 +87,16 @@
             justify-content: space-between !important;
         }
 
-        /* 5. GENEL GÜN STİLİ */
         .flatpickr-day {
             border-radius: 8px !important;
             background: transparent !important;
             border: 1px solid transparent !important;
             color: #ccc !important;
             font-weight: 500 !important;
-            margin: 4px 0 !important; /* Yatay margin yok, dikey var */
+            margin: 4px 0 !important;
             height: 38px !important;
             line-height: 38px !important;
-            flex-basis: 14.28% !important; /* 7 gün tam sığsın */
+            flex-basis: 14.28% !important;
             max-width: 14.28% !important;
             box-shadow: none !important;
             transition: all 0.2s ease;
@@ -112,59 +108,73 @@
             border-color: rgba(255,255,255,0.1) !important;
         }
 
-        /* --- "VAOV" EFEKTLİ SEÇİM (AKICI ŞERİT) --- */
-
-        /* BAŞLANGIÇ GÜNÜ (Sol Yuvarlak, Sağ Dik, GLOW Efektli) */
+        /* Başlangıç Günü (Neon Mor) */
         .flatpickr-day.startRange {
             background: linear-gradient(135deg, #7367f0, #584cd1) !important;
             color: #fff !important;
             border: none !important;
             border-radius: 8px 0 0 8px !important;
-            box-shadow: 0 0 15px rgba(115, 103, 240, 0.5) !important; /* NEON GLOW */
+            box-shadow: 0 0 15px rgba(115, 103, 240, 0.5) !important;
             z-index: 2;
             position: relative;
         }
 
-        /* BİTİŞ GÜNÜ (Sağ Yuvarlak, Sol Dik, GLOW Efektli) */
+        /* Bitiş Günü (Neon Mor) */
         .flatpickr-day.endRange {
             background: linear-gradient(135deg, #7367f0, #584cd1) !important;
             color: #fff !important;
             border: none !important;
             border-radius: 0 8px 8px 0 !important;
-            box-shadow: 0 0 15px rgba(115, 103, 240, 0.5) !important; /* NEON GLOW */
+            box-shadow: 0 0 15px rgba(115, 103, 240, 0.5) !important;
             z-index: 2;
             position: relative;
         }
 
-        /* ARADAKİ GÜNLER (Tamamen Bitişik Şerit) */
+        /* Aradaki Günler (Şerit) */
         .flatpickr-day.inRange {
             background: rgba(115, 103, 240, 0.15) !important;
             color: #fff !important;
             border: none !important;
             border-radius: 0 !important;
-            /* Margin boşluklarını dolduran gölge hilesi */
             box-shadow: -5px 0 0 rgba(115, 103, 240, 0.15), 5px 0 0 rgba(115, 103, 240, 0.15) !important; 
             z-index: 1;
         }
 
-        /* Tek Gün Seçimi (Start == End) */
         .flatpickr-day.startRange.endRange {
             border-radius: 8px !important;
         }
 
-        /* Bugün (Today) */
         .flatpickr-day.today {
             border: 1px solid rgba(115, 103, 240, 0.5) !important;
             color: #7367f0 !important;
         }
-        .flatpickr-day.today:hover {
-            border-color: #fff !important;
-            color: #fff !important;
-        }
         
-        /* Pasif Günleri Gizle */
         .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
             visibility: hidden !important;
+        }
+
+        /* -----------------------------------------------------------
+           2. FİLTRE MENÜSÜ RENK GÜNCELLEMESİ (MOR TEMA)
+        ----------------------------------------------------------- */
+        
+        /* Seçili Satırın Arka Planı (Mor) */
+        .multi-option.selected {
+            background: rgba(115, 103, 240, 0.15) !important; /* Mor Opak */
+            color: #fff !important;
+            font-weight: 500;
+        }
+
+        /* Checkbox Kutusu (Mor) */
+        .multi-option.selected .option-checkbox {
+            background: #7367f0 !important; /* MOR */
+            border-color: #7367f0 !important;
+            box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important; /* Mor Parlama */
+        }
+
+        /* Hover Durumu */
+        .multi-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
         }
     </style>
 </head>
@@ -358,8 +368,10 @@
     <script src="../js/script.js"></script>
    
     <script>
+        // --- TEMEL UI FONKSİYONLARI ---
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
        
+        // --- GLOBAL DEĞİŞKENLER ---
         let ALL_DATA = [];
         let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
         let GRAPH_FILTERED_DATA = null;
@@ -370,7 +382,7 @@
         let chartCategory = null;
         let chartPie = null;
 
-        // Scroll Sync
+        // --- SCROLL SENKRONİZASYON ---
         const topScrollWrapper = document.getElementById('top-scroll-wrapper');
         const topScrollContent = document.getElementById('top-scroll-content');
         const tableScrollContainer = document.getElementById('table-scroll-container');
@@ -394,7 +406,7 @@
         }
         window.addEventListener('resize', updateTopScrollWidth);
 
-        // Kategori Haritalama (Aynı)
+        // --- KATEGORİ HARİTALAMA (EKSİKSİZ) ---
         const CATEGORY_MAPPING = {
             "Taze Meyve": "Meyve & Sebze", "Taze Sebze": "Meyve & Sebze", "Taze Ot & Yeşillik": "Meyve & Sebze", "Patates, Soğan & Sarımsak": "Meyve & Sebze", "Kullanıma Hazır Meyve & Sebze": "Meyve & Sebze",
             "Dana Eti": "Et, Tavuk & Şarküteri", "Kuzu Eti": "Et, Tavuk & Şarküteri", "Tavuk Eti": "Et, Tavuk & Şarküteri", "Kıyma": "Et, Tavuk & Şarküteri", "Pişirilmeye Hazır Etler": "Et, Tavuk & Şarküteri", "Diğer Et Ürünleri": "Et, Tavuk & Şarküteri", "Sucuk & Sosis": "Et, Tavuk & Şarküteri", "Salam & Jambon": "Et, Tavuk & Şarküteri", "Kavurma & Pastırma": "Et, Tavuk & Şarküteri", "Diğer Şarküteri Ürünleri": "Et, Tavuk & Şarküteri", "Sakatat Ürünleri": "Et, Tavuk & Şarküteri",
@@ -426,6 +438,7 @@
             return CATEGORY_MAPPING[cleanName] || "Diğer";
         }
 
+        // --- INIT & AUTH ---
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof SessionManager === 'undefined') return;
             const session = new SessionManager();
@@ -726,7 +739,7 @@
             const lowerName = fullName.toLowerCase();
             if (lowerName.includes('migros')) return '#f5821f';
             if (lowerName.includes('carrefour')) return '#005daa';
-            if (lowerName.includes('marketten')) return '#DC6727'; 
+            if (lowerName.includes('marketten')) return '#DC6727'; // TURUNCU
             return '#f97316';
         }
 
@@ -787,23 +800,12 @@
             updateTriggerText('category', 'Tüm Kategoriler');
         }
 
-        // --- GÜNCELLENMİŞ FONKSİYON: ARAMA KUTUSU EKLENDİ ---
+        // --- GÜNCELLENMİŞ FONKSİYON: ARAMA KUTUSU EN ÜSTTE ---
         function renderMultiSelectOptions(menuId, items, type) {
             const menu = document.getElementById(menuId);
             menu.innerHTML = '';
 
-            // 1. "Tümü" Seçeneği (Sabit)
-            const fixedHeader = document.createElement('div');
-            fixedHeader.style.padding = "4px";
-            fixedHeader.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
-            fixedHeader.style.marginBottom = "4px";
-            const allDiv = document.createElement('div');
-            allDiv.className = 'multi-option all-option selected';
-            allDiv.onclick = () => selectOption(type, 'all', allDiv);
-            allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
-            fixedHeader.appendChild(allDiv);
-
-            // 2. ARAMA KUTUSU (YENİ)
+            // 1. ARAMA KUTUSU (EN ÜSTE ALINDI)
             const searchContainer = document.createElement('div');
             searchContainer.style.padding = "8px";
             searchContainer.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
@@ -840,6 +842,17 @@
 
             searchContainer.appendChild(searchInput);
 
+            // 2. "Tümü" Seçeneği (Aramanın Altında)
+            const fixedHeader = document.createElement('div');
+            fixedHeader.style.padding = "4px";
+            fixedHeader.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+            fixedHeader.style.marginBottom = "4px";
+            const allDiv = document.createElement('div');
+            allDiv.className = 'multi-option all-option selected';
+            allDiv.onclick = () => selectOption(type, 'all', allDiv);
+            allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
+            fixedHeader.appendChild(allDiv);
+
             // 3. Liste Alanı
             const scrollContainer = document.createElement('div');
             scrollContainer.style.maxHeight = "200px";
@@ -853,8 +866,8 @@
                 scrollContainer.appendChild(div);
             });
 
-            menu.appendChild(fixedHeader);
             menu.appendChild(searchContainer); 
+            menu.appendChild(fixedHeader);
             menu.appendChild(scrollContainer);
         }
 
