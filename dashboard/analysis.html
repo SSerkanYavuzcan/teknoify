@@ -445,7 +445,7 @@
                 fetch('../data/users.json')
                     .then(res => res.json())
                     .then(userDB => {
-                        const userData = userDB[currentUser.username];
+                        const userData = userDB[currentUser.username] || userDB[currentUser.email];
                         
                         // NOT: Firestore'a geçince burası da değişecek, şimdilik hibrit çalışıyor
                         if (userData) {
@@ -1335,5 +1335,7 @@
     </script>
 </body>
 </html>
+
+
 
 
