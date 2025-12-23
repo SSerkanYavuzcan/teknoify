@@ -16,13 +16,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
     <style>
-        /* Yükleme ekranı (Sadece açılışta anlık görünür) */
+        /* Yükleme Perdesi */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0f172a; z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: white; font-family: 'Inter Tight', sans-serif;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s ease;
         }
         .spinner {
             width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
@@ -36,7 +36,7 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <p>Kontrol ediliyor...</p>
+        <p>Profil Yükleniyor...</p>
     </div>
 
     <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
@@ -54,7 +54,7 @@
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">
                 <span>Hizmetler</span>
             </div>
-            <a href="analysis.html" class="menu-item">
+            <a href="analysis.html" class="menu-item" id="nav-link-analysis" style="display:none;">
                 <i class="fas fa-chart-pie"></i> <span>Web Scraping</span>
             </a>
         </nav>
@@ -83,26 +83,26 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value" id="stat-active-services">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">İşlenen Veri</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value" id="processed-data-count">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Kazanılan Saat</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value" id="stat-saved-hours">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sonraki Ödeme</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value" id="stat-next-payment">-</div>
                 </div>
             </div>
 
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem;">
                 <h3>Son Bildirimler</h3>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <button class="btn-text-action" onclick="alert('Okunacak bildirim yok.')" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500; opacity: 0.5;">
+                    <button class="btn-text-action" onclick="markAllAsRead()" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500;">
                         <i class="fas fa-check-double"></i> Tümünü Okundu İşaretle
                     </button>
                 </div>
@@ -118,20 +118,19 @@
                         </tr>
                     </thead>
                     <tbody id="notification-body">
-                        <tr>
-                            <td colspan="3" style="text-align:center; padding: 2rem; color: #666;">
-                                Henüz bildirim yok.
-                            </td>
-                        </tr>
+                        <tr><td colspan="3" style="text-align:center; padding:1rem; color:#666;">Yükleniyor...</td></tr>
                     </tbody>
                 </table>
             </div>
-
         </div>
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
     <script>
-        // --- FIREBASE AYARLARI ---
+        // ------------------------------------------------------------------
+        // 1. FIREBASE AYARLARI (Giriş kontrolü için burası ŞART)
+        // ------------------------------------------------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
             authDomain: "teknoify-9449c.firebaseapp.com",
@@ -142,37 +141,148 @@
             measurementId: "G-1DZKJE7BXE"
         };
 
-        // Firebase Başlatma
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-        
         const auth = firebase.auth();
 
-        // --- SADECE OTURUM KONTROLÜ ---
+        // ------------------------------------------------------------------
+        // 2. OTURUM VE VERİ YÖNETİMİ
+        // ------------------------------------------------------------------
+        // SessionManager yerine Firebase'i dinliyoruz (Daha güvenilir)
         auth.onAuthStateChanged((user) => {
-            const overlay = document.getElementById('loading-overlay');
-            
             if (user) {
-                // Kullanıcı Giriş Yapmış -> Sayfayı Göster
-                console.log("Giriş yapıldı:", user.email);
-                
-                // Sağ üstteki isim ve avatarı e-postadan çek
-                const simpleName = user.email.split('@')[0];
-                setText('user-name-display', user.email);
-                setText('user-name-title', simpleName);
-                setText('user-avatar', simpleName.charAt(0).toUpperCase());
-
-                // Yükleme ekranını kaldır
-                if(overlay) overlay.style.display = 'none';
-
+                console.log("Giriş Başarılı:", user.email);
+                // Giriş yapıldıysa JSON dosyasından verileri çek
+                fetchUserDataFromJSON(user.email);
             } else {
-                // Giriş Yoksa -> Anasayfaya At
+                console.warn("Oturum yok, yönlendiriliyor...");
                 window.location.href = '../index.html';
             }
         });
 
-        // --- YARDIMCI FONKSİYONLAR ---
+        // ------------------------------------------------------------------
+        // 3. JSON DOSYASINDAN VERİ ÇEKME (users.json)
+        // ------------------------------------------------------------------
+        function fetchUserDataFromJSON(email) {
+            // Dosya yoluna dikkat: member.html dashboard klasöründeyse, data bir üstte olabilir.
+            fetch('../data/users.json')
+                .then(response => response.json())
+                .then(userDB => {
+                    const overlay = document.getElementById('loading-overlay');
+                    
+                    // JSON'da email anahtarı ile kullanıcıyı bul
+                    const userData = userDB[email];
+
+                    if (userData) {
+                        console.log("Kullanıcı verisi JSON'dan alındı:", userData);
+                        updateUI(userData, email);
+                    } else {
+                        console.warn("Kullanıcı JSON dosyasında tanımlı değil:", email);
+                        // Kullanıcı Firebase'de var ama JSON'da yoksa boş profil göster
+                        updateUI({}, email);
+                    }
+
+                    // Yükleme ekranını kapat
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => { overlay.style.display = 'none'; }, 500);
+                    }
+                })
+                .catch(err => {
+                    console.error("users.json okunamadı:", err);
+                    alert("Veri dosyası okunamadı. Lütfen yönetici ile iletişime geçin.");
+                });
+        }
+
+        // ------------------------------------------------------------------
+        // 4. ARAYÜZ GÜNCELLEME
+        // ------------------------------------------------------------------
+        function updateUI(userData, email) {
+            const data = userData.data || {};
+            const features = userData.features || {};
+            const config = userData.config || {};
+
+            // --- PROFİL ---
+            const displayName = userData.name || email.split('@')[0];
+            setText('user-name-display', displayName);
+            setText('user-name-title', displayName);
+            setText('user-avatar', displayName.charAt(0).toUpperCase());
+
+            // --- MENÜ YETKİSİ ---
+            const analysisLink = document.getElementById('nav-link-analysis');
+            if (analysisLink) {
+                // Eğer analysis: true ise menüyü göster
+                analysisLink.style.display = (features.analysis === true) ? 'flex' : 'none';
+            }
+
+            // --- AKTİF HİZMET HESAPLAMA (DİNAMİK) ---
+            let activeServiceCount = 0;
+            if (features.analysis === true) activeServiceCount++;
+            if (features.impersonate === true) activeServiceCount++; 
+            // Başka özellikler varsa buraya ekle (örn: if (features.rpa) ...)
+            
+            setText('stat-active-services', activeServiceCount);
+
+            // --- DİĞER İSTATİSTİKLER ---
+            setText('stat-saved-hours', data.savedHours || "-");
+            setText('stat-next-payment', data.nextPayment || "-");
+
+            // --- İŞLENEN VERİ (CSV SAYMA) ---
+            if (config.sheetUrl && config.sheetUrl.length > 5) {
+                fetchCSVCount(config.sheetUrl);
+            } else {
+                setText('processed-data-count', data.totalProcessed || "-");
+            }
+
+            // --- BİLDİRİMLER ---
+            renderNotifications(data.notifications);
+        }
+
+        // ------------------------------------------------------------------
+        // 5. YARDIMCI FONKSİYONLAR
+        // ------------------------------------------------------------------
+        function fetchCSVCount(url) {
+            // Geçici olarak dönen ikon koyalım
+            const el = document.getElementById('processed-data-count');
+            // el.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            if (typeof Papa === 'undefined') return;
+            Papa.parse(url, {
+                download: true, header: true, skipEmptyLines: true,
+                complete: function(results) {
+                    // 'Store Name' sütunu dolu olan satırları say
+                    const count = results.data.filter(r => r['Store Name'] && r['Store Name'].trim() !== '').length;
+                    el.innerText = new Intl.NumberFormat('tr-TR').format(count);
+                },
+                error: function() {
+                    el.innerText = "Hata";
+                }
+            });
+        }
+
+        function renderNotifications(list) {
+            const tbody = document.getElementById('notification-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Henüz bildirim yok.</td></tr>';
+                return;
+            }
+
+            list.forEach(msg => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+                tr.innerHTML = `
+                    <td style="padding: 1rem;">${msg}</td>
+                    <td style="padding: 1rem;"><span style="color: #ef4444;"><i class="fas fa-envelope"></i> Okunmadı</span></td>
+                    <td style="padding: 1rem; color: #888;">Bugün</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         function setText(id, text) {
             const el = document.getElementById(id);
             if(el) el.textContent = text;
@@ -186,6 +296,14 @@
                     window.location.href = '../index.html';
                 });
             }
+        }
+        
+        function markAllAsRead() {
+            document.querySelectorAll('.fa-envelope').forEach(i => {
+                i.className = 'fas fa-check-circle';
+                i.parentElement.style.color = '#10b981';
+                i.parentElement.innerHTML = '<i class="fas fa-check-circle"></i> Okundu';
+            });
         }
     </script>
 </body>
