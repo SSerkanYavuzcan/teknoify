@@ -46,6 +46,7 @@
 
             <ul class="nav-menu" id="navMenu">
                 <li class="nav-item"><a href="#home" class="nav-link">Ana Sayfa</a></li>
+               
                 <li class="nav-item dropdown">
                     <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
                     <ul class="dropdown-menu">
@@ -57,7 +58,11 @@
                         <li><a href="#"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
                     </ul>
                 </li>
+
+
                 <li class="nav-item"><a href="#contact" class="nav-link">İletişim</a></li>
+
+
                 <li class="nav-item nav-login-btn">
                     <button id="openLoginBtn" class="btn btn-sm btn-outline">
                         <i class="fas fa-user"></i> Giriş Yap
@@ -77,17 +82,24 @@
 
 
 <main class="page-frame">
+
+
     <section id="home" class="hero">
         <div id="stars-container" class="hero-surface"></div>
+
+
         <div class="hero-container">
             <div class="hero-left">
                 <h1 class="hero-title">Geleceğin İş Gücünü <br> <span class="gradient-text">Bugün İnşa Edin</span></h1>
                 <p class="hero-subtitle">Yapay zeka tabanlı otomasyon sistemleri ile işletmenizin verimliliğini maksimum seviyeye çıkarın.</p>
+               
                 <div class="hero-ctas">
                     <button class="btn btn-primary trigger-login">Hemen Başla</button>
                     <a href="#services" class="btn btn-secondary">Hizmetlerimiz</a>
                 </div>
             </div>
+
+
             <div class="hero-right">
                 <div class="hero-terminal" id="terminalWrapper">
                     <div class="term-header">
@@ -101,21 +113,131 @@
     </section>
 
 
-    </main>
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hizmetlerimiz</h2>
+                <p>Uçtan uca dijital dönüşüm araçları.</p>
+            </div>
+            <div class="services-grid">
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-robot"></i></div>
+                    <h3>Robotik Süreç Otomasyonu</h3>
+                    <p>Tekrarlayan görevleri yazılımlara devrederek hızınızı artırın, hataları azaltın ve maliyetlerinizi düşürün.</p>
+                    <div class="card-ctas">
+                        <a href="pages/rpa.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-spider"></i></div>
+                    <h3>Web Scraping</h3>
+                    <p>İnternetteki verileri otomatik toplayıp düzenleyin; rakip fiyatlarını ve pazar trendlerini anlık izleyin.</p>
+                    <div class="card-ctas">
+                        <a href="urunler/web-scraping.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-brain"></i></div>
+                    <h3>AI Asistan</h3>
+                    <p>7/24 çalışan yapay zekâ destekli asistanlarla müşteri taleplerini yöneten akıllı sistemler kurun.</p>
+                    <div class="card-ctas">
+                        <a href="urunler/akilli-dijital-asistan.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Projelerinizi Hayata Geçirelim</h2>
+                <p>Aklınızdaki fikri veya ihtiyacınız olan otomasyon çözümünü bize anlatın.</p>
+            </div>
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <h3>Neden Teknoify?</h3>
+                        <p>İş süreçlerinizi analiz ediyor, size özel botlar ve yapay zeka çözümleri geliştiriyoruz.</p>
+                    </div>
+                    <div class="contact-methods">
+                        <div class="method-item">
+                            <div class="icon-circle"><i class="fas fa-envelope"></i></div>
+                            <div>
+                                <span>Bize E-posta Gönderin</span>
+                                <a href="mailto:info@teknoify.com">info@teknoify.com</a>
+                            </div>
+                        </div>
+                        <div class="method-item">
+                            <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <span>Lokasyon</span>
+                                <p>İstanbul, Türkiye</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" action="#" method="POST">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fullname">Adınız Soyadınız</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="fullname" name="fullname" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact_info">E-posta veya Telefon</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-address-card"></i>
+                                <input type="text" id="contact_info" name="contact_info" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="service_type">İlgilendiğiniz Hizmet</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-tag"></i>
+                            <select id="service_type" name="service_type" required>
+                                <option value="" disabled selected>Lütfen bir hizmet seçin</option>
+                                <option value="rpa">Robotik Süreç Otomasyonu</option>
+                                <option value="scraping">Web Scraping</option>
+                                <option value="ai">AI Asistan</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Projenizden veya Fikrinizden Bahsedin</label>
+                        <div class="input-wrapper textarea-wrapper">
+                            <i class="fas fa-comment-alt"></i>
+                            <textarea id="message" name="message" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Teklif İste / Gönder</span> <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="contact-glow"></div>
+    </section>
+</main>
 
 
 <div id="loginModal" class="modal-overlay" aria-hidden="true">
     <div class="modal-container">
         <button class="modal-close" aria-label="Kapat" onclick="resetModalView()"><i class="fas fa-times"></i></button>
-       
         <div class="modal-content">
-            
             <div id="login-view">
                 <div class="modal-header">
                     <h3>Giriş Yap</h3>
                     <p>Teknoify paneline erişmek için bilgilerinizi girin.</p>
                 </div>
-               
                 <form id="loginForm" class="auth-form">
                     <div class="form-group">
                         <label for="email">E-posta Adresi</label>
@@ -124,8 +246,6 @@
                             <input type="email" id="email" name="email" required placeholder="info@teknoify.com" autocomplete="username">
                         </div>
                     </div>
-
-
                     <div class="form-group">
                         <label for="password">Şifre</label>
                         <div class="input-wrapper">
@@ -133,14 +253,11 @@
                             <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
                         </div>
                     </div>
-
-
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary btn-block">
                             <span>Giriş Yap</span> <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
-                   
                     <div class="form-footer">
                         <a href="#" class="link-sm" onclick="toggleResetView(event)">Şifremi Unuttum</a>
                     </div>
@@ -149,14 +266,11 @@
 
 
             <div id="reset-view" style="display: none;">
-                
                 <div id="reset-form-content">
                     <div class="modal-header">
                         <h3>Şifre Sıfırlama</h3>
-                        <p>E-posta adresinizi girin, sistemde kayıtlıysa sıfırlama linki gönderelim.</p>
+                        <p>Hesabınıza ait e-posta adresini girin, size şifre yenileme bağlantısı gönderelim.</p>
                     </div>
-
-
                     <div class="auth-form">
                         <div class="form-group">
                             <label for="reset-email">E-posta Adresi</label>
@@ -165,19 +279,11 @@
                                 <input type="email" id="reset-email" placeholder="E-posta adresiniz" required>
                             </div>
                         </div>
-
-
-                        <div id="reset-error-msg" style="display: none; color: #ea5455; font-size: 13px; margin-top: 10px; background: rgba(234, 84, 85, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(234, 84, 85, 0.2);">
-                            <i class="fas fa-exclamation-circle"></i> <span id="error-text">Hata mesajı</span>
-                        </div>
-
-
-                        <div class="form-actions" style="margin-top: 20px;">
+                        <div class="form-actions">
                             <button onclick="sendResetLink()" id="btn-reset-submit" class="btn btn-primary btn-block">
                                 <span>Bağlantı Gönder</span> <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
-                        
                         <div class="form-footer" style="margin-top: 15px;">
                             <a href="#" class="link-sm" onclick="toggleResetView(event)" style="color: #7367f0;">
                                 <i class="fas fa-arrow-left"></i> Giriş Yap'a Dön
@@ -185,8 +291,6 @@
                         </div>
                     </div>
                 </div>
-
-
                 <div id="reset-success-content" style="display: none; text-align: center; padding: 20px 0;">
                     <div style="width: 70px; height: 70px; background: rgba(40, 199, 111, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
                         <i class="fas fa-check" style="color: #28c76f; font-size: 32px;"></i>
@@ -201,8 +305,6 @@
                     </button>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>
@@ -222,7 +324,7 @@
 
 
 <script>
-    // --- LOGIN VE ADMIN YÖNLENDİRME ---
+    // --- GİRİŞ VE YÖNLENDİRME MANTIĞI ---
     document.getElementById('loginForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
         const email = document.getElementById('email').value;
@@ -238,14 +340,21 @@
         firebase.auth().signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
+                
+                // Temizlik: Yeni girişte eski taklit kayıtlarını sil
                 localStorage.removeItem('impersonated_user_key');
+
+
+                // --- ÖZEL ADMİN YÖNLENDİRMESİ ---
                 if (user.email === 'sserkanyavuzcan99@gmail.com') {
+                    console.log("Admin girişi başarılı, yönlendiriliyor...");
                     window.location.href = 'dashboard/admin.html';
                 } else {
                     window.location.href = 'dashboard/member.html';
                 }
             })
             .catch((error) => {
+                console.error("Login hatası:", error);
                 alert("Hata: " + error.message);
                 btn.disabled = false;
                 btn.innerHTML = originalText;
@@ -253,14 +362,15 @@
     });
 
 
-    // --- GÖRÜNÜM GEÇİŞLERİ ---
+    // Görünüm Değiştirme (Login <-> Reset)
     function toggleResetView(e) {
         if(e) e.preventDefault();
         const loginView = document.getElementById('login-view');
         const resetView = document.getElementById('reset-view');
         const formContent = document.getElementById('reset-form-content');
         const successContent = document.getElementById('reset-success-content');
-        const errorBox = document.getElementById('reset-error-msg');
+        const loginEmail = document.getElementById('email');
+        const resetEmail = document.getElementById('reset-email');
 
 
         if (loginView.style.display === 'none') {
@@ -271,13 +381,8 @@
             resetView.style.display = 'block';
             formContent.style.display = 'block';
             successContent.style.display = 'none';
-            errorBox.style.display = 'none'; // Geçiş yaparken hatayı temizle
-            
-            // Eğer giriş maili yazılmışsa sıfırlama mailine otomatik taşı
-            if(document.getElementById('email').value) {
-                document.getElementById('reset-email').value = document.getElementById('email').value;
-            }
-            document.getElementById('reset-email').focus();
+            if(loginEmail.value) resetEmail.value = loginEmail.value;
+            resetEmail.focus();
         }
     }
 
@@ -296,52 +401,33 @@
     });
 
 
-    // --- ŞİFRE SIFIRLAMA VE HATA KONTROLÜ ---
     function sendResetLink() {
         const email = document.getElementById('reset-email').value;
         const btn = document.getElementById('btn-reset-submit');
         const formContent = document.getElementById('reset-form-content');
         const successContent = document.getElementById('reset-success-content');
-        const errorBox = document.getElementById('reset-error-msg');
-        const errorText = document.getElementById('error-text');
         
-        errorBox.style.display = 'none'; // Başlangıçta hatayı gizle
-
-
         if (!email) {
-            errorText.textContent = "Lütfen e-posta adresinizi giriniz.";
-            errorBox.style.display = 'block';
+            alert("Lütfen e-posta adresinizi giriniz.");
             return;
         }
 
 
         const originalHtml = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<span>Kontrol Ediliyor...</span> <i class="fas fa-spinner fa-spin"></i>';
+        btn.innerHTML = '<span>Gönderiliyor...</span> <i class="fas fa-spinner fa-spin"></i>';
 
 
         firebase.auth().sendPasswordResetEmail(email)
             .then(() => {
-                // BAŞARILI
                 formContent.style.display = 'none';
                 successContent.style.display = 'block';
             })
             .catch((error) => {
-                console.error("Firebase Reset Hatası:", error.code);
+                console.error(error);
+                alert("Hata: " + error.message);
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
-                errorBox.style.display = 'block';
-                
-                // Firebase Hata Kodlarını Türkçeleştirme
-                if (error.code === 'auth/user-not-found') {
-                    errorText.textContent = "Bu e-posta adresi sistemde kayıtlı değil.";
-                } else if (error.code === 'auth/invalid-email') {
-                    errorText.textContent = "Geçersiz bir e-posta formatı girdiniz.";
-                } else if (error.code === 'auth/too-many-requests') {
-                    errorText.textContent = "Çok fazla deneme yaptınız. Lütfen biraz bekleyin.";
-                } else {
-                    errorText.textContent = "Bağlantı gönderilemedi. Lütfen tekrar deneyin.";
-                }
             });
     }
 </script>
