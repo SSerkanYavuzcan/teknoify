@@ -7,6 +7,7 @@
    
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -25,18 +26,23 @@
         <div class="brand">
             <i class="fas fa-cube"></i> <span>Teknoify</span>
         </div>
+       
         <nav>
             <a href="member.html" class="menu-item active">
                 <i class="fas fa-home"></i> <span>Genel Bakış</span>
             </a>
+           
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">
                 <span>Hizmetler</span>
             </div>
+           
             <a href="analysis.html" class="menu-item" id="nav-link-analysis">
                 <i class="fas fa-chart-pie"></i> <span>Web Scraping</span>
             </a>
         </nav>
+       
         <div class="menu-spacer"></div>
+       
         <div class="sidebar-footer">
             <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
                 <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
@@ -57,19 +63,23 @@
         </header>
 
         <div class="content-scroll">
+           
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
                     <div class="stat-value" id="stat-active-services">-</div>
                 </div>
+
                 <div class="stat-card">
                     <div class="stat-title">İşlenen Veri</div>
                     <div class="stat-value" id="processed-data-count">-</div>
                 </div>
+
                 <div class="stat-card">
                     <div class="stat-title">Kazanılan Saat</div>
                     <div class="stat-value" id="stat-saved-hours">-</div>
                 </div>
+
                 <div class="stat-card">
                     <div class="stat-title">Sonraki Ödeme</div>
                     <div class="stat-value" id="stat-next-payment">-</div>
@@ -98,137 +108,175 @@
                         </tr>
                     </thead>
                     <tbody id="notification-body">
-                        <tr><td colspan="3" style="padding: 1rem; text-align: center;">Yükleniyor...</td></tr>
+                        <tr><td colspan="3" style="padding: 1rem; text-align: center;">Veriler alınıyor...</td></tr>
                     </tbody>
                 </table>
             </div>
+
         </div>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-
+    
     <script>
-        // --- 1. FIREBASE AYARLARI ---
-        // Lütfen buraya kendi proje ayarlarını yapıştır (index.html'deki ile aynı olmalı)
+        // --- FIREBASE AYARLARI ---
+        // BURAYA index.html'de veya script.js'de kullandığın config objesini yapıştır:
         const firebaseConfig = {
-            // BURAYI DOLDURMAYI UNUTMA
-            apiKey: "API_KEY_BURAYA",
-            authDomain: "PROJE_ID.firebaseapp.com",
-            projectId: "PROJE_ID",
-            storageBucket: "PROJE_ID.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            apiKey: "SENIN_API_KEYIN",
+            authDomain: "teknoify-xxx.firebaseapp.com",
+            projectId: "teknoify-xxx",
+            storageBucket: "teknoify-xxx.appspot.com",
+            messagingSenderId: "xxx",
+            appId: "xxx"
         };
 
+        // Firebase Başlatma
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // --- 2. OTURUM VE VERİ YÖNETİMİ ---
-        auth.onAuthStateChanged((user) => {
+        // --- GÜVENLİK VE VERİ ÇEKME ---
+        
+        // Kullanıcı giriş durumunu dinle
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
                 // Kullanıcı giriş yapmış, verilerini çek
-                loadUserData(user.uid, user.email);
+                console.log("Kullanıcı doğrulandı:", user.email);
+                loadUserData(user);
             } else {
-                // Giriş yoksa anasayfaya at
+                // Kullanıcı giriş yapmamış, anasayfaya at
+                console.log("Oturum yok, yönlendiriliyor...");
                 window.location.href = '../index.html';
             }
         });
 
-        async function loadUserData(uid, email) {
+        // Firestore'dan Veri Çekme Fonksiyonu
+        async function loadUserData(user) {
             try {
-                // Firestore'dan veriyi çek
-                const doc = await db.collection('users').doc(uid).get();
+                // 'users' koleksiyonunda, belgenin ID'si kullanıcının UID'si olmalı
+                const docRef = db.collection('users').doc(user.uid);
+                const doc = await docRef.get();
 
                 if (doc.exists) {
-                    const fullData = doc.data();
-                    const data = fullData.data || {};
-                    const features = fullData.features || {};
+                    const userDataFull = doc.data();
+                    const data = userDataFull.data || {};
+                    const features = userDataFull.features || {};
 
-                    // Arayüzü Doldur
-                    setText('user-name-display', fullData.name || email);
-                    setText('user-name-title', fullData.name || "Kullanıcı");
-                    if(fullData.name) setText('user-avatar', fullData.name.charAt(0).toUpperCase());
+                    // A) HEADER BİLGİLERİ
+                    setText('user-name-display', userDataFull.name || user.email);
+                    setText('user-name-title', userDataFull.name || "Kullanıcı");
+                    if(userDataFull.name) setText('user-avatar', userDataFull.name.charAt(0).toUpperCase());
 
-                    // Menü Kontrolü
+                    // B) MENÜ YETKİ KONTROLÜ
                     const analysisLink = document.getElementById('nav-link-analysis');
-                    if (analysisLink) analysisLink.style.display = (features.analysis) ? 'flex' : 'none';
+                    if (analysisLink) {
+                        analysisLink.style.display = (features.analysis === true) ? 'flex' : 'none';
+                    }
 
-                    // İstatistikler
+                    // C) İSTATİSTİKLER
                     let activeServicesCount = 0;
                     if (features.analysis) activeServicesCount++;
                     if (features.rpa) activeServicesCount++;
                     setText('stat-active-services', activeServicesCount);
 
-                    setText('stat-saved-hours', (features.rpa) ? (data.savedHours || "0") : "-");
+                    setText('stat-saved-hours', (features.rpa === true) ? (data.savedHours || "0") : "-");
                     setText('stat-next-payment', data.nextPayment || "-");
                     setText('processed-data-count', data.totalProcessed || "-");
 
-                    // Bildirimler
+                    // D) BİLDİRİMLER
                     renderNotifications(data.notifications);
 
-                    // Google Sheets Kontrolü
-                    if(fullData.config && fullData.config.sheetUrl) {
-                        fetchDataCount(fullData.config.sheetUrl);
-                        initAutoNotificationService(fullData.config.sheetUrl);
+                    // E) CANLI VERİ (Google Sheets entegrasyonu devam ediyor)
+                    if(userDataFull.config && userDataFull.config.sheetUrl) {
+                        fetchDataCount(userDataFull.config.sheetUrl);
+                        initAutoNotificationService(userDataFull.config.sheetUrl);
                     }
 
                 } else {
-                    console.warn("Kullanıcı verisi veritabanında bulunamadı.");
-                    setText('user-name-display', email);
-                    document.getElementById('notification-body').innerHTML = 
-                        '<tr><td colspan="3" style="text-align:center; padding:1rem; color:#eab308;">Kullanıcı verileri veritabanında eksik.</td></tr>';
+                    console.log("Kullanıcı verisi veritabanında bulunamadı!");
+                    setText('user-name-title', "Misafir");
+                    document.getElementById('notification-body').innerHTML = '<tr><td colspan="3" style="text-align:center; padding:1rem;">Kullanıcı profili oluşturulmamış.</td></tr>';
                 }
+
             } catch (error) {
-                console.error("Hata:", error);
+                console.error("Veri çekme hatası:", error);
+                alert("Veriler yüklenirken bir hata oluştu: " + error.message);
             }
         }
 
-        // --- 3. ARAYÜZ FONKSİYONLARI ---
-        function setText(id, text) {
+        // --- ÇIKIŞ İŞLEMİ (Firebase) ---
+        function logout() {
+            if(confirm("Çıkış yapmak istediğinize emin misiniz?")) {
+                auth.signOut().then(() => {
+                    window.location.href = '../index.html';
+                }).catch((error) => {
+                    console.error("Çıkış hatası:", error);
+                });
+            }
+        }
+
+        // --- ARAYÜZ YARDIMCI FONKSİYONLARI ---
+        function setText(id, value) {
             const el = document.getElementById(id);
-            if(el) el.textContent = text;
+            if(el) el.textContent = value;
         }
 
         function renderNotifications(notifArray) {
             const tbody = document.getElementById('notification-body');
+            if(!tbody) return;
             tbody.innerHTML = '';
+            
             if(!notifArray || notifArray.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Bildirim yok.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Henüz bildirim yok.</td></tr>';
                 return;
             }
+            
+            // Son eklenen en üstte görünsün diye reverse edebiliriz isteğe bağlı
+            // notifArray.reverse(); 
+
             notifArray.forEach(msg => {
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+                const today = new Date().toLocaleDateString('tr-TR');
                 tr.innerHTML = `
                     <td style="padding: 1rem;">${msg}</td>
-                    <td style="padding: 1rem;"><span style="color: #ef4444;"><i class="fas fa-envelope"></i> Okunmadı</span></td>
-                    <td style="padding: 1rem; color: #888;">${new Date().toLocaleDateString('tr-TR')}</td>`;
+                    <td class="status-cell" style="padding: 1rem;">
+                        <span class="status-unread" style="color: #ef4444; font-weight: 600;">
+                            <i class="fas fa-envelope"></i> Okunmadı
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; color: #888;">${today}</td>`;
                 tbody.appendChild(tr);
             });
         }
 
-        function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
-        
-        function markAllAsRead() {
-            // Basit görsel güncelleme
-            document.querySelectorAll('.fa-envelope').forEach(i => i.classList.replace('fa-envelope', 'fa-check-circle'));
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-closed');
         }
 
-        function logout() {
-            if(confirm("Çıkış yapılıyor?")) {
-                auth.signOut().then(() => window.location.href = '../index.html');
+        function markAllAsRead() {
+            document.querySelectorAll('.status-unread').forEach(item => {
+                item.style.color = '#10b981';
+                item.innerHTML = '<i class="fas fa-check-circle"></i> Okundu';
+                item.classList.remove('status-unread');
+            });
+            const btn = document.querySelector('.btn-text-action');
+            if(btn) {
+                btn.innerHTML = '<i class="fas fa-check-double"></i> Hepsi Okundu';
+                btn.style.opacity = '0.5';
+                btn.style.pointerEvents = 'none';
             }
         }
 
-        // --- 4. GOOGLE SHEETS ENTEGRASYONU ---
+        // --- GOOGLE SHEETS ENTEGRASYONU (Aynen korundu) ---
         function fetchDataCount(url) {
             if(typeof Papa === 'undefined') return;
             Papa.parse(url, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
+                    // Örnek mantık: Store Name ve Product Name dolu olanları say
                     const count = results.data.filter(r => r['Store Name'] && r['Product Name']).length;
                     const el = document.getElementById('processed-data-count');
                     if(el) el.innerHTML = new Intl.NumberFormat('tr-TR').format(count);
@@ -236,7 +284,58 @@
             });
         }
 
-        function initAutoNotificationService(sheetUrl) { /* ... Otomatik kontrol kodların burada kalabilir ... */ }
+        function initAutoNotificationService(sheetUrl) {
+            checkSheetForToday(sheetUrl);
+            // 5 dakikada bir kontrol
+            setInterval(() => {
+                const now = new Date();
+                const hour = now.getHours();
+                // Sadece belli saatlerde kontrol (örn: 10-11 arası)
+                if (hour >= 10 && hour < 11) { checkSheetForToday(sheetUrl); }
+            }, 300000);
+        }
+
+        function checkSheetForToday(url) {
+            const indicator = document.getElementById('live-indicator');
+            if(indicator) indicator.style.display = 'block';
+            Papa.parse(url, {
+                download: true, header: true, skipEmptyLines: true,
+                complete: function(results) {
+                    if(indicator) indicator.style.display = 'none';
+                    const today = new Date();
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const yyyy = today.getFullYear();
+                    const todayStr = `${dd}.${mm}.${yyyy}`;
+                    
+                    // 'Report Date' sütunu bugünü içeriyor mu?
+                    const hasDataForToday = results.data.some(row => row['Report Date'] && row['Report Date'].includes(todayStr));
+                    
+                    if (hasDataForToday) { addDynamicNotification(todayStr); }
+                },
+                error: function() { if(indicator) indicator.style.display = 'none'; }
+            });
+        }
+
+        function addDynamicNotification(dateStr) {
+            const storageKey = `notif_seen_${dateStr}`;
+            if (localStorage.getItem(storageKey)) return; // Daha önce gösterildiyse çık
+            
+            const tbody = document.getElementById('notification-body');
+            // Eğer "bildirim yok" yazısı varsa temizle
+            if (tbody.children.length === 1 && tbody.children[0].innerText.includes("bildirim yok")) { tbody.innerHTML = ''; }
+            
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            tr.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+            tr.innerHTML = `
+                <td style="padding: 1rem;"><strong><i class="fas fa-bolt" style="color:#F59E0B;"></i> YENİ:</strong> ${dateStr} tarihli web scraping sonuçları siteye yüklenmiştir.</td>
+                <td class="status-cell" style="padding: 1rem;"><span class="status-unread" style="color: #ef4444; font-weight: 600;"><i class="fas fa-envelope"></i> Okunmadı</span></td>
+                <td style="padding: 1rem; color: #888;">${dateStr}</td>
+            `;
+            tbody.prepend(tr);
+            localStorage.setItem(storageKey, 'true');
+        }
     </script>
 </body>
 </html>
