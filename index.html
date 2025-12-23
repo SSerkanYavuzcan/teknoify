@@ -14,8 +14,8 @@
 
 
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" /> 
-    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 
@@ -163,7 +163,7 @@
                         <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
                     </div>
                 </article>
-                
+               
                 <article class="service-card">
                     <div class="icon-box"><i class="fas fa-chart-line"></i></div>
                     <h3>Finansal İndikatör & Botlar</h3>
@@ -203,7 +203,7 @@
                         <h3>Neden Teknoify?</h3>
                         <p>İş süreçlerinizi analiz ediyor, size özel botlar ve yapay zeka çözümleri geliştiriyoruz. 7/24 çalışan dijital iş gücünüzü kurmaya hazırız.</p>
                     </div>
-                    
+                   
                     <div class="contact-methods">
                         <div class="method-item">
                             <div class="icon-circle"><i class="fas fa-envelope"></i></div>
@@ -278,7 +278,7 @@
                 </form>
             </div>
         </div>
-        
+       
         <div class="contact-glow"></div>
     </section>
 
@@ -288,43 +288,80 @@
 
 <div id="loginModal" class="modal-overlay" aria-hidden="true">
     <div class="modal-container">
-        <button class="modal-close" aria-label="Kapat"><i class="fas fa-times"></i></button>
+        <button class="modal-close" aria-label="Kapat" onclick="resetModalView()"><i class="fas fa-times"></i></button>
        
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Giriş Yap</h3>
-                <p>Teknoify paneline erişmek için bilgilerinizi girin.</p>
-            </div>
-           
-            <form id="loginForm" class="auth-form">
-                <div class="form-group">
-                    <label for="email">E-posta Adresi</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-user"></i>
-                        <input type="email" id="email" name="email" required placeholder="info@teknoify.com" autocomplete="username">
-                    </div>
-                </div>
-
-
-                <div class="form-group">
-                    <label for="password">Şifre</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
-                    </div>
-                </div>
-
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <span>Giriş Yap</span> <i class="fas fa-arrow-right"></i>
-                    </button>
+            
+            <div id="login-view">
+                <div class="modal-header">
+                    <h3>Giriş Yap</h3>
+                    <p>Teknoify paneline erişmek için bilgilerinizi girin.</p>
                 </div>
                
-                <div class="form-footer">
-                    <a href="#" class="link-sm">Şifremi Unuttum</a>
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">E-posta Adresi</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="email" id="email" name="email" required placeholder="info@teknoify.com" autocomplete="username">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+                        </div>
+                    </div>
+
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span>Giriş Yap</span> <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                   
+                    <div class="form-footer">
+                        <a href="#" class="link-sm" onclick="toggleResetView(event)">Şifremi Unuttum</a>
+                    </div>
+                </form>
+            </div>
+
+
+            <div id="reset-view" style="display: none;">
+                <div class="modal-header">
+                    <h3>Şifre Sıfırlama</h3>
+                    <p>Hesabınıza ait e-posta adresini girin, size şifre yenileme bağlantısı gönderelim.</p>
                 </div>
-            </form>
+
+
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="reset-email">E-posta Adresi</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="reset-email" placeholder="E-posta adresiniz" required>
+                        </div>
+                    </div>
+
+
+                    <div class="form-actions">
+                        <button onclick="sendResetLink()" id="btn-reset-submit" class="btn btn-primary btn-block">
+                            <span>Bağlantı Gönder</span> <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-footer" style="margin-top: 15px;">
+                        <a href="#" class="link-sm" onclick="toggleResetView(event)" style="color: #7367f0;">
+                            <i class="fas fa-arrow-left"></i> Giriş Yap'a Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 </div>
@@ -341,6 +378,90 @@
 
 <script src="js/session-manager.js"></script>
 <script src="js/script.js" defer></script>
+
+
+<script>
+    // Görünüm Değiştirme (Login <-> Reset)
+    function toggleResetView(e) {
+        if(e) e.preventDefault();
+        
+        const loginView = document.getElementById('login-view');
+        const resetView = document.getElementById('reset-view');
+        const loginEmail = document.getElementById('email');
+        const resetEmail = document.getElementById('reset-email');
+
+
+        if (loginView.style.display === 'none') {
+            // Giriş ekranına dön
+            loginView.style.display = 'block';
+            resetView.style.display = 'none';
+        } else {
+            // Şifre sıfırlama ekranını aç
+            loginView.style.display = 'none';
+            resetView.style.display = 'block';
+            
+            // Kullanıcı girişte mail yazdıysa buraya taşı
+            if(loginEmail.value) {
+                resetEmail.value = loginEmail.value;
+            }
+            resetEmail.focus();
+        }
+    }
+
+
+    // Modal Kapatılırsa Görünümü Sıfırla
+    function resetModalView() {
+        const modal = document.getElementById('loginModal');
+        modal.classList.remove('active');
+        // Kısa bir gecikmeyle (animasyon bitince) login ekranına döndür
+        setTimeout(() => {
+            document.getElementById('login-view').style.display = 'block';
+            document.getElementById('reset-view').style.display = 'none';
+        }, 300);
+    }
+    
+    // Modal dışına tıklayınca da resetlemek için (script.js'de varsa çakışabilir, burası garanti olsun)
+    document.getElementById('loginModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            resetModalView();
+        }
+    });
+
+
+    // Firebase Şifre Sıfırlama
+    function sendResetLink() {
+        const email = document.getElementById('reset-email').value;
+        const btn = document.getElementById('btn-reset-submit');
+        
+        if (!email) {
+            alert("Lütfen e-posta adresinizi giriniz.");
+            return;
+        }
+
+
+        const originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span>Gönderiliyor...</span> <i class="fas fa-spinner fa-spin"></i>';
+
+
+        firebase.auth().sendPasswordResetEmail(email)
+            .then(() => {
+                alert("Şifre sıfırlama bağlantısı e-posta adresinize gönderildi! Spam kutunuzu kontrol etmeyi unutmayın.");
+                toggleResetView(); // Başarılı olunca giriş ekranına dön
+            })
+            .catch((error) => {
+                console.error(error);
+                let msg = "Bir hata oluştu.";
+                if (error.code === 'auth/user-not-found') msg = "Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.";
+                if (error.code === 'auth/invalid-email') msg = "Geçersiz e-posta formatı.";
+                alert(msg);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            });
+    }
+</script>
 
 
 </body>
