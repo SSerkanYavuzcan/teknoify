@@ -1,5 +1,5 @@
 {
-  "tazeyo": {
+  "yakup.iler@tazeyo.com": {
     "role": "member",
     "name": "Tazeyo",
     "features": {
@@ -17,6 +17,20 @@
       "notifications": [
         "Fiyat analiz raporunuz güncellendi.",
         "Sisteme hoşgeldiniz."
+      ]
+    },
+    "scraping_config": {
+      "project_name": "Tazeyo Pazar Analizi",
+      "target_sites": [
+        {
+          "name": "Rakip Market A",
+          "url": "https://www.ornek-rakip.com",
+          "frequency": "daily"
+        }
+      ],
+      "keywords": [
+        "organik elma",
+        "gezen tavuk yumurtası"
       ]
     }
   },
