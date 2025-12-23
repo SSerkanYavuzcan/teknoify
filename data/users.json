@@ -2,6 +2,7 @@
   "yakup.iler@tazeyo.com": {
     "role": "member",
     "name": "Tazeyo",
+    "email": "yakup.iler@tazeyo.com",
     "features": {
       "analysis": true,
       "impersonate": false
@@ -34,30 +35,10 @@
       ]
     }
   },
-  "yemeksepeti": {
-    "role": "premium",
-    "name": "Yemeksepeti",
-    "features": {
-      "analysis": true,
-      "impersonate": false
-    },
-    "config": {
-      "sheetUrl": ""
-    },
-    "data": {
-      "activeBots": 0,
-      "totalProcessed": "0",
-      "savedHours": 0,
-      "nextPayment": "-",
-      "notifications": [
-        "Premium hesabınız aktif edildi.",
-        "Teknoify ailesine hoşgeldiniz!"
-      ]
-    }
-  },
-  "serkanyavuzcan": {
+  "serkanyavuzcan99@gmail.com": {
     "role": "admin",
     "name": "Serkan Yavuzcan",
+    "email": "serkanyavuzcan99@gmail.com",
     "features": {
       "analysis": true,
       "impersonate": true
@@ -73,6 +54,28 @@
       "notifications": [
         "Sistem güncellemesi hazır.",
         "Yeni üye kaydı: Yemeksepeti"
+      ]
+    }
+  },
+  "info@yemeksepeti.com": {
+    "role": "premium",
+    "name": "Yemeksepeti",
+    "email": "info@yemeksepeti.com",
+    "features": {
+      "analysis": true,
+      "impersonate": false
+    },
+    "config": {
+      "sheetUrl": ""
+    },
+    "data": {
+      "activeBots": 0,
+      "totalProcessed": "0",
+      "savedHours": 0,
+      "nextPayment": "-",
+      "notifications": [
+        "Premium hesabınız aktif edildi.",
+        "Teknoify ailesine hoşgeldiniz!"
       ]
     }
   }
