@@ -1,6 +1,6 @@
 /**
  * ================================================================
- * [MODULE] SESSION MANAGER (FIREBASE AUTH GUARD) - UPDATED
+ * [MODULE] SESSION MANAGER (FIREBASE AUTH GUARD) - FINAL VERSION
  * ================================================================
  */
 
@@ -14,6 +14,7 @@ const firebaseConfigSession = {
   measurementId: "G-1DZKJE7BXE"
 };
 
+// Eğer Firebase başlatılmamışsa başlat
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfigSession);
 }
@@ -23,6 +24,9 @@ class SessionManager {
         this.auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
     }
 
+    /**
+     * Oturumu doğrular ve impersonate durumunu kontrol eder.
+     */
     validateSession() {
         return new Promise((resolve, reject) => {
             if (!this.auth) {
@@ -35,51 +39,46 @@ class SessionManager {
                 unsubscribe(); 
                
                 if (user) {
-                    // --- IMPERSONATE KONTROLÜ ---
+                    // 1. Admin yetkisi kontrolü (Sadece bu mail impersonate yapabilir)
+                    const isAdmin = user.email === 'sserkanyavuzcan99@gmail.com';
+                    
+                    // 2. LocalStorage'da taklit kaydı var mı?
                     const impersonatedKey = localStorage.getItem('impersonated_user_key');
                     
-                    // Sadece gerçek mailin admin ise taklit moduna izin ver
-                    const isAdmin = user.email === 'sserkanyavuzcan99@gmail.com' || user.email.includes('admin');
-                    
                     let activeEmail = user.email;
-                    let activeUsername = user.email.split('@')[0];
-                    let role = isAdmin ? 'admin' : (user.email.includes('premium') ? 'premium' : 'member');
                     let isImpersonating = false;
 
-                    if (impersonatedKey && isAdmin) {
-                        console.log("🕵️ Taklit Modu Aktif: " + impersonatedKey + " olarak işlem yapılıyor.");
+                    // 3. Eğer kişi adminse ve taklit modunu açtıysa kimliği maskele
+                    if (isAdmin && impersonatedKey) {
+                        console.log("🕵️ Admin Gözetim Modu: " + impersonatedKey);
                         activeEmail = impersonatedKey;
-                        activeUsername = impersonatedKey.includes('@') ? impersonatedKey.split('@')[0] : impersonatedKey;
                         isImpersonating = true;
-                        // Taklit edilen kişinin rolünü (varsayılan) member olarak döndürür, 
-                        // bu sayfa yetkilerini users.json belirler.
-                    }
-
-                    console.log("✅ Oturum Onaylandı: " + activeEmail);
-
-                    // Üstte kırmızı taklit barı oluştur (Eğer mod aktifse)
-                    if (isImpersonating) {
                         this.showImpersonateBar(activeEmail);
                     }
+
+                    // 4. UI Bilgilerini Güncelle (Sağ üst isim/avatar)
+                    const displayName = activeEmail.split('@')[0];
+                    this.updateUserProfile(displayName);
                    
-                    this.updateUserProfile(activeUsername);
-                   
+                    // 5. Sayfaya kullanıcı objesini döndür
                     resolve({
-                        username: activeUsername,
+                        username: displayName,
                         email: activeEmail,
                         uid: user.uid,
-                        role: role,
+                        role: isAdmin ? 'admin' : 'member',
                         isImpersonated: isImpersonating
                     });
                 } else {
-                    console.warn("⚠️ Oturum Yok!");
+                    console.warn("⚠️ Oturum Yok! Login sayfasına yönlendiriliyor...");
                     reject('No user');
                 }
             });
         });
     }
 
-    // Taklit modunda olduğunu hatırlatan üst bar
+    /**
+     * Admin için sayfanın en üstünde kırmızı bilgilendirme barı gösterir.
+     */
     showImpersonateBar(targetEmail) {
         if (document.getElementById('impersonate-notice-bar')) return;
         
@@ -89,46 +88,63 @@ class SessionManager {
             background: #ea5455; 
             color: white; 
             text-align: center; 
-            padding: 8px; 
+            padding: 10px; 
             font-size: 13px; 
-            font-weight: 600;
+            font-weight: 700;
             position: fixed; 
             top: 0; 
             left: 0; 
             width: 100%; 
             z-index: 10000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
+            font-family: 'Inter Tight', sans-serif;
         `;
         bar.innerHTML = `
-            <span><i class="fas fa-user-secret"></i> Şu an <strong>${targetEmail}</strong> hesabını inceliyorsunuz.</span>
-            <button onclick="localStorage.removeItem('impersonated_user_key'); location.reload();" 
-                    style="background: white; color: #ea5455; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-weight: 700;">
-                Gözatmayı Bitir
+            <span><i class="fas fa-user-secret"></i> Şu an <strong>${targetEmail}</strong> kullanıcısının panelindesiniz.</span>
+            <button onclick="localStorage.removeItem('impersonated_user_key'); window.location.href='admin.html';" 
+                    style="background: white; color: #ea5455; border: none; padding: 5px 15px; border-radius: 6px; cursor: pointer; font-weight: 800; transition: 0.3s;">
+                Admin Paneline Dön
             </button>
         `;
         document.body.prepend(bar);
-        document.body.style.paddingTop = "40px"; // Barın içeriği kapatmaması için
+        document.body.style.paddingTop = "45px"; // Sayfa içeriği barın altında kalmasın
     }
 
+    /**
+     * Sayfadaki profil bilgilerini (Header) günceller.
+     */
     updateUserProfile(displayName) {
         const nameDisplay = document.getElementById('user-name-display');
         const avatarDisplay = document.getElementById('user-avatar');
        
-        if (nameDisplay) nameDisplay.textContent = displayName;
-        if (avatarDisplay) avatarDisplay.textContent = displayName.charAt(0).toUpperCase();
+        if (nameDisplay) {
+            nameDisplay.textContent = displayName;
+        }
+       
+        if (avatarDisplay) {
+            avatarDisplay.textContent = displayName.charAt(0).toUpperCase();
+        }
     }
 
+    /**
+     * Güvenli çıkış yapar ve tüm taklit verilerini temizler.
+     */
     destroySession() {
         if (!this.auth) return;
-        localStorage.removeItem('impersonated_user_key'); // Çıkışta temizle
+        
+        // Çıkış yaparken taklit modunu mutlaka kapat
+        localStorage.removeItem('impersonated_user_key');
+
         this.auth.signOut().then(() => {
+            console.log("🔓 Oturum kapatıldı.");
             window.location.href = '../index.html';
         }).catch((error) => {
             console.error("Çıkış hatası:", error);
+            window.location.href = '../index.html';
         });
     }
 }
