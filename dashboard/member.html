@@ -16,7 +16,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* Sayfa ilk açıldığında görünecek yükleme ekranı */
+        /* YÜKLEME EKRANI STİLİ */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0f172a; z-index: 9999;
@@ -129,16 +129,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script>
-        // ---------------------------------------------------------
-        // 1. FIREBASE AYARLARI (Lütfen Kendi Bilgilerinle Doldur)
-        // ---------------------------------------------------------
+        // --- SENİN VERDİĞİN FIREBASE AYARLARI ---
         const firebaseConfig = {
-            apiKey: "SENIN_API_KEY_BURAYA",
-            authDomain: "SENIN_PROJE_ID.firebaseapp.com",
-            projectId: "SENIN_PROJE_ID",
-            storageBucket: "SENIN_PROJE_ID.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
+            authDomain: "teknoify-9449c.firebaseapp.com",
+            projectId: "teknoify-9449c",
+            storageBucket: "teknoify-9449c.firebasestorage.app",
+            messagingSenderId: "704314596026",
+            appId: "1:704314596026:web:f63fff04c00b7a698ac083",
+            measurementId: "G-1DZKJE7BXE"
         };
 
         // Firebase Başlatma
@@ -148,36 +147,44 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // ---------------------------------------------------------
-        // 2. OTURUM KONTROLÜ (Wait for Auth)
-        // ---------------------------------------------------------
+        // --- OTURUM DİNLEYİCİSİ ---
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('loading-overlay');
             
             if (user) {
-                // Kullanıcı var, verileri çekmeye başla
-                console.log("Kullanıcı doğrulandı:", user.email);
+                // Kullanıcı Giriş Yapmış -> Verileri Çek
+                console.log("✅ Giriş başarılı. Kullanıcı:", user.email);
                 loadUserData(user.uid, user.email);
                 
                 // Yükleme ekranını yavaşça kaldır
-                setTimeout(() => {
+                if(overlay) {
                     overlay.style.opacity = '0';
                     setTimeout(() => { overlay.style.display = 'none'; }, 500);
-                }, 800);
+                }
 
             } else {
-                // Kullanıcı yok, giriş sayfasına yönlendir
-                console.log("Oturum yok, yönlendiriliyor...");
-                window.location.href = '../index.html';
+                // Kullanıcı Giriş Yapmamış -> UYARI GÖSTER (Redirect yerine)
+                console.warn("⚠️ Oturum bulunamadı!");
+                
+                if(overlay) {
+                    overlay.innerHTML = `
+                        <div style="text-align:center; padding:20px;">
+                            <i class="fas fa-exclamation-circle" style="font-size:3rem; color:#f87171; margin-bottom:20px;"></i>
+                            <h3>Oturum Açılmadı</h3>
+                            <p style="color:#ccc; margin-bottom:20px;">Sayfayı görüntülemek için giriş yapmalısınız.</p>
+                            <a href="../index.html" style="background:#6366f1; color:white; padding:10px 20px; text-decoration:none; border-radius:6px;">Giriş Yap</a>
+                        </div>
+                    `;
+                }
             }
         });
 
-        // ---------------------------------------------------------
-        // 3. FIRESTORE'DAN VERİ ÇEKME
-        // ---------------------------------------------------------
+        // --- VERİTABANINDAN VERİ ÇEKME ---
         async function loadUserData(uid, email) {
             try {
-                const doc = await db.collection('users').doc(uid).get();
+                // 'users' koleksiyonunda, kullanıcının ID'sine ait belgeyi al
+                const docRef = db.collection('users').doc(uid);
+                const doc = await docRef.get();
 
                 if (doc.exists) {
                     const fullData = doc.data();
@@ -185,16 +192,16 @@
                     const features = fullData.features || {};
                     const config = fullData.config || {};
 
-                    // İsim ve Avatar
+                    // Arayüz Doldurma
                     setText('user-name-display', fullData.name || email);
-                    setText('user-name-title', fullData.name || "Misafir");
+                    setText('user-name-title', fullData.name || "Kullanıcı");
                     if(fullData.name) setText('user-avatar', fullData.name.charAt(0).toUpperCase());
 
                     // Menü Yetkisi
                     const analysisLink = document.getElementById('nav-link-analysis');
                     if(analysisLink) analysisLink.style.display = (features.analysis) ? 'flex' : 'none';
 
-                    // İstatistik Kutuları
+                    // İstatistikler
                     let activeCount = 0;
                     if(features.analysis) activeCount++;
                     if(features.rpa) activeCount++;
@@ -204,29 +211,26 @@
                     setText('stat-next-payment', data.nextPayment || "-");
                     setText('processed-data-count', data.totalProcessed || "-");
 
-                    // Bildirimleri Listele
+                    // Bildirimler
                     renderNotifications(data.notifications);
 
-                    // Google Sheets Verisi Varsa Çek
-                    if(config.sheetUrl) {
-                        fetchSheetData(config.sheetUrl);
-                    }
+                    // Excel (Web Scraping) Verisi Varsa Çek
+                    if(config.sheetUrl) fetchSheetData(config.sheetUrl);
 
                 } else {
-                    // Veritabanında kayıt yoksa uyarı ver ama atma
-                    console.warn("Veritabanı kaydı bulunamadı.");
-                    setText('user-name-display', email);
-                    document.getElementById('notification-body').innerHTML = 
-                        '<tr><td colspan="3" style="text-align:center; padding:1rem; color:#eab308;">Verileriniz hazırlanıyor...</td></tr>';
+                    // Veri tabanında kayıt yoksa
+                    console.warn("Kullanıcı var ama veritabanında verisi yok.");
+                    setText('user-name-title', "Misafir");
+                    const tbody = document.getElementById('notification-body');
+                    if(tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:1rem; color:#facc15;">Veri veritabanında bulunamadı.</td></tr>';
                 }
             } catch (error) {
-                console.error("Veri çekme hatası:", error);
+                console.error("Hata:", error);
+                alert("Veri çekme hatası: " + error.message);
             }
         }
 
-        // ---------------------------------------------------------
-        // 4. YARDIMCI FONKSİYONLAR
-        // ---------------------------------------------------------
+        // --- YARDIMCI FONKSİYONLAR ---
         function setText(id, text) {
             const el = document.getElementById(id);
             if(el) el.textContent = text;
@@ -234,6 +238,7 @@
 
         function renderNotifications(list) {
             const tbody = document.getElementById('notification-body');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             if(!list || list.length === 0) {
@@ -253,49 +258,32 @@
             });
         }
 
-        function toggleSidebar() {
-            document.body.classList.toggle('sidebar-closed');
-        }
+        function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
 
         function logout() {
-            if(confirm("Çıkış yapmak istiyor musunuz?")) {
+            if(confirm("Çıkış yapmak istediğinize emin misiniz?")) {
                 auth.signOut().then(() => {
                     window.location.href = '../index.html';
                 });
             }
         }
-
+        
         function markAllAsRead() {
             document.querySelectorAll('.fa-envelope').forEach(icon => {
-                icon.classList.remove('fa-envelope');
-                icon.classList.add('fa-check-circle');
+                icon.className = "fas fa-check-circle";
                 icon.parentElement.style.color = '#10b981';
                 icon.parentElement.innerHTML = '<i class="fas fa-check-circle"></i> Okundu';
             });
         }
 
-        // Google Sheets / CSV Okuma
         function fetchSheetData(url) {
             if(typeof Papa === 'undefined') return;
-            
-            // Canlı göstergeyi aç
-            const indicator = document.getElementById('live-indicator');
-            if(indicator) indicator.style.display = 'block';
-
             Papa.parse(url, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
+                download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
-                    if(indicator) indicator.style.display = 'none';
-                    // Örnek: 'Store Name' sütunu dolu olanları say
-                    const count = results.data.filter(r => r['Store Name'] && r['Store Name'].trim() !== '').length;
-                    
+                    const count = results.data.filter(r => r['Store Name']).length;
                     const el = document.getElementById('processed-data-count');
                     if(el) el.innerText = new Intl.NumberFormat('tr-TR').format(count);
-                },
-                error: function() {
-                    if(indicator) indicator.style.display = 'none';
                 }
             });
         }
