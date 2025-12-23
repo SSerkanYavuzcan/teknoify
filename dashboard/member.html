@@ -14,16 +14,15 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* Yükleme Ekranı */
+        /* Yükleme ekranı (Sadece açılışta anlık görünür) */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0f172a; z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: white; font-family: 'Inter Tight', sans-serif;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.3s ease;
         }
         .spinner {
             width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
@@ -37,7 +36,7 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <p>Veriler Hesaplanıyor...</p>
+        <p>Kontrol ediliyor...</p>
     </div>
 
     <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
@@ -55,7 +54,7 @@
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">
                 <span>Hizmetler</span>
             </div>
-            <a href="analysis.html" class="menu-item" id="nav-link-analysis">
+            <a href="analysis.html" class="menu-item">
                 <i class="fas fa-chart-pie"></i> <span>Web Scraping</span>
             </a>
         </nav>
@@ -84,26 +83,26 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
-                    <div class="stat-value" id="stat-active-services">-</div>
+                    <div class="stat-value">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">İşlenen Veri</div>
-                    <div class="stat-value" id="processed-data-count">-</div>
+                    <div class="stat-value">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Kazanılan Saat</div>
-                    <div class="stat-value" id="stat-saved-hours">-</div>
+                    <div class="stat-value">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Sonraki Ödeme</div>
-                    <div class="stat-value" id="stat-next-payment">-</div>
+                    <div class="stat-value">-</div>
                 </div>
             </div>
 
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem;">
                 <h3>Son Bildirimler</h3>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <button class="btn-text-action" onclick="markAllAsRead()" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500;">
+                    <button class="btn-text-action" onclick="alert('Okunacak bildirim yok.')" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500; opacity: 0.5;">
                         <i class="fas fa-check-double"></i> Tümünü Okundu İşaretle
                     </button>
                 </div>
@@ -119,18 +118,20 @@
                         </tr>
                     </thead>
                     <tbody id="notification-body">
-                        </tbody>
+                        <tr>
+                            <td colspan="3" style="text-align:center; padding: 2rem; color: #666;">
+                                Henüz bildirim yok.
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
+
         </div>
     </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-
     <script>
-        // ------------------------------------------------------------------
-        // 1. FIREBASE AYARLARI
-        // ------------------------------------------------------------------
+        // --- FIREBASE AYARLARI ---
         const firebaseConfig = {
             apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
             authDomain: "teknoify-9449c.firebaseapp.com",
@@ -141,121 +142,40 @@
             measurementId: "G-1DZKJE7BXE"
         };
 
+        // Firebase Başlatma
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         
         const auth = firebase.auth();
-        const db = firebase.firestore();
 
-        // 🔥 "OFFLINE" HATASINI ÖNLEYEN AYAR 🔥
-        db.settings({ experimentalForceLongPolling: true, merge: true });
-
-        // ------------------------------------------------------------------
-        // 2. OTURUM VE VERİ YÖNETİMİ
-        // ------------------------------------------------------------------
+        // --- SADECE OTURUM KONTROLÜ ---
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('loading-overlay');
             
             if (user) {
-                console.log("Kullanıcı aktif:", user.email);
+                // Kullanıcı Giriş Yapmış -> Sayfayı Göster
+                console.log("Giriş yapıldı:", user.email);
                 
-                // Sağ üst köşe profil güncellemesi
-                updateProfileUI(user);
+                // Sağ üstteki isim ve avatarı e-postadan çek
+                const simpleName = user.email.split('@')[0];
+                setText('user-name-display', user.email);
+                setText('user-name-title', simpleName);
+                setText('user-avatar', simpleName.charAt(0).toUpperCase());
 
-                // Veritabanından verileri çek
-                fetchUserData(user.uid);
+                // Yükleme ekranını kaldır
+                if(overlay) overlay.style.display = 'none';
 
             } else {
+                // Giriş Yoksa -> Anasayfaya At
                 window.location.href = '../index.html';
             }
         });
 
-        // ------------------------------------------------------------------
-        // 3. VERİTABANI İŞLEMLERİ (Özel Hesaplama Burada)
-        // ------------------------------------------------------------------
-        async function fetchUserData(uid) {
-            const overlay = document.getElementById('loading-overlay');
-
-            try {
-                const doc = await db.collection('users').doc(uid).get();
-
-                if (doc.exists) {
-                    const fullData = doc.data();
-                    const data = fullData.data || {};
-                    const features = fullData.features || {};
-
-                    // --- [ÖNEMLİ] AKTİF HİZMET HESAPLAMA MANTIĞI ---
-                    let serviceCount = 0;
-                    
-                    // 1. 'analysis' (Web Scraping) açık mı?
-                    if (features.analysis === true) serviceCount++;
-                    
-                    // 2. 'rpa' açık mı?
-                    if (features.rpa === true) serviceCount++;
-
-                    // 3. Başka hizmetler eklenirse buraya if koyacağız...
-                    
-                    // Hesaplanan sayıyı ekrana bas
-                    setText('stat-active-services', serviceCount);
-
-                    // --- Diğer Verileri Doldur ---
-                    setText('stat-saved-hours', data.savedHours || "-");
-                    setText('stat-next-payment', data.nextPayment || "-");
-                    setText('processed-data-count', data.totalProcessed || "-");
-                    
-                    // Bildirimler
-                    renderNotifications(data.notifications);
-
-                } else {
-                    console.warn("Veri yok, varsayılanlar gösteriliyor.");
-                    setText('stat-active-services', "0");
-                    renderNotifications([]);
-                }
-            } catch (error) {
-                console.error("Veri çekme hatası:", error);
-                // Hata olsa bile kullanıcıyı atmıyoruz, tire (-) gösteriyoruz
-            } finally {
-                // Her durumda yükleme ekranını kapat
-                if(overlay) overlay.style.display = 'none';
-            }
-        }
-
-        // ------------------------------------------------------------------
-        // 4. ARAYÜZ YARDIMCI FONKSİYONLARI
-        // ------------------------------------------------------------------
-        function updateProfileUI(user) {
-            const simpleName = user.email.split('@')[0];
-            setText('user-name-display', user.email);
-            setText('user-name-title', simpleName);
-            setText('user-avatar', simpleName.charAt(0).toUpperCase());
-        }
-
+        // --- YARDIMCI FONKSİYONLAR ---
         function setText(id, text) {
             const el = document.getElementById(id);
             if(el) el.textContent = text;
-        }
-
-        function renderNotifications(list) {
-            const tbody = document.getElementById('notification-body');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-
-            if(!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Henüz bildirim yok.</td></tr>';
-                return;
-            }
-
-            list.forEach(msg => {
-                const tr = document.createElement('tr');
-                tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-                tr.innerHTML = `
-                    <td style="padding: 1rem;">${msg}</td>
-                    <td style="padding: 1rem;"><span style="color: #10b981;"><i class="fas fa-check-circle"></i> Okundu</span></td>
-                    <td style="padding: 1rem; color: #888;">Bugün</td>
-                `;
-                tbody.appendChild(tr);
-            });
         }
 
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
@@ -266,14 +186,6 @@
                     window.location.href = '../index.html';
                 });
             }
-        }
-        
-        function markAllAsRead() {
-            // Görsel olarak hepsini okundu yap
-            document.querySelectorAll('.fa-envelope').forEach(i => {
-                i.className = 'fas fa-check-circle';
-                i.parentNode.style.color = '#10b981';
-            });
         }
     </script>
 </body>
