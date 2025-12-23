@@ -13,8 +13,8 @@
     "data": {
       "activeBots": 1,
       "totalProcessed": "Güncel",
-      "savedHours": 15,
-      "nextPayment": "15.02.2025",
+      "savedHours": 0,
+      "nextPayment": "-",
       "notifications": [
         "Fiyat analiz raporunuz güncellendi.",
         "Sisteme hoşgeldiniz."
