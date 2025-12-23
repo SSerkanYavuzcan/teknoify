@@ -16,7 +16,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
     <style>
-        /* Yükleme ekranı artık sadece saliselik görünecek */
+        /* Yükleme ekranı (Sadece açılışta anlık görünür) */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0f172a; z-index: 9999;
@@ -36,7 +36,7 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <p>Açılıyor...</p>
+        <p>Kontrol ediliyor...</p>
     </div>
 
     <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
@@ -83,23 +83,26 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
-                    <div class="stat-value">1</div> </div>
+                    <div class="stat-value">-</div>
+                </div>
                 <div class="stat-card">
                     <div class="stat-title">İşlenen Veri</div>
-                    <div class="stat-value" id="processed-data-count">-</div>
+                    <div class="stat-value">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Kazanılan Saat</div>
-                    <div class="stat-value">15</div> </div>
+                    <div class="stat-value">-</div>
+                </div>
                 <div class="stat-card">
                     <div class="stat-title">Sonraki Ödeme</div>
-                    <div class="stat-value">15.02.2025</div> </div>
+                    <div class="stat-value">-</div>
+                </div>
             </div>
 
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem;">
                 <h3>Son Bildirimler</h3>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <button class="btn-text-action" onclick="markAllAsRead()" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500;">
+                    <button class="btn-text-action" onclick="alert('Okunacak bildirim yok.')" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500; opacity: 0.5;">
                         <i class="fas fa-check-double"></i> Tümünü Okundu İşaretle
                     </button>
                 </div>
@@ -115,15 +118,10 @@
                         </tr>
                     </thead>
                     <tbody id="notification-body">
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <td style="padding: 1rem;">Sisteme başarıyla giriş yapıldı.</td>
-                            <td style="padding: 1rem;"><span style="color: #10b981;"><i class="fas fa-check-circle"></i> Okundu</span></td>
-                            <td style="padding: 1rem; color: #888;">Bugün</td>
-                        </tr>
                         <tr>
-                            <td style="padding: 1rem;">Hoşgeldiniz, paneliniz hazır.</td>
-                            <td style="padding: 1rem;"><span style="color: #10b981;"><i class="fas fa-check-circle"></i> Okundu</span></td>
-                            <td style="padding: 1rem; color: #888;">Bugün</td>
+                            <td colspan="3" style="text-align:center; padding: 2rem; color: #666;">
+                                Henüz bildirim yok.
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -131,8 +129,6 @@
 
         </div>
     </main>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script>
         // --- FIREBASE AYARLARI ---
@@ -152,32 +148,26 @@
         }
         
         const auth = firebase.auth();
-        // DİKKAT: DB (Firestore) değişkenini ve veri çekme kodlarını tamamen SİLDİM.
 
         // --- SADECE OTURUM KONTROLÜ ---
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('loading-overlay');
             
             if (user) {
-                // Kullanıcı Giriş Yapmış
-                console.log("✅ Giriş doğrulandı:", user.email);
+                // Kullanıcı Giriş Yapmış -> Sayfayı Göster
+                console.log("Giriş yapıldı:", user.email);
                 
-                // İsim alanlarına E-posta adresini yaz (Veritabanı olmadığı için isim çekemiyoruz)
+                // Sağ üstteki isim ve avatarı e-postadan çek
                 const simpleName = user.email.split('@')[0];
                 setText('user-name-display', user.email);
                 setText('user-name-title', simpleName);
                 setText('user-avatar', simpleName.charAt(0).toUpperCase());
 
-                // Yükleme ekranını ANINDA kaldır
-                if(overlay) {
-                    overlay.style.display = 'none';
-                }
-
-                // Opsiyonel: Eğer CSV linkin sabitse buraya yazıp çalıştırabilirsin
-                // fetchSheetData("SENIN_GOOGLE_SHEET_CSV_LINKIN");
+                // Yükleme ekranını kaldır
+                if(overlay) overlay.style.display = 'none';
 
             } else {
-                // Giriş Yoksa Anasayfaya Gönder
+                // Giriş Yoksa -> Anasayfaya At
                 window.location.href = '../index.html';
             }
         });
@@ -196,23 +186,6 @@
                     window.location.href = '../index.html';
                 });
             }
-        }
-        
-        function markAllAsRead() {
-            alert("Tüm bildirimler okundu işaretlendi.");
-        }
-
-        // Bu fonksiyon duruyor ama otomatik çalışmaz, veritabanı olmadığı için.
-        function fetchSheetData(url) {
-            if(typeof Papa === 'undefined' || !url) return;
-            Papa.parse(url, {
-                download: true, header: true, skipEmptyLines: true,
-                complete: function(results) {
-                    const count = results.data.length;
-                    const el = document.getElementById('processed-data-count');
-                    if(el) el.innerText = new Intl.NumberFormat('tr-TR').format(count);
-                }
-            });
         }
     </script>
 </body>
