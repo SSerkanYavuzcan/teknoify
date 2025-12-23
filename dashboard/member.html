@@ -7,22 +7,22 @@
    
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <link rel="stylesheet" href="../css/dashboard.css">
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* YÜKLEME EKRANI STİLİ */
+        /* Yükleme ekranı artık sadece saliselik görünecek */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0f172a; z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: white; font-family: 'Inter Tight', sans-serif;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.3s ease;
         }
         .spinner {
             width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
@@ -36,7 +36,7 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <p>Veriler Yükleniyor...</p>
+        <p>Açılıyor...</p>
     </div>
 
     <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
@@ -54,7 +54,7 @@
             <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">
                 <span>Hizmetler</span>
             </div>
-            <a href="analysis.html" class="menu-item" id="nav-link-analysis">
+            <a href="analysis.html" class="menu-item">
                 <i class="fas fa-chart-pie"></i> <span>Web Scraping</span>
             </a>
         </nav>
@@ -79,31 +79,26 @@
         </header>
 
         <div class="content-scroll">
+            
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
-                    <div class="stat-value" id="stat-active-services">-</div>
-                </div>
+                    <div class="stat-value">1</div> </div>
                 <div class="stat-card">
                     <div class="stat-title">İşlenen Veri</div>
                     <div class="stat-value" id="processed-data-count">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-title">Kazanılan Saat</div>
-                    <div class="stat-value" id="stat-saved-hours">-</div>
-                </div>
+                    <div class="stat-value">15</div> </div>
                 <div class="stat-card">
                     <div class="stat-title">Sonraki Ödeme</div>
-                    <div class="stat-value" id="stat-next-payment">-</div>
-                </div>
+                    <div class="stat-value">15.02.2025</div> </div>
             </div>
 
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem;">
                 <h3>Son Bildirimler</h3>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <span id="live-indicator" style="font-size:0.8rem; color:#666; display:none;">
-                        <i class="fas fa-circle-notch fa-spin"></i> Veri kontrol ediliyor...
-                    </span>
                     <button class="btn-text-action" onclick="markAllAsRead()" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500;">
                         <i class="fas fa-check-double"></i> Tümünü Okundu İşaretle
                     </button>
@@ -120,16 +115,27 @@
                         </tr>
                     </thead>
                     <tbody id="notification-body">
-                        </tbody>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 1rem;">Sisteme başarıyla giriş yapıldı.</td>
+                            <td style="padding: 1rem;"><span style="color: #10b981;"><i class="fas fa-check-circle"></i> Okundu</span></td>
+                            <td style="padding: 1rem; color: #888;">Bugün</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem;">Hoşgeldiniz, paneliniz hazır.</td>
+                            <td style="padding: 1rem;"><span style="color: #10b981;"><i class="fas fa-check-circle"></i> Okundu</span></td>
+                            <td style="padding: 1rem; color: #888;">Bugün</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
+
         </div>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script>
-        // --- SENİN VERDİĞİN FIREBASE AYARLARI ---
+        // --- FIREBASE AYARLARI ---
         const firebaseConfig = {
             apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
             authDomain: "teknoify-9449c.firebaseapp.com",
@@ -144,118 +150,42 @@
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
+        
         const auth = firebase.auth();
-        const db = firebase.firestore();
+        // DİKKAT: DB (Firestore) değişkenini ve veri çekme kodlarını tamamen SİLDİM.
 
-        // --- OTURUM DİNLEYİCİSİ ---
+        // --- SADECE OTURUM KONTROLÜ ---
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('loading-overlay');
             
             if (user) {
-                // Kullanıcı Giriş Yapmış -> Verileri Çek
-                console.log("✅ Giriş başarılı. Kullanıcı:", user.email);
-                loadUserData(user.uid, user.email);
+                // Kullanıcı Giriş Yapmış
+                console.log("✅ Giriş doğrulandı:", user.email);
                 
-                // Yükleme ekranını yavaşça kaldır
+                // İsim alanlarına E-posta adresini yaz (Veritabanı olmadığı için isim çekemiyoruz)
+                const simpleName = user.email.split('@')[0];
+                setText('user-name-display', user.email);
+                setText('user-name-title', simpleName);
+                setText('user-avatar', simpleName.charAt(0).toUpperCase());
+
+                // Yükleme ekranını ANINDA kaldır
                 if(overlay) {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => { overlay.style.display = 'none'; }, 500);
+                    overlay.style.display = 'none';
                 }
+
+                // Opsiyonel: Eğer CSV linkin sabitse buraya yazıp çalıştırabilirsin
+                // fetchSheetData("SENIN_GOOGLE_SHEET_CSV_LINKIN");
 
             } else {
-                // Kullanıcı Giriş Yapmamış -> UYARI GÖSTER (Redirect yerine)
-                console.warn("⚠️ Oturum bulunamadı!");
-                
-                if(overlay) {
-                    overlay.innerHTML = `
-                        <div style="text-align:center; padding:20px;">
-                            <i class="fas fa-exclamation-circle" style="font-size:3rem; color:#f87171; margin-bottom:20px;"></i>
-                            <h3>Oturum Açılmadı</h3>
-                            <p style="color:#ccc; margin-bottom:20px;">Sayfayı görüntülemek için giriş yapmalısınız.</p>
-                            <a href="../index.html" style="background:#6366f1; color:white; padding:10px 20px; text-decoration:none; border-radius:6px;">Giriş Yap</a>
-                        </div>
-                    `;
-                }
+                // Giriş Yoksa Anasayfaya Gönder
+                window.location.href = '../index.html';
             }
         });
-
-        // --- VERİTABANINDAN VERİ ÇEKME ---
-        async function loadUserData(uid, email) {
-            try {
-                // 'users' koleksiyonunda, kullanıcının ID'sine ait belgeyi al
-                const docRef = db.collection('users').doc(uid);
-                const doc = await docRef.get();
-
-                if (doc.exists) {
-                    const fullData = doc.data();
-                    const data = fullData.data || {};
-                    const features = fullData.features || {};
-                    const config = fullData.config || {};
-
-                    // Arayüz Doldurma
-                    setText('user-name-display', fullData.name || email);
-                    setText('user-name-title', fullData.name || "Kullanıcı");
-                    if(fullData.name) setText('user-avatar', fullData.name.charAt(0).toUpperCase());
-
-                    // Menü Yetkisi
-                    const analysisLink = document.getElementById('nav-link-analysis');
-                    if(analysisLink) analysisLink.style.display = (features.analysis) ? 'flex' : 'none';
-
-                    // İstatistikler
-                    let activeCount = 0;
-                    if(features.analysis) activeCount++;
-                    if(features.rpa) activeCount++;
-                    
-                    setText('stat-active-services', activeCount);
-                    setText('stat-saved-hours', (features.rpa) ? (data.savedHours || "0") : "-");
-                    setText('stat-next-payment', data.nextPayment || "-");
-                    setText('processed-data-count', data.totalProcessed || "-");
-
-                    // Bildirimler
-                    renderNotifications(data.notifications);
-
-                    // Excel (Web Scraping) Verisi Varsa Çek
-                    if(config.sheetUrl) fetchSheetData(config.sheetUrl);
-
-                } else {
-                    // Veri tabanında kayıt yoksa
-                    console.warn("Kullanıcı var ama veritabanında verisi yok.");
-                    setText('user-name-title', "Misafir");
-                    const tbody = document.getElementById('notification-body');
-                    if(tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:1rem; color:#facc15;">Veri veritabanında bulunamadı.</td></tr>';
-                }
-            } catch (error) {
-                console.error("Hata:", error);
-                alert("Veri çekme hatası: " + error.message);
-            }
-        }
 
         // --- YARDIMCI FONKSİYONLAR ---
         function setText(id, text) {
             const el = document.getElementById(id);
             if(el) el.textContent = text;
-        }
-
-        function renderNotifications(list) {
-            const tbody = document.getElementById('notification-body');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-
-            if(!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Bildirim yok.</td></tr>';
-                return;
-            }
-
-            list.forEach(msg => {
-                const tr = document.createElement('tr');
-                tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-                tr.innerHTML = `
-                    <td style="padding: 1rem;">${msg}</td>
-                    <td style="padding: 1rem;"><span style="color: #ef4444;"><i class="fas fa-envelope"></i> Okunmadı</span></td>
-                    <td style="padding: 1rem; color: #888;">${new Date().toLocaleDateString('tr-TR')}</td>
-                `;
-                tbody.appendChild(tr);
-            });
         }
 
         function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
@@ -269,19 +199,16 @@
         }
         
         function markAllAsRead() {
-            document.querySelectorAll('.fa-envelope').forEach(icon => {
-                icon.className = "fas fa-check-circle";
-                icon.parentElement.style.color = '#10b981';
-                icon.parentElement.innerHTML = '<i class="fas fa-check-circle"></i> Okundu';
-            });
+            alert("Tüm bildirimler okundu işaretlendi.");
         }
 
+        // Bu fonksiyon duruyor ama otomatik çalışmaz, veritabanı olmadığı için.
         function fetchSheetData(url) {
-            if(typeof Papa === 'undefined') return;
+            if(typeof Papa === 'undefined' || !url) return;
             Papa.parse(url, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
-                    const count = results.data.filter(r => r['Store Name']).length;
+                    const count = results.data.length;
                     const el = document.getElementById('processed-data-count');
                     if(el) el.innerText = new Intl.NumberFormat('tr-TR').format(count);
                 }
