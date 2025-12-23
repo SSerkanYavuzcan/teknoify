@@ -16,6 +16,8 @@
         .admin-container { 
             max-width: 900px; 
             margin: 0 auto; 
+            opacity: 0; /* Sayfa yetki onaylanana kadar gizli kalsın */
+            transition: opacity 0.3s ease;
         }
         .header-section {
             text-align: center;
@@ -58,7 +60,6 @@
             display: inline-block;
         }
 
-        /* Impersonate Butonu */
         .btn-impersonate {
             width: 100%;
             background: linear-gradient(135deg, #7367f0, #584cd1);
@@ -84,13 +85,13 @@
 </head>
 <body>
 
-    <div class="admin-container">
+    <div class="admin-container" id="main-container">
         <div class="header-section">
             <h1><i class="fas fa-shield-alt"></i> YÖNETİM MERKEZİ</h1>
             <p class="subtitle">Sistemdeki kullanıcıları yönetin ve panellerine erişim sağlayın.</p>
         </div>
 
-        <div id="loading-state">Kullanıcılar yükleniyor...</div>
+        <div id="loading-state" style="text-align: center; color: #888; padding: 20px;">Kullanıcılar yükleniyor...</div>
         
         <div class="user-grid" id="user-list">
             </div>
@@ -102,19 +103,27 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="../js/session-manager.js"></script>
     <script>
         const session = new SessionManager();
         
-        // 1. GUARD: Admin Kontrolü
-        // Not: session.validateSession() eğer asenkron ise .then() ile kullanmalısın. 
-        // Mevcut yapına göre senkron varsayıyorum:
-        const currentUser = session.validateSession();
-
-        if (!currentUser || currentUser.role !== 'admin') {
-            alert("Bu yetki sadece yöneticilere özeldir!");
+        // 1. ASENKRON GUARD: Oturumu ve Yetkiyi Bekle
+        session.validateSession().then(user => {
+            // Role kontrolü yapıyoruz. Session manager sserkanyavuzcan99 mailini admin olarak döndürüyor.
+            if (user.role !== 'admin') {
+                alert("Bu yetki sadece yöneticilere özeldir!");
+                window.location.href = 'member.html';
+            } else {
+                // Admin ise arayüzü göster ve listeyi yükle
+                document.getElementById('main-container').style.opacity = "1";
+                loadUsers();
+            }
+        }).catch(err => {
+            console.error("Yetki Hatası:", err);
             window.location.href = '../index.html';
-        }
+        });
 
         // 2. Kullanıcıları Çek ve Listele
         async function loadUsers() {
@@ -130,7 +139,7 @@
                 Object.keys(userDB).forEach(userKey => {
                     const u = userDB[userKey];
                     
-                    // Kendi hesabını veya diğer adminleri impersonate etmeye gerek yok
+                    // Adminlerin kendisine gözatmasına gerek yok
                     if (u.role === 'admin') return;
 
                     const card = document.createElement('div');
@@ -151,25 +160,16 @@
             }
         }
 
-        // 3. Impersonate Başlat (Maskeleme)
+        // 3. Impersonate İşlemi
         function startImpersonate(targetUserEmail) {
-            // localStorage'a "taklit edilecek kişi" bilgisini yazıyoruz
             localStorage.setItem('impersonated_user_key', targetUserEmail);
-            
-            // Kullanıcıyı üye paneline yönlendir
-            // session-manager.js bu key'i gördüğünde otomatik olarak Tazeyo verilerini yükleyecek
             window.location.href = 'member.html'; 
         }
 
         function logout() {
-            // Çıkış yaparken impersonate bilgisini temizlemek güvenli olur
             localStorage.removeItem('impersonated_user_key');
             session.destroySession();
-            window.location.href = '../index.html';
         }
-
-        // Sayfa açıldığında yükle
-        window.onload = loadUsers;
     </script>
 </body>
 </html>
