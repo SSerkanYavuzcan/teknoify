@@ -19,6 +19,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+
     <link rel="stylesheet" href="css/style.css" />
    
     <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
@@ -46,10 +51,10 @@
                     <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
                     <ul class="dropdown-menu">
                         <li><a href="pages/rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
-                        <li><a href="#"><i class="fas fa-spider"></i> Web Scraping</a></li>
-                        <li><a href="#"><i class="fas fa-brain"></i> AI Asistan</a></li>
+                        <li><a href="urunler/web-scraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+                        <li><a href="urunler/akilli-dijital-asistan.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
                         <li><a href="#"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
-                        <li><a href="#"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="urunler/finansal-indikatorler.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
                         <li><a href="#"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
                     </ul>
                 </li>
@@ -133,7 +138,7 @@
                     <h3>Web Scraping</h3>
                     <p>İnternetteki verileri otomatik toplayıp düzenleyin; rakip fiyatlarını, pazar trendlerini ve ürün verilerini anlık olarak izleyerek güçlü kararlar alın ve rekabette öne geçin.</p>
                     <div class="card-ctas">
-                        <a href="#contact" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="urunler/web-scraping.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
                         <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
                     </div>
                 </article>
@@ -143,7 +148,7 @@
                     <h3>AI Asistan</h3>
                     <p>7/24 çalışan yapay zekâ destekli asistanlarla süreçlerinizi otomatikleştirin. Müşteri taleplerini yöneten, bilgi sağlayan ve iş akışlarını hızlandıran akıllı sistemlerle verimliği artırın.</p>
                     <div class="card-ctas">
-                        <a href="#contact" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="urunler/akilli-dijital-asistan.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
                         <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
                     </div>
                 </article>
@@ -164,7 +169,7 @@
                     <h3>Finansal İndikatör & Botlar</h3>
                     <p>Gerçek zamanlı piyasa verilerini analiz eden ve otomatik işlem stratejileri uygulayan trading botlarıyla daha kontrollü, veri odaklı ve hızlı yatırım kararları alın.</p>
                     <div class="card-ctas">
-                        <a href="#contact" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="urunler/finansal-indikatorler.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
                         <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
                     </div>
                 </article>
@@ -293,10 +298,10 @@
            
             <form id="loginForm" class="auth-form">
                 <div class="form-group">
-                    <label for="email">Kullanıcı Adı veya E-posta</label>
+                    <label for="email">E-posta Adresi</label>
                     <div class="input-wrapper">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="email" name="email" required placeholder="info@teknoify.com" autocomplete="username">
+                        <input type="email" id="email" name="email" required placeholder="info@teknoify.com" autocomplete="username">
                     </div>
                 </div>
 

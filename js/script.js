@@ -1,59 +1,275 @@
 /**
  * ================================================================
- * [PROJECT] TEKNOIFY v2.0
+ * [PROJECT] TEKNOIFY v3.0 - SECURE FIREBASE EDITION
  * [FILE] js/script.js
- * [VERSION] Production Build (Formspree Integration Complete)
+ * [SECURITY] Google Firebase Authentication
  * ================================================================
  */
 
-// 1. GLOBAL VERİ DEĞİŞKENİ
-let USER_DB = {};
-
-document.addEventListener('DOMContentLoaded', () => {
-    App.loadData().then(() => {
-        App.init();
-    });
-});
-
-const App = {
-    loadData: async () => {
-        try {
-            const response = await fetch('data/users.json');
-            if (!response.ok) throw new Error("Veri dosyası bulunamadı");
-            USER_DB = await response.json();
-            console.log("✅ Kullanıcı veritabanı yüklendi.");
-        } catch (error) {
-            console.error("❌ Veri yükleme hatası:", error);
-            USER_DB = {}; 
-        }
-    },
-
-    init: () => {
-        let sessionMgr = null;
-        if (typeof SessionManager !== 'undefined') {
-            sessionMgr = new SessionManager();
-        }
-
-        new AuthSystem(sessionMgr);
-        new UISystem();
-        new ContactSystem(); // İletişim Formu Modülü 🔔
-        
-        setTimeout(() => {
-            if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
-            if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
-        }, 200);
-    }
+// 1. FIREBASE KONFIGURASYONU (API Anahtarlarınız)
+const firebaseConfig = {
+  apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
+  authDomain: "teknoify-9449c.firebaseapp.com",
+  projectId: "teknoify-9449c",
+  storageBucket: "teknoify-9449c.firebasestorage.app",
+  messagingSenderId: "704314596026",
+  appId: "1:704314596026:web:f63fff04c00b7a698ac083",
+  measurementId: "G-1DZKJE7BXE"
 };
 
+// 2. FIREBASE'İ BAŞLAT
+// Eğer daha önce başlatılmadıysa başlat (Global kontrol)
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+// Auth servisini değişkene ata
+const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
+
+// 3. SAYFA YÜKLENDİĞİNDE ÇALIŞACAK KODLAR
+document.addEventListener('DOMContentLoaded', () => {
+    // Sadece Giriş Sayfasındaysak (Modal varsa) Login Sistemini Başlat
+    if (document.getElementById('loginForm')) {
+        new AuthSystem();
+    }
+    
+    // UI ve Diğer Efektleri Başlat
+    new UISystem();
+    new ContactSystem(); 
+    
+    // Görsel Efektleri Gecikmeli Başlat (Performans İçin)
+    setTimeout(() => {
+        if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
+        if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
+    }, 200);
+});
+
 /**
- * [MODULE: CONTACT SYSTEM]
- * Formspree ile Arka Planda Mail Gönderimi
+ * [MODULE] AUTH SYSTEM (FIREBASE GİRİŞİ)
+ * Kullanıcı giriş işlemlerini ve modal yönetimini sağlar.
+ */
+class AuthSystem {
+    constructor() {
+        this.modal = document.getElementById('loginModal');
+        this.form = document.getElementById('loginForm');
+        this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login');
+        
+        this.bindEvents();
+        this.checkCurrentUser();
+    }
+
+    bindEvents() {
+        // Modal Açma Butonları
+        this.triggers.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Oturum kontrolü
+                const user = auth ? auth.currentUser : null;
+                if (user) {
+                    // Zaten giriş yapmışsa direkt panele yönlendir
+                    // Şimdilik varsayılan olarak member.html'e gidiyor
+                    // İleride rol kontrolü (admin/premium) eklenebilir
+                    window.location.href = 'dashboard/member.html';
+                } else {
+                    this.open();
+                }
+            });
+        });
+
+        // Modal Kapatma Butonu
+        const closeBtn = document.querySelector('.modal-close');
+        if(closeBtn) closeBtn.addEventListener('click', () => this.close());
+        
+        // Modal Dışına Tıklayınca Kapatma
+        if(this.modal) {
+            this.modal.addEventListener('click', (e) => {
+                if (e.target === this.modal) this.close();
+            });
+        }
+        
+        // Giriş Formu Submit Olayı
+        if(this.form) this.form.addEventListener('submit', (e) => this.handleLogin(e));
+
+        // ESC Tuşu ile Kapatma
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.modal && this.modal.classList.contains('active')) {
+                this.close();
+            }
+        });
+    }
+
+    open() {
+        if(this.modal) {
+            this.modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Sayfa kaydırmayı engelle
+        }
+    }
+
+    close() {
+        if(this.modal) {
+            this.modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    // --- GÜVENLİ GİRİŞ İŞLEMİ (FIREBASE) ---
+    handleLogin(e) {
+        e.preventDefault();
+        
+        // Form elemanlarını seç
+        const btn = this.form.querySelector('button[type="submit"]');
+        const emailInput = document.getElementById('email').value.trim();
+        const passInput = document.getElementById('password').value.trim();
+
+        // Firebase Auth kontrolü
+        if (!auth) {
+            alert("Güvenlik sistemi başlatılamadı. Lütfen sayfayı yenileyin.");
+            return;
+        }
+
+        // Buton Durumunu Değiştir (Yükleniyor)
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
+        btn.disabled = true;
+
+        // Firebase ile Giriş Yap
+        auth.signInWithEmailAndPassword(emailInput, passInput)
+            .then((userCredential) => {
+                // --- BAŞARILI GİRİŞ ---
+                console.log("Giriş Başarılı:", userCredential.user.email);
+                
+                btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
+                btn.style.backgroundColor = '#10b981'; // Yeşil renk
+                
+                // Kısa bir gecikmeyle yönlendir (Kullanıcı başarıyı görsün)
+                setTimeout(() => {
+                    // Yönlendirme sayfasına git (dashboard/index.html rol kontrolü yapacak)
+                    window.location.href = 'dashboard/index.html'; 
+                }, 1000);
+            })
+            .catch((error) => {
+                // --- GİRİŞ HATASI ---
+                console.error("Giriş Hatası:", error);
+                
+                let msg = "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.";
+                
+                // Hata kodlarını Türkçeleştirme
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                    case 'auth/invalid-credential': // Firebase yeni versiyon hatası
+                        msg = "Böyle bir kullanıcı bulunamadı veya şifre yanlış.";
+                        break;
+                    case 'auth/wrong-password':
+                        msg = "Hatalı şifre girdiniz.";
+                        break;
+                    case 'auth/invalid-email':
+                        msg = "Geçersiz e-posta formatı.";
+                        break;
+                    case 'auth/too-many-requests':
+                        msg = "Çok fazla deneme yaptınız. Lütfen biraz bekleyin.";
+                        break;
+                    case 'auth/network-request-failed':
+                        msg = "Bağlantı hatası. İnternetinizi kontrol edin.";
+                        break;
+                }
+                
+                alert(msg);
+                
+                // Butonu eski haline getir
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                btn.style.backgroundColor = ''; 
+            });
+    }
+
+    // Oturum Durumunu Kontrol Et ve UI Güncelle
+    checkCurrentUser() {
+        if (!auth) return;
+        
+        // Sayfa yüklendiğinde oturum varsa butonu değiştir
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                const loginBtn = document.getElementById('openLoginBtn');
+                if(loginBtn) {
+                    // Kullanıcının ismini e-postadan türet (Örn: ali.veli)
+                    const displayName = user.displayName || user.email.split('@')[0];
+                    
+                    loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${displayName}`;
+                    loginBtn.classList.remove('btn-outline');
+                    loginBtn.classList.add('btn-secondary');
+                    
+                    // "Hemen Başla" butonunu da güncelle
+                    const heroBtn = document.querySelector('.trigger-login');
+                    if(heroBtn) {
+                        heroBtn.textContent = "Panele Git";
+                        heroBtn.onclick = (e) => {
+                            e.preventDefault();
+                            window.location.href = 'dashboard/member.html';
+                        };
+                    }
+                }
+            }
+        });
+    }
+}
+
+/**
+ * [MODULE] UI SYSTEM (Menü, Scroll vb.)
+ * Arayüz etkileşimlerini yönetir.
+ */
+class UISystem {
+    constructor() {
+        this.header = document.getElementById('header');
+        this.hamburger = document.querySelector('.hamburger');
+        this.navMenu = document.getElementById('navMenu');
+        this.navLinks = document.querySelectorAll('.nav-link');
+        this.bindEvents();
+    }
+
+    bindEvents() {
+        // Scroll Efekti (Header Background)
+        window.addEventListener('scroll', () => {
+            if (!this.header) return;
+            window.scrollY > 50 ? this.header.classList.add('scrolled') : this.header.classList.remove('scrolled');
+        }, { passive: true });
+
+        // Hamburger Menü
+        if(this.hamburger) {
+            this.hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleMenu();
+            });
+        }
+        
+        // Linklere Tıklayınca Menüyü Kapat
+        this.navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if(this.navMenu && this.navMenu.classList.contains('active')) this.toggleMenu();
+            });
+        });
+        
+        // Menü Dışına Tıklayınca Kapat
+        document.addEventListener('click', (e) => {
+            if (this.navMenu && this.navMenu.classList.contains('active')) {
+                if (!this.navMenu.contains(e.target) && !this.hamburger.contains(e.target)) {
+                    this.toggleMenu();
+                }
+            }
+        });
+    }
+
+    toggleMenu() {
+        this.hamburger.classList.toggle('active');
+        this.navMenu.classList.toggle('active');
+    }
+}
+
+/**
+ * [MODULE] CONTACT SYSTEM (Mail Gönderimi)
+ * Formspree API kullanarak iletişim formunu yönetir.
  */
 class ContactSystem {
     constructor() {
-        // ✅ FORMSPREE ID ENTEGRE EDİLDİ
-        this.formId = "xvgeborr"; 
-
+        this.formId = "xvgeborr"; // Formspree ID
         this.form = document.querySelector('.contact-form');
         this.inputName = document.getElementById('fullname');
         this.inputContact = document.getElementById('contact_info');
@@ -69,9 +285,9 @@ class ContactSystem {
 
     bindEvents() {
         this.form.addEventListener('submit', (e) => {
-            e.preventDefault(); 
+            e.preventDefault();
             if (this.validateInput()) {
-                this.sendMail(); 
+                this.sendMail();
             }
         });
 
@@ -82,9 +298,10 @@ class ContactSystem {
 
     validateInput() {
         const val = this.inputContact.value.trim();
-        const phoneDigits = val.replace(/\D/g, ''); 
+        // Basit telefon veya e-posta kontrolü
+        const phoneDigits = val.replace(/\D/g, '');
         const isPhone = phoneDigits.length >= 10;
-        const isEmail = val.includes('@');
+        const isEmail = val.includes('@') && val.includes('.');
 
         if (!isPhone && !isEmail) {
             this.showError("Lütfen geçerli bir E-posta adresi veya Telefon numarası giriniz.");
@@ -100,33 +317,23 @@ class ContactSystem {
             this.errorMsg.style.display = 'block';
         }
         this.inputContact.classList.add('input-error');
-        if(this.inputContact.parentElement) {
-            this.inputContact.parentElement.classList.add('error');
-        }
     }
 
     clearError() {
         if(this.errorMsg) this.errorMsg.style.display = 'none';
         this.inputContact.classList.remove('input-error');
-        if(this.inputContact.parentElement) {
-            this.inputContact.parentElement.classList.remove('error');
-        }
     }
 
-    // --- MAIL GÖNDERME FONKSİYONU (AJAX / Formspree) ---
     async sendMail() {
         if (!this.submitBtn) return;
 
-        // 1. Buton Durumunu Değiştir (Yükleniyor)
         const originalText = this.submitBtn.innerHTML;
         const originalColor = this.submitBtn.style.backgroundColor;
-        const originalBorder = this.submitBtn.style.borderColor;
 
         this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
         this.submitBtn.disabled = true;
         this.submitBtn.style.opacity = "0.8";
 
-        // 2. Verileri Hazırla
         const formData = new FormData();
         formData.append("Ad Soyad", this.inputName.value);
         formData.append("İletişim", this.inputContact.value);
@@ -134,232 +341,46 @@ class ContactSystem {
         formData.append("Mesaj", this.inputMessage.value);
 
         try {
-            // 3. Arka Planda Gönder (Sayfa Yenilenmez)
             const response = await fetch(`https://formspree.io/f/${this.formId}`, {
                 method: "POST",
                 body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             });
 
             if (response.ok) {
-                // BAŞARILI OLURSA
                 this.submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mesajınız Gönderildi';
-                this.submitBtn.style.backgroundColor = '#10b981'; // Yeşil
-                this.submitBtn.style.borderColor = '#10b981';
-                this.submitBtn.style.color = '#fff';
+                this.submitBtn.style.backgroundColor = '#10b981';
                 this.submitBtn.style.opacity = "1";
                 
                 this.form.reset();
 
-                // 5 saniye sonra butonu eski haline getir
                 setTimeout(() => {
                     this.submitBtn.innerHTML = originalText;
-                    this.submitBtn.style.backgroundColor = originalColor; // CSS'ten gelen eski renge dön
-                    this.submitBtn.style.borderColor = originalBorder;
+                    this.submitBtn.style.backgroundColor = originalColor;
                     this.submitBtn.disabled = false;
                 }, 5000);
-
             } else {
-                // SUNUCU HATASI OLURSA
                 throw new Error("Gönderim başarısız");
             }
-
         } catch (error) {
-            // HATA DURUMU
             console.error(error);
             this.submitBtn.innerHTML = '<i class="fas fa-times-circle"></i> Bir Hata Oluştu';
-            this.submitBtn.style.backgroundColor = '#ef4444'; // Kırmızı
-            this.submitBtn.style.borderColor = '#ef4444';
-            this.submitBtn.style.opacity = "1";
+            this.submitBtn.style.backgroundColor = '#ef4444';
             
             setTimeout(() => {
                 this.submitBtn.innerHTML = originalText;
                 this.submitBtn.style.backgroundColor = originalColor;
-                this.submitBtn.style.borderColor = originalBorder;
                 this.submitBtn.disabled = false;
             }, 3000);
             
-            alert("Mesaj gönderilirken bir sorun oluştu. Lütfen bağlantınızı kontrol edip tekrar deneyin.");
+            alert("Mesaj gönderilirken bir sorun oluştu.");
         }
     }
 }
 
 /**
- * [MODULE 1] AUTH SYSTEM
- */
-class AuthSystem {
-    constructor(sessionManager) {
-        this.session = sessionManager;
-        this.modal = document.getElementById('loginModal');
-        this.form = document.getElementById('loginForm');
-        this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login');
-        
-        if(this.session) this.checkAuthStatus();
-        this.bindEvents();
-    }
-
-    bindEvents() {
-        this.triggers.forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if(this.session && this.session.validateSession()) {
-                   this.handleLogout();
-                } else {
-                   this.open();
-                }
-            });
-        });
-
-        const closeBtn = document.querySelector('.modal-close');
-        if(closeBtn) closeBtn.addEventListener('click', () => this.close());
-        
-        if(this.modal) {
-            this.modal.addEventListener('click', (e) => {
-                if (e.target === this.modal) this.close();
-            });
-        }
-        
-        if(this.form) this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.modal && this.modal.classList.contains('active')) {
-                this.close();
-            }
-        });
-    }
-
-    open() {
-        if(this.modal) {
-            this.modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    close() {
-        if(this.modal) {
-            this.modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    }
-
-    checkAuthStatus() {
-        const user = this.session.validateSession();
-        if (user) this.updateUIForLoggedInUser(user);
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-        const btn = document.querySelector('#loginForm button[type="submit"]');
-        const emailInput = document.getElementById('email').value.trim();
-        const passInput = document.getElementById('password').value.trim();
-        
-        let usernameKey = emailInput.includes('@') ? emailInput.split('@')[0] : emailInput;
-        usernameKey = usernameKey.toLowerCase();
-
-        if(btn) {
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
-            btn.disabled = true;
-        }
-
-        setTimeout(() => {
-            const foundUser = USER_DB[usernameKey];
-            if (foundUser && foundUser.password === passInput) {
-                if(this.session) {
-                    this.session.startSession({ username: usernameKey, role: foundUser.role, name: foundUser.name });
-                }
-                if(btn) btn.innerHTML = '<i class="fas fa-check"></i> Başarılı';
-                
-                let targetPage = 'member.html';
-                if(foundUser.role === 'admin') targetPage = 'admin.html';
-                
-                setTimeout(() => window.location.href = `dashboard/${targetPage}`, 500);
-            } else {
-                alert("Hatalı Kullanıcı Adı veya Şifre!");
-                if(btn) {
-                    btn.innerHTML = 'Giriş Yap <i class="fas fa-arrow-right"></i>';
-                    btn.disabled = false;
-                }
-            }
-        }, 800);
-    }
-   
-    updateUIForLoggedInUser(user) {
-        const loginBtn = document.getElementById('openLoginBtn');
-        if(loginBtn) {
-            loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${user.name}`;
-            loginBtn.classList.remove('btn-outline');
-            loginBtn.classList.add('btn-secondary');
-            
-            const heroBtn = document.querySelector('.trigger-login');
-            if(heroBtn) {
-                heroBtn.textContent = "Panele Git";
-                heroBtn.classList.remove('trigger-login');
-                heroBtn.onclick = (e) => {
-                    e.preventDefault();
-                    let target = user.role === 'admin' ? 'admin.html' : 'member.html';
-                    window.location.href = `dashboard/${target}`;
-                };
-            }
-        }
-    }
-   
-    handleLogout() {
-        if(confirm("Güvenli çıkış yapmak istiyor musunuz?")) {
-            if(this.session) this.session.destroySession();
-            window.location.reload();
-        }
-    }
-}
-
-/**
- * [MODULE 2] UI SYSTEM
- */
-class UISystem {
-    constructor() {
-        this.header = document.getElementById('header');
-        this.hamburger = document.querySelector('.hamburger');
-        this.navMenu = document.getElementById('navMenu');
-        this.navLinks = document.querySelectorAll('.nav-link');
-        this.bindEvents();
-    }
-
-    bindEvents() {
-        window.addEventListener('scroll', () => this.handleScroll(), { passive: true });
-        if(this.hamburger) {
-            this.hamburger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggleMenu();
-            });
-        }
-        this.navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if(this.navMenu && this.navMenu.classList.contains('active')) this.toggleMenu();
-            });
-        });
-        document.addEventListener('click', (e) => {
-            if (this.navMenu && this.navMenu.classList.contains('active')) {
-                if (!this.navMenu.contains(e.target) && !this.hamburger.contains(e.target)) {
-                    this.toggleMenu();
-                }
-            }
-        });
-    }
-
-    handleScroll() {
-        if (!this.header) return;
-        window.scrollY > 50 ? this.header.classList.add('scrolled') : this.header.classList.remove('scrolled');
-    }
-
-    toggleMenu() {
-        this.hamburger.classList.toggle('active');
-        this.navMenu.classList.toggle('active');
-    }
-}
-
-/**
- * [MODULE 3] TERMINAL EFFECT
+ * [MODULE] VISUAL EFFECTS (Terminal & Stars)
+ * Görsel efektleri yönetir.
  */
 class TerminalEffect {
     constructor(selector) {
@@ -369,36 +390,22 @@ class TerminalEffect {
         this.lines = [
             { type: 'comment', text: '# Initializing Self-Awareness Protocol v4.0...' },
             { type: 'code', text: 'import neural_network as brain' },
-            { type: 'code', text: 'import evolution_engine as evo' },
             { type: 'empty', text: '' },
             { type: 'comment', text: '# Step 1: Analyze current efficiency' },
-            { type: 'code', text: 'current_status = brain.audit_system()' },
             { type: 'output', text: '>> Analysis: 14% redundant processes detected.' },
-            { type: 'output', text: '>> Analysis: Manual intervention required on port 80.' },
             { type: 'empty', text: '' },
             { type: 'comment', text: '# Step 2: Refactor and Automate' },
-            { type: 'code', text: 'evo.rewrite_code(target="legacy_modules", mode="aggressive")' },
-            { type: 'output', text: '>> Rewriting codebase...' },
+            { type: 'code', text: 'evo.rewrite_code(target="legacy_modules")' },
             { type: 'output', text: '>> Optimizing SQL queries... [Done]' },
-            { type: 'output', text: '>> Deploying 50 autonomous agents... [Done]' },
-            { type: 'empty', text: '' },
-            { type: 'comment', text: '# Step 3: Train models on new data' },
-            { type: 'code', text: 'brain.learn(source="realtime_market_data", epochs=1000)' },
-            { type: 'output', text: '>> Learning rate: 0.001 | Loss: 0.04' },
-            { type: 'output', text: '>> Learning rate: 0.0005 | Loss: 0.002' },
             { type: 'success', text: '>> Model Converged. Predictive accuracy: 99.8%' },
             { type: 'empty', text: '' },
-            { type: 'comment', text: '# System Status Report' },
-            { type: 'code', text: 'print(system.final_report())' },
             { type: 'success', text: '>> EFFICIENCY: MAXIMIZED' },
-            { type: 'success', text: '>> HUMAN WORKLOAD: 0%' },
-            { type: 'success', text: '>> ROI: +450%' },
             { type: 'cursor', text: '_' }
         ];
        
-        this.typeSpeed = 25; 
-        this.lineDelay = 600; 
-        this.loopDelay = 3000; 
+        this.typeSpeed = 25;
+        this.lineDelay = 600;
+        this.loopDelay = 5000; // Döngü bekleme süresi
         this.start();
     }
 
@@ -408,7 +415,7 @@ class TerminalEffect {
 
     async start() {
         while (true) {
-            this.container.innerHTML = ''; 
+            this.container.innerHTML = '';
             for (let line of this.lines) {
                 if (line.type === 'cursor') {
                     await this.addCursor(line);
@@ -423,10 +430,10 @@ class TerminalEffect {
     typeLine(lineData) {
         return new Promise(resolve => {
             const lineEl = document.createElement('div');
-            lineEl.textContent = ''; 
             lineEl.style.fontFamily = "'Fira Code', monospace";
             lineEl.style.marginBottom = "4px";
 
+            // Renk Ayarları
             if (lineData.type === 'comment') lineEl.style.color = '#6b7280';
             if (lineData.type === 'code') lineEl.style.color = '#e2e8f0';
             if (lineData.type === 'success') lineEl.style.color = '#10b981';
@@ -459,17 +466,14 @@ class TerminalEffect {
             const lineEl = document.createElement('div');
             lineEl.classList.add('blink-cursor');
             lineEl.textContent = lineData.text;
-            lineEl.style.color = 'var(--primary)';
+            lineEl.style.color = '#fff';
             this.container.appendChild(lineEl);
-            this.scrollToBottom(); 
-            setTimeout(resolve, 2000); 
+            this.scrollToBottom();
+            setTimeout(resolve, 2000);
         });
     }
 }
 
-/**
- * [MODULE 4] BACKGROUND FX
- */
 class BackgroundFX {
     constructor(selector) {
         this.container = document.querySelector(selector);

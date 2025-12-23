@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
    
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
    
     <link rel="stylesheet" href="../css/dashboard.css?v=8">
     <link rel="stylesheet" href="../css/analysis.css?v=8"> 
@@ -434,33 +438,50 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof SessionManager === 'undefined') return;
             const session = new SessionManager();
-            const currentUser = session.validateSession();
-            if (!currentUser) { window.location.href = '../index.html'; return; }
-
-            fetch('../data/users.json')
-                .then(res => res.json())
-                .then(userDB => {
-                    const userData = userDB[currentUser.username];
-                    if (!userData || !userData.features || userData.features.analysis !== true) {
-                        alert("Bu hizmete erişim yetkiniz bulunmamaktadır.");
-                        window.location.href = 'member.html';
-                        return;
-                    }
-                    if (userData) {
-                        document.getElementById('user-name-display').textContent = userData.name;
-                        document.getElementById('user-avatar').textContent = userData.name.charAt(0).toUpperCase();
-                    }
-                    initCalendar();
-                    if (userData.config && userData.config.sheetUrl && userData.config.sheetUrl !== "") {
-                        initData(userData.config.sheetUrl);
-                    } else {
-                        showNoDataState();
-                    }
-                })
-                .catch(err => {
-                    console.error("Hata:", err);
-                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
-                });
+            
+            // Promise yapısıyla oturumu kontrol et
+            session.validateSession().then(currentUser => {
+                // Eğer oturum geçerliyse verileri çek
+                fetch('../data/users.json')
+                    .then(res => res.json())
+                    .then(userDB => {
+                        const userData = userDB[currentUser.username];
+                        
+                        // NOT: Firestore'a geçince burası da değişecek, şimdilik hibrit çalışıyor
+                        if (userData) {
+                            if (!userData.features || userData.features.analysis !== true) {
+                                alert("Bu hizmete erişim yetkiniz bulunmamaktadır.");
+                                window.location.href = 'member.html';
+                                return;
+                            }
+                            
+                            // İsim bilgisini Firebase'den veya JSON'dan al
+                            const displayName = currentUser.email.split('@')[0] || userData.name;
+                            document.getElementById('user-name-display').textContent = displayName;
+                            document.getElementById('user-avatar').textContent = displayName.charAt(0).toUpperCase();
+                            
+                            initCalendar();
+                            if (userData.config && userData.config.sheetUrl && userData.config.sheetUrl !== "") {
+                                initData(userData.config.sheetUrl);
+                            } else {
+                                showNoDataState();
+                            }
+                        } else {
+                            // Kullanıcı Firebase'de var ama JSON'da yoksa (Yeni kayıt)
+                            document.getElementById('user-name-display').textContent = currentUser.email;
+                            document.getElementById('user-avatar').textContent = currentUser.email.charAt(0).toUpperCase();
+                            initCalendar();
+                            showNoDataState(); // Varsayılan veri yok
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Hata:", err);
+                        document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
+                    });
+            }).catch(error => {
+                // Oturum yoksa login'e at
+                window.location.href = '../index.html';
+            });
 
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.multi-select-wrapper')) {
@@ -1157,7 +1178,6 @@
             };
         }
 
-        // --- EXCEL EXPORT (Merged, Colored, Hidden Zeros) ---
         function downloadExcel() {
             const dataToExport = getActiveDataForExport();
             if (!dataToExport.rows || dataToExport.rows.length === 0) {
@@ -1310,21 +1330,6 @@
             const dateStr = flatpickrInstance.selectedDates[0] ? flatpickrInstance.selectedDates[0].toLocaleDateString('tr-TR') : 'rapor';
            
             XLSX.writeFile(wb, `teknoify_analiz_${dateStr}${filterSuffix}.xlsx`);
-            document.getElementById('download-menu').classList.remove('show');
-        }
-
-        function downloadCSV() {
-            const dataToExport = getActiveDataForExport();
-            if (!dataToExport.rows || dataToExport.rows.length === 0) {
-                showToast("İndirilecek veri bulunamadı.");
-                return;
-            }
-            const csv = Papa.unparse(dataToExport.rows);
-            const blob = new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `teknoify_analiz.csv`;
-            link.click();
             document.getElementById('download-menu').classList.remove('show');
         }
     </script>

@@ -3,25 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Yönlendiriliyor... | Teknoify</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
     <script src="../js/session-manager.js"></script>
     <script>
-        // ROUTER: Burası bekleme salonudur. Kimlik kontrolü yapar ve odaya gönderir.
-        const session = new SessionManager();
-        const user = session.validateSession();
-
-        if (!user) {
-            // Giriş yapmamışsa ana sayfaya at
-            window.location.href = '../index.html';
-        } else {
-            // Rolüne göre doğru sayfaya postala
-            if (user.role === 'admin') {
-                window.location.replace('admin.html');
-            } else if (user.role === 'premium') {
-                window.location.replace('premium.html');
-            } else {
-                window.location.replace('member.html');
+        // Sayfa yüklendiğinde oturum kontrolü yap
+        window.onload = function() {
+            if (typeof SessionManager === 'undefined') {
+                window.location.href = '../index.html';
+                return;
             }
-        }
+
+            const session = new SessionManager();
+            
+            // Promise yapısıyla güvenli kontrol
+            session.validateSession()
+                .then(user => {
+                    // Giriş başarılıysa role göre yönlendir
+                    if (user.role === 'admin') {
+                        window.location.replace('admin.html');
+                    } else if (user.role === 'premium') {
+                        window.location.replace('premium.html');
+                    } else {
+                        window.location.replace('member.html');
+                    }
+                })
+                .catch(error => {
+                    // Giriş yoksa ana sayfaya
+                    window.location.href = '../index.html';
+                });
+        };
     </script>
 </head>
 <body>
@@ -30,4 +44,5 @@
     </div>
 </body>
 </html>
+
 

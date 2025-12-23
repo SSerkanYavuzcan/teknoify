@@ -1,64 +1,68 @@
 {
-    "tazeyo": {
-      "password": "12345",
-      "role": "member",
-      "name": "Tazeyo",
-      "features": {
-        "analysis": true,
-        "impersonate": false
-      },
-      "config": {
-        "sheetUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv"
-      },
-      "data": {
-        
-      }
+  "tazeyo": {
+    "role": "member",
+    "name": "Tazeyo",
+    "features": {
+      "analysis": true,
+      "impersonate": false
     },
-    "yemeksepeti": {
-      "password": "2165466shm",
-      "role": "premium",
-      "name": "Yemeksepeti",
-      "features": {
-        "analysis": true,
-        "impersonate": false
-      },
-      "config": {
-        "sheetUrl": ""
-      },
-      "data": {
-        "activeBots": 0,
-        "totalProcessed": "0",
-        "savedHours": 0,
-        "nextPayment": "-",
-        "notifications": [
-          "Premium hesabınız aktif edildi.",
-          "Teknoify ailesine hoşgeldiniz!"
-        ]
-      }
+    "config": {
+      "sheetUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv"
     },
-    "serkanyavuzcan": {
-      "password": "335696shm!S",
-      "role": "admin",
-      "name": "Serkan Yavuzcan",
-      "features": {
-        "analysis": true,
-        "impersonate": true
-      },
-      "config": {
-        "sheetUrl": ""
-      },
-      "data": {
-        "activeBots": 99,
-        "totalProcessed": "TÜMÜ",
-        "savedHours": 9999,
-        "nextPayment": "-",
-        "notifications": [
-          "Sistem güncellemesi hazır.",
-          "Yeni üye kaydı: Yemeksepeti"
-        ]
-      }
+    "data": {
+      "activeBots": 1,
+      "totalProcessed": "Güncel",
+      "savedHours": 15,
+      "nextPayment": "15.02.2025",
+      "notifications": [
+        "Fiyat analiz raporunuz güncellendi.",
+        "Sisteme hoşgeldiniz."
+      ]
+    }
+  },
+  "yemeksepeti": {
+    "role": "premium",
+    "name": "Yemeksepeti",
+    "features": {
+      "analysis": true,
+      "impersonate": false
+    },
+    "config": {
+      "sheetUrl": ""
+    },
+    "data": {
+      "activeBots": 0,
+      "totalProcessed": "0",
+      "savedHours": 0,
+      "nextPayment": "-",
+      "notifications": [
+        "Premium hesabınız aktif edildi.",
+        "Teknoify ailesine hoşgeldiniz!"
+      ]
+    }
+  },
+  "serkanyavuzcan": {
+    "role": "admin",
+    "name": "Serkan Yavuzcan",
+    "features": {
+      "analysis": true,
+      "impersonate": true
+    },
+    "config": {
+      "sheetUrl": ""
+    },
+    "data": {
+      "activeBots": 99,
+      "totalProcessed": "TÜMÜ",
+      "savedHours": 9999,
+      "nextPayment": "-",
+      "notifications": [
+        "Sistem güncellemesi hazır.",
+        "Yeni üye kaydı: Yemeksepeti"
+      ]
     }
   }
-  
-  
-  
+}
+
+
+

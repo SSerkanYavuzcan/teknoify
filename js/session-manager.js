@@ -1,94 +1,117 @@
 /**
  * ================================================================
- * [MODULE] SESSION MANAGER (REDIS SIMULATION)
- * Güvenli, şifreli ve zaman ayarlı oturum yönetimi.
+ * [MODULE] SESSION MANAGER (FIREBASE AUTH GUARD)
+ * Panel sayfalarının güvenliğini sağlar. Kullanıcı her sayfa
+ * yenilediğinde Firebase'e sorar: "Bu kişi hala geçerli mi?"
  * ================================================================
  */
 
+// Firebase Config (Tekrar tanımlıyoruz, çünkü bu dosya bazen tek başına çalışabilir)
+// Eğer script.js'den önce yüklenirse hata vermemesi için.
+const firebaseConfigSession = {
+  apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
+  authDomain: "teknoify-9449c.firebaseapp.com",
+  projectId: "teknoify-9449c",
+  storageBucket: "teknoify-9449c.firebasestorage.app",
+  messagingSenderId: "704314596026",
+  appId: "1:704314596026:web:f63fff04c00b7a698ac083",
+  measurementId: "G-1DZKJE7BXE"
+};
+
+// Eğer Firebase başlatılmamışsa başlat
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfigSession);
+}
+
 class SessionManager {
     constructor() {
-        // AYAR: Oturum kaç dakika sürecek? (5 Dakika = 300.000 ms)
-        this.TIMEOUT_MS = 5 * 60 * 1000; 
-        this.STORAGE_KEY = 'teknoify_secure_session';
+        // Firebase Auth servisine eriş
+        this.auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
     }
 
     /**
-     * [CORE] Oturumu Başlat (Login anında çağrılır)
-     * @param {Object} userData - Kullanıcı verileri (rol, isim vb.)
-     */
-    startSession(userData) {
-        const sessionData = {
-            user: userData,
-            createdAt: Date.now(),    // İlk giriş saati
-            lastActive: Date.now()    // Son işlem saati
-        };
-
-        this._saveToStorage(sessionData);
-        console.log("🔒 Güvenli Oturum Başlatıldı (TTL: 5dk)");
-    }
-
-    /**
-     * [CORE] Oturumu Kontrol Et (Her sayfa açılışında çağrılır)
-     * @returns {Object|null} - Geçerliyse kullanıcı verisi, değilse null
+     * [CORE] Oturumu Doğrula (Promise Döndürür)
+     * Panel sayfalarında (member.html, analysis.html vb.) sayfa yüklenince çağrılır.
+     * Oturum varsa kullanıcı verisini döner (then), yoksa reddeder (catch).
      */
     validateSession() {
-        const encryptedData = localStorage.getItem(this.STORAGE_KEY);
-        if (!encryptedData) return null; // Hiç veri yok
+        return new Promise((resolve, reject) => {
+            if (!this.auth) {
+                console.error("Firebase Auth yüklenemedi!");
+                reject("Auth Error");
+                return;
+            }
 
-        const session = this._decrypt(encryptedData);
-        if (!session) return null; // Veri bozuk
+            // Firebase'in oturum durumunu dinle (listener)
+            // Bu asenkron bir işlemdir, cevap gelene kadar bekleriz.
+            const unsubscribe = this.auth.onAuthStateChanged((user) => {
+                unsubscribe(); // Dinlemeyi bırak (tek seferlik kontrol yeterli)
+                
+                if (user) {
+                    console.log("✅ Güvenli Oturum Onaylandı: " + user.email);
+                    
+                    // Kullanıcı bilgilerini (isim, avatar) UI'da güncelle
+                    this.updateUserProfile(user);
+                    
+                    // Şimdilik 'role' bilgisini basitçe email'e göre veya localStorage'dan alıyoruz.
+                    // Gerçek projede: Firestore'dan kullanıcının rolünü (claims) çekmek gerekir.
+                    // Geçici Çözüm: E-posta "admin" içeriyorsa admin say.
+                    let role = 'member';
+                    if (user.email.includes('admin')) role = 'admin';
+                    if (user.email.includes('premium')) role = 'premium';
 
-        const now = Date.now();
-        const diff = now - session.lastActive;
+                    resolve({
+                        username: user.email.split('@')[0],
+                        email: user.email,
+                        uid: user.uid,
+                        role: role 
+                    });
+                } else {
+                    console.warn("⚠️ Oturum Yok veya Süresi Dolmuş! Yönlendiriliyor...");
+                    reject('No user'); // Catch bloğuna düşer, sayfa Login'e yönlenir
+                }
+            });
+        });
+    }
 
-        // 1. KURAL: 5 Dakika geçti mi?
-        if (diff > this.TIMEOUT_MS) {
-            console.warn("⚠️ Oturum zaman aşımına uğradı. (Browser kapalıydı)");
-            this.destroySession(); // Veriyi sil
-            return null; // Oturumu geçersiz say
-        }
-
-        // 2. KURAL: Süre dolmadıysa süreyi uzat (Refresh)
-        session.lastActive = now;
-        this._saveToStorage(session); // Yeni saati kaydet
+    /**
+     * [UI] Header'daki Kullanıcı Bilgisini Güncelle
+     */
+    updateUserProfile(user) {
+        const nameDisplay = document.getElementById('user-name-display');
+        const avatarDisplay = document.getElementById('user-avatar');
         
-        return session.user; // Kullanıcıyı içeri al
+        // E-postanın '@' işaretinden önceki kısmını isim olarak al
+        // Örn: serkan.yavuzcan@gmail.com -> serkan.yavuzcan
+        const displayName = user.displayName || user.email.split('@')[0];
+        
+        if (nameDisplay) {
+            nameDisplay.textContent = displayName;
+            // Mobilde uzun isimleri kısaltmak isterseniz CSS ile text-overflow kullanın
+        }
+        
+        if (avatarDisplay) {
+            // İsmin baş harfini al
+            const letter = displayName.charAt(0).toUpperCase();
+            avatarDisplay.textContent = letter;
+        }
     }
 
     /**
      * [ACTION] Çıkış Yap
      */
     destroySession() {
-        localStorage.removeItem(this.STORAGE_KEY);
-        console.log("🔓 Oturum Sonlandırıldı.");
-    }
-
-    /**
-     * [INTERNAL] Veriyi Şifreleyip Kaydet (Mock Encryption)
-     * Gerçek projede crypto-js kullanılır. Burada Base64 ile simüle ediyoruz.
-     */
-    _saveToStorage(data) {
-        try {
-            const jsonString = JSON.stringify(data);
-            // Basit bir şifreleme (Base64) - Gözle okumayı engeller
-            const encrypted = btoa(unescape(encodeURIComponent(jsonString)));
-            localStorage.setItem(this.STORAGE_KEY, encrypted);
-        } catch (e) {
-            console.error("Session Save Error:", e);
-        }
-    }
-
-    /**
-     * [INTERNAL] Veriyi Çöz (Decryption)
-     */
-    _decrypt(encryptedString) {
-        try {
-            const jsonString = decodeURIComponent(escape(atob(encryptedString)));
-            return JSON.parse(jsonString);
-        } catch (e) {
-            console.error("Session Tampered!", e);
-            return null;
-        }
+        if (!this.auth) return;
+        
+        this.auth.signOut().then(() => {
+            console.log("🔓 Başarıyla Çıkış Yapıldı.");
+            // Çıkış yapınca ana sayfaya gönder
+            window.location.href = '../index.html';
+        }).catch((error) => {
+            console.error("Çıkış hatası:", error);
+            alert("Çıkış yapılırken bir hata oluştu.");
+        });
     }
 }
+
 
