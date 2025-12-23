@@ -1,13 +1,9 @@
 /**
  * ================================================================
- * [MODULE] SESSION MANAGER (FIREBASE AUTH GUARD)
- * Panel sayfalarının güvenliğini sağlar. Kullanıcı her sayfa
- * yenilediğinde Firebase'e sorar: "Bu kişi hala geçerli mi?"
+ * [MODULE] SESSION MANAGER (FIREBASE AUTH GUARD) - UPDATED
  * ================================================================
  */
 
-// Firebase Config (Tekrar tanımlıyoruz, çünkü bu dosya bazen tek başına çalışabilir)
-// Eğer script.js'den önce yüklenirse hata vermemesi için.
 const firebaseConfigSession = {
   apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
   authDomain: "teknoify-9449c.firebaseapp.com",
@@ -18,22 +14,15 @@ const firebaseConfigSession = {
   measurementId: "G-1DZKJE7BXE"
 };
 
-// Eğer Firebase başlatılmamışsa başlat
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfigSession);
 }
 
 class SessionManager {
     constructor() {
-        // Firebase Auth servisine eriş
         this.auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
     }
 
-    /**
-     * [CORE] Oturumu Doğrula (Promise Döndürür)
-     * Panel sayfalarında (member.html, analysis.html vb.) sayfa yüklenince çağrılır.
-     * Oturum varsa kullanıcı verisini döner (then), yoksa reddeder (catch).
-     */
     validateSession() {
         return new Promise((resolve, reject) => {
             if (!this.auth) {
@@ -42,74 +31,104 @@ class SessionManager {
                 return;
             }
 
-            // Firebase'in oturum durumunu dinle (listener)
-            // Bu asenkron bir işlemdir, cevap gelene kadar bekleriz.
             const unsubscribe = this.auth.onAuthStateChanged((user) => {
-                unsubscribe(); // Dinlemeyi bırak (tek seferlik kontrol yeterli)
-                
+                unsubscribe(); 
+               
                 if (user) {
-                    console.log("✅ Güvenli Oturum Onaylandı: " + user.email);
+                    // --- IMPERSONATE KONTROLÜ ---
+                    const impersonatedKey = localStorage.getItem('impersonated_user_key');
                     
-                    // Kullanıcı bilgilerini (isim, avatar) UI'da güncelle
-                    this.updateUserProfile(user);
+                    // Sadece gerçek mailin admin ise taklit moduna izin ver
+                    const isAdmin = user.email === 'sserkanyavuzcan99@gmail.com' || user.email.includes('admin');
                     
-                    // Şimdilik 'role' bilgisini basitçe email'e göre veya localStorage'dan alıyoruz.
-                    // Gerçek projede: Firestore'dan kullanıcının rolünü (claims) çekmek gerekir.
-                    // Geçici Çözüm: E-posta "admin" içeriyorsa admin say.
-                    let role = 'member';
-                    if (user.email.includes('admin')) role = 'admin';
-                    if (user.email.includes('premium')) role = 'premium';
+                    let activeEmail = user.email;
+                    let activeUsername = user.email.split('@')[0];
+                    let role = isAdmin ? 'admin' : (user.email.includes('premium') ? 'premium' : 'member');
+                    let isImpersonating = false;
 
+                    if (impersonatedKey && isAdmin) {
+                        console.log("🕵️ Taklit Modu Aktif: " + impersonatedKey + " olarak işlem yapılıyor.");
+                        activeEmail = impersonatedKey;
+                        activeUsername = impersonatedKey.includes('@') ? impersonatedKey.split('@')[0] : impersonatedKey;
+                        isImpersonating = true;
+                        // Taklit edilen kişinin rolünü (varsayılan) member olarak döndürür, 
+                        // bu sayfa yetkilerini users.json belirler.
+                    }
+
+                    console.log("✅ Oturum Onaylandı: " + activeEmail);
+
+                    // Üstte kırmızı taklit barı oluştur (Eğer mod aktifse)
+                    if (isImpersonating) {
+                        this.showImpersonateBar(activeEmail);
+                    }
+                   
+                    this.updateUserProfile(activeUsername);
+                   
                     resolve({
-                        username: user.email.split('@')[0],
-                        email: user.email,
+                        username: activeUsername,
+                        email: activeEmail,
                         uid: user.uid,
-                        role: role 
+                        role: role,
+                        isImpersonated: isImpersonating
                     });
                 } else {
-                    console.warn("⚠️ Oturum Yok veya Süresi Dolmuş! Yönlendiriliyor...");
-                    reject('No user'); // Catch bloğuna düşer, sayfa Login'e yönlenir
+                    console.warn("⚠️ Oturum Yok!");
+                    reject('No user');
                 }
             });
         });
     }
 
-    /**
-     * [UI] Header'daki Kullanıcı Bilgisini Güncelle
-     */
-    updateUserProfile(user) {
-        const nameDisplay = document.getElementById('user-name-display');
-        const avatarDisplay = document.getElementById('user-avatar');
+    // Taklit modunda olduğunu hatırlatan üst bar
+    showImpersonateBar(targetEmail) {
+        if (document.getElementById('impersonate-notice-bar')) return;
         
-        // E-postanın '@' işaretinden önceki kısmını isim olarak al
-        // Örn: serkan.yavuzcan@gmail.com -> serkan.yavuzcan
-        const displayName = user.displayName || user.email.split('@')[0];
-        
-        if (nameDisplay) {
-            nameDisplay.textContent = displayName;
-            // Mobilde uzun isimleri kısaltmak isterseniz CSS ile text-overflow kullanın
-        }
-        
-        if (avatarDisplay) {
-            // İsmin baş harfini al
-            const letter = displayName.charAt(0).toUpperCase();
-            avatarDisplay.textContent = letter;
-        }
+        const bar = document.createElement('div');
+        bar.id = 'impersonate-notice-bar';
+        bar.style = `
+            background: #ea5455; 
+            color: white; 
+            text-align: center; 
+            padding: 8px; 
+            font-size: 13px; 
+            font-weight: 600;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 10000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        `;
+        bar.innerHTML = `
+            <span><i class="fas fa-user-secret"></i> Şu an <strong>${targetEmail}</strong> hesabını inceliyorsunuz.</span>
+            <button onclick="localStorage.removeItem('impersonated_user_key'); location.reload();" 
+                    style="background: white; color: #ea5455; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-weight: 700;">
+                Gözatmayı Bitir
+            </button>
+        `;
+        document.body.prepend(bar);
+        document.body.style.paddingTop = "40px"; // Barın içeriği kapatmaması için
     }
 
-    /**
-     * [ACTION] Çıkış Yap
-     */
+    updateUserProfile(displayName) {
+        const nameDisplay = document.getElementById('user-name-display');
+        const avatarDisplay = document.getElementById('user-avatar');
+       
+        if (nameDisplay) nameDisplay.textContent = displayName;
+        if (avatarDisplay) avatarDisplay.textContent = displayName.charAt(0).toUpperCase();
+    }
+
     destroySession() {
         if (!this.auth) return;
-        
+        localStorage.removeItem('impersonated_user_key'); // Çıkışta temizle
         this.auth.signOut().then(() => {
-            console.log("🔓 Başarıyla Çıkış Yapıldı.");
-            // Çıkış yapınca ana sayfaya gönder
             window.location.href = '../index.html';
         }).catch((error) => {
             console.error("Çıkış hatası:", error);
-            alert("Çıkış yapılırken bir hata oluştu.");
         });
     }
 }
