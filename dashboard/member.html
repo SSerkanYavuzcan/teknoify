@@ -7,7 +7,6 @@
    
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <link rel="stylesheet" href="../css/dashboard.css">
@@ -17,7 +16,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* YÜKLEME PERDESİ */
+        /* YÜKLEME EKRANI STİLİ */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0f172a; z-index: 9999;
@@ -37,7 +36,7 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <p>Bağlantı Kuruluyor...</p>
+        <p>Veriler Yükleniyor...</p>
     </div>
 
     <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
@@ -80,7 +79,6 @@
         </header>
 
         <div class="content-scroll">
-            
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
@@ -104,7 +102,7 @@
                 <h3>Son Bildirimler</h3>
                 <div style="display:flex; gap:10px; align-items:center;">
                     <span id="live-indicator" style="font-size:0.8rem; color:#666; display:none;">
-                        <i class="fas fa-circle-notch fa-spin"></i> Veri işleniyor...
+                        <i class="fas fa-circle-notch fa-spin"></i> Veri kontrol ediliyor...
                     </span>
                     <button class="btn-text-action" onclick="markAllAsRead()" style="cursor: pointer; background: none; border: none; color: var(--primary, #6366f1); font-weight: 500;">
                         <i class="fas fa-check-double"></i> Tümünü Okundu İşaretle
@@ -125,16 +123,13 @@
                         </tbody>
                 </table>
             </div>
-
         </div>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script>
-        // ------------------------------------------------------------------
-        // 1. FIREBASE AYARLARI (Senin Projen)
-        // ------------------------------------------------------------------
+        // --- SENİN VERDİĞİN FIREBASE AYARLARI ---
         const firebaseConfig = {
             apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
             authDomain: "teknoify-9449c.firebaseapp.com",
@@ -149,51 +144,47 @@
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-        
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // 🔥🔥🔥 KRİTİK AYAR: "Offline" hatasını çözer 🔥🔥🔥
-        db.settings({ experimentalForceLongPolling: true, merge: true });
-
-        // ------------------------------------------------------------------
-        // 2. OTURUM KONTROLÜ (Giriş Yapılmış mı?)
-        // ------------------------------------------------------------------
+        // --- OTURUM DİNLEYİCİSİ ---
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('loading-overlay');
             
             if (user) {
-                // Kullanıcı var -> Verileri çek
-                console.log("✅ Giriş Başarılı:", user.email);
+                // Kullanıcı Giriş Yapmış -> Verileri Çek
+                console.log("✅ Giriş başarılı. Kullanıcı:", user.email);
                 loadUserData(user.uid, user.email);
-
-                // Yükleme ekranını kaldır
+                
+                // Yükleme ekranını yavaşça kaldır
                 if(overlay) {
                     overlay.style.opacity = '0';
                     setTimeout(() => { overlay.style.display = 'none'; }, 500);
                 }
+
             } else {
-                // Kullanıcı yok -> Uyarı ver (Yönlendirme yapma ki hata varsa görelim)
+                // Kullanıcı Giriş Yapmamış -> UYARI GÖSTER (Redirect yerine)
                 console.warn("⚠️ Oturum bulunamadı!");
+                
                 if(overlay) {
                     overlay.innerHTML = `
-                        <div style="text-align:center;">
-                            <h3 style="color:#f87171; margin-bottom:10px;">Oturum Açılmadı</h3>
-                            <p style="color:#ccc; margin-bottom:20px;">Verileri görmek için giriş yapmalısınız.</p>
-                            <a href="../index.html" style="background:#6366f1; color:white; padding:10px 20px; text-decoration:none; border-radius:6px;">Giriş Sayfasına Dön</a>
+                        <div style="text-align:center; padding:20px;">
+                            <i class="fas fa-exclamation-circle" style="font-size:3rem; color:#f87171; margin-bottom:20px;"></i>
+                            <h3>Oturum Açılmadı</h3>
+                            <p style="color:#ccc; margin-bottom:20px;">Sayfayı görüntülemek için giriş yapmalısınız.</p>
+                            <a href="../index.html" style="background:#6366f1; color:white; padding:10px 20px; text-decoration:none; border-radius:6px;">Giriş Yap</a>
                         </div>
                     `;
                 }
             }
         });
 
-        // ------------------------------------------------------------------
-        // 3. FIRESTORE VERİ ÇEKME
-        // ------------------------------------------------------------------
+        // --- VERİTABANINDAN VERİ ÇEKME ---
         async function loadUserData(uid, email) {
             try {
-                // 'users' koleksiyonundan, uid'ye sahip belgeyi iste
-                const doc = await db.collection('users').doc(uid).get();
+                // 'users' koleksiyonunda, kullanıcının ID'sine ait belgeyi al
+                const docRef = db.collection('users').doc(uid);
+                const doc = await docRef.get();
 
                 if (doc.exists) {
                     const fullData = doc.data();
@@ -201,12 +192,12 @@
                     const features = fullData.features || {};
                     const config = fullData.config || {};
 
-                    // Profil Bilgileri
+                    // Arayüz Doldurma
                     setText('user-name-display', fullData.name || email);
                     setText('user-name-title', fullData.name || "Kullanıcı");
                     if(fullData.name) setText('user-avatar', fullData.name.charAt(0).toUpperCase());
 
-                    // Menü Kontrolü (Hizmet varsa göster)
+                    // Menü Yetkisi
                     const analysisLink = document.getElementById('nav-link-analysis');
                     if(analysisLink) analysisLink.style.display = (features.analysis) ? 'flex' : 'none';
 
@@ -223,33 +214,23 @@
                     // Bildirimler
                     renderNotifications(data.notifications);
 
-                    // Web Scraping Verisi (Google Sheets)
+                    // Excel (Web Scraping) Verisi Varsa Çek
                     if(config.sheetUrl) fetchSheetData(config.sheetUrl);
 
                 } else {
-                    // Kullanıcı giriş yapmış ama veritabanında kaydı yok
-                    console.warn("Kullanıcı verisi bulunamadı.");
+                    // Veri tabanında kayıt yoksa
+                    console.warn("Kullanıcı var ama veritabanında verisi yok.");
                     setText('user-name-title', "Misafir");
-                    
                     const tbody = document.getElementById('notification-body');
-                    if(tbody) {
-                        tbody.innerHTML = `
-                            <tr>
-                                <td colspan="3" style="text-align:center; padding:1rem; color:#facc15;">
-                                    <i class="fas fa-exclamation-triangle"></i> Veritabanında kayıtlı veri bulunamadı.
-                                </td>
-                            </tr>`;
-                    }
+                    if(tbody) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:1rem; color:#facc15;">Veri veritabanında bulunamadı.</td></tr>';
                 }
             } catch (error) {
-                console.error("Veri Hatası:", error);
-                alert("Veri çekilemedi. İnternet bağlantınızı kontrol edin.");
+                console.error("Hata:", error);
+                alert("Veri çekme hatası: " + error.message);
             }
         }
 
-        // ------------------------------------------------------------------
-        // 4. YARDIMCI FONKSİYONLAR
-        // ------------------------------------------------------------------
+        // --- YARDIMCI FONKSİYONLAR ---
         function setText(id, text) {
             const el = document.getElementById(id);
             if(el) el.textContent = text;
@@ -300,12 +281,10 @@
             Papa.parse(url, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
-                    // Basit sayaç: 'Store Name' sütunu dolu olanları say
                     const count = results.data.filter(r => r['Store Name']).length;
                     const el = document.getElementById('processed-data-count');
                     if(el) el.innerText = new Intl.NumberFormat('tr-TR').format(count);
-                },
-                error: function(err) { console.log("CSV Hatası:", err); }
+                }
             });
         }
     </script>
