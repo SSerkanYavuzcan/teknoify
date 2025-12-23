@@ -456,7 +456,7 @@
                             }
                             
                             // İsim bilgisini Firebase'den veya JSON'dan al
-                            const displayName = currentUser.email.split('@')[0] || userData.name;
+                            const displayName = (userData && userData.name) ? userData.name : currentUser.email.split('@')[0];
                             document.getElementById('user-name-display').textContent = displayName;
                             document.getElementById('user-avatar').textContent = displayName.charAt(0).toUpperCase();
                             
