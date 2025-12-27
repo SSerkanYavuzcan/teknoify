@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Asistan & Chatbot Çözümleri | Teknoify</title>
+   
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+   
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/ai-assistant.css">
+</head>
+<body>
+
+<header id="header" class="header scrolled">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html#home" aria-label="Ana Sayfa">
+                    <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                    <span class="logo-text">Teknoify</span>
+                </a>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item dropdown">
+                    <a href="../index.html#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+                        <li><a href="ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+                        <li><a href="api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="finansal.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="egitim.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-login-btn">
+                    <button id="openLoginBtn" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user"></i> Giriş Yap
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="page-frame">
+
+    <section class="ai-hero">
+        <div class="container hero-grid">
+            <div class="hero-left">
+                <div class="hero-badge"><i class="fas fa-brain"></i> Yapay Zeka & NLP</div>
+                <h1>Müşteri Deneyimini Yapay Zeka ile Dönüştürün</h1>
+                <p class="subtitle main-headline">
+                    7/24 çalışan, öğrenen ve doğal dilde iletişim kuran akıllı asistanlarla operasyonel yükü hafifletin, satışlarınızı artırın.
+                </p>
+                
+                <div class="hero-ctas">
+                    <a href="../index.html#contact" class="btn btn-primary btn-lg">
+                        Demo Talep Et
+                    </a>
+                    <a href="#ai-cases" class="btn btn-secondary btn-lg">Örnek Senaryolar</a>
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <div class="ai-anim-box">
+                    <div class="neural-grid"></div>
+                    
+                    <div class="brain-core">
+                        <div class="brain-layers">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="synapse-pulse"></div>
+                    </div>
+
+                    <div class="orbit-container">
+                        <div class="orbit-item item-msg"><i class="fas fa-comment-dots"></i></div>
+                        <div class="orbit-item item-user"><i class="fas fa-user"></i></div>
+                        <div class="orbit-item item-code"><i class="fas fa-code-branch"></i></div>
+                    </div>
+
+                    <div class="chat-bubbles">
+                        <div class="bubble b-left">...</div>
+                        <div class="bubble b-right"><i class="fas fa-check"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ai-content">
+        <div class="container">
+            
+            <div class="intro-text-center">
+                <h2>Kelime Bazlı Değil, Anlam Odaklı İletişim</h2>
+                <p>Eski nesil chatbot'ları unutun. Gelişmiş NLP (Doğal Dil İşleme) teknolojimiz sayesinde, AI asistanlarımız müşterilerinizin "ne dediğini" değil, "ne demek istediğini" anlar. Satış, destek ve rezervasyon süreçlerinizi %100 otonom hale getirin.</p>
+            </div>
+
+            <h3 class="section-heading">Neden Teknoify AI Asistan?</h3>
+            <div class="benefit-cards-grid">
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-language"></i></div>
+                    <h4>Doğal Dil İşleme</h4>
+                    <p>Müşterilerinizle bir insan gibi akıcı, samimi ve bağlamı koparmadan iletişim kurar.</p>
+                </div>
+
+                <div class="benefit-card" id="card-satisfaction">
+                    <div class="benefit-icon"><i class="fas fa-smile"></i></div>
+                    <h4>%<span id="counter-sat">0</span> Memnuniyet</h4>
+                    <p>Bekleme süresini sıfıra indirerek müşteri memnuniyet oranlarını zirveye taşır.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h4>Sürekli Öğrenme</h4>
+                    <p>Geçmiş konuşmalardan ders çıkarır ve her etkileşimde kendini daha da geliştirir.</p>
+                </div>
+
+                 <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fab fa-whatsapp"></i></div>
+                    <h4>Çok Kanallı Destek</h4>
+                    <p>Web sitesi, WhatsApp, Telegram ve sosyal medya DM'lerinde tek merkezden yönetim.</p>
+                </div>
+            </div>
+
+            <div id="ai-cases" class="use-cases-wrapper">
+                <h3 class="section-heading">Neleri Otomatize Edebilirsiniz?</h3>
+                <div class="use-cases-grid">
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-headset"></i></div>
+                        <span>Müşteri Hizmetleri</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-calendar-check"></i></div>
+                        <span>Randevu & Rezervasyon</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <span>Ürün Önerisi & Satış</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-user-friends"></i></div>
+                        <span>İK & Çalışan Destek</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-filter"></i></div>
+                        <span>Lead (Müşteri) Eleme</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-globe"></i></div>
+                        <span>Çok Dilli Çeviri</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-cta">
+                <a href="../index.html#contact" class="btn btn-primary btn-block">
+                    Kendi Asistanını Tasarla
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="container footer-flex">
+        <div class="footer-brand">
+            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
+        </div>
+    </div>
+</footer>
+
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-container">
+        <div class="modal-close"><i class="fas fa-times"></i></div>
+        <div class="modal-header">
+            <h3>Giriş Yap</h3>
+            <p>Teknoify hesabınıza erişin</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" required placeholder="ornek@sirket.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+            </div>
+            <div class="form-footer">
+                <a href="#" class="link-sm">Şifremi Unuttum</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="../js/session-manager.js"></script>
+<script src="../js/script.js" defer></script>
+
+<script>
+    document.getElementById('header').classList.add('scrolled');
+   
+    let counterStarted = false;
+
+    // Sayaç Fonksiyonu
+    function animateCounter(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        if(!obj) return;
+        let startTime = null;
+        
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const currentVal = Math.floor(progress * (end - start) + start);
+            obj.textContent = currentVal;
+            if (progress < 1) window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
+    }
+   
+    // Scroll Observer
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5 
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+
+                // Memnuniyet Sayacı (%0 -> %98)
+                if (id === 'card-satisfaction' && !counterStarted) {
+                    animateCounter('counter-sat', 0, 98, 2000);
+                    counterStarted = true;
+                }
+            }
+        });
+    }, observerOptions);
+
+    const cardSat = document.getElementById('card-satisfaction');
+    if (cardSat) observer.observe(cardSat);
+
+</script>
+</body>
+</html>
+
