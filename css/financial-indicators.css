@@ -1,27 +1,36 @@
 /* ================================================================
    [FILE] financial-indicators.css
    [PURPOSE] Financial Indicators & Bot Page Styles
-   [THEME] Finance/Trading (Emerald/Blue accents) - Layout synced
+   [THEME] Finance/Trading (Indigo/Purple main theme, Green Signal accent)
    ================================================================ */
 
-/* --- RENK PALETİ (Finans Teması) --- */
+/* --- RENK PALETİ (Revize Edildi) --- */
 :root {
-    --fi-primary: #10b981;    /* Emerald (Kâr/Yükseliş/Al Sinyali) */
-    --fi-secondary: #3b82f6;  /* Blue (Teknoloji/Güven) */
-    --fi-loss: #ef4444;       /* Red (Düşüş Mumu) */
-    --fi-glow: rgba(16, 185, 129, 0.5);
+    /* Ana Renk: Site Temasıyla Uyumlu Indigo/Mor (Yükseliş Mumları için de bu kullanılacak) */
+    --fi-primary: #6366f1;
+    
+    /* İkincil Renk: Mavi (Fiyat Çizgisi/Teknoloji) */
+    --fi-secondary: #3b82f6;
+    
+    /* Düşüş Rengi: Kırmızı (Düşüş Mumu/Zarar) */
+    --fi-loss: #ef4444;
+    
+    /* ÖZEL RENK: Sadece 'AL SİNYALİ' kutusu için korunan Orijinal Yeşil */
+    --fi-accent-green: #10b981;
+
+    /* Parlama Efekti: Ana renge (Indigo) göre güncellendi */
+    --fi-glow: rgba(99, 102, 241, 0.5);
 }
 
-/* --- HERO SECTION (DİĞER SAYFALARLA EŞİTLENDİ) --- */
+/* --- HERO SECTION --- */
 .fi-hero {
-    /* Hizalama diğer sayfalarla birebir aynı */
     padding: 140px 0 80px 0;
     position: relative;
     overflow: hidden;
     
-    /* ARKA PLAN: Standart Grid Yapısı (Yeşil Parlama ile) */
+    /* ARKA PLAN: Mor/Indigo Parlama */
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 20%), /* Hafif yeşil parlama */
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 20%),
         linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px;
@@ -39,16 +48,16 @@
     z-index: 2;
 }
 
-/* BADGE (ETİKET) - FİNANS RENGİ */
+/* BADGE (ETİKET) - MOR TEMA */
 .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     
-    /* Yeşil/Emerald tonlar */
-    background: rgba(16, 185, 129, 0.1); 
+    /* Mor/Indigo tonlar */
+    background: rgba(99, 102, 241, 0.1); 
     color: var(--fi-primary); 
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.2);
     
     padding: 6px 12px;
     border-radius: 20px;
@@ -83,16 +92,16 @@
     position: relative;
     height: 350px;
     
-    /* Çerçevesiz, Floating yapı */
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, rgba(0,0,0,0) 70%);
+    /* Mor Parlama */
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, rgba(0,0,0,0) 70%);
     border: none;
     box-shadow: none;
     backdrop-filter: none;
     
-    overflow: hidden; /* Taşmaları gizle */
+    overflow: hidden;
 }
 
-/* 1. GRAFİK GRID (Arka Plan Çizgileri) */
+/* 1. GRAFİK GRID */
 .chart-grid {
     position: absolute;
     inset: 0;
@@ -102,7 +111,6 @@
 .grid-line.h { width: 100%; height: 1px; left: 0; }
 .grid-line.v { height: 100%; width: 1px; top: 0; }
 
-/* Grid Pozisyonları */
 .grid-line.h:nth-child(1) { top: 25%; }
 .grid-line.h:nth-child(2) { top: 50%; }
 .grid-line.h:nth-child(3) { top: 75%; }
@@ -110,7 +118,7 @@
 .grid-line.v:nth-child(5) { left: 50%; }
 .grid-line.v:nth-child(6) { left: 75%; }
 
-/* 2. MUM ÇUBUKLARI (Candles) */
+/* 2. MUM ÇUBUKLARI (Candles) - REVİZE EDİLDİ */
 .candles-container {
     position: absolute;
     bottom: 50px; left: 20px; right: 20px; top: 50px;
@@ -124,10 +132,10 @@
     border-radius: 2px;
     position: relative;
     animation: growCandle 1s ease-out forwards;
-    opacity: 0; /* Başlangıçta gizli */
+    opacity: 0;
 }
 
-/* Mum Fitilleri (Wicks) */
+/* Mum Fitilleri */
 .candle::before {
     content: ''; position: absolute;
     left: 50%; top: -10px; bottom: -10px;
@@ -135,24 +143,28 @@
     background: inherit; opacity: 0.5; z-index: -1;
 }
 
-/* Mum Tipleri ve Pozisyonları */
-.c-up { background: var(--fi-primary); box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+/* Mum Tipleri */
+/* REVİZE: Yükseliş mumu artık Mor (Indigo) */
+.c-up { 
+    background: var(--fi-primary); 
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
 .c-down { background: var(--fi-loss); }
 
-/* Yükseklik ve Animasyon Gecikmeleri (Simüle edilmiş grafik) */
+/* Animasyonlar */
 .candle:nth-child(1) { height: 40px; margin-bottom: 20px; animation-delay: 0.2s; }
-.candle:nth-child(2) { height: 30px; margin-bottom: 10px; animation-delay: 0.6s; } /* Düşüş */
+.candle:nth-child(2) { height: 30px; margin-bottom: 10px; animation-delay: 0.6s; }
 .candle:nth-child(3) { height: 50px; margin-bottom: 30px; animation-delay: 1.0s; }
-.candle:nth-child(4) { height: 80px; margin-bottom: 50px; animation-delay: 1.4s; } /* Büyük yükseliş */
-.candle:nth-child(5) { height: 20px; margin-bottom: 100px; animation-delay: 1.8s; } /* Düzeltme */
-.candle:nth-child(6) { height: 60px; margin-bottom: 110px; animation-delay: 2.2s; } /* Final yükseliş */
+.candle:nth-child(4) { height: 80px; margin-bottom: 50px; animation-delay: 1.4s; }
+.candle:nth-child(5) { height: 20px; margin-bottom: 100px; animation-delay: 1.8s; }
+.candle:nth-child(6) { height: 60px; margin-bottom: 110px; animation-delay: 2.2s; }
 
 @keyframes growCandle {
     from { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
     to { transform: scaleY(1); opacity: 1; transform-origin: bottom; }
 }
 
-/* 3. HAREKETLİ FİYAT ÇİZGİSİ */
+/* 3. HAREKETLİ FİYAT ÇİZGİSİ (Mavi) */
 .price-line-svg {
     position: absolute;
     top: 50px; left: 20px; width: calc(100% - 40px); height: calc(100% - 100px);
@@ -175,18 +187,24 @@
     to { stroke-dashoffset: 0; }
 }
 
-/* 4. BOT SİNYALİ (AL) */
+/* 4. BOT SİNYALİ (AL) - KRİTİK REVİZE */
 .signal-box {
     position: absolute;
     top: 20%; right: 10%;
-    background: rgba(16, 185, 129, 0.9);
+    
+    /* ÖZEL İSTEK: Arka plan orijinal YEŞİL olarak korundu */
+    background: rgba(16, 185, 129, 0.9); /* Veya var(--fi-accent-green) */
+    
     padding: 8px 16px;
     border-radius: 8px;
     color: #fff;
     font-weight: 700;
     font-size: 0.85rem;
     display: flex; align-items: center; gap: 8px;
-    box-shadow: 0 0 20px var(--fi-glow);
+    
+    /* Gölge de yeşil kalmalı */
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+    
     opacity: 0;
     animation: popSignal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 2.5s;
     z-index: 10;
@@ -231,9 +249,10 @@
     animation: scrollTicker 10s linear infinite;
 }
 
-.ticker-tape span:nth-child(1) { color: var(--fi-primary); } /* BTC Yeşil */
-.ticker-tape span:nth-child(2) { color: var(--fi-primary); } /* ETH Yeşil */
-.ticker-tape span:nth-child(3) { color: var(--fi-loss); }    /* XAU Kırmızı */
+/* REVİZE: Yükselişler Mor (Indigo) oldu */
+.ticker-tape span:nth-child(1) { color: var(--fi-primary); } /* BTC + */
+.ticker-tape span:nth-child(2) { color: var(--fi-primary); } /* ETH + */
+.ticker-tape span:nth-child(3) { color: var(--fi-loss); }    /* XAU - */
 
 @keyframes scrollTicker {
     from { transform: translateX(100%); }
@@ -272,7 +291,7 @@
     margin-bottom: 5rem;
 }
 
-/* Kartlar Grid (Yeşil Vurgulu) */
+/* Kartlar Grid (Mor Vurgulu) */
 .benefit-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -290,13 +309,15 @@
 
 .benefit-card:hover {
     transform: translateY(-5px);
+    /* REVİZE: Hover rengi Mor */
     border-color: var(--fi-primary);
-    box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
 }
 
 .benefit-icon {
     width: 50px; height: 50px;
-    background: rgba(16, 185, 129, 0.1);
+    /* REVİZE: İkon arka planı Mor */
+    background: rgba(99, 102, 241, 0.1);
     color: var(--fi-primary);
     display: flex; align-items: center; justify-content: center;
     border-radius: 12px;
@@ -315,7 +336,7 @@
     line-height: 1.6;
 }
 
-/* Use Cases (Mavi Vurgulu - Tech) */
+/* Use Cases (Mavi Vurgulu) */
 .use-cases-wrapper {
     margin-bottom: 6rem;
 }
@@ -337,14 +358,14 @@
 }
 
 .use-case-item:hover {
-    background: rgba(59, 130, 246, 0.05); /* Mavi arka plan */
+    background: rgba(59, 130, 246, 0.05);
     border-color: var(--fi-secondary);
     transform: scale(1.02);
 }
 
 .uc-icon {
     font-size: 2rem;
-    color: var(--fi-secondary); /* İkincil renk (Mavi) */
+    color: var(--fi-secondary);
     margin-bottom: 1rem;
 }
 
@@ -373,9 +394,10 @@
         height: 250px;
     }
     
-    .ticker-tape { display: none; /* Mobilde karmaşayı önlemek için gizlenebilir */ }
+    .ticker-tape { display: none; }
     
     .benefit-cards-grid { gap: 2rem; margin-bottom: 4rem; }
     .section-heading { margin-bottom: 3rem; margin-top: 3rem; }
 }
+
 
