@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finansal İndikatör & Botlar | Teknoify</title>
+   
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+   
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/financial-indicators.css">
+</head>
+<body>
+
+<header id="header" class="header scrolled">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html#home" aria-label="Ana Sayfa">
+                    <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                    <span class="logo-text">Teknoify</span>
+                </a>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item dropdown">
+                    <a href="../index.html#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+                        <li><a href="ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+                        <li><a href="api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="egitim.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-login-btn">
+                    <button id="openLoginBtn" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user"></i> Giriş Yap
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="page-frame">
+
+    <section class="fi-hero">
+        <div class="container hero-grid">
+            <div class="hero-left">
+                <div class="hero-badge"><i class="fas fa-chart-line"></i> Finansal Teknoloji</div>
+                <h1>Piyasaların Ritmini Yapay Zeka ile Yakalayın</h1>
+                <p class="subtitle main-headline">
+                    Duygusal kararları ortadan kaldırın. Özelleştirilmiş algoritmalar ve otomatik al-sat botlarıyla yatırımlarınızı 7/24 profesyonelce yönetin.
+                </p>
+                
+                <div class="hero-ctas">
+                    <a href="../index.html#contact" class="btn btn-primary btn-lg">
+                        Strateji Geliştir
+                    </a>
+                    <a href="#fi-cases" class="btn btn-secondary btn-lg">Çözümlerimiz</a>
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <div class="fi-anim-box">
+                    <div class="chart-grid">
+                        <div class="grid-line h"></div>
+                        <div class="grid-line h"></div>
+                        <div class="grid-line h"></div>
+                        <div class="grid-line v"></div>
+                        <div class="grid-line v"></div>
+                        <div class="grid-line v"></div>
+                    </div>
+
+                    <div class="candles-container">
+                        <div class="candle c-up"></div>
+                        <div class="candle c-down"></div>
+                        <div class="candle c-up"></div>
+                        <div class="candle c-up lg"></div> <div class="candle c-down sm"></div>
+                        <div class="candle c-up final"></div>
+                    </div>
+
+                    <svg class="price-line-svg" viewBox="0 0 300 150">
+                        <path class="price-path" d="M0,100 Q50,50 100,80 T200,40 T300,10" />
+                    </svg>
+
+                    <div class="signal-box">
+                        <div class="signal-dot"></div>
+                        <span>AL SİNYALİ</span>
+                    </div>
+
+                    <div class="ticker-tape">
+                        <span>BTC +2.4%</span>
+                        <span>ETH +1.8%</span>
+                        <span>XAU -0.5%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="fi-content">
+        <div class="container">
+            
+            <div class="intro-text-center">
+                <h2>Veriye Dayalı Yatırım Stratejileri</h2>
+                <p>Karmaşık piyasa verilerini anlamlı sinyallere dönüştürüyoruz. TradingView, Binance veya özel borsa API'leri üzerinde çalışan, size özel teknik analiz indikatörleri ve otomatik işlem botları geliştiriyoruz. Şans faktörünü değil, matematiği kullanın.</p>
+            </div>
+
+            <h3 class="section-heading">Neden Algoritmik Ticaret?</h3>
+            <div class="benefit-cards-grid">
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-robot"></i></div>
+                    <h4>7/24 Otomatik İşlem</h4>
+                    <p>Siz uyurken bile piyasaları izleyen botlarınız, fırsatları kaçırmadan milisaniyeler içinde işlem yapar.</p>
+                </div>
+
+                <div class="benefit-card" id="card-profit">
+                    <div class="benefit-icon"><i class="fas fa-chart-pie"></i></div>
+                    <h4>%<span id="counter-win">0</span> Başarı Oranı</h4>
+                    <p>Backtest edilmiş ve optimize edilmiş stratejilerle, riskinizi minimize ederken kâr potansiyelinizi artırın.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h4>Disiplinli Risk Yönetimi</h4>
+                    <p>Stop-loss ve take-profit seviyelerine duygusuzca sadık kalarak sermayenizi koruma altına alır.</p>
+                </div>
+
+                 <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-drafting-compass"></i></div>
+                    <h4>Kişiye Özel Strateji</h4>
+                    <p>Sizin belirlediğiniz kurallara ve indikatörlere (RSI, MACD vb.) göre çalışan tamamen size özel yazılımlar.</p>
+                </div>
+            </div>
+
+            <div id="fi-cases" class="use-cases-wrapper">
+                <h3 class="section-heading">Geliştirdiğimiz Çözümler</h3>
+                <div class="use-cases-grid">
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fab fa-bitcoin"></i></div>
+                        <span>Kripto Para Botları</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-chart-bar"></i></div>
+                        <span>TradingView İndikatörleri</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <span>Forex & Borsa Algoritmaları</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-history"></i></div>
+                        <span>Backtest Yazılımları</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fab fa-telegram-plane"></i></div>
+                        <span>Telegram Sinyal Botları</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-wallet"></i></div>
+                        <span>Portföy Takip Sistemleri</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-cta">
+                <a href="../index.html#contact" class="btn btn-primary btn-block">
+                    Botunuzu Tasarlayın
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="container footer-flex">
+        <div class="footer-brand">
+            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
+        </div>
+    </div>
+</footer>
+
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-container">
+        <div class="modal-close"><i class="fas fa-times"></i></div>
+        <div class="modal-header">
+            <h3>Giriş Yap</h3>
+            <p>Teknoify hesabınıza erişin</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" required placeholder="ornek@sirket.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+            </div>
+            <div class="form-footer">
+                <a href="#" class="link-sm">Şifremi Unuttum</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="../js/session-manager.js"></script>
+<script src="../js/script.js" defer></script>
+
+<script>
+    document.getElementById('header').classList.add('scrolled');
+   
+    let counterStarted = false;
+
+    // Sayaç Fonksiyonu
+    function animateCounter(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        if(!obj) return;
+        let startTime = null;
+        
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const currentVal = Math.floor(progress * (end - start) + start);
+            obj.textContent = currentVal;
+            if (progress < 1) window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
+    }
+   
+    // Scroll Observer
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5 
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+
+                // Başarı Oranı Sayacı (Sembolik %85)
+                if (id === 'card-profit' && !counterStarted) {
+                    animateCounter('counter-win', 0, 85, 2000);
+                    counterStarted = true;
+                }
+            }
+        });
+    }, observerOptions);
+
+    const cardProfit = document.getElementById('card-profit');
+    if (cardProfit) observer.observe(cardProfit);
+
+</script>
+</body>
+</html>
+
+
