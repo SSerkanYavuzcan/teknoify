@@ -1,30 +1,31 @@
 /* ================================================================
    [FILE] webscraping.css
    [PURPOSE] Web Scraping & Data Mining Page Styles
-   [THEME] Cyber Data (Cyan/Green accents) - Layout synced with RPA
+   [THEME] Cyber Data (Cyan/Green accents) - Harmonized with RPA
    ================================================================ */
 
 /* --- RENK PALETİ --- */
 :root {
     --ws-primary: #0ea5e9;    /* Sky Blue (İkonlar ve Spider için) */
-    --ws-accent: #10b981;     /* Emerald Green */
+    --ws-accent: #10b981;     /* Emerald Green (Başarı durumu) */
     --ws-glow: rgba(14, 165, 233, 0.5);
 }
 
-/* --- HERO SECTION (RPA İLE EŞİTLENDİ) --- */
+/* --- HERO SECTION --- */
 .ws-hero {
-    /* Hizalama RPA ile birebir aynı yapıldı */
+    /* Hizalama RPA ile birebir aynı (140px üst boşluk) */
     padding: 140px 0 80px 0;
     position: relative;
     overflow: hidden;
     
-    /* Arka Plan: RPA ile aynı Grid yapısı */
+    /* ARKA PLAN: RPA Grid Yapısı (Renk farkı olmadan) */
+    /* background-color satırı kaldırıldı, böylece RPA gibi daha açık duracak */
     background-image: 
         radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 20%),
         linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px;
-    background-color: var(--bg-body);
+    
     border-bottom: 1px solid var(--border-light);
 }
 
@@ -37,15 +38,15 @@
     z-index: 2;
 }
 
-/* BADGE (ETİKET) - RPA RENGİNE DÖNÜŞTÜRÜLDÜ */
+/* BADGE (ETİKET) - RPA RENGİNE EŞİTLENDİ */
 .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     
-    /* RPA'daki Mor/Indigo renkleri kullanıldı */
+    /* RPA Mor/Indigo Renkleri */
     background: rgba(99, 102, 241, 0.1); 
-    color: var(--primary); /* style.css'teki ana renk */
+    color: var(--primary); /* style.css ana rengi */
     border: 1px solid rgba(99, 102, 241, 0.2);
     
     padding: 6px 12px;
@@ -62,7 +63,7 @@
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 1.5rem;
-    color: #fff; /* RPA gibi net beyaz */
+    color: #fff; /* Net Beyaz */
 }
 
 .subtitle {
@@ -81,8 +82,8 @@
     position: relative;
     height: 350px;
     
-    /* ÇERÇEVE VE ARKA PLAN KALDIRILDI */
-    background: radial-gradient(circle, rgba(99,102,241,0.05) 0%, rgba(0,0,0,0) 70%); /* RPA ile aynı hafif glow */
+    /* RPA tarzı hafif glow, çerçeve ve kutu arka planı yok */
+    background: radial-gradient(circle, rgba(99,102,241,0.05) 0%, rgba(0,0,0,0) 70%);
     border: none;
     box-shadow: none;
     backdrop-filter: none;
@@ -151,7 +152,7 @@
     font-size: 3rem;
     color: var(--ws-primary);
     
-    /* Botun kendi arkasında hafif bir glow bıraktık sadece */
+    /* Botun kendi çevresindeki hafif glow */
     background: rgba(14, 165, 233, 0.05); 
     width: 80px; height: 80px;
     border-radius: 50%;
@@ -260,7 +261,6 @@
 /* Açıklama Metni */
 .intro-text-center {
     max-width: 800px;
-    /* RPA'dan gelen geniş boşluklar korundu */
     margin: 0 auto 6rem auto; 
     text-align: center;
 }
