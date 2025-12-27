@@ -687,148 +687,186 @@ Modern İletişim Formu Tasarımı
 
 
 /* =========================================
-   COMPACT FOOTER TASARIMI (Güncel)
+   COMPACT FOOTER (Final Revize)
    ========================================= */
 
 
 .footer {
     background: var(--bg-surface);
     border-top: 1px solid var(--border-light);
-    /* Üstten 8rem boşluk bırak (İçerikten uzaklaşsın) */
-    /* İç boşluğu (padding) azalttık (Daha ince olsun) */
-    margin-top: 8rem; 
-    padding: 3rem 0 1.5rem 0; 
+    margin-top: 6rem; /* Üst boşluk biraz azaltıldı */
+    padding: 2rem 0 1rem 0; /* İç boşluklar daraltıldı */
 }
 
 
-/* 3 Sütunlu Izgara Yapısı (Kurumsal kalktı) */
 .footer-grid {
     display: grid;
-    /* 1.5 birim Logo, 1 birim Yasal, 1 birim İletişim */
-    grid-template-columns: 1.5fr 1fr 1fr; 
-    gap: 3rem;
-    margin-bottom: 2rem;
+    /* 3 Eşit Sütun */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    align-items: start; /* Yukarı hizala */
 }
 
 
-/* Başlıklar */
+/* --- GENEL KOLON STİLLERİ --- */
 .footer-col h4 {
     color: #fff;
-    font-size: 1rem; /* Başlık fontunu biraz küçülttük */
-    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
     position: relative;
     display: inline-block;
     font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 
-/* Başlık Altı Çizgi */
+/* Başlık Altı Çizgi (Genel) */
 .footer-col h4::after {
     content: '';
     position: absolute;
-    left: 0; bottom: -8px;
+    bottom: -6px;
     width: 25px; height: 2px;
     background: var(--primary);
+    border-radius: 2px;
 }
 
 
 .footer-desc {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.5;
-    margin: 1rem 0 1.5rem 0;
-    max-width: 300px;
+    margin: 0.8rem 0 1.2rem 0;
+    max-width: 280px;
 }
 
 
-/* Linkler */
+/* --- HİZALAMA AYARLARI (ÖNEMLİ) --- */
+
+
+/* 1. Kolon (Sol - Logo): Sola Dayalı */
+.footer-col:nth-child(1) {
+    text-align: left;
+    display: flex; flex-direction: column; align-items: flex-start;
+}
+.footer-col:nth-child(1) h4::after { left: 0; } /* Çizgi solda */
+
+
+
+
+/* 2. Kolon (Orta - Yasal): TAM ORTALI */
+.footer-col:nth-child(2) {
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+}
+/* Çizgiyi tam ortaya al */
+.footer-col:nth-child(2) h4::after {
+    left: 50%;
+    transform: translateX(-50%); 
+}
+
+
+
+
+/* 3. Kolon (Sağ - İletişim): SAĞA DAYALI */
+.footer-col:nth-child(3) {
+    text-align: right;
+    display: flex; flex-direction: column; align-items: flex-end;
+}
+/* Çizgiyi sağa al */
+.footer-col:nth-child(3) h4::after {
+    left: auto; 
+    right: 0; 
+}
+
+
+
+
+/* --- LİNKLER & İKONLAR --- */
 .footer-col ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    list-style: none; padding: 0; margin: 0;
 }
-
-
-.footer-col ul li {
-    margin-bottom: 0.6rem; /* Satır arasını daralttık */
-}
+.footer-col ul li { margin-bottom: 0.5rem; }
 
 
 .footer-col ul li a {
     color: var(--text-muted);
     text-decoration: none;
     transition: 0.3s;
-    font-size: 0.9rem;
-    display: inline-block;
+    font-size: 0.85rem;
 }
+.footer-col ul li a:hover { color: var(--primary); }
 
 
-.footer-col ul li a:hover {
-    color: var(--primary);
-    padding-left: 5px;
-}
-
-
-/* İletişim */
+/* İletişim Listesi (Sağa dayalı olduğu için flex-direction row-reverse kullanmıyoruz, normal akış) */
 .contact-list li {
     display: flex;
     align-items: center;
     gap: 10px;
     color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 0.8rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+    /* Sağ taraf hizalaması için: */
+    flex-direction: row-reverse; 
 }
-
-
-.contact-list i {
-    color: var(--primary);
-    font-size: 0.9rem;
-}
+.contact-list i { color: var(--primary); font-size: 0.9rem; }
 
 
 /* Sosyal Medya */
-.social-links {
-    display: flex; gap: 10px;
-}
+.social-links { display: flex; gap: 8px; }
 .social-links a {
-    width: 32px; height: 32px; /* İkonları biraz küçülttük */
+    width: 30px; height: 30px;
     background: rgba(255,255,255,0.05);
     display: flex; align-items: center; justify-content: center;
     border-radius: 50%;
     color: #fff;
-    transition: 0.3s;
+    font-size: 0.85rem;
     border: 1px solid var(--border-light);
+    transition: 0.3s;
     text-decoration: none;
-    font-size: 0.9rem;
 }
 .social-links a:hover {
     background: var(--primary);
     border-color: var(--primary);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 }
 
 
-/* Alt Telif */
+/* Footer Alt */
 .footer-bottom {
     border-top: 1px solid var(--border-light);
-    padding-top: 1.5rem;
+    padding-top: 1rem;
     text-align: center;
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    opacity: 0.8;
 }
 
 
-/* Responsive */
-@media (max-width: 968px) {
-    .footer { margin-top: 5rem; }
+/* --- MOBİL GÖRÜNÜM --- */
+@media (max-width: 768px) {
+    .footer { margin-top: 4rem; }
     .footer-grid {
-        grid-template-columns: 1fr; /* Mobilde tek sütuna düşür */
+        grid-template-columns: 1fr; /* Mobilde tek sütun */
+        gap: 2rem;
         text-align: center;
-        gap: 2.5rem;
     }
-    .footer-desc { margin: 1rem auto; }
-    .footer-col h4::after { left: 50%; transform: translateX(-50%); }
-    .social-links, .contact-list li { justify-content: center; }
+    
+    /* Mobilde hepsini ortala */
+    .footer-col:nth-child(1),
+    .footer-col:nth-child(2),
+    .footer-col:nth-child(3) {
+        align-items: center;
+        text-align: center;
+    }
+    
+    /* Çizgileri ortala */
+    .footer-col h4::after,
+    .footer-col:nth-child(3) h4::after {
+        left: 50%; right: auto; transform: translateX(-50%);
+    }
+    
+    .contact-list li { flex-direction: row; justify-content: center; }
 }
 
 
