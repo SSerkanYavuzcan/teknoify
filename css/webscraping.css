@@ -4,27 +4,27 @@
    [THEME] Cyber Data (Cyan/Green accents) - Harmonized with RPA
    ================================================================ */
 
-/* --- RENK PALETİ (Bu sayfaya özel override) --- */
+/* --- RENK PALETİ --- */
 :root {
-    --ws-primary: #0ea5e9;    /* Sky Blue - Ana Renk */
-    --ws-accent: #10b981;     /* Emerald Green - Başarı Rengi */
+    --ws-primary: #0ea5e9;    /* Sky Blue */
+    --ws-accent: #10b981;     /* Emerald Green */
     --ws-glow: rgba(14, 165, 233, 0.5);
 }
 
-/* --- HERO SECTION (RPA İLE EŞİTLENDİ) --- */
+/* --- HERO SECTION --- */
 .ws-hero {
-    /* Hizalama Düzeltmesi: RPA ile aynı padding */
-    padding: 100px 0 80px 0;
+    /* REVİZE 1: Üst boşluk artırıldı (100px -> 180px) */
+    /* Böylece başlık ve etiket daha aşağıda, ortalı duracak */
+    padding: 180px 0 100px 0;
     position: relative;
     overflow: hidden;
     
-    /* ARKA PLAN DÜZELTMESİ: RPA'daki Grid yapısı birebir alındı */
+    /* Arka Plan Deseni (RPA ile Aynı Grid) */
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 20%), /* Hafif mavi parlama */
+        radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 20%),
         linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px; /* Kare boyutu eşitlendi */
-    
+    background-size: 100% 100%, 40px 40px, 40px 40px;
     background-color: var(--bg-body);
     border-bottom: 1px solid var(--border-light);
 }
@@ -38,30 +38,29 @@
     z-index: 2;
 }
 
-/* BADGE (ETİKET) DÜZELTMESİ */
-/* RPA sayfasındaki tasarımın aynısı, sadece rengi mavi */
+/* Badge (Etiket) */
 .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(14, 165, 233, 0.1); /* Çok hafif mavi zemin */
-    color: var(--ws-primary);            /* Mavi yazı */
+    background: rgba(14, 165, 233, 0.1);
+    color: var(--ws-primary);
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
-    font-family: var(--font-main);       /* Font garantilendi */
+    font-family: var(--font-main);
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(14, 165, 233, 0.2); /* İnce çerçeve */
+    border: 1px solid rgba(14, 165, 233, 0.2);
 }
 
-/* BAŞLIK (H1) DÜZELTMESİ */
+/* Başlık */
 .ws-hero h1 {
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 1.5rem;
-    color: #fff; /* RPA'deki gibi net beyaz yapıldı, gradient kaldırıldı (okunabilirlik için) */
+    color: #fff; /* Net Beyaz (RPA ile aynı) */
 }
 
 .subtitle {
@@ -71,28 +70,32 @@
     margin-bottom: 2.5rem;
 }
 
-/* Buton Grubu */
 .hero-ctas {
     display: flex; gap: 1rem;
 }
 
-/* --- ANIMATION BOX (THE DATA FACTORY) --- */
-/* Burası aynen kalıyor, görsel olarak sorunsuz */
+/* --- ANIMATION BOX (REVİZE EDİLDİ) --- */
 .scraping-anim-box {
     position: relative;
     height: 350px;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 0 40px rgba(14, 165, 233, 0.1);
+    
+    /* REVİZE 2: Kutu Görünümü Kaldırıldı */
+    background: transparent;      /* Arka plan şeffaf */
+    border: none;                 /* Kenarlık yok */
+    box-shadow: none;             /* Gölge yok */
+    backdrop-filter: none;        /* Bulanıklık yok */
+    
+    /* İçerik Hizalama */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 1. HEDEF WEB SİTESİ */
 .target-website {
     position: absolute;
-    left: 20px; top: 50%;
+    left: 0; /* RPA gibi biraz daha kenara */
+    top: 50%;
     transform: translateY(-50%);
     width: 120px;
     height: 160px;
@@ -146,7 +149,7 @@
 .spider-body {
     font-size: 3rem;
     color: var(--ws-primary);
-    background: rgba(14, 165, 233, 0.1);
+    background: rgba(14, 165, 233, 0.1); /* Sadece botun kendisinde hafif bir glow kaldı */
     width: 80px; height: 80px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
@@ -180,7 +183,7 @@
 /* 3. VERİ AKIŞI */
 .data-stream-path {
     position: absolute;
-    top: 50%; left: 140px; right: 100px;
+    top: 50%; left: 120px; right: 80px;
     height: 40px;
     transform: translateY(-50%);
     pointer-events: none;
@@ -212,7 +215,8 @@
 /* 4. DATABASE */
 .database-storage {
     position: absolute;
-    right: 30px; top: 50%;
+    right: 10px; /* RPA gibi sağa yaslı */
+    top: 50%;
     transform: translateY(-50%);
     font-size: 4rem;
     color: #475569;
@@ -243,8 +247,7 @@
     90%, 100% { background: #10b981; box-shadow: 0 0 10px #10b981; }
 }
 
-
-/* --- CONTENT SECTION (SPACING & LAYOUT) --- */
+/* --- CONTENT SECTION --- */
 .ws-content {
     padding: 4rem 0 6rem 0;
 }
@@ -266,7 +269,7 @@
     line-height: 1.7;
 }
 
-/* Bölüm Başlıkları */
+/* Başlıklar */
 .section-heading {
     text-align: center;
     font-size: 1.75rem;
@@ -275,7 +278,7 @@
     margin-bottom: 5rem;
 }
 
-/* --- BENEFIT CARDS (Grid) --- */
+/* Kartlar Grid */
 .benefit-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -318,7 +321,7 @@
     line-height: 1.6;
 }
 
-/* --- USE CASES GRID --- */
+/* Use Cases */
 .use-cases-wrapper {
     margin-bottom: 6rem;
 }
@@ -362,7 +365,7 @@
     text-align: center;
 }
 
-/* --- RESPONSIVE --- */
+/* Responsive */
 @media (max-width: 968px) {
     .hero-grid {
         grid-template-columns: 1fr;
