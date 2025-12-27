@@ -6,6 +6,8 @@
 */
 
 
+
+
 /* ================================================================
 [LAYER 0] DESIGN TOKENS (Variables)
 Tek bir noktadan yönetim merkezi
@@ -26,11 +28,15 @@ Tek bir noktadan yönetim merkezi
   --border-focus: rgba(99, 102, 241, 0.5);
 
 
+
+
   /* 0.3 Typography */
   --font-main: 'Inter Tight', system-ui, sans-serif;
   --font-mono: 'Fira Code', 'Consolas', monospace;
   --text-main: #f3f4f6;
   --text-muted: #9ca3af;
+
+
 
 
   /* 0.4 Spacing & Radius */
@@ -45,6 +51,8 @@ Tek bir noktadan yönetim merkezi
 }
 
 
+
+
 /* ================================================================
 [LAYER 1] BASE & RESET
 Temel tarayıcı sıfırlama ve global ayarlar
@@ -55,10 +63,14 @@ Temel tarayıcı sıfırlama ve global ayarlar
 }
 
 
+
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;
 }
+
+
 
 
 body {
@@ -71,9 +83,13 @@ body {
 }
 
 
+
+
 a { text-decoration: none; color: inherit; transition: color var(--ease-fast); }
 ul { list-style: none; }
 button { font-family: inherit; border: none; background: none; cursor: pointer; }
+
+
 
 
 /* ================================================================
@@ -81,6 +97,8 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
 Küçük yapı taşları
 ================================================================
 */
+
+
 
 
 /* 2.1 Buttons */
@@ -100,6 +118,8 @@ Küçük yapı taşları
 .btn-block { width: 100%; }
 
 
+
+
 .btn-primary {
   background: var(--primary);
   color: #fff;
@@ -109,6 +129,8 @@ Küçük yapı taşları
   background: var(--primary-hover);
   transform: translateY(-1px);
 }
+
+
 
 
 .btn-secondary {
@@ -122,6 +144,8 @@ Küçük yapı taşları
 }
 
 
+
+
 .btn-outline {
   border: 1px solid var(--border-light);
   color: var(--text-muted);
@@ -130,6 +154,8 @@ Küçük yapı taşları
   border-color: var(--primary);
   color: var(--primary);
 }
+
+
 
 
 /* 2.2 Inputs & Forms */
@@ -155,6 +181,8 @@ Küçük yapı taşları
 }
 
 
+
+
 /* Input/Textarea/Select Genel Stilleri */
 input, textarea, select {
   width: 100%;
@@ -168,6 +196,8 @@ input, textarea, select {
 }
 
 
+
+
 /* Focus Efektleri */
 input:focus, textarea:focus, select:focus {
   outline: none;
@@ -177,10 +207,14 @@ input:focus, textarea:focus, select:focus {
 }
 
 
+
+
 /* Textarea ve Select Özel Ayarlar */
 .textarea-wrapper { align-items: flex-start; }
 .textarea-wrapper i { top: 1rem; }
 textarea { resize: vertical; min-height: 120px; }
+
+
 
 
 /* Select (Dropdown) Özelleştirmeleri */
@@ -191,6 +225,8 @@ select { appearance: none; cursor: pointer; }
 }
 
 
+
+
 /* Select İçindeki Seçeneklerin Rengi (Dark Mode Uyumlu) */
 select option {
   background-color: #14161c !important;
@@ -199,10 +235,14 @@ select option {
 }
 
 
+
+
 /* Placeholder Rengi */
 ::placeholder {
   color: rgba(255, 255, 255, 0.2) !important;
 }
+
+
 
 
 /* 2.3 Form Validation (Hata Durumları) */
@@ -216,6 +256,8 @@ select option {
 }
 
 
+
+
 .input-error {
   border-color: #ef4444 !important;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
@@ -223,15 +265,21 @@ select option {
 }
 
 
+
+
 .input-wrapper.error i {
   color: #ef4444; /* Hata varken ikonu kırmızı yap */
 }
+
+
 
 
 /* ================================================================
 [LAYER 3] LAYOUT MODULES
 ================================================================
 */
+
+
 
 
 /* 3.1 Page Frame */
@@ -249,6 +297,8 @@ select option {
 }
 
 
+
+
 /* 3.2 Header & Nav */
 .header {
   position: fixed; top: 0; left: 0; width: 100%;
@@ -261,8 +311,10 @@ select option {
 .header.scrolled {
   background: rgba(5, 5, 5, 0.95);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-  padding: 0; 
+  padding: 0;
 }
+
+
 
 
 .nav-container {
@@ -274,9 +326,13 @@ select option {
 .logo-icon { color: var(--primary); margin-right: 8px; }
 
 
+
+
 .nav-menu { display: flex; align-items: center; gap: 2rem; }
 .nav-link { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
 .nav-link:hover { color: #fff; }
+
+
 
 
 /* [GİRİŞ YAP] Butonu Dönen Işık Efekti */
@@ -307,6 +363,8 @@ select option {
 }
 
 
+
+
 /* Dropdown */
 .dropdown { position: relative; }
 .dropdown-menu {
@@ -325,7 +383,11 @@ select option {
 .dropdown-menu a:hover { background: rgba(255,255,255,0.05); color: #fff; }
 
 
+
+
 .hamburger { display: none; }
+
+
 
 
 /* 3.3 Hero Section */
@@ -356,6 +418,8 @@ select option {
 .hero-ctas { display: flex; gap: 1rem; }
 
 
+
+
 /* 3.4 Terminal */
 .hero-terminal {
   background: #0d0f14; border: 1px solid var(--border-light);
@@ -377,6 +441,8 @@ select option {
 .term-body::-webkit-scrollbar { display: none; }
 
 
+
+
 /* 3.5 Services Grid */
 .services { padding: 4rem 0; }
 .section-header { text-align: center; margin-bottom: 4rem; max-width: 600px; margin-left: auto; margin-right: auto; }
@@ -384,10 +450,12 @@ select option {
 .section-header p { color: var(--text-muted); font-size: 1.1rem; }
 
 
-.services-grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-  gap: 2rem; 
+
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
 }
 .service-card {
   background: var(--bg-surface); border: 1px solid var(--border-light);
@@ -395,6 +463,8 @@ select option {
   display: flex; flex-direction: column; /* Butonları alta sabitlemek için */
 }
 .service-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.15); }
+
+
 
 
 .icon-box {
@@ -406,6 +476,8 @@ select option {
 .service-card p { color: var(--text-muted); font-size: 0.95rem; flex-grow: 1; margin-bottom: 1.5rem; } /* Metin esnekliği için */
 
 
+
+
 /* Hizmet Kartları İçindeki Butonları Hizalama */
 .card-ctas {
     display: flex;
@@ -413,6 +485,8 @@ select option {
     margin-top: auto; /* Metinler farklı uzunlukta olsa bile butonları alta iter */
     padding-top: 5px;
 }
+
+
 
 
 /* ================================================================
@@ -428,6 +502,8 @@ select option {
 .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
 
+
+
 .modal-container {
   background: #14161c; border: 1px solid rgba(255,255,255,0.1);
   width: 100%; max-width: 420px; padding: 2.5rem;
@@ -436,6 +512,8 @@ select option {
   transform: scale(0.95) translateY(10px); transition: transform var(--ease-smooth);
 }
 .modal-overlay.active .modal-container { transform: scale(1) translateY(0); }
+
+
 
 
 .modal-close {
@@ -453,6 +531,8 @@ select option {
 .link-sm:hover { color: var(--primary); border-color: var(--primary); }
 
 
+
+
 /* ================================================================
 [LAYER 5] UTILITIES & RESPONSIVE
 ================================================================
@@ -463,12 +543,14 @@ select option {
 }
 
 
+
+
 @media (max-width: 968px) {
   .hero-container { grid-template-columns: 1fr; text-align: center; gap: 3rem; }
   .hero-left { order: 1; display: flex; flex-direction: column; align-items: center; }
   .hero-right { order: 2; width: 100%; margin-top: 2rem; }
   .hero-terminal { height: 300px; }
-  
+ 
   .nav-menu { display: none; }
   .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
   .hamburger .bar { width: 25px; height: 2px; background: #fff; border-radius: 2px; }
@@ -480,7 +562,7 @@ select option {
     border-bottom: 1px solid var(--border-light);
     animation: slideDown 0.3s ease-out forwards;
   }
-  
+ 
   /* Contact Responsive */
   .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; }
   .form-grid { grid-template-columns: 1fr; }
@@ -488,10 +570,14 @@ select option {
 }
 
 
+
+
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
 
 
 /* ================================================================
@@ -506,13 +592,19 @@ select option {
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
 
+
+
 ::selection { background: rgba(99, 102, 241, 0.3); color: #fff; }
+
+
 
 
 @keyframes floatParticle {
   from { transform: translateY(0); opacity: 1; }
   to { transform: translateY(-100vh); opacity: 0; }
 }
+
+
 
 
 .blink-cursor::after {
@@ -525,12 +617,16 @@ select option {
 }
 
 
+
+
 /* ================================================================
 [LAYER 8] CONTACT SECTION
 Modern İletişim Formu Tasarımı
 ================================================================
 */
 .contact-section { padding: 4rem 0 6rem 0; position: relative; overflow: hidden; }
+
+
 
 
 .contact-glow {
@@ -541,12 +637,18 @@ Modern İletişim Formu Tasarımı
 }
 
 
+
+
 .contact-wrapper {
   display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem; margin-top: 2rem; align-items: start;
 }
 
 
+
+
 .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+
+
 
 
 .info-card {
@@ -555,6 +657,8 @@ Modern İletişim Formu Tasarımı
 }
 .info-card h3 { color: #fff; margin-bottom: 1rem; font-size: 1.25rem; }
 .info-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+
 
 
 .contact-methods { display: flex; flex-direction: column; gap: 1.5rem; }
@@ -569,13 +673,176 @@ Modern İletişim Formu Tasarımı
 .method-item a:hover { color: var(--primary); }
 
 
+
+
 .contact-form {
   background: var(--bg-surface); border: 1px solid var(--border-light);
   padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
 
+
+
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+
+/* =========================================
+   FOOTER TASARIMI (Tüm Sayfalar İçin)
+   ========================================= */
+
+
+.footer {
+    background: var(--bg-surface); /* Koyu gri arka plan */
+    border-top: 1px solid var(--border-light);
+    padding: 4rem 0 2rem 0;
+    margin-top: auto; /* Sayfa kısaysa footer'ı en alta itmek için */
+}
+
+
+/* 4 Sütunlu Izgara Yapısı */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr; 
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+
+/* Başlıklar */
+.footer-col h4 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    font-weight: 600;
+}
+
+
+/* Başlık Altı Çizgi Efekti */
+.footer-col h4::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -8px;
+    width: 30px; height: 2px;
+    background: var(--primary); /* Mor/Mavi tonu */
+}
+
+
+.footer-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 1.5rem 0;
+    max-width: 280px;
+}
+
+
+/* Link Listeleri Temizliği */
+.footer-col ul {
+    list-style: none; /* Noktaları kaldır */
+    padding: 0;
+    margin: 0;
+}
+
+
+.footer-col ul li {
+    margin-bottom: 0.8rem;
+}
+
+
+.footer-col ul li a {
+    color: var(--text-muted); /* Gri metin rengi */
+    text-decoration: none; /* Alt çizgiyi kaldır */
+    transition: 0.3s;
+    font-size: 0.95rem;
+    display: inline-block;
+}
+
+
+/* Link Hover Efekti */
+.footer-col ul li a:hover {
+    color: var(--primary);
+    padding-left: 5px; /* Sağa kayma */
+}
+
+
+/* İletişim Listesi */
+.contact-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+
+.contact-list i {
+    color: var(--primary);
+}
+
+
+/* Sosyal Medya İkonları */
+.social-links {
+    display: flex; gap: 10px;
+}
+.social-links a {
+    width: 35px; height: 35px;
+    background: rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    transition: 0.3s;
+    border: 1px solid var(--border-light);
+    text-decoration: none;
+}
+.social-links a:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    transform: translateY(-3px);
+}
+
+
+/* Alt Telif Kısmı */
+.footer-bottom {
+    border-top: 1px solid var(--border-light);
+    padding-top: 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+
+/* --- Responsive (Mobil Uyumluluk) --- */
+@media (max-width: 968px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr; /* Tablette 2 sütun */
+        gap: 2rem;
+    }
+}
+@media (max-width: 576px) {
+    .footer-grid {
+        grid-template-columns: 1fr; /* Mobilde tek sütun */
+        text-align: center;
+    }
+    .footer-desc {
+        margin: 1.5rem auto; /* Ortala */
+    }
+    .footer-col h4::after {
+        left: 50%; 
+        transform: translateX(-50%); /* Çizgiyi ortala */
+    }
+    .social-links {
+        justify-content: center;
+    }
+    .contact-list li {
+        justify-content: center;
+    }
+}
+
+
+
+
 
 
 
