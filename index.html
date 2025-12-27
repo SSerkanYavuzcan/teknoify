@@ -11,8 +11,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
 
+
+
     <meta name="description" content="AI destekli otomasyon, veri analizi ve akıllı çözümler." />
     <meta name="robots" content="index, follow" />
+
+
 
 
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -21,16 +25,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 
+
+
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+
 
 
     <link rel="stylesheet" href="css/style.css" />
 </head>
 
 
+
+
 <body>
+
+
 
 
 <header id="header" class="header">
@@ -44,6 +56,8 @@
             </div>
 
 
+
+
             <ul class="nav-menu" id="navMenu">
                 <li class="nav-item"><a href="#home" class="nav-link">Ana Sayfa</a></li>
                
@@ -53,14 +67,18 @@
                         <li><a href="pages/rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
                         <li><a href="pages/webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
                         <li><a href="pages/ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
-                        <li><a href="pages/api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href= "pages/api.html"><i class="fas fa-plug"></i>API Entegrasyon Hizmetleri</a></li>
                         <li><a href="pages/financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
                         <li><a href="pages/training-consulting.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
                     </ul>
                 </li>
 
 
+
+
                 <li class="nav-item"><a href="#contact" class="nav-link">İletişim</a></li>
+
+
 
 
                 <li class="nav-item nav-login-btn">
@@ -69,6 +87,8 @@
                     </button>
                 </li>
             </ul>
+
+
 
 
             <div class="hamburger" aria-label="Menü" role="button">
@@ -81,11 +101,17 @@
 </header>
 
 
+
+
 <main class="page-frame">
+
+
 
 
     <section id="home" class="hero">
         <div id="stars-container" class="hero-surface"></div>
+
+
 
 
         <div class="hero-container">
@@ -98,6 +124,8 @@
                     <a href="#services" class="btn btn-secondary">Hizmetlerimiz</a>
                 </div>
             </div>
+
+
 
 
             <div class="hero-right">
@@ -113,12 +141,16 @@
     </section>
 
 
+
+
     <section id="services" class="services">
         <div class="container">
             <div class="section-header">
                 <h2>Hizmetlerimiz</h2>
                 <p>Uçtan uca dijital dönüşüm araçları.</p>
             </div>
+
+
 
 
             <div class="services-grid">
@@ -131,6 +163,8 @@
                         <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
                     </div>
                 </article>
+
+
 
 
                 <article class="service-card">
@@ -154,6 +188,8 @@
                 </article>
 
 
+
+
                 <article class="service-card">
                     <div class="icon-box"><i class="fas fa-plug"></i></div>
                     <h3>API Entegrasyon Hizmetleri</h3>
@@ -175,6 +211,8 @@
                 </article>
 
 
+
+
                 <article class="service-card">
                     <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
                     <h3>Eğitim & Danışmanlık</h3>
@@ -189,12 +227,16 @@
     </section>
 
 
+
+
     <section id="contact" class="contact-section">
         <div class="container">
             <div class="section-header">
                 <h2>Projelerinizi Hayata Geçirelim</h2>
                 <p>Aklınızdaki fikri veya ihtiyacınız olan otomasyon çözümünü bize anlatın.</p>
             </div>
+
+
 
 
             <div class="contact-wrapper">
@@ -223,6 +265,8 @@
                 </div>
 
 
+
+
                 <form class="contact-form" action="#" method="POST">
                     <div class="form-grid">
                         <div class="form-group">
@@ -234,6 +278,8 @@
                         </div>
 
 
+
+
                         <div class="form-group">
                             <label for="contact_info">E-posta veya Telefon</label>
                             <div class="input-wrapper">
@@ -243,6 +289,8 @@
                             <div id="contact-error" class="form-error-msg"></div>
                         </div>
                     </div>
+
+
 
 
                     <div class="form-group">
@@ -263,6 +311,8 @@
                     </div>
 
 
+
+
                     <div class="form-group">
                         <label for="message">Projenizden veya Fikrinizden Bahsedin</label>
                         <div class="input-wrapper textarea-wrapper">
@@ -270,6 +320,8 @@
                             <textarea id="message" name="message" rows="4"></textarea>
                         </div>
                     </div>
+
+
 
 
                     <button type="submit" class="btn btn-primary btn-block">
@@ -283,7 +335,11 @@
     </section>
 
 
+
+
 </main>
+
+
 
 
 <div id="loginModal" class="modal-overlay" aria-hidden="true">
@@ -308,6 +364,8 @@
                     </div>
 
 
+
+
                     <div class="form-group">
                         <label for="password">Şifre</label>
                         <div class="input-wrapper">
@@ -315,6 +373,8 @@
                             <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
                         </div>
                     </div>
+
+
 
 
                     <div class="form-actions">
@@ -330,12 +390,17 @@
             </div>
 
 
+
+
             <div id="reset-view" style="display: none;">
+               
                 <div id="reset-form-content">
                     <div class="modal-header">
                         <h3>Şifre Sıfırlama</h3>
                         <p>Hesabınıza ait e-posta adresini girin, size şifre yenileme bağlantısı gönderelim.</p>
                     </div>
+
+
 
 
                     <div class="auth-form">
@@ -346,6 +411,8 @@
                                 <input type="email" id="reset-email" placeholder="E-posta adresiniz" required>
                             </div>
                         </div>
+
+
 
 
                         <div class="form-actions">
@@ -363,6 +430,8 @@
                 </div>
 
 
+
+
                 <div id="reset-success-content" style="display: none; text-align: center; padding: 20px 0;">
                     <div style="width: 70px; height: 70px; background: rgba(40, 199, 111, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
                         <i class="fas fa-check" style="color: #28c76f; font-size: 32px;"></i>
@@ -376,12 +445,20 @@
                         Giriş Yap Ekranına Dön
                     </button>
                 </div>
+
+
+
+
             </div>
+
+
 
 
         </div>
     </div>
 </div>
+
+
 
 
 <footer class="footer">
@@ -433,9 +510,15 @@
 </footer>
 
 
+
+
+
+
 <script src="js/session-manager.js"></script>
 <script src="js/script.js" defer></script>
-<script src="js/cookie.js"></script>
+<script src="js/cookie.js"></script> 
+
+
 
 
 <script>
@@ -445,20 +528,34 @@
        
         const loginView = document.getElementById('login-view');
         const resetView = document.getElementById('reset-view');
+       
+        // İçerik kutuları
         const formContent = document.getElementById('reset-form-content');
         const successContent = document.getElementById('reset-success-content');
+
+
+
+
         const loginEmail = document.getElementById('email');
         const resetEmail = document.getElementById('reset-email');
 
 
+
+
         if (loginView.style.display === 'none') {
+            // Giriş ekranına dönülüyor
             loginView.style.display = 'block';
             resetView.style.display = 'none';
         } else {
+            // Şifre sıfırlama ekranı açılıyor
             loginView.style.display = 'none';
             resetView.style.display = 'block';
+           
+            // HER AÇILIŞTA FORMU GÖSTER, BAŞARI MESAJINI GİZLE (Sıfırla)
             formContent.style.display = 'block';
             successContent.style.display = 'none';
+           
+            // Kullanıcı girişte mail yazdıysa buraya taşı
             if(loginEmail.value) {
                 resetEmail.value = loginEmail.value;
             }
@@ -467,16 +564,20 @@
     }
 
 
+
+
     // Modal Kapatılırsa Görünümü Sıfırla
     function resetModalView() {
         const modal = document.getElementById('loginModal');
         modal.classList.remove('active');
+        // Kısa bir gecikmeyle (animasyon bitince) login ekranına döndür
         setTimeout(() => {
             document.getElementById('login-view').style.display = 'block';
             document.getElementById('reset-view').style.display = 'none';
         }, 300);
     }
    
+    // Modal dışına tıklayınca da resetlemek için
     document.getElementById('loginModal').addEventListener('click', function(e) {
         if (e.target === this) {
             resetModalView();
@@ -484,10 +585,14 @@
     });
 
 
+
+
     // Firebase Şifre Sıfırlama
     function sendResetLink() {
         const email = document.getElementById('reset-email').value;
         const btn = document.getElementById('btn-reset-submit');
+       
+        // İçerik kutuları
         const formContent = document.getElementById('reset-form-content');
         const successContent = document.getElementById('reset-success-content');
        
@@ -497,13 +602,18 @@
         }
 
 
+
+
         const originalHtml = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = '<span>Gönderiliyor...</span> <i class="fas fa-spinner fa-spin"></i>';
 
 
+
+
         firebase.auth().sendPasswordResetEmail(email)
             .then(() => {
+                // BAŞARILI: Formu gizle, başarı mesajını göster
                 formContent.style.display = 'none';
                 successContent.style.display = 'block';
             })
@@ -513,6 +623,8 @@
                 if (error.code === 'auth/user-not-found') msg = "Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.";
                 if (error.code === 'auth/invalid-email') msg = "Geçersiz e-posta formatı.";
                 alert(msg);
+               
+                // Hata durumunda butonu eski haline getir
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
             });
@@ -520,8 +632,16 @@
 </script>
 
 
+
+
 </body>
 </html>
+
+
+
+
+
+
 
 
 
