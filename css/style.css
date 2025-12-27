@@ -687,107 +687,111 @@ Modern İletişim Formu Tasarımı
 
 
 /* =========================================
-   FOOTER TASARIMI (Tüm Sayfalar İçin)
+   COMPACT FOOTER TASARIMI (Güncel)
    ========================================= */
 
 
 .footer {
-    background: var(--bg-surface); /* Koyu gri arka plan */
+    background: var(--bg-surface);
     border-top: 1px solid var(--border-light);
-    padding: 4rem 0 2rem 0;
-    margin-top: auto; /* Sayfa kısaysa footer'ı en alta itmek için */
+    /* Üstten 8rem boşluk bırak (İçerikten uzaklaşsın) */
+    /* İç boşluğu (padding) azalttık (Daha ince olsun) */
+    margin-top: 8rem; 
+    padding: 3rem 0 1.5rem 0; 
 }
 
 
-/* 4 Sütunlu Izgara Yapısı */
+/* 3 Sütunlu Izgara Yapısı (Kurumsal kalktı) */
 .footer-grid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr; 
+    /* 1.5 birim Logo, 1 birim Yasal, 1 birim İletişim */
+    grid-template-columns: 1.5fr 1fr 1fr; 
     gap: 3rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 
 /* Başlıklar */
 .footer-col h4 {
     color: #fff;
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
+    font-size: 1rem; /* Başlık fontunu biraz küçülttük */
+    margin-bottom: 1.2rem;
     position: relative;
     display: inline-block;
     font-weight: 600;
 }
 
 
-/* Başlık Altı Çizgi Efekti */
+/* Başlık Altı Çizgi */
 .footer-col h4::after {
     content: '';
     position: absolute;
     left: 0; bottom: -8px;
-    width: 30px; height: 2px;
-    background: var(--primary); /* Mor/Mavi tonu */
+    width: 25px; height: 2px;
+    background: var(--primary);
 }
 
 
 .footer-desc {
     color: var(--text-muted);
     font-size: 0.9rem;
-    line-height: 1.6;
-    margin: 1.5rem 0;
-    max-width: 280px;
+    line-height: 1.5;
+    margin: 1rem 0 1.5rem 0;
+    max-width: 300px;
 }
 
 
-/* Link Listeleri Temizliği */
+/* Linkler */
 .footer-col ul {
-    list-style: none; /* Noktaları kaldır */
+    list-style: none;
     padding: 0;
     margin: 0;
 }
 
 
 .footer-col ul li {
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem; /* Satır arasını daralttık */
 }
 
 
 .footer-col ul li a {
-    color: var(--text-muted); /* Gri metin rengi */
-    text-decoration: none; /* Alt çizgiyi kaldır */
+    color: var(--text-muted);
+    text-decoration: none;
     transition: 0.3s;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     display: inline-block;
 }
 
 
-/* Link Hover Efekti */
 .footer-col ul li a:hover {
     color: var(--primary);
-    padding-left: 5px; /* Sağa kayma */
+    padding-left: 5px;
 }
 
 
-/* İletişim Listesi */
+/* İletişim */
 .contact-list li {
     display: flex;
     align-items: center;
     gap: 10px;
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
 }
 
 
 .contact-list i {
     color: var(--primary);
+    font-size: 0.9rem;
 }
 
 
-/* Sosyal Medya İkonları */
+/* Sosyal Medya */
 .social-links {
     display: flex; gap: 10px;
 }
 .social-links a {
-    width: 35px; height: 35px;
+    width: 32px; height: 32px; /* İkonları biraz küçülttük */
     background: rgba(255,255,255,0.05);
     display: flex; align-items: center; justify-content: center;
     border-radius: 50%;
@@ -795,6 +799,7 @@ Modern İletişim Formu Tasarımı
     transition: 0.3s;
     border: 1px solid var(--border-light);
     text-decoration: none;
+    font-size: 0.9rem;
 }
 .social-links a:hover {
     background: var(--primary);
@@ -803,46 +808,28 @@ Modern İletişim Formu Tasarımı
 }
 
 
-/* Alt Telif Kısmı */
+/* Alt Telif */
 .footer-bottom {
     border-top: 1px solid var(--border-light);
     padding-top: 1.5rem;
     text-align: center;
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
 }
 
 
-/* --- Responsive (Mobil Uyumluluk) --- */
+/* Responsive */
 @media (max-width: 968px) {
+    .footer { margin-top: 5rem; }
     .footer-grid {
-        grid-template-columns: 1fr 1fr; /* Tablette 2 sütun */
-        gap: 2rem;
-    }
-}
-@media (max-width: 576px) {
-    .footer-grid {
-        grid-template-columns: 1fr; /* Mobilde tek sütun */
+        grid-template-columns: 1fr; /* Mobilde tek sütuna düşür */
         text-align: center;
+        gap: 2.5rem;
     }
-    .footer-desc {
-        margin: 1.5rem auto; /* Ortala */
-    }
-    .footer-col h4::after {
-        left: 50%; 
-        transform: translateX(-50%); /* Çizgiyi ortala */
-    }
-    .social-links {
-        justify-content: center;
-    }
-    .contact-list li {
-        justify-content: center;
-    }
+    .footer-desc { margin: 1rem auto; }
+    .footer-col h4::after { left: 50%; transform: translateX(-50%); }
+    .social-links, .contact-list li { justify-content: center; }
 }
-
-
-
-
 
 
 
