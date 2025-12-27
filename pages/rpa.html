@@ -239,8 +239,6 @@
 </footer>
 
 
-
-
 <div class="modal-overlay" id="loginModal">
     <div class="modal-container">
         <div class="modal-close"><i class="fas fa-times"></i></div>
@@ -286,7 +284,7 @@
     let counterStarted = false;
 
 
-    // --- Sayaç Animasyonu (7/24 Operasyon) ---
+    // Sayaç Animasyonu
     function animateCounter(id, start, end, duration) {
         if (start === end) return;
         const obj = document.getElementById(id);
@@ -302,7 +300,7 @@
         window.requestAnimationFrame(step);
     }
    
-    // --- Scroll Gözlemcisi ---
+    // Scroll Gözlemcisi
     const observerOptions = {
         root: null,
         rootMargin: '0px',
