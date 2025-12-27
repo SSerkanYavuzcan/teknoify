@@ -1,14 +1,15 @@
 /* ================================================================
    [FILE] api.css
    [PURPOSE] API Integration Services Page Styles
-   [THEME] Connectivity (Amber/Orange accents) - Layout synced
+   [THEME] Connectivity (Indigo/Purple accents) - Harmonized with Site Theme
    ================================================================ */
 
-/* --- RENK PALETİ (API Teması) --- */
+/* --- RENK PALETİ (Site Tasarımıyla Uyumlu) --- */
 :root {
-    --api-primary: #f59e0b;    /* Amber (Ana Renk - Enerji/Bağlantı) */
-    --api-secondary: #3b82f6;  /* Blue (Yan Sistemler/Cloud) */
-    --api-glow: rgba(245, 158, 11, 0.5);
+    /* Turuncu yerine, site genelindeki mor/indigo tonu */
+    --api-primary: #6366f1;    /* Indigo (Ana Renk - Bağlantı) */
+    --api-secondary: #3b82f6;  /* Blue (Yan Sistemler/Cloud) - Aynı kaldı */
+    --api-glow: rgba(99, 102, 241, 0.5);
 }
 
 /* --- HERO SECTION (DİĞER SAYFALARLA EŞİTLENDİ) --- */
@@ -18,9 +19,9 @@
     position: relative;
     overflow: hidden;
     
-    /* ARKA PLAN: Standart Grid Yapısı */
+    /* ARKA PLAN: Standart Grid Yapısı (Mor Parlama ile) */
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 20%), /* Hafif amber parlama */
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 20%), /* Hafif mor parlama */
         linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px;
@@ -38,16 +39,16 @@
     z-index: 2;
 }
 
-/* BADGE (ETİKET) - API RENGİ */
+/* BADGE (ETİKET) - MOR TEMA */
 .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     
-    /* Amber/Turuncu tonlar */
-    background: rgba(245, 158, 11, 0.1); 
+    /* Mor/Indigo tonlar */
+    background: rgba(99, 102, 241, 0.1); 
     color: var(--api-primary); 
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.2);
     
     padding: 6px 12px;
     border-radius: 20px;
@@ -83,7 +84,7 @@
     height: 350px;
     
     /* Çerçevesiz, Floating yapı */
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, rgba(0,0,0,0) 70%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, rgba(0,0,0,0) 70%);
     border: none;
     box-shadow: none;
     backdrop-filter: none;
@@ -93,7 +94,7 @@
     justify-content: center;
 }
 
-/* 1. MERKEZİ HUB */
+/* 1. MERKEZİ HUB (Mor) */
 .central-hub {
     position: absolute;
     width: 80px; height: 80px;
@@ -115,7 +116,7 @@
     position: absolute;
     width: 100%; height: 100%;
     border-radius: 50%;
-    border: 2px dashed rgba(245, 158, 11, 0.5);
+    border: 2px dashed rgba(99, 102, 241, 0.5);
     animation: spinHub 10s linear infinite;
 }
 
@@ -156,13 +157,16 @@
 .node-erp { top: 10%; right: 10%; }
 .node-cloud { bottom: 10%; left: 50%; transform: translateX(-50%); }
 
-/* Hover Efektleri (Canlılık katsın) */
-.api-anim-box:hover .node-icon { border-color: var(--api-secondary); color: var(--api-secondary); }
-.api-anim-box:hover .node-crm .node-icon { color: #f43f5e; } /* CRM Red */
-.api-anim-box:hover .node-erp .node-icon { color: #10b981; } /* ERP Green */
-.api-anim-box:hover .node-cloud .node-icon { color: #3b82f6; } /* Cloud Blue */
+/* Hover Efektleri */
+.api-anim-box:hover .node-icon { border-color: var(--api-primary); color: var(--api-primary); }
+/* İsteğe bağlı olarak her node için farklı renkler tutulabilir veya hepsi mor yapılabilir.
+   Şimdilik hepsini ana renge çekiyoruz. */
+.api-anim-box:hover .node-crm .node-icon { color: var(--api-primary); }
+.api-anim-box:hover .node-erp .node-icon { color: var(--api-primary); }
+.api-anim-box:hover .node-cloud .node-icon { color: var(--api-primary); }
 
-/* 3. BAĞLANTI HATLARI */
+
+/* 3. BAĞLANTI HATLARI (Mor) */
 .connection-lines {
     position: absolute;
     width: 100%; height: 100%;
@@ -171,32 +175,17 @@
 
 .conn-line {
     position: absolute;
-    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
     height: 1px;
     transform-origin: left center;
 }
 
 /* Hat Konumlandırmaları (Basit Geometri) */
-/* Merkezden CRM'e */
-.c1 {
-    top: 50%; left: 50%;
-    width: 160px;
-    transform: rotate(-135deg); /* Sol yukarı */
-}
-/* Merkezden ERP'ye */
-.c2 {
-    top: 50%; left: 50%;
-    width: 160px;
-    transform: rotate(-45deg); /* Sağ yukarı */
-}
-/* Merkezden Cloud'a */
-.c3 {
-    top: 50%; left: 50%;
-    width: 140px;
-    transform: rotate(90deg); /* Aşağı */
-}
+.c1 { top: 50%; left: 50%; width: 160px; transform: rotate(-135deg); }
+.c2 { top: 50%; left: 50%; width: 160px; transform: rotate(-45deg); }
+.c3 { top: 50%; left: 50%; width: 140px; transform: rotate(90deg); }
 
-/* 4. VERİ PAKETLERİ (Data Packets) */
+/* 4. VERİ PAKETLERİ (Mor) */
 .data-packets {
     position: absolute;
     width: 100%; height: 100%;
@@ -209,35 +198,34 @@
     background: var(--api-primary);
     border-radius: 50%;
     box-shadow: 0 0 10px var(--api-primary);
-    top: 50%; left: 50%; /* Merkezden başlar */
+    top: 50%; left: 50%;
     opacity: 0;
 }
 
-/* Paket Hareketleri: Merkez <-> Node */
+/* Paket Hareketleri */
 .pkt-1 { animation: flowCRM 3s infinite linear; }
-.pkt-2 { animation: flowERP 3s infinite linear 1s; } /* Gecikmeli */
+.pkt-2 { animation: flowERP 3s infinite linear 1s; }
 .pkt-3 { animation: flowCloud 3s infinite linear 2s; }
 
-/* Animasyon Keyframes (Basit mesafe ve açı hesabı) */
 @keyframes flowCRM {
     0% { transform: rotate(-135deg) translateX(0); opacity: 0; }
     20% { opacity: 1; }
     80% { opacity: 1; }
-    100% { transform: rotate(-135deg) translateX(140px); opacity: 0; } /* CRM'e gider */
+    100% { transform: rotate(-135deg) translateX(140px); opacity: 0; }
 }
 
 @keyframes flowERP {
-    0% { transform: rotate(-45deg) translateX(140px); opacity: 0; } /* ERP'den gelir */
+    0% { transform: rotate(-45deg) translateX(140px); opacity: 0; }
     20% { opacity: 1; }
     80% { opacity: 1; }
-    100% { transform: rotate(-45deg) translateX(0); opacity: 0; } /* Merkeze */
+    100% { transform: rotate(-45deg) translateX(0); opacity: 0; }
 }
 
 @keyframes flowCloud {
-    0% { transform: rotate(90deg) translateX(0); opacity: 0; } /* Merkezden başlar */
+    0% { transform: rotate(90deg) translateX(0); opacity: 0; }
     20% { opacity: 1; }
     80% { opacity: 1; }
-    100% { transform: rotate(90deg) translateX(120px); opacity: 0; } /* Cloud'a gider */
+    100% { transform: rotate(90deg) translateX(120px); opacity: 0; }
 }
 
 
@@ -272,7 +260,7 @@
     margin-bottom: 5rem;
 }
 
-/* Kartlar Grid */
+/* Kartlar Grid (Mor Vurgulu) */
 .benefit-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -291,12 +279,12 @@
 .benefit-card:hover {
     transform: translateY(-5px);
     border-color: var(--api-primary);
-    box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
 }
 
 .benefit-icon {
     width: 50px; height: 50px;
-    background: rgba(245, 158, 11, 0.1);
+    background: rgba(99, 102, 241, 0.1);
     color: var(--api-primary);
     display: flex; align-items: center; justify-content: center;
     border-radius: 12px;
@@ -315,7 +303,7 @@
     line-height: 1.6;
 }
 
-/* Use Cases */
+/* Use Cases (Mor Vurgulu) */
 .use-cases-wrapper {
     margin-bottom: 6rem;
 }
@@ -337,7 +325,7 @@
 }
 
 .use-case-item:hover {
-    background: rgba(245, 158, 11, 0.05);
+    background: rgba(99, 102, 241, 0.05);
     border-color: var(--api-primary);
     transform: scale(1.02);
 }
@@ -376,4 +364,5 @@
     .benefit-cards-grid { gap: 2rem; margin-bottom: 4rem; }
     .section-heading { margin-bottom: 3rem; margin-top: 3rem; }
 }
+
 
