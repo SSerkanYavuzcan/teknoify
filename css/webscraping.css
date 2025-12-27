@@ -1,27 +1,26 @@
 /* ================================================================
    [FILE] webscraping.css
    [PURPOSE] Web Scraping & Data Mining Page Styles
-   [THEME] Cyber Data (Cyan/Green accents) - Harmonized with RPA
+   [THEME] Cyber Data (Cyan/Green accents) - Layout synced with RPA
    ================================================================ */
 
 /* --- RENK PALETİ --- */
 :root {
-    --ws-primary: #0ea5e9;    /* Sky Blue */
+    --ws-primary: #0ea5e9;    /* Sky Blue (İkonlar ve Spider için) */
     --ws-accent: #10b981;     /* Emerald Green */
     --ws-glow: rgba(14, 165, 233, 0.5);
 }
 
-/* --- HERO SECTION --- */
+/* --- HERO SECTION (RPA İLE EŞİTLENDİ) --- */
 .ws-hero {
-    /* REVİZE 1: Üst boşluk artırıldı (100px -> 180px) */
-    /* Böylece başlık ve etiket daha aşağıda, ortalı duracak */
-    padding: 180px 0 100px 0;
+    /* Hizalama RPA ile birebir aynı yapıldı */
+    padding: 140px 0 80px 0;
     position: relative;
     overflow: hidden;
     
-    /* Arka Plan Deseni (RPA ile Aynı Grid) */
+    /* Arka Plan: RPA ile aynı Grid yapısı */
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 20%),
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 20%),
         linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px;
@@ -38,29 +37,32 @@
     z-index: 2;
 }
 
-/* Badge (Etiket) */
+/* BADGE (ETİKET) - RPA RENGİNE DÖNÜŞTÜRÜLDÜ */
 .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(14, 165, 233, 0.1);
-    color: var(--ws-primary);
+    
+    /* RPA'daki Mor/Indigo renkleri kullanıldı */
+    background: rgba(99, 102, 241, 0.1); 
+    color: var(--primary); /* style.css'teki ana renk */
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
     font-family: var(--font-main);
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(14, 165, 233, 0.2);
 }
 
-/* Başlık */
+/* BAŞLIK */
 .ws-hero h1 {
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 1.5rem;
-    color: #fff; /* Net Beyaz (RPA ile aynı) */
+    color: #fff; /* RPA gibi net beyaz */
 }
 
 .subtitle {
@@ -74,18 +76,17 @@
     display: flex; gap: 1rem;
 }
 
-/* --- ANIMATION BOX (REVİZE EDİLDİ) --- */
+/* --- ANIMATION BOX (ÇERÇEVESİZ / FLOATING) --- */
 .scraping-anim-box {
     position: relative;
     height: 350px;
     
-    /* REVİZE 2: Kutu Görünümü Kaldırıldı */
-    background: transparent;      /* Arka plan şeffaf */
-    border: none;                 /* Kenarlık yok */
-    box-shadow: none;             /* Gölge yok */
-    backdrop-filter: none;        /* Bulanıklık yok */
+    /* ÇERÇEVE VE ARKA PLAN KALDIRILDI */
+    background: radial-gradient(circle, rgba(99,102,241,0.05) 0%, rgba(0,0,0,0) 70%); /* RPA ile aynı hafif glow */
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
     
-    /* İçerik Hizalama */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -94,7 +95,7 @@
 /* 1. HEDEF WEB SİTESİ */
 .target-website {
     position: absolute;
-    left: 0; /* RPA gibi biraz daha kenara */
+    left: 0;
     top: 50%;
     transform: translateY(-50%);
     width: 120px;
@@ -149,12 +150,15 @@
 .spider-body {
     font-size: 3rem;
     color: var(--ws-primary);
-    background: rgba(14, 165, 233, 0.1); /* Sadece botun kendisinde hafif bir glow kaldı */
+    
+    /* Botun kendi arkasında hafif bir glow bıraktık sadece */
+    background: rgba(14, 165, 233, 0.05); 
     width: 80px; height: 80px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    border: 1px solid rgba(14, 165, 233, 0.3);
-    box-shadow: 0 0 20px var(--ws-glow);
+    border: 1px solid rgba(14, 165, 233, 0.2);
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+    
     position: relative;
     animation: spiderFloat 4s ease-in-out infinite;
 }
@@ -215,7 +219,7 @@
 /* 4. DATABASE */
 .database-storage {
     position: absolute;
-    right: 10px; /* RPA gibi sağa yaslı */
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 4rem;
@@ -247,6 +251,7 @@
     90%, 100% { background: #10b981; box-shadow: 0 0 10px #10b981; }
 }
 
+
 /* --- CONTENT SECTION --- */
 .ws-content {
     padding: 4rem 0 6rem 0;
@@ -255,6 +260,7 @@
 /* Açıklama Metni */
 .intro-text-center {
     max-width: 800px;
+    /* RPA'dan gelen geniş boşluklar korundu */
     margin: 0 auto 6rem auto; 
     text-align: center;
 }
