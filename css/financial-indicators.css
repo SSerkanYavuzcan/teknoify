@@ -1,24 +1,25 @@
 /* ================================================================
    [FILE] financial-indicators.css
    [PURPOSE] Financial Indicators & Bot Page Styles
-   [THEME] Finance (Indigo Main + LIVE TRADING GREEN Accents)
+   [THEME] Finance/Trading (Indigo/Purple main theme, Green Signal accent)
    ================================================================ */
 
-/* --- RENK PALETİ --- */
+/* --- RENK PALETİ (Revize Edildi) --- */
 :root {
-    /* 1. SİTE ANA RENGİ (Başlıklar/İkonlar için Mor/Indigo) */
+    /* Ana Renk: Site Temasıyla Uyumlu Indigo/Mor (Yükseliş Mumları için de bu kullanılacak) */
     --fi-primary: #6366f1;
     
-    /* 2. TEKNOLOJİ RENGİ (Mavi - Çizgiler) */
+    /* İkincil Renk: Mavi (Fiyat Çizgisi/Teknoloji) */
     --fi-secondary: #3b82f6;
     
-    /* 3. TRADING RENKLERİ (Özel İstek: Canlı Yeşil Mumlar) */
-    --trade-green: #10b981;   /* Emerald Green (Yükseliş/Sinyal) */
-    --trade-red: #ef4444;     /* Rose Red (Düşüş) */
+    /* Düşüş Rengi: Kırmızı (Düşüş Mumu/Zarar) */
+    --fi-loss: #ef4444;
     
-    /* Parlama Efekti */
+    /* ÖZEL RENK: Sadece 'AL SİNYALİ' kutusu için korunan Orijinal Yeşil */
+    --fi-accent-green: #10b981;
+
+    /* Parlama Efekti: Ana renge (Indigo) göre güncellendi */
     --fi-glow: rgba(99, 102, 241, 0.5);
-    --trade-glow: rgba(16, 185, 129, 0.6); /* Yeşil Parlama */
 }
 
 /* --- HERO SECTION --- */
@@ -27,7 +28,7 @@
     position: relative;
     overflow: hidden;
     
-    /* Arka Plan: Mor/Indigo Parlama (Site geneliyle uyumlu) */
+    /* ARKA PLAN: Mor/Indigo Parlama */
     background-image: 
         radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 20%),
         linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
@@ -47,14 +48,17 @@
     z-index: 2;
 }
 
-/* BADGE (ETİKET) - Site Uyumu İçin Mor */
+/* BADGE (ETİKET) - MOR TEMA */
 .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    
+    /* Mor/Indigo tonlar */
     background: rgba(99, 102, 241, 0.1); 
     color: var(--fi-primary); 
     border: 1px solid rgba(99, 102, 241, 0.2);
+    
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.85rem;
@@ -69,7 +73,7 @@
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 1.5rem;
-    color: #fff;
+    color: #fff; /* Net Beyaz */
 }
 
 .subtitle {
@@ -83,12 +87,12 @@
     display: flex; gap: 1rem;
 }
 
-/* --- ANIMATION BOX (LIVE TRADING CHART) --- */
+/* --- ANIMATION BOX (TRADING CHART) --- */
 .fi-anim-box {
     position: relative;
     height: 350px;
     
-    /* Mor tonlu hafif arka plan (Kutuyu vurgulamak için) */
+    /* Mor Parlama */
     background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, rgba(0,0,0,0) 70%);
     border: none;
     box-shadow: none;
@@ -114,7 +118,7 @@
 .grid-line.v:nth-child(5) { left: 50%; }
 .grid-line.v:nth-child(6) { left: 75%; }
 
-/* 2. MUM ÇUBUKLARI (CANLI HAREKETLİ) */
+/* 2. MUM ÇUBUKLARI (Candles) - REVİZE EDİLDİ */
 .candles-container {
     position: absolute;
     bottom: 50px; left: 20px; right: 20px; top: 50px;
@@ -127,8 +131,8 @@
     width: 12px;
     border-radius: 2px;
     position: relative;
-    /* SÜREKLİ HAREKET ANİMASYONU EKLENDİ */
-    animation: liveFluctuation 3s ease-in-out infinite alternate;
+    animation: growCandle 1s ease-out forwards;
+    opacity: 0;
 }
 
 /* Mum Fitilleri */
@@ -139,39 +143,28 @@
     background: inherit; opacity: 0.5; z-index: -1;
 }
 
-/* --- RENK REVİZESİ: Mumlar YEŞİL oldu --- */
+/* Mum Tipleri */
+/* REVİZE: Yükseliş mumu artık Mor (Indigo) */
 .c-up { 
-    background: var(--trade-green); 
-    box-shadow: 0 0 15px var(--trade-glow); /* Yeşil Parlama */
+    background: var(--fi-primary); 
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
 }
-.c-down { 
-    background: var(--trade-red); 
-    opacity: 0.8;
-}
+.c-down { background: var(--fi-loss); }
 
-/* Canlı Fiyat Hareketi Simülasyonu (Her mum farklı oynar) */
-.candle:nth-child(1) { height: 40px; animation-duration: 2.5s; }
-.candle:nth-child(2) { height: 30px; animation-duration: 3.2s; animation-delay: 0.5s; }
-.candle:nth-child(3) { height: 50px; animation-duration: 2.1s; animation-delay: 0.2s; }
-.candle:nth-child(4) { height: 80px; animation-duration: 4s; animation-delay: 0s; } /* Büyük Yükseliş */
-.candle:nth-child(5) { height: 20px; animation-duration: 1.8s; animation-delay: 1s; }
-.candle:nth-child(6) { height: 60px; animation-duration: 0.5s; animation-name: rapidPulse; } /* Aktif Mum (Hızlı) */
+/* Animasyonlar */
+.candle:nth-child(1) { height: 40px; margin-bottom: 20px; animation-delay: 0.2s; }
+.candle:nth-child(2) { height: 30px; margin-bottom: 10px; animation-delay: 0.6s; }
+.candle:nth-child(3) { height: 50px; margin-bottom: 30px; animation-delay: 1.0s; }
+.candle:nth-child(4) { height: 80px; margin-bottom: 50px; animation-delay: 1.4s; }
+.candle:nth-child(5) { height: 20px; margin-bottom: 100px; animation-delay: 1.8s; }
+.candle:nth-child(6) { height: 60px; margin-bottom: 110px; animation-delay: 2.2s; }
 
-/* Mumların boyunun sürekli değişmesi (Nefes Alma Efekti) */
-@keyframes liveFluctuation {
-    0% { transform: scaleY(1); }
-    50% { transform: scaleY(1.1); }
-    100% { transform: scaleY(0.95); }
+@keyframes growCandle {
+    from { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
+    to { transform: scaleY(1); opacity: 1; transform-origin: bottom; }
 }
 
-/* Son mum için hızlı "Ticker" efekti */
-@keyframes rapidPulse {
-    0% { transform: scaleY(1); opacity: 1; }
-    50% { transform: scaleY(1.2); opacity: 0.8; }
-    100% { transform: scaleY(0.9); opacity: 1; }
-}
-
-/* 3. HAREKETLİ FİYAT ÇİZGİSİ */
+/* 3. HAREKETLİ FİYAT ÇİZGİSİ (Mavi) */
 .price-line-svg {
     position: absolute;
     top: 50px; left: 20px; width: calc(100% - 40px); height: calc(100% - 100px);
@@ -184,23 +177,23 @@
     stroke: var(--fi-secondary);
     stroke-width: 3;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 8px var(--fi-secondary));
-    stroke-dasharray: 20;
-    /* Çizginin içinden veri akıyormuş gibi hareket eder */
-    animation: flowLine 1s linear infinite;
+    filter: drop-shadow(0 0 5px var(--fi-secondary));
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 3s ease-out forwards 0.5s;
 }
 
-@keyframes flowLine {
-    to { stroke-dashoffset: -40; }
+@keyframes drawLine {
+    to { stroke-dashoffset: 0; }
 }
 
-/* 4. BOT SİNYALİ (AL) - CANLI VE YEŞİL */
+/* 4. BOT SİNYALİ (AL) - KRİTİK REVİZE */
 .signal-box {
     position: absolute;
     top: 20%; right: 10%;
     
-    /* ÖZEL İSTEK: Arka plan YEŞİL */
-    background: rgba(16, 185, 129, 0.9); 
+    /* ÖZEL İSTEK: Arka plan orijinal YEŞİL olarak korundu */
+    background: rgba(16, 185, 129, 0.9); /* Veya var(--fi-accent-green) */
     
     padding: 8px 16px;
     border-radius: 8px;
@@ -209,11 +202,11 @@
     font-size: 0.85rem;
     display: flex; align-items: center; gap: 8px;
     
-    /* Yeşil Glow */
-    box-shadow: 0 0 25px var(--trade-glow);
+    /* Gölge de yeşil kalmalı */
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
     
-    /* Havada süzülme animasyonu */
-    animation: floatSignal 3s ease-in-out infinite;
+    opacity: 0;
+    animation: popSignal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 2.5s;
     z-index: 10;
 }
 
@@ -223,9 +216,9 @@
     animation: pulseDot 1s infinite;
 }
 
-@keyframes floatSignal {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+@keyframes popSignal {
+    from { transform: scale(0.5) translateY(20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
 }
 
 @keyframes pulseDot {
@@ -256,10 +249,10 @@
     animation: scrollTicker 10s linear infinite;
 }
 
-/* Rakam Renkleri */
-.ticker-tape span:nth-child(1) { color: var(--trade-green); } /* BTC Yeşil */
-.ticker-tape span:nth-child(2) { color: var(--trade-green); } /* ETH Yeşil */
-.ticker-tape span:nth-child(3) { color: var(--trade-red); }   /* XAU Kırmızı */
+/* REVİZE: Yükselişler Mor (Indigo) oldu */
+.ticker-tape span:nth-child(1) { color: var(--fi-primary); } /* BTC + */
+.ticker-tape span:nth-child(2) { color: var(--fi-primary); } /* ETH + */
+.ticker-tape span:nth-child(3) { color: var(--fi-loss); }    /* XAU - */
 
 @keyframes scrollTicker {
     from { transform: translateX(100%); }
@@ -267,11 +260,12 @@
 }
 
 
-/* --- CONTENT SECTION --- */
+/* --- CONTENT SECTION (SPACING & LAYOUT) --- */
 .fi-content {
     padding: 4rem 0 6rem 0;
 }
 
+/* Açıklama Metni */
 .intro-text-center {
     max-width: 800px;
     margin: 0 auto 6rem auto; 
@@ -288,6 +282,7 @@
     line-height: 1.7;
 }
 
+/* Başlıklar */
 .section-heading {
     text-align: center;
     font-size: 1.75rem;
@@ -296,7 +291,7 @@
     margin-bottom: 5rem;
 }
 
-/* Kartlar Grid (Site Uyumu İçin Mor Hover) */
+/* Kartlar Grid (Mor Vurgulu) */
 .benefit-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -314,12 +309,14 @@
 
 .benefit-card:hover {
     transform: translateY(-5px);
-    border-color: var(--fi-primary); /* Mor Kenarlık */
+    /* REVİZE: Hover rengi Mor */
+    border-color: var(--fi-primary);
     box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
 }
 
 .benefit-icon {
     width: 50px; height: 50px;
+    /* REVİZE: İkon arka planı Mor */
     background: rgba(99, 102, 241, 0.1);
     color: var(--fi-primary);
     display: flex; align-items: center; justify-content: center;
@@ -339,7 +336,7 @@
     line-height: 1.6;
 }
 
-/* Use Cases */
+/* Use Cases (Mavi Vurgulu) */
 .use-cases-wrapper {
     margin-bottom: 6rem;
 }
@@ -361,14 +358,14 @@
 }
 
 .use-case-item:hover {
-    background: rgba(99, 102, 241, 0.05);
-    border-color: var(--fi-primary);
+    background: rgba(59, 130, 246, 0.05);
+    border-color: var(--fi-secondary);
     transform: scale(1.02);
 }
 
 .uc-icon {
     font-size: 2rem;
-    color: var(--fi-primary);
+    color: var(--fi-secondary);
     margin-bottom: 1rem;
 }
 
