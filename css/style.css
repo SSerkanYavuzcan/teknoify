@@ -687,32 +687,32 @@ Modern İletişim Formu Tasarımı
 
 
 /* =========================================
-   COMPACT & GRID FOOTER (Final)
+   ULTRA COMPACT FOOTER (Minimum Yükseklik)
    ========================================= */
 
 
 .footer {
     background: var(--bg-surface);
     border-top: 1px solid var(--border-light);
-    margin-top: 6rem; 
-    padding: 2.5rem 0 1.5rem 0; /* Padding biraz daha azaltıldı */
+    margin-top: 5rem; /* Üstteki içerikle mesafe */
+    padding: 1.5rem 0 0.8rem 0; /* İç boşluklar MİNİMUMA indirildi */
 }
 
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3 Eşit Sütun */
+    grid-template-columns: 1.2fr 1fr 1fr; /* Sol sütunu biraz daralttık */
     gap: 1rem;
-    margin-bottom: 1.5rem;
-    align-items: center; /* Dikeyde ortala */
+    margin-bottom: 0.8rem; /* Alt çizgi ile mesafe kısaldı */
+    align-items: start;
 }
 
 
-/* --- KOLON STİLLERİ --- */
+/* --- BAŞLIKLAR (Daha kompakt) --- */
 .footer-col h4 {
     color: #fff;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
+    font-size: 0.9rem; /* Font küçüldü */
+    margin-bottom: 0.5rem; /* Başlık altı boşluk azaldı */
     position: relative;
     display: inline-block;
     font-weight: 600;
@@ -723,19 +723,20 @@ Modern İletişim Formu Tasarımı
 .footer-col h4::after {
     content: '';
     position: absolute;
-    bottom: -6px;
-    width: 25px; height: 2px;
+    bottom: -4px; /* Çizgi başlığa yaklaştı */
+    width: 20px; height: 2px;
     background: var(--primary);
     border-radius: 2px;
 }
 
 
+/* Açıklama Metni (Sol Sütun) */
 .footer-desc {
     color: var(--text-muted);
-    font-size: 0.85rem;
-    line-height: 1.4;
-    margin: 0.5rem 0 1rem 0;
-    max-width: 280px;
+    font-size: 0.8rem; /* Font küçüldü */
+    line-height: 1.3;  /* Satır aralığı sıkılaştı */
+    margin: 0.3rem 0 0.5rem 0; /* Marginler sıkılaştı */
+    max-width: 260px;
 }
 
 
@@ -747,7 +748,14 @@ Modern İletişim Formu Tasarımı
 .footer-col:nth-child(1) h4::after { left: 0; } 
 
 
-/* --- 2. KOLON (ORTA - YASAL - 2x2 GRID) --- */
+/* Logo ayarı (Biraz küçültelim) */
+.footer-col:nth-child(1) .logo-text { font-size: 1.1rem; }
+.footer-col:nth-child(1) .logo-icon { font-size: 1rem; }
+
+
+
+
+/* --- 2. KOLON (ORTA - YASAL - 2x2 GRID SIKIŞTIRILMIŞ) --- */
 .footer-col:nth-child(2) {
     text-align: center;
     display: flex; flex-direction: column; align-items: center;
@@ -757,24 +765,23 @@ Modern İletişim Formu Tasarımı
 }
 
 
-/* ÖNEMLİ: YASAL LİNKLERİ 2x2 YAPMA KODU */
 .footer-col:nth-child(2) ul {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* İki sütun */
-    column-gap: 2rem; /* Sütunlar arası boşluk */
-    row-gap: 0.5rem;  /* Satırlar arası boşluk */
-    padding: 0;
-    margin: 0;
+    grid-template-columns: 1fr 1fr; 
+    column-gap: 1.5rem; /* Yan boşluk */
+    row-gap: 0.2rem;    /* Satır boşluğu MİNİMUM */
+    padding: 0; margin: 0;
     list-style: none;
 }
 
 
-/* Linkleri ortalamak yerine sola yaslı ama blok ortalı */
 .footer-col:nth-child(2) ul li {
-    margin-bottom: 0; /* Grid gap kullandığımız için margin'i sıfırladık */
-    text-align: center; /* Veya left yapabilirsiniz */
-    white-space: nowrap; /* Yazıların alt satıra kaymasını engelle */
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
 }
+
+
 
 
 /* --- 3. KOLON (SAĞ - İLETİŞİM) --- */
@@ -787,12 +794,14 @@ Modern İletişim Formu Tasarımı
 }
 
 
-/* Link Stilleri */
+
+
+/* --- LİNKLER & YAZILAR (Küçük Punto) --- */
 .footer-col ul li a {
     color: var(--text-muted);
     text-decoration: none;
     transition: 0.3s;
-    font-size: 0.8rem; /* Fontu bir tık küçülttük sığması için */
+    font-size: 0.75rem; /* Link fontları küçüldü */
 }
 .footer-col ul li a:hover { color: var(--primary); }
 
@@ -801,24 +810,24 @@ Modern İletişim Formu Tasarımı
 .contact-list li {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.75rem; /* İletişim fontu küçüldü */
+    margin-bottom: 0.3rem; /* Satır arası sıkılaştı */
     flex-direction: row-reverse; 
 }
-.contact-list i { color: var(--primary); font-size: 0.9rem; }
+.contact-list i { color: var(--primary); font-size: 0.8rem; }
 
 
-/* Sosyal Medya */
-.social-links { display: flex; gap: 8px; }
+/* Sosyal Medya (İkonlar ufaldı) */
+.social-links { display: flex; gap: 6px; margin-top: 2px; }
 .social-links a {
-    width: 28px; height: 28px;
+    width: 24px; height: 24px; /* İkon kutusu küçüldü */
+    font-size: 0.75rem;       /* İkon simgesi küçüldü */
     background: rgba(255,255,255,0.05);
     display: flex; align-items: center; justify-content: center;
     border-radius: 50%;
     color: #fff;
-    font-size: 0.8rem;
     border: 1px solid var(--border-light);
     transition: 0.3s;
     text-decoration: none;
@@ -830,24 +839,25 @@ Modern İletişim Formu Tasarımı
 }
 
 
-/* Footer Alt */
+/* Footer Alt (Telif) */
 .footer-bottom {
-    border-top: 1px solid var(--border-light);
-    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.05); /* Çizgi daha silik */
+    padding-top: 0.8rem; /* Üst boşluk azaldı */
     text-align: center;
     color: var(--text-muted);
-    font-size: 0.75rem;
-    opacity: 0.7;
+    font-size: 0.7rem; /* Font küçüldü */
+    opacity: 0.6;
 }
 
 
-/* Mobil Uyumluluk */
+/* Mobil */
 @media (max-width: 768px) {
-    .footer { margin-top: 4rem; }
+    .footer { margin-top: 3rem; padding: 2rem 0 1rem 0; }
     .footer-grid {
         grid-template-columns: 1fr; 
-        gap: 2.5rem;
+        gap: 1.5rem;
         text-align: center;
+        margin-bottom: 1.5rem;
     }
     .footer-col:nth-child(1),
     .footer-col:nth-child(3) {
@@ -858,8 +868,6 @@ Modern İletişim Formu Tasarımı
         left: 50% !important; right: auto !important; transform: translateX(-50%);
     }
     .contact-list li { flex-direction: row; justify-content: center; }
-    
-    /* Mobilde de 2x2 kalsın mı? Evet, daha düzenli durur. */
 }
 
 
