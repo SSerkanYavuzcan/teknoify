@@ -11,10 +11,9 @@
     --ws-glow: rgba(14, 165, 233, 0.5);
 }
 
-
 /* --- HERO SECTION --- */
 .ws-hero {
-    /* 1. DEĞİŞİKLİK: padding-top 140px'den 100px'e düşürüldü */
+    /* Düzeltme: Üst boşluk 140px'den 100px'e indirildi (Header ile uyum için) */
     padding: 100px 0 80px 0;
     position: relative;
     overflow: hidden;
@@ -27,10 +26,9 @@
     background-position: center center;
     border-bottom: 1px solid var(--border-light);
     
-    /* 2. DEĞİŞİKLİK: Arka plan rengi body ile uyumlu hale getirildi */
+    /* Düzeltme: Arka plan rengi garanti altına alındı */
     background-color: var(--bg-body);
 }
-
 
 /* Arka plana hafif bir vinyet (karartma) ekle */
 .ws-hero::after {
@@ -63,7 +61,6 @@
     border: 1px solid rgba(14, 165, 233, 0.2);
 }
 
-/* --- REVİZE EDİLEN BAŞLIK KISMI --- */
 .ws-hero h1 {
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 800;
@@ -72,10 +69,10 @@
     
     /* Gradient Text Efekti (Standart Uyumlu) */
     background: linear-gradient(to right, #fff, #a5f3fc);
-    background-clip: text;              /* Standart */
-    -webkit-background-clip: text;      /* Safari/Chrome */
+    background-clip: text;
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    color: transparent;                 /* Fallback */
+    color: transparent; /* Fallback */
 }
 
 .subtitle {
@@ -196,11 +193,11 @@
 /* 3. VERİ AKIŞI (SOL -> ORTA -> SAĞ) */
 .data-stream-path {
     position: absolute;
-    top: 50%; left: 140px; right: 100px; /* Siteden Database'e kadar */
+    top: 50%; left: 140px; right: 100px;
     height: 40px;
     transform: translateY(-50%);
     pointer-events: none;
-    overflow: hidden; /* Taşmayı önle */
+    overflow: hidden;
 }
 
 .packet {
@@ -211,7 +208,7 @@
     opacity: 0;
 }
 
-/* Paket Animasyonu: Site -> Spider -> DB */
+/* Paket Animasyonu */
 .p-1 { animation: packetFlow 3s infinite linear 0s; color: #cbd5e1; } /* Code */
 .p-2 { animation: packetFlow 3s infinite linear 1s; color: #fcd34d; } /* Image */
 .p-3 { animation: packetFlow 3s infinite linear 2s; color: var(--ws-accent); } /* Tag */
@@ -232,14 +229,13 @@
     right: 30px; top: 50%;
     transform: translateY(-50%);
     font-size: 4rem;
-    color: #475569; /* Pasif renk */
+    color: #475569;
     display: flex; flex-direction: column; align-items: center;
     transition: color 0.3s;
 }
 
-/* Veri geldikçe parlasın */
 .database-storage i {
-    animation: dbPulse 3s infinite 2.5s; /* Paketle senkronize */
+    animation: dbPulse 3s infinite 2.5s;
 }
 
 @keyframes dbPulse {
@@ -249,7 +245,7 @@
 
 .db-status-light {
     width: 8px; height: 8px;
-    background: #ef4444; /* Başta kırmızı */
+    background: #ef4444;
     border-radius: 50%;
     margin-top: 10px;
     box-shadow: 0 0 5px #ef4444;
@@ -263,12 +259,48 @@
 
 
 /* --- CONTENT SECTION --- */
-.ws-content { padding: 4rem 0 6rem 0; }
+.ws-content {
+    padding: 4rem 0 6rem 0;
+}
 
+/* Açıklama Metni */
+.intro-text-center {
+    max-width: 800px;
+    /* Revize: Alttaki başlıkla arasını açtık (6rem) */
+    margin: 0 auto 6rem auto; 
+    text-align: center;
+}
+.intro-text-center h2 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+.intro-text-center p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+/* Bölüm Başlıkları (Ara Başlıklar) */
+.section-heading {
+    text-align: center;
+    font-size: 1.75rem;
+    color: #fff;
+    
+    /* Revize: Hem üstten hem alttan nefes payı verildi */
+    margin-top: 4rem;
+    margin-bottom: 5rem;
+}
+
+/* --- BENEFIT CARDS (Grid) --- */
 .benefit-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2rem;
+    
+    /* Revize: Kartların birbirine yapışmaması için 3rem gap */
+    gap: 3rem; 
+    
+    /* Revize: Alttaki bölümle ara açıldı */
     margin-bottom: 6rem;
 }
 
@@ -307,12 +339,18 @@
     line-height: 1.6;
 }
 
-/* --- USE CASES GRID --- */
-.use-cases-wrapper { margin-bottom: 5rem; }
+/* --- USE CASES GRID (Örnekler) --- */
+.use-cases-wrapper {
+    /* Revize: Alttaki CTA butonuyla ara açıldı */
+    margin-bottom: 6rem;
+}
+
 .use-cases-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.5rem;
+    
+    /* Revize: Kart arası mesafe genişletildi (2.5rem) */
+    gap: 2.5rem;
 }
 
 .use-case-item {
@@ -342,6 +380,12 @@
     font-weight: 500;
 }
 
+.bottom-cta {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 968px) {
     .hero-grid {
@@ -360,6 +404,10 @@
     .database-storage { font-size: 3rem; right: 15px; }
     .spider-body { width: 60px; height: 60px; font-size: 2rem; }
     .data-stream-path { left: 90px; right: 60px; }
+    
+    /* Mobilde boşlukları biraz daha makul tutabiliriz */
+    .benefit-cards-grid { gap: 2rem; margin-bottom: 4rem; }
+    .section-heading { margin-bottom: 3rem; margin-top: 3rem; }
 }
 
 
