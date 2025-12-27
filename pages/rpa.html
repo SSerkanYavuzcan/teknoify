@@ -47,6 +47,12 @@
                     </button>
                 </li>
             </ul>
+            
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
         </div>
     </nav>
 </header>
@@ -92,7 +98,6 @@
 
                         <div class="result-icon"><i class="fas fa-check-circle"></i></div>
                     </div>
-                    <div class="scan-line"></div>
                 </div>
             </div>
         </div>
@@ -114,34 +119,28 @@
                 <div class="benefit-card" id="card-speed">
                     <div class="benefit-icon"><i class="fas fa-bolt"></i></div>
                     <h4>Hız Artışı</h4>
-                    <p>İşlemleri milisaniyelere indirir ve %80 hız artışı sağlar.</p>
-                    <div class="rocket-zone">
-                        <div class="rocket-container">
-                            <i class="fas fa-rocket rocket-icon"></i>
-                            <div class="smoke-trail"></div>
-                        </div>
-                    </div>
+                    <p>İnsan tarafından yapılan işlemleri milisaniyelere indirir ve iş hızınızı %80'e varan oranlarda artırır.</p>
                 </div>
 
 
                 <div class="benefit-card">
                     <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
                     <h4>Hata Oranı = 0</h4>
-                    <p>Rutin veri girişi ve hesaplamalarda insan hatası riskini tamamen yok eder.</p>
+                    <p>Rutin veri girişi, raporlama ve işlem süreçlerinde insan hatasını tamamen ortadan kaldırır.</p>
                 </div>
 
 
                 <div class="benefit-card" id="card-247">
                     <div class="benefit-icon"><i class="fas fa-sync-alt"></i></div>
                     <h4><span id="counter-7">0</span>/<span id="counter-24">0</span> Kesintisiz</h4>
-                    <p>Dijital iş gücünüz uyumaz, mola vermez ve mesai saati tanımaz.</p>
+                    <p>Dijital iş gücünüz uyumaz, mola vermez ve mesai saati tanımaz. Operasyonlarınız durmaksızın devam eder.</p>
                 </div>
 
 
                  <div class="benefit-card">
                     <div class="benefit-icon"><i class="fas fa-hand-holding-usd"></i></div>
                     <h4>Düşük Maliyet</h4>
-                    <p>Yatırım maliyetini (ROI) ortalama 6 ay içinde geri kazandırır.</p>
+                    <p>İş gücü maliyetini düşürür, operasyon verimliliğini artırır ve yatırım maliyetinizi kısa sürede geri kazandırır.</p>
                 </div>
             </div>
 
@@ -159,7 +158,7 @@
                     </div>
                     <div class="use-case-item">
                         <div class="uc-icon"><i class="fas fa-envelope-open-text"></i></div>
-                        <span>Mail Yönetimi</span>
+                        <span>E-posta Yönetimi</span>
                     </div>
                     <div class="use-case-item">
                         <div class="uc-icon"><i class="fas fa-chart-pie"></i></div>
@@ -186,9 +185,9 @@
 
         </div>
     </section>
+
+
 </main>
-
-
 
 
 <footer class="footer">
@@ -200,6 +199,41 @@
 </footer>
 
 
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-container">
+        <div class="modal-close"><i class="fas fa-times"></i></div>
+        <div class="modal-header">
+            <h3>Giriş Yap</h3>
+            <p>Teknoify hesabınıza erişin</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" required placeholder="ornek@sirket.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+            </div>
+            <div class="form-footer">
+                <a href="#" class="link-sm">Şifremi Unuttum</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="../js/session-manager.js"></script>
 <script src="../js/script.js" defer></script>
 
@@ -207,12 +241,10 @@
 <script>
     document.getElementById('header').classList.add('scrolled');
    
-    // Animasyonların sadece bir kez tetiklenmesi için bayraklar
-    let rocketLaunched = false;
     let counterStarted = false;
 
 
-    // --- 1. Sayaç Animasyonu (7/24 Operasyon) ---
+    // --- Sayaç Animasyonu (7/24 Operasyon) ---
     function animateCounter(id, start, end, duration) {
         if (start === end) return;
         const obj = document.getElementById(id);
@@ -228,33 +260,11 @@
         window.requestAnimationFrame(step);
     }
    
-    // --- 2. Roket Animasyonu (Hız Artışı) ---
-    function launchRocket() {
-        if (rocketLaunched) return;
-       
-        const rocket = document.querySelector('.rocket-container');
-        if (!rocket) return;
-       
-        rocket.classList.add('ready'); // Dumanı başlat
-       
-        setTimeout(() => {
-            rocket.classList.add('launched'); // Roketi fırlat
-            rocketLaunched = true;
-        }, 100);
-       
-        // Roket 5 saniye sonra geri dönecek
-        setTimeout(() => {
-            rocket.classList.remove('ready');
-            rocket.classList.remove('launched');
-        }, 5500);
-    }
-
-
-    // --- 3. Scroll Gözlemcisi ---
+    // --- Scroll Gözlemcisi ---
     const observerOptions = {
         root: null,
         rootMargin: '0px',
-        threshold: 0.5 // %50 görünürse tetikle
+        threshold: 0.5 
     };
 
 
@@ -264,39 +274,23 @@
                 const id = entry.target.id;
 
 
-                // Sayaç Animasyonu Kontrolü
                 if (id === 'card-247' && !counterStarted) {
                     animateCounter('counter-7', 0, 7, 2000);
                     animateCounter('counter-24', 0, 24, 2500);
                     counterStarted = true;
-                }
-               
-                // Roket Animasyonu Kontrolü
-                if (id === 'card-speed') {
-                    launchRocket();
                 }
             }
         });
     }, observerOptions);
 
 
-    // Observer'ı ilgili kartlara bağla
     const card247 = document.getElementById('card-247');
     if (card247) observer.observe(card247);
-   
-    const cardSpeed = document.getElementById('card-speed');
-    if (cardSpeed) observer.observe(cardSpeed);
 
 
 </script>
 </body>
 </html>
-
-
-
-
-
-
 
 
 
