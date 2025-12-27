@@ -1,41 +1,32 @@
 /* ================================================================
    [FILE] webscraping.css
    [PURPOSE] Web Scraping & Data Mining Page Styles
-   [THEME] Cyber Data (Cyan/Green accents)
+   [THEME] Cyber Data (Cyan/Green accents) - Harmonized with RPA
    ================================================================ */
 
 /* --- RENK PALETİ (Bu sayfaya özel override) --- */
 :root {
-    --ws-primary: #0ea5e9;    /* Sky Blue */
-    --ws-accent: #10b981;     /* Emerald Green (Data Başarılı) */
+    --ws-primary: #0ea5e9;    /* Sky Blue - Ana Renk */
+    --ws-accent: #10b981;     /* Emerald Green - Başarı Rengi */
     --ws-glow: rgba(14, 165, 233, 0.5);
 }
 
-/* --- HERO SECTION --- */
+/* --- HERO SECTION (RPA İLE EŞİTLENDİ) --- */
 .ws-hero {
-    /* Düzeltme: Üst boşluk 140px'den 100px'e indirildi (Header ile uyum için) */
+    /* Hizalama Düzeltmesi: RPA ile aynı padding */
     padding: 100px 0 80px 0;
     position: relative;
     overflow: hidden;
     
-    /* Cyber Grid Arka Plan */
+    /* ARKA PLAN DÜZELTMESİ: RPA'daki Grid yapısı birebir alındı */
     background-image: 
-        linear-gradient(rgba(14, 165, 233, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(14, 165, 233, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
-    background-position: center center;
-    border-bottom: 1px solid var(--border-light);
+        radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 20%), /* Hafif mavi parlama */
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px; /* Kare boyutu eşitlendi */
     
-    /* Düzeltme: Arka plan rengi garanti altına alındı */
     background-color: var(--bg-body);
-}
-
-/* Arka plana hafif bir vinyet (karartma) ekle */
-.ws-hero::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(circle at center, transparent 0%, var(--bg-body) 90%);
-    pointer-events: none;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .hero-grid {
@@ -47,32 +38,30 @@
     z-index: 2;
 }
 
+/* BADGE (ETİKET) DÜZELTMESİ */
+/* RPA sayfasındaki tasarımın aynısı, sadece rengi mavi */
 .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(14, 165, 233, 0.1);
-    color: var(--ws-primary);
+    background: rgba(14, 165, 233, 0.1); /* Çok hafif mavi zemin */
+    color: var(--ws-primary);            /* Mavi yazı */
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
+    font-family: var(--font-main);       /* Font garantilendi */
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(14, 165, 233, 0.2);
+    border: 1px solid rgba(14, 165, 233, 0.2); /* İnce çerçeve */
 }
 
+/* BAŞLIK (H1) DÜZELTMESİ */
 .ws-hero h1 {
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 1.5rem;
-    
-    /* Gradient Text Efekti (Standart Uyumlu) */
-    background: linear-gradient(to right, #fff, #a5f3fc);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent; /* Fallback */
+    color: #fff; /* RPA'deki gibi net beyaz yapıldı, gradient kaldırıldı (okunabilirlik için) */
 }
 
 .subtitle {
@@ -88,6 +77,7 @@
 }
 
 /* --- ANIMATION BOX (THE DATA FACTORY) --- */
+/* Burası aynen kalıyor, görsel olarak sorunsuz */
 .scraping-anim-box {
     position: relative;
     height: 350px;
@@ -99,7 +89,7 @@
     box-shadow: 0 0 40px rgba(14, 165, 233, 0.1);
 }
 
-/* 1. HEDEF WEB SİTESİ (SOL) */
+/* 1. HEDEF WEB SİTESİ */
 .target-website {
     position: absolute;
     left: 20px; top: 50%;
@@ -133,7 +123,6 @@
 .w-70 { width: 70%; } .w-50 { width: 50%; } .w-90 { width: 90%; }
 .data-block { height: 30px; background: #334155; border-radius: 4px; opacity: 0.5; }
 
-/* Hedef Siteden Veri Çekilme Efekti (Blink) */
 .db-1 { animation: dataBlink 2s infinite; }
 .db-2 { animation: dataBlink 2s infinite 1s; }
 
@@ -142,7 +131,7 @@
     50% { background: var(--ws-primary); }
 }
 
-/* 2. SPIDER BOT (ORTA) */
+/* 2. SPIDER BOT */
 .spider-bot {
     position: absolute;
     left: 50%; top: 50%;
@@ -167,11 +156,9 @@
     animation: spiderFloat 4s ease-in-out infinite;
 }
 
-/* Tarama Işığı */
 .scan-beam {
     position: absolute;
-    left: -60px; /* Web sitesine doğru */
-    top: 50%;
+    left: -60px; top: 50%;
     width: 60px; height: 2px;
     background: linear-gradient(90deg, transparent, var(--ws-primary));
     transform-origin: right center;
@@ -190,7 +177,7 @@
     50% { transform: translateY(-10px); }
 }
 
-/* 3. VERİ AKIŞI (SOL -> ORTA -> SAĞ) */
+/* 3. VERİ AKIŞI */
 .data-stream-path {
     position: absolute;
     top: 50%; left: 140px; right: 100px;
@@ -208,22 +195,21 @@
     opacity: 0;
 }
 
-/* Paket Animasyonu */
-.p-1 { animation: packetFlow 3s infinite linear 0s; color: #cbd5e1; } /* Code */
-.p-2 { animation: packetFlow 3s infinite linear 1s; color: #fcd34d; } /* Image */
-.p-3 { animation: packetFlow 3s infinite linear 2s; color: var(--ws-accent); } /* Tag */
+.p-1 { animation: packetFlow 3s infinite linear 0s; color: #cbd5e1; }
+.p-2 { animation: packetFlow 3s infinite linear 1s; color: #fcd34d; }
+.p-3 { animation: packetFlow 3s infinite linear 2s; color: var(--ws-accent); }
 
 @keyframes packetFlow {
     0% { left: 0; opacity: 0; transform: scale(0.5); }
     10% { opacity: 1; transform: scale(1); }
-    40% { left: 40%; opacity: 1; transform: scale(0.8); } /* Spider'a gir */
-    50% { left: 50%; opacity: 0; transform: scale(0.2); } /* İşleniyor */
-    60% { left: 60%; opacity: 1; transform: scale(1); } /* Spider'dan çık */
+    40% { left: 40%; opacity: 1; transform: scale(0.8); }
+    50% { left: 50%; opacity: 0; transform: scale(0.2); }
+    60% { left: 60%; opacity: 1; transform: scale(1); }
     90% { left: 100%; opacity: 1; }
     100% { left: 100%; opacity: 0; }
 }
 
-/* 4. DATABASE (SAĞ) */
+/* 4. DATABASE */
 .database-storage {
     position: absolute;
     right: 30px; top: 50%;
@@ -258,7 +244,7 @@
 }
 
 
-/* --- CONTENT SECTION --- */
+/* --- CONTENT SECTION (SPACING & LAYOUT) --- */
 .ws-content {
     padding: 4rem 0 6rem 0;
 }
@@ -266,7 +252,6 @@
 /* Açıklama Metni */
 .intro-text-center {
     max-width: 800px;
-    /* Revize: Alttaki başlıkla arasını açtık (6rem) */
     margin: 0 auto 6rem auto; 
     text-align: center;
 }
@@ -281,13 +266,11 @@
     line-height: 1.7;
 }
 
-/* Bölüm Başlıkları (Ara Başlıklar) */
+/* Bölüm Başlıkları */
 .section-heading {
     text-align: center;
     font-size: 1.75rem;
     color: #fff;
-    
-    /* Revize: Hem üstten hem alttan nefes payı verildi */
     margin-top: 4rem;
     margin-bottom: 5rem;
 }
@@ -296,11 +279,7 @@
 .benefit-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    
-    /* Revize: Kartların birbirine yapışmaması için 3rem gap */
     gap: 3rem; 
-    
-    /* Revize: Alttaki bölümle ara açıldı */
     margin-bottom: 6rem;
 }
 
@@ -339,17 +318,14 @@
     line-height: 1.6;
 }
 
-/* --- USE CASES GRID (Örnekler) --- */
+/* --- USE CASES GRID --- */
 .use-cases-wrapper {
-    /* Revize: Alttaki CTA butonuyla ara açıldı */
     margin-bottom: 6rem;
 }
 
 .use-cases-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    
-    /* Revize: Kart arası mesafe genişletildi (2.5rem) */
     gap: 2.5rem;
 }
 
@@ -397,7 +373,7 @@
     .hero-badge { margin: 0 auto 1.5rem auto; }
     
     .scraping-anim-box {
-        height: 250px; /* Mobilde biraz küçült */
+        height: 250px;
     }
     
     .target-website { width: 80px; height: 120px; left: 10px; }
@@ -405,7 +381,6 @@
     .spider-body { width: 60px; height: 60px; font-size: 2rem; }
     .data-stream-path { left: 90px; right: 60px; }
     
-    /* Mobilde boşlukları biraz daha makul tutabiliriz */
     .benefit-cards-grid { gap: 2rem; margin-bottom: 4rem; }
     .section-heading { margin-bottom: 3rem; margin-top: 3rem; }
 }
