@@ -1,12 +1,39 @@
-document.addEventListener("DOMContentLoaded", function() {
+// js/cookies.js - Google Analytics (G-1XSJMZ0J2J) Entegreli Versiyon
+
+(function() { 
     
-    // 1. Daha önce kabul edilmiş mi kontrol et
+    // --- SENİN GOOGLE ANALYTICS KODUN ---
+    const GA_MEASUREMENT_ID = 'G-1XSJMZ0J2J'; 
+    // ------------------------------------
+
+    // Google Analytics'i Yükleyen Fonksiyon
+    function loadGoogleAnalytics() {
+        // Eğer zaten yüklendiyse tekrar yükleme
+        if (document.getElementById('google-analytics-script')) return;
+
+        console.log("Google Analytics Başlatılıyor: " + GA_MEASUREMENT_ID);
+
+        // 1. Google Scriptini Dinamik Olarak Ekle
+        const script = document.createElement('script');
+        script.id = 'google-analytics-script';
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+        script.async = true;
+        document.head.appendChild(script);
+
+        // 2. Gtag Yapılandırması (Google'ın verdiği kodun JS hali)
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', GA_MEASUREMENT_ID);
+    }
+
+    // 1. Kullanıcı daha önce kabul etmiş mi kontrol et
     if (localStorage.getItem("teknoify_cookie_consent")) {
-        return; // Zaten kabul etmiş, hiçbir şey yapma.
+        loadGoogleAnalytics(); // Evetse, hemen takibe başla!
+        return; // Banner'ı gösterme, çık.
     }
 
     // 2. Link Yolunu Belirle (Ana sayfada mı yoksa alt sayfada mı?)
-    // Eğer URL içinde "/pages/" geçiyorsa aynı klasördedir, değilse "pages/" ekle.
     const isPagesDir = window.location.pathname.includes("/pages/");
     const privacyLink = isPagesDir ? "gizlilik.html" : "pages/gizlilik.html";
     const kvkkLink = isPagesDir ? "kvkk.html" : "pages/kvkk.html";
@@ -18,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="cookie-text">
                 <h4>Çerez Tercihleri</h4>
                 <p>
-                    Size daha iyi hizmet sunmak, site trafiğini analiz etmek ve kullanıcı deneyimini kişiselleştirmek amacıyla çerezleri (cookies) kullanıyoruz. 
+                    Size daha iyi hizmet sunmak, site trafiğini analiz etmek ve kullanıcı deneyimini kişiselleştirmek amacıyla çerezleri (cookies) kullanıyoruz.
                     Detaylı bilgi için <a href="${kvkkLink}">KVKK Aydınlatma Metni</a> ve <a href="${privacyLink}">Gizlilik Politikamızı</a> inceleyebilirsiniz.
                 </p>
             </div>
@@ -29,30 +56,42 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     `;
 
-    // 4. Elementi Sayfaya Ekle
+    // 4. Elementi Oluştur ve Ekle
     const bannerDiv = document.createElement("div");
-    bannerDiv.className = "cookie-banner"; // CSS'teki class
+    bannerDiv.className = "cookie-banner";
     bannerDiv.innerHTML = bannerHTML;
     document.body.appendChild(bannerDiv);
 
-    // 5. Animasyonla Göster (Hafif gecikmeli ki dikkat çeksin)
+    // 5. Animasyonla Göster
     setTimeout(() => {
         bannerDiv.classList.add("show");
-    }, 1000);
+    }, 1500);
 
-    // 6. Buton Olayları
-    document.getElementById("btn-cookie-accept").addEventListener("click", function() {
-        // Tercihi tarayıcıya kaydet
-        localStorage.setItem("teknoify_cookie_consent", "true");
-        // Bandı gizle
-        bannerDiv.classList.remove("show");
-        // DOM'dan sil (Animasyon bitince)
-        setTimeout(() => bannerDiv.remove(), 600);
-    });
+    // 6. Buton Olaylarını Tanımla
+    const acceptBtn = bannerDiv.querySelector("#btn-cookie-accept");
+    const closeBtn = bannerDiv.querySelector("#btn-cookie-close");
 
-    document.getElementById("btn-cookie-close").addEventListener("click", function() {
-        // Sadece kapat, kaydetme (Her girişte tekrar sorar veya oturum bazlı kalır)
-        bannerDiv.classList.remove("show");
-    });
-});
+    if(acceptBtn) {
+        acceptBtn.addEventListener("click", function() {
+            // Onay verildi! Tarayıcıya kaydet
+            localStorage.setItem("teknoify_cookie_consent", "true");
+            
+            // ANALYTICS'İ ŞİMDİ BAŞLAT
+            loadGoogleAnalytics();
+
+            // Banner'ı kapat
+            bannerDiv.classList.remove("show");
+            setTimeout(() => bannerDiv.remove(), 600);
+        });
+    }
+
+    if(closeBtn) {
+        closeBtn.addEventListener("click", function() {
+            // Sadece kapat, kaydetme (Analytics çalışmaz)
+            bannerDiv.classList.remove("show");
+        });
+    }
+
+})();
+
 
