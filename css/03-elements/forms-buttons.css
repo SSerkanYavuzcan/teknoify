@@ -1,0 +1,182 @@
+/* ================================================================
+[LAYER 2] ATOMIC COMPONENTS (Buttons, Inputs)
+Küçük yapı taşları
+================================================================
+*/
+
+
+
+
+/* 2.1 Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  transition: all var(--ease-fast);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+.btn-block { width: 100%; }
+
+
+
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.25);
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+
+
+
+.btn-secondary {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+}
+
+
+
+
+.btn-outline {
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+}
+.btn-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+
+
+
+/* 2.2 Inputs & Forms */
+.form-group { margin-bottom: 1.25rem; }
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-wrapper i {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+
+
+
+/* Input/Textarea/Select Genel Stilleri */
+input, textarea, select {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.5rem; /* İkon payı */
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: inherit;
+  transition: var(--ease-fast);
+}
+
+
+
+
+/* Focus Efektleri */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  background: rgba(255,255,255,0.05);
+}
+
+
+
+
+/* Textarea ve Select Özel Ayarlar */
+.textarea-wrapper { align-items: flex-start; }
+.textarea-wrapper i { top: 1rem; }
+textarea { resize: vertical; min-height: 120px; }
+
+
+
+
+/* Select (Dropdown) Özelleştirmeleri */
+select { appearance: none; cursor: pointer; }
+.select-arrow {
+  position: absolute; right: 1rem; left: auto; top: 50%; transform: translateY(-50%);
+  pointer-events: none; font-size: 0.8rem; color: var(--text-muted);
+}
+
+
+
+
+/* Select İçindeki Seçeneklerin Rengi (Dark Mode Uyumlu) */
+select option {
+  background-color: #14161c !important;
+  color: #f3f4f6 !important;
+  padding: 10px;
+}
+
+
+
+
+/* Placeholder Rengi */
+::placeholder {
+  color: rgba(255, 255, 255, 0.2) !important;
+}
+
+
+
+
+/* 2.3 Form Validation (Hata Durumları) */
+.form-error-msg {
+  color: #ef4444; /* Kırmızı */
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: none; /* JS ile açılacak */
+  padding-left: 0.5rem;
+  font-weight: 500;
+}
+
+
+
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+  background-color: rgba(239, 68, 68, 0.05) !important;
+}
+
+
+
+
+.input-wrapper.error i {
+  color: #ef4444; /* Hata varken ikonu kırmızı yap */
+}
+
+
+
+
