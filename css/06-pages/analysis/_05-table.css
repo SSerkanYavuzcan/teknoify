@@ -1,0 +1,54 @@
+/* --- 6. TABLO YAPISI & STICKY HEADER --- */
+
+/* Üst Scrollbar Kapsayıcısı */
+.top-scroll-wrapper {
+    display: block; width: 100%; overflow-x: auto; overflow-y: hidden;
+    border: 1px solid #333;
+    border-bottom: none; 
+    border-top-left-radius: 12px; border-top-right-radius: 12px;
+    background: #14161c;
+    height: 15px; 
+}
+
+/* Sahte içerik (genişliği JS ile ayarlanacak) */
+.top-scroll-content { height: 1px; }
+
+/* Asıl Tablo Kapsayıcısı (Alt Scrollbar) */
+.table-responsive-wrapper {
+    display: block; width: 100%;
+    overflow-x: auto; overflow-y: visible;
+    border: 1px solid #333; 
+    border-top: none; 
+    border-top-left-radius: 0; border-top-right-radius: 0;
+    border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+    background: #14161c; margin-bottom: 20px;
+}
+
+.comparison-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: max-content; }
+
+#header-row-top th {
+    position: sticky !important; top: 0 !important; z-index: 1000; height: 50px;
+    background-color: #14161c !important; border-bottom: 1px solid #333;
+    box-shadow: 0 1px 0 #333; text-align: center; vertical-align: middle; padding: 0 10px; color: #fff;
+}
+#header-row-bottom th {
+    position: sticky !important; top: 50px !important; z-index: 900; height: 40px;
+    background-color: #14161c !important; border-bottom: 2px solid #333;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3); text-align: center; vertical-align: middle; padding: 0 10px; color: #ccc;
+}
+th.sticky-product, td.sticky-product {
+    position: sticky !important; left: 0 !important; z-index: 1100;
+    background-color: #14161c !important; border-right: 2px solid #444;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.5);
+    min-width: 250px; max-width: 250px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    text-align: left !important; padding-left: 15px !important; color: #fff;
+}
+
+#header-row-top th:first-child { z-index: 1200 !important; left: 0 !important; }
+#header-row-bottom th.sticky-product { top: 50px !important; z-index: 1200 !important; }
+
+tr:hover td { background-color: #1a1d24 !important; }
+tr:hover td.sticky-product { background-color: #1a1d24 !important; }
+.comparison-table td { padding: 8px 10px; height: 45px; border-bottom: 1px solid #2a2a2a; font-size: 0.85rem; color: #ccc; }
+.price-cell { min-width: 100px; text-align: center; font-family: 'Fira Code', monospace; }
