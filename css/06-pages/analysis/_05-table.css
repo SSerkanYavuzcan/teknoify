@@ -24,7 +24,7 @@
     background: #14161c; margin-bottom: 20px;
 }
 
-.comparison-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: max-content; }
+.comparison-table { border-collapse: separate; border-spacing: 0; min-width: max-content; }
 
 #header-row-top th {
     position: sticky !important; top: 0 !important; z-index: 1000; height: 50px;

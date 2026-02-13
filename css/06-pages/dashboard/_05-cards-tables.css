@@ -9,7 +9,7 @@
 .stat-value { font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
 
 .data-table {
-    width: 100%; border-collapse: collapse; background: var(--dash-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+    border-collapse: collapse; background: var(--dash-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
 }
 .data-table th, .data-table td { padding: 16px 24px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 .data-table th { background: var(--dash-sidebar); color: #fff; font-weight: 600; }

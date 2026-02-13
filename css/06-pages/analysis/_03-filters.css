@@ -56,7 +56,7 @@
 .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: #fff; font-size: 0.6em; }
 
 .actions-group { margin-left: auto; display: flex; gap: 10px; align-self: flex-end; }
-.btn-filter-action { background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 6px; height: 42px; padding: 0 20px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.btn-filter-action { background: #2f3349; color: #fff; border: 1px solid #444; border-radius: 6px; height: 42px; padding: 0 20px; font-weight: 500; }
 .btn-filter-action:hover { background: #3a3f5c; }
 .btn-filter-action.primary { background: #7367f0; border-color: #7367f0; }
 .btn-filter-action.primary:hover { background: #5f52d9; }
@@ -65,5 +65,5 @@
 .download-wrapper { position: relative; }
 .download-menu { position: absolute; top: 100%; right: 0; min-width: 180px; background: #1f232c; border: 1px solid #333; border-radius: 8px; margin-top: 5px; display: none; z-index: 9999; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
 .download-menu.show { display: block; }
-.download-item { padding: 10px 15px; cursor: pointer; color: #ccc; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+.download-item { padding: 10px 15px; color: #ccc; }
 .download-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
