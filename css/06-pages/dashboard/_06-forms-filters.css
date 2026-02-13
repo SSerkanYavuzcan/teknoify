@@ -8,7 +8,7 @@
 
 .btn-filter, .btn-download {
     border: none; padding: 0 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem;
-    height: 47px; position: relative; z-index: 5;
+    height: 47px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; position: relative; z-index: 5;
 }
 .btn-filter { background: var(--primary); color: #fff; }
 .btn-filter:hover { background: var(--primary-hover); transform: translateY(-1px); }
@@ -58,7 +58,8 @@ input.flatpickr-input:focus { border-color: var(--primary) !important; outline: 
 }
 .download-menu.show { display: block; animation: fadeIn 0.2s ease; }
 .download-item {
-    padding: 12px 16px; color: #fff; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: #fff; cursor: pointer;
+    font-size: 0.9rem; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .download-item:last-child { border-bottom: none; }
 .download-item:hover { background: rgba(115, 103, 240, 0.1); color: var(--primary); }
