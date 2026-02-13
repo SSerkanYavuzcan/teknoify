@@ -1,3 +1,4 @@
+/* global dataLayer */
 // js/cookies.js - Google Analytics (G-1XSJMZ0J2J) Entegreli Versiyon
 
 (function() { 
