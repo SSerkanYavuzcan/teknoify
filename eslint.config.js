@@ -1,20 +1,29 @@
-const js = require('@eslint/js');
-const globals = require('globals');
-
 module.exports = [
-    js.configs.recommended,
     {
         files: ['js/**/*.js'],
         languageOptions: {
             ecmaVersion: 2021,
             sourceType: 'script',
             globals: {
-                ...globals.browser,
+                window: 'readonly',
+                document: 'readonly',
+                localStorage: 'readonly',
+                console: 'readonly',
+                fetch: 'readonly',
+                FormData: 'readonly',
+                setTimeout: 'readonly',
+                setInterval: 'readonly',
+                clearInterval: 'readonly',
+                clearTimeout: 'readonly',
+                requestAnimationFrame: 'readonly',
+                IntersectionObserver: 'readonly',
+                alert: 'readonly',
                 firebase: 'readonly'
             }
         },
         rules: {
-            'no-alert': 'off'
+            'no-undef': 'error',
+            'no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
         }
     }
 ];

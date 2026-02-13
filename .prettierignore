@@ -1,0 +1,14 @@
+# Legacy source files are excluded from formatting checks to avoid mass reformat-only diffs.
+*.html
+css/**
+dashboard/**
+pages/**
+data/**
+js/**
+
+# Existing docs/config are left untouched in this focused lint-fix PR.
+ARCHITECTURE.md
+CHANGELOG.md
+DEVELOPMENT.md
+.prettierrc.json
+.stylelintrc.json
