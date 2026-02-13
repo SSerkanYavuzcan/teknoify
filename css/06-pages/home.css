@@ -1,0 +1,112 @@
+/* =========================================
+   ÇEREZ UYARI BANDI (Cookie Banner)
+   ========================================= */
+
+.cookie-banner {
+    position: fixed;
+    bottom: -300px; /* Başlangıçta ekranın altında gizli */
+    left: 20px;
+    right: 20px;
+    max-width: 450px; /* Masaüstünde çok geniş olmasın */
+    background: rgba(21, 21, 25, 0.95); /* Yarı saydam koyu zemin */
+    backdrop-filter: blur(10px); /* Buzlu cam efekti */
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--primary); /* Sol tarafta şık bir mor çizgi */
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 99999; /* Her şeyin üstünde olsun */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: bottom 0.6s cubic-bezier(0.19, 1, 0.22, 1); /* Yumuşak kayma efekti */
+    font-family: 'Inter Tight', sans-serif;
+}
+
+.cookie-banner.show {
+    bottom: 20px; /* Görünür konumu */
+}
+
+.cookie-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.cookie-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-top: 3px;
+}
+
+.cookie-text h4 {
+    color: #fff;
+    font-size: 1rem;
+    margin: 0 0 5px 0;
+    font-weight: 600;
+}
+
+.cookie-text p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.cookie-text a {
+    color: #fff;
+    text-decoration: underline;
+    transition: 0.3s;
+}
+.cookie-text a:hover { color: var(--primary); }
+
+.cookie-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cookie-accept {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-cookie-accept:hover {
+    background: #5e50ee; /* Daha açık mor */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(115, 103, 240, 0.4);
+}
+
+.btn-cookie-close {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-light);
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-cookie-close:hover {
+    color: #fff;
+    border-color: #fff;
+}
+
+/* Mobil Uyumluluk */
+@media (max-width: 576px) {
+    .cookie-banner {
+        left: 10px; right: 10px; 
+        bottom: -300px; /* Mobilde de gizli başlasın */
+    }
+    .cookie-banner.show { 
+        bottom: 10px; 
+    }
+}
+
+
