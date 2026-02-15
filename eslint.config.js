@@ -1,5 +1,3 @@
-const globals = require('globals');
-
 module.exports = [
     {
         files: ['js/**/*.js'],
@@ -7,7 +5,19 @@ module.exports = [
             ecmaVersion: 2021,
             sourceType: 'script',
             globals: {
-                ...globals.browser,
+                window: 'readonly',
+                document: 'readonly',
+                localStorage: 'readonly',
+                console: 'readonly',
+                fetch: 'readonly',
+                FormData: 'readonly',
+                setTimeout: 'readonly',
+                setInterval: 'readonly',
+                clearInterval: 'readonly',
+                clearTimeout: 'readonly',
+                requestAnimationFrame: 'readonly',
+                IntersectionObserver: 'readonly',
+                alert: 'readonly',
                 firebase: 'readonly'
             }
         },

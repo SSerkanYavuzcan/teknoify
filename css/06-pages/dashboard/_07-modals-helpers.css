@@ -1,8 +1,8 @@
 
 /* Toast Notification */
 .toast-notification {
-    left: 50%; transform: translateX(-50%) translateY(-100px); border: 1px solid var(--border);
-    border-left: 4px solid var(--warning); border-radius: 12px; padding: 16px 24px; gap: 16px;
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #1f232c; border: 1px solid var(--border);
+    border-left: 4px solid var(--warning); border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); min-width: 350px;
 }
 .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
@@ -20,7 +20,7 @@
     padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center; font-size: 0.9rem; display: none; font-weight: 500;
 }
 .mini-dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; display: none; }
-.kpi-card { background: var(--dash-card); border: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; justify-content: center; }
+.kpi-card { background: var(--dash-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
 .kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
 .kpi-value { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
 .kpi-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }

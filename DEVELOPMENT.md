@@ -10,7 +10,6 @@
 npm install
 ```
 
-Kurulumdan sonra `npm run check` çalıştırın.
 ## Kod kalitesi komutları
 ```bash
 npm run format
