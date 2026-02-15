@@ -13,23 +13,17 @@
     <main style="max-width: 720px; margin: 64px auto; padding: 0 16px">
       <h1 style="margin-bottom: 8px">Admin Gözetim (Impersonate)</h1>
       <p style="opacity: 0.85; margin-top: 0">
-        Bir kullanıcıyı şifresiz “o kullanıcı gibi” görüntülemek için e-posta gir.
+        Bir kullanıcıyı şifresiz “o kullanıcı gibi” görüntülemek için listeden seç.
         <br />
         <strong>Not:</strong> Bu MVP backend’sizdir; gerçek güvenlik sağlamaz.
       </p>
 
       <form id="impersonate-form" style="display: grid; gap: 12px; margin-top: 24px">
         <label>
-          Kullanıcı e-postası
-          <input
-            id="targetEmail"
-            name="targetEmail"
-            type="email"
-            autocomplete="off"
-            placeholder="ornek@domain.com"
-            required
-            style="width: 100%; padding: 12px; margin-top: 6px"
-          />
+          Kullanıcı seç
+          <select id="targetUser" name="targetUser" required style="width: 100%; padding: 12px; margin-top: 6px">
+            <option value="" selected disabled>Yükleniyor...</option>
+          </select>
         </label>
 
         <label>
