@@ -16,27 +16,6 @@ function resolveProjectUrl(path) {
   return `../${path}`;
 }
 
-
-function renderNotice() {
-  const params = new URLSearchParams(window.location.search);
-  const notice = params.get('notice');
-  if (notice !== 'stop-impersonation-first') {
-    return;
-  }
-
-  const container = qs('.section-header');
-  if (!container) {
-    return;
-  }
-
-  const note = createEl('p', {
-    text: 'Admin sayfasına dönmek için önce impersonation oturumunu sonlandırın.'
-  });
-  note.style.color = '#ea5455';
-  note.style.fontWeight = '600';
-  container.append(note);
-}
-
 function renderProjects(projects) {
   const list = qs('#project-list');
   const empty = qs('#project-empty');
@@ -85,7 +64,6 @@ async function init() {
   }
 
   initCommonPage({ activePath: '/dashboard/index.html' });
-  renderNotice();
 
   const sessionFromStorage = getSession();
   const users = getUsers();

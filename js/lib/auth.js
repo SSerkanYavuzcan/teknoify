@@ -217,7 +217,7 @@ export function requireAuth({ role, returnTo } = {}) {
   }
 
   if (role === 'admin' && isImpersonating()) {
-    window.location.href = `${paths.dashboard}?notice=stop-impersonation-first`;
+    window.location.href = paths.dashboard;
     return null;
   }
 
