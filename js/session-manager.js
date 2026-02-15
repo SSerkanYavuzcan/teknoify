@@ -149,4 +149,7 @@ class SessionManager {
     }
 }
 
+if (typeof window !== 'undefined') {
+    window.SessionManager = SessionManager;
+}
 

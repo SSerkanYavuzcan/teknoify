@@ -1,0 +1,14 @@
+/* 3. MAIN CONTENT */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; background: var(--dash-bg); }
+.top-bar {
+    height: 64px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; background: var(--dash-sidebar); z-index: 40;
+}
+.top-bar h2 { font-size: 1.1rem; font-weight: 600; margin: 0; color: #fff; }
+.user-profile { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 500; }
+.avatar {
+    width: 38px; height: 38px; background: #2f3349; color: #fff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; border: 1px solid var(--border);
+}
+.content-scroll { padding: 24px; overflow-y: auto; height: 100%; scrollbar-width: thin; scrollbar-color: #333 transparent; }
+

@@ -1,0 +1,8 @@
+/* Shared modal-like primitives for analysis + dashboard pages */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    background: #1f232c;
+    display: flex;
+    align-items: center;
+}
