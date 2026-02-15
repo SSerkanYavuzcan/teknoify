@@ -1,0 +1,153 @@
+/* ================================================================
+[LAYER 5] UTILITIES & RESPONSIVE
+================================================================
+*/
+.footer {
+  border-top: 1px solid var(--border-light); padding: 2rem 0; margin-top: 4rem;
+  color: var(--text-muted); font-size: 0.9rem; text-align: center;
+}
+
+
+
+
+@media (max-width: 968px) {
+  .hero-container { grid-template-columns: 1fr; text-align: center; gap: 3rem; }
+  .hero-left { order: 1; display: flex; flex-direction: column; align-items: center; }
+  .hero-right { order: 2; width: 100%; margin-top: 2rem; }
+  .hero-terminal { height: 300px; }
+ 
+  .nav-menu { display: none; }
+  .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger .bar { width: 25px; height: 2px; background: #fff; border-radius: 2px; }
+ 
+  .nav-menu.active {
+    display: flex; flex-direction: column;
+    position: absolute; top: 72px; left: 0; right: 0;
+    background: var(--bg-surface); padding: 2rem;
+    border-bottom: 1px solid var(--border-light);
+    animation: slideDown 0.3s ease-out forwards;
+  }
+ 
+  /* Contact Responsive */
+  .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .contact-form { padding: 1.5rem; }
+}
+
+
+
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+
+/* ================================================================
+[LAYER 6] GEMS & POLISH
+================================================================
+*/
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-body); }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1); border-radius: 10px; border: 2px solid var(--bg-body);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+
+
+
+::selection { background: rgba(99, 102, 241, 0.3); color: #fff; }
+
+
+
+
+@keyframes floatParticle {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-100vh); opacity: 0; }
+}
+
+
+
+
+.blink-cursor::after {
+  content: '▋'; color: var(--primary); margin-left: 2px;
+  animation: cursorBlink 1s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+
+
+
+/* ================================================================
+[LAYER 8] CONTACT SECTION
+Modern İletişim Formu Tasarımı
+================================================================
+*/
+.contact-section { padding: 4rem 0 6rem 0; position: relative; overflow: hidden; }
+
+
+
+
+.contact-glow {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  z-index: -1; pointer-events: none;
+}
+
+
+
+
+.contact-wrapper {
+  display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem; margin-top: 2rem; align-items: start;
+}
+
+
+
+
+.contact-info { display: flex; flex-direction: column; gap: 2rem; }
+
+
+
+
+.info-card {
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-light);
+  padding: 2rem; border-radius: var(--radius-md);
+}
+.info-card h3 { color: #fff; margin-bottom: 1rem; font-size: 1.25rem; }
+.info-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+
+
+
+.contact-methods { display: flex; flex-direction: column; gap: 1.5rem; }
+.method-item { display: flex; align-items: center; gap: 1rem; }
+.icon-circle {
+  width: 45px; height: 45px; background: rgba(99, 102, 241, 0.1); color: var(--primary);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.method-item span { display: block; font-size: 0.85rem; color: var(--text-muted); }
+.method-item a, .method-item p { color: #fff; font-weight: 500; font-size: 1rem; }
+.method-item a:hover { color: var(--primary); }
+
+
+
+
+.contact-form {
+  background: var(--bg-surface); border: 1px solid var(--border-light);
+  padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+
+
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+

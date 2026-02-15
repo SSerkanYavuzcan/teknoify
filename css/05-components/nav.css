@@ -1,0 +1,67 @@
+.site-nav-shell {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.site-nav-menu {
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-link.is-active {
+  color: #fff;
+  border-bottom: 2px solid #7367f0;
+}
+
+.site-nav-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-user-indicator {
+  color: #a0a0a6;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .site-nav-user {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+}
+
+
+.impersonation-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(234, 84, 85, 0.14);
+  border-bottom: 1px solid rgba(234, 84, 85, 0.35);
+}
+
+.impersonation-admin-hint {
+  margin-left: auto;
+  color: #f2b9ba;
+  font-size: 0.8rem;
+}
+
+
+@media (max-width: 900px) {
+  .impersonation-banner {
+    flex-wrap: wrap;
+  }
+
+  .impersonation-admin-hint {
+    margin-left: 0;
+    width: 100%;
+  }
+}
