@@ -30,119 +30,15 @@
             <section class="services">
                 <div class="container">
                     <div class="section-header">
-                        <h1>Admin Yönetimi (MVP)</h1>
-                        <p>
-                            Bu panel localStorage üzerinde çalışır. Şifreler MVP amaçlı düz metin olarak
-                            tutulur; production için güvenli değildir.
-                        </p>
+                        <h1>Kullanıcı Erişim Yönetimi</h1>
+                        <p>Kullanıcılara proje erişimi atayın veya kaldırın.</p>
                     </div>
 
-                    <div style="display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap">
-                        <button class="btn btn-sm btn-primary is-active" data-tab-target="users" type="button">
-                            Users
-                        </button>
-                        <button class="btn btn-sm btn-secondary" data-tab-target="projects" type="button">
-                            Projects
-                        </button>
-                        <button class="btn btn-sm btn-outline" data-tab-target="access" type="button">
-                            Access
-                        </button>
-                        <button id="reset-data-btn" class="btn btn-sm btn-outline" type="button">
-                            Reset Data
-                        </button>
+                    <div id="entitlement-table-wrapper" style="overflow-x: auto"></div>
+                    <div style="margin-top: 24px; display: flex; gap: 12px">
+                        <button id="save-entitlements" class="btn btn-primary">Kaydet</button>
+                        <span id="save-feedback" hidden>Kaydedildi.</span>
                     </div>
-
-                    <section data-tab-pane="users">
-                        <h2 style="margin-bottom: 12px">Create User</h2>
-                        <form id="create-user-form" class="auth-form" novalidate>
-                            <div class="form-group">
-                                <label for="user-name">Name</label>
-                                <input id="user-name" name="name" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="user-email">Email</label>
-                                <input id="user-email" name="email" type="email" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="user-role">Role</label>
-                                <select id="user-role" name="role">
-                                    <option value="user">user</option>
-                                    <option value="admin">admin</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="user-password">Password (MVP)</label>
-                                <input id="user-password" name="password" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="user-notes">Notes</label>
-                                <textarea id="user-notes" name="notes"></textarea>
-                            </div>
-                            <button class="btn btn-primary" type="submit">Create User</button>
-                        </form>
-
-                        <p id="users-feedback" hidden aria-live="polite" style="margin-top: 10px"></p>
-
-                        <div style="display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap">
-                            <input
-                                id="users-search"
-                                placeholder="Search by name/email"
-                                aria-label="Search users"
-                                style="min-width: 260px"
-                            />
-                            <select id="user-role-filter" aria-label="Filter by role">
-                                <option value="all">All roles</option>
-                                <option value="admin">admin</option>
-                                <option value="user">user</option>
-                            </select>
-                        </div>
-
-                        <div id="users-list"></div>
-                    </section>
-
-                    <section data-tab-pane="projects" hidden>
-                        <h2 style="margin-bottom: 12px">Create Project</h2>
-                        <form id="create-project-form" class="auth-form" novalidate>
-                            <div class="form-group">
-                                <label for="project-name">Name</label>
-                                <input id="project-name" name="name" required />
-                            </div>
-                            <div class="form-group">
-                                <label for="project-id">ID (optional)</label>
-                                <input id="project-id" name="id" placeholder="auto-generated from name" />
-                            </div>
-                            <div class="form-group">
-                                <label for="project-description">Description</label>
-                                <textarea id="project-description" name="description"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="project-demo-url">Demo URL</label>
-                                <input id="project-demo-url" name="demoUrl" />
-                            </div>
-                            <div class="form-group">
-                                <label for="project-status">Status</label>
-                                <select id="project-status" name="status">
-                                    <option value="active">active</option>
-                                    <option value="inactive">inactive</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-primary" type="submit">Create Project</button>
-                        </form>
-
-                        <p id="projects-feedback" hidden aria-live="polite" style="margin-top: 10px"></p>
-                        <div id="projects-list" style="margin-top: 14px"></div>
-                    </section>
-
-                    <section data-tab-pane="access" hidden>
-                        <h2 style="margin-bottom: 12px">Access Matrix</h2>
-                        <div id="entitlement-table-wrapper" style="overflow-x: auto"></div>
-                        <div style="margin-top: 24px; display: flex; gap: 12px">
-                            <button id="save-entitlements" class="btn btn-primary" type="button">
-                                Save Access
-                            </button>
-                            <span id="save-feedback" hidden aria-live="polite"></span>
-                        </div>
-                    </section>
                 </div>
             </section>
         </main>

@@ -20,7 +20,7 @@
 }
 body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
 
-.toast-notification { right: 20px; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 8px; z-index: 10002; display: none; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.toast-notification { position: fixed; top: 20px; right: 20px; background: #1f232c; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 8px; z-index: 10002; display: none; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); align-items: center; }
 .toast-notification.show { display: flex; animation: slideIn 0.3s ease; }
 .toast-icon { color: #ef4444; font-size: 1.2rem; }
 .toast-content h4 { margin: 0 0 5px 0; font-size: 0.9rem; }

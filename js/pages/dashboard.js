@@ -46,11 +46,9 @@ function renderProjects(projects) {
       text: 'Demo Aç'
     });
 
-    actionLink.href = project.demoUrl ? resolveProjectUrl(project.demoUrl) : '#';
-    if (project.demoUrl) {
-      actionLink.target = '_blank';
-      actionLink.rel = 'noopener noreferrer';
-    }
+    actionLink.href = resolveProjectUrl(project.demoUrl);
+    actionLink.target = '_blank';
+    actionLink.rel = 'noopener noreferrer';
 
     actions.append(actionLink);
     card.append(title, description, actions);

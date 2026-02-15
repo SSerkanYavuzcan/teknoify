@@ -28,10 +28,6 @@ export function login(email, password) {
     return { ok: false, message: 'E-posta veya şifre hatalı.' };
   }
 
-  if (matchedUser.enabled === false) {
-    return { ok: false, message: 'Kullanıcı devre dışı. Lütfen yönetici ile iletişime geçin.' };
-  }
-
   const session = {
     userId: matchedUser.id,
     email: matchedUser.email,
@@ -57,15 +53,6 @@ export function requireAuth({ role } = {}) {
   const session = getSession();
 
   if (!session) {
-    window.location.href = getLoginPath();
-    return null;
-  }
-
-  const users = getUsers();
-  const currentUser = users.find((item) => item.id === session.userId);
-
-  if (!currentUser || currentUser.enabled === false) {
-    window.localStorage.removeItem(SESSION_KEY);
     window.location.href = getLoginPath();
     return null;
   }
