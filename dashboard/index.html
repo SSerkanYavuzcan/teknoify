@@ -7,9 +7,29 @@
         <link rel="stylesheet" href="../css/style.css" />
     </head>
     <body>
-        <header id="site-header"></header>
-
-
+        <header class="header" style="position: static">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="logo">
+                        <a href="../index.html" aria-label="Ana Sayfa">
+                            <span class="logo-icon">T</span>
+                            <span class="logo-text">Teknoify Dashboard</span>
+                        </a>
+                    </div>
+                    <ul class="nav-menu" style="display: flex">
+                        <li class="nav-item">
+                            <span class="nav-link" id="session-user-name">Kullanıcı</span>
+                        </li>
+                        <li class="nav-item" id="admin-link" hidden>
+                            <a href="admin.html" class="nav-link">Admin</a>
+                        </li>
+                        <li class="nav-item">
+                            <button id="logout-btn" class="btn btn-sm btn-outline">Çıkış Yap</button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
 
         <main class="page-frame" style="padding-top: 40px">
             <section class="services">

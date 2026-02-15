@@ -1,8 +1,11 @@
 import { getSession, logout, requireAuth } from '../lib/auth.js';
-import { getProjects, getUserEntitledProjectIds, getUsers } from '../lib/data.js';
+import {
+  getProjects,
+  getUserEntitledProjectIds,
+  getUsers
+} from '../lib/data.js';
 import { initSeedDataOnce } from '../lib/storage.js';
 import { createEl, qs } from '../utils/dom.js';
-import { initCommonPage } from './common.js';
 
 function resolveProjectUrl(path) {
   if (/^(https?:)?\/\//.test(path)) {
@@ -43,11 +46,9 @@ function renderProjects(projects) {
       text: 'Demo Aç'
     });
 
-    actionLink.href = project.demoUrl ? resolveProjectUrl(project.demoUrl) : '#';
-    if (project.demoUrl) {
-      actionLink.target = '_blank';
-      actionLink.rel = 'noopener noreferrer';
-    }
+    actionLink.href = resolveProjectUrl(project.demoUrl);
+    actionLink.target = '_blank';
+    actionLink.rel = 'noopener noreferrer';
 
     actions.append(actionLink);
     card.append(title, description, actions);
@@ -58,12 +59,10 @@ function renderProjects(projects) {
 async function init() {
   await initSeedDataOnce();
 
-  const session = requireAuth({ returnTo: '/dashboard/index.html' });
+  const session = requireAuth();
   if (!session) {
     return;
   }
-
-  initCommonPage({ activePath: '/dashboard/index.html' });
 
   const sessionFromStorage = getSession();
   const users = getUsers();
@@ -84,6 +83,11 @@ async function init() {
   const logoutButton = qs('#logout-btn');
   if (logoutButton) {
     logoutButton.addEventListener('click', logout);
+  }
+
+  const adminLink = qs('#admin-link');
+  if (adminLink) {
+    adminLink.hidden = session.role !== 'admin';
   }
 }
 
