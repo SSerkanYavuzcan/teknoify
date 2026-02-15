@@ -1,0 +1,5 @@
+/* Shared table primitives for analysis + dashboard pages */
+.data-table,
+.comparison-table {
+    width: 100%;
+}

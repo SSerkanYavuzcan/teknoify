@@ -1,0 +1,59 @@
+# DEVELOPMENT
+
+## Gereksinimler
+- Node.js 18+
+- npm 9+
+- Windows uyumlu komutlar (`npm run ...`) kullanılır.
+
+## Kurulum
+```bash
+npm install
+```
+
+Kurulumdan sonra `npm run check` çalıştırın.
+
+## Kod kalitesi komutları
+```bash
+npm run format
+npm run format:check
+npm run lint:js
+npm run lint:css
+npm run check
+```
+
+## Lokal çalışma
+Bu proje statik MPA yapısındadır. Dosyalar doğrudan host edilebilir.
+Geliştirme sırasında bir static server önerilir (ör. VS Code Live Server).
+
+## Deploy
+- Mevcut route/filename yapısı korunmuştur.
+- `index.html`, `reset-password.html`, `pages/*`, `dashboard/*` doğrudan yayınlanabilir.
+
+## Bakım kuralları
+- Yeni CSS doğrudan `css/style.css` içine yazılmaz; ilgili katman dosyasına eklenir.
+- Lint ve format kontrolleri commit öncesi çalıştırılır.
+
+## MVP Auth + Entitlements + Admin Management (Prototype)
+- Bu MVP tamamen **localStorage + JSON seed** ile çalışır, backend yoktur.
+- Admin panelinde kullanıcı/proje oluşturma-düzenleme-devre dışı bırakma/silme işlemleri localStorage'a yazılır.
+- Önerilen kullanım: statik server üzerinden çalıştırın (örn. VS Code Live Server) ve `pages/login.html` sayfasını açın.
+- Demo kullanıcılar:
+  - Admin: `admin@teknoify.local` / `admin123`
+  - User: `user@teknoify.local` / `user123`
+- Güvenlik notu: Bu yapı prototip amaçlıdır. Şifreler düz metin mock veridir ve **production için güvenli değildir**.
+
+### Hızlı test akışı
+1. Admin panelindeki **Reset Data** butonu ile temiz başlangıç yapın (veya localStorage temizleyin).
+2. `admin@teknoify.local` ile giriş yapıp Admin paneline geçin.
+3. Users sekmesinden yeni kullanıcı oluşturun.
+4. Projects sekmesinden yeni proje oluşturun.
+5. Access sekmesinden kullanıcıya proje erişimi verip kaydedin.
+6. Çıkış yapıp yeni kullanıcı ile giriş yapın; dashboard'da sadece yetkili projeleri görün.
+7. Kullanıcıyı disable edip tekrar login deneyin; girişin engellendiğini doğrulayın.
+
+### Temiz başlangıç için localStorage anahtarları
+- `teknoify_users`
+- `teknoify_projects`
+- `teknoify_entitlements`
+- `teknoify_session`
+- `teknoify_seeded_v1`
