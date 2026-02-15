@@ -1,0 +1,5 @@
+{
+    "name": "stylelint-config-standard",
+    "version": "36.0.1-local",
+    "main": "index.js"
+}
