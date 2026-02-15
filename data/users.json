@@ -12,5 +12,12 @@
     "name": "User",
     "role": "user",
     "password": "user123"
-  }
+  },
+  {
+  "id": "u_yakup",
+  "email": "yakup.iler@tazeyo.com",
+  "name": "Yakup İler",
+  "role": "user",
+  "password": "yakup123"
+}
 ]

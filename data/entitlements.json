@@ -2,5 +2,9 @@
   {
     "userId": "u_serkan",
     "projectIds": ["pim_automation"]
-  }
+  },
+  {
+  "userId": "u_yakup",
+  "projectIds": ["web_scraping"]
+}
 ]
