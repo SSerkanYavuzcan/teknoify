@@ -1,0 +1,17 @@
+/* =========================================================================
+   analysis.css - Fiyat Karşılaştırma Sayfası Stilleri
+   ========================================================================= */
+
+/* --- 1. TEMEL AYARLAR & RESET --- */
+* { box-sizing: border-box; }
+
+html, body {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background-color: #0b0e11;
+    margin: 0; padding: 0;
+    display: block !important;
+    font-family: 'Inter Tight', sans-serif;
+}

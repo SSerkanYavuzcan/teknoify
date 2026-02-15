@@ -1,85 +1,16 @@
-{
-  "yakup.iler@tazeyo.com": {
-    "role": "member",
-    "name": "Yakup İler",
-    "email": "yakup.iler@tazeyo.com",
-    "features": {
-      "analysis": true,
-      "impersonate": false
-    },
-    "config": {
-      "sheetUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQbNSwjxxfTllLegCs4LRFKEmFw8d8jAopgfTjjISpr_c1MTdzn50zO7OsD5p0_JmtxI6bjXCoCQgyB/pub?gid=0&single=true&output=csv"
-    },
-    "data": {
-      "activeBots": 1,
-      "totalProcessed": "Güncel",
-      "savedHours": 0,
-      "nextPayment": "-",
-      "notifications": [
-        "Fiyat analiz raporunuz güncellendi.",
-        "Sisteme hoşgeldiniz."
-      ]
-    },
-    "scraping_config": {
-      "project_name": "Tazeyo Pazar Analizi",
-      "target_sites": [
-        {
-          "name": "Rakip Market A",
-          "url": "https://www.ornek-rakip.com",
-          "frequency": "daily"
-        }
-      ],
-      "keywords": [
-        "organik elma",
-        "gezen tavuk yumurtası"
-      ]
-    }
-  },
-  "serkanyavuzcan99@gmail.com": {
+[
+  {
+    "id": "u_admin",
+    "email": "admin@teknoify.local",
+    "name": "Admin",
     "role": "admin",
-    "name": "Serkan Yavuzcan",
-    "email": "serkanyavuzcan99@gmail.com",
-    "features": {
-      "analysis": true,
-      "impersonate": true
-    },
-    "config": {
-      "sheetUrl": ""
-    },
-    "data": {
-      "activeBots": 99,
-      "totalProcessed": "TÜMÜ",
-      "savedHours": 9999,
-      "nextPayment": "-",
-      "notifications": [
-        "Sistem güncellemesi hazır.",
-        "Yeni üye kaydı: Yemeksepeti"
-      ]
-    }
+    "password": "admin123"
   },
-  "info@yemeksepeti.com": {
-    "role": "premium",
-    "name": "Yemeksepeti",
-    "email": "info@yemeksepeti.com",
-    "features": {
-      "analysis": true,
-      "impersonate": false
-    },
-    "config": {
-      "sheetUrl": ""
-    },
-    "data": {
-      "activeBots": 0,
-      "totalProcessed": "0",
-      "savedHours": 0,
-      "nextPayment": "-",
-      "notifications": [
-        "Premium hesabınız aktif edildi.",
-        "Teknoify ailesine hoşgeldiniz!"
-      ]
-    }
+  {
+    "id": "u_serkan",
+    "email": "user@teknoify.local",
+    "name": "User",
+    "role": "user",
+    "password": "user123"
   }
-}
-
-
-
+]
