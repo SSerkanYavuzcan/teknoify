@@ -1,7 +1,6 @@
-import { getReturnTarget, login } from '../lib/auth.js';
+import { login } from '../lib/auth.js';
 import { initSeedDataOnce } from '../lib/storage.js';
 import { qs } from '../utils/dom.js';
-import { initCommonPage } from './common.js';
 
 const form = qs('#mvp-login-form');
 const errorBox = qs('#mvp-login-error');
@@ -13,8 +12,6 @@ function showError(message) {
   errorBox.textContent = message;
   errorBox.hidden = false;
 }
-
-initCommonPage({ activePath: '/pages/login.html' });
 
 if (form) {
   initSeedDataOnce();
@@ -35,6 +32,6 @@ if (form) {
       return;
     }
 
-    window.location.href = getReturnTarget();
+    window.location.href = '../dashboard/index.html';
   });
 }
