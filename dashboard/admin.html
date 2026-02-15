@@ -1,177 +1,48 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yönetim Paneli | Teknoify</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body { 
-            background: #0b0b0e; 
-            color: #fff; 
-            padding: 40px; 
-            font-family: 'Inter Tight', sans-serif;
-        }
-        .admin-container { 
-            max-width: 900px; 
-            margin: 0 auto; 
-            opacity: 0; /* Sayfa yetki onaylanana kadar gizli kalsın */
-            transition: opacity 0.3s ease;
-        }
-        .header-section {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        h1 { color: #ea5455; font-size: 2.5rem; margin-bottom: 10px; }
-        .subtitle { color: #888; margin-bottom: 30px; }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin | Teknoify</title>
+        <link rel="stylesheet" href="../css/style.css" />
+    </head>
+    <body>
+        <header class="header" style="position: static">
+            <nav class="navbar">
+                <div class="nav-container">
+                    <div class="logo">
+                        <a href="index.html" aria-label="Dashboard">
+                            <span class="logo-icon">T</span>
+                            <span class="logo-text">Teknoify Admin</span>
+                        </a>
+                    </div>
+                    <ul class="nav-menu" style="display: flex">
+                        <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
+                        <li class="nav-item">
+                            <button id="logout-btn" class="btn btn-sm btn-outline">Çıkış Yap</button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
 
-        /* Kullanıcı Kartları Grid */
-        .user-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .user-card {
-            background: #151519;
-            border: 1px solid #2b2b36;
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            text-align: left;
-        }
-        .user-card:hover {
-            border-color: #7367f0;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-        }
-        .user-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 5px; display: block; }
-        .user-email { color: #666; font-size: 0.85rem; display: block; margin-bottom: 15px; }
-        .user-role-badge {
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: 800;
-            background: rgba(115, 103, 240, 0.1);
-            color: #7367f0;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
+        <main class="page-frame" style="padding-top: 40px">
+            <section class="services">
+                <div class="container">
+                    <div class="section-header">
+                        <h1>Kullanıcı Erişim Yönetimi</h1>
+                        <p>Kullanıcılara proje erişimi atayın veya kaldırın.</p>
+                    </div>
 
-        .btn-impersonate {
-            width: 100%;
-            background: linear-gradient(135deg, #7367f0, #584cd1);
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.3s;
-        }
-        .btn-impersonate:hover {
-            box-shadow: 0 0 15px rgba(115, 103, 240, 0.4);
-            filter: brightness(1.1);
-        }
+                    <div id="entitlement-table-wrapper" style="overflow-x: auto"></div>
+                    <div style="margin-top: 24px; display: flex; gap: 12px">
+                        <button id="save-entitlements" class="btn btn-primary">Kaydet</button>
+                        <span id="save-feedback" hidden>Kaydedildi.</span>
+                    </div>
+                </div>
+            </section>
+        </main>
 
-        .admin-footer { margin-top: 50px; border-top: 1px solid #222; padding-top: 20px; }
-    </style>
-</head>
-<body>
-
-    <div class="admin-container" id="main-container">
-        <div class="header-section">
-            <h1><i class="fas fa-shield-alt"></i> YÖNETİM MERKEZİ</h1>
-            <p class="subtitle">Sistemdeki kullanıcıları yönetin ve panellerine erişim sağlayın.</p>
-        </div>
-
-        <div id="loading-state" style="text-align: center; color: #888; padding: 20px;">Kullanıcılar yükleniyor...</div>
-        
-        <div class="user-grid" id="user-list">
-            </div>
-
-        <div class="admin-footer">
-            <button onclick="logout()" class="btn btn-outline" style="border-color: #444; color: #888;">
-                <i class="fas fa-sign-out-alt"></i> Güvenli Çıkış
-            </button>
-        </div>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="../js/session-manager.js"></script>
-    <script>
-        const session = new SessionManager();
-        
-        // 1. ASENKRON GUARD: Oturumu ve Yetkiyi Bekle
-        session.validateSession().then(user => {
-            // Role kontrolü yapıyoruz. Session manager sserkanyavuzcan99 mailini admin olarak döndürüyor.
-            if (user.role !== 'admin') {
-                alert("Bu yetki sadece yöneticilere özeldir!");
-                window.location.href = 'member.html';
-            } else {
-                // Admin ise arayüzü göster ve listeyi yükle
-                document.getElementById('main-container').style.opacity = "1";
-                loadUsers();
-            }
-        }).catch(err => {
-            console.error("Yetki Hatası:", err);
-            window.location.href = '../index.html';
-        });
-
-        // 2. Kullanıcıları Çek ve Listele
-        async function loadUsers() {
-            try {
-                const response = await fetch('../data/users.json');
-                const userDB = await response.json();
-                const listContainer = document.getElementById('user-list');
-                const loadingMsg = document.getElementById('loading-state');
-                
-                loadingMsg.style.display = 'none';
-                listContainer.innerHTML = '';
-
-                Object.keys(userDB).forEach(userKey => {
-                    const u = userDB[userKey];
-                    
-                    // Adminlerin kendisine gözatmasına gerek yok
-                    if (u.role === 'admin') return;
-
-                    const card = document.createElement('div');
-                    card.className = 'user-card';
-                    card.innerHTML = `
-                        <span class="user-role-badge">${u.role}</span>
-                        <span class="user-name">${u.name}</span>
-                        <span class="user-email">${userKey}</span>
-                        <button class="btn-impersonate" onclick="startImpersonate('${userKey}')">
-                            <i class="fas fa-user-secret"></i> Hesaba Gözat
-                        </button>
-                    `;
-                    listContainer.appendChild(card);
-                });
-            } catch (err) {
-                console.error("Veri yükleme hatası:", err);
-                document.getElementById('loading-state').innerText = "Kullanıcı listesi alınamadı.";
-            }
-        }
-
-        // 3. Impersonate İşlemi
-        function startImpersonate(targetUserEmail) {
-            localStorage.setItem('impersonated_user_key', targetUserEmail);
-            window.location.href = 'member.html'; 
-        }
-
-        function logout() {
-            localStorage.removeItem('impersonated_user_key');
-            session.destroySession();
-        }
-    </script>
-</body>
+        <script type="module" src="../js/pages/admin.js"></script>
+    </body>
 </html>
-
-
