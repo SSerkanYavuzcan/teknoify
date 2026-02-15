@@ -1,0 +1,18 @@
+/* Shared button-like interaction primitives for analysis + dashboard pages */
+.btn-filter-action,
+.btn-filter,
+.btn-download {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.download-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
