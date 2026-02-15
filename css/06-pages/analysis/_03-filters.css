@@ -5,7 +5,7 @@
     background: #1f232c; padding: 15px; border-radius: 12px; border: 1px solid #333; 
 }
 
-.filter-group { gap: 5px; }
+.filter-group { display: flex; flex-direction: column; gap: 5px; }
 
 .filter-group label { 
     font-size: 0.75rem; 
@@ -38,7 +38,7 @@
 .date-picker-wrapper { position: relative; }
 .calendar-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none; z-index: 10; }
 
-.multi-select-wrapper { min-width: 200px; }
+.multi-select-wrapper { position: relative; min-width: 200px; }
 .multi-select-trigger { justify-content: space-between; }
 .multi-select-trigger::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 0.8em; color: #666; }
 
@@ -48,10 +48,10 @@
 .scrollable-options-area { flex-grow: 1; overflow-y: auto; }
 .dropdown-search-wrapper { padding: 5px; }
 .dropdown-search-input { width: 100%; background: #14161c; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; }
-.multi-option { padding: 8px 12px; color: #ccc; }
+.multi-option { padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; color: #ccc; font-size: 0.9rem; }
 .multi-option:hover { background: rgba(255,255,255,0.05); color: #fff; }
 .multi-option.selected { background: rgba(16, 185, 129, 0.1); color: #fff; }
-.option-checkbox { width: 16px; height: 16px; border: 2px solid #555; }
+.option-checkbox { width: 16px; height: 16px; border: 2px solid #555; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
 .multi-option.selected .option-checkbox { background: #10b981; border-color: #10b981; }
 .multi-option.selected .option-checkbox::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: #fff; font-size: 0.6em; }
 

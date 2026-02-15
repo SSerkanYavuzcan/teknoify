@@ -7,12 +7,10 @@
         "format": "prettier --write \"**/*.{html,css,js,md,json}\"",
         "format:check": "prettier --check \"**/*.{html,css,js,md,json}\"",
         "lint:js": "eslint js/**/*.js",
-        "lint:css": "node tools/stylelint/bin/stylelint.js \"css/**/*.css\"",
+        "lint:css": "stylelint \"css/**/*.css\"",
         "check": "npm run format:check && npm run lint:js && npm run lint:css"
     },
     "devDependencies": {
-        "eslint": "^9.20.1",
-        "prettier": "^3.4.2",
         "stylelint": "file:tools/stylelint",
         "stylelint-config-standard": "file:tools/stylelint-config-standard"
     }
