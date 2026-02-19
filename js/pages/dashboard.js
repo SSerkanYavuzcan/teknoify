@@ -9,6 +9,28 @@ function resolveProjectUrl(path) {
   return `../${path}`;
 }
 
+// ---- IMPERSONATE HELPERS (localStorage) ----
+function getImpersonation() {
+  const uid = localStorage.getItem("impersonate_uid");
+  if (!uid) return null;
+  return {
+    uid,
+    email: localStorage.getItem("impersonate_email") || "",
+    name: localStorage.getItem("impersonate_name") || ""
+  };
+}
+
+function getEffectiveUserId(sessionUserId) {
+  const imp = getImpersonation();
+  return imp?.uid || sessionUserId;
+}
+
+function clearImpersonation() {
+  localStorage.removeItem("impersonate_uid");
+  localStorage.removeItem("impersonate_email");
+  localStorage.removeItem("impersonate_name");
+}
+
 function renderProjects(projects) {
   const list = qs("#project-list");
   const empty = qs("#project-empty");
@@ -47,21 +69,41 @@ async function init() {
   const session = await requireAuth();
   if (!session) return;
 
-  const userName = qs("#session-user-name");
-  if (userName) userName.textContent = session.name || "Kullanıcı";
+  // 1) Effective UID (impersonate varsa onu kullan)
+  const imp = getImpersonation();
+  const effectiveUserId = getEffectiveUserId(session.userId);
 
-  const entitledIds = await getUserEntitledProjectIds(session.userId);
+  // 2) Üstte görünen isim
+  const userName = qs("#session-user-name");
+  if (userName) {
+    if (imp) {
+      const label = imp.name || imp.email || "İmpersonated User";
+      userName.textContent = `${label} (Impersonate)`;
+    } else {
+      userName.textContent = session.name || "Kullanıcı";
+    }
+  }
+
+  // 3) Projeleri effective UID ile çek
+  const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
   const activeProjects = (await getProjects()).filter(
     (project) => project.status === "active" && entitledIds.includes(project.id)
   );
 
   renderProjects(activeProjects);
 
+  // 4) Logout: önce impersonate temizle
   const logoutButton = qs("#logout-btn");
-  if (logoutButton) logoutButton.addEventListener("click", logout);
+  if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+      clearImpersonation();
+      logout();
+    });
+  }
 
+  // 5) Admin linki: admin ise her zaman görünsün (impersonate olsa bile)
   const adminLink = qs("#admin-link");
-  if (adminLink) adminLink.hidden = !session.isAdmin; // impersonate olsa bile admin linki kalsın
+  if (adminLink) adminLink.hidden = !session.isAdmin;
 }
 
 init();

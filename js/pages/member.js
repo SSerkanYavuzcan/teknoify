@@ -2,11 +2,35 @@
 import { logout as logoutFn, requireAuth } from "../lib/auth.js";
 import { getUserEntitledProjectIds } from "../lib/data.js";
 import { db } from "../lib/firebase.js";
-import {
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+// --------------------
+// IMPERSONATE HELPERS
+// --------------------
+function getImpersonation() {
+  const uid = localStorage.getItem("impersonate_uid");
+  if (!uid) return null;
+  return {
+    uid,
+    email: localStorage.getItem("impersonate_email") || "",
+    name: localStorage.getItem("impersonate_name") || ""
+  };
+}
+
+function getEffectiveUserId(sessionUserId) {
+  const imp = getImpersonation();
+  return imp?.uid || sessionUserId;
+}
+
+function clearImpersonation() {
+  localStorage.removeItem("impersonate_uid");
+  localStorage.removeItem("impersonate_email");
+  localStorage.removeItem("impersonate_name");
+}
+
+// --------------------
+// UI HELPERS
+// --------------------
 function setText(id, text) {
   const el = document.getElementById(id);
   if (el) el.textContent = text ?? "";
@@ -84,6 +108,8 @@ window.toggleSidebar = function toggleSidebar() {
 
 window.logout = async function logout() {
   if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
+    // Admin impersonate modunda logout'a basarsa view-as state temizlensin
+    clearImpersonation();
     await logoutFn();
   }
 };
@@ -96,29 +122,37 @@ window.markAllAsRead = function markAllAsRead() {
   });
 };
 
-// ---- Main init ----
+// --------------------
+// MAIN INIT
+// --------------------
 async function init() {
   try {
     const session = await requireAuth(); // Firebase Auth + admin check
     if (!session) return;
 
-    // Profil
-    const displayName = session.name || (session.email ? session.email.split("@")[0] : "User");
-    setText("user-name-display", displayName);
-    setText("user-name-title", displayName);
+    const imp = getImpersonation();
+    const effectiveUserId = getEffectiveUserId(session.userId);
+
+    // Profil (header)
+    const displayName =
+      imp?.name ||
+      imp?.email?.split("@")[0] ||
+      session.name ||
+      (session.email ? session.email.split("@")[0] : "User");
+
+    setText("user-name-display", imp ? `${displayName} (Impersonate)` : displayName);
+    setText("user-name-title", imp ? `${displayName} (Impersonate)` : displayName);
     setText("user-avatar", displayName.charAt(0).toUpperCase());
 
-    // Entitlements → aktif hizmetler + menü
-    const entitledIds = await getUserEntitledProjectIds(session.userId);
+    // Entitlements → aktif hizmetler + menü (effective UID ile)
+    const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
     setText("stat-active-services", entitledIds.length);
 
     // Web Scraping menüsü: entitlement’a göre
     showAnalysisLink(entitledIds.includes("web_scraping"));
 
-    // Opsiyonel: users/{uid} doc’undan data/config alanlarını oku (varsa)
-    // users doc yapın şöyle olabilir:
-    // { name, email, data: { savedHours, nextPayment, totalProcessed, notifications: [] }, config: { sheetUrl } }
-    const userSnap = await getDoc(doc(db, "users", session.userId));
+    // users/{uid} doc’u (effective UID ile)
+    const userSnap = await getDoc(doc(db, "users", effectiveUserId));
     const userDoc = userSnap.exists() ? userSnap.data() : {};
 
     const data = userDoc.data || {};
