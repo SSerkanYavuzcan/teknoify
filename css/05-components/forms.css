@@ -1,0 +1,28 @@
+/* Shared form/filter primitives for analysis + dashboard pages */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.multi-select-wrapper {
+    position: relative;
+}
+
+.multi-select-trigger {
+    cursor: pointer;
+    display: flex;
+}
+
+.multi-option {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.option-checkbox {
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

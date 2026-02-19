@@ -68,7 +68,8 @@ class AuthSystem {
         this.modal = document.getElementById('loginModal');
         this.form = document.getElementById('loginForm');
         this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login');
-       
+        this.profileMenu = null;
+
         this.bindEvents();
         this.checkCurrentUser();
     }
@@ -206,25 +207,112 @@ class AuthSystem {
     }
 
 
+    ensureProfileDropdown() {
+        const loginBtn = document.getElementById('openLoginBtn');
+        if (!loginBtn) return;
+
+        const host = loginBtn.closest('.nav-login-btn');
+        if (!host) return;
+
+        host.style.position = 'relative';
+
+        let menu = host.querySelector('#profile-hover-menu');
+        if (!menu) {
+            menu = document.createElement('div');
+            menu.id = 'profile-hover-menu';
+            menu.setAttribute('role', 'menu');
+            menu.style.cssText = [
+                'position:absolute',
+                'top:calc(100% + 10px)',
+                'right:0',
+                'min-width:170px',
+                'padding:8px',
+                'border-radius:12px',
+                'background:rgba(7,10,22,.96)',
+                'border:1px solid rgba(96,165,250,.35)',
+                'box-shadow:0 16px 35px rgba(0,0,0,.45)',
+                'display:none',
+                'z-index:1200'
+            ].join(';');
+            host.appendChild(menu);
+        }
+
+        let hideTimer = null;
+
+        const showMenu = () => {
+            if (hideTimer) {
+                window.clearTimeout(hideTimer);
+                hideTimer = null;
+            }
+            menu.style.display = 'block';
+        };
+
+        const hideMenu = () => {
+            hideTimer = window.setTimeout(() => {
+                menu.style.display = 'none';
+            }, 120);
+        };
+
+        host.addEventListener('mouseenter', showMenu);
+        host.addEventListener('mouseleave', hideMenu);
+        loginBtn.addEventListener('focus', showMenu);
+        loginBtn.addEventListener('blur', hideMenu);
+
+        this.profileMenu = menu;
+    }
+
+    renderProfileDropdown(user) {
+        if (!this.profileMenu) return;
+
+        const signedIn = Boolean(user);
+        const entryStyle = 'display:block;width:100%;padding:9px 10px;margin:2px 0;border-radius:8px;background:transparent;border:none;color:#e5e7eb;text-align:left;font-size:14px;cursor:pointer;text-decoration:none';
+
+        this.profileMenu.innerHTML = signedIn
+            ? `
+                <a href="../dashboard/index.html" style="${entryStyle}" onmouseover="this.style.background='rgba(59,130,246,.18)'" onmouseout="this.style.background='transparent'">Panele Git</a>
+                <button type="button" id="profile-menu-logout" style="${entryStyle}" onmouseover="this.style.background='rgba(239,68,68,.18)'" onmouseout="this.style.background='transparent'">Çıkış Yap</button>
+              `
+            : `
+                <button type="button" id="profile-menu-login" style="${entryStyle}" onmouseover="this.style.background='rgba(59,130,246,.18)'" onmouseout="this.style.background='transparent'">Giriş Yap</button>
+              `;
+
+        const loginItem = document.getElementById('profile-menu-login');
+        if (loginItem) {
+            loginItem.addEventListener('click', () => {
+                this.open();
+            });
+        }
+
+        const logoutItem = document.getElementById('profile-menu-logout');
+        if (logoutItem) {
+            logoutItem.addEventListener('click', () => {
+                auth.signOut();
+            });
+        }
+    }
+
     // Oturum Durumunu Kontrol Et ve UI Güncelle
     checkCurrentUser() {
         if (!auth) return;
-       
+
+        this.ensureProfileDropdown();
+
         auth.onAuthStateChanged((user) => {
+            const loginBtn = document.getElementById('openLoginBtn');
+            if(!loginBtn) return;
+
             if (user) {
-                // Headerdaki "Giriş Yap" butonunu güncelle
-                const loginBtn = document.getElementById('openLoginBtn');
-                if(loginBtn) {
-                    const displayName = user.displayName || user.email.split('@')[0];
-                   
-                    loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${displayName}`;
-                    loginBtn.classList.remove('btn-outline');
-                    loginBtn.classList.add('btn-secondary');
-                    
-                    // Tıklayınca çıkış yapma veya profile gitme özelliği eklenebilir
-                    // Şimdilik sadece panele yönlendirmesi için onclick eventini AuthSystem constructor'da override ediyoruz.
-                }
+                const displayName = user.displayName || user.email.split('@')[0];
+                loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${displayName}`;
+                loginBtn.classList.remove('btn-outline');
+                loginBtn.classList.add('btn-secondary');
+            } else {
+                loginBtn.innerHTML = '<i class="fas fa-user"></i> Giriş Yap';
+                loginBtn.classList.add('btn-outline');
+                loginBtn.classList.remove('btn-secondary');
             }
+
+            this.renderProfileDropdown(user);
         });
     }
 }
