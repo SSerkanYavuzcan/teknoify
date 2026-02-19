@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genel Bakış | Teknoify</title>
-   
+
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="../css/dashboard.css">
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 
     <style>
         /* Yükleme Perdesi */
@@ -79,7 +75,7 @@
         </header>
 
         <div class="content-scroll">
-            
+
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Aktif Hizmetler</div>
@@ -127,186 +123,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
-    <script>
-        // ------------------------------------------------------------------
-        // 1. FIREBASE AYARLARI (Giriş kontrolü için burası ŞART)
-        // ------------------------------------------------------------------
-        const firebaseConfig = {
-            apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
-            authDomain: "teknoify-9449c.firebaseapp.com",
-            projectId: "teknoify-9449c",
-            storageBucket: "teknoify-9449c.firebasestorage.app",
-            messagingSenderId: "704314596026",
-            appId: "1:704314596026:web:f63fff04c00b7a698ac083",
-            measurementId: "G-1DZKJE7BXE"
-        };
+    <!-- Yeni sistem: tek kaynak Auth + Firestore -->
+    <script type="module" src="../js/pages/member.js"></script>
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const auth = firebase.auth();
-
-        // ------------------------------------------------------------------
-        // 2. OTURUM VE VERİ YÖNETİMİ
-        // ------------------------------------------------------------------
-        // SessionManager yerine Firebase'i dinliyoruz (Daha güvenilir)
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                console.log("Giriş Başarılı:", user.email);
-                // Giriş yapıldıysa JSON dosyasından verileri çek
-                fetchUserDataFromJSON(user.email);
-            } else {
-                console.warn("Oturum yok, yönlendiriliyor...");
-                window.location.href = '../index.html';
-            }
-        });
-
-        // ------------------------------------------------------------------
-        // 3. JSON DOSYASINDAN VERİ ÇEKME (users.json)
-        // ------------------------------------------------------------------
-        function fetchUserDataFromJSON(email) {
-            // Dosya yoluna dikkat: member.html dashboard klasöründeyse, data bir üstte olabilir.
-            fetch('../data/users.json')
-                .then(response => response.json())
-                .then(userDB => {
-                    const overlay = document.getElementById('loading-overlay');
-                    
-                    // JSON'da email anahtarı ile kullanıcıyı bul
-                    const userData = userDB[email];
-
-                    if (userData) {
-                        console.log("Kullanıcı verisi JSON'dan alındı:", userData);
-                        updateUI(userData, email);
-                    } else {
-                        console.warn("Kullanıcı JSON dosyasında tanımlı değil:", email);
-                        // Kullanıcı Firebase'de var ama JSON'da yoksa boş profil göster
-                        updateUI({}, email);
-                    }
-
-                    // Yükleme ekranını kapat
-                    if (overlay) {
-                        overlay.style.opacity = '0';
-                        setTimeout(() => { overlay.style.display = 'none'; }, 500);
-                    }
-                })
-                .catch(err => {
-                    console.error("users.json okunamadı:", err);
-                    alert("Veri dosyası okunamadı. Lütfen yönetici ile iletişime geçin.");
-                });
-        }
-
-        // ------------------------------------------------------------------
-        // 4. ARAYÜZ GÜNCELLEME
-        // ------------------------------------------------------------------
-        function updateUI(userData, email) {
-            const data = userData.data || {};
-            const features = userData.features || {};
-            const config = userData.config || {};
-
-            // --- PROFİL ---
-            const displayName = userData.name || email.split('@')[0];
-            setText('user-name-display', displayName);
-            setText('user-name-title', displayName);
-            setText('user-avatar', displayName.charAt(0).toUpperCase());
-
-            // --- MENÜ YETKİSİ ---
-            const analysisLink = document.getElementById('nav-link-analysis');
-            if (analysisLink) {
-                // Eğer analysis: true ise menüyü göster
-                analysisLink.style.display = (features.analysis === true) ? 'flex' : 'none';
-            }
-
-            // --- AKTİF HİZMET HESAPLAMA (DİNAMİK) ---
-            let activeServiceCount = 0;
-            if (features.analysis === true) activeServiceCount++;
-            if (features.impersonate === true) activeServiceCount++; 
-            // Başka özellikler varsa buraya ekle (örn: if (features.rpa) ...)
-            
-            setText('stat-active-services', activeServiceCount);
-
-            // --- DİĞER İSTATİSTİKLER ---
-            setText('stat-saved-hours', data.savedHours || "-");
-            setText('stat-next-payment', data.nextPayment || "-");
-
-            // --- İŞLENEN VERİ (CSV SAYMA) ---
-            if (config.sheetUrl && config.sheetUrl.length > 5) {
-                fetchCSVCount(config.sheetUrl);
-            } else {
-                setText('processed-data-count', data.totalProcessed || "-");
-            }
-
-            // --- BİLDİRİMLER ---
-            renderNotifications(data.notifications);
-        }
-
-        // ------------------------------------------------------------------
-        // 5. YARDIMCI FONKSİYONLAR
-        // ------------------------------------------------------------------
-        function fetchCSVCount(url) {
-            // Geçici olarak dönen ikon koyalım
-            const el = document.getElementById('processed-data-count');
-            // el.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            if (typeof Papa === 'undefined') return;
-            Papa.parse(url, {
-                download: true, header: true, skipEmptyLines: true,
-                complete: function(results) {
-                    // 'Store Name' sütunu dolu olan satırları say
-                    const count = results.data.filter(r => r['Store Name'] && r['Store Name'].trim() !== '').length;
-                    el.innerText = new Intl.NumberFormat('tr-TR').format(count);
-                },
-                error: function() {
-                    el.innerText = "Hata";
-                }
-            });
-        }
-
-        function renderNotifications(list) {
-            const tbody = document.getElementById('notification-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            if (!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center; color:#666;">Henüz bildirim yok.</td></tr>';
-                return;
-            }
-
-            list.forEach(msg => {
-                const tr = document.createElement('tr');
-                tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-                tr.innerHTML = `
-                    <td style="padding: 1rem;">${msg}</td>
-                    <td style="padding: 1rem;"><span style="color: #ef4444;"><i class="fas fa-envelope"></i> Okunmadı</span></td>
-                    <td style="padding: 1rem; color: #888;">Bugün</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function setText(id, text) {
-            const el = document.getElementById(id);
-            if(el) el.textContent = text;
-        }
-
-        function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
-
-        function logout() {
-            if(confirm("Çıkış yapmak istediğinize emin misiniz?")) {
-                auth.signOut().then(() => {
-                    window.location.href = '../index.html';
-                });
-            }
-        }
-        
-        function markAllAsRead() {
-            document.querySelectorAll('.fa-envelope').forEach(i => {
-                i.className = 'fas fa-check-circle';
-                i.parentElement.style.color = '#10b981';
-                i.parentElement.innerHTML = '<i class="fas fa-check-circle"></i> Okundu';
-            });
-        }
-    </script>
 </body>
 </html>
-
-

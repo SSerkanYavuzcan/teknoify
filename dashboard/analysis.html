@@ -1,1341 +1,1525 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fiyat Karşılaştırma | Teknoify</title>
-   
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-   
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-   
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiyat Karşılaştırma | Teknoify</title>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-   
-    <link rel="stylesheet" href="../css/dashboard.css?v=8">
-    <link rel="stylesheet" href="../css/analysis.css?v=8"> 
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
-    <style>
-        /* 1. Takvim Çerçevesi */
-        .flatpickr-calendar {
-            background: #1f232c !important; 
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6) !important;
-            border-radius: 16px !important;
-            padding: 15px !important;
-            font-family: 'Inter Tight', sans-serif !important;
-            width: 340px !important;
-        }
-        
-        .flatpickr-calendar:before, .flatpickr-calendar:after { display: none !important; }
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-        /* 2. Header (Ay ve Yıl) */
-        .flatpickr-months {
-            background: transparent !important;
-            margin-bottom: 20px !important;
-            align-items: center !important;
-            position: relative;
-        }
-        
-        .flatpickr-current-month {
-            color: #fff !important;
-            padding-top: 0 !important;
-            font-size: 1.1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-        .flatpickr-current-month .flatpickr-monthDropdown-months,
-        .flatpickr-current-month input.cur-year {
-            color: #fff !important;
-            font-weight: 700 !important;
-            background: transparent !important;
-            border: none !important;
-            pointer-events: none !important;
-            appearance: none;
-            margin: 0 5px;
-        }
-        .numInputWrapper span { display: none !important; }
-        
-        .flatpickr-prev-month, .flatpickr-next-month {
-            fill: #fff !important;
-            padding: 10px !important;
-            top: 5px !important;
-            transition: 0.3s;
-        }
-        .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg {
-            fill: #7367f0 !important;
-            filter: drop-shadow(0 0 5px rgba(115, 103, 240, 0.8));
-        }
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-        /* 3. Gün İsimleri */
-        .flatpickr-weekdays { margin-bottom: 10px; }
-        span.flatpickr-weekday {
-            color: #aaa !important; /* Biraz daha parlak gri */
-            font-weight: 600 !important;
-            font-size: 0.9rem !important;
-        }
+  <link rel="stylesheet" href="../css/dashboard.css?v=8">
+  <link rel="stylesheet" href="../css/analysis.css?v=8">
 
-        .flatpickr-days { width: 100% !important; }
-        .dayContainer {
-            width: 100% !important;
-            min-width: 100% !important;
-            padding: 0 !important;
-            justify-content: space-between !important;
-        }
+  <style>
+    /* 1. Takvim Çerçevesi */
+    .flatpickr-calendar {
+      background: #1f232c !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6) !important;
+      border-radius: 16px !important;
+      padding: 15px !important;
+      font-family: 'Inter Tight', sans-serif !important;
+      width: 340px !important;
+    }
 
-        /* 4. GENEL GÜN STİLİ */
-        .flatpickr-day {
-            border-radius: 8px !important;
-            background: transparent !important;
-            border: 1px solid transparent !important;
-            color: #ddd !important; /* Daha okunabilir gri */
-            font-weight: 500 !important;
-            margin: 4px 0 !important;
-            height: 38px !important;
-            line-height: 38px !important;
-            flex-basis: 14.28% !important;
-            max-width: 14.28% !important;
-            box-shadow: none !important;
-            transition: all 0.2s ease;
-        }
+    .flatpickr-calendar:before, .flatpickr-calendar:after { display: none !important; }
 
-        .flatpickr-day:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: #fff !important;
-            border-color: rgba(255,255,255,0.1) !important;
-        }
+    /* 2. Header (Ay ve Yıl) */
+    .flatpickr-months {
+      background: transparent !important;
+      margin-bottom: 20px !important;
+      align-items: center !important;
+      position: relative;
+    }
 
-        /* --- SEÇİLİ GÜNLER (OKUNABİLİRLİK İÇİN GÜNCELLENDİ) --- */
+    .flatpickr-current-month {
+      color: #fff !important;
+      padding-top: 0 !important;
+      font-size: 1.1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        /* Başlangıç Günü */
-        .flatpickr-day.startRange, 
-        .flatpickr-day.endRange, 
-        .flatpickr-day.selected {
-            background: linear-gradient(135deg, #7367f0, #584cd1) !important;
-            color: #ffffff !important; /* TAM BEYAZ */
-            font-weight: 800 !important; /* KALIN FONT */
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important; /* YAZI GÖLGESİ (OKUNABİLİRLİK İÇİN) */
-            border: none !important;
-            box-shadow: 0 0 15px rgba(115, 103, 240, 0.6) !important; /* Neon Glow */
-            z-index: 2;
-            position: relative;
-        }
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month input.cur-year {
+      color: #fff !important;
+      font-weight: 700 !important;
+      background: transparent !important;
+      border: none !important;
+      pointer-events: none !important;
+      appearance: none;
+      margin: 0 5px;
+    }
 
-        .flatpickr-day.startRange { border-radius: 8px 0 0 8px !important; }
-        .flatpickr-day.endRange { border-radius: 0 8px 8px 0 !important; }
-        .flatpickr-day.startRange.endRange, .flatpickr-day.selected { border-radius: 8px !important; }
+    .numInputWrapper span { display: none !important; }
 
-        /* Aradaki Günler (Şerit) */
-        .flatpickr-day.inRange {
-            background: rgba(115, 103, 240, 0.25) !important; /* Biraz daha belirgin mor */
-            color: #ffffff !important; /* Beyaz yazı */
-            font-weight: 600 !important;
-            border: none !important;
-            border-radius: 0 !important;
-            box-shadow: -5px 0 0 rgba(115, 103, 240, 0.25), 5px 0 0 rgba(115, 103, 240, 0.25) !important; 
-            z-index: 1;
-        }
+    .flatpickr-prev-month, .flatpickr-next-month {
+      fill: #fff !important;
+      padding: 10px !important;
+      top: 5px !important;
+      transition: 0.3s;
+    }
+    .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg {
+      fill: #7367f0 !important;
+      filter: drop-shadow(0 0 5px rgba(115, 103, 240, 0.8));
+    }
 
-        /* Bugün */
-        .flatpickr-day.today {
-            border: 1px solid rgba(115, 103, 240, 0.8) !important;
-            color: #fff !important;
-            font-weight: 700 !important;
-        }
-        
-        .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
-            visibility: hidden !important;
-        }
+    /* 3. Gün İsimleri */
+    .flatpickr-weekdays { margin-bottom: 10px; }
+    span.flatpickr-weekday {
+      color: #aaa !important;
+      font-weight: 600 !important;
+      font-size: 0.9rem !important;
+    }
 
-        /* -----------------------------------------------------------
-           5. FİLTRE MENÜSÜ RENK GÜNCELLEMESİ
-        ----------------------------------------------------------- */
-        .multi-option.selected {
-            background: rgba(115, 103, 240, 0.15) !important;
-            color: #fff !important;
-            font-weight: 500;
-        }
-        .multi-option.selected .option-checkbox {
-            background: #7367f0 !important;
-            border-color: #7367f0 !important;
-            box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important;
-        }
-        .multi-option:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-        }
-    </style>
+    .flatpickr-days { width: 100% !important; }
+    .dayContainer {
+      width: 100% !important;
+      min-width: 100% !important;
+      padding: 0 !important;
+      justify-content: space-between !important;
+    }
+
+    /* 4. GENEL GÜN STİLİ */
+    .flatpickr-day {
+      border-radius: 8px !important;
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      color: #ddd !important;
+      font-weight: 500 !important;
+      margin: 4px 0 !important;
+      height: 38px !important;
+      line-height: 38px !important;
+      flex-basis: 14.28% !important;
+      max-width: 14.28% !important;
+      box-shadow: none !important;
+      transition: all 0.2s ease;
+    }
+
+    .flatpickr-day:hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: #fff !important;
+      border-color: rgba(255,255,255,0.1) !important;
+    }
+
+    /* Seçili günler */
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange,
+    .flatpickr-day.selected {
+      background: linear-gradient(135deg, #7367f0, #584cd1) !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
+      border: none !important;
+      box-shadow: 0 0 15px rgba(115, 103, 240, 0.6) !important;
+      z-index: 2;
+      position: relative;
+    }
+
+    .flatpickr-day.startRange { border-radius: 8px 0 0 8px !important; }
+    .flatpickr-day.endRange { border-radius: 0 8px 8px 0 !important; }
+    .flatpickr-day.startRange.endRange, .flatpickr-day.selected { border-radius: 8px !important; }
+
+    .flatpickr-day.inRange {
+      background: rgba(115, 103, 240, 0.25) !important;
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: -5px 0 0 rgba(115, 103, 240, 0.25), 5px 0 0 rgba(115, 103, 240, 0.25) !important;
+      z-index: 1;
+    }
+
+    .flatpickr-day.today {
+      border: 1px solid rgba(115, 103, 240, 0.8) !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+    }
+
+    .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+      visibility: hidden !important;
+    }
+
+    /* 5. FİLTRE MENÜSÜ */
+    .multi-option.selected {
+      background: rgba(115, 103, 240, 0.15) !important;
+      color: #fff !important;
+      font-weight: 500;
+    }
+    .multi-option.selected .option-checkbox {
+      background: #7367f0 !important;
+      border-color: #7367f0 !important;
+      box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important;
+    }
+    .multi-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+  </style>
 </head>
 
 <body>
 
-    <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
-        <i class="fas fa-bars"></i>
-    </button>
+  <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
+    <i class="fas fa-bars"></i>
+  </button>
 
-    <div id="toast" class="toast-notification">
-        <div class="toast-icon"><i class="fas fa-exclamation-circle"></i></div>
-        <div class="toast-content">
-            <h4>Dikkat</h4>
-            <p id="toast-message">Mesaj</p>
-        </div>
+  <div id="toast" class="toast-notification">
+    <div class="toast-icon"><i class="fas fa-exclamation-circle"></i></div>
+    <div class="toast-content">
+      <h4>Dikkat</h4>
+      <p id="toast-message">Mesaj</p>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fas fa-cube"></i> <span>Teknoify</span>
     </div>
 
-    <aside class="sidebar">
-        <div class="brand">
-            <i class="fas fa-cube"></i> <span>Teknoify</span>
+    <nav>
+      <a href="member.html" class="menu-item">
+        <i class="fas fa-home"></i> <span>Genel Bakış</span>
+      </a>
+
+      <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">
+        <span>Hizmetler</span>
+      </div>
+
+      <a href="analysis.html" class="menu-item active" id="nav-comparison">
+        <i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span>
+      </a>
+
+      <a href="market-analysis.html" class="menu-item" id="nav-market">
+        <i class="fas fa-chart-line"></i> <span>Pazar Analizi</span>
+      </a>
+    </nav>
+
+    <div class="menu-spacer"></div>
+
+    <div class="sidebar-footer">
+      <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
+        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
+      </a>
+      <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <h2>Fiyat Karşılaştırma</h2>
+      <div class="user-profile">
+        <span id="user-name-display">Yükleniyor...</span>
+        <div class="avatar" id="user-avatar">U</div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div class="filter-bar">
+        <div class="filter-group" style="min-width: 240px;">
+          <label>Rapor Tarihi Seçiniz</label>
+          <div class="date-picker-wrapper">
+            <i class="fas fa-calendar-alt calendar-icon"></i>
+            <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz" readonly>
+          </div>
         </div>
-       
-        <nav>
-            <a href="member.html" class="menu-item">
-                <i class="fas fa-home"></i> <span>Genel Bakış</span>
-            </a>
-           
-            <div style="margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase;">
-                <span>Hizmetler</span>
+
+        <div class="filter-group">
+          <label>Şube Seçiniz</label>
+          <div class="multi-select-wrapper" id="wrapper-branch">
+            <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-branch')">
+              <span id="text-branch">Şubeler Yükleniyor...</span>
             </div>
-           
-            <a href="analysis.html" class="menu-item active" id="nav-comparison">
-                <i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span>
-            </a>
-           
-            <a href="market-analysis.html" class="menu-item" id="nav-market">
-                <i class="fas fa-chart-line"></i> <span>Pazar Analizi</span>
-            </a>
-        </nav>
-       
-        <div class="menu-spacer"></div>
-       
-        <div class="sidebar-footer">
-            <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
-                <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
-            </a>
-            <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
-                <i class="fas fa-chevron-left"></i>
-            </button>
+            <div class="multi-select-menu" id="menu-branch"></div>
+          </div>
         </div>
-    </aside>
 
-    <main class="main-content">
-        <header class="top-bar">
-            <h2>Fiyat Karşılaştırma</h2>
-            <div class="user-profile">
-                <span id="user-name-display">Yükleniyor...</span>
-                <div class="avatar" id="user-avatar">U</div>
+        <div class="filter-group">
+          <label>Kategori Seçiniz</label>
+          <div class="multi-select-wrapper" id="wrapper-category">
+            <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-category')">
+              <span id="text-category">Tüm Kategoriler</span>
             </div>
-        </header>
-
-        <div class="content-scroll">
-           
-            <div class="filter-bar">
-                <div class="filter-group" style="min-width: 240px;">
-                    <label>Rapor Tarihi Seçiniz</label>
-                    <div class="date-picker-wrapper">
-                        <i class="fas fa-calendar-alt calendar-icon"></i>
-                        <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz" readonly>
-                    </div>
-                </div>
-
-                <div class="filter-group">
-                    <label>Şube Seçiniz</label>
-                    <div class="multi-select-wrapper" id="wrapper-branch">
-                        <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-branch')">
-                            <span id="text-branch">Şubeler Yükleniyor...</span>
-                        </div>
-                        <div class="multi-select-menu" id="menu-branch"></div>
-                    </div>
-                </div>
-
-                <div class="filter-group">
-                    <label>Kategori Seçiniz</label>
-                    <div class="multi-select-wrapper" id="wrapper-category">
-                        <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-category')">
-                            <span id="text-category">Tüm Kategoriler</span>
-                        </div>
-                        <div class="multi-select-menu" id="menu-category"></div>
-                    </div>
-                </div>
-
-                <button class="btn-filter" id="btn-load" onclick="applyFilters()">
-                    <i class="fas fa-search"></i> Verileri Yükle
-                </button>
-               
-                <div class="download-wrapper">
-                    <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
-                        <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down" style="font-size:0.8em; margin-left:4px;"></i>
-                    </button>
-                    <div id="download-menu" class="download-menu">
-                        <div class="download-item" onclick="downloadCSV()">
-                            <i class="fas fa-file-csv" style="color:#10b981;"></i> CSV Olarak İndir
-                        </div>
-                        <div class="download-item" onclick="downloadExcel()">
-                            <i class="fas fa-file-excel" style="color:#10b981;"></i> Excel (.xlsx) İndir
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="active-filter-banner">
-                <span id="active-filter-text">Filtreleniyor...</span>
-                <button onclick="clearGraphFilters()" title="Filtreyi Temizle">&times;</button>
-            </div>
-
-            <div class="dashboard-container">
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fas fa-balance-scale"></i></div>
-                        <div class="kpi-title">Fiyat Rekabet Endeksi</div>
-                        <div class="kpi-value" id="kpi-competition">-</div>
-                        <div class="kpi-trend" id="kpi-competition-sub">Veri Bekleniyor...</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fas fa-tags"></i></div>
-                        <div class="kpi-title">Bizim İndirimli Ürünler</div>
-                        <div class="kpi-value" id="kpi-disc-us">-</div>
-                        <div class="kpi-trend trend-neutral">Toplam Portföy İçinde</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fas fa-percent"></i></div>
-                        <div class="kpi-title">Ortalama İndirim Derinliği</div>
-                        <div class="kpi-value" id="kpi-depth">%0</div>
-                        <div class="progress-bg"><div class="progress-fill" id="kpi-depth-bar" style="width:0%"></div></div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-icon"><i class="fas fa-trophy"></i></div>
-                        <div class="kpi-title">Avantajlı Kategori</div>
-                        <div class="kpi-value" id="kpi-best-cat" style="font-size:1.1rem">-</div>
-                        <div class="kpi-trend" id="kpi-best-cat-sub">-</div>
-                    </div>
-                </div>
-
-                <div class="charts-grid">
-                    <div class="chart-box">
-                        <div class="chart-header">
-                            <div class="chart-title">Kategori Bazlı Fiyat Endeksi</div>
-                            <div style="font-size:0.8rem; color:#666;">(Negatif = Biz Ucuzuz)</div>
-                        </div>
-                        <div id="chart-category"></div>
-                    </div>
-                    <div class="chart-box">
-                        <div class="chart-header">
-                            <div class="chart-title">Pazar Konumlandırması</div>
-                        </div>
-                        <div id="chart-pie"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="top-scroll-wrapper" class="top-scroll-wrapper">
-                <div id="top-scroll-content" class="top-scroll-content"></div>
-            </div>
-
-            <div class="table-responsive-wrapper" id="table-scroll-container">
-                <table class="comparison-table" id="main-table">
-                    <thead>
-                        <tr id="header-row-top"></tr>
-                        <tr id="header-row-bottom"></tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <tr><td colspan="100%" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağı bekleniyor...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div id="limit-msg" class="limit-warning">
-                <i class="fas fa-info-circle"></i> Sonuçlar performans için <strong>250 satır</strong> ile sınırlandırılmıştır.
-                Tüm veriyi görmek için <strong>İndir</strong> butonunu kullanınız.
-            </div>
+            <div class="multi-select-menu" id="menu-category"></div>
+          </div>
         </div>
-    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="../js/session-manager.js"></script>
-    <script src="../js/script.js"></script>
-   
-    <script>
-        // --- TEMEL UI FONKSİYONLARI ---
-        function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
-       
-        // --- GLOBAL DEĞİŞKENLER ---
-        let ALL_DATA = [];
-        let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
-        let GRAPH_FILTERED_DATA = null;
-        let activeCategoryFilter = null;
-        let flatpickrInstance;
-        let SELECTED_BRANCHES = ['all'];
-        let SELECTED_CATEGORIES = ['all'];
-        let chartCategory = null;
-        let chartPie = null;
+        <button class="btn-filter" id="btn-load" onclick="applyFilters()">
+          <i class="fas fa-search"></i> Verileri Yükle
+        </button>
 
-        // --- SCROLL SENKRONİZASYON ---
-        const topScrollWrapper = document.getElementById('top-scroll-wrapper');
-        const topScrollContent = document.getElementById('top-scroll-content');
-        const tableScrollContainer = document.getElementById('table-scroll-container');
-        const mainTable = document.getElementById('main-table');
+        <div class="download-wrapper">
+          <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
+            <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down" style="font-size:0.8em; margin-left:4px;"></i>
+          </button>
+          <div id="download-menu" class="download-menu">
+            <div class="download-item" onclick="downloadCSV()">
+              <i class="fas fa-file-csv" style="color:#10b981;"></i> CSV Olarak İndir
+            </div>
+            <div class="download-item" onclick="downloadExcel()">
+              <i class="fas fa-file-excel" style="color:#10b981;"></i> Excel (.xlsx) İndir
+            </div>
+          </div>
+        </div>
+      </div>
 
-        topScrollWrapper.addEventListener('scroll', function(e) {
-            if(tableScrollContainer.scrollLeft !== topScrollWrapper.scrollLeft) {
-                tableScrollContainer.scrollLeft = topScrollWrapper.scrollLeft;
-            }
-        });
+      <div id="active-filter-banner">
+        <span id="active-filter-text">Filtreleniyor...</span>
+        <button onclick="clearGraphFilters()" title="Filtreyi Temizle">&times;</button>
+      </div>
 
-        tableScrollContainer.addEventListener('scroll', function(e) {
-            if(topScrollWrapper.scrollLeft !== tableScrollContainer.scrollLeft) {
-                topScrollWrapper.scrollLeft = tableScrollContainer.scrollLeft;
-            }
-        });
+      <div class="dashboard-container">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-balance-scale"></i></div>
+            <div class="kpi-title">Fiyat Rekabet Endeksi</div>
+            <div class="kpi-value" id="kpi-competition">-</div>
+            <div class="kpi-trend" id="kpi-competition-sub">Veri Bekleniyor...</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-tags"></i></div>
+            <div class="kpi-title">Bizim İndirimli Ürünler</div>
+            <div class="kpi-value" id="kpi-disc-us">-</div>
+            <div class="kpi-trend trend-neutral">Toplam Portföy İçinde</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-percent"></i></div>
+            <div class="kpi-title">Ortalama İndirim Derinliği</div>
+            <div class="kpi-value" id="kpi-depth">%0</div>
+            <div class="progress-bg"><div class="progress-fill" id="kpi-depth-bar" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-trophy"></i></div>
+            <div class="kpi-title">Avantajlı Kategori</div>
+            <div class="kpi-value" id="kpi-best-cat" style="font-size:1.1rem">-</div>
+            <div class="kpi-trend" id="kpi-best-cat-sub">-</div>
+          </div>
+        </div>
 
-        function updateTopScrollWidth() {
-            const tableWidth = mainTable.scrollWidth;
-            topScrollContent.style.width = tableWidth + 'px';
+        <div class="charts-grid">
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">Kategori Bazlı Fiyat Endeksi</div>
+              <div style="font-size:0.8rem; color:#666;">(Negatif = Biz Ucuzuz)</div>
+            </div>
+            <div id="chart-category"></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">Pazar Konumlandırması</div>
+            </div>
+            <div id="chart-pie"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="top-scroll-wrapper" class="top-scroll-wrapper">
+        <div id="top-scroll-content" class="top-scroll-content"></div>
+      </div>
+
+      <div class="table-responsive-wrapper" id="table-scroll-container">
+        <table class="comparison-table" id="main-table">
+          <thead>
+            <tr id="header-row-top"></tr>
+            <tr id="header-row-bottom"></tr>
+          </thead>
+          <tbody id="table-body">
+            <tr><td colspan="100%" style="text-align:center; padding:30px; color:#aaa;">Veri kaynağı bekleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="limit-msg" class="limit-warning">
+        <i class="fas fa-info-circle"></i> Sonuçlar performans için <strong>250 satır</strong> ile sınırlandırılmıştır.
+        Tüm veriyi görmek için <strong>İndir</strong> butonunu kullanınız.
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+  <script>
+    // --- TEMEL UI FONKSİYONLARI ---
+    function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
+
+    // --- GLOBAL DEĞİŞKENLER ---
+    let ALL_DATA = [];
+    let CURRENT_PROCESSED_DATA = { rows: [], competitorNames: [] };
+    let GRAPH_FILTERED_DATA = null;
+    let activeCategoryFilter = null;
+    let flatpickrInstance;
+    let SELECTED_BRANCHES = ['all'];
+    let SELECTED_CATEGORIES = ['all'];
+    let chartCategory = null;
+    let chartPie = null;
+
+    // --- SCROLL SENKRONİZASYON ---
+    const topScrollWrapper = document.getElementById('top-scroll-wrapper');
+    const topScrollContent = document.getElementById('top-scroll-content');
+    const tableScrollContainer = document.getElementById('table-scroll-container');
+    const mainTable = document.getElementById('main-table');
+
+    topScrollWrapper.addEventListener('scroll', function() {
+      if (tableScrollContainer.scrollLeft !== topScrollWrapper.scrollLeft) {
+        tableScrollContainer.scrollLeft = topScrollWrapper.scrollLeft;
+      }
+    });
+
+    tableScrollContainer.addEventListener('scroll', function() {
+      if (topScrollWrapper.scrollLeft !== tableScrollContainer.scrollLeft) {
+        topScrollWrapper.scrollLeft = tableScrollContainer.scrollLeft;
+      }
+    });
+
+    function updateTopScrollWidth() {
+      const tableWidth = mainTable.scrollWidth;
+      topScrollContent.style.width = tableWidth + 'px';
+    }
+    window.addEventListener('resize', updateTopScrollWidth);
+
+    // --- KATEGORİ HARİTALAMA ---
+    const CATEGORY_MAPPING = {
+      "Taze Meyve": "Meyve & Sebze", "Taze Sebze": "Meyve & Sebze", "Taze Ot & Yeşillik": "Meyve & Sebze", "Patates, Soğan & Sarımsak": "Meyve & Sebze", "Kullanıma Hazır Meyve & Sebze": "Meyve & Sebze",
+      "Dana Eti": "Et, Tavuk & Şarküteri", "Kuzu Eti": "Et, Tavuk & Şarküteri", "Tavuk Eti": "Et, Tavuk & Şarküteri", "Kıyma": "Et, Tavuk & Şarküteri", "Pişirilmeye Hazır Etler": "Et, Tavuk & Şarküteri", "Diğer Et Ürünleri": "Et, Tavuk & Şarküteri", "Sucuk & Sosis": "Et, Tavuk & Şarküteri", "Salam & Jambon": "Et, Tavuk & Şarküteri", "Kavurma & Pastırma": "Et, Tavuk & Şarküteri", "Diğer Şarküteri Ürünleri": "Et, Tavuk & Şarküteri", "Sakatat Ürünleri": "Et, Tavuk & Şarküteri",
+      "Süt": "Süt & Süt Ürünleri", "Beyaz Peynir": "Süt & Süt Ürünleri", "Kaşar Peyniri": "Süt & Süt Ürünleri", "Diğer Peynirler": "Süt & Süt Ürünleri", "Tereyağı & Margarin": "Süt & Süt Ürünleri", "Yoğurt": "Süt & Süt Ürünleri", "Süt Ürünleri": "Süt & Süt Ürünleri",
+      "Yumurta": "Kahvaltılık", "Zeytin": "Kahvaltılık", "Bal & Reçel": "Kahvaltılık", "Çikolata & Ezme": "Kahvaltılık", "Tahin & Pekmez": "Kahvaltılık", "Kahvaltılık Gevrek": "Kahvaltılık", "Kahvaltılık Sos": "Kahvaltılık",
+      "Makarna & Mantı": "Temel Gıda", "Pirinç & Bakliyat": "Temel Gıda", "Un & Harçlar": "Temel Gıda", "Tuz & Şeker": "Temel Gıda", "Sıvı Yağ": "Temel Gıda", "Salça & Sos": "Temel Gıda", "Sirke & Salata Sosu": "Temel Gıda", "Baharat & Çeşniler": "Temel Gıda", "Hazır Çorba & Bulyon": "Temel Gıda", "Konserve & Turşu": "Temel Gıda", "Tatlı Malzemeleri": "Temel Gıda", "Aktar Ürünleri": "Temel Gıda",
+      "Çikolata": "Atıştırmalık", "Kaplamalı & Bar Çikolata": "Atıştırmalık", "Gofret": "Atıştırmalık", "Kek": "Atıştırmalık", "Bisküvi": "Atıştırmalık", "Cips & Patlamış Mısır": "Atıştırmalık", "Kraker & Kurabiye": "Atıştırmalık", "Kuru Yemiş": "Atıştırmalık", "Helva & Krokan": "Atıştırmalık", "Sakız": "Atıştırmalık", "Şekerleme": "Atıştırmalık", "Tatlı": "Atıştırmalık",
+      "Su": "Su & İçecek", "Gazlı İçecek": "Su & İçecek", "Maden Suyu": "Su & İçecek", "Meyve Suyu": "Su & İçecek", "Soğuk Çay & Kahve": "Su & İçecek", "Ayran & Kefir": "Su & İçecek", "Enerji İçeceği": "Su & İçecek", "Hazır & Toz İçecekler": "Su & İçecek", "Diğer İçecekler": "Su & İçecek",
+      "Siyah Çay": "Çay & Kahve", "Kahve": "Çay & Kahve", "Bitki Çayı": "Çay & Kahve",
+      "Taze Fırın": "Fırından", "Paketli Ekmekler": "Fırından", "Unlu Mamuller": "Fırından", "Tatlı Unlu Mamuller": "Fırından",
+      "Kutu Dondurma": "Dondurma", "Çubuk Dondurma": "Dondurma", "Çoklu Dondurma": "Dondurma", "Dondurma Bar": "Dondurma", "Külah Dondurma": "Dondurma",
+      "Donuk Hamur İşleri": "Dondurulmuş Gıda", "Donuk Et, Tavuk & Balık": "Dondurulmuş Gıda", "Donuk Patates, Meyve & Sebze": "Dondurulmuş Gıda", "Donuk Tatlı & Atıştırmalık": "Dondurulmuş Gıda",
+      "Sandviç": "Hızlı Yemek", "Hazır Yemek": "Hızlı Yemek", "Taze Meze": "Hızlı Yemek",
+      "Sağlıklı Atıştırmalıklar": "Sağlıklı Yaşam", "Granola & Tahıllı Gevrek": "Sağlıklı Yaşam", "Fit Süt & Süt Ürünleri": "Sağlıklı Yaşam", "Organik": "Sağlıklı Yaşam", "Vegan": "Sağlıklı Yaşam", "Glütensiz": "Sağlıklı Yaşam", "Gıda Takviyeleri & Vitaminler": "Sağlıklı Yaşam",
+      "Taze Balık": "Balık & Deniz Ürünleri", "Deniz Ürünleri": "Balık & Deniz Ürünleri",
+      "Çamaşır": "Ev Bakım", "Bulaşık": "Ev Bakım", "Mutfak & Banyo": "Ev Bakım", "Temizlik": "Ev Bakım", "Oda Kokusu": "Ev Bakım", "Böcek İlacı": "Ev Bakım", "Tek Kullanımlık Mutfak Ürünleri": "Ev Bakım", "Buzdolabı & Çöp Poşeti": "Ev Bakım", "Diğer Tek Kullanımlık Ürünler": "Ev Bakım",
+      "Tuvalet Kağıdı": "Kağıt Ürünleri", "Kağıt Havlu & Peçete": "Kağıt Ürünleri", "Islak Mendil & Havlu": "Kağıt Ürünleri",
+      "Şampuan & Saç Kremi": "Kişisel Bakım", "Saç Bakımı": "Kişisel Bakım", "Ağız & Diş Bakımı": "Kişisel Bakım", "Parfüm & Deodorant": "Kişisel Bakım", "Sabun": "Kişisel Bakım", "Duş & Banyo": "Kişisel Bakım", "Hijyenik Ped": "Kişisel Bakım", "Yüz, Cilt & Vücut Bakımı": "Kişisel Bakım", "Tıraş & Epilasyon": "Kişisel Bakım", "Ağda & Tüy Dökücü": "Kişisel Bakım", "Kolonya": "Kişisel Bakım", "Sağlık Ürünleri": "Kişisel Bakım", "Cinsel Sağlık": "Kişisel Bakım", "Bakım & Aksesuar Ürünleri": "Kişisel Bakım",
+      "Saç Boyası": "Kozmetik", "Makyaj Malzemeleri": "Kozmetik", "Makyaj Temizleme": "Kozmetik", "Oje & Aseton": "Kozmetik",
+      "Bebek Beslenme": "Bebek", "Bebek Bezi": "Bebek", "Bebek Bakım Ürünleri": "Bebek", "Diğer Bebek Ürünleri": "Bebek",
+      "Kedi": "Evcil Hayvan", "Köpek": "Evcil Hayvan", "Pet Aksesuarları & Diğerleri": "Evcil Hayvan",
+      "Ev Gereçleri": "Ev & Yaşam", "Sofra & Mutfak": "Ev & Yaşam", "Bahçe": "Ev & Yaşam", "Dergi, Gazete & Kitap": "Ev & Yaşam", "Oyuncak & Kutu Oyunları": "Ev & Yaşam", "Parti Malzemeleri": "Ev & Yaşam", "Kırtasiye Ürünleri": "Ev & Yaşam", "Telefon & Bilgisayar Aksesuarları": "Ev & Yaşam", "Elektrikli Ev Aletleri": "Ev & Yaşam", "Elektrik & Aydınlatma": "Ev & Yaşam", "Pil": "Ev & Yaşam", "Oto Bakım Ürünleri": "Ev & Yaşam",
+      "Giyim & Tekstil": "Giyim & Aksesuar", "Takı & Aksesuar": "Giyim & Aksesuar", "Spor & Outdoor": "Giyim & Aksesuar"
+    };
+
+    function getMainCategory(l2Name) {
+      if (!l2Name) return "Diğer";
+      const cleanName = l2Name.trim();
+      return CATEGORY_MAPPING[cleanName] || "Diğer";
+    }
+
+    // =========================
+    // ✅ FIREBASE + RBAC INIT
+    // =========================
+    const REQUIRED_PROJECT_ID = 'web_scraping';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
+      authDomain: "teknoify-9449c.firebaseapp.com",
+      projectId: "teknoify-9449c",
+      storageBucket: "teknoify-9449c.firebasestorage.app",
+      messagingSenderId: "704314596026",
+      appId: "1:704314596026:web:f63fff04c00b7a698ac083",
+      measurementId: "G-1DZKJE7BXE"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function safeLower(s) { return String(s || '').trim().toLowerCase(); }
+
+    async function ensureUserProfile(user) {
+      const uid = user.uid;
+      const email = safeLower(user.email);
+      const userRef = db.collection('users').doc(uid);
+      const snap = await userRef.get();
+
+      if (snap.exists) {
+        const data = snap.data() || {};
+        // email boş kalmışsa merge et
+        if (!data.email && email) {
+          await userRef.set({ email }, { merge: true });
+          return { ...data, email };
         }
-        window.addEventListener('resize', updateTopScrollWidth);
+        return data;
+      }
 
-        // --- KATEGORİ HARİTALAMA ---
-        const CATEGORY_MAPPING = {
-            "Taze Meyve": "Meyve & Sebze", "Taze Sebze": "Meyve & Sebze", "Taze Ot & Yeşillik": "Meyve & Sebze", "Patates, Soğan & Sarımsak": "Meyve & Sebze", "Kullanıma Hazır Meyve & Sebze": "Meyve & Sebze",
-            "Dana Eti": "Et, Tavuk & Şarküteri", "Kuzu Eti": "Et, Tavuk & Şarküteri", "Tavuk Eti": "Et, Tavuk & Şarküteri", "Kıyma": "Et, Tavuk & Şarküteri", "Pişirilmeye Hazır Etler": "Et, Tavuk & Şarküteri", "Diğer Et Ürünleri": "Et, Tavuk & Şarküteri", "Sucuk & Sosis": "Et, Tavuk & Şarküteri", "Salam & Jambon": "Et, Tavuk & Şarküteri", "Kavurma & Pastırma": "Et, Tavuk & Şarküteri", "Diğer Şarküteri Ürünleri": "Et, Tavuk & Şarküteri", "Sakatat Ürünleri": "Et, Tavuk & Şarküteri",
-            "Süt": "Süt & Süt Ürünleri", "Beyaz Peynir": "Süt & Süt Ürünleri", "Kaşar Peyniri": "Süt & Süt Ürünleri", "Diğer Peynirler": "Süt & Süt Ürünleri", "Tereyağı & Margarin": "Süt & Süt Ürünleri", "Yoğurt": "Süt & Süt Ürünleri", "Süt Ürünleri": "Süt & Süt Ürünleri",
-            "Yumurta": "Kahvaltılık", "Zeytin": "Kahvaltılık", "Bal & Reçel": "Kahvaltılık", "Çikolata & Ezme": "Kahvaltılık", "Tahin & Pekmez": "Kahvaltılık", "Kahvaltılık Gevrek": "Kahvaltılık", "Kahvaltılık Sos": "Kahvaltılık",
-            "Makarna & Mantı": "Temel Gıda", "Pirinç & Bakliyat": "Temel Gıda", "Un & Harçlar": "Temel Gıda", "Tuz & Şeker": "Temel Gıda", "Sıvı Yağ": "Temel Gıda", "Salça & Sos": "Temel Gıda", "Sirke & Salata Sosu": "Temel Gıda", "Baharat & Çeşniler": "Temel Gıda", "Hazır Çorba & Bulyon": "Temel Gıda", "Konserve & Turşu": "Temel Gıda", "Tatlı Malzemeleri": "Temel Gıda", "Aktar Ürünleri": "Temel Gıda",
-            "Çikolata": "Atıştırmalık", "Kaplamalı & Bar Çikolata": "Atıştırmalık", "Gofret": "Atıştırmalık", "Kek": "Atıştırmalık", "Bisküvi": "Atıştırmalık", "Cips & Patlamış Mısır": "Atıştırmalık", "Kraker & Kurabiye": "Atıştırmalık", "Kuru Yemiş": "Atıştırmalık", "Helva & Krokan": "Atıştırmalık", "Sakız": "Atıştırmalık", "Şekerleme": "Atıştırmalık", "Tatlı": "Atıştırmalık",
-            "Su": "Su & İçecek", "Gazlı İçecek": "Su & İçecek", "Maden Suyu": "Su & İçecek", "Meyve Suyu": "Su & İçecek", "Soğuk Çay & Kahve": "Su & İçecek", "Ayran & Kefir": "Su & İçecek", "Enerji İçeceği": "Su & İçecek", "Hazır & Toz İçecekler": "Su & İçecek", "Diğer İçecekler": "Su & İçecek",
-            "Siyah Çay": "Çay & Kahve", "Kahve": "Çay & Kahve", "Bitki Çayı": "Çay & Kahve",
-            "Taze Fırın": "Fırından", "Paketli Ekmekler": "Fırından", "Unlu Mamuller": "Fırından", "Tatlı Unlu Mamuller": "Fırından",
-            "Kutu Dondurma": "Dondurma", "Çubuk Dondurma": "Dondurma", "Çoklu Dondurma": "Dondurma", "Dondurma Bar": "Dondurma", "Külah Dondurma": "Dondurma",
-            "Donuk Hamur İşleri": "Dondurulmuş Gıda", "Donuk Et, Tavuk & Balık": "Dondurulmuş Gıda", "Donuk Patates, Meyve & Sebze": "Dondurulmuş Gıda", "Donuk Tatlı & Atıştırmalık": "Dondurulmuş Gıda",
-            "Sandviç": "Hızlı Yemek", "Hazır Yemek": "Hızlı Yemek", "Taze Meze": "Hızlı Yemek",
-            "Sağlıklı Atıştırmalıklar": "Sağlıklı Yaşam", "Granola & Tahıllı Gevrek": "Sağlıklı Yaşam", "Fit Süt & Süt Ürünleri": "Sağlıklı Yaşam", "Organik": "Sağlıklı Yaşam", "Vegan": "Sağlıklı Yaşam", "Glütensiz": "Sağlıklı Yaşam", "Gıda Takviyeleri & Vitaminler": "Sağlıklı Yaşam",
-            "Taze Balık": "Balık & Deniz Ürünleri", "Deniz Ürünleri": "Balık & Deniz Ürünleri",
-            "Çamaşır": "Ev Bakım", "Bulaşık": "Ev Bakım", "Mutfak & Banyo": "Ev Bakım", "Temizlik": "Ev Bakım", "Oda Kokusu": "Ev Bakım", "Böcek İlacı": "Ev Bakım", "Tek Kullanımlık Mutfak Ürünleri": "Ev Bakım", "Buzdolabı & Çöp Poşeti": "Ev Bakım", "Diğer Tek Kullanımlık Ürünler": "Ev Bakım",
-            "Tuvalet Kağıdı": "Kağıt Ürünleri", "Kağıt Havlu & Peçete": "Kağıt Ürünleri", "Islak Mendil & Havlu": "Kağıt Ürünleri",
-            "Şampuan & Saç Kremi": "Kişisel Bakım", "Saç Bakımı": "Kişisel Bakım", "Ağız & Diş Bakımı": "Kişisel Bakım", "Parfüm & Deodorant": "Kişisel Bakım", "Sabun": "Kişisel Bakım", "Duş & Banyo": "Kişisel Bakım", "Hijyenik Ped": "Kişisel Bakım", "Yüz, Cilt & Vücut Bakımı": "Kişisel Bakım", "Tıraş & Epilasyon": "Kişisel Bakım", "Ağda & Tüy Dökücü": "Kişisel Bakım", "Kolonya": "Kişisel Bakım", "Sağlık Ürünleri": "Kişisel Bakım", "Cinsel Sağlık": "Kişisel Bakım", "Bakım & Aksesuar Ürünleri": "Kişisel Bakım",
-            "Saç Boyası": "Kozmetik", "Makyaj Malzemeleri": "Kozmetik", "Makyaj Temizleme": "Kozmetik", "Oje & Aseton": "Kozmetik",
-            "Bebek Beslenme": "Bebek", "Bebek Bezi": "Bebek", "Bebek Bakım Ürünleri": "Bebek", "Diğer Bebek Ürünleri": "Bebek",
-            "Kedi": "Evcil Hayvan", "Köpek": "Evcil Hayvan", "Pet Aksesuarları & Diğerleri": "Evcil Hayvan",
-            "Ev Gereçleri": "Ev & Yaşam", "Sofra & Mutfak": "Ev & Yaşam", "Bahçe": "Ev & Yaşam", "Dergi, Gazete & Kitap": "Ev & Yaşam", "Oyuncak & Kutu Oyunları": "Ev & Yaşam", "Parti Malzemeleri": "Ev & Yaşam", "Kırtasiye Ürünleri": "Ev & Yaşam", "Telefon & Bilgisayar Aksesuarları": "Ev & Yaşam", "Elektrikli Ev Aletleri": "Ev & Yaşam", "Elektrik & Aydınlatma": "Ev & Yaşam", "Pil": "Ev & Yaşam", "Oto Bakım Ürünleri": "Ev & Yaşam",
-            "Giyim & Tekstil": "Giyim & Aksesuar", "Takı & Aksesuar": "Giyim & Aksesuar", "Spor & Outdoor": "Giyim & Aksesuar"
+      const fallbackName = user.displayName || (email ? email.split('@')[0] : 'User');
+      const profile = {
+        uid,
+        email,
+        name: fallbackName,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await userRef.set(profile, { merge: true });
+      return profile;
+    }
+
+    async function isAdmin(uid) {
+      const snap = await db.collection('admins').doc(uid).get();
+      return snap.exists === true;
+    }
+
+    async function hasEntitlement(uid, projectId) {
+      const snap = await db.collection('entitlements').doc(uid).get();
+      if (!snap.exists) return false;
+      const data = snap.data() || {};
+      const projectIds = Array.isArray(data.projectIds) ? data.projectIds : [];
+      return projectIds.includes(projectId);
+    }
+
+    function applyUserUI(profile, firebaseUser) {
+      const email = safeLower(firebaseUser.email);
+      const displayName =
+        profile?.name ||
+        firebaseUser.displayName ||
+        (email ? email.split('@')[0] : 'User');
+
+      const nameEl = document.getElementById('user-name-display');
+      const avatarEl = document.getElementById('user-avatar');
+      if (nameEl) nameEl.textContent = displayName;
+      if (avatarEl) avatarEl.textContent = displayName.charAt(0).toUpperCase();
+    }
+
+    async function bootstrap() {
+      auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+          window.location.href = "../pages/login.html";
+          return;
+        }
+
+        try {
+          const uid = user.uid;
+
+          const profile = await ensureUserProfile(user);
+          applyUserUI(profile, user);
+
+          const admin = await isAdmin(uid);
+          if (!admin) {
+            const entitled = await hasEntitlement(uid, REQUIRED_PROJECT_ID);
+            if (!entitled) {
+              alert("Bu hizmete erişim yetkiniz bulunmamaktadır.");
+              window.location.href = "member.html";
+              return;
+            }
+          }
+
+          initCalendar();
+
+          const sheetUrl =
+            (profile && profile.config && profile.config.sheetUrl) ? profile.config.sheetUrl :
+            (profile && profile.sheetUrl) ? profile.sheetUrl :
+            "";
+
+          if (sheetUrl && sheetUrl.length > 5) {
+            initData(sheetUrl);
+          } else {
+            showNoDataState();
+          }
+        } catch (err) {
+          console.error("Bootstrap error:", err);
+          const tbody = document.getElementById('table-body');
+          if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
+          }
+        }
+      });
+
+      // Menü kapanma davranışları
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.multi-select-wrapper')) {
+          document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
+        }
+        const wrapper = document.querySelector('.download-wrapper');
+        const menu = document.getElementById('download-menu');
+        if (wrapper && menu && !wrapper.contains(e.target)) {
+          menu.classList.remove('show');
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', bootstrap);
+
+    function logout() {
+      if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
+        auth.signOut().finally(() => {
+          window.location.href = "../index.html";
+        });
+      }
+    }
+
+    // --- FILTERING ---
+    function filterTableByGraph(filterType, filterValue) {
+      if(!CURRENT_PROCESSED_DATA || CURRENT_PROCESSED_DATA.rows.length === 0) return;
+
+      const banner = document.getElementById('active-filter-banner');
+      const bannerText = document.getElementById('active-filter-text');
+      banner.style.display = 'flex';
+
+      let filteredRows = [];
+
+      if (filterType === 'CATEGORY') {
+        bannerText.innerHTML = `Filtrelenen Kategori: <strong>${filterValue}</strong>`;
+        filteredRows = CURRENT_PROCESSED_DATA.rows.filter(row => {
+          const catName = getMainCategory(row['Category Name']);
+          return catName === filterValue;
+        });
+      } else if (filterType === 'POSITION') {
+        bannerText.innerHTML = `Pazar Konumu: <strong>${filterValue}</strong>`;
+        filteredRows = CURRENT_PROCESSED_DATA.rows.filter(row => {
+          const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
+          let minCompPrice = Infinity;
+          let hasComp = false;
+          Object.values(row.competitors).forEach(comp => {
+            const price = comp.dsc > 0 ? comp.dsc : comp.org;
+            if (price > 0 && price < minCompPrice) { minCompPrice = price; hasComp = true; }
+          });
+
+          if (bizPrice > 0 && hasComp && minCompPrice < Infinity) {
+            if (filterValue === 'Daha Ucuzuz') return bizPrice < minCompPrice;
+            if (filterValue === 'Daha Pahalıyız') return bizPrice > minCompPrice;
+            if (filterValue === 'Eşit') return bizPrice === minCompPrice;
+          }
+          return false;
+        });
+      }
+
+      GRAPH_FILTERED_DATA = filteredRows;
+      renderTable(filteredRows.slice(0, 250), CURRENT_PROCESSED_DATA.competitorNames);
+      const limitMsg = document.getElementById('limit-msg');
+      limitMsg.style.display = (filteredRows.length > 250) ? 'block' : 'none';
+    }
+
+    function clearGraphFilters() {
+      document.getElementById('active-filter-banner').style.display = 'none';
+      GRAPH_FILTERED_DATA = null;
+      activeCategoryFilter = null;
+
+      const displayData = CURRENT_PROCESSED_DATA.rows.slice(0, 250);
+      renderTable(displayData, CURRENT_PROCESSED_DATA.competitorNames);
+      const limitMsg = document.getElementById('limit-msg');
+      limitMsg.style.display = (CURRENT_PROCESSED_DATA.rows.length > 250) ? 'block' : 'none';
+    }
+
+    // --- DASHBOARD CALCS ---
+    function updateDashboard(dataRows) {
+      let totalBiz = 0, totalComp = 0;
+      let discountCountBiz = 0;
+      let totalDiscountDepth = 0, depthCount = 0;
+      let categoryStats = {};
+      let countCheaper = 0;
+      let countEqual = 0;
+      let countExpensive = 0;
+
+      dataRows.forEach(row => {
+        const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
+        let minCompPrice = Infinity;
+        let hasComp = false;
+
+        Object.values(row.competitors).forEach(comp => {
+          const price = comp.dsc > 0 ? comp.dsc : comp.org;
+          if (price > 0 && price < minCompPrice) {
+            minCompPrice = price;
+            hasComp = true;
+          }
+        });
+
+        if (bizPrice > 0 && hasComp && minCompPrice < Infinity) {
+          totalBiz += bizPrice;
+          totalComp += minCompPrice;
+
+          const l2Name = row['Category Name'];
+          const cat = getMainCategory(l2Name);
+
+          if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0, count: 0 };
+          categoryStats[cat].biz += bizPrice;
+          categoryStats[cat].comp += minCompPrice;
+          categoryStats[cat].count++;
+
+          if (bizPrice < minCompPrice) countCheaper++;
+          else if (bizPrice > minCompPrice) countExpensive++;
+          else countEqual++;
+        }
+
+        if (row.tazeyo_price_dsc > 0 && row.tazeyo_price_dsc < row.tazeyo_price_org) {
+          discountCountBiz++;
+          const depth = ((row.tazeyo_price_org - row.tazeyo_price_dsc) / row.tazeyo_price_org) * 100;
+          totalDiscountDepth += depth;
+          depthCount++;
+        }
+      });
+
+      const compElem = document.getElementById('kpi-competition');
+      const compSub = document.getElementById('kpi-competition-sub');
+
+      if (totalBiz > 0 && totalComp > 0) {
+        if (totalBiz < totalComp) {
+          let diff = ((totalComp - totalBiz) / totalComp) * 100;
+          compElem.innerHTML = `%${diff.toFixed(1)} <span style="font-size:0.6em; color:#10b981;">DAHA UCUZ</span>`;
+          compSub.innerHTML = `<span class="trend-up"><i class="fas fa-check"></i> Avantajlı</span> Pazar Konumu`;
+        } else {
+          let diff = ((totalBiz - totalComp) / totalBiz) * 100;
+          compElem.innerHTML = `%${diff.toFixed(1)} <span style="font-size:0.6em; color:#ef4444;">DAHA PAHALI</span>`;
+          compSub.innerHTML = `<span class="trend-down"><i class="fas fa-exclamation-triangle"></i> Kritik</span> Pazar Konumu`;
+        }
+      } else {
+        compElem.innerHTML = "-";
+        compSub.innerHTML = "Veri Yetersiz";
+      }
+
+      document.getElementById('kpi-disc-us').innerText = discountCountBiz;
+      const avgDepth = depthCount > 0 ? (totalDiscountDepth / depthCount) : 0;
+      document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
+      document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
+
+      let bestCat = '-'; let maxDiff = -Infinity;
+      for (const [cat, stats] of Object.entries(categoryStats)) {
+        if (stats.comp <= 0) continue;
+        const diffPercent = ((stats.comp - stats.biz) / stats.comp) * 100;
+        if (diffPercent > maxDiff) { maxDiff = diffPercent; bestCat = cat; }
+      }
+      document.getElementById('kpi-best-cat').innerText = bestCat;
+      document.getElementById('kpi-best-cat-sub').innerHTML = maxDiff > -Infinity
+        ? (maxDiff > 0 ? `<span class="trend-up">+%${maxDiff.toFixed(1)} Avantaj</span>` : `<span class="trend-down">%${maxDiff.toFixed(1)} Dezavantaj</span>`)
+        : '-';
+
+      renderCategoryChart(categoryStats);
+      renderPieChart(countCheaper, countEqual, countExpensive);
+    }
+
+    // --- CHARTS RENDER ---
+    function renderCategoryChart(categoryStats) {
+      const categories = Object.keys(categoryStats);
+      const seriesData = categories.map(cat => {
+        const stats = categoryStats[cat];
+        if(stats.comp === 0) return 0;
+        return parseFloat(((stats.comp - stats.biz) / stats.comp * 100).toFixed(1));
+      });
+
+      const options = {
+        series: [{ name: 'Fiyat Avantajı (%)', data: seriesData }],
+        chart: {
+          type: 'bar',
+          height: 280,
+          toolbar: { show: false },
+          background: 'transparent',
+          fontFamily: 'Inter Tight, sans-serif',
+          events: {
+            click: function(event, chartContext, config) {
+              if (config.dataPointIndex !== undefined && config.dataPointIndex > -1) {
+                const selectedCat = categories[config.dataPointIndex];
+                if (activeCategoryFilter === selectedCat) {
+                  clearGraphFilters();
+                } else {
+                  activeCategoryFilter = selectedCat;
+                  filterTableByGraph('CATEGORY', selectedCat);
+                }
+              }
+            }
+          }
+        },
+        plotOptions: {
+          bar: {
+            colors: {
+              ranges: [
+                { from: -100, to: -0.1, color: '#ef4444' },
+                { from: 0, to: 100, color: '#10b981' }
+              ]
+            },
+            columnWidth: '60%',
+            borderRadius: 4,
+          }
+        },
+        dataLabels: { enabled: false },
+        xaxis: {
+          categories: categories,
+          labels: { style: { colors: '#888', fontSize: '11px', fontWeight: 500 }, rotate: -45, trim: true },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+          tooltip: { enabled: false }
+        },
+        yaxis: {
+          labels: { style: { colors: '#888', fontFamily: 'Fira Code, monospace' }, formatter: (val) => `%${val}` },
+          axisBorder: { show: false }
+        },
+        grid: {
+          borderColor: '#333', strokeDashArray: 4,
+          yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } },
+          padding: { top: 0, right: 0, bottom: 0, left: 10 }
+        },
+        tooltip: {
+          theme: 'dark', intersect: false, shared: true, style: { fontSize: '12px' },
+          x: { show: true },
+          y: { formatter: function (val) { return "%" + val; } }
+        }
+      };
+
+      if (chartCategory) { chartCategory.destroy(); }
+      chartCategory = new ApexCharts(document.querySelector("#chart-category"), options);
+      chartCategory.render();
+    }
+
+    function renderPieChart(cheaper, equal, expensive) {
+      const total = cheaper + equal + expensive;
+      if (total === 0) return;
+
+      const options = {
+        series: [cheaper, equal, expensive],
+        chart: {
+          type: 'donut',
+          height: 280,
+          background: 'transparent',
+          events: {
+            dataPointSelection: function(event, chartContext, config) {
+              const labels = ['Daha Ucuzuz', 'Eşit', 'Daha Pahalıyız'];
+              const selectedLabel = labels[config.dataPointIndex];
+              filterTableByGraph('POSITION', selectedLabel);
+            }
+          }
+        },
+        labels: ['Daha Ucuzuz', 'Eşit', 'Daha Pahalıyız'],
+        colors: ['#10b981', '#fbbf24', '#ef4444'],
+        plotOptions: {
+          pie: {
+            donut: {
+              size: '70%',
+              labels: {
+                show: true,
+                name: { color: '#888' },
+                value: { color: '#fff', fontSize: '20px', fontWeight: 700 },
+                total: { show: true, showAlways: true, label: 'Toplam Ürün', color: '#888', formatter: function () { return total } }
+              }
+            }
+          }
+        },
+        dataLabels: { enabled: false },
+        legend: { position: 'bottom', labels: { colors: '#ccc' } },
+        stroke: { show: false },
+        theme: { mode: 'dark' }
+      };
+
+      if (chartPie) { chartPie.destroy(); }
+      chartPie = new ApexCharts(document.querySelector("#chart-pie"), options);
+      chartPie.render();
+    }
+
+    // --- HELPER FUNCTIONS ---
+    function getBrandColor(fullName) {
+      if (!fullName) return '#f97316';
+      const lowerName = fullName.toLowerCase();
+      if (lowerName.includes('migros')) return '#f5821f';
+      if (lowerName.includes('carrefour')) return '#005daa';
+      if (lowerName.includes('marketten')) return '#DC6727';
+      return '#f97316';
+    }
+
+    function hexToRgba(hex, alpha) {
+      let c;
+      if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length== 3){ c= [c[0], c[0], c[1], c[1], c[2], c[2]]; }
+        c= '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+      }
+      return hex;
+    }
+
+    function showNoDataState() {
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.</td></tr>';
+      document.getElementById('btn-load').disabled = true;
+      document.getElementById('btn-load').style.opacity = "0.5";
+    }
+
+    function initCalendar() {
+      const today = new Date();
+      const pastDate = new Date();
+      pastDate.setDate(today.getDate() - 6);
+      flatpickrInstance = flatpickr("#date-range", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        locale: "tr",
+        theme: "dark",
+        defaultDate: [pastDate, today],
+        placeholder: "Tarih Aralığı Seçiniz"
+      });
+    }
+
+    function initData(dynamicUrl) {
+      Papa.parse(dynamicUrl, {
+        download: true, header: true, skipEmptyLines: true,
+        complete: function(results) {
+          ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
+          populateFilters();
+          applyFilters();
+        },
+        error: function(err) {
+          console.error("CSV Hatası:", err);
+          document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="color:#ef4444; text-align:center;">Veri çekilemedi. Bağlantı hatası.</td></tr>';
+        }
+      });
+    }
+
+    function populateFilters() {
+      const branchSet = new Set();
+      const catSet = new Set();
+      ALL_DATA.forEach(row => {
+        if(row['Store Name']) branchSet.add(row['Store Name'].trim());
+        if(row['Category Name']) catSet.add(row['Category Name'].trim());
+      });
+      renderMultiSelectOptions('menu-branch', Array.from(branchSet).sort(), 'branch');
+      updateTriggerText('branch', 'Tüm Şubeler');
+      renderMultiSelectOptions('menu-category', Array.from(catSet).sort(), 'category');
+      updateTriggerText('category', 'Tüm Kategoriler');
+    }
+
+    // --- GÜNCELLENMİŞ FONKSİYON: ARAMA KUTUSU EN ÜSTTE ---
+    function renderMultiSelectOptions(menuId, items, type) {
+      const menu = document.getElementById(menuId);
+      menu.innerHTML = '';
+
+      // 1. ARAMA KUTUSU
+      const searchContainer = document.createElement('div');
+      searchContainer.style.padding = "8px";
+      searchContainer.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+
+      const searchInput = document.createElement('input');
+      searchInput.type = "text";
+      searchInput.placeholder = "Ara...";
+      searchInput.style.width = "100%";
+      searchInput.style.padding = "8px 12px";
+      searchInput.style.borderRadius = "6px";
+      searchInput.style.border = "1px solid rgba(255,255,255,0.1)";
+      searchInput.style.background = "rgba(0,0,0,0.3)";
+      searchInput.style.color = "#fff";
+      searchInput.style.fontSize = "0.85rem";
+      searchInput.style.outline = "none";
+      searchInput.style.marginBottom = "0";
+
+      const scrollContainer = document.createElement('div');
+      scrollContainer.style.maxHeight = "200px";
+      scrollContainer.style.overflowY = "auto";
+
+      searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const options = scrollContainer.querySelectorAll('.multi-option');
+        options.forEach(opt => {
+          const text = opt.querySelector('span').textContent.toLowerCase();
+          opt.style.display = text.includes(term) ? 'flex' : 'none';
+        });
+      });
+
+      searchInput.onclick = (e) => { e.stopPropagation(); }
+      searchContainer.appendChild(searchInput);
+
+      // 2. "Tümü"
+      const fixedHeader = document.createElement('div');
+      fixedHeader.style.padding = "4px";
+      fixedHeader.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+      fixedHeader.style.marginBottom = "4px";
+      const allDiv = document.createElement('div');
+      allDiv.className = 'multi-option all-option selected';
+      allDiv.onclick = () => selectOption(type, 'all', allDiv);
+      allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
+      fixedHeader.appendChild(allDiv);
+
+      // 3. Liste
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'multi-option';
+        div.onclick = () => selectOption(type, item, div);
+        div.innerHTML = `<span>${item}</span><div class="option-checkbox"></div>`;
+        scrollContainer.appendChild(div);
+      });
+
+      menu.appendChild(searchContainer);
+      menu.appendChild(fixedHeader);
+      menu.appendChild(scrollContainer);
+    }
+
+    function selectOption(type, value, element) {
+      let selectedArray = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
+      const menuId = (type === 'branch') ? 'menu-branch' : 'menu-category';
+      const menu = document.getElementById(menuId);
+      const allOption = menu.querySelector('.all-option');
+
+      if (value === 'all') {
+        selectedArray.length = 0; selectedArray.push('all');
+        menu.querySelectorAll('.multi-option').forEach(child => child.classList.remove('selected'));
+        allOption.classList.add('selected');
+      } else {
+        if (selectedArray.includes('all')) {
+          selectedArray.splice(selectedArray.indexOf('all'), 1);
+          allOption.classList.remove('selected');
+        }
+        if (selectedArray.includes(value)) {
+          selectedArray.splice(selectedArray.indexOf(value), 1);
+          element.classList.remove('selected');
+        } else {
+          selectedArray.push(value);
+          element.classList.add('selected');
+        }
+        if (selectedArray.length === 0) {
+          selectedArray.push('all');
+          allOption.classList.add('selected');
+        }
+      }
+
+      if (type === 'branch') SELECTED_BRANCHES = selectedArray;
+      else SELECTED_CATEGORIES = selectedArray;
+      updateTriggerText(type);
+    }
+
+    function updateTriggerText(type) {
+      const arr = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
+      const textId = (type === 'branch') ? 'text-branch' : 'text-category';
+      const label = document.getElementById(textId);
+      if (arr.includes('all')) label.textContent = (type === 'branch') ? "Tüm Şubeler" : "Tüm Kategoriler";
+      else if (arr.length === 1) label.textContent = arr[0];
+      else label.textContent = `${arr.length} ${type === 'branch' ? 'Şube' : 'Kategori'} Seçildi`;
+    }
+
+    function toggleMultiSelect(menuId) {
+      const menu = document.getElementById(menuId);
+      const isVisible = menu.classList.contains('show');
+      document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
+      if (!isVisible) {
+        menu.classList.add('show');
+        const input = menu.querySelector('input');
+        if(input) setTimeout(() => input.focus(), 100);
+      }
+    }
+
+    function applyFilters() {
+      clearGraphFilters();
+      const dateRange = flatpickrInstance.selectedDates;
+      const tbody = document.getElementById('table-body');
+      const limitMsg = document.getElementById('limit-msg');
+      const btnDownload = document.getElementById('btn-download');
+
+      if (dateRange.length < 1) { showToast("Lütfen bir tarih aralığı seçiniz."); return; }
+
+      tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
+
+      const startDate = dateRange[0];
+      const endDate = dateRange[1] ? dateRange[1] : dateRange[0];
+      startDate.setHours(0,0,0,0); endDate.setHours(23,59,59,999);
+
+      let filteredData = ALL_DATA.filter(row => {
+        const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
+        const catName = row['Category Name'] ? row['Category Name'].trim() : "";
+        const branchMatch = SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.includes(storeName);
+        const catMatch = SELECTED_CATEGORIES.includes('all') || SELECTED_CATEGORIES.includes(catName);
+
+        const dateStr = row['Report Date'];
+        if (!dateStr) return false;
+        const parts = dateStr.split('.');
+        if(parts.length !== 3) return false;
+        const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
+
+        return branchMatch && catMatch && (rowDate >= startDate && rowDate <= endDate);
+      });
+
+      const aggregatedResult = aggregateData(filteredData);
+      CURRENT_PROCESSED_DATA = aggregatedResult;
+
+      if (aggregatedResult.rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
+        btnDownload.classList.add('btn-disabled');
+        limitMsg.style.display = 'none';
+        if(chartCategory) chartCategory.updateSeries([{ data: [] }]);
+        if(chartPie) chartPie.updateSeries([0,0,0]);
+        document.getElementById('kpi-competition').innerText = "-";
+        return;
+      }
+
+      btnDownload.classList.remove('btn-disabled');
+      updateDashboard(aggregatedResult.rows);
+      const displayData = aggregatedResult.rows.slice(0, 250);
+      limitMsg.style.display = (aggregatedResult.rows.length > 250) ? 'block' : 'none';
+      renderTable(displayData, aggregatedResult.competitorNames);
+    }
+
+    function aggregateData(data) {
+      const grouped = {};
+      const allCompetitors = new Set();
+      data.forEach(row => {
+        const productKey = row['SKU'] || row['Product Name'];
+        if (!productKey) return;
+        const uniqueKey = `${row['Report Date']}_${productKey}`;
+
+        let rawCompName = row['Competitor Store Name'];
+        let compName = rawCompName ? rawCompName.trim() : 'Bilinmeyen';
+        if(compName && compName !== 'Bilinmeyen') { allCompetitors.add(compName); }
+
+        if (!grouped[uniqueKey]) {
+          grouped[uniqueKey] = {
+            ...row,
+            tazeyo_price_org: parsePrice(row['Tazeyo Original Price']),
+            tazeyo_price_dsc: parsePrice(row['Tazeyo Discount Price']),
+            competitors: {}
+          };
+        }
+        grouped[uniqueKey].competitors[compName] = {
+          org: parsePrice(row['Competitor Original Price']),
+          dsc: parsePrice(row['Competitor Discount Price'])
+        };
+      });
+
+      const sortOrder = ['marketten', 'carrefour', 'migros'];
+      const sortedCompetitors = Array.from(allCompetitors).sort((a, b) => {
+        const aLower = a.toLowerCase();
+        const bLower = b.toLowerCase();
+        let idxA = sortOrder.findIndex(key => aLower.includes(key));
+        let idxB = sortOrder.findIndex(key => bLower.includes(key));
+        if (idxA === -1) idxA = 99;
+        if (idxB === -1) idxB = 99;
+        if (idxA !== idxB) return idxA - idxB;
+        return a.localeCompare(b);
+      });
+
+      const sortedRows = Object.values(grouped).sort((a, b) => {
+        const partsA = a['Report Date'].split('.');
+        const dateA = new Date(partsA[2], partsA[1]-1, partsA[0]);
+        const partsB = b['Report Date'].split('.');
+        const dateB = new Date(partsB[2], partsB[1]-1, partsB[0]);
+        return dateB - dateA;
+      });
+
+      return { rows: sortedRows, competitorNames: sortedCompetitors };
+    }
+
+    // --- RENDER TABLE (Split Header + Sticky) ---
+    function renderTable(dataRows, competitorNames) {
+      const theadTop = document.getElementById('header-row-top');
+      const theadBottom = document.getElementById('header-row-bottom');
+      const tbody = document.getElementById('table-body');
+
+      tbody.innerHTML = '';
+      theadTop.innerHTML = '';
+      theadBottom.innerHTML = '';
+
+      // 1. ÜST HEADER
+      let headerTopHtml = '';
+      headerTopHtml += `<th class="th-fixed-corner">Ürün</th>`;
+      headerTopHtml += `<th colspan="5" class="th-scrollable-group">Ürün Detayları</th>`;
+
+      let myStoreLabel = 'Bizim Fiyatlar';
+      if(dataRows.length > 0 && dataRows[0]['Store Name']) myStoreLabel = dataRows[0]['Store Name'];
+
+      headerTopHtml += `<th colspan="2" class="th-group-tazeyo">${myStoreLabel}</th>`;
+
+      competitorNames.forEach(compName => {
+        const brandColor = getBrandColor(compName);
+        const bgRgba = hexToRgba(brandColor, 0.08);
+        const styleStr = `color: ${brandColor}; background-color: ${bgRgba}; border-bottom: 1px solid #333; border-left: 2px solid #444;`;
+        headerTopHtml += `<th colspan="2" style="${styleStr}">${compName}</th>`;
+      });
+
+      headerTopHtml += `<th colspan="2" style="background:#14161c; border-left:2px solid #444; color:#fff;">En Ucuz Kanal</th>`;
+      theadTop.innerHTML = headerTopHtml;
+
+      // 2. ALT HEADER
+      let headerBottomHtml = '';
+      headerBottomHtml += `<th class="sticky-product">Ürün Adı</th>`;
+      headerBottomHtml += `<th>Rapor Tarihi</th><th>Mağaza</th><th>SKU</th><th>Marka</th><th>Kategori</th>`;
+      headerBottomHtml += `<th>Price</th><th>Discount Price</th>`;
+
+      competitorNames.forEach(() => {
+        headerBottomHtml += `<th class="border-left-light">Price</th><th>Discount Price</th>`;
+      });
+
+      headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
+      theadBottom.innerHTML = headerBottomHtml;
+
+      // VERİ SATIRLARI
+      dataRows.forEach(row => {
+        const tr = document.createElement('tr');
+        let html = `
+          <td class="sticky-product" title="${row['Product Name']}">${row['Product Name']}</td>
+          <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
+          <td>${row['Store Name']}</td>
+          <td>${row['SKU']}</td>
+          <td>${row['Brand Name'] || '-'}</td>
+          <td>${row['Category Name'] || '-'}</td>
+        `;
+
+        const t_org = row.tazeyo_price_org;
+        const t_dsc = row.tazeyo_price_dsc;
+        const bizPrice = t_dsc > 0 ? t_dsc : t_org;
+
+        html += `
+          <td class="price-cell">₺${formatMoney(t_org)}</td>
+          <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
+        `;
+
+        let enUcuzRakipFiyati = Infinity;
+        let enUcuzRakipIsmi = '';
+
+        competitorNames.forEach(compName => {
+          const compData = row.competitors[compName];
+          if (compData) {
+            const c_org = compData.org;
+            const c_dsc = compData.dsc;
+            const rakipSatis = c_dsc > 0 ? c_dsc : c_org;
+
+            if (rakipSatis > 0 && rakipSatis < enUcuzRakipFiyati) {
+              enUcuzRakipFiyati = rakipSatis;
+              enUcuzRakipIsmi = compName;
+            }
+
+            html += `
+              <td class="price-cell" style="border-left:1px solid #333;">₺${formatMoney(c_org)}</td>
+              <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
+            `;
+          } else {
+            html += `<td colspan="2" style="border-left:1px solid #333; text-align:center; color:#444; font-size:0.8em;">Veri Yok</td>`;
+          }
+        });
+
+        let badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">-</span>';
+        let farkYuzde = 0;
+        let farkClass = "";
+
+        if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
+          if (bizPrice < enUcuzRakipFiyati) {
+            badgeHtml = '<span class="badge badge-tazeyo">Tazeyo</span>';
+            farkYuzde = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
+            farkClass = "diff-negative";
+          } else if (bizPrice > enUcuzRakipFiyati) {
+            const shortName = cleanName(enUcuzRakipIsmi);
+            const brandColor = getBrandColor(enUcuzRakipIsmi);
+            const bgRgba = hexToRgba(brandColor, 0.2);
+            const borderRgba = hexToRgba(brandColor, 0.3);
+            const badgeStyle = `background-color: ${bgRgba}; color: ${brandColor}; border: 1px solid ${borderRgba};`;
+            badgeHtml = `<span class="badge badge-market" style="${badgeStyle}" title="${enUcuzRakipIsmi}">${shortName}</span>`;
+            farkYuzde = ((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100;
+            farkClass = "diff-positive";
+          } else {
+            badgeHtml = '<span class="badge" style="background:#555;">EŞİT</span>';
+          }
+        }
+
+        html += `
+          <td style="border-left:2px solid #444; text-align:center;">${badgeHtml}</td>
+          <td class="${farkClass}">${farkYuzde > 0 ? '%' + farkYuzde.toFixed(1) : '-'}</td>
+        `;
+
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+      });
+
+      updateTopScrollWidth();
+    }
+
+    function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
+
+    function parsePrice(val) {
+      if(!val) return 0;
+      let clean = val.toString().replace(/["'₺\s]/g, '');
+      if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) {
+        clean = clean.replace(',', '.');
+      } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) {
+        clean = clean.replace(/\./g, '').replace(',', '.');
+      }
+      return parseFloat(clean) || 0;
+    }
+
+    function formatMoney(num) {
+      return num === 0 ? '0,00' : new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(num);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    }
+
+    function toggleDownloadMenu() {
+      document.getElementById('download-menu').classList.toggle('show');
+    }
+
+    function getActiveDataForExport() {
+      let activeRows = [];
+      if (GRAPH_FILTERED_DATA && GRAPH_FILTERED_DATA.length > 0) {
+        activeRows = GRAPH_FILTERED_DATA;
+      } else {
+        activeRows = CURRENT_PROCESSED_DATA.rows;
+      }
+      return {
+        rows: activeRows,
+        competitorNames: CURRENT_PROCESSED_DATA.competitorNames
+      };
+    }
+
+    // ✅ CSV EXPORT (eksik olanı tamamladım)
+    function downloadCSV() {
+      const dataToExport = getActiveDataForExport();
+      if (!dataToExport.rows || dataToExport.rows.length === 0) {
+        showToast("İndirilecek veri bulunamadı.");
+        return;
+      }
+
+      const competitorNames = dataToExport.competitorNames || [];
+      const out = [];
+
+      dataToExport.rows.forEach(row => {
+        const bizOrg = parsePrice(row.tazeyo_price_org);
+        const bizDsc = parsePrice(row.tazeyo_price_dsc);
+        const bizPrice = bizDsc > 0 ? bizDsc : bizOrg;
+
+        let enUcuzRakipFiyati = Infinity;
+        let enUcuzRakipIsmi = '';
+
+        competitorNames.forEach(comp => {
+          const cData = row.competitors[comp];
+          if (!cData) return;
+          const c_org = parsePrice(cData.org);
+          const c_dsc = parsePrice(cData.dsc);
+          const rakipSatis = c_dsc > 0 ? c_dsc : c_org;
+          if (rakipSatis > 0 && rakipSatis < enUcuzRakipFiyati) {
+            enUcuzRakipFiyati = rakipSatis;
+            enUcuzRakipIsmi = comp;
+          }
+        });
+
+        let durumText = "-";
+        let farkText = "-";
+        if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
+          if (bizPrice < enUcuzRakipFiyati) {
+            durumText = "Tazeyo";
+            farkText = "%" + (((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100).toFixed(1);
+          } else if (bizPrice > enUcuzRakipFiyati) {
+            durumText = cleanName(enUcuzRakipIsmi);
+            farkText = "%" + (((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100).toFixed(1);
+          } else {
+            durumText = "EŞİT";
+            farkText = "%0.0";
+          }
+        }
+
+        const base = {
+          "Product Name": row['Product Name'] || '',
+          "Report Date": row['Report Date'] || '',
+          "Store Name": row['Store Name'] || '',
+          "SKU": row['SKU'] || '',
+          "Brand Name": row['Brand Name'] || '',
+          "Category Name": row['Category Name'] || '',
+          "Biz Original Price": bizOrg || '',
+          "Biz Discount Price": bizDsc || '',
         };
 
-        function getMainCategory(l2Name) {
-            if (!l2Name) return "Diğer";
-            const cleanName = l2Name.trim();
-            return CATEGORY_MAPPING[cleanName] || "Diğer";
-        }
-
-        // --- INIT & AUTH ---
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof SessionManager === 'undefined') return;
-            const session = new SessionManager();
-            
-            // Promise yapısıyla oturumu kontrol et
-            session.validateSession().then(currentUser => {
-                // Eğer oturum geçerliyse verileri çek
-                fetch('../data/users.json')
-                    .then(res => res.json())
-                    .then(userDB => {
-                        const userData = userDB[currentUser.username] || userDB[currentUser.email];
-                        
-                        // NOT: Firestore'a geçince burası da değişecek, şimdilik hibrit çalışıyor
-                        if (userData) {
-                            if (!userData.features || userData.features.analysis !== true) {
-                                alert("Bu hizmete erişim yetkiniz bulunmamaktadır.");
-                                window.location.href = 'member.html';
-                                return;
-                            }
-                            
-                            // İsim bilgisini Firebase'den veya JSON'dan al
-                            const displayName = (userData && userData.name) ? userData.name : currentUser.email.split('@')[0];
-                            document.getElementById('user-name-display').textContent = displayName;
-                            document.getElementById('user-avatar').textContent = displayName.charAt(0).toUpperCase();
-                            
-                            initCalendar();
-                            if (userData.config && userData.config.sheetUrl && userData.config.sheetUrl !== "") {
-                                initData(userData.config.sheetUrl);
-                            } else {
-                                showNoDataState();
-                            }
-                        } else {
-                            // Kullanıcı Firebase'de var ama JSON'da yoksa (Yeni kayıt)
-                            document.getElementById('user-name-display').textContent = currentUser.email;
-                            document.getElementById('user-avatar').textContent = currentUser.email.charAt(0).toUpperCase();
-                            initCalendar();
-                            showNoDataState(); // Varsayılan veri yok
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Hata:", err);
-                        document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:30px; color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
-                    });
-            }).catch(error => {
-                // Oturum yoksa login'e at
-                window.location.href = '../index.html';
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.multi-select-wrapper')) {
-                    document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
-                }
-                const wrapper = document.querySelector('.download-wrapper');
-                const menu = document.getElementById('download-menu');
-                if (wrapper && !wrapper.contains(e.target)) {
-                    menu.classList.remove('show');
-                }
-            });
+        competitorNames.forEach(comp => {
+          const cData = row.competitors[comp];
+          const c_org = cData ? parsePrice(cData.org) : '';
+          const c_dsc = cData ? parsePrice(cData.dsc) : '';
+          base[`${comp} Original Price`] = c_org || '';
+          base[`${comp} Discount Price`] = c_dsc || '';
         });
 
-        // --- FILTERING ---
-        function filterTableByGraph(filterType, filterValue) {
-            if(!CURRENT_PROCESSED_DATA || CURRENT_PROCESSED_DATA.rows.length === 0) return;
+        base["Status"] = durumText;
+        base["Diff"] = farkText;
 
-            const banner = document.getElementById('active-filter-banner');
-            const bannerText = document.getElementById('active-filter-text');
-            banner.style.display = 'flex';
+        out.push(base);
+      });
 
-            let filteredRows = [];
+      const csv = Papa.unparse(out, { quotes: true, delimiter: "," });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
 
-            if (filterType === 'CATEGORY') {
-                bannerText.innerHTML = `Filtrelenen Kategori: <strong>${filterValue}</strong>`;
-                filteredRows = CURRENT_PROCESSED_DATA.rows.filter(row => {
-                    const catName = getMainCategory(row['Category Name']);
-                    return catName === filterValue;
-                });
-            } else if (filterType === 'POSITION') {
-                bannerText.innerHTML = `Pazar Konumu: <strong>${filterValue}</strong>`;
-                filteredRows = CURRENT_PROCESSED_DATA.rows.filter(row => {
-                    const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
-                    let minCompPrice = Infinity;
-                    let hasComp = false;
-                    Object.values(row.competitors).forEach(comp => {
-                        const price = comp.dsc > 0 ? comp.dsc : comp.org;
-                        if (price > 0 && price < minCompPrice) { minCompPrice = price; hasComp = true; }
-                    });
+      const a = document.createElement("a");
+      a.href = url;
 
-                    if (bizPrice > 0 && hasComp && minCompPrice < Infinity) {
-                        if (filterValue === 'Daha Ucuzuz') return bizPrice < minCompPrice;
-                        if (filterValue === 'Daha Pahalıyız') return bizPrice > minCompPrice;
-                        if (filterValue === 'Eşit') return bizPrice === minCompPrice;
-                    }
-                    return false;
-                });
+      const dateStr = flatpickrInstance?.selectedDates?.[0]
+        ? flatpickrInstance.selectedDates[0].toLocaleDateString('tr-TR')
+        : 'rapor';
+
+      a.download = `teknoify_analiz_${dateStr}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('download-menu').classList.remove('show');
+    }
+
+    // --- EXCEL EXPORT (senin koddaki gibi) ---
+    function downloadExcel() {
+      const dataToExport = getActiveDataForExport();
+      if (!dataToExport.rows || dataToExport.rows.length === 0) {
+        showToast("İndirilecek veri bulunamadı.");
+        return;
+      }
+
+      const rows = [];
+      const merges = [];
+
+      const row1 = [
+        "Ürün Bilgileri", "", "", "", "", "",
+        dataToExport.rows[0]['Store Name'] || "Bizim Fiyatlar", "",
+      ];
+
+      dataToExport.competitorNames.forEach(comp => {
+        row1.push(comp, "");
+      });
+
+      row1.push("En Ucuz Kanal", "");
+      rows.push(row1);
+
+      const row2 = [
+        "Ürün Adı", "Rapor Tarihi", "Mağaza", "SKU", "Marka", "Kategori",
+        "Fiyat", "İndirimli Fiyat"
+      ];
+      dataToExport.competitorNames.forEach(() => {
+        row2.push("Fiyat", "İndirimli Fiyat");
+      });
+      row2.push("Durum", "Fark");
+      rows.push(row2);
+
+      merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } });
+      merges.push({ s: { r: 0, c: 6 }, e: { r: 0, c: 7 } });
+
+      let colIndex = 8;
+      dataToExport.competitorNames.forEach(() => {
+        merges.push({ s: { r: 0, c: colIndex }, e: { r: 0, c: colIndex + 1 } });
+        colIndex += 2;
+      });
+
+      merges.push({ s: { r: 0, c: colIndex }, e: { r: 0, c: colIndex + 1 } });
+
+      dataToExport.rows.forEach(row => {
+        const bizOrg = parsePrice(row.tazeyo_price_org);
+        const bizDsc = parsePrice(row.tazeyo_price_dsc);
+
+        const rowData = [
+          row['Product Name'],
+          row['Report Date'],
+          row['Store Name'],
+          row['SKU'],
+          row['Brand Name'] || '-',
+          row['Category Name'] || '-',
+          bizOrg || "",
+          bizDsc || ""
+        ];
+
+        const bizPrice = bizDsc > 0 ? bizDsc : bizOrg;
+        let enUcuzRakipFiyati = Infinity;
+        let enUcuzRakipIsmi = '';
+
+        dataToExport.competitorNames.forEach(comp => {
+          const cData = row.competitors[comp];
+          if (cData) {
+            const c_org = parsePrice(cData.org);
+            const c_dsc = parsePrice(cData.dsc);
+            const rakipSatis = c_dsc > 0 ? c_dsc : c_org;
+
+            if (rakipSatis > 0 && rakipSatis < enUcuzRakipFiyati) {
+              enUcuzRakipFiyati = rakipSatis;
+              enUcuzRakipIsmi = comp;
             }
+            rowData.push(c_org || "", c_dsc || "");
+          } else {
+            rowData.push("", "");
+          }
+        });
 
-            GRAPH_FILTERED_DATA = filteredRows;
-            renderTable(filteredRows.slice(0, 250), CURRENT_PROCESSED_DATA.competitorNames);
-            const limitMsg = document.getElementById('limit-msg');
-            limitMsg.style.display = (filteredRows.length > 250) ? 'block' : 'none';
+        let durumText = "-";
+        let farkText = "-";
+
+        if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
+          if (bizPrice < enUcuzRakipFiyati) {
+            durumText = "Tazeyo";
+            const fark = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
+            farkText = "%" + fark.toFixed(1);
+          } else if (bizPrice > enUcuzRakipFiyati) {
+            durumText = cleanName(enUcuzRakipIsmi);
+            const fark = ((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100;
+            farkText = "%" + fark.toFixed(1);
+          } else {
+            durumText = "EŞİT";
+            farkText = "%0.0";
+          }
         }
 
-        function clearGraphFilters() {
-            document.getElementById('active-filter-banner').style.display = 'none';
-            GRAPH_FILTERED_DATA = null;
-            activeCategoryFilter = null;
+        rowData.push(durumText, farkText);
+        rows.push(rowData);
+      });
 
-            const displayData = CURRENT_PROCESSED_DATA.rows.slice(0, 250);
-            renderTable(displayData, CURRENT_PROCESSED_DATA.competitorNames);
-            const limitMsg = document.getElementById('limit-msg');
-            limitMsg.style.display = (CURRENT_PROCESSED_DATA.rows.length > 250) ? 'block' : 'none';
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!merges'] = merges;
+
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      const wscols = [];
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        let maxLen = 10;
+        for (let R = range.s.r; R <= Math.min(range.e.r, 50); ++R) {
+          const cell = ws[XLSX.utils.encode_cell({r: R, c: C})];
+          if (cell && cell.v) {
+            const len = cell.v.toString().length;
+            if (len > maxLen) maxLen = len;
+          }
         }
+        wscols.push({ wch: maxLen + 2 });
+      }
+      ws['!cols'] = wscols;
+
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const addr1 = XLSX.utils.encode_cell({ r: 0, c: C });
+        if (!ws[addr1]) ws[addr1] = { t: 's', v: '' };
+
+        let headerColor = "1F232C";
+        if (C >= range.e.c - 1) { headerColor = "14161c"; }
+
+        const styleObj = {
+          fill: { fgColor: { rgb: headerColor } },
+          font: { color: { rgb: "FFFFFF" }, bold: true },
+          alignment: { horizontal: "center", vertical: "center" },
+          border: {
+            bottom: { style: "thin", color: { rgb: "555555" } },
+            right: { style: "thin", color: { rgb: "555555" } }
+          }
+        };
+
+        ws[addr1].s = { ...styleObj, font: { ...styleObj.font, sz: 12 } };
+
+        const addr2 = XLSX.utils.encode_cell({ r: 1, c: C });
+        if (!ws[addr2]) continue;
+        ws[addr2].s = styleObj;
+      }
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
+
+      let filterSuffix = "";
+      if (activeCategoryFilter) filterSuffix = `_${activeCategoryFilter.replace(/\s/g, '')}`;
+      const dateStr = flatpickrInstance.selectedDates[0] ? flatpickrInstance.selectedDates[0].toLocaleDateString('tr-TR') : 'rapor';
+
+      XLSX.writeFile(wb, `teknoify_analiz_${dateStr}${filterSuffix}.xlsx`);
+      document.getElementById('download-menu').classList.remove('show');
+    }
+  </script>
 
-        // --- DASHBOARD CALCS ---
-        function updateDashboard(dataRows) {
-            let totalBiz = 0, totalComp = 0;
-            let discountCountBiz = 0;
-            let totalDiscountDepth = 0, depthCount = 0;
-            let categoryStats = {};
-            let countCheaper = 0;
-            let countEqual = 0;
-            let countExpensive = 0;
-
-            dataRows.forEach(row => {
-                const bizPrice = row.tazeyo_price_dsc > 0 ? row.tazeyo_price_dsc : row.tazeyo_price_org;
-                let minCompPrice = Infinity;
-                let hasComp = false;
-
-                Object.values(row.competitors).forEach(comp => {
-                    const price = comp.dsc > 0 ? comp.dsc : comp.org;
-                    if (price > 0 && price < minCompPrice) {
-                        minCompPrice = price;
-                        hasComp = true;
-                    }
-                });
-               
-                if (bizPrice > 0 && hasComp && minCompPrice < Infinity) {
-                    totalBiz += bizPrice;
-                    totalComp += minCompPrice;
-                   
-                    const l2Name = row['Category Name'];
-                    const cat = getMainCategory(l2Name);
-
-                    if (!categoryStats[cat]) categoryStats[cat] = { biz: 0, comp: 0, count: 0 };
-                    categoryStats[cat].biz += bizPrice;
-                    categoryStats[cat].comp += minCompPrice;
-                    categoryStats[cat].count++;
-
-                    if (bizPrice < minCompPrice) countCheaper++;
-                    else if (bizPrice > minCompPrice) countExpensive++;
-                    else countEqual++;
-                }
-
-                if (row.tazeyo_price_dsc > 0 && row.tazeyo_price_dsc < row.tazeyo_price_org) {
-                    discountCountBiz++;
-                    const depth = ((row.tazeyo_price_org - row.tazeyo_price_dsc) / row.tazeyo_price_org) * 100;
-                    totalDiscountDepth += depth;
-                    depthCount++;
-                }
-            });
-
-            const compElem = document.getElementById('kpi-competition');
-            const compSub = document.getElementById('kpi-competition-sub');
-           
-            if (totalBiz > 0 && totalComp > 0) {
-                if (totalBiz < totalComp) {
-                    let diff = ((totalComp - totalBiz) / totalComp) * 100;
-                    compElem.innerHTML = `%${diff.toFixed(1)} <span style="font-size:0.6em; color:#10b981;">DAHA UCUZ</span>`;
-                    compSub.innerHTML = `<span class="trend-up"><i class="fas fa-check"></i> Avantajlı</span> Pazar Konumu`;
-                } else {
-                    let diff = ((totalBiz - totalComp) / totalBiz) * 100;
-                    compElem.innerHTML = `%${diff.toFixed(1)} <span style="font-size:0.6em; color:#ef4444;">DAHA PAHALI</span>`;
-                    compSub.innerHTML = `<span class="trend-down"><i class="fas fa-exclamation-triangle"></i> Kritik</span> Pazar Konumu`;
-                }
-            } else {
-                compElem.innerHTML = "-";
-                compSub.innerHTML = "Veri Yetersiz";
-            }
-
-            document.getElementById('kpi-disc-us').innerText = discountCountBiz;
-            const avgDepth = depthCount > 0 ? (totalDiscountDepth / depthCount) : 0;
-            document.getElementById('kpi-depth').innerText = `%${avgDepth.toFixed(1)}`;
-            document.getElementById('kpi-depth-bar').style.width = `${Math.min(avgDepth, 100)}%`;
-
-            let bestCat = '-'; let maxDiff = -Infinity;
-            for (const [cat, stats] of Object.entries(categoryStats)) {
-                if (stats.comp <= 0) continue;
-                const diffPercent = ((stats.comp - stats.biz) / stats.comp) * 100;
-                if (diffPercent > maxDiff) { maxDiff = diffPercent; bestCat = cat; }
-            }
-            document.getElementById('kpi-best-cat').innerText = bestCat;
-            document.getElementById('kpi-best-cat-sub').innerHTML = maxDiff > -Infinity
-                ? (maxDiff > 0 ? `<span class="trend-up">+%${maxDiff.toFixed(1)} Avantaj</span>` : `<span class="trend-down">%${maxDiff.toFixed(1)} Dezavantaj</span>`)
-                : '-';
-
-            renderCategoryChart(categoryStats);
-            renderPieChart(countCheaper, countEqual, countExpensive);
-        }
-
-        // --- CHARTS RENDER ---
-        function renderCategoryChart(categoryStats) {
-            const categories = Object.keys(categoryStats);
-            const seriesData = categories.map(cat => {
-                const stats = categoryStats[cat];
-                if(stats.comp === 0) return 0;
-                return parseFloat(((stats.comp - stats.biz) / stats.comp * 100).toFixed(1));
-            });
-
-            const options = {
-                series: [{ name: 'Fiyat Avantajı (%)', data: seriesData }],
-                chart: {
-                    type: 'bar',
-                    height: 280,
-                    toolbar: { show: false },
-                    background: 'transparent',
-                    fontFamily: 'Inter Tight, sans-serif',
-                    events: {
-                        click: function(event, chartContext, config) {
-                            if (config.dataPointIndex !== undefined && config.dataPointIndex > -1) {
-                                const selectedCat = categories[config.dataPointIndex];
-                                if (activeCategoryFilter === selectedCat) {
-                                    clearGraphFilters();
-                                } else {
-                                    activeCategoryFilter = selectedCat;
-                                    filterTableByGraph('CATEGORY', selectedCat);
-                                }
-                            }
-                        }
-                    }
-                },
-                plotOptions: {
-                    bar: {
-                        colors: {
-                            ranges: [{ from: -100, to: -0.1, color: '#ef4444' }, { from: 0, to: 100, color: '#10b981' }]
-                        },
-                        columnWidth: '60%',
-                        borderRadius: 4,
-                    }
-                },
-                dataLabels: { enabled: false },
-                xaxis: {
-                    categories: categories,
-                    labels: { style: { colors: '#888', fontSize: '11px', fontWeight: 500 }, rotate: -45, trim: true },
-                    axisBorder: { show: false },
-                    axisTicks: { show: false },
-                    tooltip: { enabled: false }
-                },
-                yaxis: {
-                    labels: { style: { colors: '#888', fontFamily: 'Fira Code, monospace' }, formatter: (val) => `%${val}` },
-                    axisBorder: { show: false }
-                },
-                grid: {
-                    borderColor: '#333', strokeDashArray: 4,
-                    yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } },
-                    padding: { top: 0, right: 0, bottom: 0, left: 10 }
-                },
-                tooltip: {
-                    theme: 'dark', intersect: false, shared: true, style: { fontSize: '12px' },
-                    x: { show: true },
-                    y: { formatter: function (val) { return "%" + val; } }
-                }
-            };
-
-            if (chartCategory) { chartCategory.destroy(); }
-            chartCategory = new ApexCharts(document.querySelector("#chart-category"), options);
-            chartCategory.render();
-        }
-
-        function renderPieChart(cheaper, equal, expensive) {
-            const total = cheaper + equal + expensive;
-            if (total === 0) return;
-
-            const options = {
-                series: [cheaper, equal, expensive],
-                chart: {
-                    type: 'donut',
-                    height: 280,
-                    background: 'transparent',
-                    events: {
-                        dataPointSelection: function(event, chartContext, config) {
-                            const labels = ['Daha Ucuzuz', 'Eşit', 'Daha Pahalıyız'];
-                            const selectedLabel = labels[config.dataPointIndex];
-                            filterTableByGraph('POSITION', selectedLabel);
-                        }
-                    }
-                },
-                labels: ['Daha Ucuzuz', 'Eşit', 'Daha Pahalıyız'],
-                colors: ['#10b981', '#fbbf24', '#ef4444'],
-                plotOptions: {
-                    pie: {
-                        donut: {
-                            size: '70%',
-                            labels: {
-                                show: true, name: { color: '#888' },
-                                value: { color: '#fff', fontSize: '20px', fontWeight: 700 },
-                                total: { show: true, showAlways: true, label: 'Toplam Ürün', color: '#888', formatter: function (w) { return total } }
-                            }
-                        }
-                    }
-                },
-                dataLabels: { enabled: false },
-                legend: { position: 'bottom', labels: { colors: '#ccc' } },
-                stroke: { show: false },
-                theme: { mode: 'dark' }
-            };
-
-            if (chartPie) { chartPie.destroy(); }
-            chartPie = new ApexCharts(document.querySelector("#chart-pie"), options);
-            chartPie.render();
-        }
-
-        // --- HELPER FUNCTIONS ---
-        function getBrandColor(fullName) {
-            if (!fullName) return '#f97316';
-            const lowerName = fullName.toLowerCase();
-            if (lowerName.includes('migros')) return '#f5821f';
-            if (lowerName.includes('carrefour')) return '#005daa';
-            if (lowerName.includes('marketten')) return '#DC6727'; // TURUNCU
-            return '#f97316';
-        }
-
-        function hexToRgba(hex, alpha) {
-            let c;
-            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-                c= hex.substring(1).split('');
-                if(c.length== 3){ c= [c[0], c[0], c[1], c[1], c[2], c[2]]; }
-                c= '0x'+c.join('');
-                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
-            }
-            return hex;
-        }
-
-        function showNoDataState() {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px; color:#aaa;"><i class="fas fa-database" style="font-size:2rem; margin-bottom:10px; display:block;"></i>Bu hesap için tanımlanmış bir veri kaynağı bulunamadı.</td></tr>';
-            document.getElementById('btn-load').disabled = true;
-            document.getElementById('btn-load').style.opacity = "0.5";
-        }
-
-        function initCalendar() {
-            const today = new Date();
-            const pastDate = new Date();
-            pastDate.setDate(today.getDate() - 6);
-            flatpickrInstance = flatpickr("#date-range", {
-                mode: "range", dateFormat: "Y-m-d", locale: "tr", theme: "dark",
-                defaultDate: [pastDate, today],
-                placeholder: "Tarih Aralığı Seçiniz"
-            });
-        }
-
-        function initData(dynamicUrl) {
-            Papa.parse(dynamicUrl, {
-                download: true, header: true, skipEmptyLines: true,
-                complete: function(results) {
-                    ALL_DATA = results.data.filter(row => row['Store Name'] && row['Product Name']);
-                    populateFilters();
-                    applyFilters();
-                },
-                error: function(err) {
-                    console.error("CSV Hatası:", err);
-                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" style="color:#ef4444; text-align:center;">Veri çekilemedi. Bağlantı hatası.</td></tr>';
-                }
-            });
-        }
-
-        function populateFilters() {
-            const branchSet = new Set();
-            const catSet = new Set();
-            ALL_DATA.forEach(row => {
-                if(row['Store Name']) branchSet.add(row['Store Name'].trim());
-                if(row['Category Name']) catSet.add(row['Category Name'].trim());
-            });
-            renderMultiSelectOptions('menu-branch', Array.from(branchSet).sort(), 'branch');
-            updateTriggerText('branch', 'Tüm Şubeler');
-            renderMultiSelectOptions('menu-category', Array.from(catSet).sort(), 'category');
-            updateTriggerText('category', 'Tüm Kategoriler');
-        }
-
-        // --- GÜNCELLENMİŞ FONKSİYON: ARAMA KUTUSU EN ÜSTTE ---
-        function renderMultiSelectOptions(menuId, items, type) {
-            const menu = document.getElementById(menuId);
-            menu.innerHTML = '';
-
-            // 1. ARAMA KUTUSU (EN ÜSTE ALINDI)
-            const searchContainer = document.createElement('div');
-            searchContainer.style.padding = "8px";
-            searchContainer.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
-            
-            const searchInput = document.createElement('input');
-            searchInput.type = "text";
-            searchInput.placeholder = "Ara...";
-            searchInput.style.width = "100%";
-            searchInput.style.padding = "8px 12px";
-            searchInput.style.borderRadius = "6px";
-            searchInput.style.border = "1px solid rgba(255,255,255,0.1)";
-            searchInput.style.background = "rgba(0,0,0,0.3)";
-            searchInput.style.color = "#fff";
-            searchInput.style.fontSize = "0.85rem";
-            searchInput.style.outline = "none";
-            searchInput.style.marginBottom = "0";
-            
-            // Arama Dinamiği
-            searchInput.addEventListener('input', (e) => {
-                const term = e.target.value.toLowerCase();
-                const options = scrollContainer.querySelectorAll('.multi-option');
-                options.forEach(opt => {
-                    const text = opt.querySelector('span').textContent.toLowerCase();
-                    if (text.includes(term)) {
-                        opt.style.display = 'flex';
-                    } else {
-                        opt.style.display = 'none';
-                    }
-                });
-            });
-            
-            // Tıklamada menü kapanmasın diye (inputa tıklayınca)
-            searchInput.onclick = (e) => { e.stopPropagation(); }
-
-            searchContainer.appendChild(searchInput);
-
-            // 2. "Tümü" Seçeneği (Aramanın Altında)
-            const fixedHeader = document.createElement('div');
-            fixedHeader.style.padding = "4px";
-            fixedHeader.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
-            fixedHeader.style.marginBottom = "4px";
-            const allDiv = document.createElement('div');
-            allDiv.className = 'multi-option all-option selected';
-            allDiv.onclick = () => selectOption(type, 'all', allDiv);
-            allDiv.innerHTML = `<span>Tümü</span><div class="option-checkbox"></div>`;
-            fixedHeader.appendChild(allDiv);
-
-            // 3. Liste Alanı
-            const scrollContainer = document.createElement('div');
-            scrollContainer.style.maxHeight = "200px";
-            scrollContainer.style.overflowY = "auto";
-            
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'multi-option';
-                div.onclick = () => selectOption(type, item, div);
-                div.innerHTML = `<span>${item}</span><div class="option-checkbox"></div>`;
-                scrollContainer.appendChild(div);
-            });
-
-            menu.appendChild(searchContainer); 
-            menu.appendChild(fixedHeader);
-            menu.appendChild(scrollContainer);
-        }
-
-        function selectOption(type, value, element) {
-            let selectedArray = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
-            const menuId = (type === 'branch') ? 'menu-branch' : 'menu-category';
-            const menu = document.getElementById(menuId);
-            const allOption = menu.querySelector('.all-option');
-            if (value === 'all') {
-                selectedArray.length = 0; selectedArray.push('all');
-                menu.querySelectorAll('.multi-option').forEach(child => child.classList.remove('selected'));
-                allOption.classList.add('selected');
-            } else {
-                if (selectedArray.includes('all')) {
-                    selectedArray.splice(selectedArray.indexOf('all'), 1);
-                    allOption.classList.remove('selected');
-                }
-                if (selectedArray.includes(value)) {
-                    selectedArray.splice(selectedArray.indexOf(value), 1);
-                    element.classList.remove('selected');
-                } else {
-                    selectedArray.push(value);
-                    element.classList.add('selected');
-                }
-                if (selectedArray.length === 0) {
-                    selectedArray.push('all');
-                    allOption.classList.add('selected');
-                }
-            }
-            if (type === 'branch') SELECTED_BRANCHES = selectedArray;
-            else SELECTED_CATEGORIES = selectedArray;
-            updateTriggerText(type);
-        }
-
-        function updateTriggerText(type) {
-            const arr = (type === 'branch') ? SELECTED_BRANCHES : SELECTED_CATEGORIES;
-            const textId = (type === 'branch') ? 'text-branch' : 'text-category';
-            const label = document.getElementById(textId);
-            if (arr.includes('all')) label.textContent = (type === 'branch') ? "Tüm Şubeler" : "Tüm Kategoriler";
-            else if (arr.length === 1) label.textContent = arr[0];
-            else label.textContent = `${arr.length} ${type === 'branch' ? 'Şube' : 'Kategori'} Seçildi`;
-        }
-
-        function toggleMultiSelect(menuId) {
-            const menu = document.getElementById(menuId);
-            const isVisible = menu.classList.contains('show');
-            document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
-            if (!isVisible) {
-                menu.classList.add('show');
-                const input = menu.querySelector('input');
-                if(input) setTimeout(() => input.focus(), 100);
-            }
-        }
-
-        function applyFilters() {
-            clearGraphFilters();
-            const dateRange = flatpickrInstance.selectedDates;
-            const tbody = document.getElementById('table-body');
-            const limitMsg = document.getElementById('limit-msg');
-            const btnDownload = document.getElementById('btn-download');
-           
-            if (dateRange.length < 1) { showToast("Lütfen bir tarih aralığı seçiniz."); return; }
-
-            tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Filtreleniyor...</td></tr>';
-
-            const startDate = dateRange[0];
-            const endDate = dateRange[1] ? dateRange[1] : dateRange[0];
-            startDate.setHours(0,0,0,0); endDate.setHours(23,59,59,999);
-
-            let filteredData = ALL_DATA.filter(row => {
-                const storeName = row['Store Name'] ? row['Store Name'].trim() : "";
-                const catName = row['Category Name'] ? row['Category Name'].trim() : "";
-                const branchMatch = SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.includes(storeName);
-                const catMatch = SELECTED_CATEGORIES.includes('all') || SELECTED_CATEGORIES.includes(catName);
-                const dateStr = row['Report Date'];
-                if (!dateStr) return false;
-                const parts = dateStr.split('.');
-                if(parts.length !== 3) return false;
-                const rowDate = new Date(parts[2], parts[1]-1, parts[0]);
-                return branchMatch && catMatch && (rowDate >= startDate && rowDate <= endDate);
-            });
-
-            const aggregatedResult = aggregateData(filteredData);
-            CURRENT_PROCESSED_DATA = aggregatedResult;
-
-            if (aggregatedResult.rows.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:20px;">Bu kriterlere uygun veri bulunamadı.</td></tr>';
-                btnDownload.classList.add('btn-disabled');
-                limitMsg.style.display = 'none';
-                if(chartCategory) chartCategory.updateSeries([{ data: [] }]);
-                if(chartPie) chartPie.updateSeries([0,0,0]);
-                document.getElementById('kpi-competition').innerText = "-";
-                return;
-            }
-
-            btnDownload.classList.remove('btn-disabled');
-            updateDashboard(aggregatedResult.rows);
-            const displayData = aggregatedResult.rows.slice(0, 250);
-            limitMsg.style.display = (aggregatedResult.rows.length > 250) ? 'block' : 'none';
-            renderTable(displayData, aggregatedResult.competitorNames);
-        }
-
-        function aggregateData(data) {
-            const grouped = {};
-            const allCompetitors = new Set();
-            data.forEach(row => {
-                const productKey = row['SKU'] || row['Product Name'];
-                if (!productKey) return;
-                const uniqueKey = `${row['Report Date']}_${productKey}`;
-
-                let rawCompName = row['Competitor Store Name'];
-                let compName = rawCompName ? rawCompName.trim() : 'Bilinmeyen';
-                if(compName && compName !== 'Bilinmeyen') { allCompetitors.add(compName); }
-               
-                if (!grouped[uniqueKey]) {
-                    grouped[uniqueKey] = {
-                        ...row,
-                        tazeyo_price_org: parsePrice(row['Tazeyo Original Price']),
-                        tazeyo_price_dsc: parsePrice(row['Tazeyo Discount Price']),
-                        competitors: {}
-                    };
-                }
-                grouped[uniqueKey].competitors[compName] = {
-                    org: parsePrice(row['Competitor Original Price']),
-                    dsc: parsePrice(row['Competitor Discount Price'])
-                };
-            });
-           
-            const sortOrder = ['marketten', 'carrefour', 'migros'];
-            const sortedCompetitors = Array.from(allCompetitors).sort((a, b) => {
-                const aLower = a.toLowerCase();
-                const bLower = b.toLowerCase();
-                let idxA = sortOrder.findIndex(key => aLower.includes(key));
-                let idxB = sortOrder.findIndex(key => bLower.includes(key));
-                if (idxA === -1) idxA = 99;
-                if (idxB === -1) idxB = 99;
-                if (idxA !== idxB) return idxA - idxB;
-                return a.localeCompare(b);
-            });
-
-            const sortedRows = Object.values(grouped).sort((a, b) => {
-                const partsA = a['Report Date'].split('.');
-                const dateA = new Date(partsA[2], partsA[1]-1, partsA[0]);
-                const partsB = b['Report Date'].split('.');
-                const dateB = new Date(partsB[2], partsB[1]-1, partsB[0]);
-                return dateB - dateA;
-            });
-
-            return {
-                rows: sortedRows,
-                competitorNames: sortedCompetitors
-            };
-        }
-
-        // --- RENDER TABLE (Split Header + Sticky) ---
-        function renderTable(dataRows, competitorNames) {
-            const theadTop = document.getElementById('header-row-top');
-            const theadBottom = document.getElementById('header-row-bottom');
-            const tbody = document.getElementById('table-body');
-           
-            tbody.innerHTML = '';
-            theadTop.innerHTML = '';
-            theadBottom.innerHTML = '';
-
-            // --- 1. SATIR BAŞLIKLAR ---
-            let headerTopHtml = '';
-            headerTopHtml += `<th class="th-fixed-corner">Ürün</th>`;
-            headerTopHtml += `<th colspan="5" class="th-scrollable-group">Ürün Detayları</th>`;
-           
-            let myStoreLabel = 'Bizim Fiyatlar';
-            if(dataRows.length > 0 && dataRows[0]['Store Name']) myStoreLabel = dataRows[0]['Store Name'];
-           
-            headerTopHtml += `<th colspan="2" class="th-group-tazeyo">${myStoreLabel}</th>`;
-
-            competitorNames.forEach(compName => {
-                const brandColor = getBrandColor(compName);
-                const bgRgba = hexToRgba(brandColor, 0.08);
-                const styleStr = `color: ${brandColor}; background-color: ${bgRgba}; border-bottom: 1px solid #333; border-left: 2px solid #444;`;
-                headerTopHtml += `<th colspan="2" style="${styleStr}">${compName}</th>`;
-            });
-           
-            headerTopHtml += `<th colspan="2" style="background:#14161c; border-left:2px solid #444; color:#fff;">En Ucuz Kanal</th>`;
-            theadTop.innerHTML = headerTopHtml;
-
-            // --- 2. SATIR BAŞLIKLAR ---
-            let headerBottomHtml = '';
-            headerBottomHtml += `<th class="sticky-product">Ürün Adı</th>`;
-            headerBottomHtml += `<th>Rapor Tarihi</th><th>Mağaza</th><th>SKU</th><th>Marka</th><th>Kategori</th>`;
-            headerBottomHtml += `<th>Price</th><th>Discount Price</th>`;
-           
-            competitorNames.forEach(() => {
-                headerBottomHtml += `<th class="border-left-light">Price</th><th>Discount Price</th>`;
-            });
-           
-            headerBottomHtml += `<th class="border-left-light col-analysis-status">Durum</th><th>Fark</th>`;
-            theadBottom.innerHTML = headerBottomHtml;
-           
-            // --- VERİ SATIRLARI ---
-            dataRows.forEach(row => {
-                const tr = document.createElement('tr');
-                let html = `
-                    <td class="sticky-product" title="${row['Product Name']}">${row['Product Name']}</td>
-                    <td style="color:#888; font-size:0.85rem;">${row['Report Date']}</td>
-                    <td>${row['Store Name']}</td>
-                    <td>${row['SKU']}</td>
-                    <td>${row['Brand Name'] || '-'}</td>
-                    <td>${row['Category Name'] || '-'}</td>
-                `;
-
-                const t_org = row.tazeyo_price_org;
-                const t_dsc = row.tazeyo_price_dsc;
-                const bizPrice = t_dsc > 0 ? t_dsc : t_org;
-
-                html += `
-                    <td class="price-cell">₺${formatMoney(t_org)}</td>
-                    <td class="price-cell">${t_dsc > 0 ? '₺'+formatMoney(t_dsc) : '-'}</td>
-                `;
-
-                let enUcuzRakipFiyati = Infinity;
-                let enUcuzRakipIsmi = '';
-
-                competitorNames.forEach(compName => {
-                    const compData = row.competitors[compName];
-                    if (compData) {
-                        const c_org = compData.org;
-                        const c_dsc = compData.dsc;
-                        const rakipSatis = c_dsc > 0 ? c_dsc : c_org;
-
-                        if (rakipSatis > 0 && rakipSatis < enUcuzRakipFiyati) {
-                            enUcuzRakipFiyati = rakipSatis;
-                            enUcuzRakipIsmi = compName;
-                        }
-
-                        html += `
-                            <td class="price-cell" style="border-left:1px solid #333;">₺${formatMoney(c_org)}</td>
-                            <td class="price-cell">${c_dsc > 0 ? '₺'+formatMoney(c_dsc) : '-'}</td>
-                        `;
-                    } else {
-                        html += `<td colspan="2" style="border-left:1px solid #333; text-align:center; color:#444; font-size:0.8em;">Veri Yok</td>`;
-                    }
-                });
-
-                let badgeHtml = '<span class="badge" style="background:#333; color:#aaa;">-</span>';
-                let farkYuzde = 0;
-                let farkClass = "";
-
-                if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
-                    if (bizPrice < enUcuzRakipFiyati) {
-                        badgeHtml = '<span class="badge badge-tazeyo">Tazeyo</span>';
-                        farkYuzde = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
-                        farkClass = "diff-negative";
-                    } else if (bizPrice > enUcuzRakipFiyati) {
-                        const shortName = cleanName(enUcuzRakipIsmi);
-                        const brandColor = getBrandColor(enUcuzRakipIsmi);
-                        const bgRgba = hexToRgba(brandColor, 0.2);
-                        const borderRgba = hexToRgba(brandColor, 0.3);
-                        const badgeStyle = `background-color: ${bgRgba}; color: ${brandColor}; border: 1px solid ${borderRgba};`;
-                        badgeHtml = `<span class="badge badge-market" style="${badgeStyle}" title="${enUcuzRakipIsmi}">${shortName}</span>`;
-                        farkYuzde = ((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100;
-                        farkClass = "diff-positive";
-                    } else {
-                        badgeHtml = '<span class="badge" style="background:#555;">EŞİT</span>';
-                    }
-                }
-
-                html += `
-                    <td style="border-left:2px solid #444; text-align:center;">${badgeHtml}</td>
-                    <td class="${farkClass}">${farkYuzde > 0 ? '%' + farkYuzde.toFixed(1) : '-'}</td>
-                `;
-
-                tr.innerHTML = html;
-                tbody.appendChild(tr);
-            });
-
-            updateTopScrollWidth();
-        }
-
-        function cleanName(name) { if (!name) return ""; return name.split('(')[0].trim(); }
-        function parsePrice(val) { if(!val) return 0; let clean = val.toString().replace(/["'₺\s]/g, ''); if (clean.indexOf(',') > -1 && clean.indexOf('.') === -1) { clean = clean.replace(',', '.'); } else if (clean.indexOf(',') > -1 && clean.indexOf('.') > -1) { clean = clean.replace(/\./g, '').replace(',', '.'); } return parseFloat(clean) || 0; }
-        function formatMoney(num) { return num === 0 ? '0,00' : new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(num); }
-        function logout() { new SessionManager().destroySession(); window.location.href = '../index.html'; }
-        function showToast(message) { const toast = document.getElementById('toast'); document.getElementById('toast-message').textContent = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
-        function toggleDownloadMenu() { document.getElementById('download-menu').classList.toggle('show'); }
-       
-        function getActiveDataForExport() {
-            let activeRows = [];
-            if (GRAPH_FILTERED_DATA && GRAPH_FILTERED_DATA.length > 0) {
-                activeRows = GRAPH_FILTERED_DATA;
-            } else {
-                activeRows = CURRENT_PROCESSED_DATA.rows;
-            }
-            return {
-                rows: activeRows,
-                competitorNames: CURRENT_PROCESSED_DATA.competitorNames
-            };
-        }
-
-        function downloadExcel() {
-            const dataToExport = getActiveDataForExport();
-            if (!dataToExport.rows || dataToExport.rows.length === 0) {
-                showToast("İndirilecek veri bulunamadı.");
-                return;
-            }
-
-            const rows = [];
-            const merges = [];
-           
-            const row1 = [
-                "Ürün Bilgileri", "", "", "", "", "",
-                dataToExport.rows[0]['Store Name'] || "Bizim Fiyatlar", "",
-            ];
-            
-            dataToExport.competitorNames.forEach(comp => {
-                row1.push(comp, "");
-            });
-
-            row1.push("En Ucuz Kanal", "");
-            rows.push(row1);
-
-            const row2 = [
-                "Ürün Adı", "Rapor Tarihi", "Mağaza", "SKU", "Marka", "Kategori",
-                "Fiyat", "İndirimli Fiyat"
-            ];
-            dataToExport.competitorNames.forEach(() => {
-                row2.push("Fiyat", "İndirimli Fiyat");
-            });
-
-            row2.push("Durum", "Fark");
-            rows.push(row2);
-
-            merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }); 
-            merges.push({ s: { r: 0, c: 6 }, e: { r: 0, c: 7 } });
-
-            let colIndex = 8;
-            dataToExport.competitorNames.forEach(() => {
-                merges.push({ s: { r: 0, c: colIndex }, e: { r: 0, c: colIndex + 1 } });
-                colIndex += 2;
-            });
-
-            merges.push({ s: { r: 0, c: colIndex }, e: { r: 0, c: colIndex + 1 } });
-
-            dataToExport.rows.forEach(row => {
-                const bizOrg = parsePrice(row.tazeyo_price_org);
-                const bizDsc = parsePrice(row.tazeyo_price_dsc);
-
-                const rowData = [
-                    row['Product Name'],
-                    row['Report Date'],
-                    row['Store Name'],
-                    row['SKU'],
-                    row['Brand Name'] || '-',
-                    row['Category Name'] || '-',
-                    bizOrg || "", 
-                    bizDsc || ""
-                ];
-
-                const bizPrice = bizDsc > 0 ? bizDsc : bizOrg;
-                let enUcuzRakipFiyati = Infinity;
-                let enUcuzRakipIsmi = '';
-
-                dataToExport.competitorNames.forEach(comp => {
-                    const cData = row.competitors[comp];
-                    if (cData) {
-                        const c_org = parsePrice(cData.org);
-                        const c_dsc = parsePrice(cData.dsc);
-                        const rakipSatis = c_dsc > 0 ? c_dsc : c_org;
-
-                        if (rakipSatis > 0 && rakipSatis < enUcuzRakipFiyati) {
-                            enUcuzRakipFiyati = rakipSatis;
-                            enUcuzRakipIsmi = comp;
-                        }
-                        rowData.push(c_org || "", c_dsc || "");
-                    } else {
-                        rowData.push("", "");
-                    }
-                });
-
-                let durumText = "-";
-                let farkText = "-";
-
-                if (bizPrice > 0 && enUcuzRakipFiyati !== Infinity) {
-                    if (bizPrice < enUcuzRakipFiyati) {
-                        durumText = "Tazeyo";
-                        const fark = ((enUcuzRakipFiyati - bizPrice) / enUcuzRakipFiyati) * 100;
-                        farkText = "%" + fark.toFixed(1);
-                    } else if (bizPrice > enUcuzRakipFiyati) {
-                        durumText = cleanName(enUcuzRakipIsmi);
-                        const fark = ((bizPrice - enUcuzRakipFiyati) / bizPrice) * 100;
-                        farkText = "%" + fark.toFixed(1);
-                    } else {
-                        durumText = "EŞİT";
-                        farkText = "%0.0";
-                    }
-                }
-
-                rowData.push(durumText, farkText);
-                rows.push(rowData);
-            });
-
-            const ws = XLSX.utils.aoa_to_sheet(rows);
-            ws['!merges'] = merges;
-
-            const range = XLSX.utils.decode_range(ws['!ref']);
-            const wscols = [];
-            for (let C = range.s.c; C <= range.e.c; ++C) {
-                let maxLen = 10;
-                for (let R = range.s.r; R <= Math.min(range.e.r, 50); ++R) {
-                    const cell = ws[XLSX.utils.encode_cell({r: R, c: C})];
-                    if (cell && cell.v) {
-                        const len = cell.v.toString().length;
-                        if (len > maxLen) maxLen = len;
-                    }
-                }
-                wscols.push({ wch: maxLen + 2 });
-            }
-            ws['!cols'] = wscols;
-
-            for (let C = range.s.c; C <= range.e.c; ++C) {
-                const addr1 = XLSX.utils.encode_cell({ r: 0, c: C });
-                if (!ws[addr1]) ws[addr1] = { t: 's', v: '' };
-               
-                let headerColor = "1F232C";
-                if (C >= range.e.c - 1) { headerColor = "14161c"; }
-
-                const styleObj = {
-                    fill: { fgColor: { rgb: headerColor } },
-                    font: { color: { rgb: "FFFFFF" }, bold: true },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    border: { 
-                        bottom: { style: "thin", color: { rgb: "555555" } },
-                        right: { style: "thin", color: { rgb: "555555" } }
-                    }
-                };
-
-                ws[addr1].s = { ...styleObj, font: { ...styleObj.font, sz: 12 } };
-
-                const addr2 = XLSX.utils.encode_cell({ r: 1, c: C });
-                if (!ws[addr2]) continue;
-                ws[addr2].s = styleObj;
-            }
-
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Fiyat Analizi");
-           
-            let filterSuffix = "";
-            if (activeCategoryFilter) filterSuffix = `_${activeCategoryFilter.replace(/\s/g, '')}`;
-            const dateStr = flatpickrInstance.selectedDates[0] ? flatpickrInstance.selectedDates[0].toLocaleDateString('tr-TR') : 'rapor';
-           
-            XLSX.writeFile(wb, `teknoify_analiz_${dateStr}${filterSuffix}.xlsx`);
-            document.getElementById('download-menu').classList.remove('show');
-        }
-    </script>
 </body>
 </html>
-
-
-
-

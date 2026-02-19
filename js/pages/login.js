@@ -1,4 +1,5 @@
-import { login } from "../lib/auth.js";
+// js/pages/login.js
+import { login, requireAuth } from "../lib/auth.js";
 
 function $(id) {
   return document.getElementById(id);
@@ -7,7 +8,7 @@ function $(id) {
 function showError(msg) {
   const el = $("mvp-login-error");
   if (!el) return;
-  el.textContent = msg;
+  el.textContent = msg || "";
   el.hidden = !msg;
 }
 
@@ -16,32 +17,66 @@ function normalizeEmail(v) {
 }
 
 function redirectAfterLogin(session) {
-  // login sayfası /pages/ altında: dashboard'a ../dashboard/...
-  if (session?.role === "admin") {
+  // Admin -> admin panel
+  if (session?.isAdmin || session?.role === "admin") {
     window.location.href = "../dashboard/admin.html";
     return;
   }
-  window.location.href = "../dashboard/member.html";
+
+  // Member -> yeni sistemde güvenli olan sayfa (projects list)
+  // member.html şu an eski Firebase compat + users.json feature flag bekliyor.
+  window.location.href = "../dashboard/index.html";
 }
 
-function init() {
+async function init() {
   const form = $("mvp-login-form");
   if (!form) return;
 
-  form.addEventListener("submit", (e) => {
+  // Zaten login olduysa doğrudan yönlendir
+  try {
+    const existing = await requireAuth();
+    if (existing) {
+      redirectAfterLogin(existing);
+      return;
+    }
+  } catch {
+    // login değilse devam
+  }
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     showError("");
 
     const email = normalizeEmail($("email")?.value);
     const password = $("password")?.value || "";
 
-    const result = login(email, password);
+    if (!email || !password) {
+      showError("E-posta ve şifre zorunlu.");
+      return;
+    }
+
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn?.textContent || "Giriş Yap";
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Giriş yapılıyor...";
+    }
+
+    const result = await login(email, password);
+
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+
     if (!result?.ok) {
       showError(result?.message || "Giriş yapılamadı.");
       return;
     }
 
-    redirectAfterLogin(result.session);
+    // Giriş başarılı -> session bilgisini auth üzerinden çekip yönlendir
+    const session = await requireAuth();
+    redirectAfterLogin(session);
   });
 }
 
