@@ -1,452 +1,356 @@
-/* js/pages/admin.js
-   Teknoify Admin - User Access Management + Impersonate (View-as)
-   Works with Firebase v9 compat (firebase-app-compat, firebase-auth-compat, firebase-firestore-compat)
-*/
+// js/pages/admin.js
+import { logout, requireAuth } from "../lib/auth.js";
+import { getProjects } from "../lib/data.js";
+import { createEl, qs } from "../utils/dom.js";
+import { db } from "../lib/firebase.js";
 
-(() => {
-  'use strict';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-  // -----------------------------
-  // CONFIG / CONSTANTS
-  // -----------------------------
-  const COL = {
-    ADMINS: 'admins',
-    USERS: 'users',
-    ENTITLEMENTS: 'entitlements',
-    PROJECTS: 'projects',
-  };
+const IMPERSONATE_KEY = "tk_impersonate_uid";
 
-  const LS = {
-    IMP_UID: 'impersonate_uid',
-    IMP_EMAIL: 'impersonate_email',
-    IMP_NAME: 'impersonate_name',
-  };
+function pickTbody() {
+  return (
+    qs("#admin-user-table-body") ||
+    qs("#user-access-body") ||
+    qs("#user-table-body") ||
+    qs("#user-access-table tbody") ||
+    document.querySelector("tbody")
+  );
+}
 
-  // -----------------------------
-  // STATE
-  // -----------------------------
-  let db;
-  let authUser = null;
-  let isAdmin = false;
-
-  /** @type {Array<{id:string,name:string,status?:string,demoUrl?:string,description?:string}>} */
-  let projects = [];
-  /** @type {Array<{uid:string,name?:string,email?:string,role?:string}>} */
-  let users = [];
-  /** @type {Map<string, Set<string>>} uid -> projectIds set */
-  const entByUid = new Map();
-  /** @type {Set<string>} dirty uids */
-  const dirtyUids = new Set();
-
-  // -----------------------------
-  // HELPERS
-  // -----------------------------
-  function $(sel, root = document) {
-    return root.querySelector(sel);
+function setStatus(msg, type = "info") {
+  let el = qs("#admin-status");
+  if (!el) {
+    el = createEl("div", { id: "admin-status" });
+    el.style.margin = "12px 0";
+    el.style.fontSize = "14px";
+    el.style.opacity = "0.95";
+    const anchor = qs("main") || document.body;
+    anchor.prepend(el);
   }
 
-  function escapeHtml(str) {
-    return String(str ?? '')
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
+  el.textContent = msg || "";
+  el.style.color =
+    type === "error" ? "#ef4444" : type === "ok" ? "#10b981" : "#e5e7eb";
+}
+
+function ensureButton(selectorList, fallbackText) {
+  const selectors = Array.isArray(selectorList) ? selectorList : [selectorList];
+  for (const sel of selectors) {
+    const btn = qs(sel);
+    if (btn) return btn;
   }
 
-  function getRootEl() {
-    return (
-      document.getElementById('admin-root') ||
-      document.getElementById('users-container') ||
-      document.getElementById('app') ||
-      document.querySelector('.admin-content') ||
-      document.body
+  // yoksa üret
+  const btn = createEl("button", {
+    className: "btn btn-primary",
+    text: fallbackText
+  });
+  btn.type = "button";
+  btn.style.marginTop = "14px";
+
+  const anchor = qs("main") || document.body;
+  anchor.append(btn);
+  return btn;
+}
+
+function getImpersonatedUid() {
+  try {
+    return localStorage.getItem(IMPERSONATE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function setImpersonatedUid(uid) {
+  try {
+    if (!uid) localStorage.removeItem(IMPERSONATE_KEY);
+    else localStorage.setItem(IMPERSONATE_KEY, uid);
+  } catch {
+    // ignore
+  }
+}
+
+function renderImpersonationBanner({ isAdmin }) {
+  const current = getImpersonatedUid();
+  if (!isAdmin) return;
+
+  let wrap = qs("#impersonation-banner");
+  if (!wrap) {
+    wrap = createEl("div", { id: "impersonation-banner" });
+    wrap.style.display = "flex";
+    wrap.style.alignItems = "center";
+    wrap.style.justifyContent = "space-between";
+    wrap.style.gap = "12px";
+    wrap.style.padding = "10px 12px";
+    wrap.style.border = "1px solid rgba(255,255,255,0.08)";
+    wrap.style.borderRadius = "12px";
+    wrap.style.background = "rgba(255,255,255,0.03)";
+    wrap.style.margin = "12px 0";
+
+    const anchor = qs("main") || document.body;
+    anchor.prepend(wrap);
+  }
+
+  wrap.innerHTML = "";
+  if (!current) {
+    wrap.append(
+      createEl("div", { text: "İmpersonation aktif değil." }),
+      createEl("div", { text: "" })
     );
+    return;
   }
 
-  function toast(msg) {
-    // Eğer sitende toast component varsa burayı entegre edebilirsin.
-    // Şimdilik minimal:
-    console.log('[ADMIN]', msg);
-  }
+  const left = createEl("div", {
+    text: `İmpersonation aktif: ${current}`
+  });
 
-  function hardRedirectToLogin() {
-    // Projene göre login yolu farklıysa güncelle:
-    window.location.href = '../index.html';
-  }
-
-  function goDashboard() {
-    window.location.href = 'index.html';
-  }
-
-  function serverTimestamp() {
-    return firebase.firestore.FieldValue.serverTimestamp();
-  }
-
-  function normalizeProjectIds(value) {
-    if (!value) return [];
-    if (Array.isArray(value)) return value.filter(Boolean).map(String);
-    return [];
-  }
-
-  // -----------------------------
-  // IMPERSONATION
-  // -----------------------------
-  function startImpersonation(targetUid, targetEmail, targetName) {
-    localStorage.setItem(LS.IMP_UID, targetUid);
-    localStorage.setItem(LS.IMP_EMAIL, targetEmail || '');
-    localStorage.setItem(LS.IMP_NAME, targetName || '');
-    goDashboard();
-  }
-
-  function stopImpersonation() {
-    localStorage.removeItem(LS.IMP_UID);
-    localStorage.removeItem(LS.IMP_EMAIL);
-    localStorage.removeItem(LS.IMP_NAME);
-    // sayfayı yenile
+  const stopBtn = createEl("button", {
+    className: "btn btn-sm",
+    text: "İmpersonation’ı Bitir"
+  });
+  stopBtn.type = "button";
+  stopBtn.addEventListener("click", () => {
+    setImpersonatedUid("");
+    // admin sayfasında kal
     window.location.reload();
-  }
+  });
 
-  function getImpersonationInfo() {
-    const uid = localStorage.getItem(LS.IMP_UID);
-    if (!uid) return null;
-    return {
-      uid,
-      email: localStorage.getItem(LS.IMP_EMAIL) || '',
-      name: localStorage.getItem(LS.IMP_NAME) || '',
-    };
-  }
+  wrap.append(left, stopBtn);
+}
 
-  // -----------------------------
-  // FIREBASE GUARDS
-  // -----------------------------
-  async function checkAdmin(uid) {
-    const doc = await db.collection(COL.ADMINS).doc(uid).get();
-    return doc.exists;
-  }
+async function fetchUsers() {
+  const snap = await getDocs(collection(db, "users"));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => String(a.email || "").localeCompare(String(b.email || "")));
+}
 
-  // -----------------------------
-  // DATA LOADERS
-  // -----------------------------
-  async function loadProjects() {
-    // Sadece aktif projeler + isim sıralı (yoksa hepsini al)
-    let snap;
-    try {
-      snap = await db.collection(COL.PROJECTS).where('status', '==', 'active').get();
-    } catch (e) {
-      // index/where yoksa fallback
-      snap = await db.collection(COL.PROJECTS).get();
-    }
+async function fetchEntitlements(uid) {
+  const entRef = doc(db, "entitlements", uid);
+  const entSnap = await getDoc(entRef);
+  const data = entSnap.exists() ? entSnap.data() : {};
+  const ids = Array.isArray(data.projectIds) ? data.projectIds : [];
+  return ids;
+}
 
-    const list = [];
-    snap.forEach((d) => {
-      const data = d.data() || {};
-      list.push({
-        id: d.id,
-        name: data.name || d.id,
-        status: data.status || '',
-        demoUrl: data.demoUrl || '',
-        description: data.description || '',
-      });
+async function saveEntitlements(uid, projectIds) {
+  const entRef = doc(db, "entitlements", uid);
+  await setDoc(
+    entRef,
+    {
+      projectIds: Array.isArray(projectIds) ? projectIds : [],
+      updatedAt: serverTimestamp()
+    },
+    { merge: true }
+  );
+}
+
+function makeCheckbox({ checked, onChange }) {
+  const input = createEl("input");
+  input.type = "checkbox";
+  input.checked = !!checked;
+  input.addEventListener("change", () => onChange(input.checked));
+  return input;
+}
+
+function ensureHeaderRow(tbody, projects) {
+  // Eğer tablo başlığı HTML’de yoksa burada üretmek riskli,
+  // ama en azından tbody yoksa uyaralım.
+  if (!tbody) return;
+  // tbody sadece body; header HTML tarafında kalsın
+  // Bu fonksiyon şu an no-op.
+}
+
+function goToUserAs(uid) {
+  // Admin.js sadece flag’i set eder.
+  // requireAuth() tarafında bu uid’i “impersonated userId” olarak kullanman gerekir.
+  setImpersonatedUid(uid);
+  window.location.href = "/dashboard/index.html";
+}
+
+function createRow({ user, projects, entitledSet, stateMap, session }) {
+  const tr = document.createElement("tr");
+  tr.style.borderBottom = "1px solid rgba(255,255,255,0.06)";
+
+  // User cell
+  const tdUser = document.createElement("td");
+  tdUser.style.padding = "14px 12px";
+  tdUser.style.verticalAlign = "middle";
+
+  const name = user.name || (user.email ? user.email.split("@")[0] : user.id);
+  const userLine = createEl("div", { text: `${name} (${user.email || "-"})` });
+  userLine.style.fontWeight = "600";
+
+  const metaLine = createEl("div", {
+    text: `UID: ${user.id} • role: ${user.role || "user"}`
+  });
+  metaLine.style.fontSize = "12px";
+  metaLine.style.opacity = "0.75";
+  metaLine.style.marginTop = "4px";
+
+  const btns = createEl("div");
+  btns.style.display = "flex";
+  btns.style.gap = "8px";
+  btns.style.marginTop = "10px";
+
+  const impBtn = createEl("button", {
+    className: "btn btn-sm btn-primary",
+    text: "Impersonate"
+  });
+  impBtn.type = "button";
+  impBtn.disabled = !session.isAdmin;
+  impBtn.addEventListener("click", () => goToUserAs(user.id));
+
+  const stopBtn = createEl("button", {
+    className: "btn btn-sm",
+    text: "İmpersonation’ı Bitir"
+  });
+  stopBtn.type = "button";
+  stopBtn.disabled = !getImpersonatedUid();
+  stopBtn.addEventListener("click", () => {
+    setImpersonatedUid("");
+    window.location.reload();
+  });
+
+  btns.append(impBtn, stopBtn);
+  tdUser.append(userLine, metaLine, btns);
+
+  // Project checkboxes cells
+  const tdProjects = document.createElement("td");
+  tdProjects.style.padding = "14px 12px";
+  tdProjects.style.verticalAlign = "middle";
+
+  const wrap = createEl("div");
+  wrap.style.display = "flex";
+  wrap.style.flexWrap = "wrap";
+  wrap.style.gap = "14px";
+
+  const setForUser = new Set(entitledSet);
+  stateMap.set(user.id, setForUser);
+
+  projects.forEach((p) => {
+    const item = createEl("label");
+    item.style.display = "inline-flex";
+    item.style.alignItems = "center";
+    item.style.gap = "8px";
+    item.style.cursor = "pointer";
+
+    const cb = makeCheckbox({
+      checked: setForUser.has(p.id),
+      onChange: (isChecked) => {
+        const s = stateMap.get(user.id) || new Set();
+        if (isChecked) s.add(p.id);
+        else s.delete(p.id);
+        stateMap.set(user.id, s);
+      }
     });
 
-    list.sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id, 'tr'));
-    projects = list;
-  }
+    const text = createEl("span", { text: p.name });
+    item.append(cb, text);
+    wrap.append(item);
+  });
 
-  async function loadUsers() {
-    const snap = await db.collection(COL.USERS).get();
-    const list = [];
-    snap.forEach((d) => {
-      const data = d.data() || {};
-      list.push({
-        uid: d.id,
-        name: data.name || '',
-        email: data.email || '',
-        role: data.role || '',
-      });
-    });
+  tdProjects.append(wrap);
 
-    // İsim/email sıralı
-    list.sort((a, b) => {
-      const A = (a.name || a.email || a.uid).toLowerCase();
-      const B = (b.name || b.email || b.uid).toLowerCase();
-      return A.localeCompare(B, 'tr');
-    });
+  tr.append(tdUser, tdProjects);
+  return tr;
+}
 
-    users = list;
-  }
+async function init() {
+  try {
+    setStatus("Yükleniyor...");
 
-  async function loadEntitlements() {
-    entByUid.clear();
-    const snap = await db.collection(COL.ENTITLEMENTS).get();
-    snap.forEach((d) => {
-      const data = d.data() || {};
-      const set = new Set(normalizeProjectIds(data.projectIds));
-      entByUid.set(d.id, set);
-    });
+    const session = await requireAuth();
+    if (!session) return;
 
-    // entitlements dokümanı olmayan kullanıcılar için boş set oluştur
-    users.forEach((u) => {
-      if (!entByUid.has(u.uid)) entByUid.set(u.uid, new Set());
-    });
-  }
+    // logout
+    const logoutBtn =
+      qs("#logout-btn") || qs("#logout") || qs("[data-action='logout']");
+    if (logoutBtn) logoutBtn.addEventListener("click", logout);
 
-  // -----------------------------
-  // RENDER
-  // -----------------------------
-  function render() {
-    const root = getRootEl();
-    const imp = getImpersonationInfo();
-
-    root.innerHTML = `
-      <div class="admin-panel" style="max-width:1100px; margin:0 auto; padding:22px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;">
-          <div>
-            <h2 style="margin:0; font-size:1.4rem;">Kullanıcı Erişim Yönetimi</h2>
-            <div style="opacity:.75; margin-top:6px; font-size:.95rem;">
-              Kullanıcılara proje erişimi atayın veya kaldırın.
-            </div>
-          </div>
-
-          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            ${
-              imp
-                ? `<div style="padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);">
-                     <span style="opacity:.85;">Impersonating:</span>
-                     <strong>${escapeHtml(imp.name || imp.email || imp.uid)}</strong>
-                     <button id="btn-stop-imp" style="margin-left:10px; padding:6px 10px; border-radius:8px; cursor:pointer;">Çık</button>
-                   </div>`
-                : ``
-            }
-            <button id="btn-refresh" style="padding:10px 14px; border-radius:10px; cursor:pointer;">
-              Yenile
-            </button>
-            <button id="btn-save" style="padding:10px 14px; border-radius:10px; cursor:pointer; background:rgba(115,103,240,0.25); border:1px solid rgba(115,103,240,0.35);">
-              Kaydet
-            </button>
-          </div>
-        </div>
-
-        <div style="overflow:auto; border:1px solid rgba(255,255,255,0.10); border-radius:14px;">
-          <table style="width:100%; border-collapse:collapse; min-width:720px;">
-            <thead>
-              <tr style="background:rgba(255,255,255,0.04);">
-                <th style="text-align:left; padding:14px 12px; border-bottom:1px solid rgba(255,255,255,0.08);">User</th>
-                ${projects
-                  .map(
-                    (p) => `
-                      <th style="text-align:center; padding:14px 12px; border-bottom:1px solid rgba(255,255,255,0.08);">
-                        ${escapeHtml(p.name || p.id)}
-                      </th>
-                    `
-                  )
-                  .join('')}
-                <th style="text-align:center; padding:14px 12px; border-bottom:1px solid rgba(255,255,255,0.08);">Aksiyon</th>
-              </tr>
-            </thead>
-            <tbody id="users-tbody">
-              ${users.map((u) => renderUserRow(u)).join('')}
-            </tbody>
-          </table>
-        </div>
-
-        <div style="margin-top:12px; opacity:.7; font-size:.9rem;">
-          Not: Kaydet butonu sadece değişen kullanıcıların <code>entitlements/{UID}</code> dokümanlarını günceller.
-        </div>
-      </div>
-    `;
-
-    // bind
-    const btnSave = root.querySelector('#btn-save');
-    const btnRefresh = root.querySelector('#btn-refresh');
-    const btnStopImp = root.querySelector('#btn-stop-imp');
-
-    btnSave?.addEventListener('click', onSave);
-    btnRefresh?.addEventListener('click', async () => {
-      await reloadAll();
-    });
-    btnStopImp?.addEventListener('click', stopImpersonation);
-
-    // checkbox + impersonate handlers
-    bindRowHandlers(root);
-  }
-
-  function renderUserRow(u) {
-    const set = entByUid.get(u.uid) || new Set();
-    const displayName = (u.name || '').trim();
-    const email = (u.email || '').trim();
-    const title = displayName
-      ? `${displayName}${email ? ` (${email})` : ''}`
-      : email || u.uid;
-
-    const roleLabel = (u.role || '').trim() || 'user';
-
-    return `
-      <tr data-uid="${escapeHtml(u.uid)}" style="border-bottom:1px solid rgba(255,255,255,0.06);">
-        <td style="padding:14px 12px;">
-          <div style="display:flex; flex-direction:column; gap:4px;">
-            <div style="font-weight:600;">${escapeHtml(title)}</div>
-            <div style="opacity:.7; font-size:.88rem;">
-              <span style="padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05);">
-                ${escapeHtml(roleLabel)}
-              </span>
-              <span style="opacity:.6; margin-left:8px; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">
-                ${escapeHtml(u.uid)}
-              </span>
-            </div>
-          </div>
-        </td>
-
-        ${projects
-          .map((p) => {
-            const checked = set.has(p.id) ? 'checked' : '';
-            return `
-              <td style="text-align:center; padding:14px 12px;">
-                <input type="checkbox" class="proj-check" data-proj="${escapeHtml(p.id)}" ${checked} />
-              </td>
-            `;
-          })
-          .join('')}
-
-        <td style="text-align:center; padding:14px 12px;">
-          <button class="btn-imp" style="padding:8px 12px; border-radius:10px; cursor:pointer; border:1px solid rgba(255,255,255,0.12); background:rgba(115,103,240,0.15); color:#fff;">
-            Impersonate
-          </button>
-        </td>
-      </tr>
-    `;
-  }
-
-  function bindRowHandlers(root) {
-    root.querySelectorAll('tr[data-uid]').forEach((tr) => {
-      const uid = tr.getAttribute('data-uid');
-      if (!uid) return;
-
-      // checkbox changes
-      tr.querySelectorAll('.proj-check').forEach((cb) => {
-        cb.addEventListener('change', () => {
-          const projId = cb.getAttribute('data-proj');
-          if (!projId) return;
-
-          const set = entByUid.get(uid) || new Set();
-          if (cb.checked) set.add(projId);
-          else set.delete(projId);
-
-          entByUid.set(uid, set);
-          dirtyUids.add(uid);
-
-          // görsel mini feedback: satırı hafif işaretle
-          tr.style.background = 'rgba(255,255,255,0.03)';
-        });
-      });
-
-      // impersonate button
-      const btnImp = tr.querySelector('.btn-imp');
-      btnImp?.addEventListener('click', () => {
-        const u = users.find((x) => x.uid === uid);
-        startImpersonation(uid, u?.email || '', u?.name || '');
-      });
-    });
-  }
-
-  // -----------------------------
-  // SAVE
-  // -----------------------------
-  async function onSave() {
-    if (dirtyUids.size === 0) {
-      alert('Değişiklik yok.');
+    if (!session.isAdmin) {
+      setStatus("Bu sayfaya erişim yok (admin değilsiniz).", "error");
       return;
     }
 
-    const btn = document.getElementById('btn-save');
-    if (btn) btn.disabled = true;
+    renderImpersonationBanner(session);
 
-    try {
-      // Küçük dataset ise tek tek set yeterli.
-      // İstersen batch ile de yapılır (500 limit).
-      const uids = Array.from(dirtyUids);
-
-      for (const uid of uids) {
-        const set = entByUid.get(uid) || new Set();
-        const projectIds = Array.from(set);
-
-        await db.collection(COL.ENTITLEMENTS).doc(uid).set(
-          {
-            projectIds,
-            updatedAt: serverTimestamp(),
-          },
-          { merge: true }
-        );
-      }
-
-      dirtyUids.clear();
-      alert('Kaydedildi ✅');
-      await reloadAll(); // tekrar yükle, state temizlensin
-    } catch (e) {
-      console.error(e);
-      alert('Kaydetme sırasında hata oluştu. Console’u kontrol et.');
-    } finally {
-      if (btn) btn.disabled = false;
+    const tbody = pickTbody();
+    if (!tbody) {
+      setStatus(
+        "Admin tablosu bulunamadı. HTML’de bir <tbody> (örn: id='admin-user-table-body') olmalı.",
+        "error"
+      );
+      return;
     }
-  }
 
-  // -----------------------------
-  // RELOAD
-  // -----------------------------
-  async function reloadAll() {
-    const root = getRootEl();
-    root.innerHTML = `<div style="padding:24px; max-width:900px; margin:0 auto;">Yükleniyor...</div>`;
+    // projeler
+    const allProjects = await getProjects();
+    const activeProjects = (allProjects || []).filter(
+      (p) => p && p.status === "active"
+    );
 
-    await loadProjects();
-    await loadUsers();
-    await loadEntitlements();
+    // kullanıcılar
+    const users = await fetchUsers();
 
-    // dirty reset
-    dirtyUids.clear();
-    render();
-  }
+    // tablo render
+    tbody.innerHTML = "";
+    ensureHeaderRow(tbody, activeProjects);
 
-  // -----------------------------
-  // INIT
-  // -----------------------------
-  async function init() {
-    try {
-      if (typeof firebase === 'undefined') {
-        throw new Error('firebase global not found. Firebase scripts are not loaded.');
-      }
+    const stateMap = new Map(); // uid -> Set(projectId)
 
-      db = firebase.firestore();
-
-      firebase.auth().onAuthStateChanged(async (user) => {
-        if (!user) {
-          hardRedirectToLogin();
-          return;
-        }
-
-        authUser = user;
-
-        // admin guard
-        isAdmin = await checkAdmin(authUser.uid);
-        if (!isAdmin) {
-          alert('Bu sayfaya erişim yetkiniz yok.');
-          goDashboard();
-          return;
-        }
-
-        await reloadAll();
+    for (const user of users) {
+      const entitled = await fetchEntitlements(user.id);
+      const row = createRow({
+        user,
+        projects: activeProjects,
+        entitledSet: entitled,
+        stateMap,
+        session
       });
-    } catch (e) {
-      console.error(e);
-      const root = getRootEl();
-      root.innerHTML = `
-        <div style="padding:24px; max-width:900px; margin:0 auto; color:#ef4444;">
-          Admin sayfası başlatılamadı: ${escapeHtml(e.message || String(e))}
-        </div>
-      `;
+      tbody.append(row);
     }
-  }
 
-  // Boot
-  document.addEventListener('DOMContentLoaded', init);
-})();
+    // save button
+    const saveBtn = ensureButton(
+      ["#save-btn", "#save-access-btn", "[data-action='save']"],
+      "Kaydet"
+    );
+
+    saveBtn.addEventListener("click", async () => {
+      try {
+        saveBtn.disabled = true;
+        setStatus("Kaydediliyor...");
+
+        const writes = [];
+        for (const [uid, setOfProjects] of stateMap.entries()) {
+          const ids = Array.from(setOfProjects);
+          writes.push(saveEntitlements(uid, ids));
+        }
+        await Promise.all(writes);
+
+        setStatus("Kaydedildi ✅", "ok");
+      } catch (e) {
+        console.error(e);
+        setStatus("Kaydetme hatası: " + (e?.message || "Bilinmeyen hata"), "error");
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+
+    setStatus("Hazır ✅", "ok");
+  } catch (e) {
+    console.error(e);
+    setStatus("Admin sayfası başlatılamadı: " + (e?.message || "Bilinmeyen hata"), "error");
+  }
+}
+
+init();
