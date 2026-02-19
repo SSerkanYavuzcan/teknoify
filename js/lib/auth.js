@@ -1,199 +1,214 @@
-import { getUsers } from './data.js';
-import { getJSON, setJSON } from './storage.js';
+// js/lib/auth.js
+import { auth, db } from "./firebase.js";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const SESSION_KEY = 'teknoify_session';
-const IMPERSONATE_KEY = 'impersonated_user_key';
+const IMPERSONATE_UID_KEY = "teknoify_impersonate_uid";
 
 function normalizeEmail(email) {
-  return String(email || '').trim().toLowerCase();
+  return String(email || "").trim().toLowerCase();
 }
 
 /**
- * Path helpers
- * (Login sayfası /pages içinde olduğunda doğru relative path üretilsin)
+ * Path helpers (mevcut yaklaşımı koruyoruz)
  */
 function getLoginPath() {
-  const p = window.location.pathname || '';
-  if (p.includes('/dashboard/')) return '../pages/login.html';
-  if (p.includes('/pages/')) return 'login.html';
-  return 'pages/login.html';
+  const p = window.location.pathname || "";
+  if (p.includes("/dashboard/")) return "../pages/login.html";
+  if (p.includes("/pages/")) return "login.html";
+  return "pages/login.html";
 }
 
 function getDashboardPath() {
-  const p = window.location.pathname || '';
-  if (p.includes('/dashboard/')) return 'index.html';
-  if (p.includes('/pages/')) return '../dashboard/index.html';
-  return 'dashboard/index.html';
+  const p = window.location.pathname || "";
+  if (p.includes("/dashboard/")) return "index.html";
+  if (p.includes("/pages/")) return "../dashboard/index.html";
+  return "dashboard/index.html";
 }
 
 function getAdminPath() {
-  const p = window.location.pathname || '';
-  if (p.includes('/dashboard/')) return 'admin.html';
-  if (p.includes('/pages/')) return '../dashboard/admin.html';
-  return 'dashboard/admin.html';
+  const p = window.location.pathname || "";
+  if (p.includes("/dashboard/")) return "admin.html";
+  if (p.includes("/pages/")) return "../dashboard/admin.html";
+  return "dashboard/admin.html";
 }
 
-function getMemberPath() {
-  const p = window.location.pathname || '';
-  if (p.includes('/dashboard/')) return 'member.html';
-  if (p.includes('/pages/')) return '../dashboard/member.html';
-  return 'dashboard/member.html';
+async function waitForAuthUser() {
+  return new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      unsub();
+      resolve(user || null);
+    });
+  });
 }
 
-export function login(email, password) {
-  const users = getUsers();
-  const normalizedEmail = normalizeEmail(email);
+async function isAdminUid(uid) {
+  const snap = await getDoc(doc(db, "admins", uid));
+  return snap.exists();
+}
 
-  const matchedUser = users.find(
-    (user) =>
-      normalizeEmail(user.email) === normalizedEmail &&
-      user.password === password
+async function ensureUserProfile(user) {
+  const uid = user.uid;
+  const email = normalizeEmail(user.email);
+  const defaultName = email ? email.split("@")[0] : "User";
+
+  await setDoc(
+    doc(db, "users", uid),
+    {
+      email,
+      name: user.displayName || defaultName,
+      updatedAt: serverTimestamp(),
+      createdAt: serverTimestamp()
+    },
+    { merge: true }
   );
+}
 
-  if (!matchedUser) {
-    return { ok: false, message: 'E-posta veya şifre hatalı.' };
-  }
+async function buildRealSession(user) {
+  await ensureUserProfile(user);
 
-  const session = {
-    userId: matchedUser.id,
-    email: matchedUser.email,
-    role: matchedUser.role,
+  const uid = user.uid;
+  const email = normalizeEmail(user.email);
+
+  const admin = await isAdminUid(uid);
+
+  // Profil name'i okumak için:
+  const profileSnap = await getDoc(doc(db, "users", uid));
+  const profile = profileSnap.exists() ? profileSnap.data() : {};
+  const name = profile?.name || (email ? email.split("@")[0] : "User");
+
+  return {
+    userId: uid,
+    uid,
+    email,
+    name,
+    role: admin ? "admin" : "user",
+    isAdmin: admin,
     issuedAt: Date.now()
   };
-
-  setJSON(SESSION_KEY, session);
-
-  // Admin değilse, eski impersonation kalıntısı varsa temizle
-  if (session.role !== 'admin') {
-    window.localStorage.removeItem(IMPERSONATE_KEY);
-  }
-
-  return { ok: true, session };
-}
-
-export function logout() {
-  window.localStorage.removeItem(SESSION_KEY);
-  window.localStorage.removeItem(IMPERSONATE_KEY);
-  window.location.href = getLoginPath();
-}
-
-export function getSession() {
-  return getJSON(SESSION_KEY, null); // gerçek session
 }
 
 /**
- * Impersonation helpers
+ * Impersonation (opsiyonel ama altyapısı “gerçek admin” şartıyla güvenli)
  */
-export function isImpersonating() {
-  return !!window.localStorage.getItem(IMPERSONATE_KEY);
-}
-
-export function getImpersonatedEmail() {
-  return normalizeEmail(window.localStorage.getItem(IMPERSONATE_KEY));
-}
-
 export function stopImpersonation({ redirect = true } = {}) {
-  window.localStorage.removeItem(IMPERSONATE_KEY);
+  window.localStorage.removeItem(IMPERSONATE_UID_KEY);
   if (redirect) window.location.href = getAdminPath();
 }
 
-/**
- * Admin-only: start impersonation by email
- * (Admin panelden "View as" ile veya impersonate sayfası ile tetiklenir.)
- */
-export function startImpersonation(targetEmail, { to } = {}) {
-  const session = getSession();
-  if (!session || session.role !== 'admin') {
-    return { ok: false, message: 'Sadece admin impersonate başlatabilir.' };
+export async function startImpersonation(targetUid, { to } = {}) {
+  const user = await waitForAuthUser();
+  if (!user) return { ok: false, message: "Oturum yok." };
+
+  const real = await buildRealSession(user);
+  if (!real.isAdmin) {
+    return { ok: false, message: "Sadece admin impersonate başlatabilir." };
   }
 
-  const email = normalizeEmail(targetEmail);
-  if (!email) return { ok: false, message: 'Hedef e-posta boş olamaz.' };
+  if (!targetUid) return { ok: false, message: "Hedef kullanıcı boş olamaz." };
+  if (targetUid === real.uid) return { ok: false, message: "Kendi hesabını impersonate edemezsin." };
 
-  const users = getUsers();
-  const target = users.find((u) => normalizeEmail(u.email) === email);
+  // Hedef admin mi kontrol
+  const targetIsAdmin = await isAdminUid(targetUid);
+  if (targetIsAdmin) return { ok: false, message: "Admin hesapları impersonate edilemez." };
 
-  if (!target) {
-    return { ok: false, message: 'Hedef kullanıcı bulunamadı.' };
-  }
-
-  if (target.role === 'admin') {
-    return { ok: false, message: 'Admin hesapları impersonate edilemez.' };
-  }
-
-  if (normalizeEmail(session.email) === email) {
-    return { ok: false, message: 'Kendi hesabını impersonate edemezsin.' };
-  }
-
-  window.localStorage.setItem(IMPERSONATE_KEY, target.email);
-
+  window.localStorage.setItem(IMPERSONATE_UID_KEY, targetUid);
   if (to) window.location.href = to;
-  return { ok: true, target: { id: target.id, email: target.email, role: target.role } };
+  return { ok: true, targetUid };
 }
 
-/**
- * Effective session:
- * - admin değilse: normal session
- * - admin + impersonating: user gibi davranacak “override session”
- */
-export function getEffectiveSession() {
-  const session = getSession();
-  if (!session) return null;
-
-  if (session.role !== 'admin') {
-    return { ...session, impersonating: false };
+async function getEffectiveSession(realSession) {
+  if (!realSession.isAdmin) {
+    return { ...realSession, impersonating: false };
   }
 
-  const impEmail = getImpersonatedEmail();
-  if (!impEmail) {
-    return { ...session, impersonating: false };
+  const targetUid = window.localStorage.getItem(IMPERSONATE_UID_KEY);
+  if (!targetUid) {
+    return { ...realSession, impersonating: false };
   }
 
-  const users = getUsers();
-  const target = users.find((u) => normalizeEmail(u.email) === impEmail);
-
-  // Hedef yoksa/bozuk state -> temizle
-  if (!target || target.role === 'admin') {
-    window.localStorage.removeItem(IMPERSONATE_KEY);
-    return { ...session, impersonating: false };
+  // target profil bilgisi
+  const targetProfileSnap = await getDoc(doc(db, "users", targetUid));
+  if (!targetProfileSnap.exists()) {
+    window.localStorage.removeItem(IMPERSONATE_UID_KEY);
+    return { ...realSession, impersonating: false };
   }
 
-  // EFFECTIVE OVERRIDE: userId/email/role “hedef kullanıcı”
+  // target admin değilse override et
+  const targetIsAdmin = await isAdminUid(targetUid);
+  if (targetIsAdmin) {
+    window.localStorage.removeItem(IMPERSONATE_UID_KEY);
+    return { ...realSession, impersonating: false };
+  }
+
+  const targetProfile = targetProfileSnap.data();
   return {
-    ...session,
-    userId: target.id,
-    email: target.email,
-    role: target.role,
+    ...realSession,
+    userId: targetUid,
+    uid: targetUid,
+    email: targetProfile.email || realSession.email,
+    name: targetProfile.name || realSession.name,
+    role: "user",
     impersonating: true,
-    adminEmail: session.email,
-    adminUserId: session.userId
+    adminUserId: realSession.uid,
+    adminEmail: realSession.email,
+    isAdmin: true // admin olduğunu kaybetmesin (admin linki görünür kalsın)
   };
+}
+
+export async function login(email, password) {
+  try {
+    const cred = await signInWithEmailAndPassword(auth, normalizeEmail(email), password);
+    // Profil oluştur/güncelle
+    await ensureUserProfile(cred.user);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: "E-posta veya şifre hatalı." };
+  }
+}
+
+export async function logout() {
+  window.localStorage.removeItem(IMPERSONATE_UID_KEY);
+  try {
+    await signOut(auth);
+  } finally {
+    window.location.href = getLoginPath();
+  }
 }
 
 /**
  * requireAuth:
- * - default: effective session döner (impersonate varsa user gibi)
- * - role: 'admin' isteniyorsa gerçek session admin olmalı
+ * - default: effective session döner (admin impersonate varsa user gibi)
+ * - { role:'admin' }: gerçek admin şart
  */
-export function requireAuth({ role } = {}) {
-  const real = getSession();
+export async function requireAuth({ role } = {}) {
+  const user = await waitForAuthUser();
 
-  if (!real) {
+  if (!user) {
     window.location.href = getLoginPath();
     return null;
   }
 
-  // Admin sayfaları: gerçek admin session şart
-  if (role === 'admin') {
-    if (real.role !== 'admin') {
+  const real = await buildRealSession(user);
+
+  if (role === "admin") {
+    if (!real.isAdmin) {
       window.location.href = getDashboardPath();
       return null;
     }
     return { ...real, impersonating: false };
   }
 
-  // diğer sayfalar: effective session (impersonate varsa user rolüyle)
-  const effective = getEffectiveSession();
+  const effective = await getEffectiveSession(real);
 
   if (role && effective.role !== role) {
     window.location.href = getDashboardPath();
