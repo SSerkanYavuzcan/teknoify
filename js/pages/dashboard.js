@@ -3,32 +3,36 @@ import { logout, requireAuth } from "../lib/auth.js";
 import { getProjects, getUserEntitledProjectIds } from "../lib/data.js";
 import { createEl, qs } from "../utils/dom.js";
 
+/**
+ * Admin impersonation varsa hedef UID'yi bul.
+ * NOT: Buradaki key isimleri farklı olabilir diye birkaç olası anahtar okuyoruz.
+ * Admin.js hangi key ile set ediyorsa onu yakalar.
+ */
+function getImpersonatedUidFromStorage() {
+  return (
+    localStorage.getItem("teknoify_impersonate_uid") ||
+    localStorage.getItem("impersonate_uid") ||
+    localStorage.getItem("impersonateUid") ||
+    sessionStorage.getItem("teknoify_impersonate_uid") ||
+    sessionStorage.getItem("impersonate_uid") ||
+    sessionStorage.getItem("impersonateUid") ||
+    null
+  );
+}
+
+function getEffectiveUserId(session) {
+  const imp = getImpersonatedUidFromStorage();
+  // Sadece admin ise impersonate’i dikkate al
+  if (session?.isAdmin && imp && typeof imp === "string") return imp;
+  return session.userId;
+}
+
 function resolveProjectUrl(path) {
-  if (/^(https?:)?\/\//.test(path)) return path;
-  if (path.startsWith("../")) return path;
-  return `../${path}`;
-}
-
-// ---- IMPERSONATE HELPERS (localStorage) ----
-function getImpersonation() {
-  const uid = localStorage.getItem("impersonate_uid");
-  if (!uid) return null;
-  return {
-    uid,
-    email: localStorage.getItem("impersonate_email") || "",
-    name: localStorage.getItem("impersonate_name") || ""
-  };
-}
-
-function getEffectiveUserId(sessionUserId) {
-  const imp = getImpersonation();
-  return imp?.uid || sessionUserId;
-}
-
-function clearImpersonation() {
-  localStorage.removeItem("impersonate_uid");
-  localStorage.removeItem("impersonate_email");
-  localStorage.removeItem("impersonate_name");
+  if (!path) return "#";
+  if (/^(https?:)?\/\//.test(path)) return path; // absolute URL
+  if (path.startsWith("/")) return path;         // site root
+  // dashboard içindeyiz, "pages/xyz.html" direkt doğru çalışır
+  return path;
 }
 
 function renderProjects(projects) {
@@ -50,6 +54,7 @@ function renderProjects(projects) {
     const title = createEl("h3", { text: project.name });
     const description = createEl("p", { text: project.description });
     const actions = createEl("div", { className: "card-ctas" });
+
     const actionLink = createEl("a", {
       className: "btn btn-sm btn-primary",
       text: "Demo Aç"
@@ -69,39 +74,26 @@ async function init() {
   const session = await requireAuth();
   if (!session) return;
 
-  // 1) Effective UID (impersonate varsa onu kullan)
-  const imp = getImpersonation();
-  const effectiveUserId = getEffectiveUserId(session.userId);
+  const effectiveUserId = getEffectiveUserId(session);
 
-  // 2) Üstte görünen isim
+  // Header name: istersen burada "impersonated" etiketi de gösterebilirsin
   const userName = qs("#session-user-name");
-  if (userName) {
-    if (imp) {
-      const label = imp.name || imp.email || "İmpersonated User";
-      userName.textContent = `${label} (Impersonate)`;
-    } else {
-      userName.textContent = session.name || "Kullanıcı";
-    }
-  }
+  if (userName) userName.textContent = session.name || "Kullanıcı";
 
-  // 3) Projeleri effective UID ile çek
+  // Kritik fix: entitlements'ı effective UID ile çek
   const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
-  const activeProjects = (await getProjects()).filter(
-    (project) => project.status === "active" && entitledIds.includes(project.id)
+
+  const allProjects = await getProjects();
+  const activeProjects = allProjects.filter(
+    (p) => p.status === "active" && entitledIds.includes(p.id)
   );
 
   renderProjects(activeProjects);
 
-  // 4) Logout: önce impersonate temizle
   const logoutButton = qs("#logout-btn");
-  if (logoutButton) {
-    logoutButton.addEventListener("click", () => {
-      clearImpersonation();
-      logout();
-    });
-  }
+  if (logoutButton) logoutButton.addEventListener("click", logout);
 
-  // 5) Admin linki: admin ise her zaman görünsün (impersonate olsa bile)
+  // Admin linki admin’de kalsın (impersonate olsa bile)
   const adminLink = qs("#admin-link");
   if (adminLink) adminLink.hidden = !session.isAdmin;
 }

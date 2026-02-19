@@ -4,33 +4,6 @@ import { getUserEntitledProjectIds } from "../lib/data.js";
 import { db } from "../lib/firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// --------------------
-// IMPERSONATE HELPERS
-// --------------------
-function getImpersonation() {
-  const uid = localStorage.getItem("impersonate_uid");
-  if (!uid) return null;
-  return {
-    uid,
-    email: localStorage.getItem("impersonate_email") || "",
-    name: localStorage.getItem("impersonate_name") || ""
-  };
-}
-
-function getEffectiveUserId(sessionUserId) {
-  const imp = getImpersonation();
-  return imp?.uid || sessionUserId;
-}
-
-function clearImpersonation() {
-  localStorage.removeItem("impersonate_uid");
-  localStorage.removeItem("impersonate_email");
-  localStorage.removeItem("impersonate_name");
-}
-
-// --------------------
-// UI HELPERS
-// --------------------
 function setText(id, text) {
   const el = document.getElementById(id);
   if (el) el.textContent = text ?? "";
@@ -101,6 +74,25 @@ function fetchCSVCount(url) {
   });
 }
 
+// ---- Impersonation helpers ----
+function getImpersonatedUidFromStorage() {
+  return (
+    localStorage.getItem("teknoify_impersonate_uid") ||
+    localStorage.getItem("impersonate_uid") ||
+    localStorage.getItem("impersonateUid") ||
+    sessionStorage.getItem("teknoify_impersonate_uid") ||
+    sessionStorage.getItem("impersonate_uid") ||
+    sessionStorage.getItem("impersonateUid") ||
+    null
+  );
+}
+
+function getEffectiveUserId(session) {
+  const imp = getImpersonatedUidFromStorage();
+  if (session?.isAdmin && imp && typeof imp === "string") return imp;
+  return session.userId;
+}
+
 // ---- Global UI helpers (HTML onclick çağırıyor) ----
 window.toggleSidebar = function toggleSidebar() {
   document.body.classList.toggle("sidebar-closed");
@@ -108,8 +100,6 @@ window.toggleSidebar = function toggleSidebar() {
 
 window.logout = async function logout() {
   if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
-    // Admin impersonate modunda logout'a basarsa view-as state temizlensin
-    clearImpersonation();
     await logoutFn();
   }
 };
@@ -122,36 +112,33 @@ window.markAllAsRead = function markAllAsRead() {
   });
 };
 
-// --------------------
-// MAIN INIT
-// --------------------
+// ---- Main init ----
 async function init() {
   try {
-    const session = await requireAuth(); // Firebase Auth + admin check
+    const session = await requireAuth();
     if (!session) return;
 
-    const imp = getImpersonation();
-    const effectiveUserId = getEffectiveUserId(session.userId);
+    const effectiveUserId = getEffectiveUserId(session);
 
-    // Profil (header)
+    // Profil (görsel isim)
     const displayName =
-      imp?.name ||
-      imp?.email?.split("@")[0] ||
-      session.name ||
-      (session.email ? session.email.split("@")[0] : "User");
+      session.name || (session.email ? session.email.split("@")[0] : "User");
 
-    setText("user-name-display", imp ? `${displayName} (Impersonate)` : displayName);
-    setText("user-name-title", imp ? `${displayName} (Impersonate)` : displayName);
+    // İstersen impersonation durumunu UI’da göstermek için:
+    // setText("impersonation-badge", session.isAdmin && effectiveUserId !== session.userId ? "Impersonation aktif" : "");
+
+    setText("user-name-display", displayName);
+    setText("user-name-title", displayName);
     setText("user-avatar", displayName.charAt(0).toUpperCase());
 
-    // Entitlements → aktif hizmetler + menü (effective UID ile)
+    // Entitlements → effective UID ile
     const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
     setText("stat-active-services", entitledIds.length);
 
-    // Web Scraping menüsü: entitlement’a göre
+    // Web Scraping menüsü
     showAnalysisLink(entitledIds.includes("web_scraping"));
 
-    // users/{uid} doc’u (effective UID ile)
+    // users/{effectiveUid} doc’undan data/config alanlarını oku (varsa)
     const userSnap = await getDoc(doc(db, "users", effectiveUserId));
     const userDoc = userSnap.exists() ? userSnap.data() : {};
 
