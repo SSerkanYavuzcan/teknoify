@@ -13,6 +13,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const IMPERSONATE_UID_KEY = "teknoify_impersonate_uid";
+const IMPERSONATE_NAME_KEY = "teknoify_impersonate_name";
 
 function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
@@ -102,6 +103,7 @@ async function buildRealSession(user) {
  */
 export function stopImpersonation({ redirect = true } = {}) {
   window.localStorage.removeItem(IMPERSONATE_UID_KEY);
+  window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
   if (redirect) window.location.href = getAdminPath();
 }
 
@@ -122,6 +124,7 @@ export async function startImpersonation(targetUid, { to } = {}) {
   if (targetIsAdmin) return { ok: false, message: "Admin hesapları impersonate edilemez." };
 
   window.localStorage.setItem(IMPERSONATE_UID_KEY, targetUid);
+  window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
   if (to) window.location.href = to;
   return { ok: true, targetUid };
 }
@@ -172,13 +175,14 @@ export async function login(email, password) {
     // Profil oluştur/güncelle
     await ensureUserProfile(cred.user);
     return { ok: true };
-  } catch (e) {
+  } catch {
     return { ok: false, message: "E-posta veya şifre hatalı." };
   }
 }
 
 export async function logout() {
   window.localStorage.removeItem(IMPERSONATE_UID_KEY);
+  window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
   try {
     await signOut(auth);
   } finally {

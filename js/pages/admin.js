@@ -63,7 +63,7 @@ function getImpersonatedUid() {
   }
 }
 
-function setImpersonatedUid(uid) {
+function setImpersonatedUid(uid, name = "") {
   try {
     if (!uid) {
       localStorage.removeItem(IMPERSONATE_KEY);
