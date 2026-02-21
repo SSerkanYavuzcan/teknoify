@@ -56,15 +56,14 @@ async function ensureUserProfile(user) {
     }
     return data;
   }
+}
 
-  const fallbackName = user.displayName || (email ? email.split('@')[0] : 'User');
-  const profile = {
-    uid, email,
-    name: fallbackName,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  await ref.set(profile, { merge: true });
-  return profile;
+function safeStorageSet(storage, key, value) {
+  try {
+    storage.setItem(key, value);
+  } catch {
+    // ignore
+  }
 }
 
 function applyUserUI(displayName) {
