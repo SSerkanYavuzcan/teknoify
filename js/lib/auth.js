@@ -128,26 +128,26 @@ export async function startImpersonation(targetUid, { to } = {}) {
 
 async function getEffectiveSession(realSession) {
   if (!realSession.isAdmin) {
-    return { ...realSession, impersonating: false };
+    return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
   const targetUid = window.localStorage.getItem(IMPERSONATE_UID_KEY);
   if (!targetUid) {
-    return { ...realSession, impersonating: false };
+    return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
   // target profil bilgisi
   const targetProfileSnap = await getDoc(doc(db, "users", targetUid));
   if (!targetProfileSnap.exists()) {
     window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-    return { ...realSession, impersonating: false };
+    return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
   // target admin değilse override et
   const targetIsAdmin = await isAdminUid(targetUid);
   if (targetIsAdmin) {
     window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-    return { ...realSession, impersonating: false };
+    return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
   const targetProfile = targetProfileSnap.data();
@@ -161,7 +161,8 @@ async function getEffectiveSession(realSession) {
     impersonating: true,
     adminUserId: realSession.uid,
     adminEmail: realSession.email,
-    isAdmin: true // admin olduğunu kaybetmesin (admin linki görünür kalsın)
+    realIsAdmin: true,
+    isAdmin: false
   };
 }
 

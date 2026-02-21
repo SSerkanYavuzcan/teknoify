@@ -4,7 +4,12 @@
     "projectIds": ["pim_automation"]
   },
   {
-  "userId": "u_yakup",
-  "projectIds": ["web_scraping"]
-}
+    "userId": "u_yakup",
+    "projectIds": ["web_scraping", "food_scraping", "clothes_scraping"],
+    "projectStores": {
+      "web_scraping": ["Migros", "Carrefour", "Bim"],
+      "food_scraping": ["Migros", "Carrefour", "Bim"],
+      "clothes_scraping": ["Zara", "H&M"]
+    }
+  }
 ]

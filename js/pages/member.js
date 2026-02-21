@@ -78,9 +78,11 @@ function fetchCSVCount(url) {
 function getImpersonatedUidFromStorage() {
   return (
     localStorage.getItem("teknoify_impersonate_uid") ||
+    localStorage.getItem("tk_impersonate_uid") ||
     localStorage.getItem("impersonate_uid") ||
     localStorage.getItem("impersonateUid") ||
     sessionStorage.getItem("teknoify_impersonate_uid") ||
+    sessionStorage.getItem("tk_impersonate_uid") ||
     sessionStorage.getItem("impersonate_uid") ||
     sessionStorage.getItem("impersonateUid") ||
     null
