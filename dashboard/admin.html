@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin | Teknoify</title>
     <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/06-pages/dashboard-portal.css" />
   </head>
   <body>
     <header class="header" style="position: static">
@@ -26,34 +27,33 @@
       </nav>
     </header>
 
-    <main class="page-frame" style="padding-top: 40px">
-      <section class="services">
-        <div class="container">
-          <div class="section-header">
-            <h1>Kullanıcı Erişim Yönetimi</h1>
-            <p>Kullanıcılara proje erişimi atayın veya kaldırın.</p>
-          </div>
+    <main class="page-frame portal-frame">
+      <section class="portal-shell admin-layout">
+        <div class="portal-hero">
+          <h1>Kullanıcı Erişim Yönetimi</h1>
+          <p>Kullanıcıların satın aldığı hizmetleri yönetin, erişimleri güvenli şekilde güncelleyin ve impersonation ile deneyimi doğrulayın.</p>
+        </div>
 
-          <!-- admin.js buraya basacak -->
-          <div id="entitlement-table-wrapper" style="overflow-x: auto">
-            <table class="admin-table" style="width: 100%; border-collapse: collapse">
-              <thead>
-                <tr>
-                  <th style="text-align:left; padding: 12px;">User</th>
-                  <th style="text-align:left; padding: 12px;">Web Scraping</th>
-                  <th style="text-align:left; padding: 12px;">Aksiyon</th>
-                </tr>
-              </thead>
+        <div id="admin-status-anchor"></div>
 
-              <!-- admin.js bu tbody’yi arıyor -->
-              <tbody id="admin-user-table-body"></tbody>
-            </table>
-          </div>
+        <div id="impersonation-banner" class="impersonation-banner"></div>
 
-          <div style="margin-top: 24px; display: flex; gap: 12px">
-            <button id="save-entitlements" class="btn btn-primary">Kaydet</button>
-            <span id="save-feedback" hidden>Kaydedildi.</span>
-          </div>
+        <div id="entitlement-table-wrapper" class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Kullanıcı</th>
+                <th>Aldığı Hizmetler</th>
+                <th>Aksiyonlar</th>
+              </tr>
+            </thead>
+
+            <tbody id="admin-user-table-body"></tbody>
+          </table>
+        </div>
+
+        <div id="admin-actions">
+          <button id="save-entitlements" class="btn btn-primary">Değişiklikleri Kaydet</button>
         </div>
       </section>
     </main>
