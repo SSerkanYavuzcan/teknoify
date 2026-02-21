@@ -1,0 +1,4 @@
+customer_id,project_id,upload_batch_id,uploaded_at,report_date,store_name,product_name,sku,brand_name,category_l1,category_l2,our_original_price,our_discount_price,competitor_name,competitor_original_price,competitor_discount_price
+uid_tazeyo,quickcommerce,batch_001,2024-01-21T10:00:00Z,2024-01-21,Tazeyo,Elma (1 kg),SKU-001,DoğalMeyve,Gıda,Taze Meyve,24.90,19.90,Marketten,22.50,
+uid_tazeyo,quickcommerce,batch_001,2024-01-21T10:00:00Z,2024-01-21,Tazeyo,Elma (1 kg),SKU-001,DoğalMeyve,Gıda,Taze Meyve,24.90,19.90,Migros,25.00,23.00
+uid_tazeyo,quickcommerce,batch_001,2024-01-21T10:00:00Z,2024-01-21,Tazeyo,Domates (500g),SKU-002,TazeÜrün,Gıda,Taze Sebze,18.50,,Carrefour,17.90,
