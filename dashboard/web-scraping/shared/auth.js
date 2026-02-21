@@ -23,6 +23,33 @@ function safeLower(s) { return String(s || '').trim().toLowerCase(); }
 
 function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
 
+function getImpersonatedUid() {
+  return (
+    localStorage.getItem('teknoify_impersonate_uid') ||
+    localStorage.getItem('tk_impersonate_uid') ||
+    localStorage.getItem('impersonate_uid') ||
+    localStorage.getItem('impersonateUid') ||
+    sessionStorage.getItem('teknoify_impersonate_uid') ||
+    sessionStorage.getItem('tk_impersonate_uid') ||
+    sessionStorage.getItem('impersonate_uid') ||
+    sessionStorage.getItem('impersonateUid') ||
+    ''
+  );
+}
+
+async function getUserProfile(uid) {
+  try {
+    const snap = await db.collection('users').doc(uid).get();
+    if (!snap.exists) {
+      return { uid, name: `Kullanıcı (${String(uid || '').slice(0, 6)})` };
+    }
+    return { uid, ...(snap.data() || {}) };
+  } catch (err) {
+    console.warn('Impersonated kullanıcı profili okunamadı:', err);
+    return { uid, name: `Kullanıcı (${String(uid || '').slice(0, 6)})` };
+  }
+}
+
 // ─── Firestore helpers ────────────────────────────────────────────────────────
 async function ensureUserProfile(user) {
   const uid = user.uid;
@@ -56,18 +83,28 @@ async function isAdmin(uid) {
 
 async function hasEntitlement(uid, projectId) {
   const snap = await db.collection('entitlements').doc(uid).get();
-  if (!snap.exists) return false;
+  if (!snap.exists) return { entitled: false, allowedStores: [] };
   const data = snap.data() || {};
   const ids = Array.isArray(data.projectIds) ? data.projectIds : [];
-  return ids.includes(projectId);
+  const entitled = ids.includes(projectId);
+
+  const projectStores = data.projectStores || data.projectStoreAccess || {};
+  const storesByProject = Array.isArray(projectStores?.[projectId]) ? projectStores[projectId] : [];
+  const globalStores = Array.isArray(data.allowedStores) ? data.allowedStores : [];
+  const allowedStores = (storesByProject.length ? storesByProject : globalStores)
+    .map((store) => String(store || '').trim())
+    .filter(Boolean);
+
+  return { entitled, allowedStores };
 }
 
-function applyUserUI(profile, firebaseUser) {
-  const email = safeLower(firebaseUser.email);
+function applyUserUI(profile, fallback = {}) {
+  const fallbackEmail = safeLower(fallback.email);
+  const fallbackName = String(fallback.name || '').trim();
   const displayName =
     profile?.name ||
-    firebaseUser.displayName ||
-    (email ? email.split('@')[0] : 'User');
+    fallbackName ||
+    (fallbackEmail ? fallbackEmail.split('@')[0] : 'User');
 
   const nameEl = document.getElementById('user-name-display');
   const avatarEl = document.getElementById('user-avatar');
@@ -86,19 +123,34 @@ async function bootstrap() {
     }
 
     try {
-      const uid = user.uid;
-      const profile = await ensureUserProfile(user);
-      applyUserUI(profile, user);
+      const realUid = user.uid;
+      const realProfile = await ensureUserProfile(user);
 
-      const admin = await isAdmin(uid);
-      if (!admin) {
-        const entitled = await hasEntitlement(uid, cfg.projectId);
-        if (!entitled) {
-          alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
-          window.location.href = cfg.basePath + 'member.html';
-          return;
-        }
+      const realAdmin = await isAdmin(realUid);
+      const impUid = getImpersonatedUid();
+      const isImpersonating = realAdmin && impUid && impUid !== realUid;
+      const effectiveUid = isImpersonating ? impUid : realUid;
+
+      const effectiveProfile = isImpersonating ? await getUserProfile(effectiveUid) : realProfile;
+      applyUserUI(effectiveProfile, {
+        name: effectiveProfile?.name || realProfile?.name || user.displayName,
+        email: isImpersonating ? (effectiveProfile?.email || '') : user.email,
+      });
+
+      let access = { entitled: true, allowedStores: [] };
+      if (!realAdmin || !isImpersonating) {
+        access = await hasEntitlement(effectiveUid, cfg.projectId);
       }
+
+      if ((!realAdmin || !isImpersonating) && !access.entitled) {
+        alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
+        window.location.href = cfg.basePath + 'member.html';
+        return;
+      }
+
+      window.USER_ALLOWED_STORES = access.allowedStores;
+      window.USER_EFFECTIVE_UID = effectiveUid;
+      window.USER_IS_IMPERSONATING = isImpersonating;
 
       initCalendar();
       // BigQuery mimarisinde sheetUrl artık kullanılmıyor.
