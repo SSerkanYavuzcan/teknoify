@@ -23,8 +23,8 @@ function safeLower(s) { return String(s || '').trim().toLowerCase(); }
 
 function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
 
-function getImpersonatedContext() {
-  const uid = (
+function getImpersonatedUid() {
+  return (
     localStorage.getItem('teknoify_impersonate_uid') ||
     localStorage.getItem('tk_impersonate_uid') ||
     localStorage.getItem('impersonate_uid') ||
@@ -35,25 +35,11 @@ function getImpersonatedContext() {
     sessionStorage.getItem('impersonateUid') ||
     ''
   );
-  const name =
-    localStorage.getItem('teknoify_impersonate_name') ||
-    sessionStorage.getItem('teknoify_impersonate_name') ||
-    '';
-
-  return { uid: String(uid || "").trim(), name: String(name || "").trim() };
 }
 
 async function getUserProfile(uid) {
-  try {
-    const snap = await db.collection('users').doc(uid).get();
-    if (!snap.exists) {
-      return { uid, name: `Kullanıcı (${String(uid || '').slice(0, 6)})` };
-    }
-    return { uid, ...(snap.data() || {}) };
-  } catch (err) {
-    console.warn('Impersonated kullanıcı profili okunamadı:', err);
-    return { uid, name: `Kullanıcı (${String(uid || '').slice(0, 6)})` };
-  }
+  const snap = await db.collection('users').doc(uid).get();
+  return snap.exists ? (snap.data() || {}) : {};
 }
 
 // ─── Firestore helpers ────────────────────────────────────────────────────────
@@ -82,6 +68,28 @@ async function ensureUserProfile(user) {
   return profile;
 }
 
+async function isAdmin(uid) {
+  const snap = await db.collection('admins').doc(uid).get();
+  return snap.exists === true;
+}
+
+async function hasEntitlement(uid, projectId) {
+  const snap = await db.collection('entitlements').doc(uid).get();
+  if (!snap.exists) return { entitled: false, allowedStores: [] };
+  const data = snap.data() || {};
+  const ids = Array.isArray(data.projectIds) ? data.projectIds : [];
+  const entitled = ids.includes(projectId);
+
+  const projectStores = data.projectStores || data.projectStoreAccess || {};
+  const storesByProject = Array.isArray(projectStores?.[projectId]) ? projectStores[projectId] : [];
+  const globalStores = Array.isArray(data.allowedStores) ? data.allowedStores : [];
+  const allowedStores = (storesByProject.length ? storesByProject : globalStores)
+    .map((store) => String(store || '').trim())
+    .filter(Boolean);
+
+  return { entitled, allowedStores };
+}
+
 function applyUserUI(profile, fallback = {}) {
   const fallbackEmail = safeLower(fallback.email);
   const fallbackName = String(fallback.name || '').trim();
@@ -107,20 +115,23 @@ async function bootstrap() {
     }
 
     try {
-      const realUid = user.uid;
-      const realProfile = await ensureUserProfile(user).catch(() => ({}));
+      const uid = user.uid;
+      const profile = await ensureUserProfile(user);
+      applyUserUI(profile, user);
 
-      const imp = getImpersonatedContext();
-      const isImpersonating = Boolean(imp.uid && imp.uid !== realUid);
-      const effectiveUid = isImpersonating ? imp.uid : realUid;
+      const admin = await isAdmin(uid);
+      if (!admin) {
+        const access = await hasEntitlement(uid, cfg.projectId);
+        if (!access.entitled) {
+          alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
+          window.location.href = cfg.basePath + 'member.html';
+          return;
+        }
 
-      const effectiveProfile = isImpersonating ? await getUserProfile(effectiveUid) : realProfile;
-      applyUserUI(effectiveProfile, {
-        name: imp.name || effectiveProfile?.name || realProfile?.name || user.displayName,
-        email: isImpersonating ? (effectiveProfile?.email || '') : user.email,
-      });
+        window.USER_ALLOWED_STORES = access.allowedStores;
+      }
 
-      window.USER_ALLOWED_STORES = [];
+      window.USER_ALLOWED_STORES = access.allowedStores;
       window.USER_EFFECTIVE_UID = effectiveUid;
       window.USER_IS_IMPERSONATING = isImpersonating;
 
