@@ -13,7 +13,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const IMPERSONATE_KEY = "tk_impersonate_uid";
+const IMPERSONATE_KEY = "teknoify_impersonate_uid";
 
 function pickTbody() {
   return (
@@ -57,7 +57,7 @@ function ensureButton(selectorList, fallbackText) {
 
 function getImpersonatedUid() {
   try {
-    return localStorage.getItem(IMPERSONATE_KEY) || "";
+    return localStorage.getItem(IMPERSONATE_KEY) || localStorage.getItem("tk_impersonate_uid") || "";
   } catch {
     return "";
   }
@@ -65,8 +65,13 @@ function getImpersonatedUid() {
 
 function setImpersonatedUid(uid) {
   try {
-    if (!uid) localStorage.removeItem(IMPERSONATE_KEY);
-    else localStorage.setItem(IMPERSONATE_KEY, uid);
+    if (!uid) {
+      localStorage.removeItem(IMPERSONATE_KEY);
+      localStorage.removeItem("tk_impersonate_uid");
+    } else {
+      localStorage.setItem(IMPERSONATE_KEY, uid);
+      localStorage.removeItem("tk_impersonate_uid");
+    }
   } catch {
     // ignore
   }

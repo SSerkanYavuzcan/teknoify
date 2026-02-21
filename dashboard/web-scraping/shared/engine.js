@@ -99,6 +99,7 @@ async function initData(startDate, endDate) {
                 project_id: cfg.projectId,
                 start_date: _isoDate(startDate),
                 end_date: _isoDate(endDate),
+                effective_uid: window.USER_EFFECTIVE_UID || null,
             }),
         });
 

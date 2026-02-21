@@ -144,6 +144,9 @@ def _handle_query(request):
         except ValueError:
             return _json({"error": f"Tarih formatı YYYY-MM-DD olmalı: {d}"}, 400)
 
+    requested_effective_uid = body.get("effective_uid")
+    effective_uid, impersonated = _resolve_effective_uid(uid, requested_effective_uid)
+
     table_ref = (
         f"`{GCP_PROJECT}.{BQ_DATASET}.{BQ_TABLE}`"
         if GCP_PROJECT

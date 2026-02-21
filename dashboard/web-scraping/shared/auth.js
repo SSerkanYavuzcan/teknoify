@@ -23,6 +23,25 @@ function safeLower(s) { return String(s || '').trim().toLowerCase(); }
 
 function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
 
+function getImpersonatedUid() {
+  return (
+    localStorage.getItem('teknoify_impersonate_uid') ||
+    localStorage.getItem('tk_impersonate_uid') ||
+    localStorage.getItem('impersonate_uid') ||
+    localStorage.getItem('impersonateUid') ||
+    sessionStorage.getItem('teknoify_impersonate_uid') ||
+    sessionStorage.getItem('tk_impersonate_uid') ||
+    sessionStorage.getItem('impersonate_uid') ||
+    sessionStorage.getItem('impersonateUid') ||
+    ''
+  );
+}
+
+async function getUserProfile(uid) {
+  const snap = await db.collection('users').doc(uid).get();
+  return snap.exists ? (snap.data() || {}) : {};
+}
+
 // ─── Firestore helpers ────────────────────────────────────────────────────────
 async function ensureUserProfile(user) {
   const uid = user.uid;
@@ -110,6 +129,10 @@ async function bootstrap() {
 
         window.USER_ALLOWED_STORES = access.allowedStores;
       }
+
+      window.USER_ALLOWED_STORES = access.allowedStores;
+      window.USER_EFFECTIVE_UID = effectiveUid;
+      window.USER_IS_IMPERSONATING = isImpersonating;
 
       initCalendar();
       // BigQuery mimarisinde sheetUrl artık kullanılmıyor.
