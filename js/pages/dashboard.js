@@ -11,9 +11,11 @@ import { createEl, qs } from "../utils/dom.js";
 function getImpersonatedUidFromStorage() {
   return (
     localStorage.getItem("teknoify_impersonate_uid") ||
+    localStorage.getItem("tk_impersonate_uid") ||
     localStorage.getItem("impersonate_uid") ||
     localStorage.getItem("impersonateUid") ||
     sessionStorage.getItem("teknoify_impersonate_uid") ||
+    sessionStorage.getItem("tk_impersonate_uid") ||
     sessionStorage.getItem("impersonate_uid") ||
     sessionStorage.getItem("impersonateUid") ||
     null
@@ -57,12 +59,10 @@ function renderProjects(projects) {
 
     const actionLink = createEl("a", {
       className: "btn btn-sm btn-primary",
-      text: "Demo Aç"
+      text: "Keşfet"
     });
 
     actionLink.href = resolveProjectUrl(project.demoUrl);
-    actionLink.target = "_blank";
-    actionLink.rel = "noopener noreferrer";
 
     actions.append(actionLink);
     card.append(title, description, actions);
