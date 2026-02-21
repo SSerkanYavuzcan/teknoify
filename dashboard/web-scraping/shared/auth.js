@@ -90,12 +90,13 @@ async function hasEntitlement(uid, projectId) {
   return { entitled, allowedStores };
 }
 
-function applyUserUI(profile, firebaseUser) {
-  const email = safeLower(firebaseUser.email);
+function applyUserUI(profile, fallback = {}) {
+  const fallbackEmail = safeLower(fallback.email);
+  const fallbackName = String(fallback.name || '').trim();
   const displayName =
     profile?.name ||
-    firebaseUser.displayName ||
-    (email ? email.split('@')[0] : 'User');
+    fallbackName ||
+    (fallbackEmail ? fallbackEmail.split('@')[0] : 'User');
 
   const nameEl = document.getElementById('user-name-display');
   const avatarEl = document.getElementById('user-avatar');

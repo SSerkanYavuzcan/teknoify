@@ -109,6 +109,9 @@ async function initData(startDate, endDate) {
         }
 
         const result = await response.json();
+        if (Array.isArray(result.allowedStores)) {
+            window.USER_ALLOWED_STORES = result.allowedStores;
+        }
         ALL_DATA = (result.data || []).filter(
             row => row[cfg.fields.storeField] && row[cfg.fields.productField]
         );
