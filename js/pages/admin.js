@@ -13,7 +13,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const IMPERSONATE_KEY = "tk_impersonate_uid";
+const IMPERSONATE_KEY = "teknoify_impersonate_uid";
 
 function pickTbody() {
   return (
@@ -28,17 +28,13 @@ function pickTbody() {
 function setStatus(msg, type = "info") {
   let el = qs("#admin-status");
   if (!el) {
-    el = createEl("div", { id: "admin-status" });
-    el.style.margin = "12px 0";
-    el.style.fontSize = "14px";
-    el.style.opacity = "0.95";
-    const anchor = qs("main") || document.body;
+    el = createEl("div", { id: "admin-status", className: "admin-status" });
+    const anchor = qs("#admin-status-anchor") || qs("main") || document.body;
     anchor.prepend(el);
   }
 
   el.textContent = msg || "";
-  el.style.color =
-    type === "error" ? "#ef4444" : type === "ok" ? "#10b981" : "#e5e7eb";
+  el.className = `admin-status admin-status--${type}`;
 }
 
 function ensureButton(selectorList, fallbackText) {
@@ -48,31 +44,36 @@ function ensureButton(selectorList, fallbackText) {
     if (btn) return btn;
   }
 
-  // yoksa üret
   const btn = createEl("button", {
-    className: "btn btn-primary",
+    className: "btn btn-primary admin-save-btn",
     text: fallbackText
   });
   btn.type = "button";
-  btn.style.marginTop = "14px";
 
-  const anchor = qs("main") || document.body;
+  const anchor = qs("#admin-actions") || qs("main") || document.body;
   anchor.append(btn);
   return btn;
 }
 
 function getImpersonatedUid() {
   try {
-    return localStorage.getItem(IMPERSONATE_KEY) || "";
+    return localStorage.getItem(IMPERSONATE_KEY) || localStorage.getItem("tk_impersonate_uid") || "";
   } catch {
     return "";
   }
 }
 
-function setImpersonatedUid(uid) {
+function setImpersonatedUid(uid, name = "") {
   try {
-    if (!uid) localStorage.removeItem(IMPERSONATE_KEY);
-    else localStorage.setItem(IMPERSONATE_KEY, uid);
+    if (!uid) {
+      localStorage.removeItem(IMPERSONATE_KEY);
+      localStorage.removeItem("tk_impersonate_uid");
+      localStorage.removeItem("teknoify_impersonate_name");
+    } else {
+      localStorage.setItem(IMPERSONATE_KEY, uid);
+      localStorage.removeItem("tk_impersonate_uid");
+      localStorage.setItem("teknoify_impersonate_name", String(name || "").trim());
+    }
   } catch {
     // ignore
   }
@@ -82,44 +83,32 @@ function renderImpersonationBanner({ isAdmin }) {
   const current = getImpersonatedUid();
   if (!isAdmin) return;
 
-  let wrap = qs("#impersonation-banner");
-  if (!wrap) {
-    wrap = createEl("div", { id: "impersonation-banner" });
-    wrap.style.display = "flex";
-    wrap.style.alignItems = "center";
-    wrap.style.justifyContent = "space-between";
-    wrap.style.gap = "12px";
-    wrap.style.padding = "10px 12px";
-    wrap.style.border = "1px solid rgba(255,255,255,0.08)";
-    wrap.style.borderRadius = "12px";
-    wrap.style.background = "rgba(255,255,255,0.03)";
-    wrap.style.margin = "12px 0";
-
-    const anchor = qs("main") || document.body;
-    anchor.prepend(wrap);
-  }
+  const wrap = qs("#impersonation-banner");
+  if (!wrap) return;
 
   wrap.innerHTML = "";
   if (!current) {
+    wrap.classList.add("is-empty");
     wrap.append(
-      createEl("div", { text: "İmpersonation aktif değil." }),
-      createEl("div", { text: "" })
+      createEl("span", { className: "impersonation-label", text: "İmpersonation aktif değil" }),
+      createEl("span", { className: "impersonation-hint", text: "Bir kullanıcıyı seçerek oturumu test edebilirsiniz." })
     );
     return;
   }
 
+  wrap.classList.remove("is-empty");
   const left = createEl("div", {
+    className: "impersonation-label",
     text: `İmpersonation aktif: ${current}`
   });
 
   const stopBtn = createEl("button", {
-    className: "btn btn-sm",
+    className: "btn btn-sm btn-outline",
     text: "İmpersonation’ı Bitir"
   });
   stopBtn.type = "button";
   stopBtn.addEventListener("click", () => {
     setImpersonatedUid("");
-    // admin sayfasında kal
     window.location.reload();
   });
 
@@ -154,94 +143,42 @@ async function saveEntitlements(uid, projectIds) {
 }
 
 function makeCheckbox({ checked, onChange }) {
-  const input = createEl("input");
+  const input = createEl("input", { className: "service-checkbox" });
   input.type = "checkbox";
   input.checked = !!checked;
   input.addEventListener("change", () => onChange(input.checked));
   return input;
 }
 
-function ensureHeaderRow(tbody, projects) {
-  // Eğer tablo başlığı HTML’de yoksa burada üretmek riskli,
-  // ama en azından tbody yoksa uyaralım.
-  if (!tbody) return;
-  // tbody sadece body; header HTML tarafında kalsın
-  // Bu fonksiyon şu an no-op.
-}
-
-function goToUserAs(uid) {
-  // Admin.js sadece flag’i set eder.
-  // requireAuth() tarafında bu uid’i “impersonated userId” olarak kullanman gerekir.
-  setImpersonatedUid(uid);
+function goToUserAs(uid, name) {
+  setImpersonatedUid(uid, name);
   window.location.href = "/dashboard/index.html";
 }
 
 function createRow({ user, projects, entitledSet, stateMap, session }) {
-  const tr = document.createElement("tr");
-  tr.style.borderBottom = "1px solid rgba(255,255,255,0.06)";
+  const tr = createEl("tr", { className: "admin-row" });
 
-  // User cell
-  const tdUser = document.createElement("td");
-  tdUser.style.padding = "14px 12px";
-  tdUser.style.verticalAlign = "middle";
-
+  const tdUser = createEl("td", { className: "admin-user-cell" });
   const name = user.name || (user.email ? user.email.split("@")[0] : user.id);
-  const userLine = createEl("div", { text: `${name} (${user.email || "-"})` });
-  userLine.style.fontWeight = "600";
+  const userLine = createEl("div", {
+    className: "admin-user-name",
+    text: `${name} (${user.email || "-"})`
+  });
 
   const metaLine = createEl("div", {
+    className: "admin-user-meta",
     text: `UID: ${user.id} • role: ${user.role || "user"}`
   });
-  metaLine.style.fontSize = "12px";
-  metaLine.style.opacity = "0.75";
-  metaLine.style.marginTop = "4px";
+  tdUser.append(userLine, metaLine);
 
-  const btns = createEl("div");
-  btns.style.display = "flex";
-  btns.style.gap = "8px";
-  btns.style.marginTop = "10px";
-
-  const impBtn = createEl("button", {
-    className: "btn btn-sm btn-primary",
-    text: "Impersonate"
-  });
-  impBtn.type = "button";
-  impBtn.disabled = !session.isAdmin;
-  impBtn.addEventListener("click", () => goToUserAs(user.id));
-
-  const stopBtn = createEl("button", {
-    className: "btn btn-sm",
-    text: "İmpersonation’ı Bitir"
-  });
-  stopBtn.type = "button";
-  stopBtn.disabled = !getImpersonatedUid();
-  stopBtn.addEventListener("click", () => {
-    setImpersonatedUid("");
-    window.location.reload();
-  });
-
-  btns.append(impBtn, stopBtn);
-  tdUser.append(userLine, metaLine, btns);
-
-  // Project checkboxes cells
-  const tdProjects = document.createElement("td");
-  tdProjects.style.padding = "14px 12px";
-  tdProjects.style.verticalAlign = "middle";
-
-  const wrap = createEl("div");
-  wrap.style.display = "flex";
-  wrap.style.flexWrap = "wrap";
-  wrap.style.gap = "14px";
+  const tdProjects = createEl("td", { className: "admin-services-cell" });
+  const wrap = createEl("div", { className: "admin-service-grid" });
 
   const setForUser = new Set(entitledSet);
   stateMap.set(user.id, setForUser);
 
   projects.forEach((p) => {
-    const item = createEl("label");
-    item.style.display = "inline-flex";
-    item.style.alignItems = "center";
-    item.style.gap = "8px";
-    item.style.cursor = "pointer";
+    const item = createEl("label", { className: "service-pill" });
 
     const cb = makeCheckbox({
       checked: setForUser.has(p.id),
@@ -253,14 +190,36 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
       }
     });
 
-    const text = createEl("span", { text: p.name });
+    const text = createEl("span", { className: "service-pill-text", text: p.name });
     item.append(cb, text);
     wrap.append(item);
   });
 
   tdProjects.append(wrap);
 
-  tr.append(tdUser, tdProjects);
+  const tdActions = createEl("td", { className: "admin-actions-cell" });
+  const impBtn = createEl("button", {
+    className: "btn btn-sm btn-primary",
+    text: "Kullanıcı Olarak Gör"
+  });
+  impBtn.type = "button";
+  impBtn.disabled = !session.isAdmin;
+  impBtn.addEventListener("click", () => goToUserAs(user.id, name));
+
+  const stopBtn = createEl("button", {
+    className: "btn btn-sm btn-outline",
+    text: "Bitir"
+  });
+  stopBtn.type = "button";
+  stopBtn.disabled = !getImpersonatedUid();
+  stopBtn.addEventListener("click", () => {
+    setImpersonatedUid("");
+    window.location.reload();
+  });
+
+  tdActions.append(impBtn, stopBtn);
+
+  tr.append(tdUser, tdProjects, tdActions);
   return tr;
 }
 
@@ -271,7 +230,6 @@ async function init() {
     const session = await requireAuth();
     if (!session) return;
 
-    // logout
     const logoutBtn =
       qs("#logout-btn") || qs("#logout") || qs("[data-action='logout']");
     if (logoutBtn) logoutBtn.addEventListener("click", logout);
@@ -292,20 +250,15 @@ async function init() {
       return;
     }
 
-    // projeler
     const allProjects = await getProjects();
     const activeProjects = (allProjects || []).filter(
       (p) => p && p.status === "active"
     );
 
-    // kullanıcılar
     const users = await fetchUsers();
-
-    // tablo render
     tbody.innerHTML = "";
-    ensureHeaderRow(tbody, activeProjects);
 
-    const stateMap = new Map(); // uid -> Set(projectId)
+    const stateMap = new Map();
 
     for (const user of users) {
       const entitled = await fetchEntitlements(user.id);
@@ -319,9 +272,8 @@ async function init() {
       tbody.append(row);
     }
 
-    // save button
     const saveBtn = ensureButton(
-      ["#save-btn", "#save-access-btn", "[data-action='save']"],
+      ["#save-btn", "#save-access-btn", "#save-entitlements", "[data-action='save']"],
       "Kaydet"
     );
 

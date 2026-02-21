@@ -13,6 +13,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const IMPERSONATE_UID_KEY = "teknoify_impersonate_uid";
+const IMPERSONATE_NAME_KEY = "teknoify_impersonate_name";
 
 function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
@@ -102,6 +103,7 @@ async function buildRealSession(user) {
  */
 export function stopImpersonation({ redirect = true } = {}) {
   window.localStorage.removeItem(IMPERSONATE_UID_KEY);
+  window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
   if (redirect) window.location.href = getAdminPath();
 }
 
@@ -122,32 +124,35 @@ export async function startImpersonation(targetUid, { to } = {}) {
   if (targetIsAdmin) return { ok: false, message: "Admin hesapları impersonate edilemez." };
 
   window.localStorage.setItem(IMPERSONATE_UID_KEY, targetUid);
+  window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
   if (to) window.location.href = to;
   return { ok: true, targetUid };
 }
 
 async function getEffectiveSession(realSession) {
   if (!realSession.isAdmin) {
-    return { ...realSession, impersonating: false };
+    return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
   const targetUid = window.localStorage.getItem(IMPERSONATE_UID_KEY);
   if (!targetUid) {
-    return { ...realSession, impersonating: false };
+    return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
   // target profil bilgisi
   const targetProfileSnap = await getDoc(doc(db, "users", targetUid));
   if (!targetProfileSnap.exists()) {
     window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-    return { ...realSession, impersonating: false };
+    window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
+    return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
   // target admin değilse override et
   const targetIsAdmin = await isAdminUid(targetUid);
   if (targetIsAdmin) {
     window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-    return { ...realSession, impersonating: false };
+    window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
+    return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
   const targetProfile = targetProfileSnap.data();
@@ -161,7 +166,8 @@ async function getEffectiveSession(realSession) {
     impersonating: true,
     adminUserId: realSession.uid,
     adminEmail: realSession.email,
-    isAdmin: true // admin olduğunu kaybetmesin (admin linki görünür kalsın)
+    realIsAdmin: true,
+    isAdmin: false
   };
 }
 
@@ -171,13 +177,14 @@ export async function login(email, password) {
     // Profil oluştur/güncelle
     await ensureUserProfile(cred.user);
     return { ok: true };
-  } catch (e) {
+  } catch {
     return { ok: false, message: "E-posta veya şifre hatalı." };
   }
 }
 
 export async function logout() {
   window.localStorage.removeItem(IMPERSONATE_UID_KEY);
+  window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
   try {
     await signOut(auth);
   } finally {
