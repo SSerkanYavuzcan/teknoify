@@ -57,7 +57,7 @@ function renderProjects(projects) {
 
     const actionLink = createEl("a", {
       className: "btn btn-sm btn-primary",
-      text: "Demo Aç"
+      text: "Keşfet"
     });
 
     actionLink.href = resolveProjectUrl(project.demoUrl);
