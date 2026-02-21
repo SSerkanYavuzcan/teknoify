@@ -38,16 +38,8 @@ function getImpersonatedUid() {
 }
 
 async function getUserProfile(uid) {
-  try {
-    const snap = await db.collection('users').doc(uid).get();
-    if (!snap.exists) {
-      return { uid, name: `Kullanıcı (${String(uid || '').slice(0, 6)})` };
-    }
-    return { uid, ...(snap.data() || {}) };
-  } catch (err) {
-    console.warn('Impersonated kullanıcı profili okunamadı:', err);
-    return { uid, name: `Kullanıcı (${String(uid || '').slice(0, 6)})` };
-  }
+  const snap = await db.collection('users').doc(uid).get();
+  return snap.exists ? (snap.data() || {}) : {};
 }
 
 // ─── Firestore helpers ────────────────────────────────────────────────────────
@@ -123,29 +115,20 @@ async function bootstrap() {
     }
 
     try {
-      const realUid = user.uid;
-      const realProfile = await ensureUserProfile(user);
+      const uid = user.uid;
+      const profile = await ensureUserProfile(user);
+      applyUserUI(profile, user);
 
-      const realAdmin = await isAdmin(realUid);
-      const impUid = getImpersonatedUid();
-      const isImpersonating = realAdmin && impUid && impUid !== realUid;
-      const effectiveUid = isImpersonating ? impUid : realUid;
+      const admin = await isAdmin(uid);
+      if (!admin) {
+        const access = await hasEntitlement(uid, cfg.projectId);
+        if (!access.entitled) {
+          alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
+          window.location.href = cfg.basePath + 'member.html';
+          return;
+        }
 
-      const effectiveProfile = isImpersonating ? await getUserProfile(effectiveUid) : realProfile;
-      applyUserUI(effectiveProfile, {
-        name: effectiveProfile?.name || realProfile?.name || user.displayName,
-        email: isImpersonating ? (effectiveProfile?.email || '') : user.email,
-      });
-
-      let access = { entitled: true, allowedStores: [] };
-      if (!realAdmin || !isImpersonating) {
-        access = await hasEntitlement(effectiveUid, cfg.projectId);
-      }
-
-      if ((!realAdmin || !isImpersonating) && !access.entitled) {
-        alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
-        window.location.href = cfg.basePath + 'member.html';
-        return;
+        window.USER_ALLOWED_STORES = access.allowedStores;
       }
 
       window.USER_ALLOWED_STORES = access.allowedStores;
