@@ -63,8 +63,6 @@ function renderProjects(projects) {
     });
 
     actionLink.href = resolveProjectUrl(project.demoUrl);
-    actionLink.target = "_blank";
-    actionLink.rel = "noopener noreferrer";
 
     actions.append(actionLink);
     card.append(title, description, actions);

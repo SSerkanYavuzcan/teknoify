@@ -16,7 +16,6 @@ const _FIREBASE_CONFIG = {
 
 if (!firebase.apps.length) firebase.initializeApp(_FIREBASE_CONFIG);
 const auth = firebase.auth();
-const db = firebase.firestore();
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function safeLower(s) { return String(s || '').trim().toLowerCase(); }
@@ -68,10 +67,10 @@ async function ensureUserProfile(user) {
   return profile;
 }
 
-async function isAdmin(uid) {
-  const snap = await db.collection('admins').doc(uid).get();
-  return snap.exists === true;
-}
+function applyUserUI(displayName) {
+  const finalName = String(displayName || "User").trim() || "User";
+  const nameEl = document.getElementById("user-name-display");
+  const avatarEl = document.getElementById("user-avatar");
 
 async function hasEntitlement(uid, projectId) {
   const snap = await db.collection('entitlements').doc(uid).get();
@@ -110,7 +109,7 @@ async function bootstrap() {
 
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
-      window.location.href = cfg.rootPath + 'pages/login.html';
+      window.location.href = cfg.rootPath + "pages/login.html";
       return;
     }
 
@@ -136,34 +135,33 @@ async function bootstrap() {
       window.USER_IS_IMPERSONATING = isImpersonating;
 
       initCalendar();
-      // BigQuery mimarisinde sheetUrl artık kullanılmıyor.
-      // Kullanıcı tarih seçip "Verileri Yükle"ye basınca applyFilters() → initData() → API çağrısı yapılır.
     } catch (err) {
-      console.error('Bootstrap error:', err);
-      const tbody = document.getElementById('table-body');
+      console.error("Bootstrap error:", err);
+      const tbody = document.getElementById("table-body");
       if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center;padding:30px;color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
+        tbody.innerHTML =
+          '<tr><td colspan="100%" style="text-align:center;padding:30px;color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
       }
     }
   });
 
   // Global menu close
-  document.addEventListener('click', function (e) {
-    if (!e.target.closest('.multi-select-wrapper')) {
-      document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".multi-select-wrapper")) {
+      document.querySelectorAll(".multi-select-menu").forEach((m) => m.classList.remove("show"));
     }
-    const wrapper = document.querySelector('.download-wrapper');
-    const menu = document.getElementById('download-menu');
-    if (wrapper && menu && !wrapper.contains(e.target)) menu.classList.remove('show');
+    const wrapper = document.querySelector(".download-wrapper");
+    const menu = document.getElementById("download-menu");
+    if (wrapper && menu && !wrapper.contains(e.target)) menu.classList.remove("show");
   });
 }
 
 function logout() {
-  if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+  if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
     auth.signOut().finally(() => {
-      window.location.href = PROJECT_CONFIG.rootPath + 'index.html';
+      window.location.href = PROJECT_CONFIG.rootPath + "index.html";
     });
   }
 }
 
-document.addEventListener('DOMContentLoaded', bootstrap);
+document.addEventListener("DOMContentLoaded", bootstrap);
