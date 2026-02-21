@@ -1,0 +1,154 @@
+.page-frame.portal-frame {
+  padding: 48px 0 64px;
+  min-height: calc(100vh - 96px);
+  background:
+    radial-gradient(circle at 10% 10%, rgba(115, 103, 240, 0.12), transparent 35%),
+    radial-gradient(circle at 85% 80%, rgba(0, 183, 255, 0.08), transparent 30%);
+}
+
+.portal-shell {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.portal-hero {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.portal-hero h1 {
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  margin-bottom: 10px;
+}
+
+.portal-hero p {
+  color: var(--text-secondary);
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+.services-grid.portal-services {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.portal-services .service-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(160deg, rgba(19, 22, 40, 0.85), rgba(12, 14, 28, 0.95));
+  border-radius: 18px;
+  padding: 24px;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+.portal-services .service-card h3 {
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.portal-services .service-card p {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.portal-services .card-ctas {
+  margin-top: auto;
+}
+
+/* Admin */
+.admin-layout {
+  display: grid;
+  gap: 20px;
+}
+
+.admin-status {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+}
+
+.admin-status--info { background: rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.4); }
+.admin-status--ok { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.45); }
+.admin-status--error { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.45); }
+
+.impersonation-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.impersonation-banner.is-empty .impersonation-label { color: var(--text-muted); }
+.impersonation-hint { color: var(--text-secondary); font-size: 0.9rem; }
+
+.admin-table-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(8, 10, 22, 0.85);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  vertical-align: top;
+}
+
+.admin-table thead th {
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-row:hover { background: rgba(255, 255, 255, 0.02); }
+
+.admin-user-name { font-weight: 700; margin-bottom: 8px; }
+.admin-user-meta { color: var(--text-muted); font-size: 0.86rem; }
+
+.admin-service-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.service-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(115, 103, 240, 0.4);
+  background: rgba(115, 103, 240, 0.12);
+  color: #e9e7ff;
+}
+
+.service-checkbox { accent-color: #7367f0; }
+
+.admin-actions-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 170px;
+}
+
+#admin-actions { display: flex; justify-content: flex-end; }
+
+@media (max-width: 960px) {
+  .admin-table-wrap { overflow-x: auto; }
+  .admin-table { min-width: 840px; }
+}

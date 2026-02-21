@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Dashboard | Teknoify</title>
         <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/06-pages/dashboard-portal.css" />
     </head>
     <body>
         <header class="header" style="position: static">
@@ -31,18 +32,16 @@
             </nav>
         </header>
 
-        <main class="page-frame" style="padding-top: 40px">
-            <section class="services">
-                <div class="container">
-                    <div class="section-header">
-                        <h1>Satın Aldığınız Projeler</h1>
-                        <p>Hesabınıza tanımlanan otomasyon projeleri aşağıda listelenir.</p>
-                    </div>
-                    <div class="services-grid" id="project-list"></div>
-                    <div id="project-empty" hidden>
-                        <p>Henüz hesabınıza atanmış bir proje yok.</p>
-                        <a class="btn btn-primary" href="../index.html#contact">Bizimle iletişime geçin</a>
-                    </div>
+        <main class="page-frame portal-frame">
+            <section class="portal-shell">
+                <div class="portal-hero">
+                    <h1>Satın Aldığınız Projeler</h1>
+                    <p>Hesabınıza tanımlanan otomasyon projeleri aşağıda listelenir. Anlaşmalı hizmetlerinize hızlıca erişebilir, analiz panellerini tek tıkla keşfedebilirsiniz.</p>
+                </div>
+                <div class="services-grid portal-services" id="project-list"></div>
+                <div id="project-empty" hidden>
+                    <p>Henüz hesabınıza atanmış bir proje yok.</p>
+                    <a class="btn btn-primary" href="../index.html#contact">Bizimle iletişime geçin</a>
                 </div>
             </section>
         </main>
