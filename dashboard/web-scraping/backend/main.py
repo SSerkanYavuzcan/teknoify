@@ -58,30 +58,6 @@ def _json(data, status=200):
 
 
 
-
-
-def _is_admin_uid(uid):
-    try:
-        return fs_client.collection("admins").document(uid).get().exists
-    except Exception as e:
-        print(f"[WARN] Admin kontrolü yapılamadı (uid={uid}): {e}")
-        return False
-
-
-def _resolve_effective_uid(requester_uid, requested_effective_uid):
-    """İmpersonation varsa güvenli şekilde effective uid döndürür."""
-    target_uid = str(requested_effective_uid or "").strip()
-    if not target_uid or target_uid == requester_uid:
-        return requester_uid, False
-
-    if not _is_admin_uid(requester_uid):
-        return requester_uid, False
-
-    if _is_admin_uid(target_uid):
-        return requester_uid, False
-
-    return target_uid, True
-
 def _get_store_access(uid, project_id):
     """Firestore entitlements üzerinden proje bazlı mağaza erişim listesini döndürür."""
     try:
@@ -177,7 +153,7 @@ def _handle_query(request):
         else f"`{BQ_DATASET}.{BQ_TABLE}`"
     )
 
-    allowed_stores = _get_store_access(effective_uid, project_id)
+    allowed_stores = _get_store_access(uid, project_id)
     has_store_filter = len(allowed_stores) > 0
 
     store_clause = "AND store_name IN UNNEST(@allowed_stores)" if has_store_filter else ""
@@ -206,7 +182,7 @@ def _handle_query(request):
     """
 
     query_parameters = [
-        bigquery.ScalarQueryParameter("customer_id", "STRING", effective_uid),
+        bigquery.ScalarQueryParameter("customer_id", "STRING", uid),
         bigquery.ScalarQueryParameter("project_id",  "STRING", project_id),
         bigquery.ScalarQueryParameter("start_date",  "DATE",   start_date),
         bigquery.ScalarQueryParameter("end_date",    "DATE",   end_date),
@@ -232,8 +208,6 @@ def _handle_query(request):
             "project": project_id,
             "range":   f"{start_date} → {end_date}",
             "allowedStores": allowed_stores,
-            "effectiveUid": effective_uid,
-            "impersonated": impersonated,
         })
     except Exception as e:
         print(f"[ERROR] BigQuery sorgu hatası: {e}")
