@@ -18,7 +18,6 @@ module.exports = [
                 clearTimeout: 'readonly',
                 requestAnimationFrame: 'readonly',
                 IntersectionObserver: 'readonly',
-                URLSearchParams: 'readonly',
                 alert: 'readonly',
                 firebase: 'readonly'
             }
