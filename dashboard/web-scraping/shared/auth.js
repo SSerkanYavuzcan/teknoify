@@ -56,10 +56,19 @@ async function isAdmin(uid) {
 
 async function hasEntitlement(uid, projectId) {
   const snap = await db.collection('entitlements').doc(uid).get();
-  if (!snap.exists) return false;
+  if (!snap.exists) return { entitled: false, allowedStores: [] };
   const data = snap.data() || {};
   const ids = Array.isArray(data.projectIds) ? data.projectIds : [];
-  return ids.includes(projectId);
+  const entitled = ids.includes(projectId);
+
+  const projectStores = data.projectStores || data.projectStoreAccess || {};
+  const storesByProject = Array.isArray(projectStores?.[projectId]) ? projectStores[projectId] : [];
+  const globalStores = Array.isArray(data.allowedStores) ? data.allowedStores : [];
+  const allowedStores = (storesByProject.length ? storesByProject : globalStores)
+    .map((store) => String(store || '').trim())
+    .filter(Boolean);
+
+  return { entitled, allowedStores };
 }
 
 function applyUserUI(profile, firebaseUser) {
@@ -92,12 +101,14 @@ async function bootstrap() {
 
       const admin = await isAdmin(uid);
       if (!admin) {
-        const entitled = await hasEntitlement(uid, cfg.projectId);
-        if (!entitled) {
+        const access = await hasEntitlement(uid, cfg.projectId);
+        if (!access.entitled) {
           alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
           window.location.href = cfg.basePath + 'member.html';
           return;
         }
+
+        window.USER_ALLOWED_STORES = access.allowedStores;
       }
 
       initCalendar();
