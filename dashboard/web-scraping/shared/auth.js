@@ -23,6 +23,39 @@ function safeLower(s) { return String(s || '').trim().toLowerCase(); }
 
 function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
 
+function getImpersonatedContext() {
+  const uid = (
+    localStorage.getItem('teknoify_impersonate_uid') ||
+    localStorage.getItem('tk_impersonate_uid') ||
+    localStorage.getItem('impersonate_uid') ||
+    localStorage.getItem('impersonateUid') ||
+    sessionStorage.getItem('teknoify_impersonate_uid') ||
+    sessionStorage.getItem('tk_impersonate_uid') ||
+    sessionStorage.getItem('impersonate_uid') ||
+    sessionStorage.getItem('impersonateUid') ||
+    ''
+  );
+  const name =
+    localStorage.getItem('teknoify_impersonate_name') ||
+    sessionStorage.getItem('teknoify_impersonate_name') ||
+    '';
+
+  return { uid: String(uid || "").trim(), name: String(name || "").trim() };
+}
+
+async function getUserProfile(uid) {
+  try {
+    const snap = await db.collection('users').doc(uid).get();
+    if (!snap.exists) {
+      return { uid, name: `Kullanıcı (${String(uid || '').slice(0, 6)})` };
+    }
+    return { uid, ...(snap.data() || {}) };
+  } catch (err) {
+    console.warn('Impersonated kullanıcı profili okunamadı:', err);
+    return { uid, name: `Kullanıcı (${String(uid || '').slice(0, 6)})` };
+  }
+}
+
 // ─── Firestore helpers ────────────────────────────────────────────────────────
 async function ensureUserProfile(user) {
   const uid = user.uid;
@@ -49,25 +82,13 @@ async function ensureUserProfile(user) {
   return profile;
 }
 
-async function isAdmin(uid) {
-  const snap = await db.collection('admins').doc(uid).get();
-  return snap.exists === true;
-}
-
-async function hasEntitlement(uid, projectId) {
-  const snap = await db.collection('entitlements').doc(uid).get();
-  if (!snap.exists) return false;
-  const data = snap.data() || {};
-  const ids = Array.isArray(data.projectIds) ? data.projectIds : [];
-  return ids.includes(projectId);
-}
-
-function applyUserUI(profile, firebaseUser) {
-  const email = safeLower(firebaseUser.email);
+function applyUserUI(profile, fallback = {}) {
+  const fallbackEmail = safeLower(fallback.email);
+  const fallbackName = String(fallback.name || '').trim();
   const displayName =
     profile?.name ||
-    firebaseUser.displayName ||
-    (email ? email.split('@')[0] : 'User');
+    fallbackName ||
+    (fallbackEmail ? fallbackEmail.split('@')[0] : 'User');
 
   const nameEl = document.getElementById('user-name-display');
   const avatarEl = document.getElementById('user-avatar');
@@ -86,19 +107,22 @@ async function bootstrap() {
     }
 
     try {
-      const uid = user.uid;
-      const profile = await ensureUserProfile(user);
-      applyUserUI(profile, user);
+      const realUid = user.uid;
+      const realProfile = await ensureUserProfile(user).catch(() => ({}));
 
-      const admin = await isAdmin(uid);
-      if (!admin) {
-        const entitled = await hasEntitlement(uid, cfg.projectId);
-        if (!entitled) {
-          alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
-          window.location.href = cfg.basePath + 'member.html';
-          return;
-        }
-      }
+      const imp = getImpersonatedContext();
+      const isImpersonating = Boolean(imp.uid && imp.uid !== realUid);
+      const effectiveUid = isImpersonating ? imp.uid : realUid;
+
+      const effectiveProfile = isImpersonating ? await getUserProfile(effectiveUid) : realProfile;
+      applyUserUI(effectiveProfile, {
+        name: imp.name || effectiveProfile?.name || realProfile?.name || user.displayName,
+        email: isImpersonating ? (effectiveProfile?.email || '') : user.email,
+      });
+
+      window.USER_ALLOWED_STORES = [];
+      window.USER_EFFECTIVE_UID = effectiveUid;
+      window.USER_IS_IMPERSONATING = isImpersonating;
 
       initCalendar();
       // BigQuery mimarisinde sheetUrl artık kullanılmıyor.
