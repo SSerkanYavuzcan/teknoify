@@ -1,5 +1,5 @@
 -- ============================================================
--- Teknoify Web-Scraping Platform — BigQuery Schema (FINAL v8)
+-- Teknoify Web-Scraping Platform — BigQuery Schema (FINAL)
 -- Dataset: teknoify_scraping
 -- DEFAULT yok (maksimum uyumluluk)
 --
@@ -14,10 +14,12 @@
 -- =========================
 CREATE TABLE IF NOT EXISTS `teknoify_scraping.vendors`
 (
+  source              STRING          OPTIONS(description='Vendor kaynağı: Yemeksepeti | Getir | manual | ...'),
+
   vendor_code          STRING NOT NULL OPTIONS(description='Vendor benzersiz kodu. Tüm tablolarda ortak anahtar.'),
   vendor_name          STRING          OPTIONS(description='Görünen mağaza/market adı'),
-  vendor_category      STRING          OPTIONS(description='Örn: supermarket, electronics, fashion, ...'),
-  vertical             STRING          OPTIONS(description='Örn: shops, food, darkstore, ...'),
+  vendor_category      STRING          OPTIONS(description='Örn: supermarket, electronics, fashion, pet_shop ...'),
+  vertical             STRING          OPTIONS(description='Örn: shop, food, darkstore, ...'),
 
   country              STRING,
   city                 STRING,
@@ -31,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `teknoify_scraping.vendors`
   longitude            FLOAT64 OPTIONS(description='Boylam'),
 
   matching_vendors     ARRAY<STRING>   OPTIONS(description='Karşılaştırılması uygun vendor_code listesi. Örn: ["3re3","fe23"]'),
+  vendor_url           STRING          OPTIONS(description='Vendor sayfa linki (kaynağa göre URL)'),
 
   created_at           TIMESTAMP       OPTIONS(description='Kayıt oluşturma zamanı'),
   updated_at           TIMESTAMP       OPTIONS(description='Son güncelleme zamanı')
@@ -99,27 +102,20 @@ OPTIONS(description='Master ürün tablosu (tüm sektörlere uygun, ağır alanl
 
 
 -- =========================
--- 3) STORE PRODUCT MAP
+-- 3) STORE PRODUCT MAP (NORMALIZED)
 -- =========================
 CREATE TABLE IF NOT EXISTS `teknoify_scraping.store_product_map`
 (
-  competitor_name               STRING NOT NULL OPTIONS(description='migros | carrefour | ...'),
+  competitor_name               STRING NOT NULL OPTIONS(description='Yemeksepeti | Getir | migros | carrefour | ...'),
   store_sku                     STRING NOT NULL OPTIONS(description='Rakip platform SKU'),
   store_barcode                 STRING          OPTIONS(description='Rakip barkod/GTIN (opsiyonel)'),
   store_product_name            STRING          OPTIONS(description='Rakipte görünen ürün adı'),
 
-  -- Master (denormalize hızlı kullanım)
-  master_product_code           STRING NOT NULL,
-  master_product_name           STRING,
-  master_product_brand          STRING,
-  master_brand_owner            STRING,
-  master_category_level_1       STRING,
-  master_category_level_2       STRING,
-  master_category_level_3       STRING,
+  master_product_code           STRING NOT NULL OPTIONS(description='Eşlenen master ürün kodu'),
 
-  match_type                    STRING,
-  match_confidence              FLOAT64,
-  source_url                    STRING,
+  match_type                    STRING          OPTIONS(description='manual | exact | fuzzy | rules'),
+  match_confidence              FLOAT64         OPTIONS(description='0-1 arası skor'),
+  source_url                    STRING          OPTIONS(description='Eşleme kanıt linki'),
 
   created_at                    TIMESTAMP,
   updated_at                    TIMESTAMP,
@@ -127,11 +123,11 @@ CREATE TABLE IF NOT EXISTS `teknoify_scraping.store_product_map`
   is_active                     BOOL
 )
 CLUSTER BY competitor_name, store_sku, master_product_code
-OPTIONS(description='Tek mapping tablosu. Eşleşme competitor_name + store_sku ile yapılır.');
+OPTIONS(description='SKU->Master mapping (normalized). Master detaylar master_products üzerinden alınır.');
 
 
 -- =========================
--- 4) STORE SCRAPE DAILY (RAW - hafif)
+-- 4) STORE SCRAPE DAILY (RAW - hafif, UI ve debug için)
 -- =========================
 CREATE TABLE IF NOT EXISTS `teknoify_scraping.store_scrape_daily`
 (
@@ -141,13 +137,17 @@ CREATE TABLE IF NOT EXISTS `teknoify_scraping.store_scrape_daily`
   scraped_at                    TIMESTAMP,
   ingested_at                   TIMESTAMP,
 
-  competitor_name               STRING NOT NULL OPTIONS(description='migros | carrefour | ...'),
+  competitor_name               STRING NOT NULL OPTIONS(description='Yemeksepeti | Getir | ...'),
   vendor_code                   STRING NOT NULL OPTIONS(description='Taranan mağaza/şube/vendor kodu'),
 
   country                       STRING,
   city                          STRING,
   district_group                STRING,
   district                      STRING,
+
+  product_name                  STRING,
+  product_category_1            STRING,
+  product_category_2            STRING,
 
   store_sku                     STRING,
   store_barcode                 STRING,
@@ -166,7 +166,8 @@ CREATE TABLE IF NOT EXISTS `teknoify_scraping.store_scrape_daily`
   error_reason                  STRING
 )
 PARTITION BY report_date
-CLUSTER BY competitor_name, vendor_code, country, city, district_group, district, store_sku
+-- BigQuery CLUSTER BY max 4 alan:
+CLUSTER BY vendor_code, competitor_name, store_sku, city
 OPTIONS(description='Günlük ham scraping verisi (hafif).');
 
 
@@ -208,72 +209,54 @@ CREATE TABLE IF NOT EXISTS `teknoify_scraping.matched_prices_daily`
   ingested_at                   TIMESTAMP
 )
 PARTITION BY report_date
-CLUSTER BY master_product_code, competitor_name, vendor_code, country, city, district_group, district
+-- BigQuery CLUSTER BY max 4 alan:
+CLUSTER BY master_product_code, vendor_code, competitor_name, store_sku
 OPTIONS(description='Eşleşmiş günlük fiyat tablosu (hafif).');
 
 
 -- =========================
--- 6) PRICE COMPARISONS (UI)
+-- 6) PRICE COMPARISONS (UI - MINIMAL)
 -- =========================
 CREATE TABLE IF NOT EXISTS `teknoify_scraping.price_comparisons`
 (
-  customer_id                   STRING  NOT NULL,
-  project_id                    STRING  NOT NULL,
-  upload_batch_id               STRING,
-  uploaded_at                   TIMESTAMP,
+  customer_id                 STRING NOT NULL,
+  project_id                  STRING NOT NULL,
 
-  report_date                   DATE    NOT NULL,
+  report_date                 DATE   NOT NULL,
 
-  country                       STRING,
-  city                          STRING,
-  district_group                STRING,
-  district                      STRING,
+  country                     STRING,
+  city                        STRING,
+  district_group              STRING,
+  district                    STRING,
 
-  master_product_code           STRING,
+  master_product_code         STRING,
 
   -- Our side
-  our_vendor_code               STRING,
-  store_name                    STRING,
-  product_name                  STRING NOT NULL,
-  sku                           STRING,
-  brand_name                    STRING,
-  category_l1                   STRING,
-  category_l2                   STRING,
-  category_l3                   STRING,
-  category_l4                   STRING,
-  uom                           STRING,
-  unit_count                    FLOAT64,
-  package_size                  FLOAT64,
-  package_size_uom              STRING,
-  our_source_url                STRING,
-  our_original_price            NUMERIC,
-  our_discount_price            NUMERIC,
+  our_vendor_code             STRING,
+  store_name                  STRING,
+  product_name                STRING,
+  sku                         STRING,
+  brand_name                  STRING,
+  category_l1                 STRING,
+  category_l2                 STRING,
+
+  our_original_price          NUMERIC,
+  our_discount_price          NUMERIC,
 
   -- Competitor side
-  competitor_name               STRING,
-  competitor_vendor_code        STRING,
-  competitor_store_sku          STRING,
-  competitor_store_barcode      STRING,
-  competitor_product_name       STRING,
-  competitor_source_url         STRING,
-  competitor_original_price     NUMERIC,
-  competitor_discount_price     NUMERIC,
+  competitor_name             STRING,
+  competitor_vendor_code      STRING,
+  competitor_original_price   NUMERIC,
+  competitor_discount_price   NUMERIC,
 
-  campaign_name                 STRING,
-  campaign_badge                STRING,
-  cart_campaign                 STRING,
-
-  run_id                        STRING,
-  scraped_at                    TIMESTAMP,
-  ingested_at                   TIMESTAMP,
-  match_type                    STRING,
-  match_confidence              FLOAT64,
-  status                        STRING,
-  error_reason                  STRING
+  -- Campaign
+  campaign_name               STRING,
+  campaign_badge              STRING,
+  cart_campaign               STRING
 )
 PARTITION BY report_date
 CLUSTER BY customer_id, project_id
-OPTIONS(description='Customer/Project bazlı fiyat karşılaştırma tablosu (UI için).');
+OPTIONS(description='Minimal UI serving table for customer/project comparisons (includes discounts).');
 
 
 -- =========================
