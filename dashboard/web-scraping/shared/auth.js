@@ -16,18 +16,45 @@ const _FIREBASE_CONFIG = {
 
 if (!firebase.apps.length) firebase.initializeApp(_FIREBASE_CONFIG);
 const auth = firebase.auth();
-window.auth = auth;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function safeLower(s) { return String(s || "").trim().toLowerCase(); }
+function safeLower(s) { return String(s || '').trim().toLowerCase(); }
 
-function toggleSidebar() { document.body.classList.toggle("sidebar-closed"); }
+function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
 
-function safeStorageGet(storage, key) {
-  try {
-    return storage.getItem(key) || "";
-  } catch {
-    return "";
+function getImpersonatedUid() {
+  return (
+    localStorage.getItem('teknoify_impersonate_uid') ||
+    localStorage.getItem('tk_impersonate_uid') ||
+    localStorage.getItem('impersonate_uid') ||
+    localStorage.getItem('impersonateUid') ||
+    sessionStorage.getItem('teknoify_impersonate_uid') ||
+    sessionStorage.getItem('tk_impersonate_uid') ||
+    sessionStorage.getItem('impersonate_uid') ||
+    sessionStorage.getItem('impersonateUid') ||
+    ''
+  );
+}
+
+async function getUserProfile(uid) {
+  const snap = await db.collection('users').doc(uid).get();
+  return snap.exists ? (snap.data() || {}) : {};
+}
+
+// ─── Firestore helpers ────────────────────────────────────────────────────────
+async function ensureUserProfile(user) {
+  const uid = user.uid;
+  const email = safeLower(user.email);
+  const ref = db.collection('users').doc(uid);
+  const snap = await ref.get();
+
+  if (snap.exists) {
+    const data = snap.data() || {};
+    if (!data.email && email) {
+      await ref.set({ email }, { merge: true });
+      return { ...data, email };
+    }
+    return data;
   }
 }
 
@@ -39,77 +66,40 @@ function safeStorageSet(storage, key, value) {
   }
 }
 
-function getImpersonatedContext() {
-  const params = new URLSearchParams(window.location.search || "");
-  const queryUid = String(params.get("imp_uid") || "").trim();
-  const queryName = String(params.get("imp_name") || "").trim();
-
-  const storageUid = (
-    safeStorageGet(localStorage, "teknoify_impersonate_uid") ||
-    safeStorageGet(localStorage, "tk_impersonate_uid") ||
-    safeStorageGet(localStorage, "impersonate_uid") ||
-    safeStorageGet(localStorage, "impersonateUid") ||
-    safeStorageGet(sessionStorage, "teknoify_impersonate_uid") ||
-    safeStorageGet(sessionStorage, "tk_impersonate_uid") ||
-    safeStorageGet(sessionStorage, "impersonate_uid") ||
-    safeStorageGet(sessionStorage, "impersonateUid")
-  );
-
-  const storageName =
-    safeStorageGet(localStorage, "teknoify_impersonate_name") ||
-    safeStorageGet(sessionStorage, "teknoify_impersonate_name");
-
-  const uid = queryUid || String(storageUid || "").trim();
-  const name = queryName || String(storageName || "").trim();
-
-  if (uid) {
-    safeStorageSet(localStorage, "teknoify_impersonate_uid", uid);
-    try { localStorage.removeItem("tk_impersonate_uid"); } catch { /* ignore */ }
-    if (name) safeStorageSet(localStorage, "teknoify_impersonate_name", name);
-  }
-
-  return { uid, name };
-}
-
 function applyUserUI(displayName) {
   const finalName = String(displayName || "User").trim() || "User";
   const nameEl = document.getElementById("user-name-display");
   const avatarEl = document.getElementById("user-avatar");
 
-  if (nameEl) nameEl.textContent = finalName;
-  if (avatarEl) avatarEl.textContent = finalName.charAt(0).toUpperCase();
+async function hasEntitlement(uid, projectId) {
+  const snap = await db.collection('entitlements').doc(uid).get();
+  if (!snap.exists) return { entitled: false, allowedStores: [] };
+  const data = snap.data() || {};
+  const ids = Array.isArray(data.projectIds) ? data.projectIds : [];
+  const entitled = ids.includes(projectId);
+
+  const projectStores = data.projectStores || data.projectStoreAccess || {};
+  const storesByProject = Array.isArray(projectStores?.[projectId]) ? projectStores[projectId] : [];
+  const globalStores = Array.isArray(data.allowedStores) ? data.allowedStores : [];
+  const allowedStores = (storesByProject.length ? storesByProject : globalStores)
+    .map((store) => String(store || '').trim())
+    .filter(Boolean);
+
+  return { entitled, allowedStores };
 }
 
+function applyUserUI(profile, fallback = {}) {
+  const fallbackEmail = safeLower(fallback.email);
+  const fallbackName = String(fallback.name || '').trim();
+  const displayName =
+    profile?.name ||
+    fallbackName ||
+    (fallbackEmail ? fallbackEmail.split('@')[0] : 'User');
 
-function scheduleInitialDataLoad(retry = 0) {
-  const maxRetry = 20; // ~10sn
-
-  if (typeof applyFilters === "function" && typeof flatpickrInstance !== "undefined" && flatpickrInstance) {
-    applyFilters();
-    return;
-  }
-
-  if (retry >= maxRetry) {
-    const tbody = document.getElementById("table-body");
-    if (tbody) {
-      tbody.innerHTML =
-        '<tr><td colspan="100%" style="text-align:center;padding:30px;color:#f59e0b;">Veri yükleme başlatılamadı. Lütfen sayfayı yenileyin veya tarih aralığını yeniden seçip "Verileri Yükle" butonuna basın.</td></tr>';
-    }
-    return;
-  }
-
-  setTimeout(() => scheduleInitialDataLoad(retry + 1), 500);
-}
-
-function resolveDisplayName({ user, isImpersonating, impersonatedName }) {
-  const realEmail = safeLower(user?.email);
-  const realName = String(user?.displayName || "").trim();
-
-  if (isImpersonating && impersonatedName) return impersonatedName;
-  if (isImpersonating) return "İmpersonated User";
-  if (realName) return realName;
-  if (realEmail) return realEmail.split("@")[0];
-  return "User";
+  const nameEl = document.getElementById('user-name-display');
+  const avatarEl = document.getElementById('user-avatar');
+  if (nameEl) nameEl.textContent = displayName;
+  if (avatarEl) avatarEl.textContent = displayName.charAt(0).toUpperCase();
 }
 
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
@@ -123,26 +113,27 @@ async function bootstrap() {
     }
 
     try {
-      const realUid = user.uid;
-      const imp = getImpersonatedContext();
-      const isImpersonating = Boolean(imp.uid && imp.uid !== realUid);
-      const effectiveUid = isImpersonating ? imp.uid : realUid;
+      const uid = user.uid;
+      const profile = await ensureUserProfile(user);
+      applyUserUI(profile, user);
 
-      const displayName = resolveDisplayName({
-        user,
-        isImpersonating,
-        impersonatedName: imp.name
-      });
-      applyUserUI(displayName);
+      const admin = await isAdmin(uid);
+      if (!admin) {
+        const access = await hasEntitlement(uid, cfg.projectId);
+        if (!access.entitled) {
+          alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
+          window.location.href = cfg.basePath + 'member.html';
+          return;
+        }
 
-      // yetki/entitlement kontrolü backend'de effective_uid ile yapılır.
-      window.USER_ALLOWED_STORES = [];
+        window.USER_ALLOWED_STORES = access.allowedStores;
+      }
+
+      window.USER_ALLOWED_STORES = access.allowedStores;
       window.USER_EFFECTIVE_UID = effectiveUid;
       window.USER_IS_IMPERSONATING = isImpersonating;
-      window.WS_AUTH_BOOTSTRAPPED = true;
 
       initCalendar();
-      scheduleInitialDataLoad();
     } catch (err) {
       console.error("Bootstrap error:", err);
       const tbody = document.getElementById("table-body");
@@ -173,4 +164,3 @@ function logout() {
 }
 
 document.addEventListener("DOMContentLoaded", bootstrap);
-window.WS_AUTH_SCRIPT_LOADED = true;
