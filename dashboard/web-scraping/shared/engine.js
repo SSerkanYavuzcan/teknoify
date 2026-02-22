@@ -50,6 +50,12 @@ function getMainCategory(l2Name) {
     return map[name] || 'Diğer';
 }
 
+function getAllowedStoresSet() {
+    const stores = Array.isArray(window.USER_ALLOWED_STORES) ? window.USER_ALLOWED_STORES : [];
+    const normalized = stores.map((s) => String(s || '').trim()).filter(Boolean);
+    return new Set(normalized);
+}
+
 // ─── Calendar ─────────────────────────────────────────────────────────────────
 function initCalendar() {
     const today = new Date();
@@ -93,6 +99,7 @@ async function initData(startDate, endDate) {
                 project_id: cfg.projectId,
                 start_date: _isoDate(startDate),
                 end_date: _isoDate(endDate),
+                effective_uid: window.USER_EFFECTIVE_UID || null,
             }),
         });
 
@@ -102,6 +109,9 @@ async function initData(startDate, endDate) {
         }
 
         const result = await response.json();
+        if (Array.isArray(result.allowedStores)) {
+            window.USER_ALLOWED_STORES = result.allowedStores;
+        }
         ALL_DATA = (result.data || []).filter(
             row => row[cfg.fields.storeField] && row[cfg.fields.productField]
         );
@@ -129,10 +139,16 @@ function populateFilters() {
     const cfg = PROJECT_CONFIG;
     const branchSet = new Set();
     const catSet = new Set();
+    const allowedStores = getAllowedStoresSet();
+
     ALL_DATA.forEach(row => {
-        if (row[cfg.fields.storeField]) branchSet.add(row[cfg.fields.storeField].trim());
+        const storeName = row[cfg.fields.storeField] ? row[cfg.fields.storeField].trim() : '';
+        if (allowedStores.size > 0 && !allowedStores.has(storeName)) return;
+
+        if (storeName) branchSet.add(storeName);
         if (row[cfg.fields.categoryField]) catSet.add(row[cfg.fields.categoryField].trim());
     });
+
     renderMultiSelectOptions('menu-branch', Array.from(branchSet).sort(), 'branch');
     updateTriggerText('branch', 'Tüm Şubeler');
     renderMultiSelectOptions('menu-category', Array.from(catSet).sort(), 'category');
@@ -254,12 +270,14 @@ function _renderFilteredData() {
     const btnDl = document.getElementById('btn-download');
 
     // Client-side branch & kategori filtresi
+    const allowedStores = getAllowedStoresSet();
     const filteredData = ALL_DATA.filter(row => {
         const storeName = (row[cfg.fields.storeField] || '').trim();
         const catName = (row[cfg.fields.categoryField] || '').trim();
+        const storeEntitlementMatch = allowedStores.size === 0 || allowedStores.has(storeName);
         const branchMatch = SELECTED_BRANCHES.includes('all') || SELECTED_BRANCHES.includes(storeName);
         const catMatch = SELECTED_CATEGORIES.includes('all') || SELECTED_CATEGORIES.includes(catName);
-        return branchMatch && catMatch;
+        return storeEntitlementMatch && branchMatch && catMatch;
     });
 
     const aggregatedResult = aggregateData(filteredData);

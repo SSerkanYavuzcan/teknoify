@@ -3,6 +3,19 @@ import { logout, requireAuth } from "../lib/auth.js";
 import { getProjects, getUserEntitledProjectIds } from "../lib/data.js";
 import { createEl, qs } from "../utils/dom.js";
 
+function normalizeProjectId(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+}
+
+function isProjectActive(status) {
+  if (typeof status === "boolean") return status;
+  const normalized = String(status || "").trim().toLowerCase();
+  return ["active", "enabled", "1", "true"].includes(normalized);
+}
+
 /**
  * Admin impersonation varsa hedef UID'yi bul.
  * NOT: Buradaki key isimleri farklı olabilir diye birkaç olası anahtar okuyoruz.
@@ -11,9 +24,11 @@ import { createEl, qs } from "../utils/dom.js";
 function getImpersonatedUidFromStorage() {
   return (
     localStorage.getItem("teknoify_impersonate_uid") ||
+    localStorage.getItem("tk_impersonate_uid") ||
     localStorage.getItem("impersonate_uid") ||
     localStorage.getItem("impersonateUid") ||
     sessionStorage.getItem("teknoify_impersonate_uid") ||
+    sessionStorage.getItem("tk_impersonate_uid") ||
     sessionStorage.getItem("impersonate_uid") ||
     sessionStorage.getItem("impersonateUid") ||
     null
@@ -27,12 +42,35 @@ function getEffectiveUserId(session) {
   return session.userId;
 }
 
+
+function appendImpersonationContext(path) {
+  const impUid =
+    localStorage.getItem("teknoify_impersonate_uid") ||
+    localStorage.getItem("tk_impersonate_uid") ||
+    sessionStorage.getItem("teknoify_impersonate_uid") ||
+    "";
+
+  if (!impUid) return path;
+
+  const impName =
+    localStorage.getItem("teknoify_impersonate_name") ||
+    sessionStorage.getItem("teknoify_impersonate_name") ||
+    "";
+
+  const [base, hash = ""] = String(path || "").split("#");
+  const [pathname, query = ""] = base.split("?");
+  const params = new URLSearchParams(query);
+  params.set("imp_uid", impUid);
+  if (impName) params.set("imp_name", impName);
+  const qs = params.toString();
+  return `${pathname}${qs ? `?${qs}` : ""}${hash ? `#${hash}` : ""}`;
+}
+
 function resolveProjectUrl(path) {
   if (!path) return "#";
   if (/^(https?:)?\/\//.test(path)) return path; // absolute URL
-  if (path.startsWith("/")) return path;         // site root
-  // dashboard içindeyiz, "pages/xyz.html" direkt doğru çalışır
-  return path;
+  // site içi tüm relative/absolute pathlerde impersonation context'i taşı
+  return appendImpersonationContext(path);
 }
 
 function renderProjects(projects) {
@@ -57,12 +95,10 @@ function renderProjects(projects) {
 
     const actionLink = createEl("a", {
       className: "btn btn-sm btn-primary",
-      text: "Demo Aç"
+      text: "Keşfet"
     });
 
     actionLink.href = resolveProjectUrl(project.demoUrl);
-    actionLink.target = "_blank";
-    actionLink.rel = "noopener noreferrer";
 
     actions.append(actionLink);
     card.append(title, description, actions);
@@ -82,11 +118,13 @@ async function init() {
 
   // Kritik fix: entitlements'ı effective UID ile çek
   const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
+  const entitledSet = new Set(entitledIds.map(normalizeProjectId).filter(Boolean));
 
   const allProjects = await getProjects();
-  const activeProjects = allProjects.filter(
-    (p) => p.status === "active" && entitledIds.includes(p.id)
-  );
+  const activeProjects = allProjects.filter((project) => {
+    const projectId = normalizeProjectId(project.id || project.projectId);
+    return isProjectActive(project.status) && entitledSet.has(projectId);
+  });
 
   renderProjects(activeProjects);
 

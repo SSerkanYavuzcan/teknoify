@@ -5,7 +5,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  setDoc,
   writeBatch,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -22,14 +21,24 @@ export async function getAdminUids() {
 
 export async function getProjects() {
   const snap = await getDocs(collection(db, "projects"));
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return snap.docs.map((d) => {
+    const data = d.data() || {};
+    const explicitId = String(data.id || data.projectId || "").trim();
+    return {
+      ...data,
+      docId: d.id,
+      id: explicitId || d.id
+    };
+  });
 }
 
 export async function getUserEntitledProjectIds(userId) {
   const snap = await getDoc(doc(db, "entitlements", userId));
   if (!snap.exists()) return [];
-  const data = snap.data();
-  return Array.isArray(data.projectIds) ? data.projectIds : [];
+  const data = snap.data() || {};
+  if (Array.isArray(data.projectIds)) return data.projectIds;
+  if (Array.isArray(data.projects)) return data.projects;
+  return [];
 }
 
 export async function getAllEntitlements() {
