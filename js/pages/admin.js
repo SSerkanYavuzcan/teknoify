@@ -68,11 +68,9 @@ function setImpersonatedUid(uid, name = "") {
     if (!uid) {
       localStorage.removeItem(IMPERSONATE_KEY);
       localStorage.removeItem("tk_impersonate_uid");
-      localStorage.removeItem("teknoify_impersonate_name");
     } else {
       localStorage.setItem(IMPERSONATE_KEY, uid);
       localStorage.removeItem("tk_impersonate_uid");
-      localStorage.setItem("teknoify_impersonate_name", String(name || "").trim());
     }
   } catch {
     // ignore
@@ -150,8 +148,8 @@ function makeCheckbox({ checked, onChange }) {
   return input;
 }
 
-function goToUserAs(uid, name) {
-  setImpersonatedUid(uid, name);
+function goToUserAs(uid) {
+  setImpersonatedUid(uid);
   window.location.href = "/dashboard/index.html";
 }
 
@@ -204,7 +202,7 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   });
   impBtn.type = "button";
   impBtn.disabled = !session.isAdmin;
-  impBtn.addEventListener("click", () => goToUserAs(user.id, name));
+  impBtn.addEventListener("click", () => goToUserAs(user.id));
 
   const stopBtn = createEl("button", {
     className: "btn btn-sm btn-outline",

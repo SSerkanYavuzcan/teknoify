@@ -143,7 +143,6 @@ async function getEffectiveSession(realSession) {
   const targetProfileSnap = await getDoc(doc(db, "users", targetUid));
   if (!targetProfileSnap.exists()) {
     window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-    window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
     return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
@@ -151,7 +150,6 @@ async function getEffectiveSession(realSession) {
   const targetIsAdmin = await isAdminUid(targetUid);
   if (targetIsAdmin) {
     window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-    window.localStorage.removeItem(IMPERSONATE_NAME_KEY);
     return { ...realSession, impersonating: false, realIsAdmin: realSession.isAdmin };
   }
 
