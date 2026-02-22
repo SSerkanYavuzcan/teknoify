@@ -16,63 +16,100 @@ const _FIREBASE_CONFIG = {
 
 if (!firebase.apps.length) firebase.initializeApp(_FIREBASE_CONFIG);
 const auth = firebase.auth();
-const db = firebase.firestore();
+window.auth = auth;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function safeLower(s) { return String(s || '').trim().toLowerCase(); }
+function safeLower(s) { return String(s || "").trim().toLowerCase(); }
 
-function toggleSidebar() { document.body.classList.toggle('sidebar-closed'); }
+function toggleSidebar() { document.body.classList.toggle("sidebar-closed"); }
 
-// ─── Firestore helpers ────────────────────────────────────────────────────────
-async function ensureUserProfile(user) {
-  const uid = user.uid;
-  const email = safeLower(user.email);
-  const ref = db.collection('users').doc(uid);
-  const snap = await ref.get();
+function safeStorageGet(storage, key) {
+  try {
+    return storage.getItem(key) || "";
+  } catch {
+    return "";
+  }
+}
 
-  if (snap.exists) {
-    const data = snap.data() || {};
-    if (!data.email && email) {
-      await ref.set({ email }, { merge: true });
-      return { ...data, email };
-    }
-    return data;
+function safeStorageSet(storage, key, value) {
+  try {
+    storage.setItem(key, value);
+  } catch {
+    // ignore
+  }
+}
+
+function getImpersonatedContext() {
+  const params = new URLSearchParams(window.location.search || "");
+  const queryUid = String(params.get("imp_uid") || "").trim();
+  const queryName = String(params.get("imp_name") || "").trim();
+
+  const storageUid = (
+    safeStorageGet(localStorage, "teknoify_impersonate_uid") ||
+    safeStorageGet(localStorage, "tk_impersonate_uid") ||
+    safeStorageGet(localStorage, "impersonate_uid") ||
+    safeStorageGet(localStorage, "impersonateUid") ||
+    safeStorageGet(sessionStorage, "teknoify_impersonate_uid") ||
+    safeStorageGet(sessionStorage, "tk_impersonate_uid") ||
+    safeStorageGet(sessionStorage, "impersonate_uid") ||
+    safeStorageGet(sessionStorage, "impersonateUid")
+  );
+
+  const storageName =
+    safeStorageGet(localStorage, "teknoify_impersonate_name") ||
+    safeStorageGet(sessionStorage, "teknoify_impersonate_name");
+
+  const uid = queryUid || String(storageUid || "").trim();
+  const name = queryName || String(storageName || "").trim();
+
+  if (uid) {
+    safeStorageSet(localStorage, "teknoify_impersonate_uid", uid);
+    try { localStorage.removeItem("tk_impersonate_uid"); } catch { /* ignore */ }
+    if (name) safeStorageSet(localStorage, "teknoify_impersonate_name", name);
   }
 
-  const fallbackName = user.displayName || (email ? email.split('@')[0] : 'User');
-  const profile = {
-    uid, email,
-    name: fallbackName,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  await ref.set(profile, { merge: true });
-  return profile;
+  return { uid, name };
 }
 
-async function isAdmin(uid) {
-  const snap = await db.collection('admins').doc(uid).get();
-  return snap.exists === true;
+function applyUserUI(displayName) {
+  const finalName = String(displayName || "User").trim() || "User";
+  const nameEl = document.getElementById("user-name-display");
+  const avatarEl = document.getElementById("user-avatar");
+
+  if (nameEl) nameEl.textContent = finalName;
+  if (avatarEl) avatarEl.textContent = finalName.charAt(0).toUpperCase();
 }
 
-async function hasEntitlement(uid, projectId) {
-  const snap = await db.collection('entitlements').doc(uid).get();
-  if (!snap.exists) return false;
-  const data = snap.data() || {};
-  const ids = Array.isArray(data.projectIds) ? data.projectIds : [];
-  return ids.includes(projectId);
+
+function scheduleInitialDataLoad(retry = 0) {
+  const maxRetry = 20; // ~10sn
+
+  if (typeof applyFilters === "function" && typeof flatpickrInstance !== "undefined" && flatpickrInstance) {
+    applyFilters();
+    return;
+  }
+
+  if (retry >= maxRetry) {
+    const tbody = document.getElementById("table-body");
+    if (tbody) {
+      tbody.innerHTML =
+        '<tr><td colspan="100%" style="text-align:center;padding:30px;color:#f59e0b;">Veri yükleme başlatılamadı. Lütfen sayfayı yenileyin veya tarih aralığını yeniden seçip "Verileri Yükle" butonuna basın.</td></tr>';
+    }
+    return;
+  }
+
+  setTimeout(() => scheduleInitialDataLoad(retry + 1), 500);
 }
 
-function applyUserUI(profile, firebaseUser) {
-  const email = safeLower(firebaseUser.email);
-  const displayName =
-    profile?.name ||
-    firebaseUser.displayName ||
-    (email ? email.split('@')[0] : 'User');
+function resolveDisplayName({ user, isImpersonating, impersonatedName }) {
+  const realEmail = safeLower(user?.email);
+  const realName = String(user?.displayName || "").trim();
 
-  const nameEl = document.getElementById('user-name-display');
-  const avatarEl = document.getElementById('user-avatar');
-  if (nameEl) nameEl.textContent = displayName;
-  if (avatarEl) avatarEl.textContent = displayName.charAt(0).toUpperCase();
+  if (isImpersonating && impersonatedName) return impersonatedName;
+  if (isImpersonating) return "İmpersonated User";
+  if (realName) return realName;
+  if (realEmail) return realEmail.split("@")[0];
+  return "User";
 }
 
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
@@ -81,54 +118,59 @@ async function bootstrap() {
 
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
-      window.location.href = cfg.rootPath + 'pages/login.html';
+      window.location.href = cfg.rootPath + "pages/login.html";
       return;
     }
 
     try {
-      const uid = user.uid;
-      const profile = await ensureUserProfile(user);
-      applyUserUI(profile, user);
+      const realUid = user.uid;
+      const imp = getImpersonatedContext();
+      const isImpersonating = Boolean(imp.uid && imp.uid !== realUid);
+      const effectiveUid = isImpersonating ? imp.uid : realUid;
 
-      const admin = await isAdmin(uid);
-      if (!admin) {
-        const entitled = await hasEntitlement(uid, cfg.projectId);
-        if (!entitled) {
-          alert('Bu hizmete erişim yetkiniz bulunmamaktadır.');
-          window.location.href = cfg.basePath + 'member.html';
-          return;
-        }
-      }
+      const displayName = resolveDisplayName({
+        user,
+        isImpersonating,
+        impersonatedName: imp.name
+      });
+      applyUserUI(displayName);
+
+      // yetki/entitlement kontrolü backend'de effective_uid ile yapılır.
+      window.USER_ALLOWED_STORES = [];
+      window.USER_EFFECTIVE_UID = effectiveUid;
+      window.USER_IS_IMPERSONATING = isImpersonating;
+      window.WS_AUTH_BOOTSTRAPPED = true;
 
       initCalendar();
-      // BigQuery mimarisinde sheetUrl artık kullanılmıyor.
-      // Kullanıcı tarih seçip "Verileri Yükle"ye basınca applyFilters() → initData() → API çağrısı yapılır.
+      scheduleInitialDataLoad();
     } catch (err) {
-      console.error('Bootstrap error:', err);
-      const tbody = document.getElementById('table-body');
+      console.error("Bootstrap error:", err);
+      const tbody = document.getElementById("table-body");
       if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center;padding:30px;color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
+        tbody.innerHTML =
+          '<tr><td colspan="100%" style="text-align:center;padding:30px;color:#ef4444;">Profil yüklenirken hata oluştu.</td></tr>';
       }
     }
   });
 
   // Global menu close
-  document.addEventListener('click', function (e) {
-    if (!e.target.closest('.multi-select-wrapper')) {
-      document.querySelectorAll('.multi-select-menu').forEach(m => m.classList.remove('show'));
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".multi-select-wrapper")) {
+      document.querySelectorAll(".multi-select-menu").forEach((m) => m.classList.remove("show"));
     }
-    const wrapper = document.querySelector('.download-wrapper');
-    const menu = document.getElementById('download-menu');
-    if (wrapper && menu && !wrapper.contains(e.target)) menu.classList.remove('show');
+    const wrapper = document.querySelector(".download-wrapper");
+    const menu = document.getElementById("download-menu");
+    if (wrapper && menu && !wrapper.contains(e.target)) menu.classList.remove("show");
   });
 }
 
 function logout() {
-  if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+  if (confirm("Çıkış yapmak istediğinize emin misiniz?")) {
     auth.signOut().finally(() => {
-      window.location.href = PROJECT_CONFIG.rootPath + 'index.html';
+      window.location.href = PROJECT_CONFIG.rootPath + "index.html";
     });
   }
 }
 
-document.addEventListener('DOMContentLoaded', bootstrap);
+document.addEventListener("DOMContentLoaded", bootstrap);
+window.WS_AUTH_SCRIPT_LOADED = true;

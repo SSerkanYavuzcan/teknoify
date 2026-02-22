@@ -19,7 +19,7 @@ const PROJECT_CONFIG = {
     ourStoreLabel: 'Bizim',                  // ⚠️ Müşteri mağaza adını girin
 
     // ── API ENDPOINT (Cloud Function URL) ───────────────────────────────────────
-    apiEndpoint: 'https://REGION-PROJECT_ID.cloudfunctions.net/teknoify-api',
+    apiEndpoint: 'https://europe-west1-teknoify-9449c.cloudfunctions.net/teknoify-api',
 
     // ── YOL TANIMLARI ─────────────────────────────────────────────────────────
     basePath: '../../',    // dashboard sayfaları (member.html vb.)

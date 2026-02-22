@@ -19,7 +19,7 @@ const PROJECT_CONFIG = {
     // ── API ENDPOINT (Cloud Function URL) ───────────────────────────────────────
     // deploy.sh çalıştırıldıktan sonra gelen URL'yi buraya girin.
     // Örnek: 'https://europe-west1-teknoify-9449c.cloudfunctions.net/teknoify-api'
-    apiEndpoint: 'https://REGION-PROJECT_ID.cloudfunctions.net/teknoify-api',
+    apiEndpoint: 'https://europe-west1-teknoify-9449c.cloudfunctions.net/teknoify-api',
 
     // ── YOL TANIMLARI ─────────────────────────────────────────────────────────
     basePath: '../../',    // member.html, market-analysis.html gibi dashboard içi sayfalar
