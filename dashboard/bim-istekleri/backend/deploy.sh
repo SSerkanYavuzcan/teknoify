@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-PROJECT_ID="teknoify-9449c"
+PROJECT_ID="bim_faz_2"
 REGION="europe-west1"
 FUNCTION_NAME="teknoify-bim-api"
 ENTRY_POINT="api"
@@ -22,7 +22,7 @@ fi
 # shellcheck disable=SC1090
 source "$ENV_FILE"
 
-echo "🚀 Deploying ${FUNCTION_NAME} to ${PROJECT_ID}..."
+echo "🚀 Deploying ${FUNCTION_NAME}..."
 
 gcloud functions deploy "${FUNCTION_NAME}" \
   --gen2 \
@@ -35,7 +35,7 @@ gcloud functions deploy "${FUNCTION_NAME}" \
   --memory="${MEMORY}" \
   --timeout="${TIMEOUT}" \
   --service-account="${SERVICE_ACCOUNT}" \
-  --set-env-vars="GCP_PROJECT=${GCP_PROJECT},DEFAULT_PROJECT_CODE=${DEFAULT_PROJECT_CODE},BQ_DATASET=${BQ_DATASET},BQ_TABLE=${BQ_TABLE},MAX_ROWS=${MAX_ROWS},ALLOWED_ORIGINS=${ALLOWED_ORIGINS},API_ALLOWLIST=${API_ALLOWLIST},HTTP_TIMEOUT=${HTTP_TIMEOUT}" \
+  --set-env-vars="GCP_PROJECT=${GCP_PROJECT},BQ_DATASET=${BQ_DATASET},BQ_TABLE=${BQ_TABLE},MAX_ROWS=${MAX_ROWS},ALLOWED_ORIGINS=${ALLOWED_ORIGINS},API_ALLOWLIST=${API_ALLOWLIST},HTTP_TIMEOUT=${HTTP_TIMEOUT}" \
   --source="$(dirname "$0")"
 
 echo "✅ Deployment tamamlandı"
