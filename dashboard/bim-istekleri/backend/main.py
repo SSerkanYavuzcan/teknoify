@@ -15,7 +15,7 @@ Auth
 Notes
 - Kullanıcı yetkilendirmesi Firestore `entitlements/{uid}` üzerinden yapılır.
 - BigQuery sorgusu tarih aralığına göre çalışır.
-- Export çıktısı JSON/CSV/XLSX üretir.
+- Export çıktısı JSON veya CSV üretir (Excel için CSV önerilir).
 """
 
 from __future__ import annotations
@@ -32,7 +32,6 @@ import firebase_admin
 from firebase_admin import auth as firebase_auth
 from firebase_admin import firestore
 from google.cloud import bigquery
-from openpyxl import Workbook
 
 
 if not firebase_admin._apps:
@@ -43,13 +42,12 @@ fs_client = firestore.client()
 
 
 GCP_PROJECT = os.environ.get("GCP_PROJECT", "")
-BQ_DATASET = os.environ.get("BQ_DATASET", "teknoify_bim")
+BQ_DATASET = os.environ.get("BQ_DATASET", "teknoify_scraping")
 BQ_TABLE = os.environ.get("BQ_TABLE", "bim_requests")
 MAX_ROWS = int(os.environ.get("MAX_ROWS", "20000"))
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*")
 HTTP_TIMEOUT = int(os.environ.get("HTTP_TIMEOUT", "20"))
 API_ALLOWLIST = [u.strip() for u in os.environ.get("API_ALLOWLIST", "").split(",") if u.strip()]
-DEFAULT_PROJECT_CODE = os.environ.get("DEFAULT_PROJECT_CODE", "bim_faz_2")
 
 
 def _cors(extra: dict[str, str] | None = None) -> dict[str, str]:
@@ -94,13 +92,21 @@ def _verify_token(request):
 
 
 def _get_project_entitlement(uid: str, project_id: str) -> dict[str, Any]:
+    """
+    entitlements/{uid} örnek yapısı:
+    {
+      "projects": ["web_scraping", "bim_faz_2"],
+      "projectStores": {"bim_faz_2": ["BIM", "FILE"]},
+      "apiAllowlist": ["https://..."]
+    }
+    """
     snap = fs_client.collection("entitlements").document(uid).get()
     if not snap.exists:
         return {"enabled": False, "stores": [], "api_allowlist": []}
 
     data = snap.to_dict() or {}
-    project_ids = data.get("projectIds") or data.get("projects") or []
-    enabled = project_id in project_ids if isinstance(project_ids, list) else False
+    projects = data.get("projects") or data.get("projectIds") or []
+    enabled = project_id in projects if isinstance(projects, list) else False
 
     project_stores = data.get("projectStores") or data.get("projectStoreAccess") or {}
     stores = project_stores.get(project_id, []) if isinstance(project_stores, dict) else []
@@ -171,29 +177,13 @@ def _rows_to_csv(rows: list[dict[str, Any]]) -> str:
     return out.getvalue()
 
 
-def _rows_to_xlsx(rows: list[dict[str, Any]]) -> bytes:
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "bim_istekleri"
-
-    if rows:
-        headers = list(rows[0].keys())
-        ws.append(headers)
-        for row in rows:
-            ws.append([row.get(h) for h in headers])
-
-    out = io.BytesIO()
-    wb.save(out)
-    return out.getvalue()
-
-
 def _handle_query(request):
     uid, err = _verify_token(request)
     if err:
         return _json({"error": err}, 401)
 
     body = request.get_json(force=True, silent=True) or {}
-    project_id = str(body.get("project_id", DEFAULT_PROJECT_CODE)).strip()
+    project_id = str(body.get("project_id", "bim_faz_2")).strip()
     start_date = str(body.get("start_date", "")).strip()
     end_date = str(body.get("end_date", "")).strip()
 
@@ -230,10 +220,10 @@ def _handle_export(request):
 
     body = request.get_json(force=True, silent=True) or {}
     fmt = str(body.get("format", "json")).strip().lower()
-    if fmt not in {"json", "csv", "excel", "xlsx"}:
-        return _json({"error": "format json, csv, excel veya xlsx olmalıdır"}, 400)
+    if fmt not in {"json", "csv", "excel"}:
+        return _json({"error": "format json, csv veya excel olmalıdır"}, 400)
 
-    project_id = str(body.get("project_id", DEFAULT_PROJECT_CODE)).strip()
+    project_id = str(body.get("project_id", "bim_faz_2")).strip()
     start_date = str(body.get("start_date", "")).strip()
     end_date = str(body.get("end_date", "")).strip()
 
@@ -259,26 +249,21 @@ def _handle_export(request):
             },
         )
 
-    if fmt in {"excel", "xlsx"}:
-        xlsx_bytes = _rows_to_xlsx(rows)
-        return (
-            xlsx_bytes,
-            200,
-            {
-                **_cors(),
-                "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "Content-Disposition": f'attachment; filename="{export_name}.xlsx"',
-            },
-        )
-
     csv_text = _rows_to_csv(rows)
+    extension = "xlsx" if fmt == "excel" else "csv"
+    content_type = (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        if fmt == "excel"
+        else "text/csv; charset=utf-8"
+    )
+
     return (
         csv_text,
         200,
         {
             **_cors(),
-            "Content-Type": "text/csv; charset=utf-8",
-            "Content-Disposition": f'attachment; filename="{export_name}.csv"',
+            "Content-Type": content_type,
+            "Content-Disposition": f'attachment; filename="{export_name}.{extension}"',
         },
     )
 
@@ -297,7 +282,7 @@ def _handle_api_fetch(request):
         return _json({"error": err}, 401)
 
     body = request.get_json(force=True, silent=True) or {}
-    project_id = str(body.get("project_id", DEFAULT_PROJECT_CODE)).strip()
+    project_id = str(body.get("project_id", "bim_faz_2")).strip()
     target_url = str(body.get("url", "")).strip()
     method = str(body.get("method", "GET")).strip().upper()
     headers = body.get("headers") if isinstance(body.get("headers"), dict) else {}
