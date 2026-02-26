@@ -8,10 +8,6 @@ const DEFAULT_PROJECT_URLS = {
   bim_faz_2: "/dashboard/bim-istekleri/index.html"
 };
 
-function normalizeProjectId(value) {
-  return String(value || "").trim().toLowerCase();
-}
-
 /**
  * Admin impersonation varsa hedef UID'yi bul.
  * NOT: Buradaki key isimleri farklı olabilir diye birkaç olası anahtar okuyoruz.
@@ -81,6 +77,16 @@ function redirectIfSingleProject(projects) {
   return true;
 }
 
+function redirectIfSingleProject(projects) {
+  if (!Array.isArray(projects) || projects.length !== 1) return false;
+
+  const target = resolveProjectUrl(projects[0]?.demoUrl);
+  if (!target || target === "#") return false;
+
+  window.location.replace(target);
+  return true;
+}
+
 function renderProjects(projects) {
   const list = qs("#project-list");
   const empty = qs("#project-empty");
@@ -127,19 +133,10 @@ async function init() {
   // Kritik fix: entitlements'ı effective UID ile çek
   const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
 
-  const normalizedEntitled = entitledIds.map((id) => normalizeProjectId(id)).filter(Boolean);
-
-  let candidateProjects = [];
-  try {
-    candidateProjects = await getProjects();
-  } catch {
-    // Bazı Firestore kurallarında collection list yasak olabilir; doc-by-id fallback.
-    candidateProjects = await getProjectsByIds(entitledIds);
-  }
-
-  const activeProjects = candidateProjects.filter((p) => {
+  const allProjects = await getProjects();
+  const activeProjects = allProjects.filter((p) => {
     const isActive = !p.status || String(p.status).toLowerCase() === "active";
-    return isActive && normalizedEntitled.includes(normalizeProjectId(p.id));
+    return isActive && entitledIds.includes(p.id);
   });
 
   if (redirectIfSingleProject(activeProjects)) return;
