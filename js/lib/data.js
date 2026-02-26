@@ -5,7 +5,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  setDoc,
   writeBatch,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -28,8 +27,15 @@ export async function getProjects() {
 export async function getUserEntitledProjectIds(userId) {
   const snap = await getDoc(doc(db, "entitlements", userId));
   if (!snap.exists()) return [];
-  const data = snap.data();
-  return Array.isArray(data.projectIds) ? data.projectIds : [];
+  const data = snap.data() || {};
+
+  if (Array.isArray(data.projectIds)) return data.projectIds;
+  if (typeof data.projectIds === "string" && data.projectIds.trim()) return [data.projectIds.trim()];
+
+  if (Array.isArray(data.projects)) return data.projects;
+  if (typeof data.projects === "string" && data.projects.trim()) return [data.projects.trim()];
+
+  return [];
 }
 
 export async function getAllEntitlements() {
