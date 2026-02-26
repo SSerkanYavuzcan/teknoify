@@ -60,6 +60,16 @@ function resolveProjectUrl(path) {
   return appendImpersonationContext(path);
 }
 
+function redirectIfSingleProject(projects) {
+  if (!Array.isArray(projects) || projects.length !== 1) return false;
+
+  const target = resolveProjectUrl(projects[0]?.demoUrl);
+  if (!target || target === "#") return false;
+
+  window.location.replace(target);
+  return true;
+}
+
 function renderProjects(projects) {
   const list = qs("#project-list");
   const empty = qs("#project-empty");
@@ -111,6 +121,7 @@ async function init() {
     (p) => p.status === "active" && entitledIds.includes(p.id)
   );
 
+  if (redirectIfSingleProject(activeProjects)) return;
   renderProjects(activeProjects);
 
   const logoutButton = qs("#logout-btn");
