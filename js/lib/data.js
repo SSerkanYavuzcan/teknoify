@@ -45,10 +45,7 @@ export async function getUserEntitledProjectIds(userId) {
   const data = snap.data() || {};
 
   if (Array.isArray(data.projectIds)) return data.projectIds;
-  if (typeof data.projectIds === "string" && data.projectIds.trim()) return [data.projectIds.trim()];
-
   if (Array.isArray(data.projects)) return data.projects;
-  if (typeof data.projects === "string" && data.projects.trim()) return [data.projects.trim()];
 
   return [];
 }
