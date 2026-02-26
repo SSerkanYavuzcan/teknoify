@@ -24,6 +24,21 @@ export async function getProjects() {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
+export async function getProjectsByIds(projectIds) {
+  const ids = Array.isArray(projectIds) ? projectIds : [];
+  const normalized = ids.map((id) => String(id || "").trim()).filter(Boolean);
+
+  const docs = await Promise.all(
+    normalized.map(async (id) => {
+      const snap = await getDoc(doc(db, "projects", id));
+      if (!snap.exists()) return null;
+      return { id: snap.id, ...snap.data() };
+    })
+  );
+
+  return docs.filter(Boolean);
+}
+
 export async function getUserEntitledProjectIds(userId) {
   const snap = await getDoc(doc(db, "entitlements", userId));
   if (!snap.exists()) return [];

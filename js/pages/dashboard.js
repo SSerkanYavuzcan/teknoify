@@ -1,6 +1,6 @@
 // js/pages/dashboard.js
 import { logout, requireAuth } from "../lib/auth.js";
-import { getProjects, getUserEntitledProjectIds } from "../lib/data.js";
+import { getProjects, getProjectsByIds, getUserEntitledProjectIds } from "../lib/data.js";
 import { createEl, qs } from "../utils/dom.js";
 
 const DEFAULT_PROJECT_URLS = {
