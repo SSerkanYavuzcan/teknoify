@@ -3,6 +3,11 @@ import { logout, requireAuth } from "../lib/auth.js";
 import { getProjects, getUserEntitledProjectIds } from "../lib/data.js";
 import { createEl, qs } from "../utils/dom.js";
 
+const DEFAULT_PROJECT_URLS = {
+  web_scraping: "/dashboard/web-scraping/quickcommerce/index.html",
+  bim_faz_2: "/dashboard/bim-istekleri/index.html"
+};
+
 /**
  * Admin impersonation varsa hedef UID'yi bul.
  * NOT: Buradaki key isimleri farklı olabilir diye birkaç olası anahtar okuyoruz.
@@ -53,11 +58,23 @@ function appendImpersonationContext(path) {
   return `${pathname}${qs ? `?${qs}` : ""}${hash ? `#${hash}` : ""}`;
 }
 
-function resolveProjectUrl(path) {
-  if (!path) return "#";
-  if (/^(https?:)?\/\//.test(path)) return path; // absolute URL
+function resolveProjectUrl(path, projectId = "") {
+  const fallback = DEFAULT_PROJECT_URLS[projectId] || "#";
+  const finalPath = path || fallback;
+  if (!finalPath) return "#";
+  if (/^(https?:)?\/\//.test(finalPath)) return finalPath; // absolute URL
   // site içi tüm relative/absolute pathlerde impersonation context'i taşı
-  return appendImpersonationContext(path);
+  return appendImpersonationContext(finalPath);
+}
+
+function redirectIfSingleProject(projects) {
+  if (!Array.isArray(projects) || projects.length !== 1) return false;
+
+  const target = resolveProjectUrl(projects[0]?.demoUrl, projects[0]?.id);
+  if (!target || target === "#") return false;
+
+  window.location.replace(target);
+  return true;
 }
 
 function redirectIfSingleProject(projects) {
@@ -87,7 +104,7 @@ function renderProjects(projects) {
   projects.forEach((project) => {
     const card = createEl("article", { className: "service-card" });
     const title = createEl("h3", { text: project.name });
-    const description = createEl("p", { text: project.description });
+    const description = createEl("p", { text: project.description || "Bu hizmet için panel erişimi." });
     const actions = createEl("div", { className: "card-ctas" });
 
     const actionLink = createEl("a", {
@@ -95,7 +112,7 @@ function renderProjects(projects) {
       text: "Keşfet"
     });
 
-    actionLink.href = resolveProjectUrl(project.demoUrl);
+    actionLink.href = resolveProjectUrl(project.demoUrl, project.id);
 
     actions.append(actionLink);
     card.append(title, description, actions);
@@ -117,9 +134,10 @@ async function init() {
   const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
 
   const allProjects = await getProjects();
-  const activeProjects = allProjects.filter(
-    (p) => p.status === "active" && entitledIds.includes(p.id)
-  );
+  const activeProjects = allProjects.filter((p) => {
+    const isActive = !p.status || String(p.status).toLowerCase() === "active";
+    return isActive && entitledIds.includes(p.id);
+  });
 
   if (redirectIfSingleProject(activeProjects)) return;
   renderProjects(activeProjects);
