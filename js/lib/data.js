@@ -5,7 +5,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  setDoc,
   writeBatch,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -25,11 +24,33 @@ export async function getProjects() {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
+export async function getProjectsByIds(projectIds) {
+  const ids = Array.isArray(projectIds) ? projectIds : [];
+  const normalized = ids.map((id) => String(id || "").trim()).filter(Boolean);
+
+  const docs = await Promise.all(
+    normalized.map(async (id) => {
+      const snap = await getDoc(doc(db, "projects", id));
+      if (!snap.exists()) return null;
+      return { id: snap.id, ...snap.data() };
+    })
+  );
+
+  return docs.filter(Boolean);
+}
+
 export async function getUserEntitledProjectIds(userId) {
   const snap = await getDoc(doc(db, "entitlements", userId));
   if (!snap.exists()) return [];
-  const data = snap.data();
-  return Array.isArray(data.projectIds) ? data.projectIds : [];
+  const data = snap.data() || {};
+
+  if (Array.isArray(data.projectIds)) return data.projectIds;
+  if (typeof data.projectIds === "string" && data.projectIds.trim()) return [data.projectIds.trim()];
+
+  if (Array.isArray(data.projects)) return data.projects;
+  if (typeof data.projects === "string" && data.projects.trim()) return [data.projects.trim()];
+
+  return [];
 }
 
 export async function getAllEntitlements() {

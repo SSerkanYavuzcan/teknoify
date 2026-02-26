@@ -1,6 +1,7 @@
 // js/lib/auth.js
 import { auth, db } from "./firebase.js";
 import {
+  getIdTokenResult,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut
@@ -53,8 +54,42 @@ async function waitForAuthUser() {
 }
 
 async function isAdminUid(uid) {
-  const snap = await getDoc(doc(db, "admins", uid));
-  return snap.exists();
+  try {
+    const adminSnap = await getDoc(doc(db, "admins", uid));
+    if (adminSnap.exists()) return true;
+  } catch {
+    // admins koleksiyonuna erişim rule ile kapalı olabilir.
+  }
+
+  try {
+    const userSnap = await getDoc(doc(db, "users", uid));
+    if (userSnap.exists()) {
+      const profile = userSnap.data() || {};
+      if (profile.role === "admin" || profile.isAdmin === true) return true;
+    }
+  } catch {
+    // users profilinden role okunamıyorsa claims fallback'i denenecek.
+  }
+
+  return false;
+}
+
+async function isAdminUser(user) {
+  if (!user?.uid) return false;
+
+  const fromFirestore = await isAdminUid(user.uid);
+  if (fromFirestore) return true;
+
+  try {
+    const tokenResult = await getIdTokenResult(user);
+    const claims = tokenResult?.claims || {};
+    if (claims.admin === true) return true;
+    if (claims.role === "admin") return true;
+  } catch {
+    // claims okunamıyorsa false
+  }
+
+  return false;
 }
 
 async function ensureUserProfile(user) {
@@ -80,7 +115,7 @@ async function buildRealSession(user) {
   const uid = user.uid;
   const email = normalizeEmail(user.email);
 
-  const admin = await isAdminUid(uid);
+  const admin = await isAdminUser(user);
 
   // Profil name'i okumak için:
   const profileSnap = await getDoc(doc(db, "users", uid));
