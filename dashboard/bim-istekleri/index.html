@@ -289,7 +289,6 @@
       if (action === 'run') {
         const orderId = document.getElementById("filter-order-id").value.trim();
         if (!orderId) {
-          // Burada kendi Toast fonksiyonumuzu çağırıyoruz
           if(typeof window.showCustomToast === 'function') {
             window.showCustomToast("Eksik Bilgi", "Lütfen işleme başlamadan önce bir Sipariş Numarası (Order ID) giriniz.", "error");
           }
@@ -301,7 +300,15 @@
         btnDownload.classList.add("active-shimmer");
         
       } else if (action === 'download') {
-        if (btnDownload.classList.contains("btn-passive")) return;
+        if (btnDownload.classList.contains("btn-passive")) {
+           showCustomToast("Uyarı", "İndirme yapabilmek için önce 'İstek Gönder' butonunu kullanın.", "warning");
+           return;
+        }
+        
+        // Yeni yazdığımız indirme fonksiyonunu çağır
+        downloadResponseAsJSON();
+        
+        // İndirme sonrası butonun parlamasını durdurup tekrar pasif duruma alıyoruz (İsteğe bağlı)
         btnDownload.classList.remove("active-shimmer");
         btnDownload.classList.add("btn-passive");
         btnRun.classList.add("active-shimmer");
@@ -320,11 +327,42 @@
         btnDev.className = "btn-dev-closed btn-align-fix";
       }
     }
+
+    // Yeni İndirme Fonksiyonumuz
+    function downloadResponseAsJSON() {
+      const responseElement = document.getElementById("rc-response");
+      const content = responseElement.innerText || responseElement.textContent;
+
+      if (!content || content.includes("Henüz istek gönderilmedi") || content.trim() === "") {
+        showCustomToast("İndirme Başarısız", "İndirilecek bir veri bulunamadı. Lütfen önce istek gönderin.", "warning");
+        return;
+      }
+
+      // Order ID'yi al, yoksa varsayılan isim kullan
+      let orderId = document.getElementById("filter-order-id").value.trim();
+      if (!orderId) {
+        orderId = "api_response";
+      }
+      const fileName = `${orderId}.json`;
+
+      // JSON formatında Blob oluştur
+      const blob = new Blob([content], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      // İndirme işlemini tetikle
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+
+      // Temizle
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showCustomToast("Başarılı", `${fileName} başarıyla indirildi.`, "success");
+    }
   </script>
 
 </body>
 </html>
-
-
-
-
