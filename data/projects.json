@@ -1,0 +1,25 @@
+[
+  {
+    "id": "pim_automation",
+    "name": "PIM Automation",
+    "description": "Ürün bilgi yönetimi süreçlerini otomatikleştirerek katalog operasyonlarını hızlandırır.",
+    "demoUrl": "pages/api.html",
+    "status": "active"
+  },
+  
+  {
+    "id": "banner_rpa",
+    "name": "Banner Automation",
+    "description": "Kampanya banner üretimi ve güncellemelerini otomatikleştirir.",
+    "demoUrl": "pages/rpa.html",
+    "status": "active"
+  },
+
+  {
+  "id": "web_scraping",
+  "name": "Web Scraping",
+  "description": "Web scraping otomasyonları ve veri toplama hizmeti.",
+  "demoUrl": "pages/webscraping.html",
+  "status": "active"
+}
+]

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Console | Teknoify</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
+  <link rel="stylesheet" href="../../../css/analysis.css?v=8">
+
+  <link rel="stylesheet" href="./api-console.css?v=8">
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+  <div id="tk-toast" class="tk-toast">
+    <i id="tk-toast-icon" class="fas fa-exclamation-triangle tk-toast-icon"></i>
+    <div class="tk-toast-content">
+      <h4 id="tk-toast-title">Dikkat</h4>
+      <p id="tk-toast-message">Mesaj buraya gelecek.</p>
+    </div>
+  </div>
+
+  <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fas fa-cube"></i> <span>Teknoify</span>
+    </div>
+    <nav>
+      <a href="../../dashboard/member.html" class="menu-item">
+        <i class="fas fa-home"></i> <span>Genel Bakış</span>
+      </a>
+      
+      <div style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
+        <span>Hizmetler</span>
+      </div>
+
+      <div id="dynamic-services-menu">
+        </div>
+
+    </nav>
+    <div class="menu-spacer"></div>
+    <div class="sidebar-footer">
+      <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
+        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
+      </a>
+      <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    
+    <header class="top-bar">
+      <h2>API Console</h2>
+      <div class="user-profile">
+        <span id="user-name-display">Yükleniyor...</span>
+        <div class="avatar" id="user-avatar">U</div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div class="filter-bar" style="margin-bottom: 20px;">
+        
+        <div class="filter-group" style="min-width: 260px;">
+          <label class="custom-filter-label">Rapor Tarihi</label>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-calendar-alt input-icon"></i>
+            <input type="text" id="filter-date" class="rc-input flatpickr-input" placeholder="Tarih Aralığı Seçiniz" readonly />
+          </div>
+        </div>
+
+        <div class="filter-group" style="min-width: 240px;">
+          <label class="custom-filter-label">Sipariş Numarası (Order ID)</label>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-hashtag input-icon"></i>
+            <input id="filter-order-id" class="rc-input" placeholder="örn: pnu2-y3h8" />
+          </div>
+        </div>
+        
+        <div style="flex-grow: 1;"></div>
+
+        <div style="display:flex; align-items:flex-end; gap: 12px;">
+          
+          <button id="btn-run-flow" class="btn-animated-send btn-align-fix active-shimmer" onclick="uiToggleActionButtons('run')">
+            <i class="fas fa-paper-plane"></i> İstek Gönder
+          </button>
+
+          <button id="btn-download-flow" class="btn-animated-send btn-align-fix btn-passive" onclick="uiToggleActionButtons('download')">
+            <i class="fas fa-download"></i> İndir
+          </button>
+
+          <button id="btn-dev-mode" class="btn-dev-closed btn-align-fix" onclick="toggleDevMode()">
+            <span class="btn-content-inner"><i class="fas fa-terminal"></i> Geliştirici Modu</span>
+          </button>
+
+        </div>
+        
+      </div>
+
+      <div id="dev-mode-container" class="dev-window-wrapper hidden-dev">
+        <div class="dev-window">
+          
+          <div class="dev-window-header">
+            <div class="dev-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="dev-title">api_core.sh</div>
+            <div style="width: 44px;"></div>
+          </div>
+
+          <div class="dev-window-body">
+            
+            <div class="chart-box dev-inner-box" style="margin-bottom: 20px; padding: 20px;">
+              <div class="chart-header" style="margin-bottom: 15px;">
+                <div class="chart-title"><i class="fas fa-paper-plane" style="opacity:.8; margin-right:8px;"></i> Request</div>
+              </div>
+
+              <div class="rc-row request-action-row" id="request-action-row" data-method="GET" style="margin-bottom:15px; display:flex; gap:10px;">
+                <div class="rc-method-wrap">
+                  <select id="rc-method" class="rc-select" onchange="document.getElementById('request-action-row').setAttribute('data-method', this.value)">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="DELETE">DELETE</option>
+                    <option value="HEAD">HEAD</option>
+                    <option value="OPTIONS">OPTIONS</option>
+                  </select>
+                </div>
+                <input id="rc-url" class="rc-input grow" placeholder="https://.../endpoint" />
+                <button id="rc-send" class="btn-animated-send btn-short active-shimmer" type="button">
+                  <i class="fas fa-bolt"></i> Send
+                </button>
+              </div>
+
+              <div class="rc-tabs">
+                <div class="rc-tab active" data-tab="headers">Headers</div>
+                <div class="rc-tab" data-tab="body">Body (JSON)</div>
+              </div>
+
+              <div id="rc-panel-headers">
+                <div id="rc-headers"></div>
+                <div class="rc-row" style="margin-top:12px; gap:10px; display:flex;">
+                  <button id="rc-add-header" class="btn-filter" type="button" style="padding: 6px 12px; height: auto;">
+                    <i class="fas fa-plus"></i> Header Ekle
+                  </button>
+                  <button id="rc-clear-headers" class="btn-filter" type="button" style="background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #ffb4b4; padding: 6px 12px; height: auto;">
+                    Temizle
+                  </button>
+                </div>
+              </div>
+
+              <div id="rc-panel-body">
+                <textarea id="rc-body" class="rc-textarea" placeholder='{"example": true}'></textarea>
+              </div>
+
+              <div id="rc-panel-bq">
+                <input id="rc-bq-table" class="rc-input" placeholder="dataset.table veya preset key" />
+              </div>
+
+            </div>
+
+            <div class="chart-box dev-inner-box" style="margin-bottom: 20px; padding: 20px;">
+              <div class="chart-header" style="margin-bottom: 15px;">
+                <div class="chart-title"><i class="fas fa-diagram-project" style="opacity:.8; margin-right:8px;"></i> Akış</div>
+              </div>
+
+              <div class="rc-flow">
+                <div class="rc-flow-step">
+                  <div class="rc-flow-badge">1</div>
+                  <div>
+                    <div class="rc-flow-title">Token Al</div>
+                    <div class="rc-flow-desc">Auth endpoint’inden Bearer token üret.</div>
+                  </div>
+                </div>
+                <div class="rc-flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="rc-flow-step">
+                  <div class="rc-flow-badge">2</div>
+                  <div>
+                    <div class="rc-flow-title">Customer Info</div>
+                    <div class="rc-flow-desc">Token ile müşteri bilgisini çek.</div>
+                  </div>
+                </div>
+                <div class="rc-flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="rc-flow-step">
+                  <div class="rc-flow-badge">3</div>
+                  <div>
+                    <div class="rc-flow-title">Sonuç</div>
+                    <div class="rc-flow-desc">Final JSON çıktısını göster.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-box dev-inner-box" style="padding: 20px;">
+              <div class="chart-header" style="margin-bottom: 15px; display:flex; justify-content:space-between; width: 100%;">
+                <div class="chart-title"><i class="fas fa-inbox" style="opacity:.8; margin-right:8px;"></i> Response</div>
+                <div style="font-size: 13px; color: #aaa; font-family: 'Fira Code', monospace;">
+                  <span id="rc-status" style="margin-right:15px;">Status: -</span>
+                  <span id="rc-time">Time: -</span>
+                </div>
+              </div>
+
+              <div class="rc-tabs">
+                <div class="rc-tab active" data-rtab="resp">Body</div>
+                <div class="rc-tab" data-rtab="rheaders">Headers</div>
+              </div>
+
+              <div id="rc-rpanel-resp">
+                <div id="rc-response" class="rc-pre">Henüz istek gönderilmedi.</div>
+              </div>
+              <div id="rc-rpanel-rheaders" class="hidden">
+                <div id="rc-response-headers" class="rc-pre">-</div>
+              </div>
+              <div id="rc-rpanel-preview" class="hidden">
+                <div id="rc-preview-wrap" class="rc-pre">Önizleme yok.</div>
+              </div>
+            </div>
+
+          </div> </div> </div> </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+
+  <script src="config.js"></script>
+  <script src="../shared/auth.js?v=20260228"></script>
+  <script src="../shared/request-console.js?v=20260301"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      flatpickr("#filter-date", {
+        mode: "range",
+        dateFormat: "d.m.Y",
+        locale: "tr",
+        disableMobile: "true"
+      });
+    });
+
+    function showCustomToast(title, message, type = 'warning') {
+      const toast = document.getElementById("tk-toast");
+      const toastTitle = document.getElementById("tk-toast-title");
+      const toastMsg = document.getElementById("tk-toast-message");
+      const toastIcon = document.getElementById("tk-toast-icon");
+
+      toastTitle.innerText = title;
+      toastMsg.innerText = message;
+
+      if (type === 'error' || type === 'warning') {
+        toastIcon.className = "fas fa-exclamation-triangle tk-toast-icon";
+        toast.style.borderLeftColor = "#ef4444";
+        toastIcon.style.color = "#ef4444";
+      } else if (type === 'success') {
+        toastIcon.className = "fas fa-check-circle tk-toast-icon";
+        toast.style.borderLeftColor = "#22c55e";
+        toastIcon.style.color = "#22c55e";
+      }
+
+      toast.classList.add("show");
+      
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3500);
+    }
+
+    function uiToggleActionButtons(action) {
+      const btnRun = document.getElementById("btn-run-flow");
+      const btnDownload = document.getElementById("btn-download-flow");
+
+      if (action === 'run') {
+        const orderId = document.getElementById("filter-order-id").value.trim();
+        if (!orderId) {
+          // Burada kendi Toast fonksiyonumuzu çağırıyoruz
+          if(typeof window.showCustomToast === 'function') {
+            window.showCustomToast("Eksik Bilgi", "Lütfen işleme başlamadan önce bir Sipariş Numarası (Order ID) giriniz.", "error");
+          }
+          return; 
+        }
+
+        btnRun.classList.remove("active-shimmer");
+        btnDownload.classList.remove("btn-passive");
+        btnDownload.classList.add("active-shimmer");
+        
+      } else if (action === 'download') {
+        if (btnDownload.classList.contains("btn-passive")) return;
+        btnDownload.classList.remove("active-shimmer");
+        btnDownload.classList.add("btn-passive");
+        btnRun.classList.add("active-shimmer");
+      }
+    }
+
+    function toggleDevMode() {
+      const container = document.getElementById("dev-mode-container");
+      const btnDev = document.getElementById("btn-dev-mode");
+      
+      if (container.classList.contains("hidden-dev")) {
+        container.classList.remove("hidden-dev");
+        btnDev.className = "btn-animated-send btn-orange btn-align-fix active-shimmer";
+      } else {
+        container.classList.add("hidden-dev");
+        btnDev.className = "btn-dev-closed btn-align-fix";
+      }
+    }
+  </script>
+
+</body>
+</html>
+
+
+
+

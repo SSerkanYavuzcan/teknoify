@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teknoify • Admin Impersonate</title>
+
+    <!-- mevcut stil dosyalarını sadece kullanıyoruz, değiştirmiyoruz -->
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+
+  <body>
+    <main style="max-width: 720px; margin: 64px auto; padding: 0 16px">
+      <h1 style="margin-bottom: 8px">Admin Gözetim (Impersonate)</h1>
+      <p style="opacity: 0.85; margin-top: 0">
+        Bir kullanıcıyı şifresiz “o kullanıcı gibi” görüntülemek için listeden seç.
+        <br />
+        <strong>Not:</strong> Bu MVP backend’sizdir; gerçek güvenlik sağlamaz.
+      </p>
+
+      <form id="impersonate-form" style="display: grid; gap: 12px; margin-top: 24px">
+        <label>
+          Kullanıcı seç
+          <select id="targetUser" name="targetUser" required style="width: 100%; padding: 12px; margin-top: 6px">
+            <option value="" selected disabled>Yükleniyor...</option>
+          </select>
+        </label>
+
+        <label>
+          Hedef sayfa
+          <select id="targetPath" name="targetPath" style="width: 100%; padding: 12px; margin-top: 6px">
+            <option value="/dashboard/member.html">Member dashboard</option>
+            <option value="/dashboard/index.html">Dashboard index</option>
+            <option value="/">Ana sayfa</option>
+          </select>
+        </label>
+
+        <button type="submit" style="padding: 12px 14px; cursor: pointer">
+          View as (Başlat)
+        </button>
+      </form>
+
+      <hr style="margin: 28px 0; opacity: 0.25" />
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap">
+        <button id="stop-impersonation" type="button" style="padding: 10px 12px; cursor: pointer">
+          Impersonate’i durdur (Admin’e dön)
+        </button>
+        <a href="/dashboard/admin.html" style="padding: 10px 0">Admin paneline git</a>
+      </div>
+
+      <p id="status" style="margin-top: 18px; opacity: 0.85"></p>
+    </main>
+
+    <script src="../js/impersonate.js" defer></script>
+  </body>
+</html>

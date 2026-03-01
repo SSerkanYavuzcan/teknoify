@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Teknoify</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/06-pages/dashboard-portal.css" />
+  </head>
+  <body>
+    <header class="header" style="position: static">
+      <nav class="navbar">
+        <div class="nav-container">
+          <div class="logo">
+            <a href="index.html" aria-label="Dashboard">
+              <span class="logo-icon">T</span>
+              <span class="logo-text">Teknoify Admin</span>
+            </a>
+          </div>
+          <ul class="nav-menu" style="display: flex">
+            <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
+            <li class="nav-item">
+              <button id="logout-btn" class="btn btn-sm btn-outline">Çıkış Yap</button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main class="page-frame portal-frame">
+      <section class="portal-shell admin-layout">
+        <div class="portal-hero">
+          <h1>Kullanıcı Erişim Yönetimi</h1>
+          <p>Kullanıcıların satın aldığı hizmetleri yönetin, erişimleri güvenli şekilde güncelleyin ve impersonation ile deneyimi doğrulayın.</p>
+        </div>
+
+        <div id="admin-status-anchor"></div>
+
+        <div id="impersonation-banner" class="impersonation-banner"></div>
+
+        <div id="entitlement-table-wrapper" class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Kullanıcı</th>
+                <th>Aldığı Hizmetler</th>
+                <th>Aksiyonlar</th>
+              </tr>
+            </thead>
+
+            <tbody id="admin-user-table-body"></tbody>
+          </table>
+        </div>
+
+        <div id="admin-actions">
+          <button id="save-entitlements" class="btn btn-primary">Değişiklikleri Kaydet</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="../js/pages/admin.js"></script>
+  </body>
+</html>

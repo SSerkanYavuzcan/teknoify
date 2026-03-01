@@ -1,0 +1,411 @@
+/* ==========================================================================
+   API Console Özel Bileşen Stilleri (api-console.css)
+   ========================================================================== */
+
+:root {
+  --get: #22c55e;
+  --post: #eab308;
+  --put: #3b82f6;
+  --patch: #a855f7;
+  --delete: #ef4444;
+  --head: #2dd4bf;
+  --options: #f472b6;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.hidden { display: none !important; }
+.grow { flex: 1; min-width: 0; }
+.rc-row { display: flex; align-items: center; gap: 12px; }
+
+/* ==========================================================================
+   1. Gelişmiş Inputlar, İkonlar ve Etiketler
+   ========================================================================== */
+.custom-filter-label {
+  font-size: 14px; 
+  font-weight: 700; 
+  color: #fff; 
+  margin-bottom: 10px; 
+  display: inline-block; 
+  letter-spacing: 0.2px;
+}
+
+.rc-input, .rc-textarea {
+  width: 100%;
+  border-radius: 8px; 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  padding: 10px 14px;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.rc-input:focus, .rc-textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+.rc-textarea {
+  min-height: 200px;
+  font-family: var(--font-mono);
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.input-icon-wrapper { position: relative; display: flex; align-items: center; }
+.input-icon { position: absolute; left: 14px; color: #818cf8; font-size: 1.1rem; z-index: 10; }
+.input-icon-wrapper .rc-input { padding-left: 42px; height: 42px; }
+
+/* ==========================================================================
+   2. Dinamik Request Satırı (Metotlara Göre Lazer Işık)
+   ========================================================================== */
+.request-action-row[data-method="GET"] { --method-color: var(--get); }
+.request-action-row[data-method="POST"] { --method-color: var(--post); }
+.request-action-row[data-method="PUT"] { --method-color: var(--put); }
+.request-action-row[data-method="PATCH"] { --method-color: var(--patch); }
+.request-action-row[data-method="DELETE"] { --method-color: var(--delete); }
+.request-action-row[data-method="HEAD"] { --method-color: var(--head); }
+.request-action-row[data-method="OPTIONS"] { --method-color: var(--options); }
+
+.rc-method-wrap {
+  position: relative;
+  width: 110px;
+  min-width: 110px;
+  border-radius: 9px;
+  padding: 1px; 
+  overflow: hidden; 
+  z-index: 1;
+}
+.rc-method-wrap::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(transparent 60%, var(--method-color) 100%);
+  animation: rotate-method-light 2.5s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotate-method-light {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.rc-select {
+  appearance: none;
+  width: 100%;
+  height: 40px; 
+  background: #191e2b; 
+  border: none;
+  border-radius: 8px; 
+  color: var(--method-color); 
+  padding: 10px 30px 10px 14px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+}
+.rc-method-wrap::after {
+  content: "▾";
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--method-color);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.rc-select option { background: #191e2b; font-weight: 700; }
+.rc-select option[value="GET"] { color: var(--get); }
+.rc-select option[value="POST"] { color: var(--post); }
+.rc-select option[value="PUT"] { color: var(--put); }
+.rc-select option[value="PATCH"] { color: var(--patch); }
+.rc-select option[value="DELETE"] { color: var(--delete); }
+.rc-select option[value="HEAD"] { color: var(--head); }
+.rc-select option[value="OPTIONS"] { color: var(--options); }
+
+/* ==========================================================================
+   3. Orijinal Animasyonlu Butonlar ve Geliştirici Kapalı Modu
+   ========================================================================== */
+.btn-animated-send {
+  position: relative;
+  overflow: hidden; 
+  background: linear-gradient(135deg, #6366f1, #4f46e5); 
+  border: none;
+  color: #fff;
+  height: 42px;
+  padding: 0 20px;
+  min-width: 170px; 
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-orange {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+}
+.btn-orange:not(.btn-passive):hover {
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6);
+}
+
+.btn-passive {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+}
+
+.btn-align-fix { margin-bottom: 8px; }
+.btn-short { min-width: 120px; margin-bottom: 0px; }
+
+.btn-animated-send:not(.btn-passive):hover {
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Shimmer (Işık) Animasyonu */
+.active-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -150%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  animation: shimmer-sweep 3s ease-in-out infinite alternate;
+  z-index: 3; /* İç yazının üzerinden geçmesi için */
+  pointer-events: none;
+}
+
+@keyframes shimmer-sweep {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* Geliştirici Modu Butonu (Kapalı Durum - Turuncu Dönen Lazer) */
+.btn-dev-closed {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  border: none;
+  color: #fff;
+  height: 42px;
+  padding: 0 20px;
+  min-width: 170px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.btn-dev-closed::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(transparent 70%, #ea580c 100%);
+  animation: rotate-method-light 2.5s linear infinite;
+  z-index: 0;
+}
+.btn-dev-closed::after {
+  content: '';
+  position: absolute;
+  top: 1px; left: 1px; right: 1px; bottom: 1px;
+  background: #191e2b; /* Panelin zemin rengiyle uyumlu */
+  border-radius: 7px;
+  z-index: 1;
+  transition: background 0.2s;
+}
+.btn-dev-closed:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+}
+.btn-dev-closed:hover::after {
+  background: #202636;
+}
+/* Maskenin Üstünde Duran Buton İçeriği */
+.btn-content-inner {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   4. GELİŞTİRİCİ MODU PENCERESİ (Mac Terminal Tasarımı)
+   ========================================================================== */
+.dev-window-wrapper {
+  transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.4s ease;
+  max-height: 2500px; 
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+  margin-top: 10px;
+}
+.dev-window-wrapper.hidden-dev {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-15px);
+  pointer-events: none;
+}
+
+.dev-window {
+  background: #0d1117; 
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin-bottom: 40px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+
+.dev-window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dev-dots { display: flex; gap: 8px; }
+.dev-dots .dot { width: 12px; height: 12px; border-radius: 50%; }
+.dev-dots .red { background: #ff5f56; }
+.dev-dots .yellow { background: #ffbd2e; }
+.dev-dots .green { background: #27c93f; }
+
+.dev-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.dev-window-body { padding: 24px; }
+
+.dev-window-body .dev-inner-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+.dev-window-body .dev-inner-box:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* ==========================================================================
+   5. Sekmeler (Tabs)
+   ========================================================================== */
+.rc-tabs { display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap; }
+.rc-tab {
+  font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03); color: #888; cursor: pointer;
+  transition: all 0.2s ease; border: 1px solid transparent;
+}
+.rc-tab:hover { background: rgba(255, 255, 255, 0.08); color: #ddd; }
+.rc-tab.active {
+  background: rgba(99, 102, 241, 0.15); color: #818cf8; border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* ==========================================================================
+   6. Akış Adımları (Flow Steps)
+   ========================================================================== */
+.rc-flow { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+.rc-flow-step {
+  flex: 1; min-width: 200px; display: flex; gap: 12px; align-items: flex-start;
+  padding: 15px; border-radius: 10px; background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.rc-flow-badge {
+  width: 28px; height: 28px; min-width: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px; background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.rc-flow-title { font-weight: 700; font-size: 13px; color: #e2e8f0; }
+.rc-flow-desc { margin-top: 5px; font-size: 12px; color: #888; line-height: 1.4; }
+.rc-flow-arrow { color: rgba(255, 255, 255, 0.15); font-size: 14px; }
+
+/* ==========================================================================
+   7. Headers Key-Value Satırları
+   ========================================================================== */
+.rc-kv { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 10px; }
+.rc-kv-remove {
+  width: 38px; height: 38px; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.1); color: #f87171; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+}
+.rc-kv-remove:hover { background: rgba(239, 68, 68, 0.2); }
+
+/* ==========================================================================
+   8. Response / Kod Görüntüleme Alanı
+   ========================================================================== */
+.rc-pre {
+  background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px; padding: 15px; color: #cbd5e1; font-family: var(--font-mono);
+  font-size: 13px; min-height: 200px; white-space: pre-wrap; word-break: break-all;
+}
+
+/* ==========================================================================
+   9. Flatpickr Özelleştirilmiş Karanlık Tema
+   ========================================================================== */
+.flatpickr-calendar {
+  background: #1f232c !important; border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important; border-radius: 16px !important;
+  padding: 15px !important; font-family: inherit !important; width: 340px !important;
+}
+.flatpickr-calendar:before, .flatpickr-calendar:after { display: none !important; }
+.flatpickr-months { background: transparent !important; margin-bottom: 20px !important; }
+
+.flatpickr-current-month { display: flex !important; align-items: center !important; justify-content: center !important; color: #fff !important; font-size: 1.1rem; padding-top: 0 !important; }
+.flatpickr-current-month .flatpickr-monthDropdown-months { background: transparent !important; color: #fff !important; font-weight: 700 !important; margin-right: 8px !important; width: auto !important; }
+.flatpickr-current-month .flatpickr-monthDropdown-months option { background: #1f232c !important; color: #fff !important; font-weight: 500 !important; padding: 5px !important; }
+.flatpickr-current-month input.cur-year { color: #fff !important; font-weight: 700 !important; background: transparent !important; }
+
+.flatpickr-prev-month, .flatpickr-next-month { fill: #fff !important; transition: 0.3s; }
+.flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg { fill: #818cf8 !important; filter: drop-shadow(0 0 5px rgba(129, 140, 248, 0.8)); }
+span.flatpickr-weekday { color: #aaa !important; font-weight: 600 !important; }
+
+.flatpickr-day { border-radius: 8px !important; color: #ddd !important; transition: all 0.2s ease; }
+.flatpickr-day:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
+.flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected { background: linear-gradient(135deg, #6366f1, #4f46e5) !important; color: #ffffff !important; font-weight: 800 !important; border: none !important; box-shadow: 0 0 15px rgba(99, 102, 241, 0.5) !important; }
+.flatpickr-day.inRange { background: rgba(99, 102, 241, 0.2) !important; box-shadow: -5px 0 0 rgba(99, 102, 241, 0.2), 5px 0 0 rgba(99, 102, 241, 0.2) !important; }
+.flatpickr-day.today { border: 1px solid rgba(99, 102, 241, 0.8) !important; }
+
+/* ==========================================================================
+   10. Özel Bildirim Kutusu (Toast Notification)
+   ========================================================================== */
+.tk-toast {
+  position: fixed;
+  top: 24px;
+  right: -350px; 
+  width: 310px;
+  background: #1f232c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #ef4444; 
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+}
+
+.tk-toast.show { right: 24px; }
+.tk-toast-icon { font-size: 20px; color: #ef4444; margin-top: 2px; }
+.tk-toast-content h4 { margin: 0 0 5px 0; color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 0.3px; }
+.tk-toast-content p { margin: 0; color: #cbd5e1; font-size: 13px; line-height: 1.5; }

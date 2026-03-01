@@ -1,0 +1,389 @@
+/* ==========================================================================
+   PAZAR ANALİZİ DEMO (VİTRİN) ÖZEL STİLLERİ
+   Dosya: dashboard/demo/market-analysis/market-analysis.css
+   ========================================================================== */
+
+/* Demo Rozeti */
+.premium-badge {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  vertical-align: middle;
+  margin-left: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   YENİ: GOOGLE ANALYTICS MİMARİSİNDE KURUMSAL LİSTE VE KART TASARIMLARI
+   ========================================================================== */
+
+/* Ortak GA Liste Yapısı (Hem Sağ Panel Hem Alt Kartlar İçin) */
+.ga-section { margin-bottom: 24px; }
+.ga-section-title {
+  font-size: 11px;
+  color: #94a3b8; 
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ga-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ga-row {
+  display: flex;
+  align-items: baseline;
+  padding: 8px 0;
+}
+
+.ga-label {
+  color: #cbd5e1;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.help-icon {
+  font-size: 11px;
+  color: #64748b;
+  cursor: help;
+}
+
+/* Noktalı Kılavuz Çizgi (Dotted Leader) */
+.ga-leader {
+  flex-grow: 1;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.2);
+  margin: 0 10px;
+  position: relative;
+  top: -3px;
+}
+
+.ga-val {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Kilitli Liste Değerleri (Sansür) */
+.locked-val {
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.locked-val:hover { color: #f97316; }
+.locked-val .blur { 
+  filter: blur(4px); 
+  opacity: 0.5; 
+  user-select: none; 
+  font-family: 'Fira Code', monospace; 
+}
+.locked-val i { font-size: 11px; }
+
+/* Alt 4'lü Kartların Çerçevesi */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ga-card {
+  background: rgba(15, 23, 42, 0.4); 
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.ga-card-header {
+  font-size: 11px;
+  color: #94a3b8; 
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Minimalist Marka Noktaları (Dots) */
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.brand-dot.bim { background-color: #ef4444; }
+.brand-dot.a101 { background-color: #06b6d4; }
+.brand-dot.sok { background-color: #eab308; }
+.brand-dot.migros { background-color: #f97316; }
+.brand-dot.carrefour { background-color: #3b82f6; }
+
+
+/* ==========================================================================
+   DİĞER ELEMANLAR (Harita, Tablo, Filtreler, Modallar)
+   ========================================================================== */
+
+.ma-table { width: 100%; border-collapse: collapse; text-align: left; }
+.ma-table th { padding: 15px; color: #888; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.ma-table td { padding: 15px; color: #cbd5e1; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+.ma-table tr:hover td { background: rgba(255,255,255,0.02); }
+.status-up { color: #ef4444; font-weight: 600; } 
+.status-down { color: #22c55e; font-weight: 600; } 
+
+.dark-map-tiles { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+
+.custom-map-controls {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  padding: 6px;
+  backdrop-filter: blur(5px);
+}
+
+.map-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.map-btn:hover:not(.locked) { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.map-btn.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+.map-btn-divider { height: 1px; background: rgba(255, 255, 255, 0.1); margin: 6px 0; width: 100%; }
+.map-btn.locked { cursor: pointer; opacity: 0.8; }
+.map-btn.locked:hover { background: rgba(249, 115, 22, 0.1); color: #f97316; }
+
+.lock-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 10px;
+  color: #f97316;
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.custom-leaflet-icon { background: transparent; border: none; }
+
+.brand-logo-marker {
+  width: 36px;
+  height: 36px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: 3px solid; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.brand-logo-marker:hover { transform: scale(1.15); z-index: 999 !important; }
+.brand-logo-marker img { width: 55%; height: 55%; object-fit: contain; object-position: center; }
+.fallback-text { display: none; font-weight: 800; font-size: 18px; font-family: 'Inter Tight', sans-serif; }
+
+.panel-scroll-container { overflow-y: auto; overflow-x: hidden; }
+.panel-scroll-container::-webkit-scrollbar { width: 6px; }
+.panel-scroll-container::-webkit-scrollbar-track { background: transparent; }
+.panel-scroll-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+.panel-scroll-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+.form-group { display: flex; flex-direction: column; }
+.form-label { font-size: 11px; color: #888; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
+
+.tk-dropdown {
+  position: relative;
+  background-color: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+  transition: border-color 0.2s;
+}
+.tk-dropdown:hover { border-color: rgba(255, 255, 255, 0.2); }
+.tk-dropdown.open { border-color: #f97316; }
+
+.tk-dropdown-header {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  font-weight: 500;
+}
+
+.tk-dropdown-list {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  background-color: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  z-index: 1100;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tk-dropdown.open .tk-dropdown-list { display: flex; }
+
+.tk-dropdown-item {
+  padding: 12px 14px;
+  color: #cbd5e1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+}
+.tk-dropdown-item:hover { background-color: rgba(255, 255, 255, 0.05); color: #fff; }
+.tk-dropdown-item.active { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; font-weight: 600; }
+.tk-dropdown-item.locked { color: #64748b; cursor: pointer; }
+.tk-dropdown-item.locked:hover { background-color: rgba(249, 115, 22, 0.05); color: #f97316; }
+.tk-dropdown-item.locked span i { font-size: 11px; opacity: 0.8; }
+
+.region-trigger-btn {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.region-trigger-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #fff;
+}
+
+.tag-container { display: flex; flex-wrap: wrap; gap: 8px; }
+.filter-tag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+.filter-tag.active { background-color: rgba(255, 255, 255, 0.05); }
+.filter-tag.locked { border-color: rgba(255,255,255,0.1); color: #64748b; background-color: transparent; }
+.filter-tag.locked:hover { border-color: #f97316; color: #f97316; background-color: rgba(249, 115, 22, 0.05); }
+
+/* SİTEYE ÖZEL İLETİŞİME GEÇ & BÖLGE MODAL (POP-UP) SİSTEMİ */
+.tk-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.tk-modal-overlay.show { opacity: 1; visibility: visible; }
+
+.tk-modal {
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.tk-modal-overlay.show .tk-modal { transform: translateY(0); }
+
+.tk-modal-icon {
+  font-size: 40px;
+  margin-bottom: 15px;
+  display: inline-block;
+  filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.4));
+}
+
+.tk-modal-title { color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+.tk-modal-text { color: #94a3b8; font-size: 14px; line-height: 1.5; margin-bottom: 25px; }
+
+.tk-modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+.tk-modal-actions button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tk-btn-cancel {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.tk-btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; }
+
+.tk-btn-confirm { color: #fff; display: flex; align-items: center; gap: 8px; }
+.tk-btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(249, 115, 22, 0.4); }
+
+.region-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: left; }
+.region-locked-item {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 14px 15px;
+  border-radius: 8px;
+  color:

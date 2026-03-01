@@ -1,0 +1,143 @@
+// js/pages/dashboard.js
+import { logout, requireAuth } from "../lib/auth.js";
+import { getProjects, getProjectsByIds, getUserEntitledProjectIds } from "../lib/data.js";
+import { createEl, qs } from "../utils/dom.js";
+
+const DEFAULT_PROJECT_URLS = {
+  web_scraping: "/dashboard/web-scraping/quickcommerce/index.html",
+  bim_faz_2: "/dashboard/bim-istekleri/index.html"
+};
+
+/**
+ * Admin impersonation varsa hedef UID'yi bul.
+ * NOT: Buradaki key isimleri farklı olabilir diye birkaç olası anahtar okuyoruz.
+ * Admin.js hangi key ile set ediyorsa onu yakalar.
+ */
+function getImpersonatedUidFromStorage() {
+  return (
+    localStorage.getItem("teknoify_impersonate_uid") ||
+    localStorage.getItem("tk_impersonate_uid") ||
+    localStorage.getItem("impersonate_uid") ||
+    localStorage.getItem("impersonateUid") ||
+    sessionStorage.getItem("teknoify_impersonate_uid") ||
+    sessionStorage.getItem("tk_impersonate_uid") ||
+    sessionStorage.getItem("impersonate_uid") ||
+    sessionStorage.getItem("impersonateUid") ||
+    null
+  );
+}
+
+function getEffectiveUserId(session) {
+  const imp = getImpersonatedUidFromStorage();
+  // Sadece admin ise impersonate’i dikkate al
+  if (session?.isAdmin && imp && typeof imp === "string") return imp;
+  return session.userId;
+}
+
+function appendImpersonationContext(path) {
+  const impUid =
+    localStorage.getItem("teknoify_impersonate_uid") ||
+    localStorage.getItem("tk_impersonate_uid") ||
+    sessionStorage.getItem("teknoify_impersonate_uid") ||
+    "";
+
+  if (!impUid) return path;
+
+  const impName =
+    localStorage.getItem("teknoify_impersonate_name") ||
+    sessionStorage.getItem("teknoify_impersonate_name") ||
+    "";
+
+  const [base, hash = ""] = String(path || "").split("#");
+  const [pathname, query = ""] = base.split("?");
+  const params = new URLSearchParams(query);
+  params.set("imp_uid", impUid);
+  if (impName) params.set("imp_name", impName);
+  const qs = params.toString();
+  return `${pathname}${qs ? `?${qs}` : ""}${hash ? `#${hash}` : ""}`;
+}
+
+function resolveProjectUrl(path, projectId = "") {
+  const fallback = DEFAULT_PROJECT_URLS[projectId] || "#";
+  const finalPath = path || fallback;
+  if (!finalPath) return "#";
+  if (/^(https?:)?\/\//.test(finalPath)) return finalPath; // absolute URL
+  // site içi tüm relative/absolute pathlerde impersonation context'i taşı
+  return appendImpersonationContext(finalPath);
+}
+
+// ✅ TEK versiyon bırakıldı (duplicate kaldırıldı)
+function redirectIfSingleProject(projects) {
+  if (!Array.isArray(projects) || projects.length !== 1) return false;
+
+  const target = resolveProjectUrl(projects[0]?.demoUrl, projects[0]?.id);
+  if (!target || target === "#") return false;
+
+  window.location.replace(target);
+  return true;
+}
+
+function renderProjects(projects) {
+  const list = qs("#project-list");
+  const empty = qs("#project-empty");
+  if (!list || !empty) return;
+
+  list.innerHTML = "";
+
+  if (!projects.length) {
+    empty.hidden = false;
+    return;
+  }
+
+  empty.hidden = true;
+
+  projects.forEach((project) => {
+    const card = createEl("article", { className: "service-card" });
+    const title = createEl("h3", { text: project.name });
+    const description = createEl("p", { text: project.description || "Bu hizmet için panel erişimi." });
+    const actions = createEl("div", { className: "card-ctas" });
+
+    const actionLink = createEl("a", {
+      className: "btn btn-sm btn-primary",
+      text: "Keşfet"
+    });
+
+    actionLink.href = resolveProjectUrl(project.demoUrl, project.id);
+
+    actions.append(actionLink);
+    card.append(title, description, actions);
+    list.append(card);
+  });
+}
+
+async function init() {
+  const session = await requireAuth();
+  if (!session) return;
+
+  const effectiveUserId = getEffectiveUserId(session);
+
+  // Header name: istersen burada "impersonated" etiketi de gösterebilirsin
+  const userName = qs("#session-user-name");
+  if (userName) userName.textContent = session.name || "Kullanıcı";
+
+  // Kritik fix: entitlements'ı effective UID ile çek
+  const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
+
+  const allProjects = await getProjects();
+  const activeProjects = allProjects.filter((p) => {
+    const isActive = !p.status || String(p.status).toLowerCase() === "active";
+    return isActive && entitledIds.includes(p.id);
+  });
+
+  if (redirectIfSingleProject(activeProjects)) return;
+  renderProjects(activeProjects);
+
+  const logoutButton = qs("#logout-btn");
+  if (logoutButton) logoutButton.addEventListener("click", logout);
+
+  // Admin linki admin’de kalsın (impersonate olsa bile)
+  const adminLink = qs("#admin-link");
+  if (adminLink) adminLink.hidden = !session.isAdmin;
+}
+
+init();

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Yönlendiriliyor... | Teknoify</title>
+  <style>
+    body {
+      margin: 0;
+      background: #14161c;
+      color: #ccc;
+      font-family: 'Inter Tight', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <p>Yönlendiriliyor, lütfen bekleyin...
+    <a id="fallback-link" href="web-scraping/quickcommerce/index.html" style="color:#7367f0;">Tıklayınız</a>
+  </p>
+
+  <script>
+    (function () {
+      const target = `web-scraping/quickcommerce/index.html${window.location.search || ""}${window.location.hash || ""}`;
+      const link = document.getElementById('fallback-link');
+      if (link) link.href = target;
+      window.location.replace(target);
+    })();
+  </script>
+</body>
+
+</html>

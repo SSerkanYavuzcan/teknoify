@@ -1,0 +1,9 @@
+# bim-istekleri/backend/requirements.txt
+
+functions-framework==3.5.0
+firebase-admin==6.5.0
+requests==2.31.0
+# Not: BigQuery'yi kodumuzdan temizlemiştik, 
+# eğer başka bir yerde kullanmıyorsan silebilirsin. 
+# Kullanıyorsan alt satırı aktif bırak:
+# google-cloud-bigquery==3.15.0

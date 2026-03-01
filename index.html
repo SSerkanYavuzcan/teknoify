@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   
+    <title>Teknoify | Kurumsal Otomasyon & Veri Çözümleri</title>
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+
+
+
+
+
+
+
+    <meta name="description" content="AI destekli otomasyon, veri analizi ve akıllı çözümler." />
+    <meta name="robots" content="index, follow" />
+
+
+
+
+
+
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+
+
+
+
+
+
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+
+
+
+
+
+
+
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+
+
+
+
+
+
+
+<body>
+
+
+
+
+
+
+
+
+<header id="header" class="header">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="#home" aria-label="Ana Sayfa">
+                    <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                    <span class="logo-text">Teknoify</span>
+                </a>
+            </div>
+
+
+
+
+
+
+
+
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="#home" class="nav-link">Ana Sayfa</a></li>
+               
+                <li class="nav-item dropdown">
+                    <a href="#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="pages/rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="pages/webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+                        <li><a href="pages/ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+                        <li><a href= "pages/api.html"><i class="fas fa-plug"></i>API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="pages/financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="pages/training-consulting.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
+                    </ul>
+                </li>
+
+
+
+
+
+
+
+
+                <li class="nav-item"><a href="#contact" class="nav-link">İletişim</a></li>
+
+
+
+
+
+
+
+
+                <li class="nav-item nav-login-btn">
+                    <button id="openLoginBtn" class="btn btn-sm btn-outline">
+                        <i class="fas fa-user"></i> Giriş Yap
+                    </button>
+                </li>
+            </ul>
+
+
+
+
+
+
+
+
+            <div class="hamburger" aria-label="Menü" role="button">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+
+
+
+
+
+
+
+<main class="page-frame">
+
+
+
+
+
+
+
+
+    <section id="home" class="hero">
+        <div id="stars-container" class="hero-surface"></div>
+
+
+
+
+
+
+
+
+        <div class="hero-container">
+            <div class="hero-left">
+                <h1 class="hero-title">Geleceğin İş Gücünü <br> <span class="gradient-text">Bugün İnşa Edin</span></h1>
+                <p class="hero-subtitle">Yapay zeka tabanlı otomasyon sistemleri ile işletmenizin verimliliğini maksimum seviyeye çıkarın.</p>
+               
+                <div class="hero-ctas">
+                    <button class="btn btn-primary trigger-login">Hemen Başla</button>
+                    <a href="#services" class="btn btn-secondary">Hizmetlerimiz</a>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+            <div class="hero-right">
+                <div class="hero-terminal" id="terminalWrapper">
+                    <div class="term-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="term-title">ai_core.py</span>
+                    </div>
+                    <div class="term-body" id="heroTerminal"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hizmetlerimiz</h2>
+                <p>Uçtan uca dijital dönüşüm araçları.</p>
+            </div>
+
+
+
+
+
+
+
+
+            <div class="services-grid">
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-robot"></i></div>
+                    <h3>Robotik Süreç Otomasyonu</h3>
+                    <p>Tekrarlayan görevleri yazılımlara devrederek hızınızı artırın, hataları azaltın ve maliyetlerinizi düşürün. RPA ile ekibiniz stratejik işlere daha fazla odaklanabilir.</p>
+                    <div class="card-ctas">
+                        <a href="pages/rpa.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+
+
+
+
+
+
+
+
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-spider"></i></div>
+                    <h3>Web Scraping</h3>
+                    <p>İnternetteki verileri otomatik toplayıp düzenleyin; rakip fiyatlarını, pazar trendlerini ve ürün verilerini anlık olarak izleyerek güçlü kararlar alın ve rekabette öne geçin.</p>
+                    <div class="card-ctas">
+                        <a href="pages/webscraping.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+               
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-brain"></i></div>
+                    <h3>AI Asistan</h3>
+                    <p>7/24 çalışan yapay zekâ destekli asistanlarla süreçlerinizi otomatikleştirin. Müşteri taleplerini yöneten, bilgi sağlayan ve iş akışlarını hızlandıran akıllı sistemlerle verimliği artırın.</p>
+                    <div class="card-ctas">
+                        <a href="pages/ai-assistant.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+
+
+
+
+
+
+
+
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-plug"></i></div>
+                    <h3>API Entegrasyon Hizmetleri</h3>
+                    <p>Tüm sistemleriniz arasında sorunsuz veri akışı kurarak süreçlerinizi hızlandırın. API entegrasyonlarıyla manuel hataları azaltın ve operasyonlarınızı tek bir akış haline getirin.</p>
+                    <div class="card-ctas">
+                        <a href="pages/api.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+               
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-chart-line"></i></div>
+                    <h3>Finansal İndikatör & Botlar</h3>
+                    <p>Gerçek zamanlı piyasa verilerini analiz eden ve otomatik işlem stratejileri uygulayan trading botlarıyla daha kontrollü, veri odaklı ve hızlı yatırım kararları alın.</p>
+                    <div class="card-ctas">
+                        <a href="pages/financial-indicators.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+
+
+
+
+
+
+
+
+                <article class="service-card">
+                    <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h3>Eğitim & Danışmanlık</h3>
+                    <p>Ekibinizin otomasyon ve veri becerilerini güçlendirin. Doğru teknolojileri doğru stratejiyle uygulayarak projelerinizi daha verimli ve sürdürülebilir hale getirin.</p>
+                    <div class="card-ctas">
+                        <a href="pages/training-consulting.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Projelerinizi Hayata Geçirelim</h2>
+                <p>Aklınızdaki fikri veya ihtiyacınız olan otomasyon çözümünü bize anlatın.</p>
+            </div>
+
+
+
+
+
+
+
+
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <h3>Neden Teknoify?</h3>
+                        <p>İş süreçlerinizi analiz ediyor, size özel botlar ve yapay zeka çözümleri geliştiriyoruz. 7/24 çalışan dijital iş gücünüzü kurmaya hazırız.</p>
+                    </div>
+                   
+                    <div class="contact-methods">
+                        <div class="method-item">
+                            <div class="icon-circle"><i class="fas fa-envelope"></i></div>
+                            <div>
+                                <span>Bize E-posta Gönderin</span>
+                                <a href="mailto:info@teknoify.com">info@teknoify.com</a>
+                            </div>
+                        </div>
+                        <div class="method-item">
+                            <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <span>Lokasyon</span>
+                                <p>İstanbul, Türkiye</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+                <form class="contact-form" action="#" method="POST">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fullname">Adınız Soyadınız</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="fullname" name="fullname" required>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+                        <div class="form-group">
+                            <label for="contact_info">E-posta veya Telefon</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-address-card"></i>
+                                <input type="text" id="contact_info" name="contact_info" required>
+                            </div>
+                            <div id="contact-error" class="form-error-msg"></div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="form-group">
+                        <label for="service_type">İlgilendiğiniz Hizmet</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-tag"></i>
+                            <select id="service_type" name="service_type" required>
+                                <option value="" disabled selected>Lütfen bir hizmet seçin</option>
+                                <option value="rpa">Robotik Süreç Otomasyonu</option>
+                                <option value="scraping">Web Scraping</option>
+                                <option value="ai">AI Asistan</option>
+                                <option value="api">API Entegrasyon Hizmetleri</option>
+                                <option value="finans">Finansal İndikatör & Botlar</option>
+                                <option value="egitim">Eğitim & Danışmanlık</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-arrow"></i>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="form-group">
+                        <label for="message">Projenizden veya Fikrinizden Bahsedin</label>
+                        <div class="input-wrapper textarea-wrapper">
+                            <i class="fas fa-comment-alt"></i>
+                            <textarea id="message" name="message" rows="4"></textarea>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Teklif İste / Gönder</span> <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+       
+        <div class="contact-glow"></div>
+    </section>
+
+
+
+
+
+
+
+
+</main>
+
+
+
+
+
+
+
+
+<div id="loginModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-container">
+        <button class="modal-close" aria-label="Kapat" onclick="resetModalView()"><i class="fas fa-times"></i></button>
+       
+        <div class="modal-content">
+           
+            <div id="login-view">
+                <div class="modal-header">
+                    <h3>Giriş Yap</h3>
+                    <p>Teknoify paneline erişmek için bilgilerinizi girin.</p>
+                </div>
+               
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">E-posta Adresi</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="email" id="email" name="email" required placeholder="info@teknoify.com" autocomplete="username">
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span>Giriş Yap</span> <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                   
+                    <div class="form-footer">
+                        <a href="#" class="link-sm" onclick="toggleResetView(event)">Şifremi Unuttum</a>
+                    </div>
+                </form>
+            </div>
+
+
+
+
+
+
+
+
+            <div id="reset-view" style="display: none;">
+               
+                <div id="reset-form-content">
+                    <div class="modal-header">
+                        <h3>Şifre Sıfırlama</h3>
+                        <p>Hesabınıza ait e-posta adresini girin, size şifre yenileme bağlantısı gönderelim.</p>
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="auth-form">
+                        <div class="form-group">
+                            <label for="reset-email">E-posta Adresi</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="reset-email" placeholder="E-posta adresiniz" required>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+                        <div class="form-actions">
+                            <button onclick="sendResetLink()" id="btn-reset-submit" class="btn btn-primary btn-block">
+                                <span>Bağlantı Gönder</span> <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                       
+                        <div class="form-footer" style="margin-top: 15px;">
+                            <a href="#" class="link-sm" onclick="toggleResetView(event)" style="color: #7367f0;">
+                                <i class="fas fa-arrow-left"></i> Giriş Yap'a Dön
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+                <div id="reset-success-content" style="display: none; text-align: center; padding: 20px 0;">
+                    <div style="width: 70px; height: 70px; background: rgba(40, 199, 111, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-check" style="color: #28c76f; font-size: 32px;"></i>
+                    </div>
+                    <h3 style="color: white; margin-bottom: 10px;">E-posta Gönderildi!</h3>
+                    <p style="color: #a0a0a6; font-size: 0.95rem; line-height: 1.5;">
+                        Şifre sıfırlama bağlantısı adresinize iletildi.<br>
+                        Lütfen <strong>spam/gereksiz</strong> kutunuzu da kontrol edin.
+                    </p>
+                    <button onclick="toggleResetView(event)" class="btn btn-primary btn-block" style="margin-top: 25px;">
+                        Giriş Yap Ekranına Dön
+                    </button>
+                </div>
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <a href="#home" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
+                        <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                        <span class="logo-text">Teknoify</span>
+                    </a>
+                </div>
+                <p class="footer-desc">
+                    Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+
+
+
+            <div class="footer-col">
+                <h4>Yasal</h4>
+                <ul>
+                    <li><a href="pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
+                    <li><a href="pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                    <li><a href="pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
+                    <li><a href="pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+                </ul>
+            </div>
+
+
+
+
+            <div class="footer-col">
+                <h4>Bize Ulaşın</h4>
+                <ul class="contact-list">
+                    <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
+                </ul>
+            </div>
+        </div>
+
+
+
+
+        <div class="footer-bottom">
+            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
+        </div>
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="js/session-manager.js"></script>
+<script src="js/script.js" defer></script>
+<script src="js/cookies.js" defer></script>
+
+
+
+
+
+
+
+
+<script>
+    // Görünüm Değiştirme (Login <-> Reset)
+    function toggleResetView(e) {
+        if(e) e.preventDefault();
+       
+        const loginView = document.getElementById('login-view');
+        const resetView = document.getElementById('reset-view');
+       
+        // İçerik kutuları
+        const formContent = document.getElementById('reset-form-content');
+        const successContent = document.getElementById('reset-success-content');
+
+
+
+
+
+
+
+
+        const loginEmail = document.getElementById('email');
+        const resetEmail = document.getElementById('reset-email');
+
+
+
+
+
+
+
+
+        if (loginView.style.display === 'none') {
+            // Giriş ekranına dönülüyor
+            loginView.style.display = 'block';
+            resetView.style.display = 'none';
+        } else {
+            // Şifre sıfırlama ekranı açılıyor
+            loginView.style.display = 'none';
+            resetView.style.display = 'block';
+           
+            // HER AÇILIŞTA FORMU GÖSTER, BAŞARI MESAJINI GİZLE (Sıfırla)
+            formContent.style.display = 'block';
+            successContent.style.display = 'none';
+           
+            // Kullanıcı girişte mail yazdıysa buraya taşı
+            if(loginEmail.value) {
+                resetEmail.value = loginEmail.value;
+            }
+            resetEmail.focus();
+        }
+    }
+
+
+
+
+
+
+
+
+    // Modal Kapatılırsa Görünümü Sıfırla
+    function resetModalView() {
+        const modal = document.getElementById('loginModal');
+        modal.classList.remove('active');
+        // Kısa bir gecikmeyle (animasyon bitince) login ekranına döndür
+        setTimeout(() => {
+            document.getElementById('login-view').style.display = 'block';
+            document.getElementById('reset-view').style.display = 'none';
+        }, 300);
+    }
+   
+    // Modal dışına tıklayınca da resetlemek için
+    document.getElementById('loginModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            resetModalView();
+        }
+    });
+
+
+
+
+
+
+
+
+    // Firebase Şifre Sıfırlama
+    function sendResetLink() {
+        const email = document.getElementById('reset-email').value;
+        const btn = document.getElementById('btn-reset-submit');
+       
+        // İçerik kutuları
+        const formContent = document.getElementById('reset-form-content');
+        const successContent = document.getElementById('reset-success-content');
+       
+        if (!email) {
+            alert("Lütfen e-posta adresinizi giriniz.");
+            return;
+        }
+
+
+
+
+
+
+
+
+        const originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span>Gönderiliyor...</span> <i class="fas fa-spinner fa-spin"></i>';
+
+
+
+
+
+
+
+
+        firebase.auth().sendPasswordResetEmail(email)
+            .then(() => {
+                // BAŞARILI: Formu gizle, başarı mesajını göster
+                formContent.style.display = 'none';
+                successContent.style.display = 'block';
+            })
+            .catch((error) => {
+                console.error(error);
+                let msg = "Bir hata oluştu.";
+                if (error.code === 'auth/user-not-found') msg = "Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.";
+                if (error.code === 'auth/invalid-email') msg = "Geçersiz e-posta formatı.";
+                alert(msg);
+               
+                // Hata durumunda butonu eski haline getir
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            });
+    }
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

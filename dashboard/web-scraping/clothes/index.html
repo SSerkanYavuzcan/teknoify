@@ -1,0 +1,385 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giyim Fiyat Analizi | Teknoify</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
+  <link rel="stylesheet" href="../../../css/analysis.css?v=8">
+
+  <style>
+    /* Flatpickr overrides */
+    .flatpickr-calendar {
+      background: #1f232c !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+      border-radius: 16px !important;
+      padding: 15px !important;
+      font-family: 'Inter Tight', sans-serif !important;
+      width: 340px !important;
+    }
+
+    .flatpickr-calendar:before,
+    .flatpickr-calendar:after {
+      display: none !important;
+    }
+
+    .flatpickr-months {
+      background: transparent !important;
+      margin-bottom: 20px !important;
+      align-items: center !important;
+      position: relative;
+    }
+
+    .flatpickr-current-month {
+      color: #fff !important;
+      padding-top: 0 !important;
+      font-size: 1.1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month input.cur-year {
+      color: #fff !important;
+      font-weight: 700 !important;
+      background: transparent !important;
+      border: none !important;
+      pointer-events: none !important;
+      appearance: none;
+      margin: 0 5px;
+    }
+
+    .numInputWrapper span {
+      display: none !important;
+    }
+
+    .flatpickr-prev-month,
+    .flatpickr-next-month {
+      fill: #fff !important;
+      padding: 10px !important;
+      top: 5px !important;
+      transition: 0.3s;
+    }
+
+    .flatpickr-prev-month:hover svg,
+    .flatpickr-next-month:hover svg {
+      fill: #7367f0 !important;
+      filter: drop-shadow(0 0 5px rgba(115, 103, 240, 0.8));
+    }
+
+    .flatpickr-weekdays {
+      margin-bottom: 10px;
+    }
+
+    span.flatpickr-weekday {
+      color: #aaa !important;
+      font-weight: 600 !important;
+      font-size: 0.9rem !important;
+    }
+
+    .flatpickr-days {
+      width: 100% !important;
+    }
+
+    .dayContainer {
+      width: 100% !important;
+      min-width: 100% !important;
+      padding: 0 !important;
+      justify-content: space-between !important;
+    }
+
+    .flatpickr-day {
+      border-radius: 8px !important;
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      color: #ddd !important;
+      font-weight: 500 !important;
+      margin: 4px 0 !important;
+      height: 38px !important;
+      line-height: 38px !important;
+      flex-basis: 14.28% !important;
+      max-width: 14.28% !important;
+      box-shadow: none !important;
+      transition: all 0.2s ease;
+    }
+
+    .flatpickr-day:hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: #fff !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange,
+    .flatpickr-day.selected {
+      background: linear-gradient(135deg, #7367f0, #584cd1) !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+      border: none !important;
+      box-shadow: 0 0 15px rgba(115, 103, 240, 0.6) !important;
+      z-index: 2;
+      position: relative;
+    }
+
+    .flatpickr-day.startRange {
+      border-radius: 8px 0 0 8px !important;
+    }
+
+    .flatpickr-day.endRange {
+      border-radius: 0 8px 8px 0 !important;
+    }
+
+    .flatpickr-day.startRange.endRange,
+    .flatpickr-day.selected {
+      border-radius: 8px !important;
+    }
+
+    .flatpickr-day.inRange {
+      background: rgba(115, 103, 240, 0.25) !important;
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: -5px 0 0 rgba(115, 103, 240, 0.25), 5px 0 0 rgba(115, 103, 240, 0.25) !important;
+      z-index: 1;
+    }
+
+    .flatpickr-day.today {
+      border: 1px solid rgba(115, 103, 240, 0.8) !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+    }
+
+    .flatpickr-day.prevMonthDay,
+    .flatpickr-day.nextMonthDay {
+      visibility: hidden !important;
+    }
+
+    .multi-option.selected {
+      background: rgba(115, 103, 240, 0.15) !important;
+      color: #fff !important;
+      font-weight: 500;
+    }
+
+    .multi-option.selected .option-checkbox {
+      background: #7367f0 !important;
+      border-color: #7367f0 !important;
+      box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important;
+    }
+
+    .multi-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div id="toast" class="toast-notification">
+    <div class="toast-icon"><i class="fas fa-exclamation-circle"></i></div>
+    <div class="toast-content">
+      <h4>Dikkat</h4>
+      <p id="toast-message">Mesaj</p>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fas fa-cube"></i> <span>Teknoify</span>
+    </div>
+    <nav>
+      <a href="../../member.html" class="menu-item">
+        <i class="fas fa-home"></i> <span>Genel Bakış</span>
+      </a>
+      <div
+        style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
+        <span>Hizmetler</span>
+      </div>
+      <a href="index.html" class="menu-item active" id="nav-comparison">
+        <i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span>
+      </a>
+      <a href="../../market-analysis.html" class="menu-item" id="nav-market">
+        <i class="fas fa-chart-line"></i> <span>Pazar Analizi</span>
+      </a>
+    </nav>
+    <div class="menu-spacer"></div>
+    <div class="sidebar-footer">
+      <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
+        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
+      </a>
+      <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <h2>Giyim Fiyat Analizi</h2>
+      <div class="user-profile">
+        <span id="user-name-display">Yükleniyor...</span>
+        <div class="avatar" id="user-avatar">U</div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div class="filter-bar">
+        <div class="filter-group" style="min-width:240px;">
+          <label>Rapor Tarihi Seçiniz</label>
+          <div class="date-picker-wrapper">
+            <i class="fas fa-calendar-alt calendar-icon"></i>
+            <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz"
+              readonly>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Şube Seçiniz</label>
+          <div class="multi-select-wrapper" id="wrapper-branch">
+            <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-branch')">
+              <span id="text-branch">Şubeler Yükleniyor...</span>
+            </div>
+            <div class="multi-select-menu" id="menu-branch"></div>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Kategori Seçiniz</label>
+          <div class="multi-select-wrapper" id="wrapper-category">
+            <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-category')">
+              <span id="text-category">Tüm Kategoriler</span>
+            </div>
+            <div class="multi-select-menu" id="menu-category"></div>
+          </div>
+        </div>
+        <button class="btn-filter" id="btn-load" onclick="applyFilters()">
+          <i class="fas fa-search"></i> Verileri Yükle
+        </button>
+
+        <div class="download-wrapper">
+          <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
+            <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down"
+              style="font-size:0.8em;margin-left:4px;"></i>
+          </button>
+          <div id="download-menu" class="download-menu">
+            <div class="download-item" onclick="downloadCSV()"><i class="fas fa-file-csv" style="color:#10b981;"></i>
+              CSV Olarak İndir</div>
+            <div class="download-item" onclick="downloadExcel()"><i class="fas fa-file-excel"
+                style="color:#10b981;"></i> Excel (.xlsx) İndir</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="active-filter-banner">
+        <span id="active-filter-text">Filtreleniyor...</span>
+        <button onclick="clearGraphFilters()" title="Filtreyi Temizle">&times;</button>
+      </div>
+
+      <div class="dashboard-container">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-balance-scale"></i></div>
+            <div class="kpi-title">Fiyat Rekabet Endeksi</div>
+            <div class="kpi-value" id="kpi-competition">-</div>
+            <div class="kpi-trend" id="kpi-competition-sub">Veri Bekleniyor...</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-tags"></i></div>
+            <div class="kpi-title">Bizim İndirimli Ürünler</div>
+            <div class="kpi-value" id="kpi-disc-us">-</div>
+            <div class="kpi-trend trend-neutral">Toplam Portföy İçinde</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-percent"></i></div>
+            <div class="kpi-title">Ortalama İndirim Derinliği</div>
+            <div class="kpi-value" id="kpi-depth">%0</div>
+            <div class="progress-bg">
+              <div class="progress-fill" id="kpi-depth-bar" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-trophy"></i></div>
+            <div class="kpi-title">Avantajlı Kategori</div>
+            <div class="kpi-value" id="kpi-best-cat" style="font-size:1.1rem">-</div>
+            <div class="kpi-trend" id="kpi-best-cat-sub">-</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">Kategori Bazlı Fiyat Endeksi</div>
+              <div style="font-size:0.8rem;color:#666;">(Negatif = Biz Ucuzuz)</div>
+            </div>
+            <div id="chart-category"></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">Pazar Konumlandırması</div>
+            </div>
+            <div id="chart-pie"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="top-scroll-wrapper" class="top-scroll-wrapper">
+        <div id="top-scroll-content" class="top-scroll-content"></div>
+      </div>
+
+      <div class="table-responsive-wrapper" id="table-scroll-container">
+        <table class="comparison-table" id="main-table">
+          <thead>
+            <tr id="header-row-top"></tr>
+            <tr id="header-row-bottom"></tr>
+          </thead>
+          <tbody id="table-body">
+            <tr>
+              <td colspan="100%" style="text-align:center;padding:30px;color:#aaa;">Veri kaynağı bekleniyor...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="limit-msg" class="limit-warning">
+        <i class="fas fa-info-circle"></i> Sonuçlar performans için <strong>250 satır</strong> ile sınırlandırılmıştır.
+        Tüm veriyi görmek için <strong>İndir</strong> butonunu kullanınız.
+      </div>
+
+    </div>
+  </main>
+
+  <!-- External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+  <!-- Modüler Mimari: sıra önemli! -->
+  <script src="config.js"></script> <!-- 1. Proje ayarları -->
+  <script src="../shared/engine.js?v=20260221"></script> <!-- 2. Core render motoru -->
+  <script src="../shared/auth.js?v=20260221"></script> <!-- 3. Auth + bootstrap -->
+
+</body>
+
+</html>

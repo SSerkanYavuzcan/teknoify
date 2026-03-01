@@ -1,0 +1,2674 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-02-28T15:35:36Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/809761485",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9305066,
+          41.0160733
+        ]
+      },
+      "id": "node/809761485"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/813584962",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9296179,
+          41.0157853
+        ]
+      },
+      "id": "node/813584962"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/883450931",
+        "brand": "Migros",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "en:Migros",
+        "name": "Migros",
+        "name:ar": "ميكروس",
+        "opening_hours": "09:00-22:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "shop": "supermarket",
+        "website": "https://www.migros.com.tr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9320184,
+          41.0132193
+        ]
+      },
+      "id": "node/883450931"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2111009794",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم اكسراي",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9501782,
+          41.0122736
+        ]
+      },
+      "id": "node/2111009794"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2112213840",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "brand": "Migros",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "en:Migros",
+        "description": "MM Migros",
+        "fixme": "specify position",
+        "level": "-1",
+        "name": "Migros",
+        "name:ar": "ميغروس",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "shop": "supermarket",
+        "website": "https://www.migros.com.tr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9447629,
+          41.0145742
+        ]
+      },
+      "id": "node/2112213840"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3374370151",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "opening_hours": "Mo-Su 8:00-21:00",
+        "shop": "supermarket",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9748175,
+          41.0259319
+        ]
+      },
+      "id": "node/3374370151"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4286601066",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم اكسراي 1",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.951642,
+          41.0085786
+        ]
+      },
+      "id": "node/4286601066"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4456482789",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ru": "Бим",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9717765,
+          41.0076393
+        ]
+      },
+      "id": "node/4456482789"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4456909793",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:tr": "Şok",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.935152,
+          41.0017084
+        ]
+      },
+      "id": "node/4456909793"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4456914494",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Hekimoğlu Ali Paşa Caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم ماركت",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9318212,
+          41.0067511
+        ]
+      },
+      "id": "node/4456914494"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4874850022",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:tr": "Şok Market",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9335231,
+          41.0045571
+        ]
+      },
+      "id": "node/4874850022"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4942252032",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9279721,
+          41.0070568
+        ]
+      },
+      "id": "node/4942252032"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5075929040",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Turgut Özal Millet caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "مركز بيم",
+        "opening_hours": "mo-su 08:00-21:00",
+        "phone": "02125349142",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9436857,
+          41.0110999
+        ]
+      },
+      "id": "node/5075929040"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5075960998",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Feyzullah Efendi Sokak",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبرماركت شوك",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9487353,
+          41.0159365
+        ]
+      },
+      "id": "node/5075960998"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5075962036",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Ragıp Bey sokak",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوق الشوك",
+        "opening_hours": "mo-su 09:00-21:00",
+        "phone": "08502211100",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9496073,
+          41.0121348
+        ]
+      },
+      "id": "node/5075962036"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5081264710",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Nakibu-l Eşraf sokak",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبرماركت شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9422369,
+          41.0128391
+        ]
+      },
+      "id": "node/5081264710"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5081265923",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Oğuzhan caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "مركز ييم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9401905,
+          41.0147588
+        ]
+      },
+      "id": "node/5081265923"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5081274087",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Kızanlık Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبرماركت شوك",
+        "phone": "02124911685",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9497632,
+          41.0158445
+        ]
+      },
+      "id": "node/5081274087"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5081274334",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Turgut Özal Millet caddesi",
+        "brand": "Migros Jet",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "tr:Migros (Türkiye)",
+        "name": "Migros Jet",
+        "name:ar": "سوق ميغروس جيت",
+        "opening_hours": "mo-sa 08:00-21:30",
+        "phone": "08503102902",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9519559,
+          41.009951
+        ]
+      },
+      "id": "node/5081274334"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5081610934",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Hacı evhaddin çeşmesi sokağı",
+        "name": "Onur market",
+        "name:ar": "ماركت أونور",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9225944,
+          40.9964477
+        ]
+      },
+      "id": "node/5081610934"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5086061068",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Kara Sarıklı Sokak",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم ماركت",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9553385,
+          41.0259661
+        ]
+      },
+      "id": "node/5086061068"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5086061073",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Kara Sarıklı Sokak",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "يوز بير",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9540294,
+          41.0252131
+        ]
+      },
+      "id": "node/5086061073"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5086061075",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Müstantik Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "name": "Şok",
+        "name:ar": "شوك ماركت",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9560201,
+          41.0260829
+        ]
+      },
+      "id": "node/5086061075"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5087168307",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Yedikule caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "phone": "0532 202 64 21",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9250367,
+          40.9945325
+        ]
+      },
+      "id": "node/5087168307"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5087172334",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "İmrahor ilyasbey caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوير ماركت الشوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9277778,
+          40.9967893
+        ]
+      },
+      "id": "node/5087172334"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5087172342",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "İmrahor ilyasbey caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "A101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9285059,
+          40.9971525
+        ]
+      },
+      "id": "node/5087172342"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5087172346",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "İmrahor ilyasbey caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9288921,
+          40.9972958
+        ]
+      },
+      "id": "node/5087172346"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5088192768",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Abdurrahman Nafiz Gürman Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبرماركت شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9351268,
+          41.0016749
+        ]
+      },
+      "id": "node/5088192768"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5099060700",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Küçük langa caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9504885,
+          41.0068548
+        ]
+      },
+      "id": "node/5099060700"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5099065442",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Cerrahpaşa caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبر ماركت شوك",
+        "opening_hours": "mo-su 09:00-21:00",
+        "phone": "(0212) 576 33 00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9489894,
+          41.0092216
+        ]
+      },
+      "id": "node/5099065442"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5099065504",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Kocamustafapaşa caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "phone": "(0212) 576 33 00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9425709,
+          41.007163
+        ]
+      },
+      "id": "node/5099065504"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5100823703",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Tatlıpınar Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "ماركت شوك",
+        "opening_hours": "mo-su 09:00-21:00",
+        "phone": "(0212) 576 33 00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9319154,
+          41.0176997
+        ]
+      },
+      "id": "node/5100823703"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5100823707",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Tatlıpınar Caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "mo-su 09:00-21:00",
+        "phone": "0850 254 4444",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9317731,
+          41.0174273
+        ]
+      },
+      "id": "node/5100823707"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5103810795",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Topkapı Caddesi",
+        "name": "CarrefourSA",
+        "name:ar": "كارفور",
+        "phone": "(0212) 621 45 40",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9282266,
+          41.0188629
+        ]
+      },
+      "id": "node/5103810795"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106121850",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Ömer Efendi Sokak",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "سوبر ماركت البيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9540923,
+          41.0176571
+        ]
+      },
+      "id": "node/5106121850"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106121859",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Haydar Bey Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبرماركت شوك",
+        "phone": "02125763300",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9523932,
+          41.0163167
+        ]
+      },
+      "id": "node/5106121859"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106122302",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Eski Ali Paşa Caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9405417,
+          41.0242529
+        ]
+      },
+      "id": "node/5106122302"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106122304",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Prof. Naci Şensoy Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوق ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9397563,
+          41.0252916
+        ]
+      },
+      "id": "node/5106122304"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106123754",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Sofalı Çeşme Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوق ماركت",
+        "opening_hours": "mo-sa 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9357942,
+          41.0236134
+        ]
+      },
+      "id": "node/5106123754"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106123809",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Akşemsettin Caddesi",
+        "branch": "mini",
+        "brand": "CarrefourSA",
+        "brand:wikidata": "Q28870164",
+        "name": "CarrefourSA",
+        "name:ar": "سوبر ماركت كارفور",
+        "opening_hours": "mo-su 07:00-23:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.943055,
+          41.021264
+        ]
+      },
+      "id": "node/5106123809"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106125533",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Zembilci Sokağı",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوق ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9399785,
+          41.0207723
+        ]
+      },
+      "id": "node/5106125533"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106125534",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Tuti Abdüllatif Sokağı",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9394903,
+          41.0201004
+        ]
+      },
+      "id": "node/5106125534"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106131071",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Saray Ağası Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوق ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9432899,
+          41.0254644
+        ]
+      },
+      "id": "node/5106131071"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106131076",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Fatih Caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9461744,
+          41.0232411
+        ]
+      },
+      "id": "node/5106131076"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106133715",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Kaşgarlı Mahmut Sokağı",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9344263,
+          41.0117705
+        ]
+      },
+      "id": "node/5106133715"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106134521",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Kızılelma Caddesi",
+        "brand": "Migros Jet",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "tr:Migros (Türkiye)",
+        "name": "Migros Jet",
+        "name:ar": "مغيروس ماركت",
+        "opening_hours": "mo-su 09:00-22:00",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9385945,
+          41.0114315
+        ]
+      },
+      "id": "node/5106134521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106135528",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Koyuncu Sokağı",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9305022,
+          41.0160692
+        ]
+      },
+      "id": "node/5106135528"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106135543",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Büyük Saray Meydanı Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوق ماركت",
+        "opening_hours": "mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9293499,
+          41.015147
+        ]
+      },
+      "id": "node/5106135543"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107243181",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Yeni Çeşme Sokak",
+        "name": "Bizim Market",
+        "name:ar": "بيزيم ماركت",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9268576,
+          41.0054664
+        ]
+      },
+      "id": "node/5107243181"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107305899",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Abdüllatif Paşa Sokağı",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "phone": "0850 254 4444",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9485727,
+          41.0083748
+        ]
+      },
+      "id": "node/5107305899"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5108308863",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Nevşehirli Ibrahim Paşa Caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "سوق البيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9535634,
+          41.0208147
+        ]
+      },
+      "id": "node/5108308863"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5108308870",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Nevşehirli Ibrahim Paşa Caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "سوق a101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9534289,
+          41.0196397
+        ]
+      },
+      "id": "node/5108308870"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5108308871",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Nevşehirli Ibrahim Paşa Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوق شوك",
+        "phone": "02125763300",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9533418,
+          41.0195403
+        ]
+      },
+      "id": "node/5108308871"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5108838387",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Ebussuut Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9752376,
+          41.0134143
+        ]
+      },
+      "id": "node/5108838387"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5108844422",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Himaye-İ Eftal Sokak",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "متجر شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9743609,
+          41.0095608
+        ]
+      },
+      "id": "node/5108844422"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5109654669",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Hacamatçı Sokağı",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم ماركت",
+        "opening_hours": "Mo-su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9315167,
+          41.0134291
+        ]
+      },
+      "id": "node/5109654669"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5110345639",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Ankara Caddesi",
+        "brand": "Migros",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "en:Migros",
+        "description": "Migros Jet",
+        "name": "Migros",
+        "name:ar": "ميغروس",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9752653,
+          41.0120301
+        ]
+      },
+      "id": "node/5110345639"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5111206126",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Küçük Pazar Caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "اي ١٠١",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9621971,
+          41.0200754
+        ]
+      },
+      "id": "node/5111206126"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5111214115",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "koca mustafapasa caddesi",
+        "brand": "CarrefourSA",
+        "brand:wikidata": "Q28870164",
+        "brand:wikipedia": "fr:Carrefour (enseigne)",
+        "name": "CarrefourSA",
+        "name:ar": "كارفور",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9347374,
+          41.0048442
+        ]
+      },
+      "id": "node/5111214115"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5111215163",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Guzel sebzeci sokak",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9409173,
+          41.0070627
+        ]
+      },
+      "id": "node/5111215163"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5111215164",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Guzel sebzeci sokak",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "اه ١٠١",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.940708,
+          41.0069546
+        ]
+      },
+      "id": "node/5111215164"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5111215206",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Kizilama caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9365312,
+          41.0066279
+        ]
+      },
+      "id": "node/5111215206"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5111215750",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "koca mustafapasa caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.93345,
+          41.0045447
+        ]
+      },
+      "id": "node/5111215750"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5112725552",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Bedri Rahmi Eyüboğlu Sokağı",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبرماركت شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9279076,
+          41.0018849
+        ]
+      },
+      "id": "node/5112725552"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5112725575",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Çırakçı Bostanı Sokağı",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "سوبرماركت بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9259052,
+          41.0002755
+        ]
+      },
+      "id": "node/5112725575"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5112737057",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Tacirhane Sokağı",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "سوبرماركت بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.966623,
+          41.0147494
+        ]
+      },
+      "id": "node/5112737057"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5112739254",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Uzun Çarşı Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبرماركت شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9675888,
+          41.0137592
+        ]
+      },
+      "id": "node/5112739254"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113125933",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Koca Mustafapaşa Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك ماركت",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9294378,
+          41.0039461
+        ]
+      },
+      "id": "node/5113125933"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113470976",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Sezai Hasan Sokak",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "سوبر ماركت بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9246961,
+          41.0139023
+        ]
+      },
+      "id": "node/5113470976"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113470979",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Mevlanakapı Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "سوبر ماركت شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9249446,
+          41.0137574
+        ]
+      },
+      "id": "node/5113470979"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113473748",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Mevlanakapı Caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "سوبر ماركت بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9245933,
+          41.0135426
+        ]
+      },
+      "id": "node/5113473748"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113480911",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Salih zeki sokak",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "A.101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9490087,
+          41.0232023
+        ]
+      },
+      "id": "node/5113480911"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113481356",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Darüşşafaka caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9487158,
+          41.0221378
+        ]
+      },
+      "id": "node/5113481356"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113481403",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Haliç caddesi",
+        "name": "Happy center",
+        "name:ar": "هابي سينتر",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9510989,
+          41.0232735
+        ]
+      },
+      "id": "node/5113481403"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113495704",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Prof. naci şensoy caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9382109,
+          41.0261713
+        ]
+      },
+      "id": "node/5113495704"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113495952",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Uzun yol sokak",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9367104,
+          41.026467
+        ]
+      },
+      "id": "node/5113495952"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113500298",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:housenumber": "31A",
+        "addr:postcode": "34122",
+        "addr:street": "Peykhane Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "check_date": "2022-11-12",
+        "name": "Şok",
+        "opening_hours": "09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9724764,
+          41.0069196
+        ]
+      },
+      "id": "node/5113500298"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113557363",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Turgut özal millet Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك",
+        "opening_hours": "09:00-20:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9456529,
+          41.0099755
+        ]
+      },
+      "id": "node/5113557363"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113557364",
+        "addr:district": "Fatih",
+        "addr:street": "Turgut özal millet Caddesi",
+        "brand": "Migros Jet",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "tr:Migros (Türkiye)",
+        "name": "Migros Jet",
+        "name:ar": "ميغروس",
+        "opening_hours": "09:00-20:00",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9457953,
+          41.0099446
+        ]
+      },
+      "id": "node/5113557364"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113592195",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "turgut özal millet caddesi",
+        "branch": "SA",
+        "brand": "CarrefourSA",
+        "brand:wikidata": "Q28870164",
+        "brand:wikipedia": "fr:Carrefour (enseigne)",
+        "name": "CarrefourSA",
+        "name:ar": "كارفور سا",
+        "opening_hours": "09:00-20:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9402722,
+          41.0115344
+        ]
+      },
+      "id": "node/5113592195"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113598506",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Şair mehmet akif ersoy Sokak",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9390442,
+          41.0107936
+        ]
+      },
+      "id": "node/5113598506"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113598510",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Munif paşa sokak",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "A101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9385801,
+          41.0104058
+        ]
+      },
+      "id": "node/5113598510"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113610114",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Hasan Fehmi Paşa Caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "ا.101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9407538,
+          41.0258828
+        ]
+      },
+      "id": "node/5113610114"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5113611427",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Canfeda cami sokak",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9408548,
+          41.0265703
+        ]
+      },
+      "id": "node/5113611427"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5115933192",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Hacı Kadın Caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "سوبرماركت A101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9302745,
+          41.0025022
+        ]
+      },
+      "id": "node/5115933192"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5115937189",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Altımermer Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك",
+        "phone": "02125763300",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9313411,
+          41.0076019
+        ]
+      },
+      "id": "node/5115937189"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5115937848",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Yayla Sokak",
+        "brand": "Migros",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "en:Migros",
+        "name": "Migros",
+        "name:ar": "ميغروس",
+        "opening_hours": "09:00-22:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "08502298608",
+        "shop": "supermarket",
+        "website": "https://www.migros.com.tr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9297409,
+          41.0111949
+        ]
+      },
+      "id": "node/5115937848"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5115938011",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Altımermer Caddesi",
+        "name": "Bizim Market",
+        "name:ar": "بقالية بيزيم",
+        "phone": "02125856676",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.929199,
+          41.0091448
+        ]
+      },
+      "id": "node/5115938011"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5115938137",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Altımermer Caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "name:ar": "بيم",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "phone": "02125852121",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9311204,
+          41.008055
+        ]
+      },
+      "id": "node/5115938137"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5115939226",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Köprülüzade Sokak",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "آ يوز بير",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "phone": "4444101",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9333527,
+          41.0077121
+        ]
+      },
+      "id": "node/5115939226"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5115939264",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Cevdetpaşa Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك",
+        "phone": "05301499077",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9363327,
+          41.0094663
+        ]
+      },
+      "id": "node/5115939264"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5243950181",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Akdeniz Caddesi",
+        "branch": "SA",
+        "brand": "CarrefourSA",
+        "brand:wikidata": "Q28870164",
+        "brand:wikipedia": "fr:Carrefour (enseigne)",
+        "name": "CarrefourSA",
+        "name:ar": "كارفور سا",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9432357,
+          41.017076
+        ]
+      },
+      "id": "node/5243950181"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5243950208",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Akdeniz Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:ar": "شوك",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9439445,
+          41.0174759
+        ]
+      },
+      "id": "node/5243950208"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5243950954",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Sangüzel Caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "A.101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9444533,
+          41.0206227
+        ]
+      },
+      "id": "node/5243950954"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5243951535",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Sangüzel Caddesi",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9469576,
+          41.018188
+        ]
+      },
+      "id": "node/5243951535"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5243951549",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Sangüzel Caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "A.101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9477944,
+          41.0169839
+        ]
+      },
+      "id": "node/5243951549"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5243952324",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Bâlipaşa Caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "A.101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9420652,
+          41.0203109
+        ]
+      },
+      "id": "node/5243952324"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5243952627",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Bâlipaşa Caddesi",
+        "name": "Happy center",
+        "name:ar": "هابي سنتر",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9460792,
+          41.0164577
+        ]
+      },
+      "id": "node/5243952627"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5244802015",
+        "addr:city": "İstanbul",
+        "addr:district": "Fatih",
+        "addr:street": "Kadırga Limanı Caddesi",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "name:ar": "يوز بير",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9707983,
+          41.0048263
+        ]
+      },
+      "id": "node/5244802015"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5262688442",
+        "brand": "BİM",
+        "brand:wikidata": "Q1022075",
+        "brand:wikipedia": "en:Bim (company)",
+        "name": "BİM",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket",
+        "website": "http://bim.com.tr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9277076,
+          41.0070739
+        ]
+      },
+      "id": "node/5262688442"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5476136521",
+        "addr:housenumber": "56",
+        "addr:postcode": "34126",
+        "addr:street": "Kadırga Limanı Caddesi",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "check_date": "2022-11-12",
+        "name": "Şok",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.967231,
+          41.0046366
+        ]
+      },
+      "id": "node/5476136521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5526398465",
+        "brand": "Migros Jet",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "tr:Migros (Türkiye)",
+        "check_date": "2023-08-27",
+        "level": "0",
+        "name": "Migros Jet",
+        "name:tr": "Migros Jet",
+        "opening_hours": "08:30-22:00",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9745088,
+          41.0237593
+        ]
+      },
+      "id": "node/5526398465"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6387464187",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "check_date": "2022-09-04",
+        "internet_access": "no",
+        "name": "Şok",
+        "name:tr": "Şok",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "shop": "supermarket",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9784561,
+          41.0241172
+        ]
+      },
+      "id": "node/6387464187"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6448606494",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "brand:wikipedia": "tr:Şok (market)",
+        "name": "Şok",
+        "name:en": "Sok",
+        "name:ja": "ショック",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "payment:cash": "yes",
+        "payment:visa": "yes",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9754363,
+          41.0134117
+        ]
+      },
+      "id": "node/6448606494"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6726103904",
+        "brand": "Migros Jet",
+        "brand:wikidata": "Q1754510",
+        "brand:wikipedia": "tr:Migros (Türkiye)",
+        "check_date": "2025-07-03",
+        "name": "Migros Jet",
+        "name:en": "Migros Jet",
+        "opening_hours": "Mo-Su 09:00-22:00",
+        "shop": "convenience",
+        "wheelchair": "limited"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9735333,
+          41.026099
+        ]
+      },
+      "id": "node/6726103904"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7057374312",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9436355,
+          41.0162586
+        ]
+      },
+      "id": "node/7057374312"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9674126323",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9318741,
+          41.0127019
+        ]
+      },
+      "id": "node/9674126323"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9766708613",
+        "brand": "Şok",
+        "brand:wikidata": "Q19613992",
+        "name": "Şok",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9720255,
+          41.0257366
+        ]
+      },
+      "id": "node/9766708613"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9897760347",
+        "brand": "Migros Jet",
+        "brand:wikidata": "Q1754510",
+        "name": "Migros Jet",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9637999,
+          41.0052321
+        ]
+      },
+      "id": "node/9897760347"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9950496828",
+        "addr:postcode": "34112",
+        "brand": "Migros Jet",
+        "brand:wikidata": "Q1754510",
+        "level": "0",
+        "name": "Migros Jet",
+        "opening_hours": "Mo-Su 08:30-21:30",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.976143,
+          41.016023
+        ]
+      },
+      "id": "node/9950496828"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10178410588",
+        "branch": "Mini",
+        "brand": "Carrefour",
+        "brand:wikidata": "Q217599",
+        "check_date": "2022-11-12",
+        "name": "Carrefour",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9775545,
+          41.024178
+        ]
+      },
+      "id": "node/10178410588"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10178438638",
+        "check_date": "2022-11-12",
+        "name": "Onur Mini Market",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9659663,
+          41.0044533
+        ]
+      },
+      "id": "node/10178438638"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12006460763",
+        "addr": "Cibali Mh. Haydar Caddesi No:36/A",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "brand:wikipedia": "tr:A101",
+        "name": "A101",
+        "opening_hours": "Mo-Su 09:00-21:30",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.956001,
+          41.02195
+        ]
+      },
+      "id": "node/12006460763"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12919174758",
+        "brand": "A101",
+        "brand:wikidata": "Q6034496",
+        "name": "A101",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9489507,
+          41.0126328
+        ]
+      },
+      "id": "node/12919174758"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13467790091",
+        "brand": "Migros Jet",
+        "brand:wikidata": "Q1754510",
+        "name": "Migros Jet",
+        "opening_hours": "Mo-Su 08:30–22:00",
+        "phone": "+908502183929",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9528118,
+          41.0075915
+        ]
+      },
+      "id": "node/13467790091"
+    }
+  ]
+}

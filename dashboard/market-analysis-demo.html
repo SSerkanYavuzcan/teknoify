@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pazar Analizi (Demo) | Teknoify</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
+  <link rel="stylesheet" href="../../../css/analysis.css?v=8">
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    /* Demo Sayfasına Özel Ufak Ayarlamalar */
+    .premium-badge {
+      font-size: 11px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 6px;
+      vertical-align: middle;
+      margin-left: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+    }
+    
+    .demo-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .demo-table th { padding: 15px; color: #888; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .demo-table td { padding: 15px; color: #ddd; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+    .status-up { color: #ef4444; font-weight: 600; } /* Fiyat Artmış (Kötü) */
+    .status-down { color: #22c55e; font-weight: 600; } /* Fiyat Düşmüş (İyi) */
+  </style>
+</head>
+
+<body>
+
+  <div id="tk-toast" class="tk-toast">
+    <i id="tk-toast-icon" class="fas fa-exclamation-triangle tk-toast-icon"></i>
+    <div class="tk-toast-content">
+      <h4 id="tk-toast-title">Dikkat</h4>
+      <p id="tk-toast-message">Mesaj buraya gelecek.</p>
+    </div>
+  </div>
+
+  <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <i class="fas fa-cube"></i> <span>Teknoify</span>
+    </div>
+    <nav>
+      <a href="../../member.html" class="menu-item">
+        <i class="fas fa-home"></i> <span>Genel Bakış</span>
+      </a>
+      <div style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
+        <span>Hizmetler</span>
+      </div>
+      <div id="dynamic-services-menu"></div>
+    </nav>
+    <div class="menu-spacer"></div>
+    <div class="sidebar-footer">
+      <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
+        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
+      </a>
+      <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    
+    <header class="top-bar">
+      <h2>Pazar Analizi <span class="premium-badge"><i class="fas fa-crown"></i> PREMIUM</span></h2>
+      <div class="user-profile">
+        <span id="user-name-display">Yükleniyor...</span>
+        <div class="avatar" id="user-avatar">U</div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <div class="chart-box" style="padding: 20px; border-left: 4px solid #3b82f6;">
+          <div style="color:#888; font-size:13px; margin-bottom:8px;">Takip Edilen Ürün</div>
+          <div style="font-size:24px; font-weight:700; color:#fff;">1,240</div>
+        </div>
+        <div class="chart-box" style="padding: 20px; border-left: 4px solid #ef4444;">
+          <div style="color:#888; font-size:13px; margin-bottom:8px;">Fiyatı Artan (Son 24s)</div>
+          <div style="font-size:24px; font-weight:700; color:#fff;">84 <i class="fas fa-arrow-up" style="font-size:14px; color:#ef4444;"></i></div>
+        </div>
+        <div class="chart-box" style="padding: 20px; border-left: 4px solid #22c55e;">
+          <div style="color:#888; font-size:13px; margin-bottom:8px;">Fiyatı Düşen (Son 24s)</div>
+          <div style="font-size:24px; font-weight:700; color:#fff;">12 <i class="fas fa-arrow-down" style="font-size:14px; color:#22c55e;"></i></div>
+        </div>
+      </div>
+
+      <div class="chart-box" style="padding: 0; overflow: hidden;">
+        <div style="padding: 20px 20px 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="margin:0; font-size: 16px; color:#fff;">Rakip Fiyat Karşılaştırması</h3>
+          <span style="font-size: 12px; color: #888;">Son Güncelleme: Az Önce</span>
+        </div>
+
+        <table class="demo-table">
+          <thead>
+            <tr>
+              <th style="width: 35%;">Ürün Adı</th>
+              <th style="width: 20%;">Kategori</th>
+              <th style="width: 15%;">Sizin Fiyatınız</th>
+              <th style="width: 15%;">Rakip (Min)</th>
+              <th style="width: 15%;">Fark</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Yarım Yağlı Süt 1L</td>
+              <td>Süt Ürünleri</td>
+              <td>24.50 TL</td>
+              <td>23.90 TL</td>
+              <td class="status-up">+ %2.5</td>
+            </tr>
+            <tr>
+              <td>Süzme Beyaz Peynir 500g</td>
+              <td>Kahvaltılık</td>
+              <td>75.00 TL</td>
+              <td>79.90 TL</td>
+              <td class="status-down">- %6.1</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tk-paywall-container" style="margin-top: -1px;">
+          
+          <div class="tk-paywall-content">
+            <table class="demo-table">
+              <tbody>
+                <tr>
+                  <td style="width: 35%;">Gizli Veri (Pro)</td>
+                  <td style="width: 20%;">Atıştırmalık</td>
+                  <td style="width: 15%;">*** TL</td>
+                  <td style="width: 15%;">*** TL</td>
+                  <td class="status-up">+ %**.**</td>
+                </tr>
+                <tr>
+                  <td>Gizli Veri (Pro)</td>
+                  <td>Temizlik</td>
+                  <td>*** TL</td>
+                  <td>*** TL</td>
+                  <td class="status-down">- %**.**</td>
+                </tr>
+                <tr>
+                  <td>Gizli Veri (Pro)</td>
+                  <td>İçecekler</td>
+                  <td>*** TL</td>
+                  <td>*** TL</td>
+                  <td class="status-up">+ %**.**</td>
+                </tr>
+                <tr>
+                  <td>Gizli Veri (Pro)</td>
+                  <td>Meyve & Sebze</td>
+                  <td>*** TL</td>
+                  <td>*** TL</td>
+                  <td class="status-down">- %**.**</td>
+                </tr>
+                <tr>
+                  <td>Gizli Veri (Pro)</td>
+                  <td>Et & Tavuk</td>
+                  <td>*** TL</td>
+                  <td>*** TL</td>
+                  <td class="status-up">+ %**.**</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tk-paywall-overlay">
+            <i class="fas fa-lock tk-paywall-icon"></i>
+            <div class="tk-paywall-title">Tüm Verileri Görmek İçin Kilidi Açın</div>
+            <div class="tk-paywall-text">
+              Pazar Analizi hizmeti ile binlerce ürünün rakip fiyatlarını canlı takip edin, fiyat stratejinizi otomatik belirleyin ve pazar payınızı artırın.
+            </div>
+            
+            <a href="mailto:iletisim@teknoify.com" class="btn-orange" style="padding: 12px 24px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; display: inline-flex; align-items: center; gap: 8px;">
+              <i class="fas fa-rocket"></i> Premium Pakete Geç
+            </a>
+          </div>
+
+        </div>
+        </div>
+      
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="../shared/auth.js?v=20260228"></script>
+
+</body>
+</html>

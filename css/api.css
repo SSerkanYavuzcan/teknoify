@@ -1,0 +1,368 @@
+/* ================================================================
+   [FILE] api.css
+   [PURPOSE] API Integration Services Page Styles
+   [THEME] Connectivity (Indigo/Purple accents) - Harmonized with Site Theme
+   ================================================================ */
+
+/* --- RENK PALETİ (Site Tasarımıyla Uyumlu) --- */
+:root {
+    /* Turuncu yerine, site genelindeki mor/indigo tonu */
+    --api-primary: #6366f1;    /* Indigo (Ana Renk - Bağlantı) */
+    --api-secondary: #3b82f6;  /* Blue (Yan Sistemler/Cloud) - Aynı kaldı */
+    --api-glow: rgba(99, 102, 241, 0.5);
+}
+
+/* --- HERO SECTION (DİĞER SAYFALARLA EŞİTLENDİ) --- */
+.api-hero {
+    /* Hizalama diğer sayfalarla birebir aynı */
+    padding: 140px 0 80px 0;
+    position: relative;
+    overflow: hidden;
+    
+    /* ARKA PLAN: Standart Grid Yapısı (Mor Parlama ile) */
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 20%), /* Hafif mor parlama */
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    
+    background-color: var(--bg-body); /* Body rengiyle bütünleşik */
+    border-bottom: 1px solid var(--border-light);
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* BADGE (ETİKET) - MOR TEMA */
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    
+    /* Mor/Indigo tonlar */
+    background: rgba(99, 102, 241, 0.1); 
+    color: var(--api-primary); 
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-main);
+    margin-bottom: 1.5rem;
+}
+
+/* BAŞLIK */
+.api-hero h1 {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: #fff; /* Net Beyaz */
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+.hero-ctas {
+    display: flex; gap: 1rem;
+}
+
+/* --- ANIMATION BOX (CENTRAL HUB) --- */
+.api-anim-box {
+    position: relative;
+    height: 350px;
+    
+    /* Çerçevesiz, Floating yapı */
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, rgba(0,0,0,0) 70%);
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 1. MERKEZİ HUB (Mor) */
+.central-hub {
+    position: absolute;
+    width: 80px; height: 80px;
+    background: #1e293b;
+    border: 1px solid var(--api-primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+    box-shadow: 0 0 30px var(--api-glow);
+}
+
+.hub-icon {
+    font-size: 2rem;
+    color: var(--api-primary);
+    z-index: 2;
+}
+
+.hub-ring {
+    position: absolute;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 2px dashed rgba(99, 102, 241, 0.5);
+    animation: spinHub 10s linear infinite;
+}
+
+@keyframes spinHub {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 2. UYDU SİSTEMLER (NODES) */
+.node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 5;
+}
+
+.node-icon {
+    width: 50px; height: 50px;
+    background: #0f172a;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    color: #cbd5e1;
+    transition: 0.3s;
+}
+
+.node span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* Node Pozisyonları */
+.node-crm { top: 10%; left: 10%; }
+.node-erp { top: 10%; right: 10%; }
+.node-cloud { bottom: 10%; left: 50%; transform: translateX(-50%); }
+
+/* Hover Efektleri */
+.api-anim-box:hover .node-icon { border-color: var(--api-primary); color: var(--api-primary); }
+/* İsteğe bağlı olarak her node için farklı renkler tutulabilir veya hepsi mor yapılabilir.
+   Şimdilik hepsini ana renge çekiyoruz. */
+.api-anim-box:hover .node-crm .node-icon { color: var(--api-primary); }
+.api-anim-box:hover .node-erp .node-icon { color: var(--api-primary); }
+.api-anim-box:hover .node-cloud .node-icon { color: var(--api-primary); }
+
+
+/* 3. BAĞLANTI HATLARI (Mor) */
+.connection-lines {
+    position: absolute;
+    width: 100%; height: 100%;
+    pointer-events: none;
+}
+
+.conn-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+    height: 1px;
+    transform-origin: left center;
+}
+
+/* Hat Konumlandırmaları (Basit Geometri) */
+.c1 { top: 50%; left: 50%; width: 160px; transform: rotate(-135deg); }
+.c2 { top: 50%; left: 50%; width: 160px; transform: rotate(-45deg); }
+.c3 { top: 50%; left: 50%; width: 140px; transform: rotate(90deg); }
+
+/* 4. VERİ PAKETLERİ (Mor) */
+.data-packets {
+    position: absolute;
+    width: 100%; height: 100%;
+    pointer-events: none;
+}
+
+.packet {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--api-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--api-primary);
+    top: 50%; left: 50%;
+    opacity: 0;
+}
+
+/* Paket Hareketleri */
+.pkt-1 { animation: flowCRM 3s infinite linear; }
+.pkt-2 { animation: flowERP 3s infinite linear 1s; }
+.pkt-3 { animation: flowCloud 3s infinite linear 2s; }
+
+@keyframes flowCRM {
+    0% { transform: rotate(-135deg) translateX(0); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: rotate(-135deg) translateX(140px); opacity: 0; }
+}
+
+@keyframes flowERP {
+    0% { transform: rotate(-45deg) translateX(140px); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: rotate(-45deg) translateX(0); opacity: 0; }
+}
+
+@keyframes flowCloud {
+    0% { transform: rotate(90deg) translateX(0); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: rotate(90deg) translateX(120px); opacity: 0; }
+}
+
+
+/* --- CONTENT SECTION (SPACING & LAYOUT) --- */
+.api-content {
+    padding: 4rem 0 6rem 0;
+}
+
+/* Açıklama Metni */
+.intro-text-center {
+    max-width: 800px;
+    margin: 0 auto 6rem auto; 
+    text-align: center;
+}
+.intro-text-center h2 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+.intro-text-center p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+/* Başlıklar */
+.section-heading {
+    text-align: center;
+    font-size: 1.75rem;
+    color: #fff;
+    margin-top: 4rem;
+    margin-bottom: 5rem;
+}
+
+/* Kartlar Grid (Mor Vurgulu) */
+.benefit-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 3rem; 
+    margin-bottom: 6rem;
+}
+
+.benefit-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--api-primary);
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
+}
+
+.benefit-icon {
+    width: 50px; height: 50px;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--api-primary);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.benefit-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #fff;
+}
+.benefit-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Use Cases (Mor Vurgulu) */
+.use-cases-wrapper {
+    margin-bottom: 6rem;
+}
+
+.use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2.5rem;
+}
+
+.use-case-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    text-align: center;
+    transition: 0.3s;
+    cursor: default;
+}
+
+.use-case-item:hover {
+    background: rgba(99, 102, 241, 0.05);
+    border-color: var(--api-primary);
+    transform: scale(1.02);
+}
+
+.uc-icon {
+    font-size: 2rem;
+    color: var(--api-primary);
+    margin-bottom: 1rem;
+}
+
+.use-case-item span {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.bottom-cta {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+    .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 3rem;
+    }
+    .hero-ctas { justify-content: center; }
+    .hero-badge { margin: 0 auto 1.5rem auto; }
+    
+    .api-anim-box {
+        height: 250px;
+    }
+    
+    .benefit-cards-grid { gap: 2rem; margin-bottom: 4rem; }
+    .section-heading { margin-bottom: 3rem; margin-top: 3rem; }
+}
+
+

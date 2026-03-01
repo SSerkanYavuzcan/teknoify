@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraping & Veri Madenciliği | Teknoify</title>
+   
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+   
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/webscraping.css">
+</head>
+<body>
+
+<header id="header" class="header scrolled">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html#home" aria-label="Ana Sayfa">
+                    <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                    <span class="logo-text">Teknoify</span>
+                </a>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item dropdown">
+                    <a href="../index.html#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+                        <li><a href="ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+                        <li><a href="api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="training-consulting.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-login-btn">
+                    <button id="openLoginBtn" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user"></i> Giriş Yap
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="page-frame">
+
+    <section class="ws-hero">
+        <div class="container hero-grid">
+            <div class="hero-left">
+                <div class="hero-badge"><i class="fas fa-globe"></i> Big Data & Scraping</div>
+                <h1>İnternetin Veri Gücünü Keşfedin</h1>
+                <p class="subtitle main-headline">
+                    Milyonlarca web sayfasındaki dağınık verileri sizin için topluyor, temizliyor ve analiz edilebilir formatlara dönüştürüyoruz.
+                </p>
+                
+                <div class="hero-ctas">
+                    <a href="../index.html#contact" class="btn btn-primary btn-lg">
+                        Veri Projesi Başlat
+                    </a>
+                    <a href="#ws-cases" class="btn btn-secondary btn-lg">Kullanım Alanları</a>
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <div class="scraping-anim-box">
+                    <div class="target-website">
+                        <div class="site-header">
+                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        </div>
+                        <div class="site-content">
+                            <div class="line w-70"></div>
+                            <div class="line w-50"></div>
+                            <div class="line w-90"></div>
+                            <div class="data-block db-1"></div>
+                            <div class="data-block db-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="data-stream-path">
+                        <div class="packet p-1"><i class="fas fa-code"></i></div>
+                        <div class="packet p-2"><i class="fas fa-image"></i></div>
+                        <div class="packet p-3"><i class="fas fa-tag"></i></div>
+                    </div>
+
+                    <div class="spider-bot">
+                        <div class="spider-body">
+                            <i class="fas fa-spider"></i>
+                            <div class="scan-beam"></div>
+                        </div>
+                    </div>
+
+                    <div class="database-storage">
+                        <i class="fas fa-database"></i>
+                        <div class="db-status-light"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ws-content">
+        <div class="container">
+            
+            <div class="intro-text-center">
+                <h2>Veriye Dayalı Kararlar Alın</h2>
+                <p>Web Scraping, rekabet analizi, fiyat takibi ve pazar araştırması için en güçlü silahtır. Manuel olarak haftalar sürecek veri toplama işlemlerini dakikalara indiriyoruz. Excel, CSV, JSON veya doğrudan API entegrasyonu ile veriyi size sunuyoruz.</p>
+            </div>
+
+            <h3 class="section-heading">Web Scraping Avantajları</h3>
+            <div class="benefit-cards-grid">
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-chart-line"></i></div>
+                    <h4>Rakip Analizi</h4>
+                    <p>Rakiplerinizin fiyatlarını, stok durumlarını ve kampanyalarını anlık olarak takip edin.</p>
+                </div>
+
+                <div class="benefit-card" id="card-data-count">
+                    <div class="benefit-icon"><i class="fas fa-database"></i></div>
+                    <h4><span id="counter-data">0</span>+ Veri Noktası</h4>
+                    <p>Günlük milyonlarca veri satırını hatasız bir şekilde işleyip raporluyoruz.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-hourglass-half"></i></div>
+                    <h4>Zaman Tasarrufu</h4>
+                    <p>Manuel kopyala-yapıştır devri bitti. Otomasyon ile ekibiniz analize odaklansın.</p>
+                </div>
+
+                 <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-network-wired"></i></div>
+                    <h4>Esnek Entegrasyon</h4>
+                    <p>Toplanan verileri doğrudan CRM, ERP sistemlerinize veya veritabanınıza aktaralım.</p>
+                </div>
+            </div>
+
+            <div id="ws-cases" class="use-cases-wrapper">
+                <h3 class="section-heading">Hangi Verileri Toplayabiliriz?</h3>
+                <div class="use-cases-grid">
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-tags"></i></div>
+                        <span>E-Ticaret Fiyatları</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-home"></i></div>
+                        <span>Emlak İlanları</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-comment-dots"></i></div>
+                        <span>Sosyal Medya Yorumları</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-briefcase"></i></div>
+                        <span>LinkedIn & İş İlanları</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-newspaper"></i></div>
+                        <span>Haber ve İçerik Takibi</span>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="uc-icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <span>Google Maps Lokasyonları</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-cta">
+                <a href="../index.html#contact" class="btn btn-primary btn-block">
+                    Hemen Teklif Alın
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <a href="../index.html#home" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
+                        <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                        <span class="logo-text">Teknoify</span>
+                    </a>
+                </div>
+                <p class="footer-desc">
+                    Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Yasal</h4>
+                <ul>
+                    <li><a href="kvkk.html">KVKK Aydınlatma Metni</a></li>
+                    <li><a href="gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                    <li><a href="kullanim-sartlari.html">Kullanım Şartları</a></li>
+                    <li><a href="hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Bize Ulaşın</h4>
+                <ul class="contact-list">
+                    <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
+        </div>
+    </div>
+</footer>
+
+
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-container">
+        <div class="modal-close"><i class="fas fa-times"></i></div>
+        <div class="modal-header">
+            <h3>Giriş Yap</h3>
+            <p>Teknoify hesabınıza erişin</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" required placeholder="ornek@sirket.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+            </div>
+            <div class="form-footer">
+                <a href="#" class="link-sm">Şifremi Unuttum</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="../js/session-manager.js"></script>
+<script src="../js/script.js" defer></script>
+
+<script>
+    document.getElementById('header').classList.add('scrolled');
+   
+    let counterStarted = false;
+
+    // Sayaç Fonksiyonu
+    function animateCounter(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        if(!obj) return;
+        let startTime = null;
+        
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            
+            const easeProgress = 1 - Math.pow(1 - progress, 3);
+            
+            const currentVal = Math.floor(easeProgress * (end - start) + start);
+            
+            obj.textContent = currentVal.toLocaleString('tr-TR');
+            
+            if (progress < 1) window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
+    }
+   
+    // Scroll Observer
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5 
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+
+                if (id === 'card-data-count' && !counterStarted) {
+                    animateCounter('counter-data', 0, 10000, 2500);
+                    counterStarted = true;
+                }
+            }
+        });
+    }, observerOptions);
+
+    const cardData = document.getElementById('card-data-count');
+    if (cardData) observer.observe(cardData);
+
+</script>
+</body>
+</html>
+
+

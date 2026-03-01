@@ -1,0 +1,397 @@
+/* ================================================================
+   [FILE] webscraping.css
+   [PURPOSE] Web Scraping & Data Mining Page Styles
+   [THEME] Cyber Data (Cyan/Green accents) - Harmonized with RPA
+   ================================================================ */
+
+/* --- RENK PALETİ --- */
+:root {
+    --ws-primary: #0ea5e9;    /* Sky Blue (İkonlar ve Spider için) */
+    --ws-accent: #10b981;     /* Emerald Green (Başarı durumu) */
+    --ws-glow: rgba(14, 165, 233, 0.5);
+}
+
+/* --- HERO SECTION --- */
+.ws-hero {
+    /* Hizalama RPA ile birebir aynı (140px üst boşluk) */
+    padding: 140px 0 80px 0;
+    position: relative;
+    overflow: hidden;
+    
+    /* ARKA PLAN: RPA Grid Yapısı (Renk farkı olmadan) */
+    /* background-color satırı kaldırıldı, böylece RPA gibi daha açık duracak */
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 20%),
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    
+    border-bottom: 1px solid var(--border-light);
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* BADGE (ETİKET) - RPA RENGİNE EŞİTLENDİ */
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    
+    /* RPA Mor/Indigo Renkleri */
+    background: rgba(99, 102, 241, 0.1); 
+    color: var(--primary); /* style.css ana rengi */
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-main);
+    margin-bottom: 1.5rem;
+}
+
+/* BAŞLIK */
+.ws-hero h1 {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: #fff; /* Net Beyaz */
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+.hero-ctas {
+    display: flex; gap: 1rem;
+}
+
+/* --- ANIMATION BOX (ÇERÇEVESİZ / FLOATING) --- */
+.scraping-anim-box {
+    position: relative;
+    height: 350px;
+    
+    /* RPA tarzı hafif glow, çerçeve ve kutu arka planı yok */
+    background: radial-gradient(circle, rgba(99,102,241,0.05) 0%, rgba(0,0,0,0) 70%);
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 1. HEDEF WEB SİTESİ */
+.target-website {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120px;
+    height: 160px;
+    background: #1e293b;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    z-index: 2;
+}
+
+.site-header {
+    height: 20px;
+    background: #0f172a;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    gap: 4px;
+}
+.site-header .dot { width: 6px; height: 6px; border-radius: 50%; }
+.dot.red { background: #ef4444; }
+.dot.yellow { background: #f59e0b; }
+.dot.green { background: #10b981; }
+
+.site-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.line { height: 4px; background: #334155; border-radius: 2px; }
+.w-70 { width: 70%; } .w-50 { width: 50%; } .w-90 { width: 90%; }
+.data-block { height: 30px; background: #334155; border-radius: 4px; opacity: 0.5; }
+
+.db-1 { animation: dataBlink 2s infinite; }
+.db-2 { animation: dataBlink 2s infinite 1s; }
+
+@keyframes dataBlink {
+    0%, 100% { background: #334155; }
+    50% { background: var(--ws-primary); }
+}
+
+/* 2. SPIDER BOT */
+.spider-bot {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    width: 100px; height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spider-body {
+    font-size: 3rem;
+    color: var(--ws-primary);
+    
+    /* Botun kendi çevresindeki hafif glow */
+    background: rgba(14, 165, 233, 0.05); 
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(14, 165, 233, 0.2);
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
+    
+    position: relative;
+    animation: spiderFloat 4s ease-in-out infinite;
+}
+
+.scan-beam {
+    position: absolute;
+    left: -60px; top: 50%;
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ws-primary));
+    transform-origin: right center;
+    opacity: 0.5;
+    animation: scanMove 2s linear infinite;
+}
+
+@keyframes scanMove {
+    0% { transform: translateY(-30px) rotate(-15deg); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(30px) rotate(15deg); opacity: 0; }
+}
+
+@keyframes spiderFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* 3. VERİ AKIŞI */
+.data-stream-path {
+    position: absolute;
+    top: 50%; left: 120px; right: 80px;
+    height: 40px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.packet {
+    position: absolute;
+    left: 0; top: 10px;
+    color: #fff;
+    font-size: 1rem;
+    opacity: 0;
+}
+
+.p-1 { animation: packetFlow 3s infinite linear 0s; color: #cbd5e1; }
+.p-2 { animation: packetFlow 3s infinite linear 1s; color: #fcd34d; }
+.p-3 { animation: packetFlow 3s infinite linear 2s; color: var(--ws-accent); }
+
+@keyframes packetFlow {
+    0% { left: 0; opacity: 0; transform: scale(0.5); }
+    10% { opacity: 1; transform: scale(1); }
+    40% { left: 40%; opacity: 1; transform: scale(0.8); }
+    50% { left: 50%; opacity: 0; transform: scale(0.2); }
+    60% { left: 60%; opacity: 1; transform: scale(1); }
+    90% { left: 100%; opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+}
+
+/* 4. DATABASE */
+.database-storage {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 4rem;
+    color: #475569;
+    display: flex; flex-direction: column; align-items: center;
+    transition: color 0.3s;
+}
+
+.database-storage i {
+    animation: dbPulse 3s infinite 2.5s;
+}
+
+@keyframes dbPulse {
+    0%, 80%, 100% { color: #475569; text-shadow: none; }
+    90% { color: var(--ws-accent); text-shadow: 0 0 15px var(--ws-accent); }
+}
+
+.db-status-light {
+    width: 8px; height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    margin-top: 10px;
+    box-shadow: 0 0 5px #ef4444;
+    animation: statusChange 3s infinite 2.5s;
+}
+
+@keyframes statusChange {
+    0%, 85% { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
+    90%, 100% { background: #10b981; box-shadow: 0 0 10px #10b981; }
+}
+
+
+/* --- CONTENT SECTION --- */
+.ws-content {
+    padding: 4rem 0 6rem 0;
+}
+
+/* Açıklama Metni */
+.intro-text-center {
+    max-width: 800px;
+    margin: 0 auto 6rem auto; 
+    text-align: center;
+}
+.intro-text-center h2 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+.intro-text-center p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+/* Başlıklar */
+.section-heading {
+    text-align: center;
+    font-size: 1.75rem;
+    color: #fff;
+    margin-top: 4rem;
+    margin-bottom: 5rem;
+}
+
+/* Kartlar Grid */
+.benefit-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 3rem; 
+    margin-bottom: 6rem;
+}
+
+.benefit-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--ws-primary);
+    box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.2);
+}
+
+.benefit-icon {
+    width: 50px; height: 50px;
+    background: rgba(14, 165, 233, 0.1);
+    color: var(--ws-primary);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.benefit-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #fff;
+}
+.benefit-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Use Cases */
+.use-cases-wrapper {
+    margin-bottom: 6rem;
+}
+
+.use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2.5rem;
+}
+
+.use-case-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    text-align: center;
+    transition: 0.3s;
+    cursor: default;
+}
+
+.use-case-item:hover {
+    background: rgba(14, 165, 233, 0.05);
+    border-color: var(--ws-primary);
+    transform: scale(1.02);
+}
+
+.uc-icon {
+    font-size: 2rem;
+    color: var(--ws-primary);
+    margin-bottom: 1rem;
+}
+
+.use-case-item span {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.bottom-cta {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+    .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 3rem;
+    }
+    .hero-ctas { justify-content: center; }
+    .hero-badge { margin: 0 auto 1.5rem auto; }
+    
+    .scraping-anim-box {
+        height: 250px;
+    }
+    
+    .target-website { width: 80px; height: 120px; left: 10px; }
+    .database-storage { font-size: 3rem; right: 15px; }
+    .spider-body { width: 60px; height: 60px; font-size: 2rem; }
+    .data-stream-path { left: 90px; right: 60px; }
+    
+    .benefit-cards-grid { gap: 2rem; margin-bottom: 4rem; }
+    .section-heading { margin-bottom: 3rem; margin-top: 3rem; }
+}
+
+

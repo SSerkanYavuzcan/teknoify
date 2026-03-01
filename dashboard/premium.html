@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Premium Panel | Teknoify</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { background: #050505; color: #fff; padding: 50px; text-align: center; }
+        .dashboard-card { border: 1px solid #f59e0b; padding: 40px; border-radius: 20px; background: #111; max-width: 600px; margin: 0 auto; }
+        h1 { color: #f59e0b; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-card">
+        <h1><i class="fas fa-crown"></i> PREMIUM PANEL</h1>
+        <p>Hoşgeldin VIP Üye. Özel raporlarına buradan erişebilirsin.</p>
+        <hr style="border-color: #333; margin: 20px 0;">
+        <button onclick="logout()" class="btn btn-outline">Çıkış Yap</button>
+    </div>
+
+    <script src="../js/session-manager.js"></script>
+    <script>
+        // SessionManager ile Güvenli Kontrol
+        if (typeof SessionManager !== 'undefined') {
+            const session = new SessionManager();
+            
+            // Promise yapısıyla oturumu kontrol et
+            session.validateSession().then(user => {
+                // Sadece Admin veya Premium girebilir
+                // NOT: Gerçek projede rol bilgisi Firestore'dan alınmalıdır.
+                // Şimdilik e-posta bazlı veya localStorage'dan gelen basit rol kontrolü yapılıyor.
+                // Firebase Auth'un "Custom Claims" özelliği en güvenli yoldur.
+                
+                // Basit kontrol (Geçici)
+                if (user.role !== 'premium' && user.role !== 'admin') {
+                    alert("Bu alana erişim yetkiniz yok (Sadece Premium Üyeler).");
+                    window.location.href = '../index.html';
+                }
+            }).catch(err => {
+                // Oturum yoksa ana sayfaya at
+                window.location.href = '../index.html';
+            });
+        }
+
+        function logout() {
+            if (typeof SessionManager !== 'undefined') {
+                new SessionManager().destroySession();
+            } else {
+                window.location.href = '../index.html';
+            }
+        }
+    </script>
+</body>
+</html>
+
+

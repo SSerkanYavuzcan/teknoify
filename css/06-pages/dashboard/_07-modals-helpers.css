@@ -1,0 +1,138 @@
+/* ==========================================================================
+   Toast Notification 
+   ========================================================================== */
+.toast-notification {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #1f232c; border: 1px solid var(--border);
+    border-left: 4px solid var(--warning); border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); min-width: 350px;
+}
+.toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast-icon { font-size: 1.5rem; color: var(--warning); }
+.toast-content h4 { margin: 0 0 4px 0; font-size: 0.95rem; color: #fff; }
+.toast-content p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+
+/* ==========================================================================
+   Ortak Helper Sınıfları
+   ========================================================================== */
+.badge { padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: inline-block; }
+.badge-tazeyo { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
+.badge-market { background: rgba(249, 115, 22, 0.15); color: var(--warning); border: 1px solid rgba(249, 115, 22, 0.25); }
+.diff-negative { color: var(--success); font-weight: 600; } .diff-positive { color: var(--danger); font-weight: 600; }
+.limit-warning {
+    background: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.4); color: #fdba74;
+    padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center; font-size: 0.9rem; display: none; font-weight: 500;
+}
+.mini-dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; display: none; }
+.kpi-card { background: var(--dash-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+.kpi-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+.kpi-value { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+.kpi-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+.trend-up { color: var(--success); } .trend-down { color: var(--danger); } .trend-neutral { color: var(--warning); }
+.progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; }
+.progress-fill { height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 1s ease; }
+@media (max-width: 1024px) { .mini-dashboard { grid-template-columns: repeat(2, 1fr); } }
+.btn-text-action { background: transparent; border: none; color: var(--primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+.btn-text-action:hover { color: #fff; text-decoration: underline; } .btn-text-action i { font-size: 0.9rem; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.section-header h3 { font-size: 1.1rem; font-weight: 600; margin: 0; color: #fff; }
+
+/* ==========================================================================
+   ÖZEL ÇIKIŞ YAP (LOGOUT) MODAL (Tüm Sayfalar İçin)
+   ========================================================================== */
+.tk-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.tk-modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tk-modal {
+  background: #1f232c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 30px 24px;
+  width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  transform: translateY(-20px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tk-modal-overlay.show .tk-modal {
+  transform: translateY(0) scale(1);
+}
+
+.tk-modal-icon {
+  font-size: 45px;
+  color: #ef4444; 
+  margin-bottom: 15px;
+  filter: drop-shadow(0 0 10px rgba(239,68,68,0.4));
+}
+
+.tk-modal-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0.3px;
+}
+
+.tk-modal-text {
+  color: #cbd5e1;
+  font-size: 14px;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.tk-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.tk-btn-cancel, .tk-btn-confirm {
+  padding: 12px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.tk-btn-cancel {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.tk-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.tk-btn-confirm {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.tk-btn-confirm:hover {
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+  transform: translateY(-2px);
+}

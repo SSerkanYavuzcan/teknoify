@@ -1,0 +1,286 @@
+/* css/request-console.css
+   Teknoify theme + Postman-like request console styling
+*/
+
+:root{
+  --rc-bg: rgba(255,255,255,0.03);
+  --rc-border: rgba(255,255,255,0.08);
+  --rc-border-2: rgba(255,255,255,0.06);
+  --rc-text: #e5e7eb;
+  --rc-muted: #9aa0aa;
+
+  --rc-primary: #6366f1;
+  --rc-primary-2: rgba(99,102,241,0.18);
+  --rc-danger: #ef4444;
+
+  --rc-chip-bg: rgba(0,0,0,0.25);
+  --rc-chip-bg-2: rgba(0,0,0,0.35);
+
+  --rc-radius: 16px;
+  --rc-radius-sm: 12px;
+  --rc-input-radius: 10px;
+
+  /* Typography (Postman-ish) */
+  --rc-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Inter Tight", sans-serif;
+  --rc-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Fira Code", "Liberation Mono", "Courier New", monospace;
+}
+
+/* Layout helpers */
+.rc-grid{
+  display:grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap:16px;
+}
+@media (max-width: 1100px){
+  .rc-grid{ grid-template-columns: 1fr; }
+}
+
+.rc-stack{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:16px;
+}
+
+/* Card */
+.rc-card{
+  background: var(--rc-bg);
+  border: 1px solid var(--rc-border-2);
+  border-radius: var(--rc-radius);
+  padding: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.rc-title{
+  font-weight: 700;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.rc-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.rc-row .grow{ flex:1; }
+
+.rc-meta{
+  font-family: var(--rc-mono);
+  font-size: 0.8rem;
+  color: var(--rc-muted);
+}
+
+/* Inputs */
+.rc-input,
+.rc-select,
+.rc-textarea{
+  width:100%;
+  border-radius: var(--rc-input-radius);
+  border: 1px solid var(--rc-border);
+  background: var(--rc-chip-bg);
+  color:#fff;
+  padding: 10px 12px;
+  outline:none;
+  font-family: var(--rc-font);
+}
+.rc-input::placeholder,
+.rc-textarea::placeholder{
+  color: rgba(255,255,255,0.35);
+}
+
+.rc-textarea{
+  min-height: 220px;
+  font-family: var(--rc-mono);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  background: rgba(0,0,0,0.28);
+}
+
+/* Tabs */
+.rc-tabs{
+  display:flex;
+  gap:8px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.rc-tab{
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--rc-border);
+  background: var(--rc-chip-bg);
+  color: #bbb;
+  cursor: pointer;
+  font-size: 0.85rem;
+  user-select:none;
+  transition: all .15s ease;
+  font-family: var(--rc-font);
+}
+.rc-tab:hover{
+  border-color: rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.32);
+}
+.rc-tab.active{
+  color:#fff;
+  background: var(--rc-primary-2);
+  border-color: rgba(99,102,241,0.35);
+}
+
+/* Buttons */
+.rc-btn{
+  border: 0;
+  border-radius: var(--rc-radius-sm);
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition: transform .06s ease, opacity .15s ease;
+  font-family: var(--rc-font);
+}
+.rc-btn:active{ transform: translateY(1px); }
+.rc-btn-primary{
+  background: var(--rc-primary);
+  color:#fff;
+}
+.rc-btn-ghost{
+  background: rgba(255,255,255,0.06);
+  color:#ddd;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.rc-btn-danger{
+  background: rgba(239,68,68,0.15);
+  color: var(--rc-danger);
+  border: 1px solid rgba(239,68,68,0.35);
+}
+
+/* Response areas */
+.rc-pre{
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--rc-chip-bg-2);
+  border: 1px solid var(--rc-border-2);
+  border-radius: var(--rc-radius-sm);
+  padding: 12px;
+  color: var(--rc-text);
+  font-family: var(--rc-mono);
+  font-size: 0.85rem;
+  min-height: 220px;
+}
+
+/* Key/Value rows for headers */
+.rc-kv{
+  display:grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.rc-kv .rc-input{
+  background: rgba(0,0,0,0.28);
+}
+
+/* Remove button (x) */
+.rc-kv-remove{
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(239,68,68,0.35);
+  background: rgba(239,68,68,0.12);
+  color: #ff6b6b;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* BQ preview table */
+.rc-table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--rc-border-2);
+}
+
+.rc-table th,
+.rc-table td{
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--rc-border-2);
+  font-size: 0.85rem;
+  color: #ddd;
+  font-family: var(--rc-font);
+}
+.rc-table th{
+  background: rgba(255,255,255,0.03);
+  text-align:left;
+  color:#fff;
+  font-weight:700;
+}
+.rc-table tr:last-child td{ border-bottom: none; }
+
+/* Postman-like Method Dropdown (optional enhancement for native select) */
+.rc-method-wrap{
+  position: relative;
+  width: 140px;
+  min-width: 140px;
+}
+.rc-method-select{
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 34px;
+  cursor: pointer;
+}
+.rc-method-wrap:after{
+  content:"▾";
+  position:absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.55);
+  pointer-events:none;
+  font-size: 12px;
+}
+
+/* Method color chips (works when request-console.js applies data-method on wrapper) */
+.rc-method-wrap[data-method="GET"] .rc-method-select{ border-color: rgba(34,197,94,0.35); }
+.rc-method-wrap[data-method="POST"] .rc-method-select{ border-color: rgba(234,179,8,0.40); }
+.rc-method-wrap[data-method="PUT"] .rc-method-select{ border-color: rgba(59,130,246,0.40); }
+.rc-method-wrap[data-method="PATCH"] .rc-method-select{ border-color: rgba(168,85,247,0.40); }
+.rc-method-wrap[data-method="DELETE"] .rc-method-select{ border-color: rgba(239,68,68,0.45); }
+
+/* =========================================================
+   FIX: Dropdown options too bold / too big (native select)
+   ========================================================= */
+
+/* Method select itself */
+#rc-method,
+.rc-method-select{
+  font-family: var(--rc-font) !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important; /* 400-500 arası deneyebilirsin */
+  line-height: 1.25 !important;
+  letter-spacing: .1px;
+  padding: 7px 10px !important;
+  height: 36px;
+}
+
+/* Options (opened list) */
+#rc-method option,
+.rc-method-select option{
+  font-family: var(--rc-font) !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.25 !important;
+}
+
+/* If global CSS is forcing bold everywhere, normalize inside console */
+.rc-card,
+.rc-card *{
+  font-weight: inherit;
+}
