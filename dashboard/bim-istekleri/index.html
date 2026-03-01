@@ -15,9 +15,7 @@
   <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
 
-  <link rel="stylesheet" href="./api-console.css?v=8">
-
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <link rel="stylesheet" href="./api-console.css?v=9"> <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -106,7 +104,7 @@
             <i class="fas fa-download"></i> İndir
           </button>
 
-          <button id="btn-dev-mode" class="btn-dev-closed btn-align-fix" onclick="toggleDevMode()">
+          <button id="btn-dev-mode" class="btn-animated-send btn-orange btn-align-fix active-shimmer" onclick="toggleDevMode()">
             <span class="btn-content-inner"><i class="fas fa-terminal"></i> Geliştirici Modu</span>
           </button>
 
@@ -114,7 +112,7 @@
         
       </div>
 
-      <div id="dev-mode-container" class="dev-window-wrapper hidden-dev">
+      <div id="dev-mode-container" class="dev-window-wrapper">
         <div class="dev-window">
           
           <div class="dev-window-header">
@@ -152,13 +150,57 @@
                 </button>
               </div>
 
-              <div class="rc-tabs">
-                <div class="rc-tab active" data-tab="headers">Headers</div>
+              <div class="rc-tabs" id="request-tabs-nav">
+                <div class="rc-tab active" data-tab="params">Params</div>
+                <div class="rc-tab" data-tab="auth">Authorization</div>
+                <div class="rc-tab" data-tab="headers">Headers</div>
                 <div class="rc-tab" data-tab="body">Body (JSON)</div>
               </div>
 
-              <div id="rc-panel-headers">
-                <div id="rc-headers"></div>
+              <div id="rc-panel-params">
+                <div id="rc-params">
+                  <div class="rc-kv-row">
+                    <input type="text" class="rc-input" placeholder="Key (örn: status)">
+                    <input type="text" class="rc-input" placeholder="Value (örn: active)">
+                    <button class="rc-kv-btn" title="Sil"><i class="fas fa-trash-alt"></i></button>
+                  </div>
+                </div>
+                <div class="rc-row" style="margin-top:15px; gap:12px; display:flex;">
+                  <button id="rc-add-param" class="btn-header-action btn-header-add" type="button">
+                    <i class="fas fa-plus"></i> Param Ekle
+                  </button>
+                  <button id="rc-clear-params" class="btn-header-action btn-header-clear" type="button">
+                    <i class="fas fa-trash-alt"></i> Temizle
+                  </button>
+                </div>
+              </div>
+
+              <div id="rc-panel-auth" class="hidden">
+                <div class="rc-row" style="margin-bottom: 12px;">
+                  <div style="width: 200px;">
+                    <select class="rc-select" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                      <option value="none">No Auth</option>
+                      <option value="bearer" selected>Bearer Token</option>
+                      <option value="basic">Basic Auth</option>
+                    </select>
+                  </div>
+                  <div class="grow" style="color: #888; font-size: 13px; padding-left: 10px;">
+                    <i class="fas fa-info-circle"></i> İsteklerinize otomatik olarak Authorization header'ı ekler.
+                  </div>
+                </div>
+                <div class="rc-row">
+                  <input type="text" id="rc-auth-token" class="rc-input" placeholder="Token girin (örn: eyJhbGciOiJIUzI1Ni...)" />
+                </div>
+              </div>
+
+              <div id="rc-panel-headers" class="hidden">
+                <div id="rc-headers">
+                  <div class="rc-kv-row">
+                    <input type="text" class="rc-input" placeholder="Key (örn: Content-Type)">
+                    <input type="text" class="rc-input" placeholder="Value (örn: application/json)">
+                    <button class="rc-kv-btn" title="Sil"><i class="fas fa-trash-alt"></i></button>
+                  </div>
+                </div>
                 <div class="rc-row" style="margin-top:15px; gap:12px; display:flex;">
                   <button id="rc-add-header" class="btn-header-action btn-header-add" type="button">
                     <i class="fas fa-plus"></i> Header Ekle
@@ -169,7 +211,7 @@
                 </div>
               </div>
 
-              <div id="rc-panel-body">
+              <div id="rc-panel-body" class="hidden">
                 <textarea id="rc-body" class="rc-textarea" placeholder='{"example": true}'></textarea>
               </div>
 
@@ -214,10 +256,12 @@
             <div class="chart-box dev-inner-box" style="padding: 20px;">
               <div class="chart-header" style="margin-bottom: 15px; display:flex; justify-content:space-between; width: 100%;">
                 <div class="chart-title"><i class="fas fa-inbox" style="opacity:.8; margin-right:8px;"></i> Response</div>
-                <div style="font-size: 13px; color: #aaa; font-family: 'Fira Code', monospace;">
-                  <span id="rc-status" style="margin-right:15px;">Status: -</span>
-                  <span id="rc-time">Time: -</span>
+                
+                <div style="display:flex; gap: 10px; align-items: center;">
+                  <span id="rc-status" class="rc-badge rc-badge-idle"><i class="fas fa-circle" style="font-size:8px;"></i> Status: 000</span>
+                  <span id="rc-time" class="rc-badge rc-badge-idle"><i class="fas fa-clock" style="font-size:10px;"></i> Time: 0 ms</span>
                 </div>
+
               </div>
 
               <div class="rc-tabs">
@@ -253,6 +297,29 @@
         dateFormat: "d.m.Y",
         locale: "tr",
         disableMobile: "true"
+      });
+
+      // Geliştirici Modu Sekmeleri İçin Basit Geçiş Mantığı
+      const reqTabs = document.querySelectorAll('#request-tabs-nav .rc-tab');
+      const panels = ['params', 'auth', 'headers', 'body'];
+
+      reqTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Sekme aktifliğini değiştir
+          reqTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          // Tüm panelleri gizle
+          panels.forEach(p => {
+            const panelEl = document.getElementById('rc-panel-' + p);
+            if(panelEl) panelEl.classList.add('hidden');
+          });
+
+          // İlgili paneli göster
+          const target = tab.getAttribute('data-tab');
+          const targetPanel = document.getElementById('rc-panel-' + target);
+          if(targetPanel) targetPanel.classList.remove('hidden');
+        });
       });
     });
 
@@ -299,16 +366,19 @@
         btnDownload.classList.remove("btn-passive");
         btnDownload.classList.add("active-shimmer");
         
+        // Örnek Rozet Simülasyonu (İsteğe bağlı, JS dosyanız zaten bunu yönetiyorsa silebilirsiniz)
+        const statusBadge = document.getElementById("rc-status");
+        statusBadge.className = "rc-badge rc-badge-success";
+        statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> Status: 200 OK';
+
       } else if (action === 'download') {
         if (btnDownload.classList.contains("btn-passive")) {
            showCustomToast("Uyarı", "İndirme yapabilmek için önce 'İstek Gönder' butonunu kullanın.", "warning");
            return;
         }
         
-        // JSON indirme fonksiyonunu çağır
         downloadResponseAsJSON();
         
-        // İsteğe bağlı: İndirme sonrası butonu tekrar pasif duruma alma
         btnDownload.classList.remove("active-shimmer");
         btnDownload.classList.add("btn-passive");
         btnRun.classList.add("active-shimmer");
@@ -320,9 +390,11 @@
       const btnDev = document.getElementById("btn-dev-mode");
       
       if (container.classList.contains("hidden-dev")) {
+        // Açılırken
         container.classList.remove("hidden-dev");
         btnDev.className = "btn-animated-send btn-orange btn-align-fix active-shimmer";
       } else {
+        // Kapanırken
         container.classList.add("hidden-dev");
         btnDev.className = "btn-dev-closed btn-align-fix";
       }
