@@ -140,49 +140,72 @@
 .json-null { color: #94a3b8; font-style: italic; }
 
 /* ==========================================================================
-   13. YEPYENİ KOD ÜRETİCİ MODAL (BACKDROP KALDIRILDI)
+   13. YEPYENİ KOD ÜRETİCİ MODAL
+   (SADECE CODE MODAL’IN BACKDROP’U KALDIRILDI)
    ========================================================================== */
+
 .tk-modal {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  display: flex; align-items: center; justify-content: center;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 10000;
 }
 
-/* ✅ Backdrop (gri karartma/blur) kaldırıldı */
-.tk-modal-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+/* ✅ SADECE Code Snippet modalında karartma/blur yok */
+#code-modal .tk-modal-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: transparent !important;
   backdrop-filter: none !important;
   cursor: pointer;
 }
 
-/* Modal ana gövdesi - TEXT-ALIGN LEFT EKLENDİ (Ortalanmayı bozar) */
+/* Modal ana gövdesi */
 .tk-modal-content {
-  position: relative; width: 680px; max-width: 90%;
-  background: #0d1117 !important; /* Gerçek terminal arkaplanı */
+  position: relative;
+  width: 680px; max-width: 90%;
+  background: #0d1117 !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  overflow: hidden; z-index: 10001;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  z-index: 10001;
   text-align: left !important;
 }
 
 .tk-modal-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 18px; background: rgba(0, 0, 0, 0.2) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(0, 0, 0, 0.2) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 .tk-modal-body { padding: 20px; }
 
 .btn-copy {
-  background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #818cf8; padding: 0 16px; height: 40px; border-radius: 8px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-weight: 600; font-family: inherit; font-size: 13px; transition: 0.2s ease;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #818cf8;
+  padding: 0 16px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 13px;
+  transition: 0.2s ease;
 }
 .btn-copy:hover { background: rgba(99, 102, 241, 0.3); color: #fff; }
 
-/* HİÇBİR ARKA PLANI VE ÇERÇEVESİ OLMAYAN KOD ALANI */
 .terminal-code-area {
   background: transparent !important;
   border: none !important;
@@ -198,13 +221,13 @@
   color: #a5b4fc;
   font-family: var(--font-mono);
   font-size: 13px;
-  white-space: pre !important; /* Uzun kodların alt satıra geçmesini engeller */
+  white-space: pre !important;
   line-height: 1.6;
   text-align: left !important;
-  display: block; /* Genişliği doldurur ve sola yazar */
+  display: block;
 }
 
-/* Scrollbar Özelleştirme */
+/* Scrollbar */
 .terminal-code-area::-webkit-scrollbar { height: 8px; }
 .terminal-code-area::-webkit-scrollbar-track { background: transparent; border-radius: 4px; }
 .terminal-code-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
