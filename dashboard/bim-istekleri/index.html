@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
 
-  <link rel="stylesheet" href="./api-console.css?v=16">
+  <link rel="stylesheet" href="./api-console.css?v=17">
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -139,7 +139,7 @@
                 </div>
                 <input id="rc-url" class="rc-input grow" placeholder="https://api.example.com/endpoint" value="https://us-central1-teknoify-9449c.cloudfunctions.net/apiProxy" />
                 
-                <button class="btn-animated-send btn-short" style="background: rgba(255,255,255,0.08); color:#a5b4fc; box-shadow:none; border: 1px solid rgba(255,255,255,0.1);" type="button" onclick="openCodeModal()">
+                <button class="btn-animated-send btn-short" style="background: rgba(255,255,255,0.08); color:#a5b4fc; box-shadow:none; border: 1px solid rgba(255,255,255,0.1);" type="button" onclick="openCodeSidebar()">
                   <i class="fas fa-code"></i> Kod Üret
                 </button>
 
@@ -280,43 +280,37 @@
     </div>
   </main>
 
-  <div id="code-modal" class="tk-modal hidden" onclick="closeCodeModal()">
-    <div class="tk-modal-overlay"></div>
+  <div id="code-sidebar-overlay" class="rc-sidebar-overlay" onclick="closeCodeSidebar()"></div>
+  <div id="code-sidebar" class="rc-sidebar">
     
-    <div class="tk-modal-content" onclick="event.stopPropagation()">
-      <div class="tk-modal-header">
-        <div class="dev-dots" style="position: static; padding: 0;">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot green"></span>
-        </div>
-        <div class="dev-title" style="color: #64748b;">Code Snippet</div>
-        <button class="rc-kv-btn" style="width: 28px; height: 28px; font-size: 14px; position: static;" onclick="closeCodeModal()"><i class="fas fa-times"></i></button>
+    <div class="rc-sidebar-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-code" style="color: #a5b4fc; font-size: 16px;"></i>
+        <div class="dev-title" style="color: #e2e8f0; font-size: 14px; font-weight: 700;">Code Snippet</div>
       </div>
+      <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px;" onclick="closeCodeSidebar()"><i class="fas fa-times"></i></button>
+    </div>
 
-      <div class="tk-modal-body">
-        <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
-          <div style="position: relative; width: 220px;">
-            <select id="code-lang-select" class="rc-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #818cf8; border-radius: 8px; font-weight: 600;" onchange="generateSnippet()">
-              <option value="curl">cURL</option>
-              <option value="fetch">Node.js (Fetch)</option>
-              <option value="python">Python (Requests)</option>
-              <option value="csharp">C# (HttpClient)</option>
-              <option value="dart">Dart (http)</option>
-              <option value="go">Go (Native)</option>
-              <option value="java">Java (OkHttp)</option>
-            </select>
-          </div>
-          
-          <button class="btn-copy" onclick="copyCodeSnippet()" title="Kodu Kopyala">
-            <i class="fas fa-copy" style="margin-right: 6px;"></i> Kopyala
-          </button>
+    <div class="rc-sidebar-body">
+      <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="position: relative; width: 220px;">
+          <select id="code-lang-select" class="rc-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #818cf8; border-radius: 8px; font-weight: 600;" onchange="generateSnippet()">
+            <option value="curl">cURL</option>
+            <option value="fetch">Node.js (Fetch)</option>
+            <option value="python">Python (Requests)</option>
+            <option value="csharp">C# (HttpClient)</option>
+            <option value="dart">Dart (http)</option>
+            <option value="go">Go (Native)</option>
+            <option value="java">Java (OkHttp)</option>
+          </select>
         </div>
         
-        <div class="terminal-code-area">
-          <div id="code-snippet-output"></div>
-        </div>
+        <button class="btn-copy" onclick="copyCodeSnippet()" title="Kodu Kopyala">
+          <i class="fas fa-copy" style="margin-right: 6px;"></i> Kopyala
+        </button>
       </div>
+      
+      <div class="rc-sidebar-code" id="code-snippet-output"></div>
     </div>
   </div>
 
@@ -442,10 +436,7 @@
             "order_id": orderId,
             "is_active": true,
             "total_amount": 149.99,
-            "currency": "TRY",
-            "items": [
-                {"id": 101, "name": "Cloud Function PRO", "price": 49.99}
-            ]
+            "currency": "TRY"
           },
           "message": "Sipariş başarıyla çekildi."
         };
@@ -501,13 +492,16 @@
       }
     }
 
-    function openCodeModal() {
-      document.getElementById('code-modal').classList.remove('hidden');
+    // YENİ: SAĞDAN AÇILAN PANEL FONKSİYONLARI
+    function openCodeSidebar() {
+      document.getElementById('code-sidebar-overlay').classList.add('show');
+      document.getElementById('code-sidebar').classList.add('show');
       generateSnippet();
     }
 
-    function closeCodeModal() {
-      document.getElementById('code-modal').classList.add('hidden');
+    function closeCodeSidebar() {
+      document.getElementById('code-sidebar-overlay').classList.remove('show');
+      document.getElementById('code-sidebar').classList.remove('show');
     }
 
     function generateSnippet() {
