@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
 
-  <link rel="stylesheet" href="./api-console.css?v=9"> <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <link rel="stylesheet" href="./api-console.css?v=10"> <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -162,14 +162,14 @@
                   <div class="rc-kv-row">
                     <input type="text" class="rc-input" placeholder="Key (örn: status)">
                     <input type="text" class="rc-input" placeholder="Value (örn: active)">
-                    <button class="rc-kv-btn" title="Sil"><i class="fas fa-trash-alt"></i></button>
+                    <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                   </div>
                 </div>
                 <div class="rc-row" style="margin-top:15px; gap:12px; display:flex;">
-                  <button id="rc-add-param" class="btn-header-action btn-header-add" type="button">
+                  <button id="btn-add-custom-param" class="btn-header-action btn-header-add" type="button">
                     <i class="fas fa-plus"></i> Param Ekle
                   </button>
-                  <button id="rc-clear-params" class="btn-header-action btn-header-clear" type="button">
+                  <button id="btn-clear-custom-params" class="btn-header-action btn-header-clear" type="button">
                     <i class="fas fa-trash-alt"></i> Temizle
                   </button>
                 </div>
@@ -198,14 +198,14 @@
                   <div class="rc-kv-row">
                     <input type="text" class="rc-input" placeholder="Key (örn: Content-Type)">
                     <input type="text" class="rc-input" placeholder="Value (örn: application/json)">
-                    <button class="rc-kv-btn" title="Sil"><i class="fas fa-trash-alt"></i></button>
+                    <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                   </div>
                 </div>
                 <div class="rc-row" style="margin-top:15px; gap:12px; display:flex;">
-                  <button id="rc-add-header" class="btn-header-action btn-header-add" type="button">
+                  <button id="btn-add-custom-header" class="btn-header-action btn-header-add" type="button">
                     <i class="fas fa-plus"></i> Header Ekle
                   </button>
-                  <button id="rc-clear-headers" class="btn-header-action btn-header-clear" type="button">
+                  <button id="btn-clear-custom-headers" class="btn-header-action btn-header-clear" type="button">
                     <i class="fas fa-trash-alt"></i> Temizle
                   </button>
                 </div>
@@ -299,28 +299,55 @@
         disableMobile: "true"
       });
 
-      // Geliştirici Modu Sekmeleri İçin Basit Geçiş Mantığı
+      // Sekmeler Arası Geçiş
       const reqTabs = document.querySelectorAll('#request-tabs-nav .rc-tab');
       const panels = ['params', 'auth', 'headers', 'body'];
 
       reqTabs.forEach(tab => {
         tab.addEventListener('click', () => {
-          // Sekme aktifliğini değiştir
           reqTabs.forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
 
-          // Tüm panelleri gizle
           panels.forEach(p => {
             const panelEl = document.getElementById('rc-panel-' + p);
             if(panelEl) panelEl.classList.add('hidden');
           });
 
-          // İlgili paneli göster
           const target = tab.getAttribute('data-tab');
           const targetPanel = document.getElementById('rc-panel-' + target);
           if(targetPanel) targetPanel.classList.remove('hidden');
         });
       });
+
+      // --- YENİ EKLENEN KISIM: 1'er 1'er satır ekleme ve silme mantığı ---
+      function createKVRow(placeholderKey, placeholderValue) {
+        const row = document.createElement('div');
+        row.className = 'rc-kv-row';
+        row.innerHTML = `
+          <input type="text" class="rc-input" placeholder="${placeholderKey}">
+          <input type="text" class="rc-input" placeholder="${placeholderValue}">
+          <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+        `;
+        return row;
+      }
+
+      // Headers Ekle / Temizle
+      document.getElementById('btn-add-custom-header').addEventListener('click', () => {
+        document.getElementById('rc-headers').appendChild(createKVRow('Key (örn: Content-Type)', 'Value (örn: application/json)'));
+      });
+      document.getElementById('btn-clear-custom-headers').addEventListener('click', () => {
+        document.getElementById('rc-headers').innerHTML = '';
+      });
+
+      // Params Ekle / Temizle
+      document.getElementById('btn-add-custom-param').addEventListener('click', () => {
+        document.getElementById('rc-params').appendChild(createKVRow('Key (örn: status)', 'Value (örn: active)'));
+      });
+      document.getElementById('btn-clear-custom-params').addEventListener('click', () => {
+        document.getElementById('rc-params').innerHTML = '';
+      });
+      // ---------------------------------------------------------------------
+
     });
 
     function showCustomToast(title, message, type = 'warning') {
@@ -343,10 +370,7 @@
       }
 
       toast.classList.add("show");
-      
-      setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3500);
+      setTimeout(() => { toast.classList.remove("show"); }, 3500);
     }
 
     function uiToggleActionButtons(action) {
@@ -366,7 +390,6 @@
         btnDownload.classList.remove("btn-passive");
         btnDownload.classList.add("active-shimmer");
         
-        // Örnek Rozet Simülasyonu (İsteğe bağlı, JS dosyanız zaten bunu yönetiyorsa silebilirsiniz)
         const statusBadge = document.getElementById("rc-status");
         statusBadge.className = "rc-badge rc-badge-success";
         statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> Status: 200 OK';
@@ -390,11 +413,9 @@
       const btnDev = document.getElementById("btn-dev-mode");
       
       if (container.classList.contains("hidden-dev")) {
-        // Açılırken
         container.classList.remove("hidden-dev");
         btnDev.className = "btn-animated-send btn-orange btn-align-fix active-shimmer";
       } else {
-        // Kapanırken
         container.classList.add("hidden-dev");
         btnDev.className = "btn-dev-closed btn-align-fix";
       }
@@ -410,9 +431,7 @@
       }
 
       let orderId = document.getElementById("filter-order-id").value.trim();
-      if (!orderId) {
-        orderId = "api_response";
-      }
+      if (!orderId) { orderId = "api_response"; }
       const fileName = `${orderId}.json`;
 
       const blob = new Blob([content], { type: "application/json" });
