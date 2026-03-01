@@ -15,7 +15,9 @@
   <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
 
-  <link rel="stylesheet" href="./api-console.css?v=12"> <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <link rel="stylesheet" href="./api-console.css?v=13">
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -136,7 +138,7 @@
                     <option value="DELETE">DELETE</option>
                   </select>
                 </div>
-                <input id="rc-url" class="rc-input grow" placeholder="https://api.example.com/endpoint" value="https://api.teknoify.com/v1/orders" />
+                <input id="rc-url" class="rc-input grow" placeholder="https://api.example.com/endpoint" value="https://us-central1-teknoify-9449c.cloudfunctions.net/apiProxy" />
                 
                 <button class="btn-animated-send btn-short" style="background: rgba(255,255,255,0.08); color:#a5b4fc; box-shadow:none; border: 1px solid rgba(255,255,255,0.1);" type="button" onclick="openCodeModal()">
                   <i class="fas fa-code"></i> Kod Üret
@@ -157,8 +159,8 @@
               <div id="rc-panel-params">
                 <div id="rc-params">
                   <div class="rc-kv-row">
-                    <input type="text" class="rc-input kv-key" placeholder="Key" value="status">
-                    <input type="text" class="rc-input kv-val" placeholder="Value" value="active">
+                    <input type="text" class="rc-input kv-key" placeholder="Key" value="orderId">
+                    <input type="text" class="rc-input kv-val" placeholder="Value" value="pnu2-y3h8">
                     <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                   </div>
                 </div>
@@ -208,7 +210,7 @@
               </div>
 
               <div id="rc-panel-body" class="hidden">
-                <textarea id="rc-body" class="rc-textarea" placeholder='{"example": true}'>{"example": true}</textarea>
+                <textarea id="rc-body" class="rc-textarea" placeholder='{"example": true}'>{"project_id": "bim_faz_2"}</textarea>
               </div>
 
               <div id="rc-panel-bq">
@@ -294,18 +296,29 @@
       </div>
 
       <div class="tk-modal-body">
-        <div class="rc-tabs" id="code-tabs-nav" style="margin-top: 0;">
-          <div class="rc-tab active" data-lang="curl">cURL</div>
-          <div class="rc-tab" data-lang="fetch">Node.js (Fetch)</div>
-          <div class="rc-tab" data-lang="python">Python</div>
+        
+        <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="position: relative; width: 220px;">
+            <select id="code-lang-select" class="rc-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #818cf8; border-radius: 8px; font-weight: 600;" onchange="generateSnippet()">
+              <option value="curl">cURL</option>
+              <option value="fetch">Node.js (Fetch)</option>
+              <option value="python">Python (Requests)</option>
+              <option value="csharp">C# (HttpClient)</option>
+              <option value="dart">Dart (http)</option>
+              <option value="go">Go (Native)</option>
+              <option value="java">Java (OkHttp)</option>
+            </select>
+          </div>
+          
+          <button class="btn-copy" onclick="copyCodeSnippet()" title="Kodu Kopyala">
+            <i class="fas fa-copy" style="margin-right: 6px;"></i> Kopyala
+          </button>
         </div>
         
-        <div class="rc-pre" style="position: relative; margin-top: 15px; min-height: 150px;">
-          <button class="btn-copy" onclick="copyCodeSnippet()" title="Kodu Kopyala">
-            <i class="fas fa-copy"></i>
-          </button>
-          <div id="code-snippet-output" style="white-space: pre-wrap; font-family: var(--font-mono); font-size: 13px; color: #cbd5e1;"></div>
+        <div class="rc-pre code-modal-pre">
+          <div id="code-snippet-output"></div>
         </div>
+
       </div>
     </div>
   </div>
@@ -342,15 +355,6 @@
           if(targetPanel) targetPanel.classList.remove('hidden');
         });
       });
-
-      const codeTabs = document.querySelectorAll('#code-tabs-nav .rc-tab');
-      codeTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          codeTabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          generateSnippet();
-        });
-      });
     });
 
     function createKVRow(placeholderKey, placeholderValue) {
@@ -371,7 +375,7 @@
       document.getElementById('rc-headers').innerHTML = '';
     });
     document.getElementById('btn-add-custom-param').addEventListener('click', () => {
-      document.getElementById('rc-params').appendChild(createKVRow('Key (örn: status)', 'Value (örn: active)'));
+      document.getElementById('rc-params').appendChild(createKVRow('Key', 'Value'));
     });
     document.getElementById('btn-clear-custom-params').addEventListener('click', () => {
       document.getElementById('rc-params').innerHTML = '';
@@ -408,16 +412,9 @@
       return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
         let cls = 'json-number';
         if (/^"/.test(match)) {
-          if (/:$/.test(match)) {
-            cls = 'json-key';
-          } else {
-            cls = 'json-string';
-          }
-        } else if (/true|false/.test(match)) {
-          cls = 'json-boolean';
-        } else if (/null/.test(match)) {
-          cls = 'json-null';
-        }
+          if (/:$/.test(match)) { cls = 'json-key'; } else { cls = 'json-string'; }
+        } else if (/true|false/.test(match)) { cls = 'json-boolean';
+        } else if (/null/.test(match)) { cls = 'json-null'; }
         return '<span class="' + cls + '">' + match + '</span>';
       });
     }
@@ -518,11 +515,12 @@
       document.getElementById('code-modal').classList.add('hidden');
     }
 
+    // YENİ: ÇOKLU DİL KOD ÜRETME MOTORU
     function generateSnippet() {
       const method = document.getElementById('rc-method').value;
       const url = document.getElementById('rc-url').value || "https://api.example.com/v1";
       const bodyStr = document.getElementById('rc-body').value || "{}";
-      const activeTab = document.querySelector('#code-tabs-nav .rc-tab.active').getAttribute('data-lang');
+      const activeLang = document.getElementById('code-lang-select').value;
       const output = document.getElementById('code-snippet-output');
 
       const headerRows = document.querySelectorAll('#rc-headers .rc-kv-row');
@@ -537,50 +535,74 @@
       if(token) headers['Authorization'] = `Bearer ${token}`;
 
       let code = "";
+      const hasBody = (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}' && bodyStr !== '');
 
-      if (activeTab === 'curl') {
-        code = `curl --location --request ${method} '${url}' \\\n`;
-        for (const [k, v] of Object.entries(headers)) {
-          code += `--header '${k}: ${v}' \\\n`;
-        }
-        if (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}') {
-          code += `--data-raw '${bodyStr}'`;
-        }
-        if (code.endsWith(' \\\n')) code = code.slice(0, -3);
+      switch(activeLang) {
+        case 'curl':
+          code = `curl --location --request ${method} '${url}' \\\n`;
+          for (const [k, v] of Object.entries(headers)) {
+            code += `--header '${k}: ${v}' \\\n`;
+          }
+          if (hasBody) code += `--data-raw '${bodyStr}'`;
+          if (code.endsWith(' \\\n')) code = code.slice(0, -3);
+          break;
 
-      } else if (activeTab === 'fetch') {
-        code = `const myHeaders = new Headers();\n`;
-        for (const [k, v] of Object.entries(headers)) {
-          code += `myHeaders.append("${k}", "${v}");\n`;
-        }
-        code += `\nconst requestOptions = {\n  method: '${method}',\n  headers: myHeaders,\n  redirect: 'follow'`;
-        if (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}') {
-          code += `,\n  body: JSON.stringify(${bodyStr})`;
-        }
-        code += `\n};\n\nfetch("${url}", requestOptions)\n  .then(response => response.text())\n  .then(result => console.log(result))\n  .catch(error => console.log('error', error));`;
-      
-      } else if (activeTab === 'python') {
-        code = `import requests\nimport json\n\nurl = "${url}"\n`;
-        if (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}') {
-          code += `payload = json.dumps(${bodyStr})\n`;
-        } else {
-          code += `payload = {}\n`;
-        }
-        code += `headers = {\n`;
-        for (const [k, v] of Object.entries(headers)) {
-          code += `  '${k}': '${v}',\n`;
-        }
-        code += `}\n\nresponse = requests.request("${method}", url, headers=headers, data=payload)\n\nprint(response.text)`;
+        case 'fetch':
+          code = `const myHeaders = new Headers();\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `myHeaders.append("${k}", "${v}");\n`; }
+          code += `\nconst requestOptions = {\n  method: '${method}',\n  headers: myHeaders,\n  redirect: 'follow'`;
+          if (hasBody) code += `,\n  body: JSON.stringify(${bodyStr})`;
+          code += `\n};\n\nfetch("${url}", requestOptions)\n  .then(response => response.text())\n  .then(result => console.log(result))\n  .catch(error => console.log('error', error));`;
+          break;
+
+        case 'python':
+          code = `import requests\nimport json\n\nurl = "${url}"\n`;
+          if (hasBody) { code += `payload = json.dumps(${bodyStr})\n`; } else { code += `payload = {}\n`; }
+          code += `headers = {\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
+          code += `}\n\nresponse = requests.request("${method}", url, headers=headers, data=payload)\n\nprint(response.text)`;
+          break;
+
+        case 'csharp':
+          code = `var client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.${method.charAt(0).toUpperCase() + method.slice(1).toLowerCase()}, "${url}");\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `request.Headers.Add("${k}", "${v}");\n`; }
+          if (hasBody) { code += `var content = new StringContent("${bodyStr.replace(/"/g, '\\"')}", null, "application/json");\nrequest.Content = content;\n`; }
+          code += `var response = await client.SendAsync(request);\nresponse.EnsureSuccessStatusCode();\nConsole.WriteLine(await response.Content.ReadAsStringAsync());`;
+          break;
+
+        case 'dart':
+          code = `var headers = {\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
+          code += `};\nvar request = http.Request('${method}', Uri.parse('${url}'));\n`;
+          if (hasBody) { code += `request.body = json.encode(${bodyStr});\n`; }
+          code += `request.headers.addAll(headers);\n\nhttp.StreamedResponse response = await request.send();\n\nif (response.statusCode == 200) {\n  print(await response.stream.bytesToString());\n} else {\n  print(response.reasonPhrase);\n}`;
+          break;
+
+        case 'go':
+          code = `package main\n\nimport (\n  "fmt"\n  "strings"\n  "net/http"\n  "io/ioutil"\n)\n\nfunc main() {\n  url := "${url}"\n  method := "${method}"\n`;
+          if (hasBody) { code += `  payload := strings.NewReader(\`${bodyStr}\`)\n  client := &http.Client {}\n  req, err := http.NewRequest(method, url, payload)\n`; }
+          else { code += `  client := &http.Client {}\n  req, err := http.NewRequest(method, url, nil)\n`; }
+          code += `  if err != nil {\n    fmt.Println(err)\n    return\n  }\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `  req.Header.Add("${k}", "${v}")\n`; }
+          code += `  res, err := client.Do(req)\n  if err != nil {\n    fmt.Println(err)\n    return\n  }\n  defer res.Body.Close()\n\n  body, err := ioutil.ReadAll(res.Body)\n  fmt.Println(string(body))\n}`;
+          break;
+
+        case 'java':
+          code = `OkHttpClient client = new OkHttpClient().newBuilder().build();\n`;
+          if (hasBody) { code += `MediaType mediaType = MediaType.parse("application/json");\nRequestBody body = RequestBody.create(mediaType, "${bodyStr.replace(/"/g, '\\"')}");\n`; }
+          code += `Request request = new Request.Builder()\n  .url("${url}")\n`;
+          if (hasBody) { code += `  .method("${method}", body)\n`; } else { code += `  .method("${method}", null)\n`; }
+          for (const [k, v] of Object.entries(headers)) { code += `  .addHeader("${k}", "${v}")\n`; }
+          code += `  .build();\nResponse response = client.newCall(request).execute();`;
+          break;
       }
 
       output.innerText = code;
     }
 
-    // GÜNCELLENEN: KOPYALANDI POP-UP'I (TOAST)
     function copyCodeSnippet() {
       const code = document.getElementById('code-snippet-output').innerText;
       navigator.clipboard.writeText(code).then(() => {
-        // Mevcut showCustomToast fonksiyonunu "success" tipiyle çağırıyoruz
         showCustomToast("Başarılı", "Kod panoya kopyalandı!", "success");
       });
     }
