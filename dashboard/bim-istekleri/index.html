@@ -16,7 +16,8 @@
 
   <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
-  <link rel="stylesheet" href="./api-console.css?v=18">
+  
+  <link rel="stylesheet" href="./api-console.css?v=19">
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -286,8 +287,8 @@
     
     <div class="rc-sidebar-header">
       <div style="display: flex; align-items: center; gap: 10px;">
-        <i class="fas fa-file-code" style="color: #4ade80; font-size: 16px;"></i>
-        <div class="dev-title" style="color: #cccccc; font-size: 14px; font-weight: 500;">code_snippet.js</div>
+        <i class="fas fa-code" style="color: #818cf8; font-size: 16px;"></i>
+        <div class="dev-title" style="color: #cccccc; font-size: 14px; font-weight: 600;">Code Snippet</div>
       </div>
       <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px; color: #cccccc;" onclick="closeCodeSidebar()"><i class="fas fa-times"></i></button>
     </div>
@@ -319,6 +320,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
@@ -432,13 +434,14 @@
           "message": "Sipariş başarıyla çekildi."
         };
         
-        // YENİ: Kendi regeximiz yerine artık Highlight.js kütüphanesini kullanıyoruz!
         const responseEl = document.getElementById("rc-response");
         responseEl.textContent = JSON.stringify(dummyResponse, null, 2);
         
-        // Önceki boyamayı sıfırlayıp yeniden boyatıyoruz
-        delete responseEl.dataset.highlighted;
-        if(window.hljs) { hljs.highlightElement(responseEl); }
+        if(window.hljs) { 
+          delete responseEl.dataset.highlighted;
+          hljs.highlightElement(responseEl); 
+          hljs.lineNumbersBlock(responseEl); // Ana JSON kısmına da satır numarası eklendi
+        }
         
         showCustomToast("Başarılı", "İstek gönderildi ve yanıt alındı.", "success");
 
@@ -456,7 +459,7 @@
 
     function downloadResponseAsJSON() {
       const responseElement = document.getElementById("rc-response");
-      const content = responseElement.textContent; // innerText yerine textContent daha güvenli
+      const content = responseElement.innerText; 
 
       if (!content || content.includes("Henüz istek gönderilmedi") || content.trim() === "") {
         showCustomToast("İndirme Başarısız", "İndirilecek veri bulunamadı.", "warning");
@@ -489,7 +492,6 @@
       }
     }
 
-    // SAĞ PANEL FONKSİYONLARI
     function openCodeSidebar() {
       document.getElementById('code-sidebar-overlay').classList.add('show');
       document.getElementById('code-sidebar').classList.add('show');
@@ -501,7 +503,6 @@
       document.getElementById('code-sidebar').classList.remove('show');
     }
 
-    // YENİ: VS CODE RENKLENDİRMESİ İLE KOD ÜRETME
     function generateSnippet() {
       const method = document.getElementById('rc-method').value;
       const url = document.getElementById('rc-url').value || "https://api.example.com/v1";
@@ -575,27 +576,36 @@
           break;
       }
       
-      // Metni koda basıyoruz
       output.textContent = code;
 
-      // Hangi dili Highlight.js'e göndereceğimizi belirliyoruz
       const langMap = {
         'curl': 'bash', 'fetch': 'javascript', 'python': 'python',
         'csharp': 'csharp', 'dart': 'dart', 'go': 'go', 'java': 'java'
       };
       output.className = 'language-' + langMap[activeLang];
 
-      // Kodu VS Code renkleriyle boyatıyoruz
       if(window.hljs) {
         delete output.dataset.highlighted;
         hljs.highlightElement(output);
+        // YENİ: Satır Numaralarını Koda Uygula
+        hljs.lineNumbersBlock(output);
       }
     }
 
     function copyCodeSnippet() {
-      // HTML etiketleri (renkler) olmadan sadece ham metni kopyalar
-      const code = document.getElementById('code-snippet-output').textContent;
-      navigator.clipboard.writeText(code).then(() => {
+      // Satır numaraları kopyalanmasın diye sadece .hljs-ln-code içindeki metinleri alıyoruz
+      const codeLines = document.querySelectorAll('#code-snippet-output .hljs-ln-code');
+      let codeToCopy = "";
+      
+      if(codeLines.length > 0) {
+        codeLines.forEach(line => {
+          codeToCopy += line.innerText + "\n";
+        });
+      } else {
+        codeToCopy = document.getElementById('code-snippet-output').innerText;
+      }
+
+      navigator.clipboard.writeText(codeToCopy.trim()).then(() => {
         showCustomToast("Başarılı", "Kod panoya kopyalandı!", "success");
       });
     }
