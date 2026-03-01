@@ -1,84 +1,65 @@
 /* ==========================================================================
-   3. MAIN CONTENT (Ana Stiller)
-   ========================================================================== */
-.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; background: var(--dash-bg); width: 100%; }
-.top-bar {
-    height: 64px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px; background: var(--dash-sidebar); z-index: 40;
-}
-.top-bar h2 { font-size: 1.1rem; font-weight: 600; margin: 0; color: #fff; }
-.user-profile { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 500; }
-.avatar {
-    width: 38px; height: 38px; background: #2f3349; color: #fff; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; font-weight: 700; border: 1px solid var(--border);
-}
-.content-scroll { padding: 24px; overflow-y: auto; height: 100%; scrollbar-width: thin; scrollbar-color: #333 transparent; }
-
-/* ==========================================================================
-   MOBİL KESİN ÇÖZÜM - KAYDIRMA (SCROLL) VE EKRAN İTME SORUNUNU ÇÖZER
+   MOBİL KESİN ÇÖZÜM - OVERLAY (ÜZERİNE AÇILMA) VE SOL ALT BUTON
    ========================================================================== */
 @media screen and (max-width: 992px) {
   
-  /* 1. AŞAĞI KAYDIRMA (SCROLL) KİLİDİNİ AÇIYORUZ */
+  /* 1. EKRANIN SAĞA İTİLMESİNİ KESİNLİKLE YASAKLA */
   html, body {
-    display: block !important;
-    overflow-x: hidden !important; /* Sağa sola kaymayı yasakla */
-    overflow-y: auto !important;   /* Aşağı yukarı kaydırmayı serbest bırak */
+    overflow-x: hidden !important; /* Sağa kaymayı ve siyah boşluğu %100 engeller */
     width: 100% !important;
-    height: auto !important;
   }
 
-  /* 2. MENÜNÜN EKRANI İTMESİNİ YASAKLA (Üzerinden gelsin) */
+  /* 2. ANA İÇERİK (SABİT KALACAK, ASLA İTİLMEYECEK) */
   .main-content {
     width: 100% !important;
     max-width: 100vw !important;
-    height: auto !important;
-    min-height: 100vh !important;
-    margin-left: 0 !important; /* Hayati Kod: Menü açılsa bile ekranı sağa itme! */
+    margin-left: 0 !important; /* SİHİRLİ KOD: Menü açılsa bile ekranı sağa itme! */
     transform: none !important;
-    overflow: visible !important;
-    position: static !important;
+    position: relative !important;
   }
 
-  /* 3. İÇERİK ALANI KAYDIRMASI */
-  .content-scroll {
-    height: auto !important;
-    overflow-y: visible !important;
-    padding: 15px !important;
-    padding-bottom: 80px !important; /* Mobilde en alt yapışmasın */
-  }
-
-  /* 4. YÜZEN MENÜ BUTONU */
+  /* 3. YÜZEN BUTON (SOL ALT KÖŞEYE ALINDI) */
   #floating-toggle-btn {
     display: flex !important;
     position: fixed !important;
-    top: 11px !important;
-    left: 15px !important;
-    z-index: 99999 !important;
+    top: auto !important; /* Üstteki hizalamayı iptal et */
+    bottom: 25px !important; /* Sol alt köşe */
+    left: 25px !important; /* Sol alt köşe */
+    z-index: 99999 !important; /* Her şeyin üstünde kalmasını sağlar */
     opacity: 1 !important;
     visibility: visible !important;
-    transform: scale(1) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important; /* Butonu belirginleştirir */
   }
 
-  /* 5. ÜST BAR HİZALAMASI */
+  /* Buton aşağı alındığı için üst barın sol boşluğunu normale döndürüyoruz */
   .top-bar {
-    padding-left: 70px !important; /* Menü butonuna yer bırak */
-    padding-right: 15px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
   }
 
-  /* 6. SİDEBAR DAVRANIŞI (Ekranın üstünden kayarak gelsin) */
+  /* 4. SİDEBAR (ANA İÇERİĞİN ÜSTÜNE KAYARAK GELSİN) */
   .sidebar {
     position: fixed !important;
     top: 0 !important;
-    left: -300px !important; /* Varsayılan olarak ekranın solunda gizli */
+    left: -320px !important; /* Ekranın dışında bekle */
     height: 100vh !important;
-    width: 260px !important;
-    z-index: 99998 !important;
-    transition: left 0.3s ease !important;
+    width: 280px !important;
+    z-index: 99998 !important; /* Butonun bir tık altında, ana ekranın çok üstünde */
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 5px 0 25px rgba(0,0,0,0.7) !important; /* İçeriğin üstünde durduğunu belli eden şık gölge */
   }
 
-  /* JS menüyü açtığında sadece Sidebar gelsin, Main Content sabit kalsın */
-  body:not(.sidebar-closed) .sidebar {
+  /* JavaScript menüyü açtığında SADECE Sidebar hareket etsin, arka plan sabit kalsın */
+  body:not(.sidebar-closed) .sidebar,
+  .sidebar.active {
     left: 0 !important;
+  }
+
+  /* 5. İÇERİK ALANI KAYDIRMASI */
+  .content-scroll {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important; /* Telefonda kaymak gibi kaydırma hissi */
+    padding: 15px !important;
+    padding-bottom: 90px !important; /* Sol alttaki menü butonu içeriği kapatmasın diye alt boşluk bıraktık */
   }
 }
