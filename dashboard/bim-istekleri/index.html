@@ -403,13 +403,62 @@
       setTimeout(() => { toast.classList.remove("show"); }, 3500);
     }
 
+    function syntaxHighlightJSON(json) {
+      if (typeof json != 'string') {
+        json = JSON.stringify(json, undefined, 2);
+      }
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        let cls = 'json-number';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) { cls = 'json-key'; } else { cls = 'json-string'; }
+        } else if (/true|false/.test(match)) { cls = 'json-boolean';
+        } else if (/null/.test(match)) { cls = 'json-null'; }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    // =========================================================================
+    // YENİDEN YAZILAN İSTEK GÖNDERME MANTIĞI (HATA VE BAŞARI DURUMLARI)
+    // =========================================================================
     function uiToggleActionButtons(action) {
       const btnRun = document.getElementById("btn-run-flow");
       const btnDownload = document.getElementById("btn-download-flow");
 
       if (action === 'run') {
-        const orderId = document.getElementById("filter-order-id").value.trim() || "test-123";
+        const orderId = document.getElementById("filter-order-id").value.trim();
 
+        // 1. DURUM: EĞER ORDER ID GİRİLMEDİYSE (Gerçekçi 400 Bad Request simülasyonu)
+        if (!orderId) {
+          showCustomToast("Hata", "Lütfen istek atmadan önce bir Sipariş Numarası (Order ID) giriniz.", "error");
+          
+          const statusBadge = document.getElementById("rc-status");
+          statusBadge.className = "rc-badge rc-badge-error";
+          statusBadge.innerHTML = '<i class="fas fa-times-circle"></i> Status: 400 Bad Request';
+
+          const timeBadge = document.getElementById("rc-time");
+          timeBadge.className = "rc-badge rc-badge-idle";
+          timeBadge.innerHTML = '<i class="fas fa-clock"></i> Time: 14 ms';
+
+          const errorResponse = {
+            "status": "error",
+            "code": 400,
+            "message": "Missing required parameter: orderId",
+            "details": "İstek atabilmek için sipariş numarası zorunludur."
+          };
+          
+          const responseEl = document.getElementById("rc-response");
+          responseEl.textContent = JSON.stringify(errorResponse, null, 2);
+          
+          if(window.hljs) { 
+            delete responseEl.dataset.highlighted;
+            hljs.highlightElement(responseEl); 
+            hljs.lineNumbersBlock(responseEl);
+          }
+          return; // İşlemi burada kesiyoruz, başarılı duruma geçmiyor!
+        }
+
+        // 2. DURUM: EĞER ORDER ID GİRİLDİYSE (Başarılı Yanıt)
         btnRun.classList.remove("active-shimmer");
         btnDownload.classList.remove("btn-passive");
         btnDownload.classList.add("active-shimmer");
@@ -440,7 +489,7 @@
         if(window.hljs) { 
           delete responseEl.dataset.highlighted;
           hljs.highlightElement(responseEl); 
-          hljs.lineNumbersBlock(responseEl); // Ana JSON kısmına da satır numarası eklendi
+          hljs.lineNumbersBlock(responseEl); 
         }
         
         showCustomToast("Başarılı", "İstek gönderildi ve yanıt alındı.", "success");
@@ -587,13 +636,11 @@
       if(window.hljs) {
         delete output.dataset.highlighted;
         hljs.highlightElement(output);
-        // YENİ: Satır Numaralarını Koda Uygula
         hljs.lineNumbersBlock(output);
       }
     }
 
     function copyCodeSnippet() {
-      // Satır numaraları kopyalanmasın diye sadece .hljs-ln-code içindeki metinleri alıyoruz
       const codeLines = document.querySelectorAll('#code-snippet-output .hljs-ln-code');
       let codeToCopy = "";
       
