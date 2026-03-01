@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
 
-  <link rel="stylesheet" href="./api-console.css?v=14">
+  <link rel="stylesheet" href="./api-console.css?v=15">
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -51,7 +51,6 @@
 
       <div id="dynamic-services-menu">
       </div>
-
     </nav>
     <div class="menu-spacer"></div>
     <div class="sidebar-footer">
@@ -285,7 +284,6 @@
     <div class="tk-modal-overlay"></div>
     
     <div class="tk-modal-content" onclick="event.stopPropagation()">
-      
       <div class="tk-modal-header">
         <div class="dev-dots" style="position: static; padding: 0;">
           <span class="dot red"></span>
@@ -297,8 +295,7 @@
       </div>
 
       <div class="tk-modal-body">
-        
-        <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
           <div style="position: relative; width: 220px;">
             <select id="code-lang-select" class="rc-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #818cf8; border-radius: 8px; font-weight: 600;" onchange="generateSnippet()">
               <option value="curl">cURL</option>
@@ -316,10 +313,9 @@
           </button>
         </div>
         
-        <div class="code-snippet-container">
-          <div id="code-snippet-output"></div>
+        <div class="terminal-code-area">
+          <code id="code-snippet-output"></code>
         </div>
-
       </div>
     </div>
   </div>
@@ -538,13 +534,10 @@
       switch(activeLang) {
         case 'curl':
           code = `curl --location --request ${method} '${url}' \\\n`;
-          for (const [k, v] of Object.entries(headers)) {
-            code += `--header '${k}: ${v}' \\\n`;
-          }
+          for (const [k, v] of Object.entries(headers)) { code += `--header '${k}: ${v}' \\\n`; }
           if (hasBody) code += `--data-raw '${bodyStr}'`;
           if (code.endsWith(' \\\n')) code = code.slice(0, -3);
           break;
-
         case 'fetch':
           code = `const myHeaders = new Headers();\n`;
           for (const [k, v] of Object.entries(headers)) { code += `myHeaders.append("${k}", "${v}");\n`; }
@@ -552,7 +545,6 @@
           if (hasBody) code += `,\n  body: JSON.stringify(${bodyStr})`;
           code += `\n};\n\nfetch("${url}", requestOptions)\n  .then(response => response.text())\n  .then(result => console.log(result))\n  .catch(error => console.log('error', error));`;
           break;
-
         case 'python':
           code = `import requests\nimport json\n\nurl = "${url}"\n`;
           if (hasBody) { code += `payload = json.dumps(${bodyStr})\n`; } else { code += `payload = {}\n`; }
@@ -560,14 +552,12 @@
           for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
           code += `}\n\nresponse = requests.request("${method}", url, headers=headers, data=payload)\n\nprint(response.text)`;
           break;
-
         case 'csharp':
           code = `var client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.${method.charAt(0).toUpperCase() + method.slice(1).toLowerCase()}, "${url}");\n`;
           for (const [k, v] of Object.entries(headers)) { code += `request.Headers.Add("${k}", "${v}");\n`; }
           if (hasBody) { code += `var content = new StringContent("${bodyStr.replace(/"/g, '\\"')}", null, "application/json");\nrequest.Content = content;\n`; }
           code += `var response = await client.SendAsync(request);\nresponse.EnsureSuccessStatusCode();\nConsole.WriteLine(await response.Content.ReadAsStringAsync());`;
           break;
-
         case 'dart':
           code = `var headers = {\n`;
           for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
@@ -575,7 +565,6 @@
           if (hasBody) { code += `request.body = json.encode(${bodyStr});\n`; }
           code += `request.headers.addAll(headers);\n\nhttp.StreamedResponse response = await request.send();\n\nif (response.statusCode == 200) {\n  print(await response.stream.bytesToString());\n} else {\n  print(response.reasonPhrase);\n}`;
           break;
-
         case 'go':
           code = `package main\n\nimport (\n\t"fmt"\n\t"strings"\n\t"net/http"\n\t"io/ioutil"\n)\n\nfunc main() {\n\turl := "${url}"\n\tmethod := "${method}"\n\n`;
           if (hasBody) { code += `\tpayload := strings.NewReader(\`${bodyStr}\`)\n\tclient := &http.Client {}\n\treq, err := http.NewRequest(method, url, payload)\n`; }
@@ -584,7 +573,6 @@
           for (const [k, v] of Object.entries(headers)) { code += `\treq.Header.Add("${k}", "${v}")\n`; }
           code += `\n\tres, err := client.Do(req)\n\tif err != nil {\n\t\tfmt.Println(err)\n\t\treturn\n\t}\n\tdefer res.Body.Close()\n\n\tbody, err := ioutil.ReadAll(res.Body)\n\tfmt.Println(string(body))\n}`;
           break;
-
         case 'java':
           code = `OkHttpClient client = new OkHttpClient().newBuilder().build();\n`;
           if (hasBody) { code += `MediaType mediaType = MediaType.parse("application/json");\nRequestBody body = RequestBody.create(mediaType, "${bodyStr.replace(/"/g, '\\"')}");\n`; }
@@ -594,7 +582,6 @@
           code += `  .build();\nResponse response = client.newCall(request).execute();`;
           break;
       }
-
       output.innerText = code;
     }
 
