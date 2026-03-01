@@ -159,12 +159,12 @@
 
               <div id="rc-panel-headers">
                 <div id="rc-headers"></div>
-                <div class="rc-row" style="margin-top:12px; gap:10px; display:flex;">
-                  <button id="rc-add-header" class="btn-filter" type="button" style="padding: 6px 12px; height: auto;">
+                <div class="rc-row" style="margin-top:15px; gap:12px; display:flex;">
+                  <button id="rc-add-header" class="btn-header-action btn-header-add" type="button">
                     <i class="fas fa-plus"></i> Header Ekle
                   </button>
-                  <button id="rc-clear-headers" class="btn-filter" type="button" style="background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #ffb4b4; padding: 6px 12px; height: auto;">
-                    Temizle
+                  <button id="rc-clear-headers" class="btn-header-action btn-header-clear" type="button">
+                    <i class="fas fa-trash-alt"></i> Temizle
                   </button>
                 </div>
               </div>
@@ -305,10 +305,10 @@
            return;
         }
         
-        // Yeni yazdığımız indirme fonksiyonunu çağır
+        // JSON indirme fonksiyonunu çağır
         downloadResponseAsJSON();
         
-        // İndirme sonrası butonun parlamasını durdurup tekrar pasif duruma alıyoruz (İsteğe bağlı)
+        // İsteğe bağlı: İndirme sonrası butonu tekrar pasif duruma alma
         btnDownload.classList.remove("active-shimmer");
         btnDownload.classList.add("btn-passive");
         btnRun.classList.add("active-shimmer");
@@ -328,7 +328,6 @@
       }
     }
 
-    // Yeni İndirme Fonksiyonumuz
     function downloadResponseAsJSON() {
       const responseElement = document.getElementById("rc-response");
       const content = responseElement.innerText || responseElement.textContent;
@@ -338,25 +337,21 @@
         return;
       }
 
-      // Order ID'yi al, yoksa varsayılan isim kullan
       let orderId = document.getElementById("filter-order-id").value.trim();
       if (!orderId) {
         orderId = "api_response";
       }
       const fileName = `${orderId}.json`;
 
-      // JSON formatında Blob oluştur
       const blob = new Blob([content], { type: "application/json" });
       const url = URL.createObjectURL(blob);
 
-      // İndirme işlemini tetikle
       const a = document.createElement("a");
       a.href = url;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
 
-      // Temizle
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
