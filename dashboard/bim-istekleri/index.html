@@ -15,9 +15,7 @@
   <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
 
-  <link rel="stylesheet" href="./api-console.css?v=11">
-
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <link rel="stylesheet" href="./api-console.css?v=12"> <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -138,7 +136,7 @@
                     <option value="DELETE">DELETE</option>
                   </select>
                 </div>
-                <input id="rc-url" class="rc-input grow" placeholder="https://.../endpoint" value="https://api.teknoify.com/v1/orders" />
+                <input id="rc-url" class="rc-input grow" placeholder="https://api.example.com/endpoint" value="https://api.teknoify.com/v1/orders" />
                 
                 <button class="btn-animated-send btn-short" style="background: rgba(255,255,255,0.08); color:#a5b4fc; box-shadow:none; border: 1px solid rgba(255,255,255,0.1);" type="button" onclick="openCodeModal()">
                   <i class="fas fa-code"></i> Kod Üret
@@ -159,8 +157,8 @@
               <div id="rc-panel-params">
                 <div id="rc-params">
                   <div class="rc-kv-row">
-                    <input type="text" class="rc-input kv-key" placeholder="Key (örn: status)" value="status">
-                    <input type="text" class="rc-input kv-val" placeholder="Value (örn: active)" value="active">
+                    <input type="text" class="rc-input kv-key" placeholder="Key" value="status">
+                    <input type="text" class="rc-input kv-val" placeholder="Value" value="active">
                     <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                   </div>
                 </div>
@@ -187,15 +185,15 @@
                   </div>
                 </div>
                 <div class="rc-row">
-                  <input type="text" id="rc-auth-token" class="rc-input" placeholder="Token girin (örn: eyJhbGciOiJIUzI1Ni...)" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
+                  <input type="text" id="rc-auth-token" class="rc-input" placeholder="Token girin" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
                 </div>
               </div>
 
               <div id="rc-panel-headers" class="hidden">
                 <div id="rc-headers">
                   <div class="rc-kv-row">
-                    <input type="text" class="rc-input kv-key" placeholder="Key (örn: Content-Type)" value="Content-Type">
-                    <input type="text" class="rc-input kv-val" placeholder="Value (örn: application/json)" value="application/json">
+                    <input type="text" class="rc-input kv-key" placeholder="Key" value="Content-Type">
+                    <input type="text" class="rc-input kv-val" placeholder="Value" value="application/json">
                     <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                   </div>
                 </div>
@@ -284,18 +282,24 @@
   <div id="code-modal" class="tk-modal hidden">
     <div class="tk-modal-overlay" onclick="closeCodeModal()"></div>
     <div class="tk-modal-content">
+      
       <div class="tk-modal-header">
-        <h3 style="margin:0; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 8px;">
-          <i class="fas fa-code" style="color: #818cf8;"></i> Kod Parçacığı
-        </h3>
-        <button class="rc-kv-btn" onclick="closeCodeModal()"><i class="fas fa-times"></i></button>
+        <div class="dev-dots" style="position: static; padding: 0;">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="dev-title" style="color: #64748b;">Code Snippet</div>
+        <button class="rc-kv-btn" style="width: 28px; height: 28px; font-size: 14px; position: static;" onclick="closeCodeModal()"><i class="fas fa-times"></i></button>
       </div>
+
       <div class="tk-modal-body">
         <div class="rc-tabs" id="code-tabs-nav" style="margin-top: 0;">
           <div class="rc-tab active" data-lang="curl">cURL</div>
           <div class="rc-tab" data-lang="fetch">Node.js (Fetch)</div>
           <div class="rc-tab" data-lang="python">Python</div>
         </div>
+        
         <div class="rc-pre" style="position: relative; margin-top: 15px; min-height: 150px;">
           <button class="btn-copy" onclick="copyCodeSnippet()" title="Kodu Kopyala">
             <i class="fas fa-copy"></i>
@@ -322,7 +326,6 @@
         disableMobile: "true"
       });
 
-      // Geliştirici Modu Sekmeleri Geçiş
       const reqTabs = document.querySelectorAll('#request-tabs-nav .rc-tab');
       const panels = ['params', 'auth', 'headers', 'body'];
 
@@ -340,18 +343,16 @@
         });
       });
 
-      // Kod Modal Sekmeleri Geçiş
       const codeTabs = document.querySelectorAll('#code-tabs-nav .rc-tab');
       codeTabs.forEach(tab => {
         tab.addEventListener('click', () => {
           codeTabs.forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
-          generateSnippet(); // Sekme değişince kodu yeniden üret
+          generateSnippet();
         });
       });
     });
 
-    // Satır Ekleme Mantığı
     function createKVRow(placeholderKey, placeholderValue) {
       const row = document.createElement('div');
       row.className = 'rc-kv-row';
@@ -399,7 +400,6 @@
       setTimeout(() => { toast.classList.remove("show"); }, 3500);
     }
 
-    // YENİ: JSON Renklendirme (Syntax Highlighting) Fonksiyonu
     function syntaxHighlightJSON(json) {
       if (typeof json != 'string') {
         json = JSON.stringify(json, undefined, 2);
@@ -441,7 +441,6 @@
         timeBadge.className = "rc-badge rc-badge-idle";
         timeBadge.innerHTML = '<i class="fas fa-clock"></i> Time: 124 ms';
 
-        // JSON Simülasyonu ve Renklendirmesi
         const dummyResponse = {
           "status": "success",
           "code": 200,
@@ -450,12 +449,15 @@
             "is_active": true,
             "total_amount": 149.99,
             "currency": "TRY",
+            "items": [
+                {"id": 101, "name": "Cloud Function PRO", "price": 49.99},
+                {"id": 102, "name": "API Gateway Entry", "price": 100.00}
+            ],
             "metadata": null
           },
           "message": "Sipariş bilgileri başarıyla çekildi."
         };
         
-        // JSON'ı renklendirip ekrana basıyoruz
         const highlightedJSON = syntaxHighlightJSON(dummyResponse);
         document.getElementById("rc-response").innerHTML = highlightedJSON;
         showCustomToast("Başarılı", "İstek gönderildi ve yanıt alındı.", "success");
@@ -507,10 +509,9 @@
       }
     }
 
-    // YENİ: KOD ÜRETİCİ FONKSİYONLARI
     function openCodeModal() {
       document.getElementById('code-modal').classList.remove('hidden');
-      generateSnippet(); // Açılırken kodu üret
+      generateSnippet();
     }
 
     function closeCodeModal() {
@@ -519,12 +520,11 @@
 
     function generateSnippet() {
       const method = document.getElementById('rc-method').value;
-      const url = document.getElementById('rc-url').value || "https://api.example.com";
-      const bodyStr = document.getElementById('rc-body').value || "";
+      const url = document.getElementById('rc-url').value || "https://api.example.com/v1";
+      const bodyStr = document.getElementById('rc-body').value || "{}";
       const activeTab = document.querySelector('#code-tabs-nav .rc-tab.active').getAttribute('data-lang');
       const output = document.getElementById('code-snippet-output');
 
-      // Headerları topla
       const headerRows = document.querySelectorAll('#rc-headers .rc-kv-row');
       let headers = {};
       headerRows.forEach(row => {
@@ -533,7 +533,6 @@
         if (k && v) headers[k] = v;
       });
 
-      // Token varsa ekle
       const token = document.getElementById('rc-auth-token').value.trim();
       if(token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -544,10 +543,9 @@
         for (const [k, v] of Object.entries(headers)) {
           code += `--header '${k}: ${v}' \\\n`;
         }
-        if (method !== 'GET' && method !== 'HEAD' && bodyStr) {
+        if (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}') {
           code += `--data-raw '${bodyStr}'`;
         }
-        // Sondaki gereksiz ters slash'ı temizle
         if (code.endsWith(' \\\n')) code = code.slice(0, -3);
 
       } else if (activeTab === 'fetch') {
@@ -556,14 +554,14 @@
           code += `myHeaders.append("${k}", "${v}");\n`;
         }
         code += `\nconst requestOptions = {\n  method: '${method}',\n  headers: myHeaders,\n  redirect: 'follow'`;
-        if (method !== 'GET' && method !== 'HEAD' && bodyStr) {
+        if (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}') {
           code += `,\n  body: JSON.stringify(${bodyStr})`;
         }
         code += `\n};\n\nfetch("${url}", requestOptions)\n  .then(response => response.text())\n  .then(result => console.log(result))\n  .catch(error => console.log('error', error));`;
       
       } else if (activeTab === 'python') {
         code = `import requests\nimport json\n\nurl = "${url}"\n`;
-        if (method !== 'GET' && method !== 'HEAD' && bodyStr) {
+        if (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}') {
           code += `payload = json.dumps(${bodyStr})\n`;
         } else {
           code += `payload = {}\n`;
@@ -578,13 +576,14 @@
       output.innerText = code;
     }
 
+    // GÜNCELLENEN: KOPYALANDI POP-UP'I (TOAST)
     function copyCodeSnippet() {
       const code = document.getElementById('code-snippet-output').innerText;
       navigator.clipboard.writeText(code).then(() => {
-        showCustomToast("Kopyalandı", "Kod panoya kopyalandı!", "success");
+        // Mevcut showCustomToast fonksiyonunu "success" tipiyle çağırıyoruz
+        showCustomToast("Başarılı", "Kod panoya kopyalandı!", "success");
       });
     }
-
   </script>
 
 </body>
