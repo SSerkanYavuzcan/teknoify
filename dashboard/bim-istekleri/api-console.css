@@ -5,7 +5,7 @@
 :root {
   --get: #22c55e; --post: #eab308; --put: #3b82f6; --patch: #a855f7;
   --delete: #ef4444; --head: #2dd4bf; --options: #f472b6;
-  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Consolas, monospace;
+  --font-mono: 'Consolas', 'Courier New', ui-monospace, SFMono-Regular, monospace;
 }
 
 .hidden { display: none !important; }
@@ -109,7 +109,8 @@
 .rc-kv-btn:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
 /* 8. Response Alanı */
-.rc-pre { background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 15px; color: #cbd5e1; font-family: var(--font-mono); font-size: 13px; min-height: 200px; white-space: pre-wrap; word-break: break-all; }
+.rc-pre-container { background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 15px; min-height: 200px; overflow-x: auto; }
+.rc-pre { color: #cbd5e1; font-family: var(--font-mono); font-size: 13px; white-space: pre; }
 
 /* 9. Toast Notification */
 .tk-toast { position: fixed; top: 24px; right: -350px; width: 310px; background: #1f232c; border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ef4444; border-radius: 8px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); z-index: 99999; transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
@@ -132,102 +133,87 @@
 .rc-badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2); }
 .rc-badge-error { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
 
-/* 12. JSON Syntax Highlighting */
-.json-key { color: #a5b4fc; font-weight: 600; }
-.json-string { color: #86efac; }
-.json-number { color: #fcd34d; }
-.json-boolean { color: #fca5a5; font-weight: 600; }
-.json-null { color: #94a3b8; font-style: italic; }
 
 /* ==========================================================================
-   13. YEPYENİ POSTMAN STİLİ SAĞDAN AÇILAN PANEL (SIDEBAR)
+   12. YEPYENİ POSTMAN/VS CODE STİLİ SAĞDAN AÇILAN PANEL (SIDEBAR)
    ========================================================================== */
 
 /* Arka planı hafifçe karartan tıklanabilir alan */
 .rc-sidebar-overlay {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(3px);
   z-index: 10000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
-.rc-sidebar-overlay.show {
-  opacity: 1;
-  pointer-events: auto;
-}
+.rc-sidebar-overlay.show { opacity: 1; pointer-events: auto; }
 
-/* Panel Gövdesi - Ekranın sağından kayarak girer */
+/* Panel Gövdesi - VS Code Dark+ Tema Arka Planı */
 .rc-sidebar {
-  position: fixed;
-  top: 0; 
-  right: -550px; /* Panel kapalıyken ekranın dışında bekler */
-  width: 500px;
-  max-width: 100vw;
-  height: 100vh;
-  background: #0d1117 !important; /* Koyu terminal rengi */
-  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.6);
-  z-index: 10001;
-  display: flex;
-  flex-direction: column;
+  position: fixed; top: 0; right: -600px;
+  width: 550px; max-width: 100vw; height: 100vh;
+  background: #1e1e1e !important; /* VS Code Editör Arka Planı */
+  border-left: 1px solid #333333 !important;
+  box-shadow: -15px 0 40px rgba(0,0,0,0.8);
+  z-index: 10001; display: flex; flex-direction: column;
   transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.rc-sidebar.show {
-  right: 0; /* "show" sınıfı eklenince ekrana girer */
-}
+.rc-sidebar.show { right: 0; }
 
-/* Sidebar Üst Başlık Kısmı */
+/* Sidebar Üst Başlık Kısmı - VS Code Tab Alanı Rengi */
 .rc-sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   padding: 15px 25px;
-  background: rgba(0, 0, 0, 0.2) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background: #252526 !important; /* VS Code Üst Sekme Rengi */
+  border-bottom: 1px solid #333333 !important;
 }
 
-/* Sidebar İçerik Kısmı */
-.rc-sidebar-body {
-  padding: 25px;
-  flex: 1;
-  overflow-y: auto;
-}
+.rc-sidebar-body { padding: 25px; flex: 1; overflow-y: auto; }
 
-/* Kopyala butonu tasarımı */
+/* Kopyala butonu VS Code estetiği */
 .btn-copy {
-  background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3);
-  color: #818cf8; padding: 0 16px; height: 40px; border-radius: 8px;
+  background: transparent; border: 1px solid #454545; color: #cccccc;
+  padding: 0 16px; height: 38px; border-radius: 4px;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-weight: 600; font-family: inherit; font-size: 13px; transition: 0.2s ease;
+  font-weight: 500; font-family: inherit; font-size: 13px; transition: 0.2s ease;
 }
-.btn-copy:hover { background: rgba(99, 102, 241, 0.3); color: #fff; }
+.btn-copy:hover { background: #2a2d2e; border-color: #555555; color: #ffffff; }
 
-/* KÜRESEL CSS'LERİ TAMAMEN EZEN SAF KOD ALANI */
+/* Dil Seçici (Select) VS Code stili */
+.code-lang-select {
+  background: #252526 !important;
+  border: 1px solid #3c3c3c !important;
+  color: #cccccc !important;
+  font-weight: normal !important;
+  border-radius: 4px !important;
+}
+
+/* VS Code KOD ALANI Kapsayıcısı */
 .rc-sidebar-code {
   background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 15px 0 0 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-  color: #a5b4fc !important;
-  font-family: var(--font-mono) !important;
-  font-size: 13px !important;
-  white-space: pre !important; 
-  line-height: 1.6 !important;
-  text-align: left !important;
-  display: block !important;
-  overflow-x: auto !important; /* Uzun satırlarda yatay kaydırma */
+  margin-top: 10px;
+  width: 100%;
+  overflow-x: auto;
 }
 
-/* Scrollbar Özelleştirme */
-.rc-sidebar-code::-webkit-scrollbar { height: 8px; }
-.rc-sidebar-code::-webkit-scrollbar-track { background: transparent; border-radius: 4px; }
-.rc-sidebar-code::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-.rc-sidebar-code::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+/* Highlight.js'in çirkin siyah kutusunu şeffaf yapıp VS code fontlarını zorluyoruz */
+.hljs {
+  background: transparent !important; /* Arka planı Sidebar'dan (1e1e1e) alacak */
+  padding: 0 !important;
+  margin: 0 !important;
+  font-family: var(--font-mono) !important;
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+}
+
+/* Scrollbar Özelleştirme (VS Code tarzı ince ve koyu scroll) */
+.rc-sidebar-code::-webkit-scrollbar, .rc-pre-container::-webkit-scrollbar { height: 10px; width: 10px; }
+.rc-sidebar-code::-webkit-scrollbar-track, .rc-pre-container::-webkit-scrollbar-track { background: transparent; }
+.rc-sidebar-code::-webkit-scrollbar-thumb, .rc-pre-container::-webkit-scrollbar-thumb { background: #424242; }
+.rc-sidebar-code::-webkit-scrollbar-thumb:hover, .rc-pre-container::-webkit-scrollbar-thumb:hover { background: #4f4f4f; }
 
 /* Flatpickr Özelleştirmeleri */
 .flatpickr-calendar { background: #1f232c !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important; border-radius: 16px !important; padding: 15px !important; font-family: inherit !important; width: 340px !important; }
