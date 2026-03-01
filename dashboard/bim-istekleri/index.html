@@ -12,10 +12,11 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+
   <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
-
-  <link rel="stylesheet" href="./api-console.css?v=17">
+  <link rel="stylesheet" href="./api-console.css?v=18">
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -265,11 +266,11 @@
                 <div class="rc-tab" data-rtab="rheaders">Headers</div>
               </div>
 
-              <div id="rc-rpanel-resp">
-                <div id="rc-response" class="rc-pre">Henüz istek gönderilmedi.</div>
+              <div id="rc-rpanel-resp" class="rc-pre-container">
+                <pre style="margin:0; padding:0; background:transparent;"><code id="rc-response" class="language-json">Henüz istek gönderilmedi.</code></pre>
               </div>
               <div id="rc-rpanel-rheaders" class="hidden">
-                <div id="rc-response-headers" class="rc-pre">-</div>
+                <div id="rc-response-headers" class="rc-pre">Henüz istek gönderilmedi.</div>
               </div>
             </div>
 
@@ -285,16 +286,16 @@
     
     <div class="rc-sidebar-header">
       <div style="display: flex; align-items: center; gap: 10px;">
-        <i class="fas fa-code" style="color: #a5b4fc; font-size: 16px;"></i>
-        <div class="dev-title" style="color: #e2e8f0; font-size: 14px; font-weight: 700;">Code Snippet</div>
+        <i class="fas fa-file-code" style="color: #4ade80; font-size: 16px;"></i>
+        <div class="dev-title" style="color: #cccccc; font-size: 14px; font-weight: 500;">code_snippet.js</div>
       </div>
-      <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px;" onclick="closeCodeSidebar()"><i class="fas fa-times"></i></button>
+      <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px; color: #cccccc;" onclick="closeCodeSidebar()"><i class="fas fa-times"></i></button>
     </div>
 
     <div class="rc-sidebar-body">
       <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
         <div style="position: relative; width: 220px;">
-          <select id="code-lang-select" class="rc-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #818cf8; border-radius: 8px; font-weight: 600;" onchange="generateSnippet()">
+          <select id="code-lang-select" class="rc-select code-lang-select" onchange="generateSnippet()">
             <option value="curl">cURL</option>
             <option value="fetch">Node.js (Fetch)</option>
             <option value="python">Python (Requests)</option>
@@ -310,9 +311,14 @@
         </button>
       </div>
       
-      <div class="rc-sidebar-code" id="code-snippet-output"></div>
+      <div class="rc-sidebar-code">
+        <pre style="margin:0; padding:0; background:transparent;"><code id="code-snippet-output"></code></pre>
+      </div>
     </div>
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
@@ -395,21 +401,6 @@
       setTimeout(() => { toast.classList.remove("show"); }, 3500);
     }
 
-    function syntaxHighlightJSON(json) {
-      if (typeof json != 'string') {
-        json = JSON.stringify(json, undefined, 2);
-      }
-      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        let cls = 'json-number';
-        if (/^"/.test(match)) {
-          if (/:$/.test(match)) { cls = 'json-key'; } else { cls = 'json-string'; }
-        } else if (/true|false/.test(match)) { cls = 'json-boolean';
-        } else if (/null/.test(match)) { cls = 'json-null'; }
-        return '<span class="' + cls + '">' + match + '</span>';
-      });
-    }
-
     function uiToggleActionButtons(action) {
       const btnRun = document.getElementById("btn-run-flow");
       const btnDownload = document.getElementById("btn-download-flow");
@@ -441,8 +432,14 @@
           "message": "Sipariş başarıyla çekildi."
         };
         
-        const highlightedJSON = syntaxHighlightJSON(dummyResponse);
-        document.getElementById("rc-response").innerHTML = highlightedJSON;
+        // YENİ: Kendi regeximiz yerine artık Highlight.js kütüphanesini kullanıyoruz!
+        const responseEl = document.getElementById("rc-response");
+        responseEl.textContent = JSON.stringify(dummyResponse, null, 2);
+        
+        // Önceki boyamayı sıfırlayıp yeniden boyatıyoruz
+        delete responseEl.dataset.highlighted;
+        if(window.hljs) { hljs.highlightElement(responseEl); }
+        
         showCustomToast("Başarılı", "İstek gönderildi ve yanıt alındı.", "success");
 
       } else if (action === 'download') {
@@ -459,7 +456,7 @@
 
     function downloadResponseAsJSON() {
       const responseElement = document.getElementById("rc-response");
-      const content = responseElement.innerText || responseElement.textContent;
+      const content = responseElement.textContent; // innerText yerine textContent daha güvenli
 
       if (!content || content.includes("Henüz istek gönderilmedi") || content.trim() === "") {
         showCustomToast("İndirme Başarısız", "İndirilecek veri bulunamadı.", "warning");
@@ -492,7 +489,7 @@
       }
     }
 
-    // YENİ: SAĞDAN AÇILAN PANEL FONKSİYONLARI
+    // SAĞ PANEL FONKSİYONLARI
     function openCodeSidebar() {
       document.getElementById('code-sidebar-overlay').classList.add('show');
       document.getElementById('code-sidebar').classList.add('show');
@@ -504,6 +501,7 @@
       document.getElementById('code-sidebar').classList.remove('show');
     }
 
+    // YENİ: VS CODE RENKLENDİRMESİ İLE KOD ÜRETME
     function generateSnippet() {
       const method = document.getElementById('rc-method').value;
       const url = document.getElementById('rc-url').value || "https://api.example.com/v1";
@@ -576,11 +574,27 @@
           code += `  .build();\nResponse response = client.newCall(request).execute();`;
           break;
       }
-      output.innerText = code;
+      
+      // Metni koda basıyoruz
+      output.textContent = code;
+
+      // Hangi dili Highlight.js'e göndereceğimizi belirliyoruz
+      const langMap = {
+        'curl': 'bash', 'fetch': 'javascript', 'python': 'python',
+        'csharp': 'csharp', 'dart': 'dart', 'go': 'go', 'java': 'java'
+      };
+      output.className = 'language-' + langMap[activeLang];
+
+      // Kodu VS Code renkleriyle boyatıyoruz
+      if(window.hljs) {
+        delete output.dataset.highlighted;
+        hljs.highlightElement(output);
+      }
     }
 
     function copyCodeSnippet() {
-      const code = document.getElementById('code-snippet-output').innerText;
+      // HTML etiketleri (renkler) olmadan sadece ham metni kopyalar
+      const code = document.getElementById('code-snippet-output').textContent;
       navigator.clipboard.writeText(code).then(() => {
         showCustomToast("Başarılı", "Kod panoya kopyalandı!", "success");
       });
