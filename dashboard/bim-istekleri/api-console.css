@@ -140,7 +140,7 @@
 .json-null { color: #94a3b8; font-style: italic; }
 
 /* ==========================================================================
-   13. YEPYENİ KOD ÜRETİCİ MODAL (TAMAMEN TEMİZLENMİŞ)
+   13. YEPYENİ KOD ÜRETİCİ MODAL (BACKDROP KALDIRILDI)
    ========================================================================== */
 .tk-modal {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -148,10 +148,12 @@
   z-index: 10000;
 }
 
+/* ✅ Backdrop (gri karartma/blur) kaldırıldı */
 .tk-modal-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px);
-  cursor: pointer; 
+  background: transparent !important;
+  backdrop-filter: none !important;
+  cursor: pointer;
 }
 
 /* Modal ana gövdesi - TEXT-ALIGN LEFT EKLENDİ (Ortalanmayı bozar) */
@@ -207,13 +209,3 @@
 .terminal-code-area::-webkit-scrollbar-track { background: transparent; border-radius: 4px; }
 .terminal-code-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 .terminal-code-area::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-
-/* Flatpickr Özelleştirmeleri */
-.flatpickr-calendar { background: #1f232c !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important; border-radius: 16px !important; padding: 15px !important; font-family: inherit !important; width: 340px !important; }
-.flatpickr-calendar:before, .flatpickr-calendar:after { display: none !important; }
-.flatpickr-months { background: transparent !important; margin-bottom: 20px !important; }
-.flatpickr-current-month { display: flex !important; align-items: center !important; justify-content: center !important; color: #fff !important; font-size: 1.1rem; padding-top: 0 !important; }
-.flatpickr-current-month input.cur-year { color: #fff !important; font-weight: 700 !important; background: transparent !important; }
-.flatpickr-prev-month, .flatpickr-next-month { fill: #fff !important; transition: 0.3s; }
-.flatpickr-day { border-radius: 8px !important; color: #ddd !important; transition: all 0.2s ease; }
-.flatpickr-day.selected { background: linear-gradient(135deg, #6366f1, #4f46e5) !important; color: #ffffff !important; border: none !important; }
