@@ -97,9 +97,6 @@
         <div style="flex-grow: 1;"></div>
 
         <div style="display:flex; align-items:flex-end; gap: 12px;">
-          <button id="btn-run-flow" class="btn-animated-send btn-align-fix active-shimmer" onclick="uiToggleActionButtons('run')">
-            <i class="fas fa-paper-plane"></i> İstek Gönder
-          </button>
 
           <div class="tk-dropdown-wrapper">
             <button id="btn-download-flow" class="btn-animated-send btn-align-fix btn-passive" onclick="toggleDownloadMenu(event)">
@@ -418,13 +415,10 @@
       });
     });
 
-    // =========================================================================
-    // YENİ: ŞABLON İNDİRME MANTIĞI
-    // =========================================================================
     function downloadJsonTemplate() {
       const templateStr = `{
   "action": "bq_upload",
-  "dataset_id": "mahalle_BIM",
+  "dataset_id": "mahalle_bim",
   "table_id": "BIM_partial_return_invoice_response",
   "format": "json",
   "data": [
@@ -445,9 +439,6 @@
       showCustomToast("Başarılı", "JSON Şablonu indirildi.", "success");
     }
 
-    // =========================================================================
-    // DOSYA YÜKLEME (FİLE UPLOAD) MANTIĞI
-    // =========================================================================
     function handleJsonFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -460,7 +451,7 @@
           const formatted = JSON.stringify(parsed, null, 2); 
           
           document.getElementById('rc-body').value = formatted;
-          showCustomToast("Başarılı", "JSON dosyası başarıyla yüklendi ve formatlandı.", "success");
+          showCustomToast("Başarılı", "JSON dosyası başarıyla yüklendi.", "success");
         } catch (error) {
           showCustomToast("Dosya Hatası", "Yüklediğiniz dosya geçerli bir JSON formatında değil.", "error");
         }
@@ -570,11 +561,12 @@
     }
 
     async function uiToggleActionButtons(action) {
-      const btnRun = document.getElementById("btn-run-flow");
+      // "btn-run-flow" kaldırıldığı için referansı Dev Mode içindeki "rc-send" butonuna kaydırdık
+      const btnRun = document.getElementById("rc-send");
       const btnDownload = document.getElementById("btn-download-flow");
 
       if (action === 'run') {
-        if (btnRun.disabled) return; 
+        if (btnRun && btnRun.disabled) return; 
 
         const token = document.getElementById('rc-auth-token') ? document.getElementById('rc-auth-token').value.trim() : '';
         const endpointUrl = document.getElementById('rc-url') ? document.getElementById('rc-url').value.trim() : '';
@@ -596,9 +588,11 @@
           return;
         }
 
-        btnRun.disabled = true; 
-        btnRun.classList.add("active-shimmer");
-        btnRun.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+        if (btnRun) {
+            btnRun.disabled = true; 
+            btnRun.classList.add("active-shimmer");
+            btnRun.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+        }
 
         try {
           const startTime = performance.now(); 
@@ -673,9 +667,11 @@
             statusBadge.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Status: FAILED`;
           }
         } finally {
-          btnRun.disabled = false; 
-          btnRun.innerHTML = '<i class="fas fa-paper-plane"></i> İstek Gönder';
-          btnRun.classList.remove("active-shimmer");
+          if (btnRun) {
+              btnRun.disabled = false; 
+              btnRun.innerHTML = '<i class="fas fa-bolt"></i> Send';
+              btnRun.classList.remove("active-shimmer");
+          }
         }
       }
     }
