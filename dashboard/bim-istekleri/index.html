@@ -112,6 +112,7 @@
           <button id="btn-dev-mode" class="btn-animated-send btn-orange btn-align-fix active-shimmer" onclick="toggleDevMode()">
             <span class="btn-content-inner"><i class="fas fa-terminal"></i> Geliştirici Modu</span>
           </button>
+          
           <button id="btn-history" class="btn-animated-send btn-align-fix btn-passive" onclick="openHistorySidebar()">
             <i class="fas fa-history"></i> Geçmiş
           </button>
@@ -403,6 +404,7 @@
         });
       });
       renderHistory();
+      updateHistoryButtonState(); // Sayfa açılırken geçmişi kontrol et
       
       document.addEventListener('click', function(e) {
         const menu = document.getElementById('tk-download-menu');
@@ -561,7 +563,6 @@
     }
 
     async function uiToggleActionButtons(action) {
-      // "btn-run-flow" kaldırıldığı için referansı Dev Mode içindeki "rc-send" butonuna kaydırdık
       const btnRun = document.getElementById("rc-send");
       const btnDownload = document.getElementById("btn-download-flow");
 
@@ -755,13 +756,31 @@
       return str;
     }
 
+    // =========================================================================
+    // GEÇMİŞ (HISTORY) MANTIĞI & BUTON RENKLENDİRME
+    // =========================================================================
     let requestHistory = JSON.parse(localStorage.getItem('tk_api_history') || '[]');
+
+    // Geçmişte veri varsa butonu Turuncu/Canlı yapar
+    function updateHistoryButtonState() {
+      const historyBtn = document.getElementById("btn-history");
+      if (!historyBtn) return;
+
+      if (requestHistory && requestHistory.length > 0) {
+        historyBtn.classList.remove("btn-passive");
+        historyBtn.classList.add("btn-orange"); // Geliştirici modu ile aynı renk
+      } else {
+        historyBtn.classList.remove("btn-orange");
+        historyBtn.classList.add("btn-passive");
+      }
+    }
 
     function saveToHistory(item) {
       requestHistory.unshift(item); 
       if (requestHistory.length > 30) requestHistory.pop(); 
       localStorage.setItem('tk_api_history', JSON.stringify(requestHistory));
       renderHistory();
+      updateHistoryButtonState(); // Yeni kayıt eklendiğinde butonu kontrol et
     }
 
     function renderHistory() {
@@ -803,6 +822,7 @@
       requestHistory = [];
       localStorage.removeItem('tk_api_history');
       renderHistory();
+      updateHistoryButtonState(); // Geçmiş silinince butonu pasife çek
       showCustomToast("Temizlendi", "Geçmiş silindi.", "success");
     }
 
