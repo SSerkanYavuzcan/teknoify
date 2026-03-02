@@ -100,9 +100,18 @@
           <button id="btn-run-flow" class="btn-animated-send btn-align-fix active-shimmer" onclick="uiToggleActionButtons('run')">
             <i class="fas fa-paper-plane"></i> İstek Gönder
           </button>
-          <button id="btn-download-flow" class="btn-animated-send btn-align-fix btn-passive" onclick="uiToggleActionButtons('download')">
-            <i class="fas fa-download"></i> İndir
-          </button>
+
+          <div class="tk-dropdown-wrapper">
+            <button id="btn-download-flow" class="btn-animated-send btn-align-fix btn-passive" onclick="toggleDownloadMenu(event)">
+              <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down" style="font-size: 10px; margin-left: 6px; opacity:0.7;"></i>
+            </button>
+            <div id="tk-download-menu" class="tk-dropdown hidden">
+              <div class="tk-dropdown-item" onclick="triggerDownload('json')"><i class="fas fa-file-code" style="color:#60a5fa;"></i> JSON İndir</div>
+              <div class="tk-dropdown-divider"></div>
+              <div class="tk-dropdown-item" onclick="triggerDownload('csv')"><i class="fas fa-file-csv" style="color:#34d399;"></i> CSV İndir</div>
+            </div>
+          </div>
+
           <button id="btn-dev-mode" class="btn-animated-send btn-orange btn-align-fix active-shimmer" onclick="toggleDevMode()">
             <span class="btn-content-inner"><i class="fas fa-terminal"></i> Geliştirici Modu</span>
           </button>
@@ -382,15 +391,32 @@
         });
       });
       renderHistory();
+      
+      // Tıklandığında menüyü dışarıdan kapatma
+      document.addEventListener('click', function(e) {
+        const menu = document.getElementById('tk-download-menu');
+        const btn = document.getElementById('btn-download-flow');
+        if (menu && !menu.classList.contains('hidden')) {
+          if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.add('hidden');
+          }
+        }
+      });
     });
 
     // =========================================================================
-    // YENİ: HIZLI VERİ ÇEKME (QUICK FETCH) FONKSİYONU
+    // HIZLI VERİ ÇEKME (QUICK FETCH) - TARİH ZORUNLULUĞU EKLENDİ
     // =========================================================================
     function quickFetch(tableId) {
       // 1. Filtreleri Oku
       const dateRange = document.getElementById("filter-date").value;
       const orderId = document.getElementById("filter-order-id").value.trim();
+
+      // --- TARİH ZORUNLULUĞU KONTROLÜ ---
+      if (!dateRange) {
+        showCustomToast("Uyarı", "Büyük verileri önlemek için lütfen önce 'Rapor Tarihi' seçiniz.", "warning");
+        return; // Tarih seçilmemişse işlemi durdur
+      }
 
       // 2. Tabloya Özel Kolon Adını Belirle
       let orderColumn = "order_id";
@@ -403,17 +429,15 @@
         action: "bq_fetch",
         dataset_id: "mahalle_bim",
         table_id: tableId,
-        limit: 100
+        limit: 1000 // İsteğe bağlı limit artırılabilir
       };
 
       // 4. Filtreler Doluysa Payload'a Ekle
-      if (dateRange || orderId) {
-        payload.filters = {};
-        if (dateRange) payload.filters.date_range = dateRange;
-        if (orderId) {
-          payload.filters.order_column = orderColumn;
-          payload.filters.order_value = orderId;
-        }
+      payload.filters = {};
+      payload.filters.date_range = dateRange; // Tarih artık zorunlu
+      if (orderId) {
+        payload.filters.order_column = orderColumn;
+        payload.filters.order_value = orderId;
       }
 
       // 5. Payload'u Ekrana (Body Alanına) Yazdır
@@ -486,9 +510,6 @@
       setTimeout(() => { toast.classList.remove("show"); }, 3500);
     }
 
-    // =========================================================================
-    // SPAM KORUMALI VE DEDUPLICATION DESTEKLİ İSTEK MANTIĞI
-    // =========================================================================
     async function uiToggleActionButtons(action) {
       const btnRun = document.getElementById("btn-run-flow");
       const btnDownload = document.getElementById("btn-download-flow");
@@ -597,23 +618,32 @@
           btnRun.innerHTML = '<i class="fas fa-paper-plane"></i> İstek Gönder';
           btnRun.classList.remove("active-shimmer");
         }
-
-      } else if (action === 'download') {
-        if (btnDownload.classList.contains("btn-passive")) {
-           showCustomToast("Uyarı", "Önce bir istek gönderin.", "warning");
-           return;
-        }
-        if(typeof downloadResponseAsJSON === 'function') downloadResponseAsJSON();
-        btnDownload.classList.remove("active-shimmer");
-        btnDownload.classList.add("btn-passive");
       }
     }
 
-    function downloadResponseAsJSON() {
+    // =========================================================================
+    // YENİ: JSON VE CSV İNDİRME MANTIĞI
+    // =========================================================================
+    function toggleDownloadMenu(e) {
+      if (document.getElementById("btn-download-flow").classList.contains("btn-passive")) {
+        showCustomToast("Uyarı", "Önce bir istek gönderin.", "warning");
+        return;
+      }
+      const menu = document.getElementById("tk-download-menu");
+      menu.classList.toggle("hidden");
+      e.stopPropagation();
+    }
+
+    function triggerDownload(format) {
+      document.getElementById('tk-download-menu').classList.add('hidden');
+      
       const responseElement = document.getElementById("rc-response");
       const content = responseElement.innerText; 
       if (!content || content.includes("Henüz istek gönderilmedi")) return;
       
+      let parsedData;
+      try { parsedData = JSON.parse(content); } catch (e) { return; }
+
       const payloadText = document.getElementById('rc-body').value;
       let tableName = "api_response";
       try {
@@ -622,9 +652,27 @@
       } catch (e) {}
 
       let orderId = document.getElementById("filter-order-id").value.trim();
-      const fileName = orderId ? `${tableName}_${orderId}.json` : `${tableName}.json`;
+      let dateRange = document.getElementById("filter-date").value.replace(/ /g, "");
       
-      const blob = new Blob([content], { type: "application/json" });
+      let fileSuffix = orderId ? orderId : (dateRange ? dateRange : "data");
+      const fileName = `${tableName}_${fileSuffix}.${format}`;
+
+      if (format === 'json') {
+        const blob = new Blob([content], { type: "application/json" });
+        triggerBrowserDownload(blob, fileName);
+      } else if (format === 'csv') {
+        if (parsedData.data && Array.isArray(parsedData.data) && parsedData.data.length > 0) {
+          const csvStr = convertArrayToCSV(parsedData.data);
+          // Türkçe karakter bozulmasını engellemek için UTF-8 BOM ekliyoruz (\ufeff)
+          const blob = new Blob(['\ufeff' + csvStr], { type: "text/csv;charset=utf-8;" });
+          triggerBrowserDownload(blob, fileName);
+        } else {
+          showCustomToast("Hata", "CSV'ye dönüştürülecek tablo verisi bulunamadı.", "error");
+        }
+      }
+    }
+
+    function triggerBrowserDownload(blob, fileName) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -633,6 +681,29 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      showCustomToast("Başarılı", `${fileName} indirildi.`, "success");
+    }
+
+    // JSON Objelerini CSV'ye Çeviren Fonksiyon
+    function convertArrayToCSV(objArray) {
+      const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+      if (!array || !array.length) return '';
+      
+      let str = '';
+      let headers = Object.keys(array[0]).join(',');
+      str += headers + '\r\n';
+
+      for (let i = 0; i < array.length; i++) {
+        let line = '';
+        for (let index in array[i]) {
+          if (line != '') line += ',';
+          // Hücre içeriğinde virgül veya satır atlama varsa diye tırnak içine alıyoruz
+          let val = array[i][index] === null || array[i][index] === undefined ? '' : String(array[i][index]);
+          line += `"${val.replace(/"/g, '""')}"`;
+        }
+        str += line + '\r\n';
+      }
+      return str;
     }
 
     // =========================================================================
