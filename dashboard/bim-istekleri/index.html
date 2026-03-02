@@ -238,10 +238,16 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                   <span style="font-size: 12px; color: #888;"><i class="fas fa-info-circle"></i> İstek JSON'ını buraya yazabilir veya dosya yükleyebilirsiniz.</span>
                   
-                  <input type="file" id="json-file-input" accept=".json" style="display: none;" onchange="handleJsonFileUpload(event)">
-                  <button type="button" class="btn-header-action btn-header-add" onclick="document.getElementById('json-file-input').click()" style="height: 32px; min-width: auto; padding: 0 12px; font-size: 12px;">
-                    <i class="fas fa-file-upload"></i> JSON Dosyası Yükle
-                  </button>
+                  <div style="display: flex; gap: 8px;">
+                    <button type="button" onclick="downloadJsonTemplate()" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; min-width: auto; padding: 0 12px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; background: rgba(255,255,255,0.05); color: #ccc; border: 1px solid rgba(255,255,255,0.1);">
+                      <i class="fas fa-file-download"></i> Şablon İndir
+                    </button>
+
+                    <input type="file" id="json-file-input" accept=".json" style="display: none;" onchange="handleJsonFileUpload(event)">
+                    <button type="button" class="btn-header-action btn-header-add" onclick="document.getElementById('json-file-input').click()" style="height: 32px; min-width: auto; padding: 0 12px; font-size: 12px; border-radius: 6px;">
+                      <i class="fas fa-file-upload"></i> JSON Yükle
+                    </button>
+                  </div>
                 </div>
 
                 <textarea id="rc-body" class="rc-textarea" placeholder='{"action": "bq_upload"}'>{"action": "bq_upload", "dataset_id": "mahalle_bim", "table_id": "BIM_partial_return_invoice_response", "format": "json", "data": [{"movement_id": "test-w4v1CS"}]}</textarea>
@@ -413,7 +419,34 @@
     });
 
     // =========================================================================
-    // YENİ: JSON DOSYASI YÜKLEME (FİLE UPLOAD) MANTIĞI
+    // YENİ: ŞABLON İNDİRME MANTIĞI
+    // =========================================================================
+    function downloadJsonTemplate() {
+      const templateStr = `{
+  "action": "bq_upload",
+  "dataset_id": "mahalle_BIM",
+  "table_id": "BIM_partial_return_invoice_response",
+  "format": "json",
+  "data": [
+    {"movement_id": "test-w0v1CN"},
+    {"movement_id": "test-w0v1CS"}
+  ]
+}`;
+      const blob = new Blob([templateStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bq_upload_template.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showCustomToast("Başarılı", "JSON Şablonu indirildi.", "success");
+    }
+
+    // =========================================================================
+    // DOSYA YÜKLEME (FİLE UPLOAD) MANTIĞI
     // =========================================================================
     function handleJsonFileUpload(event) {
       const file = event.target.files[0];
@@ -423,15 +456,15 @@
       reader.onload = function(e) {
         try {
           const content = e.target.result;
-          const parsed = JSON.parse(content); // JSON doğrulaması
-          const formatted = JSON.stringify(parsed, null, 2); // Düzenli format
+          const parsed = JSON.parse(content); 
+          const formatted = JSON.stringify(parsed, null, 2); 
           
           document.getElementById('rc-body').value = formatted;
           showCustomToast("Başarılı", "JSON dosyası başarıyla yüklendi ve formatlandı.", "success");
         } catch (error) {
           showCustomToast("Dosya Hatası", "Yüklediğiniz dosya geçerli bir JSON formatında değil.", "error");
         }
-        event.target.value = ''; // Aynı dosyayı tekrar yükleyebilmek için inputu temizle
+        event.target.value = ''; 
       };
       
       reader.onerror = function() {
