@@ -235,6 +235,15 @@
               </div>
 
               <div id="rc-panel-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <span style="font-size: 12px; color: #888;"><i class="fas fa-info-circle"></i> İstek JSON'ını buraya yazabilir veya dosya yükleyebilirsiniz.</span>
+                  
+                  <input type="file" id="json-file-input" accept=".json" style="display: none;" onchange="handleJsonFileUpload(event)">
+                  <button type="button" class="btn-header-action btn-header-add" onclick="document.getElementById('json-file-input').click()" style="height: 32px; min-width: auto; padding: 0 12px; font-size: 12px;">
+                    <i class="fas fa-file-upload"></i> JSON Dosyası Yükle
+                  </button>
+                </div>
+
                 <textarea id="rc-body" class="rc-textarea" placeholder='{"action": "bq_upload"}'>{"action": "bq_upload", "dataset_id": "mahalle_bim", "table_id": "BIM_partial_return_invoice_response", "format": "json", "data": [{"movement_id": "test-w4v1CS"}]}</textarea>
               </div>
 
@@ -392,7 +401,6 @@
       });
       renderHistory();
       
-      // Tıklandığında menüyü dışarıdan kapatma
       document.addEventListener('click', function(e) {
         const menu = document.getElementById('tk-download-menu');
         const btn = document.getElementById('btn-download-flow');
@@ -405,46 +413,65 @@
     });
 
     // =========================================================================
-    // HIZLI VERİ ÇEKME (QUICK FETCH) - TARİH ZORUNLULUĞU EKLENDİ
+    // YENİ: JSON DOSYASI YÜKLEME (FİLE UPLOAD) MANTIĞI
     // =========================================================================
+    function handleJsonFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const content = e.target.result;
+          const parsed = JSON.parse(content); // JSON doğrulaması
+          const formatted = JSON.stringify(parsed, null, 2); // Düzenli format
+          
+          document.getElementById('rc-body').value = formatted;
+          showCustomToast("Başarılı", "JSON dosyası başarıyla yüklendi ve formatlandı.", "success");
+        } catch (error) {
+          showCustomToast("Dosya Hatası", "Yüklediğiniz dosya geçerli bir JSON formatında değil.", "error");
+        }
+        event.target.value = ''; // Aynı dosyayı tekrar yükleyebilmek için inputu temizle
+      };
+      
+      reader.onerror = function() {
+        showCustomToast("Okuma Hatası", "Dosya okunurken bir hata oluştu.", "error");
+      };
+
+      reader.readAsText(file);
+    }
+
     function quickFetch(tableId) {
-      // 1. Filtreleri Oku
       const dateRange = document.getElementById("filter-date").value;
       const orderId = document.getElementById("filter-order-id").value.trim();
 
-      // --- TARİH ZORUNLULUĞU KONTROLÜ ---
       if (!dateRange) {
         showCustomToast("Uyarı", "Büyük verileri önlemek için lütfen önce 'Rapor Tarihi' seçiniz.", "warning");
-        return; // Tarih seçilmemişse işlemi durdur
+        return; 
       }
 
-      // 2. Tabloya Özel Kolon Adını Belirle
       let orderColumn = "order_id";
       if (tableId === "BIM_partial_return_details") {
         orderColumn = "order_code";
       }
 
-      // 3. Ana Payload'u Oluştur
       const payload = {
         action: "bq_fetch",
         dataset_id: "mahalle_bim",
         table_id: tableId,
-        limit: 1000 // İsteğe bağlı limit artırılabilir
+        limit: 1000 
       };
 
-      // 4. Filtreler Doluysa Payload'a Ekle
       payload.filters = {};
-      payload.filters.date_range = dateRange; // Tarih artık zorunlu
+      payload.filters.date_range = dateRange; 
       if (orderId) {
         payload.filters.order_column = orderColumn;
         payload.filters.order_value = orderId;
       }
 
-      // 5. Payload'u Ekrana (Body Alanına) Yazdır
       const bodyEl = document.getElementById('rc-body');
       bodyEl.value = JSON.stringify(payload, null, 2);
 
-      // 6. UI: Metodu POST'a Çevir ve Body Sekmesini Aç
       document.getElementById('rc-method').value = 'POST';
       document.getElementById('request-action-row').setAttribute('data-method', 'POST');
       
@@ -459,7 +486,6 @@
       });
       document.getElementById('rc-panel-body').classList.remove('hidden');
 
-      // 7. Otomatik Olarak İsteği Gönder
       uiToggleActionButtons('run');
     }
 
@@ -621,9 +647,6 @@
       }
     }
 
-    // =========================================================================
-    // YENİ: JSON VE CSV İNDİRME MANTIĞI
-    // =========================================================================
     function toggleDownloadMenu(e) {
       if (document.getElementById("btn-download-flow").classList.contains("btn-passive")) {
         showCustomToast("Uyarı", "Önce bir istek gönderin.", "warning");
@@ -663,7 +686,6 @@
       } else if (format === 'csv') {
         if (parsedData.data && Array.isArray(parsedData.data) && parsedData.data.length > 0) {
           const csvStr = convertArrayToCSV(parsedData.data);
-          // Türkçe karakter bozulmasını engellemek için UTF-8 BOM ekliyoruz (\ufeff)
           const blob = new Blob(['\ufeff' + csvStr], { type: "text/csv;charset=utf-8;" });
           triggerBrowserDownload(blob, fileName);
         } else {
@@ -684,7 +706,6 @@
       showCustomToast("Başarılı", `${fileName} indirildi.`, "success");
     }
 
-    // JSON Objelerini CSV'ye Çeviren Fonksiyon
     function convertArrayToCSV(objArray) {
       const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
       if (!array || !array.length) return '';
@@ -697,7 +718,6 @@
         let line = '';
         for (let index in array[i]) {
           if (line != '') line += ',';
-          // Hücre içeriğinde virgül veya satır atlama varsa diye tırnak içine alıyoruz
           let val = array[i][index] === null || array[i][index] === undefined ? '' : String(array[i][index]);
           line += `"${val.replace(/"/g, '""')}"`;
         }
@@ -706,9 +726,6 @@
       return str;
     }
 
-    // =========================================================================
-    // GEÇMİŞ (HISTORY) MANTIĞI
-    // =========================================================================
     let requestHistory = JSON.parse(localStorage.getItem('tk_api_history') || '[]');
 
     function saveToHistory(item) {
