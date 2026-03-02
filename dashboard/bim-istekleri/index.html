@@ -422,97 +422,133 @@
     // YENİDEN YAZILAN İSTEK GÖNDERME MANTIĞI (HATA VE BAŞARI DURUMLARI)
     // =========================================================================
     // =========================================================================
-// GÜNCELLENMİŞ İSTEK GÖNDERME MANTIĞI (GERÇEK FETCH İSTEĞİ)
 // =========================================================================
-async function uiToggleActionButtons(action) {
-  const btnRun = document.getElementById("btn-run-flow");
-  const btnDownload = document.getElementById("btn-download-flow");
+    // EKSİKSİZ VE SPAM KORUMALI İSTEK GÖNDERME MANTIĞI
+    // =========================================================================
+    async function uiToggleActionButtons(action) {
+      const btnRun = document.getElementById("btn-run-flow");
+      const btnDownload = document.getElementById("btn-download-flow");
 
-  if (action === 'run') {
-    // 1. Arayüzdeki verileri toplayalım
-    const token = document.getElementById('rc-auth-token').value.trim();
-    const endpointUrl = document.getElementById('rc-url').value.trim();
-    
-    // Yükleme animasyonunu başlat
-    btnRun.classList.add("active-shimmer");
-    btnRun.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+      if (action === 'run') {
+        // 🛑 1. KİLİT KONTROLÜ: Buton meşgulse (arka arkaya basılıyorsa) durdur!
+        if (btnRun.disabled) return; 
 
-    // Backend'in BigQuery için beklediği formatı hazırlıyoruz
-    // Not: Buradaki dataset_id ve table_id'yi kendi BigQuery projene göre güncellemelisin
-    const payload = {
-      action: "bq_upload",
-      dataset_id: "senin_dataset_adin", 
-      table_id: "senin_tablo_adin",
-      format: "json",
-      data: [
-        {
-          "order_id": document.getElementById("filter-order-id").value.trim() || "test-order",
-          "project_id": "bim_faz_2",
-          "tarih": new Date().toISOString()
-        }
-      ]
-    };
-
-    try {
-      // 2. Python Backend'ine Gerçek İstek (Fetch) Atıyoruz
-      const response = await fetch(endpointUrl, {
-        method: 'POST', // BigQuery veri gönderimi için POST/PUT kullanıyoruz
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : ''
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await response.json();
-
-      // 3. Yanıtı Arayüze Yazdırıyoruz
-      const statusBadge = document.getElementById("rc-status");
-      const timeBadge = document.getElementById("rc-time");
-      const responseEl = document.getElementById("rc-response");
-
-      if (response.ok) {
-        // BAŞARILI DURUM
-        statusBadge.className = "rc-badge rc-badge-success";
-        statusBadge.innerHTML = `<i class="fas fa-check-circle"></i> Status: ${response.status} OK`;
-        showCustomToast("Başarılı", result.message || "Veri BigQuery'ye aktarıldı.", "success");
+        // 2. Arayüzden Verileri Topla
+        const token = document.getElementById('rc-auth-token') ? document.getElementById('rc-auth-token').value.trim() : '';
+        const endpointUrl = document.getElementById('rc-url') ? document.getElementById('rc-url').value.trim() : '';
+        const method = document.getElementById('rc-method') ? document.getElementById('rc-method').value : 'POST';
+        const bodyText = document.getElementById('rc-body') ? document.getElementById('rc-body').value.trim() : '{}';
         
-        btnDownload.classList.remove("btn-passive");
-        btnDownload.classList.add("active-shimmer");
-      } else {
-        // HATA DURUMU
-        statusBadge.className = "rc-badge rc-badge-error";
-        statusBadge.innerHTML = `<i class="fas fa-times-circle"></i> Status: ${response.status} Error`;
-        showCustomToast("Hata", result.error || "İşlem başarısız oldu.", "error");
+        let payload = {};
+        try {
+          // Arayüzdeki (UI) metin kutusundaki veriyi geçerli bir JSON'a çevir
+          payload = bodyText ? JSON.parse(bodyText) : {};
+        } catch (e) {
+          showCustomToast("JSON Hatası", "Body kısmındaki JSON formatı hatalı. Lütfen kontrol edin.", "error");
+          return;
+        }
+
+        // 3. KİLİDİ DEVREYE SOK VE ANİMASYONU BAŞLAT
+        btnRun.disabled = true; // Butonu kilitle
+        btnRun.classList.add("active-shimmer");
+        btnRun.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+
+        try {
+          // İstek süresini ölçmek için zamanı başlat
+          const startTime = performance.now(); 
+
+          // 4. API İsteğini Gönder (Fetch)
+          const response = await fetch(endpointUrl, {
+            method: method, 
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token ? `Bearer ${token}` : ''
+            },
+            body: (method !== 'GET' && method !== 'HEAD') ? JSON.stringify(payload) : undefined
+          });
+
+          // Süreyi hesapla
+          const endTime = performance.now();
+          const timeTaken = Math.round(endTime - startTime);
+
+          const result = await response.json();
+
+          // 5. Arayüzü (UI) Güncelle
+          const statusBadge = document.getElementById("rc-status");
+          const timeBadge = document.getElementById("rc-time");
+          const responseEl = document.getElementById("rc-response");
+
+          // Süre badge'ini güncelle
+          if(timeBadge) {
+             timeBadge.className = "rc-badge rc-badge-idle";
+             timeBadge.innerHTML = `<i class="fas fa-clock" style="font-size:10px;"></i> Time: ${timeTaken} ms`;
+          }
+
+          if (response.ok) {
+            // BAŞARILI DURUM
+            if(statusBadge) {
+              statusBadge.className = "rc-badge rc-badge-success";
+              statusBadge.innerHTML = `<i class="fas fa-check-circle"></i> Status: ${response.status} OK`;
+            }
+            showCustomToast("Başarılı", result.message || "İstek başarıyla tamamlandı.", "success");
+            
+            // İndir butonunu aktif et
+            btnDownload.classList.remove("btn-passive");
+            btnDownload.classList.add("active-shimmer");
+          } else {
+            // HATA DURUMU
+            if(statusBadge) {
+              statusBadge.className = "rc-badge rc-badge-error";
+              statusBadge.innerHTML = `<i class="fas fa-times-circle"></i> Status: ${response.status} Error`;
+            }
+            showCustomToast("Hata", result.error || "İşlem başarısız oldu.", "error");
+          }
+
+          // JSON çıktısını ekrana bas ve renklendir
+          if(responseEl) {
+            responseEl.textContent = JSON.stringify(result, null, 2);
+            if (window.hljs) { 
+              delete responseEl.dataset.highlighted;
+              hljs.highlightElement(responseEl); 
+              if(hljs.lineNumbersBlock) hljs.lineNumbersBlock(responseEl);
+            }
+          }
+
+        } catch (error) {
+          // BAĞLANTI HATASI (CORS vb.)
+          console.error("İstek Hatası:", error);
+          showCustomToast("Bağlantı Hatası", "Sunucuya ulaşılamadı. F12 Konsolu kontrol edin.", "error");
+          
+          const statusBadge = document.getElementById("rc-status");
+          if(statusBadge) {
+            statusBadge.className = "rc-badge rc-badge-error";
+            statusBadge.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Status: FAILED`;
+          }
+        } finally {
+          // 🟢 6. İŞLEM BİTTİ: KİLİDİ AÇ VE BUTONU ESKİ HALİNE GETİR
+          btnRun.disabled = false; 
+          btnRun.innerHTML = '<i class="fas fa-paper-plane"></i> İstek Gönder';
+          btnRun.classList.remove("active-shimmer");
+        }
+
+      } else if (action === 'download') {
+        // İNDİRME MANTIĞI
+        if (btnDownload.classList.contains("btn-passive")) {
+           showCustomToast("Uyarı", "İndirme yapabilmek için önce 'İstek Gönder' butonunu kullanın.", "warning");
+           return;
+        }
+        
+        // HTML dosyasında halihazırda bulunan download fonksiyonunu çağırır
+        if(typeof downloadResponseAsJSON === 'function') {
+            downloadResponseAsJSON();
+        }
+        
+        // Görsel efekti sıfırla
+        btnDownload.classList.remove("active-shimmer");
+        btnDownload.classList.add("btn-passive");
+        btnRun.classList.add("active-shimmer");
       }
-
-      // JSON çıktısını ekrana bas
-      responseEl.textContent = JSON.stringify(result, null, 2);
-      if(window.hljs) { 
-        delete responseEl.dataset.highlighted;
-        hljs.highlightElement(responseEl); 
-        hljs.lineNumbersBlock(responseEl); 
-      }
-
-    } catch (error) {
-      // BAĞLANTI HATASI DURUMU
-      console.error("İstek Hatası:", error);
-      showCustomToast("Bağlantı Hatası", "Sunucuya ulaşılamadı.", "error");
-    } finally {
-      // Butonu eski haline getir
-      btnRun.innerHTML = '<i class="fas fa-paper-plane"></i> İstek Gönder';
-      btnRun.classList.remove("active-shimmer");
     }
-
-  } else if (action === 'download') {
-    // İndirme fonksiyonu eskisi gibi kalabilir
-    if (btnDownload.classList.contains("btn-passive")) {
-       showCustomToast("Uyarı", "İndirme yapabilmek için önce 'İstek Gönder' butonunu kullanın.", "warning");
-       return;
-    }
-    downloadResponseAsJSON();
-  }
-}
 
     function downloadResponseAsJSON() {
       const responseElement = document.getElementById("rc-response");
