@@ -1,16 +1,14 @@
 # dashboard/bim-istekleri/backend/main.py
 #
-# ✅ GÜVENLİK GÜNCELLEMELERİ TAMAMLANDI:
-# 1. SSRF Koruması: urlparse ile host ve scheme bazlı kesin doğrulama eklendi.
-# 2. Crash (Çökme) Koruması: Senkron Firebase token doğrulaması try/except ile güvenli hale getirildi.
-# 3. Payload Veri Tipi: requests.request içinde dict/list ise JSON, değilse data olarak iletilmesi sağlandı.
-# 4. Header Abuse & Credential Relay: authorization, cookie gibi tehlikeli başlıkların 3. partilere sızması engellendi.
-# 5. Open CORS Kapatıldı: Varsayılan "*" izni kaldırıldı, varsayılan olarak sadece "https://teknoify.com"a izin verildi.
+# ✅ GÜVENLİK GÜNCELLEMELERİ TAMAMLANDI: SSRF, Crash Koruması, Payload & Header Abuse, CORS
+# 🚀 YENİ ÖZELLİK: BigQuery'ye JSON ve CSV veri yükleme entegrasyonu (Data Ingestion) eklendi.
 
 from __future__ import annotations
 
 import json
 import os
+import csv
+import io
 from datetime import datetime
 from typing import Any
 from urllib.parse import urlparse
@@ -21,25 +19,32 @@ from firebase_admin import auth as firebase_auth
 from firebase_admin import firestore
 import requests
 
+# BigQuery kütüphanesi
+from google.cloud import bigquery
 
-# -------------------- Firebase init --------------------
+
+# -------------------- Init --------------------
 if not firebase_admin._apps:
     firebase_admin.initialize_app()
 
 fs_client = firestore.client()
 
+# Soğuk başlangıç (cold start) süresini kısaltmak için BQ Client global tanımlanır.
+try:
+    bq_client = bigquery.Client()
+except Exception as e:
+    print(f"[WARNING] BigQuery Client başlatılamadı (Local test ortamında olabilir): {e}")
+    bq_client = None
+
 
 # -------------------- Env --------------------
 HTTP_TIMEOUT = int(os.environ.get("HTTP_TIMEOUT", "20"))
 
-# CORS allowlist: Varsayılan olarak sadece senin domainin (Açık CORS zafiyeti kapatıldı)
 ALLOWED_ORIGINS_RAW = os.environ.get("ALLOWED_ORIGINS", "https://teknoify.com")
 ALLOWED_ORIGINS = [o.strip() for o in ALLOWED_ORIGINS_RAW.split(",") if o.strip()]
 
-# Generic proxy allowlist (optional):
 API_ALLOWLIST = [u.strip() for u in os.environ.get("API_ALLOWLIST", "").split(",") if u.strip()]
 
-# BIM credentials (Secret Manager veya Environment Variables üzerinden okunmalı)
 BIM_USERNAME = os.environ.get("BIM_USERNAME", "")
 BIM_PASSWORD = os.environ.get("BIM_PASSWORD", "")
 BIM_CHAIN_ID = os.environ.get("BIM_CHAIN_ID", "cw7cw")
@@ -60,7 +65,7 @@ def _cors_headers_for_request(request, extra: dict[str, str] | None = None) -> d
 
     allow_all = "*" in ALLOWED_ORIGINS
     headers: dict[str, str] = {
-        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
         "Access-Control-Allow-Headers": "Authorization,Content-Type",
         "Access-Control-Max-Age": "3600",
     }
@@ -68,7 +73,6 @@ def _cors_headers_for_request(request, extra: dict[str, str] | None = None) -> d
     if allow_all:
         headers["Access-Control-Allow-Origin"] = "*"
     else:
-        # İstek atan Origin, izin verilenler listesindeyse ekle, yoksa tarayıcı bloklar.
         if origin and origin in ALLOWED_ORIGINS:
             headers["Access-Control-Allow-Origin"] = origin
             headers["Vary"] = "Origin"
@@ -172,7 +176,6 @@ def _handle_bim_customer_info(request, body: dict[str, Any]):
     if not BIM_USERNAME or not BIM_PASSWORD:
         return _json(request, {"error": "BIM credentials server-side eksik"}, 500)
 
-    # 1) LOGIN -> token
     try:
         login_resp = requests.get(
             BIM_LOGIN_URL,
@@ -207,7 +210,6 @@ def _handle_bim_customer_info(request, body: dict[str, Any]):
 
     bearer = raw_token if raw_token.lower().startswith("bearer ") else f"Bearer {raw_token}"
 
-    # 2) CUSTOMER INFO
     info_url = BIM_CUSTOMER_INFO_URL_TEMPLATE.format(order_id=order_id)
 
     try:
@@ -263,7 +265,6 @@ def _handle_api_fetch(request, body: dict[str, Any]):
     if method not in {"GET", "POST", "PUT", "PATCH", "DELETE"}:
         return _json(request, {"error": "Desteklenmeyen HTTP method"}, 400)
 
-    # 🚨 GÜVENLİK: Header Abuse & Credential Relay Koruması
     DANGEROUS_HEADERS = {
         "host", "content-length", "connection", 
         "authorization", "cookie", "proxy-authorization", 
@@ -285,7 +286,6 @@ def _handle_api_fetch(request, body: dict[str, Any]):
             "timeout": HTTP_TIMEOUT
         }
         
-        # Payload Tipi Güvenliği (Çökme ve Veri Uyuşmazlığını Engeller)
         if isinstance(payload, (dict, list)):
             req_kwargs["json"] = payload
         elif payload is not None:
@@ -312,6 +312,71 @@ def _handle_api_fetch(request, body: dict[str, Any]):
     )
 
 
+# -------------------- BigQuery Upload (JSON/CSV) --------------------
+def _handle_bq_upload(request, body: dict[str, Any]):
+    # 1. Yetki Kontrolü
+    uid, err = _verify_token(request)
+    if err:
+        return _json(request, {"error": err}, 401)
+        
+    if not bq_client:
+        return _json(request, {"error": "BigQuery Client başlatılamadı."}, 500)
+
+    # (Opsiyonel: Eğer bu işlem için özel bir yetki (entitlement) kontrolü yapmak istersen buraya ekleyebilirsin)
+
+    # 2. Parametreleri al
+    dataset_id = str(body.get("dataset_id", "")).strip()
+    table_id = str(body.get("table_id", "")).strip()
+    data_format = str(body.get("format", "json")).strip().lower() # 'json' veya 'csv'
+    raw_data = body.get("data")
+
+    if not dataset_id or not table_id or not raw_data:
+        return _json(request, {"error": "dataset_id, table_id ve data alanları zorunludur."}, 400)
+
+    # 3. Veriyi parse et
+    rows_to_insert = []
+    
+    if data_format == "json":
+        if not isinstance(raw_data, list):
+            return _json(request, {"error": "JSON formatında 'data' alanı bir dizi (list/array) olmalıdır."}, 400)
+        rows_to_insert = raw_data
+
+    elif data_format == "csv":
+        if not isinstance(raw_data, str):
+            return _json(request, {"error": "CSV formatında 'data' alanı string olmalıdır."}, 400)
+        try:
+            f = io.StringIO(raw_data)
+            reader = csv.DictReader(f)
+            rows_to_insert = [row for row in reader]
+        except Exception as e:
+            return _json(request, {"error": f"CSV parse hatası: {str(e)}"}, 400)
+    else:
+        return _json(request, {"error": "Sadece 'json' veya 'csv' formatları desteklenmektedir."}, 400)
+
+    if not rows_to_insert:
+        return _json(request, {"error": "Eklenecek geçerli veri bulunamadı."}, 400)
+
+    # 4. BigQuery'ye stream (insert) işlemi
+    table_ref = f"{bq_client.project}.{dataset_id}.{table_id}"
+    
+    try:
+        errors = bq_client.insert_rows_json(table_ref, rows_to_insert)
+        
+        if not errors:
+            return _json(request, {
+                "ok": True, 
+                "message": f"{len(rows_to_insert)} satır başarıyla '{table_id}' tablosuna eklendi."
+            }, 200)
+        else:
+            return _json(request, {
+                "error": "BigQuery yazma hatası (Şema uyuşmazlığı olabilir)", 
+                "details": errors
+            }, 502)
+    except Exception as e:
+        print(f"[ERROR] BigQuery Insert Failed: {e}")
+        return _json(request, {"error": f"Sunucu tarafında BigQuery hatası: {str(e)}"}, 500)
+
+
 # -------------------- Main entrypoint --------------------
 @functions_framework.http
 def apiProxy(request):
@@ -326,17 +391,25 @@ def apiProxy(request):
     # Parse JSON body
     body = request.get_json(silent=True) or {}
 
-    # Routing
+    # Routing (Yönlendirme)
+    
+    # 1. BigQuery Ingestion İşlemi
+    if isinstance(body, dict) and body.get("action") == "bq_upload":
+        return _handle_bq_upload(request, body)
+        
+    # 2. BIM Özel İşlemi
     if isinstance(body, dict) and (body.get("orderId") or body.get("order_id")):
         return _handle_bim_customer_info(request, body)
 
+    # 3. Genel Proxy İşlemi
     if isinstance(body, dict) and body.get("url"):
         return _handle_api_fetch(request, body)
 
+    # Eşleşme bulunamazsa Hata
     return _json(
         request,
         {
-            "error": "Geçersiz istek. 'orderId' veya 'url' alanı bekleniyor.",
+            "error": "Geçersiz istek. 'action'='bq_upload', 'orderId' veya 'url' alanı bekleniyor.",
         },
         400,
     )
