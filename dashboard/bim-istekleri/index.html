@@ -214,7 +214,7 @@
               </div>
 
               <div id="rc-panel-body">
-                <textarea id="rc-body" class="rc-textarea" placeholder='{"action": "bq_upload"}'>{"action": "bq_upload", "dataset_id": "mahalle_BIM", "table_id": "BIM_partial_return_invoice_response", "format": "json", "data": [{"movement_id": "test-w4v1CS"}]}</textarea>
+                <textarea id="rc-body" class="rc-textarea" placeholder='{"action": "bq_upload"}'>{"action": "bq_upload", "dataset_id": "mahalle_bim", "table_id": "BIM_partial_return_invoice_response", "format": "json", "data": [{"movement_id": "test-w4v1CS"}]}</textarea>
               </div>
 
             </div>
@@ -283,7 +283,6 @@
 
   <div id="code-sidebar-overlay" class="rc-sidebar-overlay" onclick="closeCodeSidebar()"></div>
   <div id="code-sidebar" class="rc-sidebar">
-    
     <div class="rc-sidebar-header">
       <div style="display: flex; align-items: center; gap: 10px;">
         <i class="fas fa-code" style="color: #818cf8; font-size: 16px;"></i>
@@ -291,7 +290,6 @@
       </div>
       <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px; color: #cccccc;" onclick="closeCodeSidebar()"><i class="fas fa-times"></i></button>
     </div>
-
     <div class="rc-sidebar-body">
       <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
         <div style="position: relative; width: 220px;">
@@ -305,12 +303,10 @@
             <option value="java">Java (OkHttp)</option>
           </select>
         </div>
-        
         <button class="btn-copy" onclick="copyCodeSnippet()" title="Kodu Kopyala">
           <i class="fas fa-copy" style="margin-right: 6px;"></i> Kopyala
         </button>
       </div>
-      
       <div class="rc-sidebar-code">
         <pre style="margin:0; padding:0; background:transparent;"><code id="code-snippet-output"></code></pre>
       </div>
@@ -326,10 +322,9 @@
       </div>
       <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px; color: #cccccc;" onclick="closeHistorySidebar()"><i class="fas fa-times"></i></button>
     </div>
-
     <div class="rc-sidebar-body" style="display: flex; flex-direction: column; height: calc(100% - 60px);">
       <div id="history-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;">
-        </div>
+      </div>
       <div style="padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;">
         <button class="btn-animated-send btn-short" style="width: 100%; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);" onclick="clearHistory()">
           <i class="fas fa-trash-alt"></i> Tüm Geçmişi Temizle
@@ -374,6 +369,7 @@
           if(targetPanel) targetPanel.classList.remove('hidden');
         });
       });
+      renderHistory();
     });
 
     function createKVRow(placeholderKey, placeholderValue) {
@@ -423,33 +419,16 @@
       setTimeout(() => { toast.classList.remove("show"); }, 3500);
     }
 
-    function syntaxHighlightJSON(json) {
-      if (typeof json != 'string') {
-        json = JSON.stringify(json, undefined, 2);
-      }
-      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        let cls = 'json-number';
-        if (/^"/.test(match)) {
-          if (/:$/.test(match)) { cls = 'json-key'; } else { cls = 'json-string'; }
-        } else if (/true|false/.test(match)) { cls = 'json-boolean';
-        } else if (/null/.test(match)) { cls = 'json-null'; }
-        return '<span class="' + cls + '">' + match + '</span>';
-      });
-    }
-
     // =========================================================================
-    // EKSİKSİZ VE SPAM KORUMALI İSTEK GÖNDERME MANTIĞI
+    // SPAM KORUMALI VE DEDUPLICATION (TEKİLLEŞTİRME) DESTEKLİ İSTEK MANTIĞI
     // =========================================================================
     async function uiToggleActionButtons(action) {
       const btnRun = document.getElementById("btn-run-flow");
       const btnDownload = document.getElementById("btn-download-flow");
 
       if (action === 'run') {
-        // 🛑 1. KİLİT KONTROLÜ: Buton meşgulse durdur!
         if (btnRun.disabled) return; 
 
-        // 2. Arayüzden Verileri Topla
         const token = document.getElementById('rc-auth-token') ? document.getElementById('rc-auth-token').value.trim() : '';
         const endpointUrl = document.getElementById('rc-url') ? document.getElementById('rc-url').value.trim() : '';
         const method = document.getElementById('rc-method') ? document.getElementById('rc-method').value : 'POST';
@@ -457,13 +436,21 @@
         
         let payload = {};
         try {
-          payload = bodyText ? JSON.parse(bodyText) : {};
+          payload = JSON.parse(bodyText || '{}');
+          
+          // --- BIGQUERY DEDUPLICATION (MÜKERRER ENGELLEME) ---
+          // Eğer bu bir BigQuery yüklemesi ise her satıra movement_id'sini kimlik (insertId) olarak basıyoruz.
+          if (payload.action === "bq_upload" && Array.isArray(payload.data)) {
+              payload.data = payload.data.map(item => ({
+                  ...item,
+                  insertId: item.movement_id || ("id_" + Math.random().toString(36).substr(2, 9))
+              }));
+          }
         } catch (e) {
-          showCustomToast("JSON Hatası", "Body kısmındaki JSON formatı hatalı. Lütfen kontrol edin.", "error");
+          showCustomToast("JSON Hatası", "Body kısmındaki JSON formatı hatalı.", "error");
           return;
         }
 
-        // 3. KİLİDİ DEVREYE SOK VE ANİMASYONU BAŞLAT
         btnRun.disabled = true; 
         btnRun.classList.add("active-shimmer");
         btnRun.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
@@ -471,7 +458,6 @@
         try {
           const startTime = performance.now(); 
 
-          // 4. API İsteğini Gönder (Fetch)
           const response = await fetch(endpointUrl, {
             method: method, 
             headers: {
@@ -485,7 +471,6 @@
           const timeTaken = Math.round(endTime - startTime);
           const result = await response.json();
 
-          // 5. Arayüzü (UI) Güncelle
           const statusBadge = document.getElementById("rc-status");
           const timeBadge = document.getElementById("rc-time");
           const responseEl = document.getElementById("rc-response");
@@ -500,7 +485,7 @@
               statusBadge.className = "rc-badge rc-badge-success";
               statusBadge.innerHTML = `<i class="fas fa-check-circle"></i> Status: ${response.status} OK`;
             }
-            showCustomToast("Başarılı", result.message || "İstek başarıyla tamamlandı.", "success");
+            showCustomToast("Başarılı", result.message || "İşlem tamamlandı.", "success");
             btnDownload.classList.remove("btn-passive");
             btnDownload.classList.add("active-shimmer");
           } else {
@@ -508,7 +493,7 @@
               statusBadge.className = "rc-badge rc-badge-error";
               statusBadge.innerHTML = `<i class="fas fa-times-circle"></i> Status: ${response.status} Error`;
             }
-            showCustomToast("Hata", result.error || "İşlem başarısız oldu.", "error");
+            showCustomToast("Hata", result.error || "Hata oluştu.", "error");
           }
 
           if(responseEl) {
@@ -520,7 +505,7 @@
             }
           }
 
-          // --- GEÇMİŞE (HISTORY) KAYDET ---
+          // GEÇMİŞE KAYDET
           const actionType = payload.action === "bq_upload" ? "BigQuery Upload" : (payload.orderId ? "BIM İsteği" : "Genel API İsteği");
           saveToHistory({
             id: Date.now(),
@@ -534,19 +519,16 @@
             ok: response.ok,
             time: timeTaken
           });
-          // --------------------------------
 
         } catch (error) {
           console.error("İstek Hatası:", error);
-          showCustomToast("Bağlantı Hatası", "Sunucuya ulaşılamadı. F12 Konsolu kontrol edin.", "error");
-          
+          showCustomToast("Bağlantı Hatası", "Sunucuya ulaşılamadı.", "error");
           const statusBadge = document.getElementById("rc-status");
           if(statusBadge) {
             statusBadge.className = "rc-badge rc-badge-error";
             statusBadge.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Status: FAILED`;
           }
         } finally {
-          // 🟢 6. İŞLEM BİTTİ: KİLİDİ AÇ
           btnRun.disabled = false; 
           btnRun.innerHTML = '<i class="fas fa-paper-plane"></i> İstek Gönder';
           btnRun.classList.remove("active-shimmer");
@@ -554,39 +536,94 @@
 
       } else if (action === 'download') {
         if (btnDownload.classList.contains("btn-passive")) {
-           showCustomToast("Uyarı", "İndirme yapabilmek için önce 'İstek Gönder' butonunu kullanın.", "warning");
+           showCustomToast("Uyarı", "Önce bir istek gönderin.", "warning");
            return;
         }
-        if(typeof downloadResponseAsJSON === 'function') {
-            downloadResponseAsJSON();
-        }
+        if(typeof downloadResponseAsJSON === 'function') downloadResponseAsJSON();
         btnDownload.classList.remove("active-shimmer");
         btnDownload.classList.add("btn-passive");
-        btnRun.classList.add("active-shimmer");
       }
     }
 
     function downloadResponseAsJSON() {
       const responseElement = document.getElementById("rc-response");
       const content = responseElement.innerText; 
-
-      if (!content || content.includes("Henüz istek gönderilmedi") || content.trim() === "") {
-        showCustomToast("İndirme Başarısız", "İndirilecek veri bulunamadı.", "warning");
-        return;
-      }
-
+      if (!content || content.includes("Henüz istek gönderilmedi")) return;
       let orderId = document.getElementById("filter-order-id").value.trim() || "api_response";
-      const fileName = `${orderId}.json`;
       const blob = new Blob([content], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = fileName;
+      a.download = `${orderId}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showCustomToast("Başarılı", `${fileName} indirildi.`, "success");
+    }
+
+    // =========================================================================
+    // GEÇMİŞ (HISTORY) MANTIĞI
+    // =========================================================================
+    let requestHistory = JSON.parse(localStorage.getItem('tk_api_history') || '[]');
+
+    function saveToHistory(item) {
+      requestHistory.unshift(item); 
+      if (requestHistory.length > 30) requestHistory.pop(); 
+      localStorage.setItem('tk_api_history', JSON.stringify(requestHistory));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const listEl = document.getElementById('history-list');
+      if (!listEl) return;
+      if (requestHistory.length === 0) {
+        listEl.innerHTML = '<div style="color: #666; text-align: center; padding: 30px 10px; font-size: 13px;">Geçmiş yok.</div>';
+        return;
+      }
+      listEl.innerHTML = requestHistory.map((item, index) => `
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px;">
+            <span style="color: #888;">${item.timestamp}</span>
+            <span class="rc-badge ${item.ok ? 'rc-badge-success' : 'rc-badge-error'}" style="padding: 2px 6px; font-size: 10px;">Status: ${item.status}</span>
+          </div>
+          <div style="font-family: monospace; font-size: 12px; color: #a5b4fc; margin-bottom: 10px; word-break: break-all;">
+            <strong>${item.method}</strong> <span>${item.actionType}</span>
+          </div>
+          <button onclick="downloadHistoryItem(${index})" style="width:100%; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding: 6px; color: #fff; border-radius: 4px; cursor:pointer; font-size: 12px;">
+            <i class="fas fa-download"></i> Detaylı İndir
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function downloadHistoryItem(index) {
+      const item = requestHistory[index];
+      const data = { meta: { timestamp: item.timestamp, time: item.time, status: item.status }, request: item.requestPayload, response: item.response };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `api_history_${item.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearHistory() {
+      requestHistory = [];
+      localStorage.removeItem('tk_api_history');
+      renderHistory();
+      showCustomToast("Temizlendi", "Geçmiş silindi.", "success");
+    }
+
+    function openHistorySidebar() {
+      document.getElementById('history-sidebar-overlay').classList.add('show');
+      document.getElementById('history-sidebar').classList.add('show');
+      renderHistory();
+    }
+
+    function closeHistorySidebar() {
+      document.getElementById('history-sidebar-overlay').classList.remove('show');
+      document.getElementById('history-sidebar').classList.remove('show');
     }
 
     function toggleDevMode() {
@@ -610,200 +647,6 @@
     function closeCodeSidebar() {
       document.getElementById('code-sidebar-overlay').classList.remove('show');
       document.getElementById('code-sidebar').classList.remove('show');
-    }
-
-    function generateSnippet() {
-      const method = document.getElementById('rc-method').value;
-      const url = document.getElementById('rc-url').value || "https://api.example.com/v1";
-      const bodyStr = document.getElementById('rc-body').value || "{}";
-      const activeLang = document.getElementById('code-lang-select').value;
-      const output = document.getElementById('code-snippet-output');
-
-      const headerRows = document.querySelectorAll('#rc-headers .rc-kv-row');
-      let headers = {};
-      headerRows.forEach(row => {
-        const k = row.querySelector('.kv-key').value.trim();
-        const v = row.querySelector('.kv-val').value.trim();
-        if (k && v) headers[k] = v;
-      });
-
-      const token = document.getElementById('rc-auth-token').value.trim();
-      if(token) headers['Authorization'] = `Bearer ${token}`;
-
-      let code = "";
-      const hasBody = (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}' && bodyStr !== '');
-
-      switch(activeLang) {
-        case 'curl':
-          code = `curl --location --request ${method} '${url}' \\\n`;
-          for (const [k, v] of Object.entries(headers)) { code += `--header '${k}: ${v}' \\\n`; }
-          if (hasBody) code += `--data-raw '${bodyStr}'`;
-          if (code.endsWith(' \\\n')) code = code.slice(0, -3);
-          break;
-        case 'fetch':
-          code = `const myHeaders = new Headers();\n`;
-          for (const [k, v] of Object.entries(headers)) { code += `myHeaders.append("${k}", "${v}");\n`; }
-          code += `\nconst requestOptions = {\n  method: '${method}',\n  headers: myHeaders,\n  redirect: 'follow'`;
-          if (hasBody) code += `,\n  body: JSON.stringify(${bodyStr})`;
-          code += `\n};\n\nfetch("${url}", requestOptions)\n  .then(response => response.text())\n  .then(result => console.log(result))\n  .catch(error => console.log('error', error));`;
-          break;
-        case 'python':
-          code = `import requests\nimport json\n\nurl = "${url}"\n`;
-          if (hasBody) { code += `payload = json.dumps(${bodyStr})\n`; } else { code += `payload = {}\n`; }
-          code += `headers = {\n`;
-          for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
-          code += `}\n\nresponse = requests.request("${method}", url, headers=headers, data=payload)\n\nprint(response.text)`;
-          break;
-        case 'csharp':
-          code = `var client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.${method.charAt(0).toUpperCase() + method.slice(1).toLowerCase()}, "${url}");\n`;
-          for (const [k, v] of Object.entries(headers)) { code += `request.Headers.Add("${k}", "${v}");\n`; }
-          if (hasBody) { code += `var content = new StringContent("${bodyStr.replace(/"/g, '\\"')}", null, "application/json");\nrequest.Content = content;\n`; }
-          code += `var response = await client.SendAsync(request);\nresponse.EnsureSuccessStatusCode();\nConsole.WriteLine(await response.Content.ReadAsStringAsync());`;
-          break;
-        case 'dart':
-          code = `var headers = {\n`;
-          for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
-          code += `};\nvar request = http.Request('${method}', Uri.parse('${url}'));\n`;
-          if (hasBody) { code += `request.body = json.encode(${bodyStr});\n`; }
-          code += `request.headers.addAll(headers);\n\nhttp.StreamedResponse response = await request.send();\n\nif (response.statusCode == 200) {\n  print(await response.stream.bytesToString());\n} else {\n  print(response.reasonPhrase);\n}`;
-          break;
-        case 'go':
-          code = `package main\n\nimport (\n\t"fmt"\n\t"strings"\n\t"net/http"\n\t"io/ioutil"\n)\n\nfunc main() {\n\turl := "${url}"\n\tmethod := "${method}"\n\n`;
-          if (hasBody) { code += `\tpayload := strings.NewReader(\`${bodyStr}\`)\n\tclient := &http.Client {}\n\treq, err := http.NewRequest(method, url, payload)\n`; }
-          else { code += `\tclient := &http.Client {}\n\treq, err := http.NewRequest(method, url, nil)\n`; }
-          code += `\n\tif err != nil {\n\t\tfmt.Println(err)\n\t\treturn\n\t}\n`;
-          for (const [k, v] of Object.entries(headers)) { code += `\treq.Header.Add("${k}", "${v}")\n`; }
-          code += `\n\tres, err := client.Do(req)\n\tif err != nil {\n\t\tfmt.Println(err)\n\t\treturn\n\t}\n\tdefer res.Body.Close()\n\n\tbody, err := ioutil.ReadAll(res.Body)\n\tfmt.Println(string(body))\n}`;
-          break;
-        case 'java':
-          code = `OkHttpClient client = new OkHttpClient().newBuilder().build();\n`;
-          if (hasBody) { code += `MediaType mediaType = MediaType.parse("application/json");\nRequestBody body = RequestBody.create(mediaType, "${bodyStr.replace(/"/g, '\\"')}");\n`; }
-          code += `Request request = new Request.Builder()\n  .url("${url}")\n`;
-          if (hasBody) { code += `  .method("${method}", body)\n`; } else { code += `  .method("${method}", null)\n`; }
-          for (const [k, v] of Object.entries(headers)) { code += `  .addHeader("${k}", "${v}")\n`; }
-          code += `  .build();\nResponse response = client.newCall(request).execute();`;
-          break;
-      }
-      
-      output.textContent = code;
-
-      const langMap = {
-        'curl': 'bash', 'fetch': 'javascript', 'python': 'python',
-        'csharp': 'csharp', 'dart': 'dart', 'go': 'go', 'java': 'java'
-      };
-      output.className = 'language-' + langMap[activeLang];
-
-      if(window.hljs) {
-        delete output.dataset.highlighted;
-        hljs.highlightElement(output);
-        if(hljs.lineNumbersBlock) hljs.lineNumbersBlock(output);
-      }
-    }
-
-    function copyCodeSnippet() {
-      const codeLines = document.querySelectorAll('#code-snippet-output .hljs-ln-code');
-      let codeToCopy = "";
-      
-      if(codeLines.length > 0) {
-        codeLines.forEach(line => {
-          codeToCopy += line.innerText + "\n";
-        });
-      } else {
-        codeToCopy = document.getElementById('code-snippet-output').innerText;
-      }
-
-      navigator.clipboard.writeText(codeToCopy.trim()).then(() => {
-        showCustomToast("Başarılı", "Kod panoya kopyalandı!", "success");
-      });
-    }
-
-    // =========================================================================
-    // GEÇMİŞ (HISTORY) MANTIĞI
-    // =========================================================================
-    let requestHistory = JSON.parse(localStorage.getItem('tk_api_history') || '[]');
-
-    function saveToHistory(item) {
-      requestHistory.unshift(item); // En yeni isteği en başa ekle
-      if (requestHistory.length > 30) requestHistory.pop(); // Sadece son 30 isteği tut
-      localStorage.setItem('tk_api_history', JSON.stringify(requestHistory));
-      renderHistory();
-    }
-
-    function renderHistory() {
-      const listEl = document.getElementById('history-list');
-      if (!listEl) return;
-
-      if (requestHistory.length === 0) {
-        listEl.innerHTML = '<div style="color: #666; text-align: center; padding: 30px 10px; font-size: 13px;"><i class="fas fa-inbox" style="font-size: 24px; margin-bottom: 10px; display:block; opacity:0.5;"></i>Henüz kaydedilmiş bir geçmiş yok.</div>';
-        return;
-      }
-
-      listEl.innerHTML = requestHistory.map((item, index) => `
-        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px;">
-            <span style="color: #888;"><i class="fas fa-calendar-alt"></i> ${item.timestamp}</span>
-            <span class="rc-badge ${item.ok ? 'rc-badge-success' : 'rc-badge-error'}" style="padding: 2px 6px; font-size: 10px; border-radius: 4px; box-shadow: none;">Status: ${item.status}</span>
-          </div>
-          <div style="font-family: monospace; font-size: 12px; color: #a5b4fc; margin-bottom: 10px; word-break: break-all; line-height: 1.4;">
-            <strong style="color: #fff;">${item.method}</strong> 
-            <span style="color: #ccc;">${item.actionType}</span>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button onclick="downloadHistoryItem(${index})" style="flex:1; background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); padding: 6px; color: #fff; border-radius: 4px; cursor:pointer; font-size: 12px; transition: all 0.2s;">
-              <i class="fas fa-download"></i> Detaylı İndir
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function downloadHistoryItem(index) {
-      const item = requestHistory[index];
-      if (!item) return;
-
-      const dataToDownload = {
-        meta: {
-          timestamp: item.timestamp,
-          time_taken_ms: item.time,
-          status: item.status
-        },
-        request: {
-          method: item.method,
-          url: item.url,
-          payload: item.requestPayload
-        },
-        response: item.response
-      };
-
-      const fileName = `api_history_${item.id}.json`;
-      const blob = new Blob([JSON.stringify(dataToDownload, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showCustomToast("Başarılı", "Geçmiş detayı (Request + Response) indirildi.", "success");
-    }
-
-    function clearHistory() {
-      requestHistory = [];
-      localStorage.removeItem('tk_api_history');
-      renderHistory();
-      showCustomToast("Temizlendi", "Geçmiş verileri silindi.", "success");
-    }
-
-    function openHistorySidebar() {
-      document.getElementById('history-sidebar-overlay').classList.add('show');
-      document.getElementById('history-sidebar').classList.add('show');
-      renderHistory();
-    }
-
-    function closeHistorySidebar() {
-      document.getElementById('history-sidebar-overlay').classList.remove('show');
-      document.getElementById('history-sidebar').classList.remove('show');
     }
   </script>
 
