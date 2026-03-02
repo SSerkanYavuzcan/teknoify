@@ -1,1621 +1,836 @@
 <!DOCTYPE html>
-
 <html lang="tr">
 
-
-
 <head>
-
   <meta charset="UTF-8" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>API Console | Teknoify</title>
 
-
-
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
 
-
-
   <link rel="stylesheet" href="../../../css/dashboard.css?v=20">
-
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
-
   
-
   <link rel="stylesheet" href="./api-console.css?v=19">
 
-
-
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
 </head>
-
-
 
 <body>
 
-
-
   <div id="tk-toast" class="tk-toast">
-
     <i id="tk-toast-icon" class="fas fa-exclamation-triangle tk-toast-icon"></i>
-
     <div class="tk-toast-content">
-
       <h4 id="tk-toast-title">Dikkat</h4>
-
       <p id="tk-toast-message">Mesaj buraya gelecek.</p>
-
     </div>
-
   </div>
 
-
-
   <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
-
     <i class="fas fa-bars"></i>
-
   </button>
 
-
-
   <aside class="sidebar">
-
     <div class="brand">
-
       <i class="fas fa-cube"></i> <span>Teknoify</span>
-
     </div>
-
     <nav>
-
       <a href="../../dashboard/member.html" class="menu-item">
-
         <i class="fas fa-home"></i> <span>Genel Bakış</span>
-
       </a>
-
       
-
       <div style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
-
         <span>Hizmetler</span>
-
       </div>
-
-
 
       <div id="dynamic-services-menu">
-
       </div>
-
     </nav>
-
     <div class="menu-spacer"></div>
-
     <div class="sidebar-footer">
-
       <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
-
         <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
-
       </a>
-
       <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
-
         <i class="fas fa-chevron-left"></i>
-
       </button>
-
     </div>
-
   </aside>
 
-
-
   <main class="main-content">
-
     
-
     <header class="top-bar">
-
       <h2>API Console</h2>
-
       <div class="user-profile">
-
         <span id="user-name-display">Yükleniyor...</span>
-
         <div class="avatar" id="user-avatar">U</div>
-
       </div>
-
     </header>
-
-
 
     <div class="content-scroll">
 
-
-
-      <div class="filter-bar" style="margin-bottom: 20px;">
-
+      <div class="filter-bar" style="margin-bottom: 15px;">
         <div class="filter-group" style="min-width: 260px;">
-
           <label class="custom-filter-label">Rapor Tarihi</label>
-
           <div class="input-icon-wrapper">
-
             <i class="fas fa-calendar-alt input-icon"></i>
-
             <input type="text" id="filter-date" class="rc-input flatpickr-input" placeholder="Tarih Aralığı Seçiniz" readonly />
-
           </div>
-
         </div>
-
-
 
         <div class="filter-group" style="min-width: 240px;">
-
           <label class="custom-filter-label">Sipariş Numarası (Order ID)</label>
-
           <div class="input-icon-wrapper">
-
             <i class="fas fa-hashtag input-icon"></i>
-
             <input id="filter-order-id" class="rc-input" placeholder="örn: pnu2-y3h8" />
-
           </div>
-
         </div>
-
         
-
         <div style="flex-grow: 1;"></div>
 
-
-
         <div style="display:flex; align-items:flex-end; gap: 12px;">
-
           <button id="btn-run-flow" class="btn-animated-send btn-align-fix active-shimmer" onclick="uiToggleActionButtons('run')">
-
             <i class="fas fa-paper-plane"></i> İstek Gönder
-
           </button>
-
           <button id="btn-download-flow" class="btn-animated-send btn-align-fix btn-passive" onclick="uiToggleActionButtons('download')">
-
             <i class="fas fa-download"></i> İndir
-
           </button>
-
           <button id="btn-dev-mode" class="btn-animated-send btn-orange btn-align-fix active-shimmer" onclick="toggleDevMode()">
-
             <span class="btn-content-inner"><i class="fas fa-terminal"></i> Geliştirici Modu</span>
-
           </button>
-
           <button id="btn-history" class="btn-animated-send btn-align-fix btn-passive" onclick="openHistorySidebar()">
-
             <i class="fas fa-history"></i> Geçmiş
-
           </button>
-
         </div>
-
       </div>
 
-
+      <div class="quick-actions-bar" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+        <div style="width: 100%; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">
+          <i class="fas fa-bolt" style="color:#eab308; margin-right:5px;"></i> Hızlı Veri Çekme (BigQuery)
+        </div>
+        <button class="btn-animated-send btn-short" style="background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);" onclick="quickFetch('BIM_partial_return_details')">
+          <i class="fas fa-list-alt"></i> Partial Return Details
+        </button>
+        <button class="btn-animated-send btn-short" style="background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);" onclick="quickFetch('BIM_partial_return_invoice')">
+          <i class="fas fa-file-invoice-dollar"></i> Partial Return Invoice
+        </button>
+        <button class="btn-animated-send btn-short" style="background: rgba(244, 63, 94, 0.1); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3);" onclick="quickFetch('bim_live_data')">
+          <i class="fas fa-satellite-dish"></i> Live Data
+        </button>
+      </div>
 
       <div id="dev-mode-container" class="dev-window-wrapper">
-
         <div class="dev-window">
-
           
-
           <div class="dev-window-header">
-
             <div class="dev-dots">
-
               <span class="dot red"></span>
-
               <span class="dot yellow"></span>
-
               <span class="dot green"></span>
-
             </div>
-
             <div class="dev-title">api_core.sh</div>
-
             <div style="width: 44px;"></div>
-
           </div>
-
-
 
           <div class="dev-window-body">
-
             
-
             <div class="chart-box dev-inner-box" style="margin-bottom: 20px; padding: 20px;">
-
               <div class="chart-header" style="margin-bottom: 15px;">
-
                 <div class="chart-title"><i class="fas fa-paper-plane" style="opacity:.8; margin-right:8px;"></i> Request</div>
-
               </div>
-
-
 
               <div class="rc-row request-action-row" id="request-action-row" data-method="POST" style="margin-bottom:15px; display:flex; gap:10px;">
-
                 <div class="rc-method-wrap">
-
                   <select id="rc-method" class="rc-select" onchange="document.getElementById('request-action-row').setAttribute('data-method', this.value)">
-
                     <option value="GET">GET</option>
-
                     <option value="POST" selected>POST</option>
-
                     <option value="PUT">PUT</option>
-
                     <option value="PATCH">PATCH</option>
-
                     <option value="DELETE">DELETE</option>
-
                   </select>
-
                 </div>
-
                 <input id="rc-url" class="rc-input grow" placeholder="https://api.example.com/endpoint" value="https://us-central1-teknoify-9449c.cloudfunctions.net/apiProxy" />
-
                 
-
                 <button class="btn-animated-send btn-short" style="background: rgba(255,255,255,0.08); color:#a5b4fc; box-shadow:none; border: 1px solid rgba(255,255,255,0.1);" type="button" onclick="openCodeSidebar()">
-
                   <i class="fas fa-code"></i> Kod Üret
-
                 </button>
-
-
 
                 <button id="rc-send" class="btn-animated-send btn-short active-shimmer" type="button" onclick="uiToggleActionButtons('run')">
-
                   <i class="fas fa-bolt"></i> Send
-
                 </button>
-
               </div>
-
-
 
               <div class="rc-tabs" id="request-tabs-nav">
-
                 <div class="rc-tab" data-tab="params">Params</div>
-
                 <div class="rc-tab" data-tab="auth">Authorization</div>
-
                 <div class="rc-tab" data-tab="headers">Headers</div>
-
                 <div class="rc-tab active" data-tab="body">Body (JSON)</div>
-
               </div>
-
-
 
               <div id="rc-panel-params" class="hidden">
-
                 <div id="rc-params">
-
                   <div class="rc-kv-row">
-
                     <input type="text" class="rc-input kv-key" placeholder="Key" value="orderId">
-
                     <input type="text" class="rc-input kv-val" placeholder="Value" value="pnu2-y3h8">
-
                     <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-
                   </div>
-
                 </div>
-
                 <div class="rc-row" style="margin-top:15px; gap:12px; display:flex;">
-
                   <button id="btn-add-custom-param" class="btn-header-action btn-header-add" type="button">
-
                     <i class="fas fa-plus"></i> Param Ekle
-
                   </button>
-
                   <button id="btn-clear-custom-params" class="btn-header-action btn-header-clear" type="button">
-
                     <i class="fas fa-trash-alt"></i> Temizle
-
                   </button>
-
                 </div>
-
               </div>
-
-
 
               <div id="rc-panel-auth" class="hidden">
-
                 <div class="rc-row" style="margin-bottom: 12px;">
-
                   <div style="width: 200px;">
-
                     <select class="rc-select" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
-
                       <option value="none">No Auth</option>
-
                       <option value="bearer" selected>Bearer Token</option>
-
                     </select>
-
                   </div>
-
                   <div class="grow" style="color: #888; font-size: 13px; padding-left: 10px;">
-
                     <i class="fas fa-info-circle"></i> İsteklerinize otomatik olarak Authorization header'ı ekler.
-
                   </div>
-
                 </div>
-
                 <div class="rc-row">
-
                   <input type="text" id="rc-auth-token" class="rc-input" placeholder="Token girin" value="" />
-
                 </div>
-
               </div>
-
-
 
               <div id="rc-panel-headers" class="hidden">
-
                 <div id="rc-headers">
-
                   <div class="rc-kv-row">
-
                     <input type="text" class="rc-input kv-key" placeholder="Key" value="Content-Type">
-
                     <input type="text" class="rc-input kv-val" placeholder="Value" value="application/json">
-
                     <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-
                   </div>
-
                 </div>
-
                 <div class="rc-row" style="margin-top:15px; gap:12px; display:flex;">
-
                   <button id="btn-add-custom-header" class="btn-header-action btn-header-add" type="button">
-
                     <i class="fas fa-plus"></i> Header Ekle
-
                   </button>
-
                   <button id="btn-clear-custom-headers" class="btn-header-action btn-header-clear" type="button">
-
                     <i class="fas fa-trash-alt"></i> Temizle
-
                   </button>
-
                 </div>
-
               </div>
-
-
 
               <div id="rc-panel-body">
-
-                <textarea id="rc-body" class="rc-textarea" placeholder='{"action": "bq_upload"}'>{"action": "bq_upload", "dataset_id": "mahalle_BIM", "table_id": "BIM_partial_return_invoice_response", "format": "json", "data": [{"movement_id": "test-w4v1CS"}]}</textarea>
-
+                <textarea id="rc-body" class="rc-textarea" placeholder='{"action": "bq_upload"}'>{"action": "bq_upload", "dataset_id": "mahalle_bim", "table_id": "BIM_partial_return_invoice_response", "format": "json", "data": [{"movement_id": "test-w4v1CS"}]}</textarea>
               </div>
 
-
-
             </div>
-
-
 
             <div class="chart-box dev-inner-box" style="margin-bottom: 20px; padding: 20px;">
-
               <div class="chart-header" style="margin-bottom: 15px;">
-
                 <div class="chart-title"><i class="fas fa-diagram-project" style="opacity:.8; margin-right:8px;"></i> Akış</div>
-
               </div>
-
-
 
               <div class="rc-flow">
-
                 <div class="rc-flow-step">
-
                   <div class="rc-flow-badge">1</div>
-
                   <div>
-
                     <div class="rc-flow-title">Token Al / Auth</div>
-
                     <div class="rc-flow-desc">Yetkilendirme ve izin kontrolleri.</div>
-
                   </div>
-
                 </div>
-
                 <div class="rc-flow-arrow"><i class="fas fa-arrow-right"></i></div>
-
                 <div class="rc-flow-step">
-
                   <div class="rc-flow-badge">2</div>
-
                   <div>
-
                     <div class="rc-flow-title">Aksiyon Tespiti</div>
-
                     <div class="rc-flow-desc">BigQuery veya BIM API yönlendirmesi.</div>
-
                   </div>
-
                 </div>
-
                 <div class="rc-flow-arrow"><i class="fas fa-arrow-right"></i></div>
-
                 <div class="rc-flow-step">
-
                   <div class="rc-flow-badge">3</div>
-
                   <div>
-
                     <div class="rc-flow-title">Sonuç</div>
-
                     <div class="rc-flow-desc">Final JSON çıktısını göster.</div>
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
-
 
             <div class="chart-box dev-inner-box" style="padding: 20px;">
-
               <div class="chart-header" style="margin-bottom: 15px; display:flex; justify-content:space-between; width: 100%;">
-
                 <div class="chart-title"><i class="fas fa-inbox" style="opacity:.8; margin-right:8px;"></i> Response</div>
-
                 
-
                 <div style="display:flex; gap: 10px; align-items: center;">
-
                   <span id="rc-status" class="rc-badge rc-badge-idle"><i class="fas fa-circle" style="font-size:8px;"></i> Status: 000</span>
-
                   <span id="rc-time" class="rc-badge rc-badge-idle"><i class="fas fa-clock" style="font-size:10px;"></i> Time: 0 ms</span>
-
                 </div>
-
               </div>
-
-
 
               <div class="rc-tabs">
-
                 <div class="rc-tab active" data-rtab="resp">Body</div>
-
                 <div class="rc-tab" data-rtab="rheaders">Headers</div>
-
               </div>
-
-
 
               <div id="rc-rpanel-resp" class="rc-pre-container">
-
                 <pre style="margin:0; padding:0; background:transparent;"><code id="rc-response" class="language-json">Henüz istek gönderilmedi.</code></pre>
-
               </div>
-
               <div id="rc-rpanel-rheaders" class="hidden">
-
                 <div id="rc-response-headers" class="rc-pre">Henüz istek gönderilmedi.</div>
-
               </div>
-
             </div>
 
-
-
           </div> 
-
         </div> 
-
       </div> 
 
-
-
     </div>
-
   </main>
 
-
-
   <div id="code-sidebar-overlay" class="rc-sidebar-overlay" onclick="closeCodeSidebar()"></div>
-
   <div id="code-sidebar" class="rc-sidebar">
-
-    
-
     <div class="rc-sidebar-header">
-
       <div style="display: flex; align-items: center; gap: 10px;">
-
         <i class="fas fa-code" style="color: #818cf8; font-size: 16px;"></i>
-
         <div class="dev-title" style="color: #cccccc; font-size: 14px; font-weight: 600;">Code Snippet</div>
-
       </div>
-
       <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px; color: #cccccc;" onclick="closeCodeSidebar()"><i class="fas fa-times"></i></button>
-
     </div>
-
-
-
     <div class="rc-sidebar-body">
-
       <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
-
         <div style="position: relative; width: 220px;">
-
           <select id="code-lang-select" class="rc-select code-lang-select" onchange="generateSnippet()">
-
             <option value="curl">cURL</option>
-
             <option value="fetch">Node.js (Fetch)</option>
-
             <option value="python">Python (Requests)</option>
-
             <option value="csharp">C# (HttpClient)</option>
-
             <option value="dart">Dart (http)</option>
-
             <option value="go">Go (Native)</option>
-
             <option value="java">Java (OkHttp)</option>
-
           </select>
-
         </div>
-
-        
-
         <button class="btn-copy" onclick="copyCodeSnippet()" title="Kodu Kopyala">
-
           <i class="fas fa-copy" style="margin-right: 6px;"></i> Kopyala
-
         </button>
-
       </div>
-
-      
-
       <div class="rc-sidebar-code">
-
         <pre style="margin:0; padding:0; background:transparent;"><code id="code-snippet-output"></code></pre>
-
       </div>
-
     </div>
-
   </div>
-
-
 
   <div id="history-sidebar-overlay" class="rc-sidebar-overlay" onclick="closeHistorySidebar()"></div>
-
   <div id="history-sidebar" class="rc-sidebar">
-
     <div class="rc-sidebar-header">
-
       <div style="display: flex; align-items: center; gap: 10px;">
-
         <i class="fas fa-history" style="color: #818cf8; font-size: 16px;"></i>
-
         <div class="dev-title" style="color: #cccccc; font-size: 14px; font-weight: 600;">İstek Geçmişi</div>
-
       </div>
-
       <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px; color: #cccccc;" onclick="closeHistorySidebar()"><i class="fas fa-times"></i></button>
-
     </div>
-
-
-
     <div class="rc-sidebar-body" style="display: flex; flex-direction: column; height: calc(100% - 60px);">
-
       <div id="history-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;">
-
-        </div>
-
-      <div style="padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;">
-
-        <button class="btn-animated-send btn-short" style="width: 100%; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);" onclick="clearHistory()">
-
-          <i class="fas fa-trash-alt"></i> Tüm Geçmişi Temizle
-
-        </button>
-
       </div>
-
+      <div style="padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;">
+        <button class="btn-animated-send btn-short" style="width: 100%; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);" onclick="clearHistory()">
+          <i class="fas fa-trash-alt"></i> Tüm Geçmişi Temizle
+        </button>
+      </div>
     </div>
-
   </div>
 
-
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
 
-
-
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
   <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
 
-
-
   <script src="config.js"></script>
-
   <script src="../shared/auth.js?v=20260228"></script>
-
   <script src="../shared/request-console.js?v=20260301"></script>
 
-
-
   <script>
-
     document.addEventListener("DOMContentLoaded", function () {
-
       flatpickr("#filter-date", {
-
         mode: "range",
-
         dateFormat: "d.m.Y",
-
         locale: "tr",
-
         disableMobile: "true"
-
       });
-
-
 
       const reqTabs = document.querySelectorAll('#request-tabs-nav .rc-tab');
-
       const panels = ['params', 'auth', 'headers', 'body'];
 
-
-
       reqTabs.forEach(tab => {
-
         tab.addEventListener('click', () => {
-
           reqTabs.forEach(t => t.classList.remove('active'));
-
           tab.classList.add('active');
-
           panels.forEach(p => {
-
             const panelEl = document.getElementById('rc-panel-' + p);
-
             if(panelEl) panelEl.classList.add('hidden');
-
           });
-
           const target = tab.getAttribute('data-tab');
-
           const targetPanel = document.getElementById('rc-panel-' + target);
-
           if(targetPanel) targetPanel.classList.remove('hidden');
-
         });
-
       });
-
+      renderHistory();
     });
 
+    // =========================================================================
+    // YENİ: HIZLI VERİ ÇEKME (QUICK FETCH) FONKSİYONU
+    // =========================================================================
+    function quickFetch(tableId) {
+      // 1. Filtreleri Oku
+      const dateRange = document.getElementById("filter-date").value;
+      const orderId = document.getElementById("filter-order-id").value.trim();
 
+      // 2. Tabloya Özel Kolon Adını Belirle
+      let orderColumn = "order_id";
+      if (tableId === "BIM_partial_return_details") {
+        orderColumn = "order_code";
+      }
+
+      // 3. Ana Payload'u Oluştur
+      const payload = {
+        action: "bq_fetch",
+        dataset_id: "mahalle_bim",
+        table_id: tableId,
+        limit: 100
+      };
+
+      // 4. Filtreler Doluysa Payload'a Ekle
+      if (dateRange || orderId) {
+        payload.filters = {};
+        if (dateRange) payload.filters.date_range = dateRange;
+        if (orderId) {
+          payload.filters.order_column = orderColumn;
+          payload.filters.order_value = orderId;
+        }
+      }
+
+      // 5. Payload'u Ekrana (Body Alanına) Yazdır
+      const bodyEl = document.getElementById('rc-body');
+      bodyEl.value = JSON.stringify(payload, null, 2);
+
+      // 6. UI: Metodu POST'a Çevir ve Body Sekmesini Aç
+      document.getElementById('rc-method').value = 'POST';
+      document.getElementById('request-action-row').setAttribute('data-method', 'POST');
+      
+      const tabs = document.querySelectorAll('#request-tabs-nav .rc-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      document.querySelector('#request-tabs-nav .rc-tab[data-tab="body"]').classList.add('active');
+      
+      const panels = ['params', 'auth', 'headers', 'body'];
+      panels.forEach(p => {
+        const panelEl = document.getElementById('rc-panel-' + p);
+        if(panelEl) panelEl.classList.add('hidden');
+      });
+      document.getElementById('rc-panel-body').classList.remove('hidden');
+
+      // 7. Otomatik Olarak İsteği Gönder
+      uiToggleActionButtons('run');
+    }
 
     function createKVRow(placeholderKey, placeholderValue) {
-
       const row = document.createElement('div');
-
       row.className = 'rc-kv-row';
-
       row.innerHTML = `
-
         <input type="text" class="rc-input kv-key" placeholder="${placeholderKey}">
-
         <input type="text" class="rc-input kv-val" placeholder="${placeholderValue}">
-
         <button class="rc-kv-btn" title="Sil" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-
       `;
-
       return row;
-
     }
-
-
 
     document.getElementById('btn-add-custom-header').addEventListener('click', () => {
-
       document.getElementById('rc-headers').appendChild(createKVRow('Key (örn: Content-Type)', 'Value (örn: application/json)'));
-
     });
-
     document.getElementById('btn-clear-custom-headers').addEventListener('click', () => {
-
       document.getElementById('rc-headers').innerHTML = '';
-
     });
-
     document.getElementById('btn-add-custom-param').addEventListener('click', () => {
-
       document.getElementById('rc-params').appendChild(createKVRow('Key', 'Value'));
-
     });
-
     document.getElementById('btn-clear-custom-params').addEventListener('click', () => {
-
       document.getElementById('rc-params').innerHTML = '';
-
     });
-
-
 
     function showCustomToast(title, message, type = 'warning') {
-
       const toast = document.getElementById("tk-toast");
-
       const toastTitle = document.getElementById("tk-toast-title");
-
       const toastMsg = document.getElementById("tk-toast-message");
-
       const toastIcon = document.getElementById("tk-toast-icon");
 
-
-
       toastTitle.innerText = title;
-
       toastMsg.innerText = message;
 
-
-
       if (type === 'error' || type === 'warning') {
-
         toastIcon.className = "fas fa-exclamation-triangle tk-toast-icon";
-
         toast.style.borderLeftColor = "#ef4444";
-
         toastIcon.style.color = "#ef4444";
-
       } else if (type === 'success') {
-
         toastIcon.className = "fas fa-check-circle tk-toast-icon";
-
         toast.style.borderLeftColor = "#22c55e";
-
         toastIcon.style.color = "#22c55e";
-
       }
-
-
 
       toast.classList.add("show");
-
       setTimeout(() => { toast.classList.remove("show"); }, 3500);
-
     }
 
-
-
-    function syntaxHighlightJSON(json) {
-
-      if (typeof json != 'string') {
-
-        json = JSON.stringify(json, undefined, 2);
-
-      }
-
-      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-
-        let cls = 'json-number';
-
-        if (/^"/.test(match)) {
-
-          if (/:$/.test(match)) { cls = 'json-key'; } else { cls = 'json-string'; }
-
-        } else if (/true|false/.test(match)) { cls = 'json-boolean';
-
-        } else if (/null/.test(match)) { cls = 'json-null'; }
-
-        return '<span class="' + cls + '">' + match + '</span>';
-
-      });
-
-    }
-
-
-
     // =========================================================================
-
-    // EKSİKSİZ VE SPAM KORUMALI İSTEK GÖNDERME MANTIĞI
-
+    // SPAM KORUMALI VE DEDUPLICATION DESTEKLİ İSTEK MANTIĞI
     // =========================================================================
-
     async function uiToggleActionButtons(action) {
-
       const btnRun = document.getElementById("btn-run-flow");
-
       const btnDownload = document.getElementById("btn-download-flow");
 
-
-
       if (action === 'run') {
-
-        // 🛑 1. KİLİT KONTROLÜ: Buton meşgulse durdur!
-
         if (btnRun.disabled) return; 
 
-
-
-        // 2. Arayüzden Verileri Topla
-
         const token = document.getElementById('rc-auth-token') ? document.getElementById('rc-auth-token').value.trim() : '';
-
         const endpointUrl = document.getElementById('rc-url') ? document.getElementById('rc-url').value.trim() : '';
-
         const method = document.getElementById('rc-method') ? document.getElementById('rc-method').value : 'POST';
-
         const bodyText = document.getElementById('rc-body') ? document.getElementById('rc-body').value.trim() : '{}';
-
         
-
         let payload = {};
-
         try {
-
-          payload = bodyText ? JSON.parse(bodyText) : {};
-
+          payload = JSON.parse(bodyText || '{}');
+          
+          if (payload.action === "bq_upload" && Array.isArray(payload.data)) {
+              payload.data = payload.data.map(item => ({
+                  ...item,
+                  insertId: item.movement_id || ("id_" + Math.random().toString(36).substr(2, 9))
+              }));
+          }
         } catch (e) {
-
-          showCustomToast("JSON Hatası", "Body kısmındaki JSON formatı hatalı. Lütfen kontrol edin.", "error");
-
+          showCustomToast("JSON Hatası", "Body kısmındaki JSON formatı hatalı.", "error");
           return;
-
         }
-
-
-
-        // 3. KİLİDİ DEVREYE SOK VE ANİMASYONU BAŞLAT
 
         btnRun.disabled = true; 
-
         btnRun.classList.add("active-shimmer");
-
         btnRun.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
 
-
-
         try {
-
           const startTime = performance.now(); 
 
-
-
-          // 4. API İsteğini Gönder (Fetch)
-
           const response = await fetch(endpointUrl, {
-
             method: method, 
-
             headers: {
-
               'Content-Type': 'application/json',
-
               'Authorization': token ? `Bearer ${token}` : ''
-
             },
-
             body: (method !== 'GET' && method !== 'HEAD') ? JSON.stringify(payload) : undefined
-
           });
-
-
 
           const endTime = performance.now();
-
           const timeTaken = Math.round(endTime - startTime);
-
           const result = await response.json();
 
-
-
-          // 5. Arayüzü (UI) Güncelle
-
           const statusBadge = document.getElementById("rc-status");
-
           const timeBadge = document.getElementById("rc-time");
-
           const responseEl = document.getElementById("rc-response");
 
-
-
           if(timeBadge) {
-
              timeBadge.className = "rc-badge rc-badge-idle";
-
              timeBadge.innerHTML = `<i class="fas fa-clock" style="font-size:10px;"></i> Time: ${timeTaken} ms`;
-
           }
-
-
 
           if (response.ok) {
-
             if(statusBadge) {
-
               statusBadge.className = "rc-badge rc-badge-success";
-
               statusBadge.innerHTML = `<i class="fas fa-check-circle"></i> Status: ${response.status} OK`;
-
             }
-
-            showCustomToast("Başarılı", result.message || "İstek başarıyla tamamlandı.", "success");
-
+            showCustomToast("Başarılı", result.message || "İşlem tamamlandı.", "success");
             btnDownload.classList.remove("btn-passive");
-
             btnDownload.classList.add("active-shimmer");
-
           } else {
-
             if(statusBadge) {
-
               statusBadge.className = "rc-badge rc-badge-error";
-
               statusBadge.innerHTML = `<i class="fas fa-times-circle"></i> Status: ${response.status} Error`;
-
             }
-
-            showCustomToast("Hata", result.error || "İşlem başarısız oldu.", "error");
-
+            showCustomToast("Hata", result.error || "Hata oluştu.", "error");
           }
-
-
 
           if(responseEl) {
-
             responseEl.textContent = JSON.stringify(result, null, 2);
-
             if (window.hljs) { 
-
               delete responseEl.dataset.highlighted;
-
               hljs.highlightElement(responseEl); 
-
               if(hljs.lineNumbersBlock) hljs.lineNumbersBlock(responseEl);
-
             }
-
           }
 
-
-
-          // --- GEÇMİŞE (HISTORY) KAYDET ---
-
-          const actionType = payload.action === "bq_upload" ? "BigQuery Upload" : (payload.orderId ? "BIM İsteği" : "Genel API İsteği");
-
+          const actionType = payload.action === "bq_upload" ? "BigQuery Upload" : (payload.action === "bq_fetch" ? "BigQuery Fetch" : "API İsteği");
           saveToHistory({
-
             id: Date.now(),
-
             timestamp: new Date().toLocaleString('tr-TR'),
-
             method: method,
-
             url: endpointUrl,
-
             actionType: actionType,
-
             requestPayload: payload,
-
             response: result,
-
             status: response.status,
-
             ok: response.ok,
-
             time: timeTaken
-
           });
 
-          // --------------------------------
-
-
-
         } catch (error) {
-
           console.error("İstek Hatası:", error);
-
-          showCustomToast("Bağlantı Hatası", "Sunucuya ulaşılamadı. F12 Konsolu kontrol edin.", "error");
-
-          
-
+          showCustomToast("Bağlantı Hatası", "Sunucuya ulaşılamadı.", "error");
           const statusBadge = document.getElementById("rc-status");
-
           if(statusBadge) {
-
             statusBadge.className = "rc-badge rc-badge-error";
-
             statusBadge.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Status: FAILED`;
-
           }
-
         } finally {
-
-          // 🟢 6. İŞLEM BİTTİ: KİLİDİ AÇ
-
           btnRun.disabled = false; 
-
           btnRun.innerHTML = '<i class="fas fa-paper-plane"></i> İstek Gönder';
-
           btnRun.classList.remove("active-shimmer");
-
         }
-
-
 
       } else if (action === 'download') {
-
         if (btnDownload.classList.contains("btn-passive")) {
-
-           showCustomToast("Uyarı", "İndirme yapabilmek için önce 'İstek Gönder' butonunu kullanın.", "warning");
-
+           showCustomToast("Uyarı", "Önce bir istek gönderin.", "warning");
            return;
-
         }
-
-        if(typeof downloadResponseAsJSON === 'function') {
-
-            downloadResponseAsJSON();
-
-        }
-
+        if(typeof downloadResponseAsJSON === 'function') downloadResponseAsJSON();
         btnDownload.classList.remove("active-shimmer");
-
         btnDownload.classList.add("btn-passive");
-
-        btnRun.classList.add("active-shimmer");
-
       }
-
     }
-
-
 
     function downloadResponseAsJSON() {
-
       const responseElement = document.getElementById("rc-response");
-
       const content = responseElement.innerText; 
+      if (!content || content.includes("Henüz istek gönderilmedi")) return;
+      
+      const payloadText = document.getElementById('rc-body').value;
+      let tableName = "api_response";
+      try {
+        const payload = JSON.parse(payloadText);
+        if(payload.table_id) tableName = payload.table_id;
+      } catch (e) {}
 
-
-
-      if (!content || content.includes("Henüz istek gönderilmedi") || content.trim() === "") {
-
-        showCustomToast("İndirme Başarısız", "İndirilecek veri bulunamadı.", "warning");
-
-        return;
-
-      }
-
-
-
-      let orderId = document.getElementById("filter-order-id").value.trim() || "api_response";
-
-      const fileName = `${orderId}.json`;
-
+      let orderId = document.getElementById("filter-order-id").value.trim();
+      const fileName = orderId ? `${tableName}_${orderId}.json` : `${tableName}.json`;
+      
       const blob = new Blob([content], { type: "application/json" });
-
       const url = URL.createObjectURL(blob);
-
       const a = document.createElement("a");
-
       a.href = url;
-
       a.download = fileName;
-
       document.body.appendChild(a);
-
       a.click();
-
       document.body.removeChild(a);
-
       URL.revokeObjectURL(url);
-
-      showCustomToast("Başarılı", `${fileName} indirildi.`, "success");
-
     }
-
-
-
-    function toggleDevMode() {
-
-      const container = document.getElementById("dev-mode-container");
-
-      const btnDev = document.getElementById("btn-dev-mode");
-
-      if (container.classList.contains("hidden-dev")) {
-
-        container.classList.remove("hidden-dev");
-
-        btnDev.className = "btn-animated-send btn-orange btn-align-fix active-shimmer";
-
-      } else {
-
-        container.classList.add("hidden-dev");
-
-        btnDev.className = "btn-dev-closed btn-align-fix";
-
-      }
-
-    }
-
-
-
-    function openCodeSidebar() {
-
-      document.getElementById('code-sidebar-overlay').classList.add('show');
-
-      document.getElementById('code-sidebar').classList.add('show');
-
-      generateSnippet();
-
-    }
-
-
-
-    function closeCodeSidebar() {
-
-      document.getElementById('code-sidebar-overlay').classList.remove('show');
-
-      document.getElementById('code-sidebar').classList.remove('show');
-
-    }
-
-
-
-    function generateSnippet() {
-
-      const method = document.getElementById('rc-method').value;
-
-      const url = document.getElementById('rc-url').value || "https://api.example.com/v1";
-
-      const bodyStr = document.getElementById('rc-body').value || "{}";
-
-      const activeLang = document.getElementById('code-lang-select').value;
-
-      const output = document.getElementById('code-snippet-output');
-
-
-
-      const headerRows = document.querySelectorAll('#rc-headers .rc-kv-row');
-
-      let headers = {};
-
-      headerRows.forEach(row => {
-
-        const k = row.querySelector('.kv-key').value.trim();
-
-        const v = row.querySelector('.kv-val').value.trim();
-
-        if (k && v) headers[k] = v;
-
-      });
-
-
-
-      const token = document.getElementById('rc-auth-token').value.trim();
-
-      if(token) headers['Authorization'] = `Bearer ${token}`;
-
-
-
-      let code = "";
-
-      const hasBody = (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}' && bodyStr !== '');
-
-
-
-      switch(activeLang) {
-
-        case 'curl':
-
-          code = `curl --location --request ${method} '${url}' \\\n`;
-
-          for (const [k, v] of Object.entries(headers)) { code += `--header '${k}: ${v}' \\\n`; }
-
-          if (hasBody) code += `--data-raw '${bodyStr}'`;
-
-          if (code.endsWith(' \\\n')) code = code.slice(0, -3);
-
-          break;
-
-        case 'fetch':
-
-          code = `const myHeaders = new Headers();\n`;
-
-          for (const [k, v] of Object.entries(headers)) { code += `myHeaders.append("${k}", "${v}");\n`; }
-
-          code += `\nconst requestOptions = {\n  method: '${method}',\n  headers: myHeaders,\n  redirect: 'follow'`;
-
-          if (hasBody) code += `,\n  body: JSON.stringify(${bodyStr})`;
-
-          code += `\n};\n\nfetch("${url}", requestOptions)\n  .then(response => response.text())\n  .then(result => console.log(result))\n  .catch(error => console.log('error', error));`;
-
-          break;
-
-        case 'python':
-
-          code = `import requests\nimport json\n\nurl = "${url}"\n`;
-
-          if (hasBody) { code += `payload = json.dumps(${bodyStr})\n`; } else { code += `payload = {}\n`; }
-
-          code += `headers = {\n`;
-
-          for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
-
-          code += `}\n\nresponse = requests.request("${method}", url, headers=headers, data=payload)\n\nprint(response.text)`;
-
-          break;
-
-        case 'csharp':
-
-          code = `var client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.${method.charAt(0).toUpperCase() + method.slice(1).toLowerCase()}, "${url}");\n`;
-
-          for (const [k, v] of Object.entries(headers)) { code += `request.Headers.Add("${k}", "${v}");\n`; }
-
-          if (hasBody) { code += `var content = new StringContent("${bodyStr.replace(/"/g, '\\"')}", null, "application/json");\nrequest.Content = content;\n`; }
-
-          code += `var response = await client.SendAsync(request);\nresponse.EnsureSuccessStatusCode();\nConsole.WriteLine(await response.Content.ReadAsStringAsync());`;
-
-          break;
-
-        case 'dart':
-
-          code = `var headers = {\n`;
-
-          for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
-
-          code += `};\nvar request = http.Request('${method}', Uri.parse('${url}'));\n`;
-
-          if (hasBody) { code += `request.body = json.encode(${bodyStr});\n`; }
-
-          code += `request.headers.addAll(headers);\n\nhttp.StreamedResponse response = await request.send();\n\nif (response.statusCode == 200) {\n  print(await response.stream.bytesToString());\n} else {\n  print(response.reasonPhrase);\n}`;
-
-          break;
-
-        case 'go':
-
-          code = `package main\n\nimport (\n\t"fmt"\n\t"strings"\n\t"net/http"\n\t"io/ioutil"\n)\n\nfunc main() {\n\turl := "${url}"\n\tmethod := "${method}"\n\n`;
-
-          if (hasBody) { code += `\tpayload := strings.NewReader(\`${bodyStr}\`)\n\tclient := &http.Client {}\n\treq, err := http.NewRequest(method, url, payload)\n`; }
-
-          else { code += `\tclient := &http.Client {}\n\treq, err := http.NewRequest(method, url, nil)\n`; }
-
-          code += `\n\tif err != nil {\n\t\tfmt.Println(err)\n\t\treturn\n\t}\n`;
-
-          for (const [k, v] of Object.entries(headers)) { code += `\treq.Header.Add("${k}", "${v}")\n`; }
-
-          code += `\n\tres, err := client.Do(req)\n\tif err != nil {\n\t\tfmt.Println(err)\n\t\treturn\n\t}\n\tdefer res.Body.Close()\n\n\tbody, err := ioutil.ReadAll(res.Body)\n\tfmt.Println(string(body))\n}`;
-
-          break;
-
-        case 'java':
-
-          code = `OkHttpClient client = new OkHttpClient().newBuilder().build();\n`;
-
-          if (hasBody) { code += `MediaType mediaType = MediaType.parse("application/json");\nRequestBody body = RequestBody.create(mediaType, "${bodyStr.replace(/"/g, '\\"')}");\n`; }
-
-          code += `Request request = new Request.Builder()\n  .url("${url}")\n`;
-
-          if (hasBody) { code += `  .method("${method}", body)\n`; } else { code += `  .method("${method}", null)\n`; }
-
-          for (const [k, v] of Object.entries(headers)) { code += `  .addHeader("${k}", "${v}")\n`; }
-
-          code += `  .build();\nResponse response = client.newCall(request).execute();`;
-
-          break;
-
-      }
-
-      
-
-      output.textContent = code;
-
-
-
-      const langMap = {
-
-        'curl': 'bash', 'fetch': 'javascript', 'python': 'python',
-
-        'csharp': 'csharp', 'dart': 'dart', 'go': 'go', 'java': 'java'
-
-      };
-
-      output.className = 'language-' + langMap[activeLang];
-
-
-
-      if(window.hljs) {
-
-        delete output.dataset.highlighted;
-
-        hljs.highlightElement(output);
-
-        if(hljs.lineNumbersBlock) hljs.lineNumbersBlock(output);
-
-      }
-
-    }
-
-
-
-    function copyCodeSnippet() {
-
-      const codeLines = document.querySelectorAll('#code-snippet-output .hljs-ln-code');
-
-      let codeToCopy = "";
-
-      
-
-      if(codeLines.length > 0) {
-
-        codeLines.forEach(line => {
-
-          codeToCopy += line.innerText + "\n";
-
-        });
-
-      } else {
-
-        codeToCopy = document.getElementById('code-snippet-output').innerText;
-
-      }
-
-
-
-      navigator.clipboard.writeText(codeToCopy.trim()).then(() => {
-
-        showCustomToast("Başarılı", "Kod panoya kopyalandı!", "success");
-
-      });
-
-    }
-
-
 
     // =========================================================================
-
     // GEÇMİŞ (HISTORY) MANTIĞI
-
     // =========================================================================
-
     let requestHistory = JSON.parse(localStorage.getItem('tk_api_history') || '[]');
 
-
-
     function saveToHistory(item) {
-
-      requestHistory.unshift(item); // En yeni isteği en başa ekle
-
-      if (requestHistory.length > 30) requestHistory.pop(); // Sadece son 30 isteği tut
-
+      requestHistory.unshift(item); 
+      if (requestHistory.length > 30) requestHistory.pop(); 
       localStorage.setItem('tk_api_history', JSON.stringify(requestHistory));
-
       renderHistory();
-
     }
-
-
 
     function renderHistory() {
-
       const listEl = document.getElementById('history-list');
-
       if (!listEl) return;
-
-
-
       if (requestHistory.length === 0) {
-
-        listEl.innerHTML = '<div style="color: #666; text-align: center; padding: 30px 10px; font-size: 13px;"><i class="fas fa-inbox" style="font-size: 24px; margin-bottom: 10px; display:block; opacity:0.5;"></i>Henüz kaydedilmiş bir geçmiş yok.</div>';
-
+        listEl.innerHTML = '<div style="color: #666; text-align: center; padding: 30px 10px; font-size: 13px;">Geçmiş yok.</div>';
         return;
-
       }
-
-
-
       listEl.innerHTML = requestHistory.map((item, index) => `
-
         <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px;">
-
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px;">
-
-            <span style="color: #888;"><i class="fas fa-calendar-alt"></i> ${item.timestamp}</span>
-
-            <span class="rc-badge ${item.ok ? 'rc-badge-success' : 'rc-badge-error'}" style="padding: 2px 6px; font-size: 10px; border-radius: 4px; box-shadow: none;">Status: ${item.status}</span>
-
+            <span style="color: #888;">${item.timestamp}</span>
+            <span class="rc-badge ${item.ok ? 'rc-badge-success' : 'rc-badge-error'}" style="padding: 2px 6px; font-size: 10px;">Status: ${item.status}</span>
           </div>
-
-          <div style="font-family: monospace; font-size: 12px; color: #a5b4fc; margin-bottom: 10px; word-break: break-all; line-height: 1.4;">
-
-            <strong style="color: #fff;">${item.method}</strong> 
-
-            <span style="color: #ccc;">${item.actionType}</span>
-
+          <div style="font-family: monospace; font-size: 12px; color: #a5b4fc; margin-bottom: 10px; word-break: break-all;">
+            <strong>${item.method}</strong> <span>${item.actionType}</span>
           </div>
-
-          <div style="display: flex; gap: 8px;">
-
-            <button onclick="downloadHistoryItem(${index})" style="flex:1; background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); padding: 6px; color: #fff; border-radius: 4px; cursor:pointer; font-size: 12px; transition: all 0.2s;">
-
-              <i class="fas fa-download"></i> Detaylı İndir
-
-            </button>
-
-          </div>
-
+          <button onclick="downloadHistoryItem(${index})" style="width:100%; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding: 6px; color: #fff; border-radius: 4px; cursor:pointer; font-size: 12px;">
+            <i class="fas fa-download"></i> Detaylı İndir
+          </button>
         </div>
-
       `).join('');
-
     }
-
-
 
     function downloadHistoryItem(index) {
-
       const item = requestHistory[index];
-
-      if (!item) return;
-
-
-
-      const dataToDownload = {
-
-        meta: {
-
-          timestamp: item.timestamp,
-
-          time_taken_ms: item.time,
-
-          status: item.status
-
-        },
-
-        request: {
-
-          method: item.method,
-
-          url: item.url,
-
-          payload: item.requestPayload
-
-        },
-
-        response: item.response
-
-      };
-
-
-
-      const fileName = `api_history_${item.id}.json`;
-
-      const blob = new Blob([JSON.stringify(dataToDownload, null, 2)], { type: "application/json" });
-
+      const data = { meta: { timestamp: item.timestamp, time: item.time, status: item.status }, request: item.requestPayload, response: item.response };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-
       const a = document.createElement("a");
-
       a.href = url;
-
-      a.download = fileName;
-
-      document.body.appendChild(a);
-
+      a.download = `api_history_${item.id}.json`;
       a.click();
-
-      document.body.removeChild(a);
-
       URL.revokeObjectURL(url);
-
-      showCustomToast("Başarılı", "Geçmiş detayı (Request + Response) indirildi.", "success");
-
     }
-
-
 
     function clearHistory() {
-
       requestHistory = [];
-
       localStorage.removeItem('tk_api_history');
-
       renderHistory();
-
-      showCustomToast("Temizlendi", "Geçmiş verileri silindi.", "success");
-
+      showCustomToast("Temizlendi", "Geçmiş silindi.", "success");
     }
-
-
 
     function openHistorySidebar() {
-
       document.getElementById('history-sidebar-overlay').classList.add('show');
-
       document.getElementById('history-sidebar').classList.add('show');
-
       renderHistory();
-
     }
-
-
 
     function closeHistorySidebar() {
-
       document.getElementById('history-sidebar-overlay').classList.remove('show');
-
       document.getElementById('history-sidebar').classList.remove('show');
-
     }
 
+    function toggleDevMode() {
+      const container = document.getElementById("dev-mode-container");
+      const btnDev = document.getElementById("btn-dev-mode");
+      if (container.classList.contains("hidden-dev")) {
+        container.classList.remove("hidden-dev");
+        btnDev.className = "btn-animated-send btn-orange btn-align-fix active-shimmer";
+      } else {
+        container.classList.add("hidden-dev");
+        btnDev.className = "btn-dev-closed btn-align-fix";
+      }
+    }
+
+    function openCodeSidebar() {
+      document.getElementById('code-sidebar-overlay').classList.add('show');
+      document.getElementById('code-sidebar').classList.add('show');
+      generateSnippet();
+    }
+
+    function closeCodeSidebar() {
+      document.getElementById('code-sidebar-overlay').classList.remove('show');
+      document.getElementById('code-sidebar').classList.remove('show');
+    }
+
+    function generateSnippet() {
+      const method = document.getElementById('rc-method').value;
+      const url = document.getElementById('rc-url').value || "https://api.example.com/v1";
+      const bodyStr = document.getElementById('rc-body').value || "{}";
+      const activeLang = document.getElementById('code-lang-select').value;
+      const output = document.getElementById('code-snippet-output');
+
+      const headerRows = document.querySelectorAll('#rc-headers .rc-kv-row');
+      let headers = {};
+      headerRows.forEach(row => {
+        const k = row.querySelector('.kv-key').value.trim();
+        const v = row.querySelector('.kv-val').value.trim();
+        if (k && v) headers[k] = v;
+      });
+
+      const token = document.getElementById('rc-auth-token').value.trim();
+      if(token) headers['Authorization'] = `Bearer ${token}`;
+
+      let code = "";
+      const hasBody = (method !== 'GET' && method !== 'HEAD' && bodyStr !== '{}' && bodyStr !== '');
+
+      switch(activeLang) {
+        case 'curl':
+          code = `curl --location --request ${method} '${url}' \\\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `--header '${k}: ${v}' \\\n`; }
+          if (hasBody) code += `--data-raw '${bodyStr}'`;
+          if (code.endsWith(' \\\n')) code = code.slice(0, -3);
+          break;
+        case 'fetch':
+          code = `const myHeaders = new Headers();\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `myHeaders.append("${k}", "${v}");\n`; }
+          code += `\nconst requestOptions = {\n  method: '${method}',\n  headers: myHeaders,\n  redirect: 'follow'`;
+          if (hasBody) code += `,\n  body: JSON.stringify(${bodyStr})`;
+          code += `\n};\n\nfetch("${url}", requestOptions)\n  .then(response => response.text())\n  .then(result => console.log(result))\n  .catch(error => console.log('error', error));`;
+          break;
+        case 'python':
+          code = `import requests\nimport json\n\nurl = "${url}"\n`;
+          if (hasBody) { code += `payload = json.dumps(${bodyStr})\n`; } else { code += `payload = {}\n`; }
+          code += `headers = {\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
+          code += `}\n\nresponse = requests.request("${method}", url, headers=headers, data=payload)\n\nprint(response.text)`;
+          break;
+        case 'csharp':
+          code = `var client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.${method.charAt(0).toUpperCase() + method.slice(1).toLowerCase()}, "${url}");\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `request.Headers.Add("${k}", "${v}");\n`; }
+          if (hasBody) { code += `var content = new StringContent("${bodyStr.replace(/"/g, '\\"')}", null, "application/json");\nrequest.Content = content;\n`; }
+          code += `var response = await client.SendAsync(request);\nresponse.EnsureSuccessStatusCode();\nConsole.WriteLine(await response.Content.ReadAsStringAsync());`;
+          break;
+        case 'dart':
+          code = `var headers = {\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `  '${k}': '${v}',\n`; }
+          code += `};\nvar request = http.Request('${method}', Uri.parse('${url}'));\n`;
+          if (hasBody) { code += `request.body = json.encode(${bodyStr});\n`; }
+          code += `request.headers.addAll(headers);\n\nhttp.StreamedResponse response = await request.send();\n\nif (response.statusCode == 200) {\n  print(await response.stream.bytesToString());\n} else {\n  print(response.reasonPhrase);\n}`;
+          break;
+        case 'go':
+          code = `package main\n\nimport (\n\t"fmt"\n\t"strings"\n\t"net/http"\n\t"io/ioutil"\n)\n\nfunc main() {\n\turl := "${url}"\n\tmethod := "${method}"\n\n`;
+          if (hasBody) { code += `\tpayload := strings.NewReader(\`${bodyStr}\`)\n\tclient := &http.Client {}\n\treq, err := http.NewRequest(method, url, payload)\n`; }
+          else { code += `\tclient := &http.Client {}\n\treq, err := http.NewRequest(method, url, nil)\n`; }
+          code += `\n\tif err != nil {\n\t\tfmt.Println(err)\n\t\treturn\n\t}\n`;
+          for (const [k, v] of Object.entries(headers)) { code += `\treq.Header.Add("${k}", "${v}")\n`; }
+          code += `\n\tres, err := client.Do(req)\n\tif err != nil {\n\t\tfmt.Println(err)\n\t\treturn\n\t}\n\tdefer res.Body.Close()\n\n\tbody, err := ioutil.ReadAll(res.Body)\n\tfmt.Println(string(body))\n}`;
+          break;
+        case 'java':
+          code = `OkHttpClient client = new OkHttpClient().newBuilder().build();\n`;
+          if (hasBody) { code += `MediaType mediaType = MediaType.parse("application/json");\nRequestBody body = RequestBody.create(mediaType, "${bodyStr.replace(/"/g, '\\"')}");\n`; }
+          code += `Request request = new Request.Builder()\n  .url("${url}")\n`;
+          if (hasBody) { code += `  .method("${method}", body)\n`; } else { code += `  .method("${method}", null)\n`; }
+          for (const [k, v] of Object.entries(headers)) { code += `  .addHeader("${k}", "${v}")\n`; }
+          code += `  .build();\nResponse response = client.newCall(request).execute();`;
+          break;
+      }
+      
+      output.textContent = code;
+
+      const langMap = {
+        'curl': 'bash', 'fetch': 'javascript', 'python': 'python',
+        'csharp': 'csharp', 'dart': 'dart', 'go': 'go', 'java': 'java'
+      };
+      output.className = 'language-' + langMap[activeLang];
+
+      if(window.hljs) {
+        delete output.dataset.highlighted;
+        hljs.highlightElement(output);
+        if(hljs.lineNumbersBlock) hljs.lineNumbersBlock(output);
+      }
+    }
+
+    function copyCodeSnippet() {
+      const codeLines = document.querySelectorAll('#code-snippet-output .hljs-ln-code');
+      let codeToCopy = "";
+      
+      if(codeLines.length > 0) {
+        codeLines.forEach(line => {
+          codeToCopy += line.innerText + "\n";
+        });
+      } else {
+        codeToCopy = document.getElementById('code-snippet-output').innerText;
+      }
+
+      navigator.clipboard.writeText(codeToCopy.trim()).then(() => {
+        showCustomToast("Başarılı", "Kod panoya kopyalandı!", "success");
+      });
+    }
   </script>
 
-
-
 </body>
-
 </html>
