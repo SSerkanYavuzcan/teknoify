@@ -106,6 +106,9 @@
           <button id="btn-dev-mode" class="btn-animated-send btn-orange btn-align-fix active-shimmer" onclick="toggleDevMode()">
             <span class="btn-content-inner"><i class="fas fa-terminal"></i> Geliştirici Modu</span>
           </button>
+          <button id="btn-history" class="btn-animated-send btn-align-fix btn-passive" onclick="openHistorySidebar()">
+            <i class="fas fa-history"></i> Geçmiş
+          </button>
         </div>
       </div>
 
@@ -129,11 +132,11 @@
                 <div class="chart-title"><i class="fas fa-paper-plane" style="opacity:.8; margin-right:8px;"></i> Request</div>
               </div>
 
-              <div class="rc-row request-action-row" id="request-action-row" data-method="GET" style="margin-bottom:15px; display:flex; gap:10px;">
+              <div class="rc-row request-action-row" id="request-action-row" data-method="POST" style="margin-bottom:15px; display:flex; gap:10px;">
                 <div class="rc-method-wrap">
                   <select id="rc-method" class="rc-select" onchange="document.getElementById('request-action-row').setAttribute('data-method', this.value)">
                     <option value="GET">GET</option>
-                    <option value="POST">POST</option>
+                    <option value="POST" selected>POST</option>
                     <option value="PUT">PUT</option>
                     <option value="PATCH">PATCH</option>
                     <option value="DELETE">DELETE</option>
@@ -151,13 +154,13 @@
               </div>
 
               <div class="rc-tabs" id="request-tabs-nav">
-                <div class="rc-tab active" data-tab="params">Params</div>
+                <div class="rc-tab" data-tab="params">Params</div>
                 <div class="rc-tab" data-tab="auth">Authorization</div>
                 <div class="rc-tab" data-tab="headers">Headers</div>
-                <div class="rc-tab" data-tab="body">Body (JSON)</div>
+                <div class="rc-tab active" data-tab="body">Body (JSON)</div>
               </div>
 
-              <div id="rc-panel-params">
+              <div id="rc-panel-params" class="hidden">
                 <div id="rc-params">
                   <div class="rc-kv-row">
                     <input type="text" class="rc-input kv-key" placeholder="Key" value="orderId">
@@ -188,7 +191,7 @@
                   </div>
                 </div>
                 <div class="rc-row">
-                  <input type="text" id="rc-auth-token" class="rc-input" placeholder="Token girin" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
+                  <input type="text" id="rc-auth-token" class="rc-input" placeholder="Token girin" value="" />
                 </div>
               </div>
 
@@ -210,12 +213,8 @@
                 </div>
               </div>
 
-              <div id="rc-panel-body" class="hidden">
-                <textarea id="rc-body" class="rc-textarea" placeholder='{"example": true}'>{"project_id": "bim_faz_2"}</textarea>
-              </div>
-
-              <div id="rc-panel-bq">
-                <input id="rc-bq-table" class="rc-input" placeholder="dataset.table veya preset key" />
+              <div id="rc-panel-body">
+                <textarea id="rc-body" class="rc-textarea" placeholder='{"action": "bq_upload"}'>{"action": "bq_upload", "dataset_id": "mahalle_BIM", "table_id": "BIM_partial_return_invoice_response", "format": "json", "data": [{"movement_id": "test-w4v1CS"}]}</textarea>
               </div>
 
             </div>
@@ -229,16 +228,16 @@
                 <div class="rc-flow-step">
                   <div class="rc-flow-badge">1</div>
                   <div>
-                    <div class="rc-flow-title">Token Al</div>
-                    <div class="rc-flow-desc">Auth endpoint’inden Bearer token üret.</div>
+                    <div class="rc-flow-title">Token Al / Auth</div>
+                    <div class="rc-flow-desc">Yetkilendirme ve izin kontrolleri.</div>
                   </div>
                 </div>
                 <div class="rc-flow-arrow"><i class="fas fa-arrow-right"></i></div>
                 <div class="rc-flow-step">
                   <div class="rc-flow-badge">2</div>
                   <div>
-                    <div class="rc-flow-title">Customer Info</div>
-                    <div class="rc-flow-desc">Token ile müşteri bilgisini çek.</div>
+                    <div class="rc-flow-title">Aksiyon Tespiti</div>
+                    <div class="rc-flow-desc">BigQuery veya BIM API yönlendirmesi.</div>
                   </div>
                 </div>
                 <div class="rc-flow-arrow"><i class="fas fa-arrow-right"></i></div>
@@ -314,6 +313,27 @@
       
       <div class="rc-sidebar-code">
         <pre style="margin:0; padding:0; background:transparent;"><code id="code-snippet-output"></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="history-sidebar-overlay" class="rc-sidebar-overlay" onclick="closeHistorySidebar()"></div>
+  <div id="history-sidebar" class="rc-sidebar">
+    <div class="rc-sidebar-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-history" style="color: #818cf8; font-size: 16px;"></i>
+        <div class="dev-title" style="color: #cccccc; font-size: 14px; font-weight: 600;">İstek Geçmişi</div>
+      </div>
+      <button class="rc-kv-btn" style="width: 32px; height: 32px; font-size: 16px; color: #cccccc;" onclick="closeHistorySidebar()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="rc-sidebar-body" style="display: flex; flex-direction: column; height: calc(100% - 60px);">
+      <div id="history-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;">
+        </div>
+      <div style="padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;">
+        <button class="btn-animated-send btn-short" style="width: 100%; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2);" onclick="clearHistory()">
+          <i class="fas fa-trash-alt"></i> Tüm Geçmişi Temizle
+        </button>
       </div>
     </div>
   </div>
@@ -426,7 +446,7 @@
       const btnDownload = document.getElementById("btn-download-flow");
 
       if (action === 'run') {
-        // 🛑 1. KİLİT KONTROLÜ: Buton meşgulse (arka arkaya basılıyorsa) durdur!
+        // 🛑 1. KİLİT KONTROLÜ: Buton meşgulse durdur!
         if (btnRun.disabled) return; 
 
         // 2. Arayüzden Verileri Topla
@@ -437,7 +457,6 @@
         
         let payload = {};
         try {
-          // Arayüzdeki (UI) metin kutusundaki veriyi geçerli bir JSON'a çevir
           payload = bodyText ? JSON.parse(bodyText) : {};
         } catch (e) {
           showCustomToast("JSON Hatası", "Body kısmındaki JSON formatı hatalı. Lütfen kontrol edin.", "error");
@@ -445,12 +464,11 @@
         }
 
         // 3. KİLİDİ DEVREYE SOK VE ANİMASYONU BAŞLAT
-        btnRun.disabled = true; // Butonu kilitle
+        btnRun.disabled = true; 
         btnRun.classList.add("active-shimmer");
         btnRun.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
 
         try {
-          // İstek süresini ölçmek için zamanı başlat
           const startTime = performance.now(); 
 
           // 4. API İsteğini Gönder (Fetch)
@@ -463,10 +481,8 @@
             body: (method !== 'GET' && method !== 'HEAD') ? JSON.stringify(payload) : undefined
           });
 
-          // Süreyi hesapla
           const endTime = performance.now();
           const timeTaken = Math.round(endTime - startTime);
-
           const result = await response.json();
 
           // 5. Arayüzü (UI) Güncelle
@@ -474,25 +490,20 @@
           const timeBadge = document.getElementById("rc-time");
           const responseEl = document.getElementById("rc-response");
 
-          // Süre badge'ini güncelle
           if(timeBadge) {
              timeBadge.className = "rc-badge rc-badge-idle";
              timeBadge.innerHTML = `<i class="fas fa-clock" style="font-size:10px;"></i> Time: ${timeTaken} ms`;
           }
 
           if (response.ok) {
-            // BAŞARILI DURUM
             if(statusBadge) {
               statusBadge.className = "rc-badge rc-badge-success";
               statusBadge.innerHTML = `<i class="fas fa-check-circle"></i> Status: ${response.status} OK`;
             }
             showCustomToast("Başarılı", result.message || "İstek başarıyla tamamlandı.", "success");
-            
-            // İndir butonunu aktif et
             btnDownload.classList.remove("btn-passive");
             btnDownload.classList.add("active-shimmer");
           } else {
-            // HATA DURUMU
             if(statusBadge) {
               statusBadge.className = "rc-badge rc-badge-error";
               statusBadge.innerHTML = `<i class="fas fa-times-circle"></i> Status: ${response.status} Error`;
@@ -500,7 +511,6 @@
             showCustomToast("Hata", result.error || "İşlem başarısız oldu.", "error");
           }
 
-          // JSON çıktısını ekrana bas ve renklendir
           if(responseEl) {
             responseEl.textContent = JSON.stringify(result, null, 2);
             if (window.hljs) { 
@@ -510,8 +520,23 @@
             }
           }
 
+          // --- GEÇMİŞE (HISTORY) KAYDET ---
+          const actionType = payload.action === "bq_upload" ? "BigQuery Upload" : (payload.orderId ? "BIM İsteği" : "Genel API İsteği");
+          saveToHistory({
+            id: Date.now(),
+            timestamp: new Date().toLocaleString('tr-TR'),
+            method: method,
+            url: endpointUrl,
+            actionType: actionType,
+            requestPayload: payload,
+            response: result,
+            status: response.status,
+            ok: response.ok,
+            time: timeTaken
+          });
+          // --------------------------------
+
         } catch (error) {
-          // BAĞLANTI HATASI (CORS vb.)
           console.error("İstek Hatası:", error);
           showCustomToast("Bağlantı Hatası", "Sunucuya ulaşılamadı. F12 Konsolu kontrol edin.", "error");
           
@@ -521,25 +546,20 @@
             statusBadge.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Status: FAILED`;
           }
         } finally {
-          // 🟢 6. İŞLEM BİTTİ: KİLİDİ AÇ VE BUTONU ESKİ HALİNE GETİR
+          // 🟢 6. İŞLEM BİTTİ: KİLİDİ AÇ
           btnRun.disabled = false; 
           btnRun.innerHTML = '<i class="fas fa-paper-plane"></i> İstek Gönder';
           btnRun.classList.remove("active-shimmer");
         }
 
       } else if (action === 'download') {
-        // İNDİRME MANTIĞI
         if (btnDownload.classList.contains("btn-passive")) {
            showCustomToast("Uyarı", "İndirme yapabilmek için önce 'İstek Gönder' butonunu kullanın.", "warning");
            return;
         }
-        
-        // HTML dosyasında halihazırda bulunan download fonksiyonunu çağırır
         if(typeof downloadResponseAsJSON === 'function') {
             downloadResponseAsJSON();
         }
-        
-        // Görsel efekti sıfırla
         btnDownload.classList.remove("active-shimmer");
         btnDownload.classList.add("btn-passive");
         btnRun.classList.add("active-shimmer");
@@ -676,7 +696,7 @@
       if(window.hljs) {
         delete output.dataset.highlighted;
         hljs.highlightElement(output);
-        hljs.lineNumbersBlock(output);
+        if(hljs.lineNumbersBlock) hljs.lineNumbersBlock(output);
       }
     }
 
@@ -695,6 +715,95 @@
       navigator.clipboard.writeText(codeToCopy.trim()).then(() => {
         showCustomToast("Başarılı", "Kod panoya kopyalandı!", "success");
       });
+    }
+
+    // =========================================================================
+    // GEÇMİŞ (HISTORY) MANTIĞI
+    // =========================================================================
+    let requestHistory = JSON.parse(localStorage.getItem('tk_api_history') || '[]');
+
+    function saveToHistory(item) {
+      requestHistory.unshift(item); // En yeni isteği en başa ekle
+      if (requestHistory.length > 30) requestHistory.pop(); // Sadece son 30 isteği tut
+      localStorage.setItem('tk_api_history', JSON.stringify(requestHistory));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const listEl = document.getElementById('history-list');
+      if (!listEl) return;
+
+      if (requestHistory.length === 0) {
+        listEl.innerHTML = '<div style="color: #666; text-align: center; padding: 30px 10px; font-size: 13px;"><i class="fas fa-inbox" style="font-size: 24px; margin-bottom: 10px; display:block; opacity:0.5;"></i>Henüz kaydedilmiş bir geçmiş yok.</div>';
+        return;
+      }
+
+      listEl.innerHTML = requestHistory.map((item, index) => `
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px;">
+            <span style="color: #888;"><i class="fas fa-calendar-alt"></i> ${item.timestamp}</span>
+            <span class="rc-badge ${item.ok ? 'rc-badge-success' : 'rc-badge-error'}" style="padding: 2px 6px; font-size: 10px; border-radius: 4px; box-shadow: none;">Status: ${item.status}</span>
+          </div>
+          <div style="font-family: monospace; font-size: 12px; color: #a5b4fc; margin-bottom: 10px; word-break: break-all; line-height: 1.4;">
+            <strong style="color: #fff;">${item.method}</strong> 
+            <span style="color: #ccc;">${item.actionType}</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="downloadHistoryItem(${index})" style="flex:1; background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); padding: 6px; color: #fff; border-radius: 4px; cursor:pointer; font-size: 12px; transition: all 0.2s;">
+              <i class="fas fa-download"></i> Detaylı İndir
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function downloadHistoryItem(index) {
+      const item = requestHistory[index];
+      if (!item) return;
+
+      const dataToDownload = {
+        meta: {
+          timestamp: item.timestamp,
+          time_taken_ms: item.time,
+          status: item.status
+        },
+        request: {
+          method: item.method,
+          url: item.url,
+          payload: item.requestPayload
+        },
+        response: item.response
+      };
+
+      const fileName = `api_history_${item.id}.json`;
+      const blob = new Blob([JSON.stringify(dataToDownload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showCustomToast("Başarılı", "Geçmiş detayı (Request + Response) indirildi.", "success");
+    }
+
+    function clearHistory() {
+      requestHistory = [];
+      localStorage.removeItem('tk_api_history');
+      renderHistory();
+      showCustomToast("Temizlendi", "Geçmiş verileri silindi.", "success");
+    }
+
+    function openHistorySidebar() {
+      document.getElementById('history-sidebar-overlay').classList.add('show');
+      document.getElementById('history-sidebar').classList.add('show');
+      renderHistory();
+    }
+
+    function closeHistorySidebar() {
+      document.getElementById('history-sidebar-overlay').classList.remove('show');
+      document.getElementById('history-sidebar').classList.remove('show');
     }
   </script>
 
