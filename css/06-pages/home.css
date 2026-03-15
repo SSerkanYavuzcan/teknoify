@@ -4,27 +4,27 @@
 
 .cookie-banner {
     position: fixed;
-    bottom: -300px; /* Başlangıçta ekranın altında gizli */
+    bottom: -300px;
     left: 20px;
     right: 20px;
-    max-width: 450px; /* Masaüstünde çok geniş olmasın */
-    background: rgba(21, 21, 25, 0.95); /* Yarı saydam koyu zemin */
-    backdrop-filter: blur(10px); /* Buzlu cam efekti */
+    max-width: 450px;
+    background: rgba(21, 21, 25, 0.95);
+    backdrop-filter: blur(10px);
     border: 1px solid var(--border-light);
-    border-left: 4px solid var(--primary); /* Sol tarafta şık bir mor çizgi */
+    border-left: 4px solid var(--primary);
     border-radius: 12px;
     padding: 20px;
-    z-index: 99999; /* Her şeyin üstünde olsun */
+    z-index: 99999;
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     display: flex;
     flex-direction: column;
     gap: 15px;
-    transition: bottom 0.6s cubic-bezier(0.19, 1, 0.22, 1); /* Yumuşak kayma efekti */
+    transition: bottom 0.6s cubic-bezier(0.19, 1, 0.22, 1);
     font-family: 'Inter Tight', sans-serif;
 }
 
 .cookie-banner.show {
-    bottom: 20px; /* Görünür konumu */
+    bottom: 20px;
 }
 
 .cookie-content {
@@ -78,7 +78,7 @@
     transition: 0.3s;
 }
 .btn-cookie-accept:hover {
-    background: #5e50ee; /* Daha açık mor */
+    background: #5e50ee;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(115, 103, 240, 0.4);
 }
@@ -98,77 +98,61 @@
     border-color: #fff;
 }
 
-/* Mobil Uyumluluk */
 @media (max-width: 576px) {
     .cookie-banner {
         left: 10px; right: 10px;
-        bottom: -300px; /* Mobilde de gizli başlasın */
+        bottom: -300px;
     }
     .cookie-banner.show {
         bottom: 10px;
     }
 }
 
+
 /* =========================================
-   TEMİNAL KUTUSU (Terminal Box) - Revize Edildi
+   ÖZEL KÖŞE EFEKTLİ KARTLAR (Hizmetler & Terminal)
    ========================================= */
 
-.terminal-box {
-    background-color: #0d0d12; /* Siyah arka plan */
-    border: 2px solid #000; /* Siyah çerçeve */
-    border-radius: 12px;
-    overflow: hidden;
+/* Görseldeki ürün kartları ve terminal için kullanabileceğin ortak sınıf */
+.service-card {
     position: relative;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    background-color: #0d0d12; /* Kartın kendi siyah arka planı */
+    border-radius: 12px;
+    padding: 30px;
+    z-index: 1; /* İçeriğin üstte kalması için */
     display: flex;
     flex-direction: column;
+    /* Kartın içi çok siyahsa ve ayırt edilmiyorsa çok hafif bir iç gölge/border verebilirsin */
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02); 
 }
 
-/* Köşelerdeki mor efekt için pseudo-element */
-.terminal-box::before {
-    content: '';
+/* Çerçeveyi ve köşelerdeki mor efekti yaratan katman */
+.service-card::before {
+    content: "";
     position: absolute;
-    inset: -5px; /* Çerçevenin dışına taşmasını sağlamak için negatif boşluk */
-    background: conic-gradient(from -45deg at 50% 50%, #0d0d12, #0d0d12, var(--primary), var(--primary), #0d0d12, #0d0d12);
-    border-radius: 17px; /* Kutu kenar yarıçapından 5px fazla */
-    z-index: -1;
-    box-shadow: 0 0 20px rgba(115, 103, 240, 0.5); /* Mor parıltı (tahmini mor) */
-    opacity: 0.6;
+    inset: -2px; /* Çerçevenin kalınlığı (2px) */
+    border-radius: 14px; /* Kartın radius değerinden biraz daha büyük olmalı */
+    z-index: -1; /* Kartın arkasına atıyoruz */
+    
+    /* Tüm köşelere şirket rengini (mor), aralara siyah rengi veren sihirli gradient */
+    background: 
+        linear-gradient(135deg, var(--primary) 0%, transparent 20%, transparent 80%, var(--primary) 100%),
+        linear-gradient(45deg, var(--primary) 0%, transparent 20%, transparent 80%, var(--primary) 100%);
+    background-color: #151519; /* Kenarların ortasında kalacak koyu renk (siyah/koyu gri) */
+    
+    /* Hafif bir mor parlama efekti istersen burayı açabilirsin: */
+    /* box-shadow: 0 0 15px rgba(115, 103, 240, 0.2); */
 }
 
-.terminal-header {
-    background-color: rgba(255, 255, 255, 0.05); /* Hafif şeffaf gri */
-    color: #e2e8f0;
-    font-size: 0.8rem;
-    padding: 10px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+/* Kart içi metin/ikon düzenlemeleri (Mevcut yapına göre ayarlayabilirsin) */
+.service-card h3 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #ffffff;
 }
 
-.terminal-body {
-    color: #fff;
-    font-family: 'Courier New', monospace;
-    font-size: 0.8rem;
-    padding: 15px;
-    line-height: 1.5;
-}
-
-/* Kod satırları için stiller */
-.terminal-line {
-    display: flex;
-    gap: 10px;
-    color: #e2e8f0;
-}
-
-.terminal-line::before {
-    content: '>>';
-    color: #a78bfa;
-}
-
-/* DONE, 99.8%, MAXIMIZED için stiller */
-.terminal-done {
-    color: #4ade80;
-}
-
-.terminal-success {
-    color: #10b981;
+.service-card p {
+    color: #a0a0b0;
+    line-height: 1.6;
+    margin-bottom: 20px;
 }
