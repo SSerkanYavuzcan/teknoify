@@ -110,47 +110,115 @@
 
 
 /* =========================================
-   SADECE ÇERÇEVE KÖŞELERİ RENKLİ KARTLAR
+   SADECE ÇERÇEVE KÖŞELERİ RENKLİ KARTLAR VE HAREKETLİ IŞIK EFEKTİ
    ========================================= */
 
 .service-card {
     position: relative;
-    background-color: #0d0d12; /* Kartın kendi koyu zemin rengi, içeri sızmayı engeller */
+    background-color: #0d0d12; 
     border-radius: 12px;
     padding: 30px;
     z-index: 1; 
     display: flex;
     flex-direction: column;
-    /* Kartın varsayılan border'ını kaldırıyoruz çünkü efekti ::after ile vereceğiz */
     border: none; 
+    transition: transform 0.3s ease; /* Hover'da hafif yukarı kalkması için */
 }
 
-/* Çerçeveyi oluşturacak katman */
+/* Hover'da kartı hafifçe öne çıkarma (İsteğe bağlı) */
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 1. KATMAN: Sabit Duran Köşe Çerçevesi (Mevcut olan) */
 .service-card::after {
     content: "";
     position: absolute;
-    inset: -2px; /* Çerçevenin kalınlığı (2px dışarı taşar) */
-    border-radius: 14px; /* Dış çerçevenin kavisi */
-    pointer-events: none; /* İçerikteki butonların tıklanmasını engellememesi için */
-    z-index: 2; /* Kartın en üstünde dursun ama içi boş olacağı için sorun yaratmaz */
+    inset: -2px; 
+    border-radius: 14px; 
+    pointer-events: none; 
+    z-index: 2; 
     
-    /* Dört köşeye noktasal mor renk (radial-gradient), kalan her yere siyah veriyoruz */
     background: 
         radial-gradient(circle at top left, var(--primary) 0%, transparent 45px),
         radial-gradient(circle at top right, var(--primary) 0%, transparent 45px),
         radial-gradient(circle at bottom left, var(--primary) 0%, transparent 45px),
         radial-gradient(circle at bottom right, var(--primary) 0%, transparent 45px),
-        #111111; /* Çerçevenin kenarlarındaki siyah/koyu renk */
+        #111111; 
         
-    padding: 2px; /* Çerçevemizin 2px olacağını maskeye söylüyoruz */
-    
-    /* SİHİRLİ KISIM: İçini tamamen boşaltıp sadece padding alanını (2px'lik kenarı) bırakır */
+    padding: 2px; 
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
 }
 
-/* Kart içi metin/ikon düzenlemeleri (Eğer bozulma olursa buradan ayarlayabilirsin) */
+/* 2. KATMAN: Hover ile Çıkan Çarpışan Lazer Işınları */
+.service-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 14px;
+    pointer-events: none;
+    z-index: 3;
+    padding: 2px;
+    
+    /* Aynı maskeyi uyguluyoruz ki ışıklar sadece 2px çerçeve üzerinde görünsün */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    /* 8 Adet Işık Topu (Her kenar için karşılıklı 2 adet) */
+    background-image:
+        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Üst Sol Işık */
+        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Üst Sağ Işık */
+        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Alt Sol Işık */
+        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Alt Sağ Işık */
+        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Sol Üst Işık */
+        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Sol Alt Işık */
+        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Sağ Üst Işık */
+        radial-gradient(circle, var(--primary) 0%, transparent 60%); /* Sağ Alt Işık */
+        
+    background-repeat: no-repeat;
+    background-size: 100px 100px; /* Işıkların parlama genişliği */
+    
+    opacity: 0; /* Başlangıçta gizli */
+    transition: opacity 0.3s ease;
+}
+
+/* Mouse ile üzerine gelindiğinde ışıkları görünür yap ve animasyonu başlat */
+.service-card:hover::before {
+    opacity: 1;
+    /* 1.2 saniyede gidip (ease-in-out) gelir (alternate), sonsuza kadar (infinite) döner */
+    animation: lightCollision 1.2s ease-in-out infinite alternate;
+}
+
+/* Çarpışma Animasyonunun Matematiksel Koordinatları */
+@keyframes lightCollision {
+    0% {
+        background-position:
+            0% 0%,       /* Üst 1: Sol Üst Köşeden başlar */
+            100% 0%,     /* Üst 2: Sağ Üst Köşeden başlar */
+            0% 100%,     /* Alt 1: Sol Alt Köşeden başlar */
+            100% 100%,   /* Alt 2: Sağ Alt Köşeden başlar */
+            0% 0%,       /* Sol 1: Sol Üst Köşeden başlar */
+            0% 100%,     /* Sol 2: Sol Alt Köşeden başlar */
+            100% 0%,     /* Sağ 1: Sağ Üst Köşeden başlar */
+            100% 100%;   /* Sağ 2: Sağ Alt Köşeden başlar */
+    }
+    100% {
+        background-position:
+            50% 0%,      /* Üst kenardakiler Tam Ortada çarpışır */
+            50% 0%,      
+            50% 100%,    /* Alt kenardakiler Tam Ortada çarpışır */
+            50% 100%,    
+            0% 50%,      /* Sol kenardakiler Tam Ortada çarpışır */
+            0% 50%,      
+            100% 50%,    /* Sağ kenardakiler Tam Ortada çarpışır */
+            100% 50%;    
+    }
+}
+
+/* Kart içi metin/ikon düzenlemeleri */
 .service-card h3 {
     margin-top: 15px;
     margin-bottom: 10px;
