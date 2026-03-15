@@ -101,12 +101,74 @@
 /* Mobil Uyumluluk */
 @media (max-width: 576px) {
     .cookie-banner {
-        left: 10px; right: 10px; 
+        left: 10px; right: 10px;
         bottom: -300px; /* Mobilde de gizli başlasın */
     }
-    .cookie-banner.show { 
-        bottom: 10px; 
+    .cookie-banner.show {
+        bottom: 10px;
     }
 }
 
+/* =========================================
+   TEMİNAL KUTUSU (Terminal Box) - Revize Edildi
+   ========================================= */
 
+.terminal-box {
+    background-color: #0d0d12; /* Siyah arka plan */
+    border: 2px solid #000; /* Siyah çerçeve */
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Köşelerdeki mor efekt için pseudo-element */
+.terminal-box::before {
+    content: '';
+    position: absolute;
+    inset: -5px; /* Çerçevenin dışına taşmasını sağlamak için negatif boşluk */
+    background: conic-gradient(from -45deg at 50% 50%, #0d0d12, #0d0d12, var(--primary), var(--primary), #0d0d12, #0d0d12);
+    border-radius: 17px; /* Kutu kenar yarıçapından 5px fazla */
+    z-index: -1;
+    box-shadow: 0 0 20px rgba(115, 103, 240, 0.5); /* Mor parıltı (tahmini mor) */
+    opacity: 0.6;
+}
+
+.terminal-header {
+    background-color: rgba(255, 255, 255, 0.05); /* Hafif şeffaf gri */
+    color: #e2e8f0;
+    font-size: 0.8rem;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.terminal-body {
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    padding: 15px;
+    line-height: 1.5;
+}
+
+/* Kod satırları için stiller */
+.terminal-line {
+    display: flex;
+    gap: 10px;
+    color: #e2e8f0;
+}
+
+.terminal-line::before {
+    content: '>>';
+    color: #a78bfa;
+}
+
+/* DONE, 99.8%, MAXIMIZED için stiller */
+.terminal-done {
+    color: #4ade80;
+}
+
+.terminal-success {
+    color: #10b981;
+}
