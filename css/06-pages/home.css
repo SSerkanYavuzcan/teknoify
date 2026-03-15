@@ -110,41 +110,47 @@
 
 
 /* =========================================
-   ÖZEL KÖŞE EFEKTLİ KARTLAR (Hizmetler & Terminal)
+   SADECE ÇERÇEVE KÖŞELERİ RENKLİ KARTLAR
    ========================================= */
 
-/* Görseldeki ürün kartları ve terminal için kullanabileceğin ortak sınıf */
 .service-card {
     position: relative;
-    background-color: #0d0d12; /* Kartın kendi siyah arka planı */
+    background-color: #0d0d12; /* Kartın kendi koyu zemin rengi, içeri sızmayı engeller */
     border-radius: 12px;
     padding: 30px;
-    z-index: 1; /* İçeriğin üstte kalması için */
+    z-index: 1; 
     display: flex;
     flex-direction: column;
-    /* Kartın içi çok siyahsa ve ayırt edilmiyorsa çok hafif bir iç gölge/border verebilirsin */
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02); 
+    /* Kartın varsayılan border'ını kaldırıyoruz çünkü efekti ::after ile vereceğiz */
+    border: none; 
 }
 
-/* Çerçeveyi ve köşelerdeki mor efekti yaratan katman */
-.service-card::before {
+/* Çerçeveyi oluşturacak katman */
+.service-card::after {
     content: "";
     position: absolute;
-    inset: -2px; /* Çerçevenin kalınlığı (2px) */
-    border-radius: 14px; /* Kartın radius değerinden biraz daha büyük olmalı */
-    z-index: -1; /* Kartın arkasına atıyoruz */
+    inset: -2px; /* Çerçevenin kalınlığı (2px dışarı taşar) */
+    border-radius: 14px; /* Dış çerçevenin kavisi */
+    pointer-events: none; /* İçerikteki butonların tıklanmasını engellememesi için */
+    z-index: 2; /* Kartın en üstünde dursun ama içi boş olacağı için sorun yaratmaz */
     
-    /* Tüm köşelere şirket rengini (mor), aralara siyah rengi veren sihirli gradient */
+    /* Dört köşeye noktasal mor renk (radial-gradient), kalan her yere siyah veriyoruz */
     background: 
-        linear-gradient(135deg, var(--primary) 0%, transparent 20%, transparent 80%, var(--primary) 100%),
-        linear-gradient(45deg, var(--primary) 0%, transparent 20%, transparent 80%, var(--primary) 100%);
-    background-color: #151519; /* Kenarların ortasında kalacak koyu renk (siyah/koyu gri) */
+        radial-gradient(circle at top left, var(--primary) 0%, transparent 45px),
+        radial-gradient(circle at top right, var(--primary) 0%, transparent 45px),
+        radial-gradient(circle at bottom left, var(--primary) 0%, transparent 45px),
+        radial-gradient(circle at bottom right, var(--primary) 0%, transparent 45px),
+        #111111; /* Çerçevenin kenarlarındaki siyah/koyu renk */
+        
+    padding: 2px; /* Çerçevemizin 2px olacağını maskeye söylüyoruz */
     
-    /* Hafif bir mor parlama efekti istersen burayı açabilirsin: */
-    /* box-shadow: 0 0 15px rgba(115, 103, 240, 0.2); */
+    /* SİHİRLİ KISIM: İçini tamamen boşaltıp sadece padding alanını (2px'lik kenarı) bırakır */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
 }
 
-/* Kart içi metin/ikon düzenlemeleri (Mevcut yapına göre ayarlayabilirsin) */
+/* Kart içi metin/ikon düzenlemeleri (Eğer bozulma olursa buradan ayarlayabilirsin) */
 .service-card h3 {
     margin-top: 15px;
     margin-bottom: 10px;
