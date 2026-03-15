@@ -110,7 +110,7 @@
 
 
 /* =========================================
-   SADECE ÇERÇEVE KÖŞELERİ RENKLİ KARTLAR VE HAREKETLİ IŞIK EFEKTİ
+   HİZMET KARTLARI - ANA ÇERÇEVE
    ========================================= */
 
 .service-card {
@@ -122,105 +122,85 @@
     display: flex;
     flex-direction: column;
     border: none; 
-    transition: transform 0.3s ease; /* Hover'da hafif yukarı kalkması için */
 }
 
-/* Hover'da kartı hafifçe öne çıkarma (İsteğe bağlı) */
-.service-card:hover {
-    transform: translateY(-5px);
-}
-
-/* 1. KATMAN: Sabit Duran Köşe Çerçevesi (Mevcut olan) */
+/* Ana Kart Çerçevesi - Daha İnce ve Vurgusu Azaltılmış */
 .service-card::after {
     content: "";
     position: absolute;
-    inset: -2px; 
-    border-radius: 14px; 
+    inset: -1px; /* 2px'den 1px'e düşürdük, daha ince bir çerçeve oldu */
+    border-radius: 13px; 
     pointer-events: none; 
     z-index: 2; 
     
     background: 
-        radial-gradient(circle at top left, var(--primary) 0%, transparent 45px),
-        radial-gradient(circle at top right, var(--primary) 0%, transparent 45px),
-        radial-gradient(circle at bottom left, var(--primary) 0%, transparent 45px),
-        radial-gradient(circle at bottom right, var(--primary) 0%, transparent 45px),
-        #111111; 
+        /* 45px olan vurgu alanını 25px'e düşürdük, renk daha az yayılecek */
+        radial-gradient(circle at top left, var(--primary) 0%, transparent 25px),
+        radial-gradient(circle at top right, var(--primary) 0%, transparent 25px),
+        radial-gradient(circle at bottom left, var(--primary) 0%, transparent 25px),
+        radial-gradient(circle at bottom right, var(--primary) 0%, transparent 25px),
+        #1a1a24; /* Çerçevenin kenarlarındaki renk, siyah yerine biraz daha belirgin koyu gri */
         
-    padding: 2px; 
+    padding: 1px; /* Sadece 1px kalınlığında çizilecek */
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
 }
 
-/* 2. KATMAN: Hover ile Çıkan Çarpışan Lazer Işınları */
-.service-card::before {
+
+/* =========================================
+   İKON KUTUSU - DÖNEN IŞIK EFEKTİ
+   ========================================= */
+
+/* HTML'de ikonunu bu sınıf ile sarmaladığından emin ol */
+.service-icon-box {
+    position: relative;
+    width: 54px; /* Kutu genişliği */
+    height: 54px; /* Kutu yüksekliği */
+    border-radius: 12px;
+    background-color: #12121a; /* İkon arkasındaki koyu renk */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    z-index: 5;
+}
+
+/* Dönen Işık Çerçevesi */
+.service-icon-box::before {
     content: "";
     position: absolute;
-    inset: -2px;
-    border-radius: 14px;
-    pointer-events: none;
-    z-index: 3;
-    padding: 2px;
+    inset: -1.5px; /* Işığın kalınlığı */
+    border-radius: 13.5px; /* Kutuyla uyumlu köşe ovalliği */
+    /* Işığın kuyruk efekti: Transparan başlayıp sona doğru mor renge ulaşıyor */
+    background: conic-gradient(from 0deg, transparent 60%, var(--primary) 100%);
+    animation: spinLight 2s linear infinite; /* 2 saniyede bir tam tur */
+    padding: 1.5px;
     
-    /* Aynı maskeyi uyguluyoruz ki ışıklar sadece 2px çerçeve üzerinde görünsün */
+    /* İçini boşaltıp sadece çerçevede dönmesini sağlayan maske */
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-
-    /* 8 Adet Işık Topu (Her kenar için karşılıklı 2 adet) */
-    background-image:
-        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Üst Sol Işık */
-        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Üst Sağ Işık */
-        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Alt Sol Işık */
-        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Alt Sağ Işık */
-        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Sol Üst Işık */
-        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Sol Alt Işık */
-        radial-gradient(circle, var(--primary) 0%, transparent 60%), /* Sağ Üst Işık */
-        radial-gradient(circle, var(--primary) 0%, transparent 60%); /* Sağ Alt Işık */
-        
-    background-repeat: no-repeat;
-    background-size: 100px 100px; /* Işıkların parlama genişliği */
-    
-    opacity: 0; /* Başlangıçta gizli */
-    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
-/* Mouse ile üzerine gelindiğinde ışıkları görünür yap ve animasyonu başlat */
-.service-card:hover::before {
-    opacity: 1;
-    /* 1.2 saniyede gidip (ease-in-out) gelir (alternate), sonsuza kadar (infinite) döner */
-    animation: lightCollision 1.2s ease-in-out infinite alternate;
+/* Dönüş Animasyonu */
+@keyframes spinLight {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* Çarpışma Animasyonunun Matematiksel Koordinatları */
-@keyframes lightCollision {
-    0% {
-        background-position:
-            0% 0%,       /* Üst 1: Sol Üst Köşeden başlar */
-            100% 0%,     /* Üst 2: Sağ Üst Köşeden başlar */
-            0% 100%,     /* Alt 1: Sol Alt Köşeden başlar */
-            100% 100%,   /* Alt 2: Sağ Alt Köşeden başlar */
-            0% 0%,       /* Sol 1: Sol Üst Köşeden başlar */
-            0% 100%,     /* Sol 2: Sol Alt Köşeden başlar */
-            100% 0%,     /* Sağ 1: Sağ Üst Köşeden başlar */
-            100% 100%;   /* Sağ 2: Sağ Alt Köşeden başlar */
-    }
-    100% {
-        background-position:
-            50% 0%,      /* Üst kenardakiler Tam Ortada çarpışır */
-            50% 0%,      
-            50% 100%,    /* Alt kenardakiler Tam Ortada çarpışır */
-            50% 100%,    
-            0% 50%,      /* Sol kenardakiler Tam Ortada çarpışır */
-            0% 50%,      
-            100% 50%,    /* Sağ kenardakiler Tam Ortada çarpışır */
-            100% 50%;    
-    }
+/* Kutu içindeki İkonun (font-awesome, svg vb.) Stili */
+.service-icon-box i, 
+.service-icon-box svg {
+    color: var(--primary); /* İkon rengi */
+    font-size: 1.5rem;
+    z-index: 10;
 }
 
-/* Kart içi metin/ikon düzenlemeleri */
+/* Diğer Metin Stilleri */
 .service-card h3 {
-    margin-top: 15px;
+    margin-top: 5px;
     margin-bottom: 10px;
     color: #ffffff;
 }
