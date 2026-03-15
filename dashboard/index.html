@@ -6,6 +6,7 @@
         <title>Dashboard | Teknoify</title>
         <link rel="stylesheet" href="../css/style.css" />
         <link rel="stylesheet" href="../css/06-pages/dashboard-portal.css" />
+        <link rel="stylesheet" href="../css/06-pages/home.css" />
     </head>
     <body>
         <header class="header" style="position: static">
@@ -37,7 +38,26 @@
                 <div class="portal-hero">
                     <h1>Satın Aldığınız Projeler</h1>
                     <p>Hesabınıza tanımlanan otomasyon projeleri aşağıda listelenir. Anlaşmalı hizmetlerinize hızlıca erişebilir, analiz panellerini tek tıkla keşfedebilirsiniz.</p>
-                </div>
+                    
+                    <div class="terminal-box" style="margin-top: 30px; max-width: 600px;">
+                        <div class="terminal-header">
+                            <span style="display:inline-block; width:10px; height:10px; background:#ef4444; border-radius:50%; margin-right:5px;"></span>
+                            <span style="display:inline-block; width:10px; height:10px; background:#eab308; border-radius:50%; margin-right:5px;"></span>
+                            <span style="display:inline-block; width:10px; height:10px; background:#22c55e; border-radius:50%; margin-right:15px;"></span>
+                            ai_core.py
+                        </div>
+                        <div class="terminal-body">
+                            <p class="terminal-line" style="color: #6b7280;"># Step 1: Analyze current efficiency</p>
+                            <p class="terminal-line">Analysis: 14% redundant processes detected.</p>
+                            <br>
+                            <p class="terminal-line" style="color: #6b7280;"># Step 2: Refactor and Automate</p>
+                            <p class="terminal-line">Optimizing SQL queries ... <span class="terminal-done">[DONE]</span></p>
+                            <p class="terminal-line">Model Converged. Predictive accuracy: <span class="terminal-success">99.8%</span></p>
+                            <br>
+                            <p class="terminal-line">EFFICIENCY: <span class="terminal-success">MAXIMIZED</span></p>
+                        </div>
+                    </div>
+                    </div>
                 <div class="services-grid portal-services" id="project-list"></div>
                 <div id="project-empty" hidden>
                     <p>Henüz hesabınıza atanmış bir proje yok.</p>
