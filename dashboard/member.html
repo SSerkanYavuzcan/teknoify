@@ -78,17 +78,28 @@
 
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-sidebar-nav">
+    <nav id="tk-main-nav-container">
       <a href="/dashboard/member.html" class="menu-item active">
         <i class="fas fa-home"></i> <span>Genel Bakış</span>
       </a>
       
-      <div class="tk-nav-section"><span>Hizmetler</span></div>
-      <div id="dynamic-services-menu"></div>
+      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Hizmetler</span></div>
+      <div id="tk-sidebar-projects"></div>
 
       <div class="tk-nav-section"><span>Keşfet</span></div>
-      <div id="explore-services-menu"></div>
+      <div id="explore-services-menu">
+         <a href="#" class="menu-item">
+           <i class="fas fa-bolt"></i> <span>API Service</span> <i class="fas fa-lock" style="margin-left:auto; font-size:10px; color:#555;"></i>
+         </a>
+         <a href="#" class="menu-item">
+           <i class="fas fa-chart-line"></i> <span>Pazar Analizi</span> <i class="fas fa-lock" style="margin-left:auto; font-size:10px; color:#555;"></i>
+         </a>
+         <a href="#" class="menu-item">
+           <i class="fas fa-spider"></i> <span>Web Scraping</span> <i class="fas fa-lock" style="margin-left:auto; font-size:10px; color:#555;"></i>
+         </a>
+      </div>
     </nav>
+
     <div class="menu-spacer"></div>
     <div class="sidebar-footer">
       <a href="#" onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
@@ -118,10 +129,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="../config.js"></script>
   <script src="./shared/auth.js?v=20260228"></script>
+  <script src="./shared/sidebar.js?v=20260228"></script>
   <script type="module" src="../js/pages/member.js?v=20260228"></script>
 
   <script>
-    // Dinamik Yükleme Metinleri ve Terminal Simülasyonu (Aynen Korundu)
+    // Dinamik Yükleme Metinleri ve Terminal Simülasyonu
     const statusTexts = ["Profil verileri doğrulanıyor...", "Güvenlik katmanı aktif ediliyor...", "Şifrelenmiş tünel kuruluyor...", "Modüller senkronize ediliyor...", "Veritabanı bağlantısı kuruluyor...", "Arayüz render ediliyor..."];
     let textIdx = 0;
     const textEl = document.getElementById("dynamic-loader-text");
@@ -137,6 +149,14 @@
 
     // Sidebar aç/kapat
     window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+
+    // SİDEBAR RENDER TETİKLEYİCİSİ (EKSİKTİ, EKLENDİ)
+    const checkSessionSidebar = setInterval(() => {
+      if (window.USER_SESSION && window.TK_RENDER_SIDEBAR) {
+        window.TK_RENDER_SIDEBAR();
+        clearInterval(checkSessionSidebar);
+      }
+    }, 100);
 
     // Overlay'i Kapatma Mantığı
     (function () {
