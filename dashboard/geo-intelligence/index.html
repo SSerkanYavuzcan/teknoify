@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geo Intelligence | Teknoify</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
+  <link rel="stylesheet" href="../../../css/analysis.css?v=8">
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    /* Harita Konteyneri */
+    #competitor-map {
+      height: 75vh; 
+      width: 100%;
+      border-radius: 12px;
+      z-index: 1;
+    }
+    
+    /* Özel Harita İkon Tasarımı */
+    .brand-logo-marker {
+      background: #1e293b;
+      border: 2px solid;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+    }
+    .brand-logo-marker i {
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="main-content" style="margin-left: 0; padding: 20px;">
+    
+    <header class="top-bar">
+      <h2><i class="fas fa-globe-europe" style="color:#f97316;"></i> Geo Intelligence <span class="premium-badge">İSTANBUL</span></h2>
+      <a href="/dashboard/member.html" class="tk-btn-cancel" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+        <i class="fas fa-arrow-left"></i> Panele Dön
+      </a>
+    </header>
+
+    <div class="content-scroll">
+      <div class="chart-box" style="padding: 0; overflow: hidden; position: relative;">
+        <div id="competitor-map"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../../config.js"></script>
+  <script src="../shared/auth.js?v=20260228"></script>
+  
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Haritayı Başlat (İstanbul Merkezi)
+      var map = L.map('competitor-map', {
+        zoomControl: true, 
+        dragging: true,     
+        scrollWheelZoom: true, 
+      }).setView([41.0082, 28.9784], 12); 
+
+      // 2. Koyu Tema Harita Katmanı (CartoDB Dark Matter)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // 3. Marka ve Kategori Renkleri/İkonları
+      const categoryData = {
+        // Büyük Zincirler
+        "Migros": { color: "#f97316", icon: "fa-shopping-basket" },
+        "Carrefour": { color: "#3b82f6", icon: "fa-shopping-basket" },
+        "BİM": { color: "#ef4444", icon: "fa-shopping-basket" },
+        "A101": { color: "#06b6d4", icon: "fa-shopping-basket" },
+        "Şok": { color: "#eab308", icon: "fa-shopping-basket" },
+        
+        // Sektörler (Eğer markası yoksa etiketine göre ikon ata)
+        "supermarket": { color: "#10b981", icon: "fa-store" },
+        "convenience": { color: "#8b5cf6", icon: "fa-store-alt" },
+        "greengrocer": { color: "#84cc16", icon: "fa-apple-alt" },
+        "pharmacy": { color: "#ec4899", icon: "fa-plus-square" }, 
+        "fuel": { color: "#f43f5e", icon: "fa-gas-pump" },        
+        "bakery": { color: "#f59e0b", icon: "fa-bread-slice" },   
+        "clothes": { color: "#d946ef", icon: "fa-tshirt" },       
+        "electronics": { color: "#0ea5e9", icon: "fa-laptop" },
+        "coffee": { color: "#78350f", icon: "fa-coffee" },
+        "cafe": { color: "#b45309", icon: "fa-mug-hot" },
+        "default": { color: "#94a3b8", icon: "fa-map-pin" }
+      };
+
+      // 4. Marka İsimlerini Düzeltme Fonksiyonu
+      function normalizeBrandName(rawName) {
+          if (!rawName) return null;
+          let n = rawName.toUpperCase();
+          if (n.includes("MİGROS") || n.includes("MIGROS")) return "Migros";
+          if (n.includes("CARREFOUR")) return "Carrefour";
+          if (n.includes("BİM") || n.includes("BIM")) return "BİM";
+          if (n.includes("A101") || n.includes("A.101")) return "A101";
+          if (n.includes("ŞOK") || n.includes("SOK")) return "Şok";
+          return null; 
+      }
+
+      // 5. Haritaya Nokta Ekleme Fonksiyonu
+      function renderMarker(lat, lng, storeName, shopType, amenityType) {
+          let brand = normalizeBrandName(storeName);
+          let catInfo;
+
+          // Hangi ikonu kullanacağına karar ver
+          if (brand && categoryData[brand]) {
+              catInfo = categoryData[brand];
+          } else if (shopType && categoryData[shopType]) {
+              catInfo = categoryData[shopType];
+          } else if (amenityType && categoryData[amenityType]) {
+              catInfo = categoryData[amenityType];
+          } else {
+              catInfo = categoryData["default"];
+          }
+
+          // Leaflet İkonunu oluştur
+          const customIcon = L.divIcon({
+            className: 'custom-leaflet-icon',
+            html: `
+              <div class="brand-logo-marker" style="border-color: ${catInfo.color}; box-shadow: 0 0 10px ${catInfo.color}80;">
+                <i class="fas ${catInfo.icon}" style="color: ${catInfo.color};"></i>
+              </div>
+            `,
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+            tooltipAnchor: [0, -15]
+          });
+
+          let displayName = brand ? brand : (storeName ? storeName : (shopType || amenityType));
+          L.marker([lat, lng], { icon: customIcon })
+            .bindTooltip(`<b>${displayName}</b><br><small style="text-transform: capitalize;">${shopType || amenityType || 'Ticari Nokta'}</small>`)
+            .addTo(map);
+      }
+
+      // 6. Devasa GeoJSON Dosyasını Çek ve Haritaya Bas
+      fetch('istanbul-ultimate.geojson') 
+        .then(response => response.json())
+        .then(data => {
+            console.log("Haritaya yüklenen veri sayısı: " + data.features.length);
+            
+            data.features.forEach(feature => {
+                let lng = feature.geometry.coordinates[0];
+                let lat = feature.geometry.coordinates[1];
+                
+                let storeName = feature.properties.name || feature.properties.brand || "";
+                let shopType = feature.properties.shop || null;
+                let amenityType = feature.properties.amenity || null;
+                
+                renderMarker(lat, lng, storeName, shopType, amenityType);
+            });
+        })
+        .catch(error => console.error("GeoJSON verisi yüklenirken hata oluştu:", error));
+    });
+  </script>
+</body>
+</html>
