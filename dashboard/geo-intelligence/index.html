@@ -1,352 +1,303 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bölge Rakip Analizi | Teknoify</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bölge Analizi | Teknoify</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  
+  <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
+  <link rel="stylesheet" href="../../../css/analysis.css?v=8">
 
   <style>
     /* ---------------------------------------------------
-       1. GLOBAL VE TEMEL DEĞİŞKENLER
+       ÖZEL SAYFA İSKELETİ (GRID SİSTEMİ)
     --------------------------------------------------- */
-    :root {
-      --bg-dark: #0f172a;       /* Ana arka plan */
-      --bg-panel: #1e293b;      /* Panel arka planları */
-      --bg-input: #0b1120;      /* Input arka planları */
-      --border-color: rgba(255, 255, 255, 0.1);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent: #3b82f6;        /* Mavi vurgu */
-      
-      /* Marka Renkleri */
-      --brand-bim: #ef4444;
-      --brand-a101: #06b6d4;
-      --brand-sok: #eab308;
-      --brand-migros: #f97316;
-      --brand-carrefour: #3b82f6;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
-    /* Özel Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg-dark); }
-    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-
-    /* ---------------------------------------------------
-       2. LAYOUT (GRID SİSTEMİ)
-    --------------------------------------------------- */
-    .dashboard-container {
+    .geo-analysis-layout {
       display: grid;
-      grid-template-columns: 1fr 380px; /* Harita esnek, filtre 380px sabit */
-      grid-template-rows: 1fr auto;     /* İçerik esnek, alt kartlar içeriğe göre */
-      gap: 16px;
-      padding: 16px;
-      height: 100%;
+      grid-template-columns: 1fr 350px; /* Harita esnek, sağ panel 350px sabit */
+      gap: 20px;
+      height: calc(100vh - 120px); /* Üst bardan kalan tam ekran yüksekliği */
       width: 100%;
     }
 
-    .map-area { grid-column: 1 / 2; grid-row: 1 / 2; display: flex; flex-direction: column; background: var(--bg-panel); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; position: relative; }
-    .filter-sidebar { grid-column: 2 / 3; grid-row: 1 / 3; background: var(--bg-panel); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow-y: auto; }
-    .metrics-area { grid-column: 1 / 2; grid-row: 2 / 3; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-
-    /* ---------------------------------------------------
-       3. HARİTA ALANI (SOL)
-    --------------------------------------------------- */
-    .map-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.5); z-index: 10; }
+    /* HARİTA ALANI */
+    .map-container {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .map-header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 10;
+    }
+    
     .map-title { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-    .map-location { font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
-    #analysis-map { flex: 1; width: 100%; background: #1a1a2e; z-index: 1; }
-
-    /* Custom Leaflet Controls */
-    .custom-map-tools { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-    .custom-map-tools button { background: transparent; border: none; color: var(--text-main); padding: 12px; cursor: pointer; transition: 0.2s; border-bottom: 1px solid var(--border-color); }
-    .custom-map-tools button:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
-    .custom-map-tools button.active { background: rgba(59, 130, 246, 0.2); color: var(--accent); }
-    .custom-map-tools button:last-child { border-bottom: none; }
-
-    /* ---------------------------------------------------
-       4. SAĞ FİLTRE PANELİ
-    --------------------------------------------------- */
-    .filter-header { padding: 16px 20px; font-weight: 600; border-bottom: 1px solid var(--border-color); letter-spacing: 0.5px; }
-    .filter-body { padding: 20px; display: flex; flex-direction: column; gap: 24px; }
+    .map-location { font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
     
-    .filter-group { display: flex; flex-direction: column; gap: 8px; }
-    .filter-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+    #competitor-map { flex: 1; width: 100%; z-index: 1; background: #0f172a; }
+
+    /* SAĞ FİLTRE PANELİ */
+    .filter-sidebar {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      overflow-y: auto;
+    }
+
+    .filter-group { display: flex; flex-direction: column; gap: 10px; }
+    .filter-label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
     
-    /* Input & Select Stilleri */
-    .custom-select { appearance: none; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; width: 100%; cursor: pointer; outline: none; transition: border 0.3s; }
-    .custom-select:focus { border-color: var(--accent); }
-    .select-wrapper { position: relative; }
-    .select-wrapper::after { content: '\f107'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+    /* Input Stilleri */
+    .custom-select {
+      appearance: none;
+      background: #0b1120;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      width: 100%;
+      cursor: pointer;
+      outline: none;
+      transition: border 0.3s;
+    }
+    .custom-select:focus { border-color: #3b82f6; }
+    .select-wrapper { position: relative; margin-bottom: 8px; }
+    .select-wrapper::after {
+      content: '\f107'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      color: #94a3b8; pointer-events: none;
+    }
 
-    /* Çizim Butonu */
-    .btn-draw { background: rgba(59, 130, 246, 0.1); color: var(--accent); border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-    .btn-draw:hover { background: rgba(59, 130, 246, 0.2); border-color: var(--accent); }
+    .btn-draw {
+      background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500;
+      display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
+    }
+    .btn-draw:hover { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; }
 
-    /* Marka (Rakip) Filtre Butonları */
-    .brand-filters { display: flex; flex-wrap: wrap; gap: 10px; }
-    .brand-pill { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 6px; }
-    .brand-pill:hover:not(.locked) { border-color: rgba(255,255,255,0.3); color: var(--text-main); }
-    
-    /* Marka Seçili Durumları */
-    .brand-pill.active.bim { border-color: var(--brand-bim); color: var(--brand-bim); background: rgba(239, 68, 68, 0.1); }
-    .brand-pill.active.a101 { border-color: var(--brand-a101); color: var(--brand-a101); background: rgba(6, 182, 212, 0.1); }
-    .brand-pill.active.sok { border-color: var(--brand-sok); color: var(--brand-sok); background: rgba(234, 179, 8, 0.1); }
-    .brand-pill.active.migros { border-color: var(--brand-migros); color: var(--brand-migros); background: rgba(249, 115, 22, 0.1); }
-    .brand-pill.active.carrefour { border-color: var(--brand-carrefour); color: var(--brand-carrefour); background: rgba(59, 130, 246, 0.1); }
-    
-    /* Kilitli Butonlar */
-    .brand-pill.locked { opacity: 0.5; cursor: not-allowed; border-style: dashed; }
-    .brand-pill.locked i { font-size: 0.75rem; }
-
-    /* Akordiyon Liste */
-    .accordion-item { border-bottom: 1px solid var(--border-color); padding: 12px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-    .accordion-title { font-size: 0.9rem; font-weight: 500; }
-    .accordion-icon { color: var(--text-muted); font-size: 0.8rem; }
-
-    /* ---------------------------------------------------
-       5. ALT METRİK KARTLARI
-    --------------------------------------------------- */
-    .metric-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; justify-content: center; }
-    .metric-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .metric-value { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
-    .metric-trend { font-size: 0.8rem; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
-    .trend-up { color: #10b981; } .trend-down { color: #ef4444; }
+    /* Marka Pin Tasarımları */
+    .brand-logo-marker {
+      background: #1e293b; border: 2px solid; border-radius: 50%;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .marker-cluster-small { background-color: rgba(249, 115, 22, 0.6); }
+    .marker-cluster-small div { background-color: rgba(249, 115, 22, 0.9); color: white; }
   </style>
 </head>
+
 <body>
+  <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç"><i class="fas fa-bars"></i></button>
 
-  <div class="dashboard-container">
-    
-    <div class="map-area">
-      <div class="map-header">
-        <div class="map-title">Bölge Rakip Analizi</div>
-        <div class="map-location" id="display-location"><i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> Fındıkzade, Fatih</div>
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
+    <nav id="tk-sidebar-nav">
+       </nav>
+    <div class="menu-spacer"></div>
+    <div class="sidebar-footer">
+      <a href="#" onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
+      <button class="btn-collapse" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <h2><i class="fas fa-layer-group" style="color:#f97316;"></i> Bölge Analizi <span class="premium-badge">İSTANBUL</span></h2>
+      <div class="user-profile">
+        <span id="user-name-display">Yükleniyor...</span>
+        <div class="avatar" id="user-avatar">U</div>
       </div>
+    </header>
+
+    <div class="content-scroll" style="padding: 20px;">
       
-      <div id="analysis-map"></div>
-
-      <div class="custom-map-tools">
-        <button class="active" title="Haritayı Kaydır"><i class="fas fa-hand-paper"></i></button>
-        <button title="Poligon Çiz"><i class="fas fa-draw-polygon"></i></button>
-        <button title="Dairesel Seçim"><i class="fas fa-circle-notch"></i></button>
-      </div>
-    </div>
-
-    <aside class="filter-sidebar">
-      <div class="filter-body">
+      <div class="geo-analysis-layout">
         
-        <div class="filter-group">
-          <label class="filter-label">Harita Türü</label>
-          <div class="select-wrapper">
-            <select class="custom-select">
-              <option value="regional" selected>📍 Bölgesel Rakip Analizi</option>
-              <option value="heatmap">🔥 Isı Haritası (Yoğunluk)</option>
-              <option value="cannibalization">✂️ Yamyamlaşma Analizi</option>
-            </select>
+        <div class="map-container">
+          <div class="map-header">
+            <div class="map-title">İnteraktif Bölge Haritası</div>
+            <div class="map-location" id="display-location"><i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> İstanbul</div>
           </div>
+          <div id="competitor-map"></div>
         </div>
 
-        <div class="filter-group">
-          <label class="filter-label">Sektör</label>
-          <div class="select-wrapper">
-            <select class="custom-select">
-              <option value="fmcg" selected>🛒 Hızlı Tüketim (FMCG)</option>
-              <option value="pharmacy">💊 Eczane & Sağlık</option>
-              <option value="fuel">⛽ Akaryakıt</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Bölge & Lokasyon</label>
-          <div class="select-wrapper" style="margin-bottom: 8px;">
-            <select class="custom-select" id="select-city">
-              <option value="">İl Seçiniz</option>
-              <option value="34" selected>İstanbul</option>
-              <option value="06">Ankara</option>
-              <option value="35">İzmir</option>
-            </select>
-          </div>
-          <div class="select-wrapper" style="margin-bottom: 8px;">
-            <select class="custom-select" id="select-district">
-              <option value="">İlçe Seçiniz</option>
+        <aside class="filter-sidebar">
+          
+          <div class="filter-group">
+            <label class="filter-label">Analiz Türü</label>
+            <div class="select-wrapper">
+              <select class="custom-select">
+                <option value="regional" selected>📍 Bölgesel Mağaza Dağılımı</option>
+                <option value="heatmap">🔥 Isı Haritası (Yakında)</option>
               </select>
+            </div>
           </div>
-          <div class="select-wrapper" style="margin-bottom: 12px;">
-            <select class="custom-select" id="select-neighborhood">
-              <option value="">Mahalle Seçiniz</option>
+
+          <div class="filter-group">
+            <label class="filter-label">Sektör</label>
+            <div class="select-wrapper">
+              <select class="custom-select">
+                <option value="fmcg" selected>🛒 Hızlı Tüketim (FMCG)</option>
+                <option value="pharmacy">💊 Eczane & Sağlık</option>
+                <option value="fuel">⛽ Akaryakıt</option>
               </select>
+            </div>
           </div>
-          <button class="btn-draw"><i class="fas fa-map-marked-alt"></i> Haritada Bölge Seç / Çizim Yap</button>
-        </div>
 
-        <div class="filter-group">
-          <label class="filter-label">Rakip Seçiniz (Filtre)</label>
-          <div class="brand-filters">
-            <button class="brand-pill active bim" onclick="toggleBrand(this)"><i class="fas fa-shopping-basket"></i> BİM</button>
-            <button class="brand-pill active a101" onclick="toggleBrand(this)"><i class="fas fa-shopping-basket"></i> A101</button>
-            <button class="brand-pill active sok" onclick="toggleBrand(this)"><i class="fas fa-shopping-basket"></i> ŞOK</button>
-            <button class="brand-pill active migros" onclick="toggleBrand(this)"><i class="fas fa-shopping-basket"></i> Migros</button>
-            <button class="brand-pill active carrefour" onclick="toggleBrand(this)"><i class="fas fa-shopping-basket"></i> Carrefour</button>
-            
-            <button class="brand-pill locked" title="Premium Özellik"><i class="fas fa-lock"></i> Tarım Kredi</button>
-            <button class="brand-pill locked" title="Premium Özellik"><i class="fas fa-lock"></i> File</button>
-            <button class="brand-pill locked" title="Premium Özellik"><i class="fas fa-lock"></i> Yerel Zincirler</button>
+          <div class="filter-group">
+            <label class="filter-label">Bölge & Lokasyon</label>
+            <div class="select-wrapper">
+              <select class="custom-select" id="select-city">
+                <option value="">İl Seçiniz</option>
+                <option value="34" selected>İstanbul</option>
+                <option value="06">Ankara</option>
+                <option value="35">İzmir</option>
+              </select>
+            </div>
+            <div class="select-wrapper">
+              <select class="custom-select" id="select-district">
+                <option value="">İlçe Seçiniz</option>
+              </select>
+            </div>
+            <div class="select-wrapper" style="margin-bottom: 4px;">
+              <select class="custom-select" id="select-neighborhood">
+                <option value="">Mahalle Seçiniz</option>
+              </select>
+            </div>
+            <button class="btn-draw"><i class="fas fa-map-marked-alt"></i> Haritada Çizim Yap</button>
           </div>
-        </div>
 
-        <div class="filter-group" style="margin-top: 10px;">
-          <label class="filter-label" style="color:var(--brand-migros);">📈 Pazar & Rekabet Metrikleri</label>
-          <div class="accordion-item">
-            <div class="accordion-title">Mağaza Yoğunluğu</div>
-            <i class="fas fa-question-circle accordion-icon"></i>
-          </div>
-          <div class="accordion-item">
-            <div class="accordion-title">Konsantrasyon (HHI)</div>
-            <i class="fas fa-lock accordion-icon" style="color:#ef4444;"></i>
-          </div>
-        </div>
+        </aside>
 
-      </div>
-    </aside>
-
-    <div class="metrics-area">
-      <div class="metric-card">
-        <div class="metric-title">Takip Edilen Aktif Ürün <i class="fas fa-info-circle"></i></div>
-        <div class="metric-value">12,450</div>
-        <div class="metric-trend trend-up"><i class="fas fa-arrow-up"></i> %4.2 geçen aya göre</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-title">Ortalama Sepet Maliyeti <i class="fas fa-info-circle"></i></div>
-        <div class="metric-value">₺485.50</div>
-        <div class="metric-trend trend-down"><i class="fas fa-arrow-down"></i> %1.8 düştü</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-title">Ürün Promosyonları <i class="fas fa-info-circle"></i></div>
-        <div class="metric-value">342</div>
-        <div class="metric-trend trend-up"><i class="fas fa-arrow-up"></i> 24 yeni kampanya</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-title">Assortment Skoru <i class="fas fa-info-circle"></i></div>
-        <div class="metric-value">86/100</div>
-        <div class="metric-trend"><span style="color:var(--text-muted); font-size:0.8rem;">Bölgesel ortalamanın üstünde</span></div>
       </div>
     </div>
+  </main>
 
-  </div>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../shared/auth.js?v=2026"></script>
+  <script src="../shared/sidebar.js?v=2026"></script>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
   <script>
-    /* =========================================================
-       1. HARİTA KURULUMU VE GÖRSELLEŞTİRME
-    ========================================================= */
-    // Fatih, İstanbul merkezli harita
-    const map = L.map('analysis-map', {
-      zoomControl: false // Özel kontrol eklediğimiz için default'u kapatıyoruz
-    }).setView([41.014, 28.940], 14);
-
-    // Dark Mode uyumlu CartoDB altlığı
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      subdomains: 'abcd',
-      maxZoom: 20
-    }).addTo(map);
-
-    // Tasarımdaki gibi seçili alanı simüle eden poligon/daire
-    const selectionCircle = L.circle([41.012, 28.938], {
-      color: '#3b82f6',
-      fillColor: '#000000',
-      fillOpacity: 0.6,
-      weight: 2,
-      dashArray: '5, 5' // Kesik çizgili sınır
-    }).addTo(map);
-
-    /* =========================================================
-       2. MARKA FİLTRELEME MANTIĞI (Buton Tıklamaları)
-    ========================================================= */
-    function toggleBrand(button) {
-      if(button.classList.contains('locked')) return; // Kilitliyse işlem yapma
-      
-      button.classList.toggle('active');
-      
-      // Gerçek projede burada haritadaki pinleri (marker) göster/gizle fonksiyonunu çağırırsın.
-      // Örn: updateMapMarkers();
+    // Sidebar Toggle
+    function toggleSidebar() {
+      document.body.classList.toggle('sidebar-collapsed');
+      const aside = document.querySelector('.sidebar');
+      if(aside) aside.classList.toggle('collapsed');
     }
 
-    /* =========================================================
-       3. İL - İLÇE - MAHALLE KASKAD (CASCADING) DROPDOWN MANTIĞI
-    ========================================================= */
-    const data = {
-      "34": { // İstanbul
-        "fatih": { name: "Fatih", neighborhoods: ["Fındıkzade", "Aksaray", "Haseki", "Cerrahpaşa"] },
-        "kadikoy": { name: "Kadıköy", neighborhoods: ["Moda", "Caferağa", "Fenerbahçe"] },
-        "besiktas": { name: "Beşiktaş", neighborhoods: ["Levent", "Etiler", "Bebek"] }
-      },
-      "06": { // Ankara
-        "cankaya": { name: "Çankaya", neighborhoods: ["Kızılay", "Bahçelievler", "Tunalı"] }
-      }
-    };
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Sidebar Render Tetikleyici
+      const checkSession = setInterval(() => {
+        if (window.USER_SESSION && window.TK_RENDER_SIDEBAR) {
+          window.TK_RENDER_SIDEBAR();
+          clearInterval(checkSession);
+        }
+      }, 100);
 
-    const citySelect = document.getElementById('select-city');
-    const districtSelect = document.getElementById('select-district');
-    const neighborhoodSelect = document.getElementById('select-neighborhood');
-    const displayLocation = document.getElementById('display-location');
+      // 2. Harita Başlatma
+      var map = L.map('competitor-map', { zoomControl: true }).setView([41.0082, 28.9784], 11);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-    // İlçe Doldurma Fonksiyonu
-    function populateDistricts(cityCode) {
-      districtSelect.innerHTML = '<option value="">İlçe Seçiniz</option>';
-      neighborhoodSelect.innerHTML = '<option value="">Mahalle Seçiniz</option>';
+      // 3. Marker Cluster Ayarları ve Renkleri
+      var markers = L.markerClusterGroup({ chunkedLoading: true, disableClusteringAtZoom: 17 });
+      const categoryData = {
+        "Migros": { color: "#f97316", icon: "fa-shopping-basket" },
+        "BİM": { color: "#ef4444", icon: "fa-shopping-basket" },
+        "A101": { color: "#06b6d4", icon: "fa-shopping-basket" },
+        "Şok": { color: "#eab308", icon: "fa-shopping-basket" },
+        "pharmacy": { color: "#ec4899", icon: "fa-plus-square" },
+        "fuel": { color: "#f43f5e", icon: "fa-gas-pump" },
+        "default": { color: "#64748b", icon: "fa-map-marker-alt" }
+      };
+
+      // 4. Veri Çekme (İlk kodundaki geojson okuma)
+      fetch('istanbul-ultimate.geojson')
+        .then(res => res.json())
+        .then(data => {
+          const items = data.features || data.elements || [];
+          items.forEach(item => {
+            let lat, lng, tags;
+            if(item.geometry) { lng = item.geometry.coordinates[0]; lat = item.geometry.coordinates[1]; tags = item.properties; }
+            else { lat = item.lat; lng = item.lon; tags = item.tags || {}; }
+
+            if(!lat || !lng) return;
+
+            let name = tags.name || tags.brand || "Ticari Nokta";
+            let type = tags.shop || tags.amenity || "default";
+            let brandKey = name.includes("MİGROS") ? "Migros" : name.includes("BİM") ? "BİM" : name.includes("A101") ? "A101" : name.includes("ŞOK") ? "Şok" : null;
+            let info = (brandKey && categoryData[brandKey]) ? categoryData[brandKey] : (categoryData[type] || categoryData["default"]);
+
+            let mIcon = L.divIcon({
+              className: 'custom-icon',
+              html: `<div class="brand-logo-marker" style="border-color:${info.color}"><i class="fas ${info.icon}" style="color:${info.color}"></i></div>`,
+              iconSize: [32, 32], iconAnchor: [16, 16]
+            });
+
+            markers.addLayer(L.marker([lat, lng], { icon: mIcon }).bindTooltip(`<b>${name}</b>`));
+          });
+          map.addLayer(markers);
+        }).catch(err => console.error("GeoJSON Yüklenemedi:", err));
+
+
+      // 5. Basit İl-İlçe-Mahalle Mantığı (Kaskad)
+      const locData = {
+        "34": { "fatih": { name: "Fatih", mah: ["Fındıkzade", "Aksaray"] }, "kadikoy": { name: "Kadıköy", mah: ["Moda", "Caferağa"] } }
+      };
       
-      if(data[cityCode]) {
-        Object.keys(data[cityCode]).forEach(key => {
-          let selected = (cityCode === "34" && key === "fatih") ? "selected" : "";
-          districtSelect.innerHTML += `<option value="${key}" ${selected}>${data[cityCode][key].name}</option>`;
-        });
-        // Fatih otomatik seçili geldiyse mahallelerini de doldur
-        if(cityCode === "34") populateNeighborhoods("34", "fatih");
+      const selectCity = document.getElementById('select-city');
+      const selectDistrict = document.getElementById('select-district');
+      const selectNeigh = document.getElementById('select-neighborhood');
+      const displayLoc = document.getElementById('display-location');
+
+      function updateDistricts(city) {
+        selectDistrict.innerHTML = '<option value="">İlçe Seçiniz</option>';
+        if(locData[city]) {
+          Object.keys(locData[city]).forEach(k => selectDistrict.innerHTML += `<option value="${k}">${locData[city][k].name}</option>`);
+        }
       }
-    }
-
-    // Mahalle Doldurma Fonksiyonu
-    function populateNeighborhoods(cityCode, districtCode) {
-      neighborhoodSelect.innerHTML = '<option value="">Mahalle Seçiniz</option>';
-      if(data[cityCode] && data[cityCode][districtCode]) {
-        data[cityCode][districtCode].neighborhoods.forEach(mah => {
-          let selected = (mah === "Fındıkzade") ? "selected" : "";
-          neighborhoodSelect.innerHTML += `<option value="${mah}" ${selected}>${mah}</option>`;
-        });
+      function updateNeigh(city, dist) {
+        selectNeigh.innerHTML = '<option value="">Mahalle Seçiniz</option>';
+        if(locData[city] && locData[city][dist]) {
+          locData[city][dist].mah.forEach(m => selectNeigh.innerHTML += `<option value="${m}">${m}</option>`);
+        }
       }
-    }
 
-    // Event Listener'lar
-    citySelect.addEventListener('change', function() {
-      populateDistricts(this.value);
+      selectCity.addEventListener('change', e => { updateDistricts(e.target.value); updateNeigh(e.target.value, ''); });
+      selectDistrict.addEventListener('change', e => updateNeigh(selectCity.value, e.target.value));
+      selectNeigh.addEventListener('change', e => {
+        if(e.target.value) displayLoc.innerHTML = `<i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> ${e.target.value}, ${selectDistrict.options[selectDistrict.selectedIndex].text}`;
+      });
+      
+      updateDistricts("34"); // Sayfa açılışında İstanbul ilçelerini yükle
     });
-
-    districtSelect.addEventListener('change', function() {
-      populateNeighborhoods(citySelect.value, this.value);
-    });
-
-    neighborhoodSelect.addEventListener('change', function() {
-      if(this.value) {
-        const ilceAdi = districtSelect.options[districtSelect.selectedIndex].text;
-        displayLocation.innerHTML = `<i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> ${this.value}, ${ilceAdi}`;
-        // Burada Leaflet haritasını o mahalleye uçurabilirsin: map.flyTo([lat, lng], 15);
-      }
-    });
-
-    // Sayfa Yüklendiğinde Varsayılan (İstanbul/Fatih/Fındıkzade) ayarını yükle
-    populateDistricts("34");
-
   </script>
 </body>
 </html>
