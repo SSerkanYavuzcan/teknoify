@@ -16,105 +16,37 @@
   <link rel="stylesheet" href="../../../css/analysis.css?v=8">
 
   <style>
-    /* ---------------------------------------------------
-       ÖZEL SAYFA İSKELETİ (GRID SİSTEMİ)
-    --------------------------------------------------- */
-    .geo-analysis-layout {
-      display: grid;
-      grid-template-columns: 1fr 350px; /* Harita esnek, sağ panel 350px sabit */
-      gap: 20px;
-      height: calc(100vh - 120px); /* Üst bardan kalan tam ekran yüksekliği */
-      width: 100%;
-    }
-
-    /* HARİTA ALANI */
-    .map-container {
-      background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .map-header {
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(15, 23, 42, 0.6);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      z-index: 10;
-    }
-    
+    .geo-analysis-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; height: calc(100vh - 120px); width: 100%; }
+    .map-container { background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+    .map-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.6); border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 10; }
     .map-title { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     .map-location { font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
-    
     #competitor-map { flex: 1; width: 100%; z-index: 1; background: #0f172a; }
 
-    /* SAĞ FİLTRE PANELİ */
-    .filter-sidebar {
-      background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 24px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      overflow-y: auto;
-    }
-
+    .filter-sidebar { background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 24px 20px; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
     .filter-group { display: flex; flex-direction: column; gap: 10px; }
     .filter-label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
     
-    /* Input Stilleri */
-    .custom-select {
-      appearance: none;
-      background: #0b1120;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #f8fafc;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      width: 100%;
-      cursor: pointer;
-      outline: none;
-      transition: border 0.3s;
-    }
+    .custom-select { appearance: none; background: #0b1120; border: 1px solid rgba(255, 255, 255, 0.1); color: #f8fafc; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; width: 100%; cursor: pointer; outline: none; transition: border 0.3s; }
     .custom-select:focus { border-color: #3b82f6; }
     .select-wrapper { position: relative; margin-bottom: 8px; }
-    .select-wrapper::after {
-      content: '\f107'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
-      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
-      color: #94a3b8; pointer-events: none;
-    }
+    .select-wrapper::after { content: '\f107'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
 
-    .btn-draw {
-      background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);
-      padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500;
-      display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
-    }
+    .btn-draw { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
     .btn-draw:hover { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; }
 
-    /* Marka Pin Tasarımları */
-    .brand-logo-marker {
-      background: #1e293b; border: 2px solid; border-radius: 50%;
-      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-    .marker-cluster-small { background-color: rgba(249, 115, 22, 0.6); }
-    .marker-cluster-small div { background-color: rgba(249, 115, 22, 0.9); color: white; }
+    .brand-logo-marker { background: #1e293b; border: 2px solid; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+    .marker-cluster-small { background-color: rgba(59, 130, 246, 0.6); }
+    .marker-cluster-small div { background-color: rgba(59, 130, 246, 0.9); color: white; }
   </style>
 </head>
 
 <body>
-  <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç"><i class="fas fa-bars"></i></button>
+  <button id="floating-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
 
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-sidebar-nav">
-       </nav>
+    <nav id="tk-sidebar-nav"></nav>
     <div class="menu-spacer"></div>
     <div class="sidebar-footer">
       <a href="#" onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
@@ -132,7 +64,6 @@
     </header>
 
     <div class="content-scroll" style="padding: 20px;">
-      
       <div class="geo-analysis-layout">
         
         <div class="map-container">
@@ -146,22 +77,13 @@
         <aside class="filter-sidebar">
           
           <div class="filter-group">
-            <label class="filter-label">Analiz Türü</label>
-            <div class="select-wrapper">
-              <select class="custom-select">
-                <option value="regional" selected>📍 Bölgesel Mağaza Dağılımı</option>
-                <option value="heatmap">🔥 Isı Haritası (Yakında)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="filter-group">
             <label class="filter-label">Sektör</label>
             <div class="select-wrapper">
-              <select class="custom-select">
-                <option value="fmcg" selected>🛒 Hızlı Tüketim (FMCG)</option>
+              <select class="custom-select" id="select-sector">
+                <option value="all" selected>🌟 Tümü (Tüm Veriler)</option>
+                <option value="fmcg">🛒 Hızlı Tüketim (Marketler)</option>
                 <option value="pharmacy">💊 Eczane & Sağlık</option>
-                <option value="fuel">⛽ Akaryakıt</option>
+                <option value="fuel">⛽ Akaryakıt İstasyonları</option>
               </select>
             </div>
           </div>
@@ -171,7 +93,7 @@
             <div class="select-wrapper">
               <select class="custom-select" id="select-city">
                 <option value="">İl Seçiniz</option>
-                <option value="34" selected>İstanbul</option>
+                <option value="34">İstanbul</option>
                 <option value="06">Ankara</option>
                 <option value="35">İzmir</option>
               </select>
@@ -186,7 +108,7 @@
                 <option value="">Mahalle Seçiniz</option>
               </select>
             </div>
-            <button class="btn-draw"><i class="fas fa-map-marked-alt"></i> Haritada Çizim Yap</button>
+            <button class="btn-draw" onclick="alert('Poligon çizim aracı yakında aktif edilecek.')"><i class="fas fa-map-marked-alt"></i> Haritada Çizim Yap</button>
           </div>
 
         </aside>
@@ -195,39 +117,17 @@
     </div>
   </main>
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="../../config.js"></script>
-  <script src="../shared/auth.js?v=2026"></script>
-  <script src="../shared/sidebar.js?v=2026"></script>
-
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
   <script>
-    // Sidebar Toggle
-    function toggleSidebar() {
-      document.body.classList.toggle('sidebar-collapsed');
-      const aside = document.querySelector('.sidebar');
-      if(aside) aside.classList.toggle('collapsed');
-    }
-
     document.addEventListener("DOMContentLoaded", function() {
-      // 1. Sidebar Render Tetikleyici
-      const checkSession = setInterval(() => {
-        if (window.USER_SESSION && window.TK_RENDER_SIDEBAR) {
-          window.TK_RENDER_SIDEBAR();
-          clearInterval(checkSession);
-        }
-      }, 100);
-
-      // 2. Harita Başlatma
-      var map = L.map('competitor-map', { zoomControl: true }).setView([41.0082, 28.9784], 11);
+      
+      // 1. HARİTA BAŞLATMA
+      var map = L.map('competitor-map', { zoomControl: true }).setView([41.0082, 28.9784], 10);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-      // 3. Marker Cluster Ayarları ve Renkleri
-      var markers = L.markerClusterGroup({ chunkedLoading: true, disableClusteringAtZoom: 17 });
+      // Kategori Stilleri
       const categoryData = {
         "Migros": { color: "#f97316", icon: "fa-shopping-basket" },
         "BİM": { color: "#ef4444", icon: "fa-shopping-basket" },
@@ -238,65 +138,113 @@
         "default": { color: "#64748b", icon: "fa-map-marker-alt" }
       };
 
-      // 4. Veri Çekme (İlk kodundaki geojson okuma)
+      var markersGroup = L.markerClusterGroup({ chunkedLoading: true, disableClusteringAtZoom: 17 });
+      let allGeoData = []; // Tüm veriyi hafızada tutacağımız dizi
+
+      // 2. VERİYİ ÇEKME VE HAFIZAYA ALMA
       fetch('istanbul-ultimate.geojson')
         .then(res => res.json())
         .then(data => {
-          const items = data.features || data.elements || [];
-          items.forEach(item => {
-            let lat, lng, tags;
-            if(item.geometry) { lng = item.geometry.coordinates[0]; lat = item.geometry.coordinates[1]; tags = item.properties; }
-            else { lat = item.lat; lng = item.lon; tags = item.tags || {}; }
+          allGeoData = data.features || data.elements || [];
+          renderMarkers('all'); // İlk açılışta tümünü çiz
+        }).catch(err => console.error("Veri hatası:", err));
 
-            if(!lat || !lng) return;
 
-            let name = tags.name || tags.brand || "Ticari Nokta";
-            let type = tags.shop || tags.amenity || "default";
-            let brandKey = name.includes("MİGROS") ? "Migros" : name.includes("BİM") ? "BİM" : name.includes("A101") ? "A101" : name.includes("ŞOK") ? "Şok" : null;
-            let info = (brandKey && categoryData[brandKey]) ? categoryData[brandKey] : (categoryData[type] || categoryData["default"]);
+      // 3. FİLTRELEME VE EKRANA BASMA FONKSİYONU
+      function renderMarkers(sectorFilter) {
+        markersGroup.clearLayers(); // Önce haritadaki eski pinleri temizle
+        
+        allGeoData.forEach(item => {
+          let lat, lng, tags;
+          if(item.geometry) { lng = item.geometry.coordinates[0]; lat = item.geometry.coordinates[1]; tags = item.properties; }
+          else { lat = item.lat; lng = item.lon; tags = item.tags || {}; }
 
-            let mIcon = L.divIcon({
-              className: 'custom-icon',
-              html: `<div class="brand-logo-marker" style="border-color:${info.color}"><i class="fas ${info.icon}" style="color:${info.color}"></i></div>`,
-              iconSize: [32, 32], iconAnchor: [16, 16]
-            });
+          if(!lat || !lng) return;
 
-            markers.addLayer(L.marker([lat, lng], { icon: mIcon }).bindTooltip(`<b>${name}</b>`));
+          let name = tags.name || tags.brand || "Ticari Nokta";
+          let type = tags.shop || tags.amenity || "default";
+          
+          let brandKey = name.includes("MİGROS") ? "Migros" : name.includes("BİM") ? "BİM" : name.includes("A101") ? "A101" : name.includes("ŞOK") ? "Şok" : null;
+          
+          // Sektör Belirleme Mantığı (Overpass etiketlerine göre)
+          let itemSector = "other";
+          if (brandKey || type === "supermarket" || type === "convenience") itemSector = "fmcg";
+          else if (type === "pharmacy") itemSector = "pharmacy";
+          else if (type === "fuel") itemSector = "fuel";
+
+          // Filtre Kontrolü (Seçili sektörle eşleşmiyorsa bu döngüyü atla)
+          if (sectorFilter !== 'all' && itemSector !== sectorFilter) return;
+
+          let info = (brandKey && categoryData[brandKey]) ? categoryData[brandKey] : (categoryData[type] || categoryData["default"]);
+
+          let mIcon = L.divIcon({
+            className: 'custom-icon',
+            html: `<div class="brand-logo-marker" style="border-color:${info.color}"><i class="fas ${info.icon}" style="color:${info.color}"></i></div>`,
+            iconSize: [32, 32], iconAnchor: [16, 16]
           });
-          map.addLayer(markers);
-        }).catch(err => console.error("GeoJSON Yüklenemedi:", err));
+
+          markersGroup.addLayer(L.marker([lat, lng], { icon: mIcon }).bindTooltip(`<b>${name}</b>`));
+        });
+        
+        map.addLayer(markersGroup); // Süzülmüş yeni pinleri haritaya ekle
+      }
+
+      // Sektör Dropdown Değişimi Dinleyicisi
+      document.getElementById('select-sector').addEventListener('change', function(e) {
+        renderMarkers(e.target.value);
+      });
 
 
-      // 5. Basit İl-İlçe-Mahalle Mantığı (Kaskad)
-      const locData = {
-        "34": { "fatih": { name: "Fatih", mah: ["Fındıkzade", "Aksaray"] }, "kadikoy": { name: "Kadıköy", mah: ["Moda", "Caferağa"] } }
+      // 4. BÖLGESEL ODAKLANMA (FLY TO) MANTIĞI
+      // Not: Gerçek sistemde bu veri bir API'den veya JSON'dan gelmelidir.
+      const locationCoords = {
+        "34": { lat: 41.0082, lng: 28.9784, zoom: 10, name: "İstanbul",
+                districts: { 
+                  "besiktas": { name: "Beşiktaş", lat: 41.0428, lng: 29.0075, zoom: 14, mah: ["Levent", "Etiler"] },
+                  "fatih": { name: "Fatih", lat: 41.0142, lng: 28.9484, zoom: 14, mah: ["Aksaray", "Fındıkzade"] } 
+                }
+        },
+        "06": { lat: 39.9334, lng: 32.8597, zoom: 10, name: "Ankara", 
+                districts: { "cankaya": { name: "Çankaya", lat: 39.9208, lng: 32.8541, zoom: 14, mah: ["Kızılay", "Bahçelievler"] } } 
+        },
+        "35": { lat: 38.4192, lng: 27.1287, zoom: 10, name: "İzmir", districts: {} }
       };
-      
-      const selectCity = document.getElementById('select-city');
-      const selectDistrict = document.getElementById('select-district');
-      const selectNeigh = document.getElementById('select-neighborhood');
+
+      const selCity = document.getElementById('select-city');
+      const selDist = document.getElementById('select-district');
+      const selNeigh = document.getElementById('select-neighborhood');
       const displayLoc = document.getElementById('display-location');
 
-      function updateDistricts(city) {
-        selectDistrict.innerHTML = '<option value="">İlçe Seçiniz</option>';
-        if(locData[city]) {
-          Object.keys(locData[city]).forEach(k => selectDistrict.innerHTML += `<option value="${k}">${locData[city][k].name}</option>`);
+      selCity.addEventListener('change', e => {
+        let cityId = e.target.value;
+        selDist.innerHTML = '<option value="">İlçe Seçiniz</option>';
+        selNeigh.innerHTML = '<option value="">Mahalle Seçiniz</option>';
+        
+        if(locationCoords[cityId]) {
+          let city = locationCoords[cityId];
+          displayLoc.innerHTML = `<i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> ${city.name}`;
+          map.flyTo([city.lat, city.lng], city.zoom, { animate: true, duration: 1.5 }); // Haritayı şehre uçur
+          
+          Object.keys(city.districts).forEach(distId => {
+            selDist.innerHTML += `<option value="${distId}">${city.districts[distId].name}</option>`;
+          });
         }
-      }
-      function updateNeigh(city, dist) {
-        selectNeigh.innerHTML = '<option value="">Mahalle Seçiniz</option>';
-        if(locData[city] && locData[city][dist]) {
-          locData[city][dist].mah.forEach(m => selectNeigh.innerHTML += `<option value="${m}">${m}</option>`);
-        }
-      }
-
-      selectCity.addEventListener('change', e => { updateDistricts(e.target.value); updateNeigh(e.target.value, ''); });
-      selectDistrict.addEventListener('change', e => updateNeigh(selectCity.value, e.target.value));
-      selectNeigh.addEventListener('change', e => {
-        if(e.target.value) displayLoc.innerHTML = `<i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> ${e.target.value}, ${selectDistrict.options[selectDistrict.selectedIndex].text}`;
       });
-      
-      updateDistricts("34"); // Sayfa açılışında İstanbul ilçelerini yükle
+
+      selDist.addEventListener('change', e => {
+        let cityId = selCity.value;
+        let distId = e.target.value;
+        selNeigh.innerHTML = '<option value="">Mahalle Seçiniz</option>';
+        
+        if(cityId && distId && locationCoords[cityId].districts[distId]) {
+          let dist = locationCoords[cityId].districts[distId];
+          displayLoc.innerHTML = `<i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> ${dist.name}, ${locationCoords[cityId].name}`;
+          map.flyTo([dist.lat, dist.lng], dist.zoom, { animate: true, duration: 1.5 }); // Haritayı ilçeye uçur
+          
+          dist.mah.forEach(m => selNeigh.innerHTML += `<option value="${m}">${m}</option>`);
+        }
+      });
+
     });
   </script>
 </body>
