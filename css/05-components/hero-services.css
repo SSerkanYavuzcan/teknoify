@@ -1,80 +1,409 @@
-/* 3.3 Hero Section */
+/* ================================================================
+   3.3 YENİ HERO ALANI (Siber Uzay & Solucan Deliği)
+================================================================ */
 .hero {
-  padding-top: 160px; padding-bottom: 80px; min-height: 90vh;
-  display: flex; align-items: center; position: relative; overflow: hidden;
-  
-  /* Arka plana solucan deliği görselini ekliyoruz */
-  background-image: url('../images/wormhole-bg.jpg'); /* Görselin yolunu kendi projene göre güncelle */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.hero-surface {
-  position: absolute; 
-  inset: 0; 
-  z-index: 0; 
-  
-  /* Dönen ışık efekti */
-  background: conic-gradient(from 0deg at 50% 50%, 
-    transparent 0%, 
-    rgba(99, 102, 241, 0.4) 25%, 
-    rgba(244, 63, 94, 0.4) 50%,  
-    transparent 75%, 
-    rgba(14, 165, 233, 0.4) 100% 
-  );
-  mix-blend-mode: color-dodge; 
-  opacity: 0.8;
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 25%, black 45%, transparent 65%);
-  mask-image: radial-gradient(circle at 50% 50%, transparent 25%, black 45%, transparent 65%);
-  animation: spinPortal 15s linear infinite;
-}
-
-@keyframes spinPortal {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.05); }
-  100% { transform: rotate(360deg) scale(1); }
-}
-
-.hero-container {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
-  width: 100%; max-width: var(--container-width); margin: 0 auto; padding: 0 1.5rem;
   position: relative;
-  z-index: 1; /* İçeriğin ışıkların/arkaplanın önünde net durması için */
+  min-height: calc(100vh - 140px);
+  display: flex;
+  align-items: center;
+  padding: 60px 0 80px;
+  overflow: hidden;
 }
 
-.hero-title {
-  font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; font-weight: 800; margin-bottom: 1.5rem;
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.02fr 1fr;
+  gap: 48px;
+  align-items: center;
 }
-.gradient-text {
-  background: linear-gradient(135deg, #fff 30%, var(--primary));
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-}
-.hero-subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 500px; margin-bottom: 2rem; }
-.hero-ctas { display: flex; gap: 1rem; }
 
-/* 3.4 Terminal */
-.hero-terminal {
-  background: #0d0f14; border: 1px solid var(--border-light);
-  border-radius: var(--radius-md); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  font-family: var(--font-mono); overflow: hidden; height: 400px;
-  display: flex; flex-direction: column;
+.hero-copy {
+  max-width: 700px;
+  position: relative;
+  z-index: 2;
 }
-.term-header {
-  background: rgba(255,255,255,0.03); padding: 10px 16px;
-  border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-}
-.dot { width: 10px; height: 10px; border-radius: 50%; }
-.red { background: #ef4444; } .yellow { background: #f59e0b; } .green { background: #10b981; }
-.term-title { margin-left: auto; font-size: 0.8rem; color: var(--text-muted); opacity: 0.6; }
-.term-body {
-  padding: 1.5rem; color: #a5b4fc; font-size: 0.9rem; line-height: 1.6; flex: 1;
-  overflow-y: auto; scroll-behavior: auto; scrollbar-width: none; -ms-overflow-style: none;
-}
-.term-body::-webkit-scrollbar { display: none; }
 
-/* 3.5 Services Grid */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 18px;
+  margin-bottom: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(125,138,255,0.22);
+  background: rgba(9, 13, 28, 0.56);
+  color: #c6ceff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+.hero h1 {
+  margin: 0 0 22px;
+  font-size: clamp(56px, 6vw, 92px);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  font-weight: 800;
+}
+
+.hero h1 .gradient {
+  background: linear-gradient(90deg, #ffffff 0%, #b9b8ff 24%, #8a88ff 55%, #66bfff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  max-width: 620px;
+  margin: 0 0 32px;
+  color: var(--muted);
+  font-size: 25px;
+  line-height: 1.65;
+  letter-spacing: -0.02em;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+/* Sadece Hero Alanındaki Özel Butonlar */
+.hero-actions .btn {
+  height: 62px;
+  padding: 0 26px;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 600;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.hero-actions .btn:hover {
+  transform: translateY(-2px);
+}
+
+.hero-actions .btn-primary {
+  color: white;
+  background: linear-gradient(135deg, #6f7cff 0%, #8d68ff 60%, #58b8ff 100%);
+  box-shadow:
+    0 12px 28px rgba(103, 114, 255, 0.32),
+    0 0 28px rgba(111, 124, 255, 0.22);
+}
+
+.hero-actions .btn-secondary {
+  color: #fff;
+  border: 1px solid rgba(139, 153, 255, 0.28);
+  background: rgba(11, 14, 26, 0.52);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+
+/* ================================================================
+   3.4 WORMHOLE VE 3D ZEMİN EFEKTİ
+================================================================ */
+.hero-visual {
+  position: relative;
+  min-height: 720px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wormhole-wrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.wormhole {
+  position: absolute;
+  width: 760px;
+  height: 760px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(10,14,28,0.98) 0 26%, transparent 27%),
+    conic-gradient(
+      from 0deg,
+      rgba(82, 191, 255, 0.95),
+      rgba(163, 96, 255, 0.95),
+      rgba(111, 124, 255, 0.95),
+      rgba(89, 213, 255, 0.95),
+      rgba(82, 191, 255, 0.95)
+    );
+  filter: blur(0.5px);
+  box-shadow:
+    0 0 70px rgba(111, 124, 255, 0.30),
+    0 0 150px rgba(123, 86, 255, 0.20),
+    inset 0 0 80px rgba(255,255,255,0.08);
+  animation: spin 20s linear infinite;
+  opacity: 0.95;
+}
+
+.wormhole::before {
+  content: "";
+  position: absolute;
+  inset: 48px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(5,8,18,1) 0 40%, rgba(7,11,24,0.95) 55%, transparent 60%),
+    conic-gradient(from 40deg, rgba(111,124,255,0.4), rgba(93,214,255,0.2), rgba(150,96,255,0.38), rgba(111,124,255,0.4));
+  filter: blur(4px);
+}
+
+.wormhole::after {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(151, 103, 255, 0.16) 0, transparent 64%);
+  filter: blur(38px);
+}
+
+.portal-core {
+  position: absolute;
+  width: 280px;
+  height: 420px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(106,188,255,0.45), transparent 60%),
+    linear-gradient(180deg, rgba(20,26,52,0.2), rgba(3,5,14,0.92));
+  filter: blur(2px);
+  box-shadow: inset 0 0 50px rgba(134, 184, 255, 0.18);
+}
+
+.energy-ring {
+  position: absolute;
+  width: 840px;
+  height: 840px;
+  border-radius: 50%;
+  border: 1px solid rgba(111,124,255,0.10);
+  box-shadow: 0 0 120px rgba(111,124,255,0.05);
+}
+
+.hero-floor {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -30px;
+  height: 280px;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.06) 22%, rgba(0,0,0,0.38) 100%),
+    linear-gradient(rgba(111,124,255,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(111,124,255,0.12) 1px, transparent 1px);
+  background-size: auto, 54px 54px, 54px 54px;
+  transform: perspective(380px) rotateX(78deg);
+  transform-origin: center bottom;
+  opacity: 0.7;
+  filter: drop-shadow(0 -12px 30px rgba(111,124,255,0.14));
+}
+
+
+/* ================================================================
+   3.5 KOD PANELİ (TERMINAL)
+================================================================ */
+.code-panel {
+  position: relative;
+  z-index: 2;
+  width: min(760px, 100%);
+  border-radius: 28px;
+  border: 1px solid rgba(124, 137, 255, 0.26);
+  background:
+    linear-gradient(180deg, rgba(11, 14, 28, 0.88), rgba(8, 10, 22, 0.92));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 20px 50px rgba(0,0,0,0.38),
+    0 0 60px rgba(111,124,255,0.12);
+  overflow: hidden;
+}
+
+.code-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(111,124,255,0.08), transparent 22%, transparent 70%, rgba(85,196,255,0.06));
+  pointer-events: none;
+}
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.code-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.file-badge {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #cdd4ff;
+  background: rgba(111, 124, 255, 0.12);
+  border: 1px solid rgba(111,124,255,0.18);
+}
+
+.file-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.code-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.running-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(35, 204, 120, 0.10);
+  border: 1px solid rgba(61, 220, 132, 0.18);
+  color: #71e6a2;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.running-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 12px rgba(61, 220, 132, 0.8);
+}
+
+.code-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 420px;
+  padding: 22px;
+}
+
+.code-editor {
+  flex: 1;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background:
+    linear-gradient(180deg, rgba(4, 6, 16, 0.84), rgba(3, 4, 14, 0.92));
+  padding: 22px 22px 18px;
+  overflow: hidden;
+}
+
+.code-lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.8;
+  color: #cfd6ff;
+  counter-reset: line;
+}
+
+.code-lines li {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 14px;
+  align-items: start;
+  white-space: pre-wrap;
+}
+
+.code-lines li::before {
+  counter-increment: line;
+  content: counter(line);
+  color: #687099;
+  text-align: right;
+  user-select: none;
+}
+
+.code-lines .comment { color: #7e86aa; }
+.code-lines .warn { color: var(--warning); }
+.code-lines .success { color: #2ee68f; }
+.code-lines .accent { color: #6ddcff; }
+
+.code-lines .cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1.2em;
+  background: #fff;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+
+
+/* ================================================================
+   HERO ANIMASYONLARI
+================================================================ */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+
+/* ================================================================
+   HERO RESPONSIVE (Mobil Uyumluluk)
+================================================================ */
+@media (max-width: 1200px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-copy { max-width: 100%; }
+  .hero-visual { min-height: 680px; }
+  .wormhole { width: 640px; height: 640px; }
+  .energy-ring { width: 700px; height: 700px; }
+}
+
+@media (max-width: 900px) {
+  .hero { min-height: auto; padding-top: 40px; }
+  .hero h1 { font-size: clamp(42px, 10vw, 72px); }
+  .hero p { font-size: 19px; }
+  .wormhole { width: 540px; height: 540px; }
+  .energy-ring { width: 600px; height: 600px; }
+  .portal-core { width: 220px; height: 340px; }
+}
+
+@media (max-width: 640px) {
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { justify-content: center; width: 100%; }
+  .wormhole { width: 420px; height: 420px; }
+  .energy-ring { width: 470px; height: 470px; }
+  .hero-floor { height: 200px; }
+}
+
+
+/* ================================================================
+   3.6 SERVICES GRID (ESKİ HALİ KORUNDU)
+================================================================ */
 .services { padding: 4rem 0; }
 .section-header { text-align: center; margin-bottom: 4rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 .section-header h2 { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 1rem; font-weight: 700; }
@@ -88,28 +417,27 @@
 .service-card {
   background: var(--bg-surface); border: 1px solid var(--border-light);
   padding: 2rem; border-radius: var(--radius-md); transition: transform var(--ease-fast);
-  display: flex; flex-direction: column; /* Butonları alta sabitlemek için */
+  display: flex; flex-direction: column; 
 }
 .service-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.15); }
 
 .icon-box {
-  width: 50px; height: 50px; background: rgba(99, 102, 241, 0.1); color: var(--primary);
+  width: 50px; height: 50px; background: rgba(111, 124, 255, 0.1); color: var(--primary);
   display: flex; align-items: center; justify-content: center; border-radius: 10px;
   font-size: 1.25rem; margin-bottom: 1.5rem;
 }
 .service-card h3 { margin-bottom: 0.5rem; font-size: 1.25rem; }
-.service-card p { color: var(--text-muted); font-size: 0.95rem; flex-grow: 1; margin-bottom: 1.5rem; } /* Metin esnekliği için */
+.service-card p { color: var(--text-muted); font-size: 0.95rem; flex-grow: 1; margin-bottom: 1.5rem; } 
 
-/* Hizmet Kartları İçindeki Butonları Hizalama */
 .card-ctas {
     display: flex;
     gap: 10px;
-    margin-top: auto; /* Metinler farklı uzunlukta olsa bile butonları alta iter */
+    margin-top: auto;
     padding-top: 5px;
 }
 
 /* ================================================================
-[LAYER 4] MODULE: LOGIN MODAL
+[LAYER 4] MODULE: LOGIN MODAL (ESKİ HALİ KORUNDU)
 ================================================================
 */
 .modal-overlay {
