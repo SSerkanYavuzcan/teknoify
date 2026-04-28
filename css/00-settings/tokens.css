@@ -1,9 +1,12 @@
 /* ================================================================
 [PROJECT] TEKNOIFY v2.0
-[FILE] tokens.css
+[FILE] style.css
 [STRATEGY] Mobile-First, Performance-Oriented, Modular
 ================================================================
 */
+
+
+
 
 /* ================================================================
 [LAYER 0] DESIGN TOKENS (Variables)
@@ -11,57 +14,38 @@ Tek bir noktadan yönetim merkezi
 ================================================================
 */
 :root {
-  /* --- 1. YENİ SİBER TASARIM RENKLERİ VE ÖLÇÜLERİ (Senin Eklediklerin) --- */
-  --bg: #04050b;
-  --bg-soft: #0a0d1a;
-  --panel: rgba(10, 14, 30, 0.72);
-  --panel-border: rgba(120, 140, 255, 0.22);
-  --text: #f5f7ff;
-  --muted: #b7bdd3;
-  --primary: #6f7cff;
-  --primary-2: #9b6dff;
-  --cyan: #5fd6ff;
-  --success: #3ddc84;
-  --warning: #ffbe3d;
-  
-  /* Efektler ve Gölgeler */
-  --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
-  --glow: 0 0 30px rgba(111, 124, 255, 0.28);
-  
-  /* Ölçüler ve Yuvarlaklıklar */
-  --radius-xl: 28px;
-  --radius-lg: 22px;
-  --radius-md: 16px;
-  --radius-sm: 12px;
-  --container: 1440px;
-  --nav-h: 88px;
-  
-  /* Tipografi */
-  --font: "Inter", "Segoe UI", sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-
-
-  /* --- 2. GERİYE DÖNÜK UYUMLULUK (Sitenin Bozulmaması İçin Köprüler) --- */
-  /* Eski değişkenleri senin yeni harika renklerine bağlıyoruz */
-  
-  --primary-hover: #5a66eb; /* Primary renginin bir ton koyusu */
-  --secondary: var(--cyan);
-  --accent: #f43f5e; /* Hata mesajları için kırmızımsı ton sabit kaldı */
-
-  --bg-body: var(--bg);
-  --bg-surface: var(--bg-soft);
+  /* 0.1 Brand Colors */
+  --primary: #6366f1;       /* Indigo 500 */
+  --primary-hover: #4f46e5; /* Indigo 600 */
+  --secondary: #0ea5e9;     /* Sky 500 */
+  --accent: #f43f5e;        /* Rose 500 (Hata/Dikkat) */
+ 
+  /* 0.2 Surfaces (Dark Mode Core) */
+  --bg-body: #050505;       /* En koyu zemin */
+  --bg-surface: #0f1014;    /* Kartlar/Modallar */
   --bg-input: rgba(255, 255, 255, 0.03);
-  
-  --border-light: var(--panel-border);
-  --border-focus: rgba(111, 124, 255, 0.5);
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(99, 102, 241, 0.5);
 
-  --font-main: var(--font);
-  --text-main: var(--text);
-  --text-muted: var(--muted);
-  
-  --container-width: var(--container);
 
-  /* Animasyon Hızları (Eski formlar için) */
+
+
+  /* 0.3 Typography */
+  --font-main: 'Inter Tight', system-ui, sans-serif;
+  --font-mono: 'Fira Code', 'Consolas', monospace;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+
+
+
+
+  /* 0.4 Spacing & Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --container-width: 1200px;
+ 
+  /* 0.5 Animation Speeds */
   --ease-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --ease-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
