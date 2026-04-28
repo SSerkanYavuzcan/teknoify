@@ -74,62 +74,46 @@
 <main class="page-frame">
 
     <section id="home" class="hero">
-        <div class="hero-floor"></div>
-    
-        <div class="container hero-grid">
-            <div class="hero-copy">
-                <div class="eyebrow">
-                    <span class="running-dot"></span> SİSTEM AKTİF
-                </div>
-                <h1>Geleceğin İş Gücünü <br><span class="gradient">Bugün İnşa Edin</span></h1>
-                <p>Yapay zeka tabanlı otomasyon sistemleri ile işletmenizin verimliliğini maksimum seviyeye çıkarın.</p>
+        <div class="container hero-container">
+            
+            <div class="hero-left">
+                <h1 class="hero-title">Geleceğin İş Gücünü <br> <span class="gradient-text">Bugün İnşa Edin</span></h1>
+                <p class="hero-subtitle">Yapay zeka tabanlı otomasyon sistemleri ile işletmenizin verimliliğini maksimum seviyeye çıkarın.</p>
                 
-                <div class="hero-actions">
+                <div class="hero-ctas">
                     <button class="btn btn-primary trigger-login">Hemen Başla</button>
                     <a href="#services" class="btn btn-secondary">Hizmetlerimiz</a>
                 </div>
             </div>
-    
-            <div class="hero-visual">
-                <div class="wormhole-wrap">
-                    <div class="energy-ring"></div>
-                    <div class="wormhole"></div>
-                    <div class="portal-core"></div>
-                </div>
-    
-                <div class="code-panel">
-                    <div class="code-header">
-                        <div class="code-title">
-                            <div class="file-badge">PY</div>
-                            <span class="file-name">ai_core.py</span>
+
+            <div class="hero-right">
+                <div class="code-window">
+                    <div class="window-header">
+                        <div class="window-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
                         </div>
-                        <div class="code-actions">
-                            <div class="running-badge">
-                                <span class="running-dot"></span> Çalışıyor
-                            </div>
-                        </div>
+                        <div class="window-title">ai_core.py</div>
                     </div>
                     
-                    <div class="code-body">
-                        <div class="code-editor">
-                            <ul class="code-lines">
-                                <li><span class="accent">import</span> neural_network <span class="accent">as</span> brain</li>
-                                <li></li>
-                                <li class="comment"># Step 1: Analyze current efficiency</li>
-                                <li class="warn">>> Analysis: 14% redundant processes detected.</li>
-                                <li></li>
-                                <li class="comment"># Step 2: Refactor and Automate</li>
-                                <li>evo.rewrite_code(target=<span class="success">"legacy_modules"</span>)</li>
-                                <li class="warn">>> Optimizing SQL queries ... [Done]</li>
-                                <li class="success">>> Model Converged. Predictive accuracy: 99.8%</li>
-                                <li></li>
-                                <li class="success">>> EFFICIENCY: MAXIMIZED</li>
-                                <li><span class="cursor"></span></li>
-                            </ul>
-                        </div>
+                    <div class="window-body">
+                        <pre><code><span class="keyword">import</span> neural_network <span class="keyword">as</span> brain
+
+<span class="comment"># Step 1: Analyze current efficiency</span>
+<span class="output">&gt;&gt; Analysis: 14% redundant processes detected.</span>
+
+<span class="comment"># Step 2: Refactor and Automate</span>
+evo.rewrite_code(target=<span class="string">"legacy_modules"</span>)
+<span class="output">&gt;&gt; Optimizing SQL queries ... [Done]</span>
+<span class="success">&gt;&gt; Model Converged. Predictive accuracy: 99.8%</span>
+
+<span class="success">&gt;&gt; EFFICIENCY: MAXIMIZED</span>
+<span class="cursor">_</span></code></pre>
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
     <section id="services" class="services">
@@ -428,7 +412,6 @@
         </div>
     </div>
 </footer>
-
 
 <script src="js/session-manager.js"></script>
 <script src="js/script.js" defer></script>
