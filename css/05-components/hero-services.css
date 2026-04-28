@@ -2,8 +2,8 @@
    3.3 HERO SECTION (Görselli ve Modern Yapı)
 ================================================================ */
 .hero {
-  /* Arka plan görseli buraya bağlandı (.png formatında) */
-  background-image: url('../images/hero-bg.png'); 
+  /* Dosya yoluna bir ../ daha ekledik */
+  background-image: url('../../images/hero-bg.png'); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -11,7 +11,7 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 80px; /* Navbar payı */
+  padding-top: 80px; 
   position: relative;
   overflow: hidden;
 }
