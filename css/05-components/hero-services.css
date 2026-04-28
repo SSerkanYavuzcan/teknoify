@@ -25,19 +25,23 @@
   z-index: 1;
 }
 
+/* Tam ekran görünümü için max-width kaldırıldı ve padding artırıldı */
 .hero-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  gap: 2rem; /* Öğeler biraz daha birbirine yakınlaşabilir */
   align-items: center;
   position: relative;
-  z-index: 2; /* Karartmanın üstünde durması için */
+  z-index: 2;
   width: 100%;
-  max-width: var(--container-width);
+  /* max-width: var(--container-width);  <-- Bunu iptal ettik */
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 5%; /* Kenarlardan esnek boşluk */
 }
 
+.hero-left {
+  padding-left: 5%; /* Sol yazıları kenara daha çok yaklaştırır */
+}
 /* Sol Taraf: Tipografi ve Butonlar */
 .hero-title {
   font-size: clamp(3rem, 5vw, 4.5rem);
@@ -108,7 +112,7 @@
    3.4 MODERN KOD PANELİ (Terminal)
 ================================================================ */
 .code-window {
-  background: rgba(10, 14, 30, 0.4); /* Cam Efekti Yarı Şeffaf Zemin */
+  background: rgba(10, 14, 30, 0.4); 
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -117,8 +121,9 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
   overflow: hidden;
   width: 100%;
-  max-width: 550px;
+  max-width: 650px; /* Terminali biraz daha genişlettik */
   margin-left: auto;
+  margin-right: 5%; /* Sağ kenara biraz daha yaklaştırdık */
 }
 
 .window-header {
