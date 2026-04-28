@@ -2,18 +2,47 @@
 .hero {
   padding-top: 160px; padding-bottom: 80px; min-height: 90vh;
   display: flex; align-items: center; position: relative; overflow: hidden;
+  
+  /* Arka plana solucan deliği görselini ekliyoruz */
+  background-image: url('../images/wormhole-bg.jpg'); /* Görselin yolunu kendi projene göre güncelle */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+
 .hero-surface {
-  position: absolute; inset: 0; z-index: -1;
-  background-size: 40px 40px;
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 80%);
+  position: absolute; 
+  inset: 0; 
+  z-index: 0; 
+  
+  /* Dönen ışık efekti */
+  background: conic-gradient(from 0deg at 50% 50%, 
+    transparent 0%, 
+    rgba(99, 102, 241, 0.4) 25%, 
+    rgba(244, 63, 94, 0.4) 50%,  
+    transparent 75%, 
+    rgba(14, 165, 233, 0.4) 100% 
+  );
+  mix-blend-mode: color-dodge; 
+  opacity: 0.8;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 25%, black 45%, transparent 65%);
+  mask-image: radial-gradient(circle at 50% 50%, transparent 25%, black 45%, transparent 65%);
+  animation: spinPortal 15s linear infinite;
 }
+
+@keyframes spinPortal {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
 .hero-container {
   display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
   width: 100%; max-width: var(--container-width); margin: 0 auto; padding: 0 1.5rem;
+  position: relative;
+  z-index: 1; /* İçeriğin ışıkların/arkaplanın önünde net durması için */
 }
+
 .hero-title {
   font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; font-weight: 800; margin-bottom: 1.5rem;
 }
@@ -24,9 +53,6 @@
 }
 .hero-subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 500px; margin-bottom: 2rem; }
 .hero-ctas { display: flex; gap: 1rem; }
-
-
-
 
 /* 3.4 Terminal */
 .hero-terminal {
@@ -48,17 +74,11 @@
 }
 .term-body::-webkit-scrollbar { display: none; }
 
-
-
-
 /* 3.5 Services Grid */
 .services { padding: 4rem 0; }
 .section-header { text-align: center; margin-bottom: 4rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 .section-header h2 { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 1rem; font-weight: 700; }
 .section-header p { color: var(--text-muted); font-size: 1.1rem; }
-
-
-
 
 .services-grid {
   display: grid;
@@ -72,9 +92,6 @@
 }
 .service-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.15); }
 
-
-
-
 .icon-box {
   width: 50px; height: 50px; background: rgba(99, 102, 241, 0.1); color: var(--primary);
   display: flex; align-items: center; justify-content: center; border-radius: 10px;
@@ -83,9 +100,6 @@
 .service-card h3 { margin-bottom: 0.5rem; font-size: 1.25rem; }
 .service-card p { color: var(--text-muted); font-size: 0.95rem; flex-grow: 1; margin-bottom: 1.5rem; } /* Metin esnekliği için */
 
-
-
-
 /* Hizmet Kartları İçindeki Butonları Hizalama */
 .card-ctas {
     display: flex;
@@ -93,9 +107,6 @@
     margin-top: auto; /* Metinler farklı uzunlukta olsa bile butonları alta iter */
     padding-top: 5px;
 }
-
-
-
 
 /* ================================================================
 [LAYER 4] MODULE: LOGIN MODAL
@@ -109,9 +120,6 @@
 }
 .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
-
-
-
 .modal-container {
   background: #14161c; border: 1px solid rgba(255,255,255,0.1);
   width: 100%; max-width: 420px; padding: 2.5rem;
@@ -120,9 +128,6 @@
   transform: scale(0.95) translateY(10px); transition: transform var(--ease-smooth);
 }
 .modal-overlay.active .modal-container { transform: scale(1) translateY(0); }
-
-
-
 
 .modal-close {
   position: absolute; top: 1rem; right: 1rem; width: 32px; height: 32px;
@@ -137,7 +142,3 @@
 .form-footer { margin-top: 1.5rem; text-align: center; font-size: 0.85rem; }
 .link-sm { color: var(--text-muted); border-bottom: 1px dotted transparent; }
 .link-sm:hover { color: var(--primary); border-color: var(--primary); }
-
-
-
-
