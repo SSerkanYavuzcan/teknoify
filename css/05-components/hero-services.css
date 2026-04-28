@@ -1,245 +1,79 @@
-/* ================================================================
-   3.3 HERO SECTION (Görselli ve Modern Yapı)
-================================================================ */
+/* 3.3 Hero Section */
 .hero {
-  /* Dosya yoluna bir ../ daha ekledik */
-  background-image: url('../../images/hero-bg.png'); 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  padding-top: 80px; 
-  position: relative;
-  overflow: hidden;
+  padding-top: 160px; padding-bottom: 80px; min-height: 90vh;
+  display: flex; align-items: center; position: relative; overflow: hidden;
 }
-
-/* Görselin üzerine metinler okunsun diye çok hafif karartma */
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(4, 5, 11, 0.3);
-  z-index: 1;
+.hero-surface {
+  position: absolute; inset: 0; z-index: -1;
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 80%);
 }
-
-/* Tam ekran görünümü için max-width kaldırıldı ve padding artırıldı */
 .hero-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem; /* Öğeler biraz daha birbirine yakınlaşabilir */
-  align-items: center;
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  /* max-width: var(--container-width);  <-- Bunu iptal ettik */
-  margin: 0 auto;
-  padding: 0 5%; /* Kenarlardan esnek boşluk */
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  width: 100%; max-width: var(--container-width); margin: 0 auto; padding: 0 1.5rem;
 }
-
-.hero-left {
-  padding-left: 5%; /* Sol yazıları kenara daha çok yaklaştırır */
-}
-/* Sol Taraf: Tipografi ve Butonlar */
 .hero-title {
-  font-size: clamp(3rem, 5vw, 4.5rem);
-  line-height: 1.1;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  color: #ffffff;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; font-weight: 800; margin-bottom: 1.5rem;
 }
-
 .gradient-text {
-  background: linear-gradient(90deg, #b4b4ff 0%, #6f7cff 50%, #5fd6ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
+  background: linear-gradient(135deg, #fff 30%, var(--primary));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
 }
+.hero-subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 500px; margin-bottom: 2rem; }
+.hero-ctas { display: flex; gap: 1rem; }
 
-.hero-subtitle {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.7);
-  max-width: 500px;
-  margin-bottom: 2.5rem;
-  line-height: 1.6;
+
+
+
+/* 3.4 Terminal */
+.hero-terminal {
+  background: #0d0f14; border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  font-family: var(--font-mono); overflow: hidden; height: 400px;
+  display: flex; flex-direction: column;
 }
-
-.hero-ctas {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+.term-header {
+  background: rgba(255,255,255,0.03); padding: 10px 16px;
+  border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 8px; flex-shrink: 0;
 }
-
-.hero-ctas .btn {
-  padding: 14px 32px;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.red { background: #ef4444; } .yellow { background: #f59e0b; } .green { background: #10b981; }
+.term-title { margin-left: auto; font-size: 0.8rem; color: var(--text-muted); opacity: 0.6; }
+.term-body {
+  padding: 1.5rem; color: #a5b4fc; font-size: 0.9rem; line-height: 1.6; flex: 1;
+  overflow-y: auto; scroll-behavior: auto; scrollbar-width: none; -ms-overflow-style: none;
 }
+.term-body::-webkit-scrollbar { display: none; }
 
-.hero-ctas .btn-primary {
-  background: linear-gradient(135deg, #6f7cff 0%, #58b8ff 100%);
-  color: white;
-  border: none;
-  box-shadow: 0 10px 30px rgba(111, 124, 255, 0.4);
-}
 
-.hero-ctas .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(111, 124, 255, 0.6);
-}
 
-.hero-ctas .btn-secondary {
-  background: transparent;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
 
-.hero-ctas .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-/* ================================================================
-   3.4 MODERN KOD PANELİ (Terminal)
-================================================================ */
-.code-window {
-  background: rgba(10, 14, 30, 0.4); 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-  width: 100%;
-  max-width: 650px; /* Terminali biraz daha genişlettik */
-  margin-left: auto;
-  margin-right: 5%; /* Sağ kenara biraz daha yaklaştırdık */
-}
-
-.window-header {
-  display: flex;
-  align-items: center;
-  padding: 16px 20px;
-  background: rgba(0, 0, 0, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.window-dots {
-  display: flex;
-  gap: 8px;
-}
-
-.window-dots .dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.dot.red { background: #ff5f56; }
-.dot.yellow { background: #ffbd2e; }
-.dot.green { background: #27c93f; }
-
-.window-title {
-  margin: 0 auto;
-  transform: translateX(-20px);
-  font-family: var(--font-main);
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
-  font-weight: 500;
-}
-
-.window-body {
-  padding: 24px;
-}
-
-.window-body pre {
-  margin: 0;
-  white-space: pre-wrap;
-}
-
-.window-body code {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: #e0e6ed;
-}
-
-/* Terminal Kod Renkleri */
-.keyword { color: #c678dd; } 
-.string { color: #98c379; } 
-.comment { color: #5c6370; font-style: italic; } 
-.output { color: #e5c07b; } 
-.success { color: #56b6c2; } 
-
-.cursor {
-  animation: blink 1s step-end infinite;
-  font-weight: bold;
-}
-
-@keyframes blink { 50% { opacity: 0; } }
-
-/* ================================================================
-   HERO RESPONSIVE (Mobil Uyumluluk)
-================================================================ */
-@media (max-width: 992px) {
-  .hero-container {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 3rem;
-  }
-  .hero-subtitle {
-    margin: 0 auto 2.5rem;
-  }
-  .hero-ctas {
-    justify-content: center;
-  }
-  .code-window {
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 576px) {
-  .hero-title {
-    font-size: 2.5rem;
-  }
-  .hero-ctas {
-    flex-direction: column;
-  }
-  .hero-ctas .btn { width: 100%; }
-}
-
-/* ================================================================
-   3.5 SERVICES GRID (Orijinal Hali)
-================================================================ */
+/* 3.5 Services Grid */
 .services { padding: 4rem 0; }
 .section-header { text-align: center; margin-bottom: 4rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 .section-header h2 { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 1rem; font-weight: 700; }
 .section-header p { color: var(--text-muted); font-size: 1.1rem; }
 
+
+
+
 .services-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  max-width: var(--container-width);
-  margin: 0 auto;
-  padding: 0 1.5rem;
 }
 .service-card {
   background: var(--bg-surface); border: 1px solid var(--border-light);
   padding: 2rem; border-radius: var(--radius-md); transition: transform var(--ease-fast);
-  display: flex; flex-direction: column; 
+  display: flex; flex-direction: column; /* Butonları alta sabitlemek için */
 }
 .service-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.15); }
+
+
+
 
 .icon-box {
   width: 50px; height: 50px; background: rgba(99, 102, 241, 0.1); color: var(--primary);
@@ -247,17 +81,24 @@
   font-size: 1.25rem; margin-bottom: 1.5rem;
 }
 .service-card h3 { margin-bottom: 0.5rem; font-size: 1.25rem; }
-.service-card p { color: var(--text-muted); font-size: 0.95rem; flex-grow: 1; margin-bottom: 1.5rem; } 
+.service-card p { color: var(--text-muted); font-size: 0.95rem; flex-grow: 1; margin-bottom: 1.5rem; } /* Metin esnekliği için */
 
+
+
+
+/* Hizmet Kartları İçindeki Butonları Hizalama */
 .card-ctas {
     display: flex;
     gap: 10px;
-    margin-top: auto;
+    margin-top: auto; /* Metinler farklı uzunlukta olsa bile butonları alta iter */
     padding-top: 5px;
 }
 
+
+
+
 /* ================================================================
-[LAYER 4] MODULE: LOGIN MODAL (Orijinal Hali)
+[LAYER 4] MODULE: LOGIN MODAL
 ================================================================
 */
 .modal-overlay {
@@ -268,6 +109,9 @@
 }
 .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
+
+
+
 .modal-container {
   background: #14161c; border: 1px solid rgba(255,255,255,0.1);
   width: 100%; max-width: 420px; padding: 2.5rem;
@@ -276,6 +120,9 @@
   transform: scale(0.95) translateY(10px); transition: transform var(--ease-smooth);
 }
 .modal-overlay.active .modal-container { transform: scale(1) translateY(0); }
+
+
+
 
 .modal-close {
   position: absolute; top: 1rem; right: 1rem; width: 32px; height: 32px;
