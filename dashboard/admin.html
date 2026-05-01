@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin | Teknoify</title>
+    <title>Admin Paneli | Teknoify</title>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/06-pages/dashboard-portal.css" />
   </head>
@@ -31,7 +31,7 @@
       <section class="portal-shell admin-layout">
         <div class="portal-hero">
           <h1>Kullanıcı Erişim Yönetimi</h1>
-          <p>Kullanıcıların satın aldığı hizmetleri yönetin, erişimleri güvenli şekilde güncelleyin ve impersonation ile deneyimi doğrulayın.</p>
+          <p>Kullanıcı rollerini (Admin/Premium/Member), hesap durumlarını (Aktif/Askıda) ve spesifik proje erişimlerini güvenli bir şekilde yönetin.</p>
         </div>
 
         <div id="admin-status-anchor"></div>
@@ -42,13 +42,15 @@
           <table class="admin-table">
             <thead>
               <tr>
-                <th>Kullanıcı</th>
-                <th>Aldığı Hizmetler</th>
+                <th>Kullanıcı Bilgileri</th>
+                <th>Rol & Durum</th>
+                <th>Proje Erişimleri</th>
                 <th>Aksiyonlar</th>
               </tr>
             </thead>
 
-            <tbody id="admin-user-table-body"></tbody>
+            <tbody id="admin-user-table-body">
+              </tbody>
           </table>
         </div>
 
