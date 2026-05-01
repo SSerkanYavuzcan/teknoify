@@ -111,14 +111,6 @@
   box-shadow: 0 10px 40px rgba(99, 102, 241, 0.15);
 }
 
-.adv-project-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 20%; width: 60%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.8), transparent);
-  opacity: 0.5;
-}
-
 .adv-project-img-wrapper {
   flex-shrink: 0;
   width: 220px;
@@ -234,6 +226,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
   transition: 0.3s;
@@ -245,19 +238,8 @@
   transform: translateY(-2px);
 }
 
-.btn-outline-dark {
-  background: transparent;
-  color: #e2e8f0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
 /* =========================================================
-   4. TEKNOIFY AI CHATBOT VE TRIGGER BUTONU
+   4. TEKNOIFY AI CHATBOT, TRIGGER VE DESTEK FORMU
    ========================================================= */
 .chat-trigger-btn {
   position: fixed;
@@ -285,9 +267,9 @@
 .ai-chat-window {
   position: fixed;
   bottom: 25px;
-  right: -450px; /* Başlangıçta dışarıda */
+  right: -450px;
   width: 380px;
-  height: 580px;
+  height: 620px; /* Form için biraz uzattık */
   background: #0b1120;
   border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 20px;
@@ -339,7 +321,6 @@
   color: #94a3b8;
   font-size: 24px;
   cursor: pointer;
-  line-height: 1;
 }
 
 .chat-body {
@@ -349,8 +330,6 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(99, 102, 241, 0.2) transparent;
 }
 
 .ai-msg, .user-msg {
@@ -375,6 +354,55 @@
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
+/* Chatbot Destek Formu */
+.chat-support-form {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    animation: chatFormIn 0.3s ease;
+}
+
+.chat-support-form input, 
+.chat-support-form textarea {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    padding: 10px;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.chat-support-form textarea { height: 80px; resize: none; }
+.chat-support-form input:focus { border-color: #4f46e5; }
+
+.file-upload-wrap label {
+    display: block;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-align: center;
+    cursor: pointer;
+}
+
+.file-upload-wrap label:hover {
+    border-color: #4f46e5;
+    color: #fff;
+}
+
+@keyframes chatFormIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .chat-footer {
   padding: 15px;
   background: rgba(15, 23, 42, 0.8);
@@ -386,7 +414,6 @@
   gap: 8px;
   margin-bottom: 12px;
   overflow-x: auto;
-  padding-bottom: 5px;
 }
 
 .chat-quick-actions button {
@@ -398,29 +425,15 @@
   font-size: 0.75rem;
   cursor: pointer;
   white-space: nowrap;
-  transition: 0.2s;
 }
 
 .chat-quick-actions button:hover {
   background: #4f46e5;
   color: #fff;
-  border-color: #4f46e5;
 }
 
-.chat-input-area {
-  display: flex;
-  gap: 10px;
-}
-
-.chat-input-area input {
-  flex: 1;
-  background: #0f172a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
-  padding: 10px 15px;
-  border-radius: 10px;
-  outline: none;
-}
+.chat-input-area { display: flex; gap: 10px; }
+.chat-input-area input { flex: 1; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 10px; border-radius: 10px; }
 
 #btn-send-message {
   background: #4f46e5;
@@ -439,47 +452,19 @@
    5. ADMİN PANELİ KODLARI (KORUNAN ALAN)
    ========================================================= */
 .admin-layout { display: grid; gap: 20px; }
-.admin-status { padding: 10px 14px; border-radius: 10px; border: 1px solid transparent; font-size: 0.95rem; }
-.admin-status--info { background: rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.4); }
-.admin-status--ok { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.45); }
-.admin-status--error { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.45); }
-.impersonation-banner { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02); }
 .admin-table-wrap { border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; overflow: hidden; background: rgba(8, 10, 22, 0.85); }
 .admin-table { width: 100%; border-collapse: collapse; }
-.admin-table th, .admin-table td { padding: 16px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.08); vertical-align: top; }
-.admin-table thead th { font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); background: rgba(255, 255, 255, 0.02); }
-.service-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(115, 103, 240, 0.4); background: rgba(115, 103, 240, 0.12); color: #e9e7ff; }
+.admin-table th, .admin-table td { padding: 16px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.admin-table thead th { font-size: 0.82rem; text-transform: uppercase; color: #64748b; background: rgba(255, 255, 255, 0.02); }
 
 /* =========================================================
-   6. RESPONSIVE AYARLAR
+   6. RESPONSIVE
    ========================================================= */
-@media (max-width: 960px) {
-  .admin-table-wrap { overflow-x: auto; }
-  .admin-table { min-width: 840px; }
-}
-
 @media (max-width: 768px) {
-  .adv-project-card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
-  }
-  .adv-project-header {
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  .adv-tags {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .adv-project-footer {
-    flex-direction: column;
-    gap: 16px;
-  }
-  .ai-chat-window {
-    width: calc(100% - 40px);
-    height: 500px;
-  }
+  .adv-project-card { flex-direction: column; padding: 20px; text-align: center; }
+  .adv-project-img-wrapper { width: 100%; height: 180px; margin-bottom: 15px; }
+  .adv-project-header { flex-direction: column; align-items: center; gap: 10px; }
+  .adv-tags { justify-content: center; flex-wrap: wrap; }
+  .adv-project-footer { flex-direction: column; gap: 15px; }
+  .ai-chat-window { width: calc(100% - 40px); height: 550px; }
 }
