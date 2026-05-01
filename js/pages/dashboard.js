@@ -252,19 +252,36 @@ function renderAdvancedProjects(projects) {
 }
 
 async function init() {
+    // 1. İmpersonation (Görünüm Değiştirme) Banner'ını göster (Eğer aktifse)
+    renderImpersonationBanner();
+
     const session = await requireAuth();
     if (!session) return;
 
-    // Önce konfigürasyonları çek
+    // 2. Önce konfigürasyonları çek (EmailJS anahtarları vb. için)
     await fetchSystemConfigs();
 
-    if (qs("#session-user-name")) qs("#session-user-name").textContent = session.name;
-    if (qs("#admin-link")) qs("#admin-link").style.display = (session.isAdmin || session.role?.type === "admin") ? "block" : "none";
-    if (qs("#logout-btn")) qs("#logout-btn").addEventListener("click", logout);
+    // 3. Kullanıcı adını ekrana yazdır (profile içinden veya ana yapıdan)
+    if (qs("#session-user-name")) {
+        const userName = session.profile?.fullName || session.fullName || session.name || session.email?.split('@')[0] || "Kullanıcı";
+        qs("#session-user-name").textContent = userName;
+    }
+    
+    // 4. Admin Linkinin Görünürlüğü (Kullanıcı admin ise göster)
+    const isAdminUser = session.isAdmin || session.role?.type === "admin";
+    if (qs("#admin-link")) {
+        qs("#admin-link").style.display = isAdminUser ? "block" : "none";
+    }
+    
+    if (qs("#logout-btn")) {
+        qs("#logout-btn").addEventListener("click", logout);
+    }
 
+    // 5. Destek Modülü ve Chatbot Başlatma
     updateSupportStatus(session);
     initAIChat(session);
 
+    // 6. Projeleri Veritabanından Çekme ve Yetki Kontrolü
     try {
         const querySnapshot = await getDocs(collection(db, "projects"));
         const activeProjects = [];
@@ -273,9 +290,17 @@ async function init() {
         querySnapshot.forEach((doc) => {
             const projectId = doc.id;
             const data = doc.data();
+            
+            // Proje genel olarak kapalıysa atla
             if (data.config?.isActive === false) return;
 
-            const hasAccess = session.isAdmin || (session.projectAccess && session.projectAccess[projectId] === true);
+            // ERİŞİM KONTROL MANTIĞI
+            // projectAccess bilgisini "profile" içinden veya dışarıdan yakala
+            const accessObj = session.profile?.projectAccess || session.projectAccess || {};
+            
+            // Eğer kullanıcı adminse VEYA projectAccess içinde bu proje 'true' ise yetki ver
+            const hasAccess = isAdminUser || accessObj[projectId] === true;
+
             if (hasAccess) {
                 const folderPath = data.config?.folderPath || `dashboard/${projectId}`;
                 const entryPoint = data.config?.entryPoint || "index.html";
@@ -294,14 +319,18 @@ async function init() {
             }
         });
 
+        // 7. İstatistik Kartlarını Güncelle
         if (qs("#stat-active-projects")) qs("#stat-active-projects").textContent = activeProjects.length;
         if (qs("#stat-tools")) qs("#stat-tools").textContent = activeProjects.length;
+        
         const lastUpdateEl = qs("#dashboard-stats .stat-box:last-child .stat-value");
         if (lastUpdateEl) lastUpdateEl.textContent = latestGlobalUpdate;
 
+        // 8. İzin verilen projeleri ekrana çiz
         renderAdvancedProjects(activeProjects);
+        
     } catch (error) {
-        console.error("Dashboard başlatma hatası:", error);
+        console.error("Dashboard projeleri başlatılırken hata oluştu:", error);
     }
 }
 
