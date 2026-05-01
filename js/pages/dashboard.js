@@ -95,12 +95,40 @@ window.sendChatMessage = (msg) => {
     chatBody.scrollTop = chatBody.scrollHeight;
 
     setTimeout(() => {
-        let aiResp = "İsteğinizi aldım. Yapay zeka modelimiz şu an isteğinizi analiz ediyor.";
-        if (msg.toLowerCase().includes("proje")) aiResp = "Hesabınızda 1 adet aktif proje (Geo Intelligence) tanımlı görünüyor.";
-        if (msg.toLowerCase().includes("destek")) aiResp = "Destek talebiniz sisteme iletildi. En kısa sürede size dönüş yapacağız.";
-        
-        const aiDiv = createEl("div", { className: "ai-msg", text: aiResp });
-        chatBody.append(aiDiv);
+        if (msg.toLowerCase().includes("destek")) {
+            const aiDiv = createEl("div", { 
+                className: "ai-msg", 
+                text: "Destek talebinizi ilgili birimlere ilettik. Destek talebinizi bu form içerisinde belirtirseniz size çok daha hızlı destek olabiliriz:" 
+            });
+            chatBody.append(aiDiv);
+
+            const formDiv = createEl("div", { className: "chat-support-form" });
+            formDiv.innerHTML = `
+                <input type="text" id="support-subject" placeholder="Konu (Örn: Veri Hatası)">
+                <textarea id="support-content" placeholder="Sorununuzu detaylandırın..."></textarea>
+                <div class="file-upload-wrap">
+                    <label for="support-file"><i class="fa-solid fa-paperclip"></i> Dosya Ekle (Görsel/PDF)</label>
+                    <input type="file" id="support-file" hidden onchange="this.previousElementSibling.innerText = this.files[0].name">
+                </div>
+                <button id="btn-submit-support" class="btn-glow">Talebi Gönder</button>
+            `;
+            chatBody.append(formDiv);
+
+            qs("#btn-submit-support").onclick = () => {
+                const sub = qs("#support-subject").value;
+                const con = qs("#support-content").value;
+                if(!sub || !con) return alert("Lütfen gerekli alanları doldurun.");
+                
+                formDiv.innerHTML = `<p style="color:#22c55e; font-size:0.85rem; text-align:center;"><i class="fa-solid fa-check-circle"></i> Talebiniz info@teknoify.com adresine iletildi.</p>`;
+                chatBody.scrollTop = chatBody.scrollHeight;
+            };
+        } else {
+            let aiResp = "İsteğinizi aldım. Yapay zeka modelimiz şu an analiz ediyor.";
+            if (msg.toLowerCase().includes("proje")) aiResp = "Hesabınızda 1 adet aktif proje (Geo Intelligence) tanımlı görünüyor.";
+            
+            const aiDiv = createEl("div", { className: "ai-msg", text: aiResp });
+            chatBody.append(aiDiv);
+        }
         chatBody.scrollTop = chatBody.scrollHeight;
     }, 800);
 };
