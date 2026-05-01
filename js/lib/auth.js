@@ -149,7 +149,8 @@ export async function logout() {
   try {
     await signOut(auth);
   } finally {
-    window.location.replace(`${getLoginPath()}?loggedOut=1`);
+    // Çıkış yapıldığında doğrudan sitenin ana sayfasına yönlendir
+    window.location.replace("/");
   }
 }
 
