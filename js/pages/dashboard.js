@@ -6,49 +6,74 @@ import { createEl, qs } from "../utils/dom.js";
 function resolveProjectUrl(path, projectId = "") {
   if (!path) return "#";
   let normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const impUid = localStorage.getItem("teknoify_impersonate_uid");
-  if (!impUid) return normalizedPath;
-  return `${normalizedPath}${normalizedPath.includes('?') ? '&' : '?'}imp_uid=${impUid}`;
+  return normalizedPath;
 }
 
 function updateSupportStatus() {
   const statusEl = qs("#dashboard-stats .stat-box:nth-child(3) .stat-value");
+  const boxEl = qs("#dashboard-stats .stat-box:nth-child(3)");
   if (!statusEl) return;
 
   const now = new Date();
   const hours = now.getHours();
+  const isWorkHours = hours >= 9 && hours < 18;
   
-  if (hours >= 9 && hours < 18) {
-    statusEl.textContent = "Aktif";
-    statusEl.style.color = "#22c55e";
-  } else {
-    statusEl.textContent = "Pasif";
-    statusEl.style.color = "#ef4444";
+  statusEl.textContent = isWorkHours ? "Aktif" : "Pasif";
+  statusEl.style.color = isWorkHours ? "#22c55e" : "#ef4444";
+  boxEl.style.cursor = "pointer";
+  
+  if (!boxEl.onclick) {
+    boxEl.onclick = () => openSupportChat();
   }
 }
 
+function openSupportChat() {
+    let chatWrap = qs("#tk-ai-chat");
+    if (!chatWrap) {
+        chatWrap = createEl("div", { id: "tk-ai-chat", className: "ai-chat-window" });
+        chatWrap.innerHTML = `
+            <div class="chat-header">
+                <span>Teknoify AI Destek</span>
+                <button onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+            <div class="chat-body" id="chat-messages">
+                <p class="ai-msg">Selam! Ben Teknoify AI. Size nasıl yardımcı olabilirim?</p>
+            </div>
+            <div class="chat-suggestions">
+                <button onclick="sendQuickMsg('Projem neden yüklenmiyor?')">Proje Yükleme Sorunu</button>
+                <button onclick="sendQuickMsg('Yeni veri ne zaman gelir?')">Veri Güncelleme</button>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" placeholder="Mesajınızı yazın..." id="chat-input">
+                <button id="send-chat">Gönder</button>
+            </div>
+        `;
+        document.body.append(chatWrap);
+    }
+}
+
+window.sendQuickMsg = (msg) => {
+    const body = qs("#chat-messages");
+    body.innerHTML += `<p class="user-msg">${msg}</p>`;
+    setTimeout(() => {
+        body.innerHTML += `<p class="ai-msg">Bu konuda size yardımcı olmamı ister misiniz? Uzman ekibimize bildirim gönderiyorum.</p>`;
+        body.scrollTop = body.scrollHeight;
+    }, 1000);
+};
+
 function renderAdvancedProjects(projects) {
   const list = qs("#project-list");
-  const empty = qs("#project-empty");
-  if (!list || !empty) return;
-
+  if (!list) return;
   list.innerHTML = "";
-
-  if (!projects.length) {
-    empty.style.display = "block";
-    return;
-  }
-
-  empty.style.display = "none";
 
   projects.forEach((project) => {
     const card = createEl("div", { className: "adv-project-card" });
-    
-    // Kart İçeriği (HTML Şablonu)
+    const imgContent = project.imageURL 
+        ? `<img src="${project.imageURL}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`
+        : `<i class="${project.icon || 'fa-solid fa-earth-americas'}"></i>`;
+
     card.innerHTML = `
-      <div class="adv-project-img-wrapper">
-        <i class="${project.icon || 'fa-solid fa-earth-americas'}"></i>
-      </div>
+      <div class="adv-project-img-wrapper">${imgContent}</div>
       <div class="adv-project-content">
         <div class="adv-project-header">
           <h3>${project.name}</h3>
@@ -61,10 +86,10 @@ function renderAdvancedProjects(projects) {
           <span class="adv-tag teal">Dashboard</span>
         </div>
         <div class="adv-project-footer">
-          <div class="adv-date"><i class="fa-solid fa-calendar-day"></i> Son güncelleme: ${project.lastUpdate || 'Bugün'}</div>
+          <div class="adv-date"><i class="fa-solid fa-calendar-day"></i> Son güncelleme: ${project.lastUpdate}</div>
           <div class="adv-actions">
-            <a href="${project.url}" class="btn-glow"><i class="fa-solid fa-play"></i> Projeyi Başlat</a>
-            <button class="btn-outline-dark">Detaylar <i class="fa-solid fa-chevron-right"></i></button>
+            <a href="${project.url}" class="btn-glow">Projeyi Başlat</a>
+            <button class="btn-outline-dark">Detaylar</button>
           </div>
         </div>
       </div>
@@ -77,57 +102,33 @@ async function init() {
   const session = await requireAuth();
   if (!session) return;
 
-  if (qs("#session-user-name")) qs("#session-user-name").textContent = session.name;
-  if (qs("#admin-link")) qs("#admin-link").style.display = (session.isAdmin || session.role?.type === "admin") ? "block" : "none";
-  if (qs("#logout-btn")) qs("#logout-btn").addEventListener("click", logout);
-
-  // Destek Durumu Kontrolü
+  qs("#session-user-name").textContent = session.name;
   updateSupportStatus();
-  setInterval(updateSupportStatus, 60000); // Dakikada bir kontrol et
 
   try {
     const querySnapshot = await getDocs(collection(db, "projects"));
     const activeProjects = [];
-    let latestGlobalUpdate = null;
 
     querySnapshot.forEach((doc) => {
+      const data = doc.data();
       const projectId = doc.id;
-      const projectData = doc.data();
-
-      if (projectData.config?.isActive === false) return;
-
-      const hasAccess = session.isAdmin || (session.projectAccess && session.projectAccess[projectId] === true);
-
-      if (hasAccess) {
-        const folderPath = projectData.config?.folderPath || `dashboard/${projectId}`;
-        const entryPoint = projectData.config?.entryPoint || "index.html";
-        const projectUpdate = projectData.audit?.lastUpdate || "Bugün";
-
+      if (data.config?.isActive !== false && (session.isAdmin || session.projectAccess?.[projectId])) {
         activeProjects.push({
           id: projectId,
-          name: projectData.details?.name || projectId,
-          description: projectData.details?.description || "",
-          icon: projectData.details?.icon,
-          url: resolveProjectUrl(`${folderPath}/${entryPoint}`, projectId),
-          lastUpdate: projectUpdate
+          name: data.details?.name || projectId,
+          description: data.details?.description || "",
+          icon: data.details?.icon,
+          imageURL: data.details?.imageURL, // Firestore'a bu alanı eklemelisin
+          url: resolveProjectUrl(data.config?.folderPath + "/" + data.config?.entryPoint),
+          lastUpdate: data.audit?.lastUpdate || "Bugün"
         });
-
-        latestGlobalUpdate = projectUpdate;
       }
     });
 
-    // İstatistikleri Güncelle
-    if (qs("#stat-active-projects")) qs("#stat-active-projects").textContent = activeProjects.length;
-    if (qs("#stat-tools")) qs("#stat-tools").textContent = activeProjects.length;
-    if (latestGlobalUpdate && qs("#dashboard-stats .stat-box:last-child .stat-value")) {
-        qs("#dashboard-stats .stat-box:last-child .stat-value").textContent = latestGlobalUpdate;
-    }
-
+    qs("#stat-active-projects").textContent = activeProjects.length;
+    qs("#stat-tools").textContent = activeProjects.length;
     renderAdvancedProjects(activeProjects);
-
-  } catch (error) {
-    console.error("Dashboard hatası:", error);
-  }
+  } catch (e) { console.error(e); }
 }
 
 init();
