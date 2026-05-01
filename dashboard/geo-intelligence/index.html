@@ -12,8 +12,8 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
   
-  <link rel="stylesheet" href="../../../css/dashboard.css?v=8">
-  <link rel="stylesheet" href="../../../css/analysis.css?v=8">
+  <link rel="stylesheet" href="../../css/dashboard.css?v=8">
+  <link rel="stylesheet" href="../../css/analysis.css?v=8">
 
   <style>
     .geo-analysis-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; height: calc(100vh - 120px); width: 100%; }
@@ -46,10 +46,14 @@
 
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-sidebar-nav"></nav>
+    <nav id="tk-sidebar-nav">
+       <a id="nav-back-link" href="#" class="menu-item" style="color: #94a3b8; margin-bottom: 15px;">
+         <i class="fas fa-arrow-left"></i> <span>Panele Dön</span>
+       </a>
+    </nav>
     <div class="menu-spacer"></div>
     <div class="sidebar-footer">
-      <a href="#" onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
+      <a href="#" onclick="window.logoutApp()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
       <button class="btn-collapse" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
     </div>
   </aside>
@@ -119,6 +123,34 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+  <script type="module">
+    import { requireAuth, logout } from "../../js/lib/auth.js";
+
+    // HTML'deki onclick handler'ı için global
+    window.logoutApp = logout;
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 1. Güvenlik Kontrolü ve Profil Verisini Çekme
+      const session = await requireAuth();
+      if (!session) return; // Yetkisi yoksa atılacak
+
+      // 2. Sağ Üst Profil Güncellemesi
+      const userNameDisplay = document.getElementById("user-name-display");
+      const userAvatar = document.getElementById("user-avatar");
+      
+      if (userNameDisplay) userNameDisplay.textContent = session.name;
+      if (userAvatar) userAvatar.textContent = session.name.charAt(0).toUpperCase();
+
+      // 3. Sol Menü (Geri Dön) Linkinin Yönlendirilmesi
+      const backLink = document.getElementById("nav-back-link");
+      if (backLink) {
+        // Eğer admin ise admin.html'e dönsün, yoksa dashboard ana sayfasına (index.html) dönsün
+        backLink.href = session.isAdmin ? "../admin.html" : "../index.html";
+      }
+    });
+  </script>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -196,7 +228,6 @@
 
 
       // 4. BÖLGESEL ODAKLANMA (FLY TO) MANTIĞI
-      // Not: Gerçek sistemde bu veri bir API'den veya JSON'dan gelmelidir.
       const locationCoords = {
         "34": { lat: 41.0082, lng: 28.9784, zoom: 10, name: "İstanbul",
                 districts: { 
