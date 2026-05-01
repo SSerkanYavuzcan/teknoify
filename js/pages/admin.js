@@ -159,16 +159,22 @@ function goToUserAs(uid) {
 function createRow({ user, projects, entitledSet, stateMap, session }) {
   const tr = createEl("tr", { className: "admin-row" });
 
+  // Veritabanı yapısına göre profile objesini alıyoruz
+  const profile = user.profile || {};
+
   // 1. SÜTUN: KULLANICI BİLGİLERİ (İsim(ID) ve Altında Email)
   const tdUser = createEl("td", { className: "admin-user-cell" });
-  const fullName = user.fullName || user.name || (user.email ? user.email.split("@")[0] : "İsimsiz Kullanıcı");
+  
+  // İsmi ve Emaili "profile" objesinin içinden çekiyoruz
+  const fullName = profile.fullName || user.fullName || user.name || (profile.email ? profile.email.split("@")[0] : "İsimsiz Kullanıcı");
+  const email = profile.email || user.email || "Email belirtilmemiş";
   
   const nameLine = createEl("div", { className: "admin-user-name" });
   nameLine.innerHTML = `<strong>${fullName}</strong> <span style="font-size: 0.85em; opacity: 0.6; font-weight: normal;">(${user.id})</span>`;
   
   const emailLine = createEl("div", { 
       className: "admin-user-meta", 
-      text: user.email || "Email belirtilmemiş" 
+      text: email 
   });
   emailLine.style.color = "#a1a1aa";
   emailLine.style.fontSize = "0.85em";
@@ -176,50 +182,54 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   
   tdUser.append(nameLine, emailLine);
 
-  // 2. SÜTUN: ROL VE DURUM
+  // 2. SÜTUN: ROL VE DURUM (Sadece isimleri büyük harfle)
   const tdRole = createEl("td", { className: "admin-role-cell" });
   tdRole.style.verticalAlign = "middle";
   
-  // Obje kontrolü (type ve status bilgisini çekmek için)
-  const roleType = (typeof user.role === 'object' && user.role !== null) ? (user.role.type || 'Belirtilmemiş') : (user.role || 'user');
-  const roleStatus = (typeof user.role === 'object' && user.role !== null) ? (user.role.status || 'Belirtilmemiş') : (user.status || 'Aktif');
+  const roleType = (typeof user.role === 'object' && user.role !== null) ? (user.role.type || 'member') : (user.role || 'member');
+  const roleStatus = (typeof user.role === 'object' && user.role !== null) ? (user.role.status || 'active') : (user.status || 'active');
+
+  // İlk harfleri büyütelim (Member, Admin, Active vb.)
+  const capRole = roleType.charAt(0).toUpperCase() + roleType.slice(1);
+  const capStatus = roleStatus.charAt(0).toUpperCase() + roleStatus.slice(1);
 
   tdRole.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 4px;">
-          <span style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.8em; display: inline-block; width: fit-content;">
-              Rol: <strong>${roleType}</strong>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500; letter-spacing: 0.5px;">
+              ${capRole}
           </span>
-          <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; display: inline-block; width: fit-content;">
-              Durum: <strong>${roleStatus}</strong>
+          <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500; letter-spacing: 0.5px;">
+              ${capStatus}
           </span>
       </div>
   `;
 
-  // 3. SÜTUN: PROJE ERİŞİMLERİ (Checkboxlar)
+  // 3. SÜTUN: PROJE ERİŞİMLERİ (projectAccess içindeki true olanlar)
   const tdProjects = createEl("td", { className: "admin-services-cell" });
   const wrap = createEl("div", { className: "admin-service-grid" });
+  wrap.style.display = "flex";
+  wrap.style.flexWrap = "wrap";
+  wrap.style.gap = "6px";
 
-  const setForUser = new Set(entitledSet);
-  stateMap.set(user.id, setForUser);
+  // Sadece değeri "true" olan projeleri filtreliyoruz
+  const accessObj = user.projectAccess || {};
+  const allowedIds = Object.keys(accessObj).filter(k => accessObj[k] === true);
 
-  projects.forEach((p) => {
-    const item = createEl("label", { className: "service-pill" });
+  if (allowedIds.length === 0) {
+      wrap.innerHTML = `<span style="font-size: 0.85em; color: #a1a1aa; font-style: italic;">Erişim yok</span>`;
+  } else {
+      allowedIds.forEach(id => {
+          // Sistemdeki proje listesinden projenin gerçek adını buluyoruz
+          const proj = projects.find(p => p.id === id);
+          const pName = proj ? proj.name : id; // Bulamazsa fallback olarak ID yazsın
 
-    const cb = makeCheckbox({
-      checked: setForUser.has(p.id),
-      onChange: (isChecked) => {
-        const s = stateMap.get(user.id) || new Set();
-        if (isChecked) s.add(p.id);
-        else s.delete(p.id);
-        stateMap.set(user.id, s);
-      }
-    });
-
-    const text = createEl("span", { className: "service-pill-text", text: p.name });
-    item.append(cb, text);
-    wrap.append(item);
-  });
-
+          // Bulunan projeleri şık bir badge (etiket) olarak ekliyoruz
+          const badge = createEl("span", { text: pName });
+          badge.style.cssText = "background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 0.8em; font-weight: 500;";
+          wrap.append(badge);
+      });
+  }
+  
   tdProjects.append(wrap);
 
   // 4. SÜTUN: AKSİYONLAR
@@ -246,7 +256,7 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
 
   tdActions.append(impBtn, stopBtn);
 
-  // Satıra tüm sütunları ekle (4 Sütun oldu)
+  // Satıra tüm sütunları ekle
   tr.append(tdUser, tdRole, tdProjects, tdActions);
   return tr;
 }
