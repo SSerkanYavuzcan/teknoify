@@ -34,6 +34,28 @@ function resolveProjectUrl(path) {
     return `${normalizedPath}${normalizedPath.includes('?') ? '&' : '?'}imp_uid=${impUid}`;
 }
 
+function renderImpersonationBanner() {
+    const impUid = localStorage.getItem("teknoify_impersonate_uid");
+    if (!impUid) return;
+
+    const banner = createEl("div", { className: "impersonation-warning" });
+    // Turuncu/Sarı tonlarında dikkat çekici bir banner tasarımı
+    banner.style.cssText = "background: #f59e0b; color: #fff; padding: 10px; text-align: center; font-weight: 500; font-size: 0.9rem; z-index: 9999; position: relative; display: flex; justify-content: center; align-items: center; gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.5);";
+    
+    banner.innerHTML = `
+        <span><i class="fa-solid fa-user-secret"></i> Şu an farklı bir kullanıcı görünümündesiniz.</span>
+        <button id="btn-end-imp" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s;">Geri Dön</button>
+    `;
+    
+    document.body.prepend(banner);
+
+    // Geri dön butonuna tıklanınca imp_uid silinir ve admin paneline dönülür
+    document.getElementById("btn-end-imp").onclick = () => {
+        localStorage.removeItem("teknoify_impersonate_uid");
+        window.location.href = "/dashboard/admin"; // Yolu kendi admin HTML yoluna göre ayarlayabilirsin
+    };
+}
+
 function updateSupportStatus(session) {
     const statusEl = qs("#dashboard-stats .stat-box:nth-child(3) .stat-value");
     const boxEl = qs("#dashboard-stats .stat-box:nth-child(3)");
