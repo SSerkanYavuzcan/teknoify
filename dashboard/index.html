@@ -6,10 +6,9 @@
         <title>Dashboard | Teknoify</title>
         <link rel="stylesheet" href="../css/style.css" />
         <link rel="stylesheet" href="../css/06-pages/dashboard-portal.css" />
-        <link rel="stylesheet" href="../css/06-pages/home.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     </head>
-    <body>
+    <body class="dark-dashboard">
         <header class="header" style="position: static">
             <nav class="navbar">
                 <div class="nav-container">
@@ -36,15 +35,47 @@
 
         <main class="page-frame portal-frame">
             <section class="portal-shell">
-                <div class="portal-hero">
-                    <h1>Satın Aldığınız Projeler</h1>
-                    <p>Hesabınıza tanımlanan otomasyon projeleri aşağıda listelenir. Analiz panellerinize ve özel araçlarınıza tek tıkla erişebilirsiniz.</p>
+                
+                <div class="dashboard-stats-grid" id="dashboard-stats">
+                    <div class="stat-box">
+                        <div class="stat-icon" style="color: #a855f7; background: rgba(168, 85, 247, 0.1);"><i class="fa-solid fa-rocket"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Aktif Proje</span>
+                            <h3 class="stat-value" id="stat-active-projects">Yükleniyor..</h3>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"><i class="fa-solid fa-briefcase"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Kullanılabilir Araç</span>
+                            <h3 class="stat-value" id="stat-tools">Yükleniyor..</h3>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon" style="color: #22c55e; background: rgba(34, 197, 94, 0.1);"><i class="fa-solid fa-shield-check"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Destek Durumu</span>
+                            <h3 class="stat-value text-success" style="color: #22c55e;">Aktif</h3>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon" style="color: #a855f7; background: rgba(168, 85, 247, 0.1);"><i class="fa-solid fa-calendar-alt"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Son Güncelleme</span>
+                            <h3 class="stat-value text-info" style="color: #38bdf8;">Bugün</h3>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="services-grid portal-services" id="project-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="projects-section-header" style="margin-top: 40px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <div class="section-indicator" style="width: 4px; height: 20px; background: #6366f1; border-radius: 4px;"></div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Projeleriniz</h2>
+                </div>
+
+                <div id="project-list" class="advanced-project-list">
                     </div>
 
-                <div id="project-empty" style="display: none; text-align: center; margin-top: 50px; padding: 40px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                <div id="project-empty" style="display: none; text-align: center; margin-top: 50px; padding: 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
                     <i class="fa-solid fa-folder-open" style="font-size: 40px; color: #6b7280; margin-bottom: 20px;"></i>
                     <h3 style="margin-bottom: 10px;">Görünüşe Göre Henüz Bir Projeniz Yok</h3>
                     <p style="color: #9ca3af; margin-bottom: 20px;">Sizin için hazırlayacağımız özel otomasyon ve analiz araçlarına erişmek için uzman ekibimizle görüşün.</p>
