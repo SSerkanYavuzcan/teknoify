@@ -74,6 +74,7 @@ async function buildRealSession(user) {
     uid,
     email,
     name,
+    profile: profileData, // EKLENDİ: Dashboard'un okuyabilmesi için profile objesi eklendi
     role: roleData, 
     projectAccess,
     isAdmin,
@@ -125,6 +126,7 @@ async function getEffectiveSession(realSession) {
     uid: targetUid,
     email: targetDoc.profile?.email || realSession.email,
     name: targetDoc.profile?.fullName || "Kullanıcı",
+    profile: targetDoc.profile || {}, // EKLENDİ: Taklit edilen kullanıcının profile objesi aktarıldı
     role: targetDoc.role || { type: "member", status: "active" },
     projectAccess: targetDoc.projectAccess || {},
     impersonating: true,
@@ -149,7 +151,6 @@ export async function logout() {
   try {
     await signOut(auth);
   } finally {
-    // Çıkış yapıldığında doğrudan sitenin ana sayfasına yönlendir
     window.location.replace("/");
   }
 }
