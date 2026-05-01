@@ -25,16 +25,14 @@ function resolveProjectUrl(path, projectId = "") {
   const finalPath = path || fallback;
   if (!finalPath) return "#";
   if (/^(https?:)?\/\//.test(finalPath)) return finalPath;
-  return appendImpersonationContext(finalPath);
+  
+  // Çift 'dashboard/dashboard' hatasını önlemek için URL'yi kök dizinden (absolute) başlatıyoruz
+  let normalizedPath = finalPath.startsWith('/') ? finalPath : `/${finalPath}`;
+  
+  return appendImpersonationContext(normalizedPath);
 }
 
-function redirectIfSingleProject(projects) {
-  if (!Array.isArray(projects) || projects.length !== 1) return false;
-  const target = resolveProjectUrl(projects[0].url, projects[0].id);
-  if (!target || target === "#") return false;
-  window.location.replace(target);
-  return true;
-}
+// NOT: redirectIfSingleProject fonksiyonu kullanıcının isteği üzerine tamamen kaldırıldı.
 
 function renderProjects(projects) {
   const list = qs("#project-list");
@@ -72,7 +70,7 @@ function renderProjects(projects) {
 
     const actionLink = createEl("a", {
       className: "btn btn-sm btn-primary",
-      text: "Keşfet",
+      text: "Projeyi Başlat",
       style: "text-align: center; display: block; text-decoration: none; border-radius: 8px;"
     });
 
@@ -119,7 +117,7 @@ async function init() {
       const hasAccess = session.isAdmin || (session.projectAccess && session.projectAccess[projectId] === true);
 
       if (hasAccess) {
-        const folderPath = projectData.config?.folderPath || `../dashboard/${projectId}`;
+        const folderPath = projectData.config?.folderPath || `dashboard/${projectId}`;
         const entryPoint = projectData.config?.entryPoint || "index.html";
         
         activeProjects.push({
@@ -131,10 +129,11 @@ async function init() {
       }
     });
 
-    if (redirectIfSingleProject(activeProjects)) return;
+    // Projeleri ekrana bas (artık tek proje olsa bile bu çalışacak)
     renderProjects(activeProjects);
 
   } catch (error) {
+    console.error("Projeler yüklenirken hata:", error);
     if (list) list.innerHTML = "<p style='grid-column: 1 / -1; color: #ef4444; text-align: center;'>Projeler yüklenirken bir hata oluştu.</p>";
   }
 }
