@@ -3,7 +3,7 @@ import { db } from "../lib/firebase.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { createEl, qs } from "../utils/dom.js";
 
-function resolveProjectUrl(path, projectId = "") {
+function resolveProjectUrl(path) {
   if (!path) return "#";
   let normalizedPath = path.startsWith('/') ? path : `/${path}`;
   const impUid = localStorage.getItem("teknoify_impersonate_uid");
@@ -24,70 +24,85 @@ function updateSupportStatus(session) {
   statusEl.style.color = isWorkHours ? "#22c55e" : "#ef4444";
   
   boxEl.style.cursor = "pointer";
-  boxEl.onclick = () => openSupportChat(session);
+  boxEl.onclick = () => {
+      const chat = qs("#tk-ai-chat");
+      if (chat) chat.classList.add("active");
+  };
 }
 
-function openSupportChat(session) {
+function initAIChat(session) {
     let chatWrap = qs("#tk-ai-chat");
-    
-    if (!chatWrap) {
-        chatWrap = createEl("div", { id: "tk-ai-chat", className: "ai-chat-window" });
-        chatWrap.innerHTML = `
-            <div class="chat-header">
-                <div class="chat-header-info">
-                    <div class="chat-status-dot"></div>
-                    <span>Teknoify AI Assistant</span>
-                </div>
-                <button class="chat-close-btn" onclick="document.getElementById('tk-ai-chat').classList.remove('active')">×</button>
-            </div>
-            <div class="chat-body" id="chat-messages">
-                <div class="ai-msg">Merhaba ${session.name.split(' ')[0]}, size nasıl yardımcı olabilirim?</div>
-            </div>
-            <div class="chat-footer">
-                <div class="chat-quick-actions">
-                    <button onclick="window.sendChatMessage('Projelerim hakkında bilgi ver')">📁 Projelerim</button>
-                    <button onclick="window.sendChatMessage('Teknik destek istiyorum')">❓ Destek</button>
-                    <button onclick="window.sendChatMessage('Raporları görüntüle')">📊 Raporlar</button>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" placeholder="Mesajınızı yazın..." id="chat-input">
-                    <button id="btn-send-message"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
-            </div>
-        `;
-        document.body.append(chatWrap);
+    if (chatWrap) return;
 
-        const input = qs("#chat-input");
-        input.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") window.sendChatMessage(input.value);
-        });
-        
-        qs("#btn-send-message").onclick = () => window.sendChatMessage(input.value);
-    }
+    const chatTrigger = createEl("div", { id: "chat-trigger", className: "chat-trigger-btn" });
+    chatTrigger.innerHTML = `<i class="fa-solid fa-comment-dots"></i>`;
+    document.body.append(chatTrigger);
 
-    chatWrap.classList.add("active");
+    chatWrap = createEl("div", { id: "tk-ai-chat", className: "ai-chat-window" });
+    chatWrap.innerHTML = `
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-status-dot"></div>
+                <span>Teknoify AI Assistant</span>
+            </div>
+            <button class="chat-close-btn" id="close-chat-window">×</button>
+        </div>
+        <div class="chat-body" id="chat-messages">
+            <div class="ai-msg">Merhaba ${session.name.split(' ')[0]}, size nasıl yardımcı olabilirim?</div>
+        </div>
+        <div class="chat-footer">
+            <div class="chat-quick-actions">
+                <button id="chat-btn-projects">📁 Projelerim</button>
+                <button id="chat-btn-support">❓ Destek</button>
+                <button id="chat-btn-reports">📊 Raporlar</button>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" placeholder="Mesajınızı yazın..." id="chat-input">
+                <button id="btn-send-message"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    `;
+    document.body.append(chatWrap);
+
+    chatTrigger.onclick = () => chatWrap.classList.add("active");
+    qs("#close-chat-window").onclick = () => chatWrap.classList.remove("active");
+
+    const input = qs("#chat-input");
+    const sendBtn = qs("#btn-send-message");
+
+    const handleSend = () => {
+        const val = input.value;
+        if (val.trim()) {
+            window.sendChatMessage(val);
+            input.value = "";
+        }
+    };
+
+    input.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
+    sendBtn.onclick = handleSend;
+
+    qs("#chat-btn-projects").onclick = () => window.sendChatMessage("Aktif projelerimi listele");
+    qs("#chat-btn-support").onclick = () => window.sendChatMessage("Destek ekibiyle görüşmek istiyorum");
+    qs("#chat-btn-reports").onclick = () => window.sendChatMessage("Raporlarımı analiz et");
 }
 
 window.sendChatMessage = (msg) => {
-    const input = qs("#chat-input");
-    const messageText = msg || input.value;
-    if (!messageText.trim()) return;
-
     const chatBody = qs("#chat-messages");
-    const userDiv = createEl("div", { className: "user-msg", text: messageText });
+    if (!chatBody) return;
+
+    const userDiv = createEl("div", { className: "user-msg", text: msg });
     chatBody.append(userDiv);
-    
-    if (input) input.value = "";
     chatBody.scrollTop = chatBody.scrollHeight;
 
     setTimeout(() => {
-        const response = messageText.toLowerCase().includes("geo") 
-            ? "Geo Intelligence projesi şu an aktif ve son verilerle güncellendi. Başlatmak ister misiniz?"
-            : "Mesajınızı aldım. Yapay zeka modelimiz şu an isteğinizi analiz ediyor.";
-        const aiDiv = createEl("div", { className: "ai-msg", text: response });
+        let aiResp = "İsteğinizi aldım. Yapay zeka modelimiz şu an isteğinizi analiz ediyor.";
+        if (msg.toLowerCase().includes("proje")) aiResp = "Hesabınızda 1 adet aktif proje (Geo Intelligence) tanımlı görünüyor.";
+        if (msg.toLowerCase().includes("destek")) aiResp = "Destek talebiniz sisteme iletildi. En kısa sürede size dönüş yapacağız.";
+        
+        const aiDiv = createEl("div", { className: "ai-msg", text: aiResp });
         chatBody.append(aiDiv);
         chatBody.scrollTop = chatBody.scrollHeight;
-    }, 1000);
+    }, 800);
 };
 
 function renderAdvancedProjects(projects) {
@@ -96,18 +111,16 @@ function renderAdvancedProjects(projects) {
   if (!list || !empty) return;
 
   list.innerHTML = "";
-
   if (!projects.length) {
     empty.style.display = "block";
     return;
   }
-
   empty.style.display = "none";
 
   projects.forEach((project) => {
     const card = createEl("div", { className: "adv-project-card" });
     const imgContent = project.imageURL 
-        ? `<img src="${project.imageURL}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`
+        ? `<img src="${project.imageURL}" alt="${project.name}">`
         : `<i class="${project.icon || 'fa-solid fa-earth-americas'}"></i>`;
 
     card.innerHTML = `
@@ -145,7 +158,7 @@ async function init() {
   if (qs("#logout-btn")) qs("#logout-btn").addEventListener("click", logout);
 
   updateSupportStatus(session);
-  setInterval(() => updateSupportStatus(session), 60000);
+  initAIChat(session);
 
   try {
     const querySnapshot = await getDocs(collection(db, "projects"));
@@ -155,11 +168,9 @@ async function init() {
     querySnapshot.forEach((doc) => {
       const projectId = doc.id;
       const data = doc.data();
-
       if (data.config?.isActive === false) return;
 
       const hasAccess = session.isAdmin || (session.projectAccess && session.projectAccess[projectId] === true);
-
       if (hasAccess) {
         const folderPath = data.config?.folderPath || `dashboard/${projectId}`;
         const entryPoint = data.config?.entryPoint || "index.html";
@@ -171,22 +182,19 @@ async function init() {
           description: data.details?.description || "",
           icon: data.details?.icon,
           imageURL: data.details?.imageURL,
-          url: resolveProjectUrl(`${folderPath}/${entryPoint}`, projectId),
+          url: resolveProjectUrl(`${folderPath}/${entryPoint}`),
           lastUpdate: projectUpdate
         });
-
         latestGlobalUpdate = projectUpdate;
       }
     });
 
     if (qs("#stat-active-projects")) qs("#stat-active-projects").textContent = activeProjects.length;
     if (qs("#stat-tools")) qs("#stat-tools").textContent = activeProjects.length;
-    if (qs("#dashboard-stats .stat-box:last-child .stat-value")) {
-        qs("#dashboard-stats .stat-box:last-child .stat-value").textContent = latestGlobalUpdate;
-    }
+    const lastUpdateEl = qs("#dashboard-stats .stat-box:last-child .stat-value");
+    if (lastUpdateEl) lastUpdateEl.textContent = latestGlobalUpdate;
 
     renderAdvancedProjects(activeProjects);
-
   } catch (error) {
     console.error("Dashboard hatası:", error);
   }
