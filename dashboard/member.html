@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="../css/dashboard.css?v=9">
 
   <style>
-    /* QUANTUM CUBE LOADER CSS (ORİJİNAL HALİ) */
     #loading-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: #05080a; z-index: 9999;
@@ -41,14 +40,10 @@
     .sub-status { font-size: 11px; color: #6366f1; opacity: 0.8; }
     .terminal-logs { position: absolute; bottom: 40px; left: 40px; font-family: 'Fira Code', monospace; font-size: 10px; color: rgba(99, 102, 241, 0.4); pointer-events: none; }
     
-    /* Dinamik Menü Başlık Stili */
     .tk-nav-section { margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase; }
   </style>
-
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-</head>
+  
+  </head>
 
 <body>
 
@@ -69,8 +64,7 @@
     </div>
     <div class="terminal-logs" id="terminal-logs">
       <div>> INITIALIZING CORE_SYSTEM... OK</div>
-      <div>> ESTABLISHING SECURE_LINK... OK</div>
-      <div>> FETCHING ENCRYPTED_DATA... WAITING</div>
+      <div>> ESTABLISHING SECURE_LINK... WAITING</div>
     </div>
   </div>
 
@@ -102,7 +96,7 @@
 
     <div class="menu-spacer"></div>
     <div class="sidebar-footer">
-      <a href="#" onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
+      <a href="#" onclick="window.logoutApp()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
       <button class="btn-collapse" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
     </div>
   </aside>
@@ -128,52 +122,66 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="../config.js"></script>
-  <script src="./shared/auth.js?v=20260228"></script>
   <script src="./shared/sidebar.js?v=20260228"></script>
   <script type="module" src="../js/pages/member.js?v=20260228"></script>
 
-  <script>
-    // Dinamik Yükleme Metinleri ve Terminal Simülasyonu
-    const statusTexts = ["Profil verileri doğrulanıyor...", "Güvenlik katmanı aktif ediliyor...", "Şifrelenmiş tünel kuruluyor...", "Modüller senkronize ediliyor...", "Veritabanı bağlantısı kuruluyor...", "Arayüz render ediliyor..."];
+  <script type="module">
+    import { requireAuth, logout } from "../js/lib/auth.js";
+
+    window.logoutApp = async () => {
+        await logout();
+    };
+
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+
+    const statusTexts = ["Profil verileri doğrulanıyor...", "Yetkiler kontrol ediliyor...", "Şifrelenmiş tünel kuruluyor...", "Projeler senkronize ediliyor..."];
     let textIdx = 0;
     const textEl = document.getElementById("dynamic-loader-text");
     const terminalEl = document.getElementById("terminal-logs");
+    
     const textInterval = setInterval(() => {
       textEl.style.opacity = "0";
-      setTimeout(() => { textEl.textContent = statusTexts[textIdx]; textEl.style.opacity = "1"; textIdx = (textIdx + 1) % statusTexts.length; }, 300);
+      setTimeout(() => { 
+        textEl.textContent = statusTexts[textIdx]; 
+        textEl.style.opacity = "1"; 
+        textIdx = (textIdx + 1) % statusTexts.length; 
+      }, 300);
+      
       const log = document.createElement("div");
-      log.textContent = `> SYNC_DATA_CHUNK_${Math.floor(Math.random()*9999)}... OK`;
+      log.textContent = `> FETCHING_ACCESS_DATA_${Math.floor(Math.random()*9999)}... OK`;
       terminalEl.appendChild(log);
       if(terminalEl.children.length > 5) terminalEl.removeChild(terminalEl.firstChild);
     }, 1500);
 
-    // Sidebar aç/kapat
-    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+    document.addEventListener("DOMContentLoaded", async () => {
+        const session = await requireAuth(); 
+        
+        if (!session) return; 
 
-    // SİDEBAR RENDER TETİKLEYİCİSİ (EKSİKTİ, EKLENDİ)
-    const checkSessionSidebar = setInterval(() => {
-      if (window.USER_SESSION && window.TK_RENDER_SIDEBAR) {
-        window.TK_RENDER_SIDEBAR();
-        clearInterval(checkSessionSidebar);
-      }
-    }, 100);
+        clearInterval(textInterval);
+        const finalLog = document.createElement("div");
+        finalLog.textContent = `> ACCESS_GRANTED: WELCOME ${session.name.toUpperCase()}`;
+        finalLog.style.color = "#4ade80";
+        terminalEl.appendChild(finalLog);
 
-    // Overlay'i Kapatma Mantığı
-    (function () {
-      const overlay = document.getElementById("loading-overlay");
-      function tryHide() {
-        if (window.USER_SESSION && overlay) {
-          clearInterval(textInterval);
-          overlay.style.opacity = "0"; overlay.style.visibility = "hidden";
-          setTimeout(() => overlay.remove(), 800);
-          const t = document.getElementById("user-name-title");
-          if (t && window.USER_SESSION.name) t.textContent = window.USER_SESSION.name;
-          return true;
-        }
-        return false;
-      }
-      if (!tryHide()) { const iv = setInterval(() => { if (tryHide()) clearInterval(iv); }, 120); setTimeout(() => clearInterval(iv), 10000); }
-    })();
+        document.getElementById("user-name-title").textContent = session.name;
+        document.getElementById("user-name-display").textContent = session.name;
+        document.getElementById("user-avatar").textContent = session.name.charAt(0).toUpperCase();
+        window.USER_SESSION = session;
+
+        setTimeout(() => {
+            const overlay = document.getElementById("loading-overlay");
+            if (overlay) {
+                overlay.style.opacity = "0"; 
+                overlay.style.visibility = "hidden";
+                setTimeout(() => overlay.remove(), 800);
+            }
+
+            if (typeof window.TK_RENDER_SIDEBAR === "function") {
+                window.TK_RENDER_SIDEBAR();
+            }
+        }, 1000); 
+    });
   </script>
 </body>
 </html>
