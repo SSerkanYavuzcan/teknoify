@@ -17,14 +17,28 @@ function normalizeEmail(v) {
 }
 
 function redirectAfterLogin(session) {
-  // Admin -> admin panel
-  if (session?.isAdmin || session?.role === "admin") {
-    window.location.href = "../dashboard/admin.html";
-    return;
+  // session objesinin Firestore'dan gelen verileri (profile, role vb.) içerdiğini varsayıyoruz.
+  
+  // 1. Kullanıcının rolünü ve durumunu belirle (Yoksa varsayılan olarak 'member' ve 'pending' say)
+  const userRole = session?.role?.type || "member"; 
+  const userStatus = session?.role?.status || "active";
+
+  // 2. Eğer hesabı aktif değilse yönlendirmeyi durdur (Kurumsal projelerde çok önemlidir)
+  if (userStatus !== "active") {
+    showError("Hesabınız aktif değil veya askıya alınmış. Lütfen destek ile iletişime geçin.");
+    // Gerekirse burada firebase auth üzerinden çıkış (logout) işlemi de tetiklenebilir.
+    return; 
   }
 
-  // Member -> projects list
-  window.location.href = "../dashboard/index.html";
+  // 3. Rol bazlı yönlendirme (Role-Based Routing)
+  if (userRole === "admin") {
+    window.location.href = "../dashboard/admin.html";
+  } else if (userRole === "premium") {
+    window.location.href = "../dashboard/premium.html";
+  } else {
+    // member veya tanımsız bir rol ise standart üyeye yönlendir
+    window.location.href = "../dashboard/member.html"; 
+  }
 }
 
 async function init() {
