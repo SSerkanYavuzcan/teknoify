@@ -34,12 +34,14 @@ function resolveProjectUrl(path) {
     return `${normalizedPath}${normalizedPath.includes('?') ? '&' : '?'}imp_uid=${impUid}`;
 }
 
+// YENİ EKLENEN: Admin Impersonation Test Modu Uyarı Bantı
 function renderImpersonationBanner() {
     const impUid = localStorage.getItem("teknoify_impersonate_uid");
     if (!impUid) return;
 
-    const banner = createEl("div", { className: "impersonation-warning" });
-    // Turuncu/Sarı tonlarında dikkat çekici bir banner tasarımı
+    if (qs("#imp-banner-wrap")) return;
+
+    const banner = createEl("div", { id: "imp-banner-wrap", className: "impersonation-warning" });
     banner.style.cssText = "background: #f59e0b; color: #fff; padding: 10px; text-align: center; font-weight: 500; font-size: 0.9rem; z-index: 9999; position: relative; display: flex; justify-content: center; align-items: center; gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.5);";
     
     banner.innerHTML = `
@@ -49,10 +51,9 @@ function renderImpersonationBanner() {
     
     document.body.prepend(banner);
 
-    // Geri dön butonuna tıklanınca imp_uid silinir ve admin paneline dönülür
     document.getElementById("btn-end-imp").onclick = () => {
         localStorage.removeItem("teknoify_impersonate_uid");
-        window.location.href = "/dashboard/admin"; // Yolu kendi admin HTML yoluna göre ayarlayabilirsin
+        window.location.href = "/dashboard/admin";
     };
 }
 
@@ -86,6 +87,7 @@ function initAIChat(session) {
 
     // Chat Penceresi
     chatWrap = createEl("div", { id: "tk-ai-chat", className: "ai-chat-window" });
+    const userName = session.profile?.fullName || session.name || "Kullanıcı";
     chatWrap.innerHTML = `
         <div class="chat-header">
             <div class="chat-header-info">
@@ -95,7 +97,7 @@ function initAIChat(session) {
             <button class="chat-close-btn" id="close-chat-window">×</button>
         </div>
         <div class="chat-body" id="chat-messages">
-            <div class="ai-msg">Merhaba ${session.name.split(' ')[0]}, size nasıl yardımcı olabilirim?</div>
+            <div class="ai-msg">Merhaba ${userName.split(' ')[0]}, size nasıl yardımcı olabilirim?</div>
         </div>
         <div class="chat-footer">
             <div class="chat-quick-actions">
@@ -176,15 +178,15 @@ window.sendChatMessage = (msg, session) => {
                     await emailjs.send(emailConfig.serviceId, emailConfig.supportTemplateId, {
                         subject: sub,
                         message: con,
-                        from_name: session.name,
-                        reply_to: session.email
+                        from_name: session.profile?.fullName || session.name,
+                        reply_to: session.profile?.email || session.email
                     });
 
                     // 2. MAİL: KULLANICIYA GİDEN OTOMATİK YANIT
                     await emailjs.send(emailConfig.serviceId, emailConfig.autoReplyTemplateId, {
-                        from_name: session.name,
+                        from_name: session.profile?.fullName || session.name,
                         message: con,
-                        reply_to: session.email
+                        reply_to: session.profile?.email || session.email
                     });
 
                     formDiv.innerHTML = `<p style="color:#22c55e; font-size:0.85rem; text-align:center;"><i class="fa-solid fa-check-circle"></i> Talebiniz alındı. Tarafınıza onay maili gönderildi.</p>`;
@@ -198,7 +200,7 @@ window.sendChatMessage = (msg, session) => {
             };
         } else {
             let aiResp = "İsteğinizi aldım. Yapay zeka modelimiz şu an analiz ediyor.";
-            if (msg.toLowerCase().includes("proje")) aiResp = "Hesabınızda 1 adet aktif proje (Geo Intelligence) tanımlı görünüyor.";
+            if (msg.toLowerCase().includes("proje")) aiResp = "Hesabınızda erişebileceğiniz aktif projeler ana ekranınızda listelenmiştir.";
             
             const aiDiv = createEl("div", { className: "ai-msg", text: aiResp });
             chatBody.append(aiDiv);
@@ -251,24 +253,23 @@ function renderAdvancedProjects(projects) {
     });
 }
 
+// --- ANA BAŞLATMA FONKSİYONU ---
 async function init() {
-    // 1. İmpersonation (Görünüm Değiştirme) Banner'ını göster (Eğer aktifse)
     renderImpersonationBanner();
 
     const session = await requireAuth();
     if (!session) return;
 
-    // 2. Önce konfigürasyonları çek (EmailJS anahtarları vb. için)
     await fetchSystemConfigs();
 
-    // 3. Kullanıcı adını ekrana yazdır (profile içinden veya ana yapıdan)
+    // Kullanıcı adını ekrana yazdır (profile objesini dikkate alarak)
     if (qs("#session-user-name")) {
         const userName = session.profile?.fullName || session.fullName || session.name || session.email?.split('@')[0] || "Kullanıcı";
         qs("#session-user-name").textContent = userName;
     }
     
-    // 4. Admin Linkinin Görünürlüğü (Kullanıcı admin ise göster)
-    const isAdminUser = session.isAdmin || session.role?.type === "admin";
+    // Admin Linkinin Görünürlüğü
+    const isAdminUser = session.role?.type === "admin" || session.isAdmin === true || session.profile?.role?.type === "admin";
     if (qs("#admin-link")) {
         qs("#admin-link").style.display = isAdminUser ? "block" : "none";
     }
@@ -277,11 +278,10 @@ async function init() {
         qs("#logout-btn").addEventListener("click", logout);
     }
 
-    // 5. Destek Modülü ve Chatbot Başlatma
     updateSupportStatus(session);
     initAIChat(session);
 
-    // 6. Projeleri Veritabanından Çekme ve Yetki Kontrolü
+    // GÜNCELLENEN KISIM: Projeleri Çekme ve Yetki Kontrolü
     try {
         const querySnapshot = await getDocs(collection(db, "projects"));
         const activeProjects = [];
@@ -291,15 +291,14 @@ async function init() {
             const projectId = doc.id;
             const data = doc.data();
             
-            // Proje genel olarak kapalıysa atla
             if (data.config?.isActive === false) return;
 
-            // ERİŞİM KONTROL MANTIĞI
-            // projectAccess bilgisini "profile" içinden veya dışarıdan yakala
+            // ERİŞİM KONTROL MANTIĞI: projectAccess'i çek ve kontrol et
             const accessObj = session.profile?.projectAccess || session.projectAccess || {};
-            
-            // Eğer kullanıcı adminse VEYA projectAccess içinde bu proje 'true' ise yetki ver
             const hasAccess = isAdminUser || accessObj[projectId] === true;
+
+            // Debug satırı (İstersen sonradan silebilirsin)
+            console.log(`[Kontrol] Proje ID: ${projectId} | Yetki Var Mı?: ${hasAccess}`);
 
             if (hasAccess) {
                 const folderPath = data.config?.folderPath || `dashboard/${projectId}`;
@@ -319,14 +318,12 @@ async function init() {
             }
         });
 
-        // 7. İstatistik Kartlarını Güncelle
         if (qs("#stat-active-projects")) qs("#stat-active-projects").textContent = activeProjects.length;
         if (qs("#stat-tools")) qs("#stat-tools").textContent = activeProjects.length;
         
         const lastUpdateEl = qs("#dashboard-stats .stat-box:last-child .stat-value");
         if (lastUpdateEl) lastUpdateEl.textContent = latestGlobalUpdate;
 
-        // 8. İzin verilen projeleri ekrana çiz
         renderAdvancedProjects(activeProjects);
         
     } catch (error) {
