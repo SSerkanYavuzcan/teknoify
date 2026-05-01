@@ -293,12 +293,20 @@ async function init() {
             
             if (data.config?.isActive === false) return;
 
-            // ERİŞİM KONTROL MANTIĞI: projectAccess'i çek ve kontrol et
-            const accessObj = session.profile?.projectAccess || session.projectAccess || {};
-            const hasAccess = isAdminUser || accessObj[projectId] === true;
+            // ERİŞİM KONTROL MANTIĞI: projectAccess'i çek ve kontrol et (Esnek kontrol eklendi)
+            const accessObj = session.projectAccess || session.profile?.projectAccess || {};
+            const hasAccess = isAdminUser || accessObj[projectId] === true || accessObj[projectId] === "true";
 
-            // Debug satırı (İstersen sonradan silebilirsin)
-            console.log(`[Kontrol] Proje ID: ${projectId} | Yetki Var Mı?: ${hasAccess}`);
+            // --- KESİN RÖNTGEN: KONSOLA VERİ YAZDIRMA ---
+            // Sorunu F12 Konsolunda kendi gözlerinle görmeni sağlayacak kod:
+            if(projectId === "YnONl3KsXap06gc3W45D") {
+                console.log("=== HATA AYIKLAMA KONTROLÜ ===");
+                console.log("Giriş Yapan UID:", session.uid);
+                console.log("Cepteki İzinler (projectAccess):", accessObj);
+                console.log("İzin Verildi mi?:", hasAccess);
+                console.log("==============================");
+            }
+            // ---------------------------------------------
 
             if (hasAccess) {
                 const folderPath = data.config?.folderPath || `dashboard/${projectId}`;
