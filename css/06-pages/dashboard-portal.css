@@ -14,7 +14,7 @@
 }
 
 .portal-hero {
-  text-align: left; /* Yeni tasarıma göre sola hizalı */
+  text-align: left;
   margin-bottom: 34px;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .portal-hero p {
-  color: var(--text-secondary);
+  color: #94a3b8;
   max-width: 700px;
 }
 
@@ -109,7 +109,6 @@
   box-shadow: 0 10px 40px rgba(99, 102, 241, 0.15);
 }
 
-/* Üstteki ince neon çizgisi */
 .adv-project-card::before {
   content: '';
   position: absolute;
@@ -131,6 +130,13 @@
   font-size: 80px;
   color: rgba(99, 102, 241, 0.8);
   box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+  overflow: hidden; /* Resimlerin taşmaması için */
+}
+
+.adv-project-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .adv-project-content {
@@ -259,30 +265,161 @@
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-@media (max-width: 768px) {
-  .adv-project-card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
-  }
-  .adv-project-header {
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  .adv-tags {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .adv-project-footer {
-    flex-direction: column;
-    gap: 16px;
-  }
+/* =========================================================
+   3. TEKNOIFY AI CHATBOT (YENİ EKİ)
+   ========================================================= */
+.ai-chat-window {
+  position: fixed;
+  bottom: 20px;
+  right: -420px;
+  width: 380px;
+  height: 580px;
+  background: #0b1120;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10000;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+.ai-chat-window.active {
+  right: 20px;
+}
+
+.chat-header {
+  background: rgba(30, 41, 59, 0.8);
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.chat-status-dot {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+.chat-close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.2) transparent;
+}
+
+.ai-msg, .user-msg {
+  max-width: 85%;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  position: relative;
+}
+
+.ai-msg {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-radius: 15px 15px 15px 2px;
+  align-self: flex-start;
+}
+
+.user-msg {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border-radius: 15px 15px 2px 15px;
+  align-self: flex-end;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.chat-footer {
+  padding: 15px;
+  background: rgba(15, 23, 42, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chat-quick-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.chat-quick-actions button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s;
+}
+
+.chat-quick-actions button:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #fff;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-area input {
+  flex: 1;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 10px;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+#btn-send-message {
+  background: #4f46e5;
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* =========================================================
-   3. ADMİN PANELİ KODLARI (ESKİ YAPIN KORUNMUŞTUR)
+   4. ADMİN PANELİ KODLARI (ESKİ YAPIN KORUNMUŞTUR)
    ========================================================= */
 .admin-layout { display: grid; gap: 20px; }
 .admin-status { padding: 10px 14px; border-radius: 10px; border: 1px solid transparent; font-size: 0.95rem; }
@@ -304,4 +441,31 @@
 .service-checkbox { accent-color: #7367f0; }
 .admin-actions-cell { display: flex; flex-direction: column; gap: 10px; min-width: 170px; }
 #admin-actions { display: flex; justify-content: flex-end; }
+
 @media (max-width: 960px) { .admin-table-wrap { overflow-x: auto; } .admin-table { min-width: 840px; } }
+
+@media (max-width: 768px) {
+  .adv-project-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+  }
+  .adv-project-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .adv-tags {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .adv-project-footer {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .ai-chat-window {
+    width: calc(100% - 40px);
+    height: 500px;
+  }
+}
