@@ -1,43 +1,68 @@
 import { logout, requireAuth } from "../lib/auth.js";
 import { db } from "../lib/firebase.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { createEl, qs } from "../utils/dom.js";
 
+// Global Yapılandırma Değişkeni
+let emailConfig = null;
+
+/**
+ * Firestore üzerinden EmailJS ve diğer sistem ayarlarını çeker.
+ */
+async function fetchSystemConfigs() {
+    try {
+        const configSnap = await getDoc(doc(db, "configs", "email_service"));
+        if (configSnap.exists()) {
+            emailConfig = configSnap.data();
+            // EmailJS kütüphanesini anahtarla başlat
+            if (window.emailjs) {
+                emailjs.init(emailConfig.publicKey);
+            }
+        } else {
+            console.warn("E-posta yapılandırması Firestore'da bulunamadı!");
+        }
+    } catch (err) {
+        console.error("Sistem ayarları yüklenirken hata oluştu:", err);
+    }
+}
+
 function resolveProjectUrl(path) {
-  if (!path) return "#";
-  let normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const impUid = localStorage.getItem("teknoify_impersonate_uid");
-  if (!impUid) return normalizedPath;
-  return `${normalizedPath}${normalizedPath.includes('?') ? '&' : '?'}imp_uid=${impUid}`;
+    if (!path) return "#";
+    let normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const impUid = localStorage.getItem("teknoify_impersonate_uid");
+    if (!impUid) return normalizedPath;
+    return `${normalizedPath}${normalizedPath.includes('?') ? '&' : '?'}imp_uid=${impUid}`;
 }
 
 function updateSupportStatus(session) {
-  const statusEl = qs("#dashboard-stats .stat-box:nth-child(3) .stat-value");
-  const boxEl = qs("#dashboard-stats .stat-box:nth-child(3)");
-  if (!statusEl || !boxEl) return;
+    const statusEl = qs("#dashboard-stats .stat-box:nth-child(3) .stat-value");
+    const boxEl = qs("#dashboard-stats .stat-box:nth-child(3)");
+    if (!statusEl || !boxEl) return;
 
-  const now = new Date();
-  const hours = now.getHours();
-  const isWorkHours = hours >= 9 && hours < 18;
-  
-  statusEl.textContent = isWorkHours ? "Aktif" : "Pasif";
-  statusEl.style.color = isWorkHours ? "#22c55e" : "#ef4444";
-  
-  boxEl.style.cursor = "pointer";
-  boxEl.onclick = () => {
-      const chat = qs("#tk-ai-chat");
-      if (chat) chat.classList.add("active");
-  };
+    const now = new Date();
+    const hours = now.getHours();
+    const isWorkHours = hours >= 9 && hours < 18;
+
+    statusEl.textContent = isWorkHours ? "Aktif" : "Pasif";
+    statusEl.style.color = isWorkHours ? "#22c55e" : "#ef4444";
+
+    boxEl.style.cursor = "pointer";
+    boxEl.onclick = () => {
+        const chat = qs("#tk-ai-chat");
+        if (chat) chat.classList.add("active");
+    };
 }
 
 function initAIChat(session) {
     let chatWrap = qs("#tk-ai-chat");
     if (chatWrap) return;
 
+    // Chat Açma Butonu (Trigger)
     const chatTrigger = createEl("div", { id: "chat-trigger", className: "chat-trigger-btn" });
     chatTrigger.innerHTML = `<i class="fa-solid fa-comment-dots"></i>`;
     document.body.append(chatTrigger);
 
+    // Chat Penceresi
     chatWrap = createEl("div", { id: "tk-ai-chat", className: "ai-chat-window" });
     chatWrap.innerHTML = `
         <div class="chat-header">
@@ -73,7 +98,7 @@ function initAIChat(session) {
     const handleSend = () => {
         const val = input.value;
         if (val.trim()) {
-            window.sendChatMessage(val);
+            window.sendChatMessage(val, session);
             input.value = "";
         }
     };
@@ -81,12 +106,12 @@ function initAIChat(session) {
     input.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
     sendBtn.onclick = handleSend;
 
-    qs("#chat-btn-projects").onclick = () => window.sendChatMessage("Aktif projelerimi listele");
-    qs("#chat-btn-support").onclick = () => window.sendChatMessage("Destek ekibiyle görüşmek istiyorum");
-    qs("#chat-btn-reports").onclick = () => window.sendChatMessage("Raporlarımı analiz et");
+    qs("#chat-btn-projects").onclick = () => window.sendChatMessage("Aktif projelerimi listele", session);
+    qs("#chat-btn-support").onclick = () => window.sendChatMessage("Destek ekibiyle görüşmek istiyorum", session);
+    qs("#chat-btn-reports").onclick = () => window.sendChatMessage("Raporlarımı analiz et", session);
 }
 
-window.sendChatMessage = (msg) => {
+window.sendChatMessage = (msg, session) => {
     const chatBody = qs("#chat-messages");
     if (!chatBody) return;
 
@@ -94,7 +119,7 @@ window.sendChatMessage = (msg) => {
     chatBody.append(userDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    setTimeout(() => {
+    setTimeout(async () => {
         if (msg.toLowerCase().includes("destek")) {
             const aiDiv = createEl("div", { 
                 className: "ai-msg", 
@@ -114,12 +139,39 @@ window.sendChatMessage = (msg) => {
             `;
             chatBody.append(formDiv);
 
-            qs("#btn-submit-support").onclick = () => {
+            qs("#btn-submit-support").onclick = async () => {
+                if (!emailConfig) return alert("E-posta servisi henüz hazır değil.");
+                
                 const sub = qs("#support-subject").value;
                 const con = qs("#support-content").value;
                 if(!sub || !con) return alert("Lütfen gerekli alanları doldurun.");
                 
-                formDiv.innerHTML = `<p style="color:#22c55e; font-size:0.85rem; text-align:center;"><i class="fa-solid fa-check-circle"></i> Talebiniz info@teknoify.com adresine iletildi.</p>`;
+                qs("#btn-submit-support").innerText = "Gönderiliyor...";
+                qs("#btn-submit-support").disabled = true;
+
+                try {
+                    // 1. MAİL: ADMİNE (SANA) GİDEN
+                    await emailjs.send(emailConfig.serviceId, emailConfig.supportTemplateId, {
+                        subject: sub,
+                        message: con,
+                        from_name: session.name,
+                        reply_to: session.email
+                    });
+
+                    // 2. MAİL: KULLANICIYA GİDEN OTOMATİK YANIT
+                    await emailjs.send(emailConfig.serviceId, emailConfig.autoReplyTemplateId, {
+                        from_name: session.name,
+                        message: con,
+                        reply_to: session.email
+                    });
+
+                    formDiv.innerHTML = `<p style="color:#22c55e; font-size:0.85rem; text-align:center;"><i class="fa-solid fa-check-circle"></i> Talebiniz alındı. Tarafınıza onay maili gönderildi.</p>`;
+                } catch (err) {
+                    console.error("Mail gönderme hatası:", err);
+                    alert("Mail gönderilemedi, lütfen tekrar deneyin.");
+                    qs("#btn-submit-support").innerText = "Talebi Gönder";
+                    qs("#btn-submit-support").disabled = false;
+                }
                 chatBody.scrollTop = chatBody.scrollHeight;
             };
         } else {
@@ -134,98 +186,101 @@ window.sendChatMessage = (msg) => {
 };
 
 function renderAdvancedProjects(projects) {
-  const list = qs("#project-list");
-  const empty = qs("#project-empty");
-  if (!list || !empty) return;
+    const list = qs("#project-list");
+    const empty = qs("#project-empty");
+    if (!list || !empty) return;
 
-  list.innerHTML = "";
-  if (!projects.length) {
-    empty.style.display = "block";
-    return;
-  }
-  empty.style.display = "none";
+    list.innerHTML = "";
+    if (!projects.length) {
+        empty.style.display = "block";
+        return;
+    }
+    empty.style.display = "none";
 
-  projects.forEach((project) => {
-    const card = createEl("div", { className: "adv-project-card" });
-    const imgContent = project.imageURL 
-        ? `<img src="${project.imageURL}" alt="${project.name}">`
-        : `<i class="${project.icon || 'fa-solid fa-earth-americas'}"></i>`;
+    projects.forEach((project) => {
+        const card = createEl("div", { className: "adv-project-card" });
+        const imgContent = project.imageURL 
+            ? `<img src="${project.imageURL}" alt="${project.name}">`
+            : `<i class="${project.icon || 'fa-solid fa-earth-americas'}"></i>`;
 
-    card.innerHTML = `
-      <div class="adv-project-img-wrapper">${imgContent}</div>
-      <div class="adv-project-content">
-        <div class="adv-project-header">
-          <h3>${project.name}</h3>
-          <div class="adv-status-badge">Aktif</div>
-        </div>
-        <p class="adv-project-desc">${project.description}</p>
-        <div class="adv-tags">
-          <span class="adv-tag purple">Analytics</span>
-          <span class="adv-tag blue">Geo Data</span>
-          <span class="adv-tag teal">Dashboard</span>
-        </div>
-        <div class="adv-project-footer">
-          <div class="adv-date"><i class="fa-solid fa-calendar-day"></i> Son güncelleme: ${project.lastUpdate}</div>
-          <div class="adv-actions">
-            <a href="${project.url}" class="btn-glow">Projeyi Başlat</a>
-            <button class="btn-outline-dark">Detaylar <i class="fa-solid fa-chevron-right"></i></button>
+        card.innerHTML = `
+          <div class="adv-project-img-wrapper">${imgContent}</div>
+          <div class="adv-project-content">
+            <div class="adv-project-header">
+              <h3>${project.name}</h3>
+              <div class="adv-status-badge">Aktif</div>
+            </div>
+            <p class="adv-project-desc">${project.description}</p>
+            <div class="adv-tags">
+              <span class="adv-tag purple">Analytics</span>
+              <span class="adv-tag blue">Geo Data</span>
+              <span class="adv-tag teal">Dashboard</span>
+            </div>
+            <div class="adv-project-footer">
+              <div class="adv-date"><i class="fa-solid fa-calendar-day"></i> Son güncelleme: ${project.lastUpdate}</div>
+              <div class="adv-actions">
+                <a href="${project.url}" class="btn-glow">Projeyi Başlat</a>
+                <button class="btn-outline-dark">Detaylar <i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    `;
-    list.append(card);
-  });
+        `;
+        list.append(card);
+    });
 }
 
 async function init() {
-  const session = await requireAuth();
-  if (!session) return;
+    const session = await requireAuth();
+    if (!session) return;
 
-  if (qs("#session-user-name")) qs("#session-user-name").textContent = session.name;
-  if (qs("#admin-link")) qs("#admin-link").style.display = (session.isAdmin || session.role?.type === "admin") ? "block" : "none";
-  if (qs("#logout-btn")) qs("#logout-btn").addEventListener("click", logout);
+    // Önce konfigürasyonları çek
+    await fetchSystemConfigs();
 
-  updateSupportStatus(session);
-  initAIChat(session);
+    if (qs("#session-user-name")) qs("#session-user-name").textContent = session.name;
+    if (qs("#admin-link")) qs("#admin-link").style.display = (session.isAdmin || session.role?.type === "admin") ? "block" : "none";
+    if (qs("#logout-btn")) qs("#logout-btn").addEventListener("click", logout);
 
-  try {
-    const querySnapshot = await getDocs(collection(db, "projects"));
-    const activeProjects = [];
-    let latestGlobalUpdate = "Bugün";
+    updateSupportStatus(session);
+    initAIChat(session);
 
-    querySnapshot.forEach((doc) => {
-      const projectId = doc.id;
-      const data = doc.data();
-      if (data.config?.isActive === false) return;
+    try {
+        const querySnapshot = await getDocs(collection(db, "projects"));
+        const activeProjects = [];
+        let latestGlobalUpdate = "Bugün";
 
-      const hasAccess = session.isAdmin || (session.projectAccess && session.projectAccess[projectId] === true);
-      if (hasAccess) {
-        const folderPath = data.config?.folderPath || `dashboard/${projectId}`;
-        const entryPoint = data.config?.entryPoint || "index.html";
-        const projectUpdate = data.audit?.lastUpdate || "Bugün";
+        querySnapshot.forEach((doc) => {
+            const projectId = doc.id;
+            const data = doc.data();
+            if (data.config?.isActive === false) return;
 
-        activeProjects.push({
-          id: projectId,
-          name: data.details?.name || projectId,
-          description: data.details?.description || "",
-          icon: data.details?.icon,
-          imageURL: data.details?.imageURL,
-          url: resolveProjectUrl(`${folderPath}/${entryPoint}`),
-          lastUpdate: projectUpdate
+            const hasAccess = session.isAdmin || (session.projectAccess && session.projectAccess[projectId] === true);
+            if (hasAccess) {
+                const folderPath = data.config?.folderPath || `dashboard/${projectId}`;
+                const entryPoint = data.config?.entryPoint || "index.html";
+                const projectUpdate = data.audit?.lastUpdate || "Bugün";
+
+                activeProjects.push({
+                    id: projectId,
+                    name: data.details?.name || projectId,
+                    description: data.details?.description || "",
+                    icon: data.details?.icon,
+                    imageURL: data.details?.imageURL,
+                    url: resolveProjectUrl(`${folderPath}/${entryPoint}`),
+                    lastUpdate: projectUpdate
+                });
+                latestGlobalUpdate = projectUpdate;
+            }
         });
-        latestGlobalUpdate = projectUpdate;
-      }
-    });
 
-    if (qs("#stat-active-projects")) qs("#stat-active-projects").textContent = activeProjects.length;
-    if (qs("#stat-tools")) qs("#stat-tools").textContent = activeProjects.length;
-    const lastUpdateEl = qs("#dashboard-stats .stat-box:last-child .stat-value");
-    if (lastUpdateEl) lastUpdateEl.textContent = latestGlobalUpdate;
+        if (qs("#stat-active-projects")) qs("#stat-active-projects").textContent = activeProjects.length;
+        if (qs("#stat-tools")) qs("#stat-tools").textContent = activeProjects.length;
+        const lastUpdateEl = qs("#dashboard-stats .stat-box:last-child .stat-value");
+        if (lastUpdateEl) lastUpdateEl.textContent = latestGlobalUpdate;
 
-    renderAdvancedProjects(activeProjects);
-  } catch (error) {
-    console.error("Dashboard hatası:", error);
-  }
+        renderAdvancedProjects(activeProjects);
+    } catch (error) {
+        console.error("Dashboard başlatma hatası:", error);
+    }
 }
 
 init();
