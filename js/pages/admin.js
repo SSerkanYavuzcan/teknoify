@@ -153,22 +153,49 @@ function goToUserAs(uid) {
   window.location.href = "/dashboard/index.html";
 }
 
+// ----------------------------------------------------
+// YENİ: CREATE ROW FONKSİYONU GÜNCELLENDİ
+// ----------------------------------------------------
 function createRow({ user, projects, entitledSet, stateMap, session }) {
   const tr = createEl("tr", { className: "admin-row" });
 
+  // 1. SÜTUN: KULLANICI BİLGİLERİ (İsim(ID) ve Altında Email)
   const tdUser = createEl("td", { className: "admin-user-cell" });
-  const name = user.name || (user.email ? user.email.split("@")[0] : user.id);
-  const userLine = createEl("div", {
-    className: "admin-user-name",
-    text: `${name} (${user.email || "-"})`
+  const fullName = user.fullName || user.name || (user.email ? user.email.split("@")[0] : "İsimsiz Kullanıcı");
+  
+  const nameLine = createEl("div", { className: "admin-user-name" });
+  nameLine.innerHTML = `<strong>${fullName}</strong> <span style="font-size: 0.85em; opacity: 0.6; font-weight: normal;">(${user.id})</span>`;
+  
+  const emailLine = createEl("div", { 
+      className: "admin-user-meta", 
+      text: user.email || "Email belirtilmemiş" 
   });
+  emailLine.style.color = "#a1a1aa";
+  emailLine.style.fontSize = "0.85em";
+  emailLine.style.marginTop = "2px";
+  
+  tdUser.append(nameLine, emailLine);
 
-  const metaLine = createEl("div", {
-    className: "admin-user-meta",
-    text: `UID: ${user.id} • role: ${user.role || "user"}`
-  });
-  tdUser.append(userLine, metaLine);
+  // 2. SÜTUN: ROL VE DURUM
+  const tdRole = createEl("td", { className: "admin-role-cell" });
+  tdRole.style.verticalAlign = "middle";
+  
+  // Obje kontrolü (type ve status bilgisini çekmek için)
+  const roleType = (typeof user.role === 'object' && user.role !== null) ? (user.role.type || 'Belirtilmemiş') : (user.role || 'user');
+  const roleStatus = (typeof user.role === 'object' && user.role !== null) ? (user.role.status || 'Belirtilmemiş') : (user.status || 'Aktif');
 
+  tdRole.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.8em; display: inline-block; width: fit-content;">
+              Rol: <strong>${roleType}</strong>
+          </span>
+          <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; display: inline-block; width: fit-content;">
+              Durum: <strong>${roleStatus}</strong>
+          </span>
+      </div>
+  `;
+
+  // 3. SÜTUN: PROJE ERİŞİMLERİ (Checkboxlar)
   const tdProjects = createEl("td", { className: "admin-services-cell" });
   const wrap = createEl("div", { className: "admin-service-grid" });
 
@@ -195,6 +222,7 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
 
   tdProjects.append(wrap);
 
+  // 4. SÜTUN: AKSİYONLAR
   const tdActions = createEl("td", { className: "admin-actions-cell" });
   const impBtn = createEl("button", {
     className: "btn btn-sm btn-primary",
@@ -206,7 +234,8 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
 
   const stopBtn = createEl("button", {
     className: "btn btn-sm btn-outline",
-    text: "Bitir"
+    text: "Bitir",
+    style: "margin-left: 5px;"
   });
   stopBtn.type = "button";
   stopBtn.disabled = !getImpersonatedUid();
@@ -217,10 +246,14 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
 
   tdActions.append(impBtn, stopBtn);
 
-  tr.append(tdUser, tdProjects, tdActions);
+  // Satıra tüm sütunları ekle (4 Sütun oldu)
+  tr.append(tdUser, tdRole, tdProjects, tdActions);
   return tr;
 }
 
+// ----------------------------------------------------
+// İNİT FONKSİYONU
+// ----------------------------------------------------
 async function init() {
   try {
     setStatus("Yükleniyor...");
@@ -248,6 +281,21 @@ async function init() {
       return;
     }
 
+    // Tablonun 4 sütunlu olduğundan emin olmak için Thead ekleyelim (Eğer yoksa)
+    const table = tbody.parentElement;
+    if (table && !table.querySelector("thead")) {
+        const thead = createEl("thead");
+        thead.innerHTML = `
+            <tr>
+                <th style="text-align: left; padding: 10px;">KULLANICI BİLGİLERİ</th>
+                <th style="text-align: left; padding: 10px;">ROL & DURUM</th>
+                <th style="text-align: left; padding: 10px;">PROJE ERİŞİMLERİ</th>
+                <th style="text-align: right; padding: 10px;">AKSİYONLAR</th>
+            </tr>
+        `;
+        table.prepend(thead);
+    }
+
     const allProjects = await getProjects();
     const activeProjects = (allProjects || []).filter(
       (p) => p && p.status === "active"
@@ -272,7 +320,7 @@ async function init() {
 
     const saveBtn = ensureButton(
       ["#save-btn", "#save-access-btn", "#save-entitlements", "[data-action='save']"],
-      "Kaydet"
+      "Değişiklikleri Kaydet"
     );
 
     saveBtn.addEventListener("click", async () => {
