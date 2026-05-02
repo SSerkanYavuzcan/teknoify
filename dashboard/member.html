@@ -1,67 +1,17 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Genel Bakış | Teknoify</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=20260502">
-  <style>
-    #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #05080a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
-    .data-loader-info { text-align: center; font-family: 'Fira Code', monospace; color: white; }
-    .tk-nav-section { margin-top:20px; margin-bottom:10px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
-  </style>
-</head>
-<body>
-  <div id="loading-overlay"><div class="data-loader-info" id="dynamic-loader-text">Güvenli oturum başlatılıyor...</div></div>
-  <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
-  <aside class="sidebar">
-    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item active"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
-      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
-      <div id="tk-sidebar-projects"></div>
-      <div class="tk-nav-section" style="display: none;"><span>Keşfet</span></div>
-      <div id="explore-services-menu"></div>
-    </nav>
-    <div class="menu-spacer"></div>
-    <div class="sidebar-footer">
-      <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
-      <button class="btn-collapse" onclick="window.toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
-    </div>
-  </aside>
-  <main class="main-content">
-    <header class="top-bar">
-      <h2>Hoşgeldin, <span id="user-name-title">...</span></h2>
-      <div class="user-profile">
-        <span id="user-name-display">Yükleniyor...</span>
-        <div class="avatar" id="user-avatar">U</div>
-      </div>
-    </header>
-    <div class="content-scroll">
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-title">Aktif Hizmetler</div><div class="stat-value" id="stat-active-services">0</div></div>
-        <div class="stat-card"><div class="stat-title">İşlenen Veri</div><div class="stat-value" id="processed-data-count">0</div></div>
-        <div class="stat-card"><div class="stat-title">Kazanılan Saat</div><div class="stat-value" id="stat-saved-hours">0</div></div>
-        <div class="stat-card"><div class="stat-title">Sonraki Ödeme</div><div class="stat-value" id="stat-next-payment">Belirlenmedi</div></div>
-      </div>
-    </div>
-  </main>
-
-  <script src="/dashboard/config.js"></script>
-  <script src="/dashboard/shared/auth.js?v=999"></script> 
-  <script src="/dashboard/shared/sidebar.js?v=999"></script>
-  <script type="module" src="/dashboard/js/pages/member.js?v=999"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  
+  <script src="config.js?v=999"></script>
+  
+  <script src="shared/auth.js?v=999"></script> 
+  <script src="shared/sidebar.js?v=999"></script>
+  
+  <script type="module" src="../js/pages/member.js?v=999"></script>
 
   <script>
     window.logoutApp = function(e) { 
       if(e) e.preventDefault();
       if(typeof window.logout === 'function') { window.logout(); } 
-      else { alert("Oturum kapatılamadı. Lütfen sayfayı yenileyin."); }
+      else { alert("Oturum kapatılamadı."); }
     };
     window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
   </script>
-</body>
-</html>
