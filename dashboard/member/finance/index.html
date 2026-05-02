@@ -11,23 +11,59 @@
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
 
   <style>
+    /* ========================================================= */
+    /* SCROLLBAR GİZLEME VE GENEL DÜZEN */
+    /* ========================================================= */
+    .content-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      overflow-y: auto;
+    }
+    .content-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
     /* Finans Sayfasına Özel Ek Stiller */
     .finance-header-grid {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr;
       gap: 24px;
       margin-bottom: 30px;
+      padding: 24px 24px 0 10px;
+    }
+    .super-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 0 24px 24px 10px;
+      width: 100%;
     }
     .portfolio-main-card {
       background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%) !important;
       border: 1px solid rgba(139, 92, 246, 0.3) !important;
     }
+    .dashboard-card {
+      background: #11131a; 
+      border: 1px solid rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .card-header h3 { margin: 0; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    .trend-tag { font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+    .trend-tag.up { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
     .asset-distribution-box { display: flex; align-items: center; justify-content: space-around; padding: 20px 0; }
     .asset-legend { display: flex; flex-direction: column; gap: 12px; }
     .legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: #a1a1aa; }
     .dot { width: 8px; height: 8px; border-radius: 50%; }
     .progress-container { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }
     .progress-fill { height: 100%; background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); transition: width 0.5s ease; }
+    
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .data-table th, .data-table td { padding: 12px 0; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; color: #a1a1aa; }
+    .data-table th { font-weight: 600; color: #71717a; text-transform: uppercase; font-size: 0.75rem; }
     
     /* Güncelleme Modalı İçin Stiller */
     .btn-update { background: #6366f1; color: #fff; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
@@ -43,37 +79,23 @@
     .btn-save { background: #10b981; color: #fff; padding: 12px; border: none; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; }
     .btn-save:hover { background: #059669; }
     .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #05080a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
   </style>
 </head>
 <body>
 
-  <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
-
-  <aside class="sidebar">
-    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
-      
-      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
-      <div id="tk-sidebar-projects"></div>
-      
-      <div class="tk-nav-section"><span>Keşfet</span></div>
-      <div id="explore-services-menu"></div>
-    </nav>
-    
-    <div class="menu-spacer"></div>
-    
-    <div class="sidebar-footer">
-      <a href="#" onclick="window.logoutApp(event)" class="btn-logout">
-        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
-      </a>
-      <button class="btn-collapse" onclick="window.toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
+  <div id="loading-overlay">
+    <div style="text-align:center; color:white; font-family:'Fira Code', monospace;">
+      <div id="dynamic-loader-text">Veriler senkronize ediliyor...</div>
     </div>
-  </aside>
+  </div>
+
+  <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
     <header class="top-bar">
-      <div class="page-info" style="display: flex; align-items: center; gap: 20px;">
+      <div class="page-info" style="display: flex; align-items: center; gap: 20px; padding-left: 10px;">
         <h2>Yatırım & Finans</h2>
         <button class="btn-update" id="openUpdateModal"><i class="fas fa-edit"></i> Verileri Güncelle</button>
       </div>
@@ -191,36 +213,63 @@
   <script src="/dashboard/shared/sidebar.js?v=999" type="module"></script>
 
   <script type="module">
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     const auth = getAuth();
     const db = getFirestore();
     let currentUserId = null;
 
-    // Ortak Fonksiyonlar
-    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
-    window.logoutApp = function(e) { 
-        if(e) e.preventDefault(); 
-        signOut(auth).then(() => window.location.href = "/login.html");
-    };
-
-    // Grafikleri global tanımlıyoruz ki sonradan verisini güncelleyebilelim
     let portfolioChart, assetChart;
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUserId = user.uid;
-            const name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
-            document.getElementById("user-name-display").textContent = name;
-            document.getElementById("user-avatar").textContent = name.charAt(0).toUpperCase();
             
+            // Kullanıcı bilgilerini Firestore'dan çekip doğru ismini gösterelim
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                
+                let displayName = user.email.split('@')[0]; // Varsayılan
+
+                if (snap.exists()) {
+                    const data = snap.data();
+                    // Firestore'da profile.fullName varsa onu al, yoksa companyName'i al
+                    if (data.profile) {
+                        displayName = data.profile.fullName || data.profile.companyName || displayName;
+                    }
+
+                    // Finans Verilerini Yükle
+                    const financeData = data.dashboardStats?.finance || null;
+                    if (financeData) {
+                        updateUI(financeData);
+                        fillModalInputs(financeData);
+                    }
+                }
+
+                document.getElementById("user-name-display").textContent = displayName;
+                document.getElementById("user-avatar").textContent = displayName.charAt(0).toUpperCase();
+
+            } catch (error) {
+                console.error("Kullanıcı verisi çekilemedi:", error);
+            }
+
+            // Global Değişken ve Sidebar Yüklemesi
+            window.USER_SESSION = { uid: user.uid, email: user.email };
             if(typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();
             }
 
             initCharts();
-            fetchFinanceData();
+            
+            // Yükleme ekranını kapat
+            const loader = document.getElementById("loading-overlay");
+            if (loader) {
+                loader.style.opacity = "0";
+                setTimeout(() => loader.style.display = "none", 600);
+            }
+
         } else {
             window.location.href = "/login.html";
         }
@@ -247,31 +296,8 @@
         assetChart.render();
     }
 
-    // FİREBASE'DEN VERİLERİ ÇEK VE EKRANA YANSIT
-    async function fetchFinanceData() {
-        if (!currentUserId) return;
-        
-        try {
-            const userRef = doc(db, "users", currentUserId);
-            const snap = await getDoc(userRef);
-            
-            if (snap.exists()) {
-                const data = snap.data();
-                const financeData = data.dashboardStats?.finance || null;
-
-                if (financeData) {
-                    updateUI(financeData);
-                    fillModalInputs(financeData);
-                }
-            }
-        } catch (error) {
-            console.error("Finans verisi çekilemedi:", error);
-        }
-    }
-
     // ARAYÜZÜ (UI) GÜNCELLEYEN FONKSİYON
     function updateUI(data) {
-        // Metinleri Güncelle
         document.getElementById('ui-total-value').textContent = `₺${data.totalValue.toLocaleString('tr-TR')}`;
         document.getElementById('ui-savings').textContent = `₺${data.savings.toLocaleString('tr-TR')}`;
         document.getElementById('ui-target-text').textContent = `Hedef: ₺${data.target.toLocaleString('tr-TR')}`;
@@ -280,13 +306,10 @@
         document.getElementById('ui-fund-pct').textContent = `%${data.assets.funds}`;
         document.getElementById('ui-gold-pct').textContent = `%${data.assets.gold}`;
 
-        // Yüzde ve Barları Hesapla
         const progressPct = data.target > 0 ? Math.min(Math.round((data.savings / data.target) * 100), 100) : 0;
         document.getElementById('ui-savings-progress').style.width = `${progressPct}%`;
         document.getElementById('ui-savings-rate').textContent = `%${progressPct}`;
 
-        // Grafikleri Güncelle
-        // Not: Portföy grafiği için statik bir yükseliş trendi dizisi simüle ediyoruz (Görsellik için)
         const baseValue = data.totalValue;
         const mockHistory = [
             baseValue * 0.85, baseValue * 0.88, baseValue * 0.92, 
@@ -301,7 +324,7 @@
         ]);
     }
 
-    // MODAL İŞLEMLERİ (Aç/Kapat ve Veri Gönderimi)
+    // MODAL İŞLEMLERİ
     const modal = document.getElementById('updateModal');
     const openBtn = document.getElementById('openUpdateModal');
     const closeBtn = document.getElementById('closeUpdateModal');
@@ -340,7 +363,6 @@
         };
 
         try {
-            // FIREBASE'E KAYDET (Merge true ile diğer alanları bozmayız)
             const userRef = doc(db, "users", currentUserId);
             await setDoc(userRef, {
                 dashboardStats: {
@@ -348,7 +370,6 @@
                 }
             }, { merge: true });
 
-            // UI'ı anında güncelle
             updateUI(newData);
             modal.classList.remove('active');
             
@@ -360,7 +381,6 @@
             btn.disabled = false;
         }
     });
-
   </script>
 </body>
 </html>
