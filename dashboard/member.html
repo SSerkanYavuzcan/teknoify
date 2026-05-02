@@ -284,10 +284,10 @@
 
   <script type="module">
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; // Firestore eklendi
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; 
 
     const auth = getAuth();
-    const db = getFirestore(); // Firestore başlatıldı
+    const db = getFirestore(); 
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -302,73 +302,97 @@
 
             window.USER_SESSION = { uid: user.uid, name: name, email: user.email };
             
-            // Profil yüklendikten sonra sidebar projelerini çek
             if(typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();
             }
 
-            // FIREBASE'DEN PROJELERİ ÇEKME İŞLEMİ
-            fetchUserProjects();
+            // KULLANICININ UID'SİNİ GÖNDERİYORUZ
+            fetchUserProjects(user.uid);
 
         } else {
             window.location.href = "/login.html";
         }
     });
 
-    // PROJELERİ ÇEKEN VE EKRANA BASAN FONKSİYON
-    async function fetchUserProjects() {
+    // PROJELERİ USERS KOLEKSİYONUNDAKİ ERİŞİM İZİNLERİNE GÖRE ÇEKEN FONKSİYON
+    async function fetchUserProjects(userUid) {
         const container = document.getElementById('dynamic-projects-container');
         if (!container) return;
 
         try {
-            const querySnapshot = await getDocs(collection(db, "projects"));
-            
-            if (querySnapshot.empty) {
-                container.innerHTML = '<p style="color: #a1a1aa;">Henüz aktif bir projeniz bulunmuyor.</p>';
+            // ADIM 1: KULLANICI BİLGİLERİNİ ÇEK
+            const userDocRef = doc(db, "users", userUid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (!userDocSnap.exists()) {
+                container.innerHTML = '<p style="color: #ef4444;">Kullanıcı profili bulunamadı.</p>';
                 closeLoader();
                 return;
             }
 
-            container.innerHTML = ''; // "Yükleniyor" yazısını temizle
-            
-            querySnapshot.forEach((doc) => {
-                const projectData = doc.data();
+            const userData = userDocSnap.data();
+            const projectAccess = userData.projectAccess || {};
+
+            // ADIM 2: 'true' OLAN PROJE ID'LERİNİ BUL
+            const allowedProjectIds = Object.keys(projectAccess).filter(projectId => projectAccess[projectId] === true);
+
+            if (allowedProjectIds.length === 0) {
+                container.innerHTML = '<p style="color: #a1a1aa;">Henüz size tanımlanmış aktif bir projeniz bulunmuyor.</p>';
+                closeLoader();
+                return;
+            }
+
+            container.innerHTML = ''; // Yükleniyor yazısını temizle
+
+            // ADIM 3: İZİN VERİLEN PROJELERİ 'PROJECTS' KOLEKSİYONUNDAN ÇEK
+            const projectPromises = allowedProjectIds.map(id => getDoc(doc(db, "projects", id)));
+            const projectSnaps = await Promise.all(projectPromises);
+
+            projectSnaps.forEach((projectDoc) => {
+                if (!projectDoc.exists()) return; 
+
+                const projectData = projectDoc.data();
                 const details = projectData.details || {};
                 
-                // İkon yolunu oluşturuyoruz
-                const iconName = details.icon || 'default-project-icon'; 
+                // İsim ve açıklamayı hem details içinde hem ana dizinde ara
+                const projectName = details.name || projectData.name || 'İsimsiz Proje';
+                const projectDesc = details.description || projectData.description || 'Proje açıklaması bulunmuyor.';
+                const projectStatus = details.status || projectData.status || 'Aktif';
+                
+                // İkon dosya yolunu oluştur
+                const iconName = details.icon || projectData.icon || 'default-project-icon'; 
                 const imagePath = `/images/${iconName}.png`; 
                 
-                // Etiketleri (Tags) oluşturma
+                // Etiketleri (Tags) oluştur
                 let tagsHTML = '';
-                if (details.tags && Array.isArray(details.tags)) {
-                     details.tags.forEach(tag => {
+                const tagsArray = details.tags || projectData.tags;
+                
+                if (tagsArray && Array.isArray(tagsArray)) {
+                     tagsArray.forEach(tag => {
                          tagsHTML += `<span class="ptag" style="color: #c084fc; border: 1px solid rgba(192,132,252,0.3); background: rgba(192,132,252,0.05); margin-right:5px;">${tag}</span>`;
                      });
                 } else {
-                     // Eğer etiket yoksa tasarımın bozulmaması için varsayılan birkaç etiket ekleyebiliriz
                      tagsHTML = `
                         <span class="ptag ptag-analytics">Analytics</span>
                         <span class="ptag ptag-dashboard">Dashboard</span>
                      `;
                 }
 
-                // Proje linki ayarlama
-                const projectLink = projectData.link || '#';
+                // Proje Linki (Config objesi altındaysa)
+                const projectLink = projectData.config?.folderPath ? `/${projectData.config.folderPath}/${projectData.config.entryPoint}` : '#';
 
-                // Kart HTML'ini oluştur
                 const cardHTML = `
                     <div class="project-card-wide" style="margin-bottom: 24px;">
                       <div class="project-image">
-                          <img src="${imagePath}" alt="${projectData.name || 'Proje'} Görseli" onerror="this.src='/images/default-project-icon.png'">
+                          <img src="${imagePath}" alt="${projectName} Görseli" onerror="this.src='/images/default-project-icon.png'">
                       </div>
                       <div class="project-details">
                         <div>
                           <div class="project-header-top">
-                            <h3>${projectData.name || 'İsimsiz Proje'}</h3>
-                            <div class="status-badge-active">${projectData.status || 'Aktif'}</div>
+                            <h3>${projectName}</h3>
+                            <div class="status-badge-active">${projectStatus}</div>
                           </div>
-                          <p class="project-desc-text">${projectData.description || 'Proje açıklaması bulunmuyor.'}</p>
+                          <p class="project-desc-text">${projectDesc}</p>
                           
                           <div class="project-tags">
                             ${tagsHTML}
@@ -406,7 +430,6 @@
         }
     }
 
-    // Sayfa Yüklendiğinde Grafiği Çiz
     document.addEventListener('DOMContentLoaded', () => {
       if(document.querySelector("#finance-summary-chart")) {
           new ApexCharts(document.querySelector("#finance-summary-chart"), {
