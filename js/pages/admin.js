@@ -1,6 +1,5 @@
 // js/pages/admin.js
 import { logout, requireAuth } from "../lib/auth.js";
-import { getProjects } from "../lib/data.js";
 import { createEl, qs } from "../utils/dom.js";
 import { auth, db } from "../lib/firebase.js";
 
@@ -110,26 +109,22 @@ function goToUserAs(uid) {
 }
 
 // ----------------------------------------------------
-// YENİ: KULLANICI AYARLARI PENCERESİ (MODAL)
+// KULLANICI AYARLARI PENCERESİ (MODAL)
 // ----------------------------------------------------
 function openUserSettingsModal(user, allProjects) {
   const profile = user.profile || {};
   const role = user.role || {};
   const currentAccess = user.projectAccess || {};
 
-  // Arka plan karartması
   const overlay = createEl("div");
   overlay.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9998; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);";
 
-  // Modal Kutusu
   const modal = createEl("div");
   modal.style.cssText = "background: #18181b; border: 1px solid #3f3f46; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; color: white;";
 
-  // Ortak input stilleri
   const inputStyle = "width: 100%; padding: 10px; margin-top: 6px; background: #27272a; border: 1px solid #3f3f46; color: white; border-radius: 6px; box-sizing: border-box; font-size: 0.9em;";
   const labelStyle = "display: block; margin-top: 16px; font-size: 0.85em; color: #a1a1aa; font-weight: 500;";
 
-  // Form HTML İçeriği
   modal.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #3f3f46; padding-bottom: 10px;">
           <h2 style="margin: 0; font-size: 1.2em;">Kullanıcı Ayarları</h2>
@@ -166,7 +161,7 @@ function openUserSettingsModal(user, allProjects) {
 
       <div style="margin-top: 24px;">
           <h3 style="font-size: 0.95em; color: #e4e4e7; margin-bottom: 10px;">Projeler & Yetkilendirme</h3>
-          <div id="m-projects" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #27272a; padding: 12px; border-radius: 8px; border: 1px solid #3f3f46;">
+          <div id="m-projects" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #27272a; padding: 16px; border-radius: 8px; border: 1px solid #3f3f46;">
               </div>
       </div>
 
@@ -185,22 +180,27 @@ function openUserSettingsModal(user, allProjects) {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
-  // Proje checkboxlarını dinamik ekle
+  // Projeleri Ekrana Bas (Aktif Projeler)
   const projectsContainer = modal.querySelector('#m-projects');
-  allProjects.forEach(proj => {
-      const isChecked = currentAccess[proj.id] === true;
-      const lbl = createEl("label");
-      lbl.style.cssText = "display: flex; align-items: center; gap: 8px; font-size: 0.85em; color: #e4e4e7; cursor: pointer;";
-      lbl.innerHTML = `<input type="checkbox" value="${proj.id}" class="m-proj-checkbox" ${isChecked ? 'checked' : ''}> ${proj.name}`;
-      projectsContainer.appendChild(lbl);
-  });
+  if (allProjects.length === 0) {
+      projectsContainer.innerHTML = `<span style="color: #ef4444; font-size: 0.85em; grid-column: span 2;">Sistemde aktif proje bulunamadı.</span>`;
+  } else {
+      allProjects.forEach(proj => {
+          const isChecked = currentAccess[proj.id] === true;
+          const lbl = createEl("label");
+          // Checkbox ve yazıyı hizalayan tıklanabilir alan
+          lbl.style.cssText = "display: flex; align-items: center; gap: 8px; font-size: 0.85em; color: #e4e4e7; cursor: pointer; padding: 4px;";
+          lbl.innerHTML = `<input type="checkbox" value="${proj.id}" class="m-proj-checkbox" style="width: 16px; height: 16px; cursor: pointer;" ${isChecked ? 'checked' : ''}> <span>${proj.name}</span>`;
+          projectsContainer.appendChild(lbl);
+      });
+  }
 
-  // Modal Kapatma İşlemi
+  // Kapatma
   const closeModal = () => overlay.remove();
   modal.querySelector('#close-modal-btn').onclick = closeModal;
   modal.querySelector('#btn-cancel').onclick = closeModal;
 
-  // Şifre Sıfırlama Gönderme
+  // Şifre Gönderme
   modal.querySelector('#btn-reset-pw').onclick = async (e) => {
       const btn = e.target;
       btn.disabled = true;
@@ -220,20 +220,18 @@ function openUserSettingsModal(user, allProjects) {
       }
   };
 
-  // Verileri Kaydetme İşlemi (Firestore Update)
+  // Veritabanına Kaydetme
   modal.querySelector('#btn-save').onclick = async (e) => {
       const btn = e.target;
       btn.disabled = true;
       btn.innerText = "Kaydediliyor...";
 
       try {
-          // Checkboxlardan proje izinlerini topla
           const newProjectAccess = {};
           modal.querySelectorAll('.m-proj-checkbox').forEach(cb => {
               if (cb.checked) newProjectAccess[cb.value] = true;
           });
 
-          // Güncellenecek veriyi hazırla (Nokta notasyonu ile sadece ilgili alanları ez)
           const updates = {
               "profile.fullName": modal.querySelector('#m-name').value.trim(),
               "profile.companyName": modal.querySelector('#m-company').value.trim(),
@@ -243,12 +241,10 @@ function openUserSettingsModal(user, allProjects) {
               "projectAccess": newProjectAccess
           };
 
-          // Firestore'u Güncelle
           const userRef = doc(db, "users", user.id);
           await updateDoc(userRef, updates);
 
           closeModal();
-          // Sayfayı yenileyerek yeni verilerin ekrana yansımasını sağla
           window.location.reload();
 
       } catch (error) {
@@ -357,7 +353,6 @@ function createRow({ user, projects, session }) {
   actionsWrap.style.flexWrap = "wrap";
   actionsWrap.style.justifyContent = "center"; 
 
-  // GÜNCELLENDİ: Kullanıcı Ayarları Butonu
   const settingsBtn = createEl("button", { text: "Kullanıcı Ayarları" });
   settingsBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316 !important; color: #ffffff !important; opacity: 1 !important; display: inline-block; transition: 0.2s;";
   settingsBtn.onmouseover = () => settingsBtn.style.background = "#ea580c !important";
@@ -390,6 +385,9 @@ function createRow({ user, projects, session }) {
   return tr;
 }
 
+// ----------------------------------------------------
+// İNİT FONKSİYONU
+// ----------------------------------------------------
 async function init() {
   try {
     const session = await requireAuth();
@@ -430,8 +428,18 @@ async function init() {
         `;
     }
 
-    const allProjects = await getProjects();
-    const activeProjects = (allProjects || []).filter(p => p && p.status === "active");
+    // GÜNCELLENDİ: Projeler doğrudan veritabanının yollarına göre çekilir
+    const projectsSnap = await getDocs(collection(db, "projects"));
+    const activeProjects = [];
+    projectsSnap.forEach(doc => {
+        const data = doc.data();
+        if (data.config?.isActive === true) {
+            activeProjects.push({
+                id: doc.id,
+                name: data.details?.name || doc.id
+            });
+        }
+    });
 
     const users = await fetchUsers();
     tbody.innerHTML = "";
@@ -441,7 +449,6 @@ async function init() {
       tbody.append(row);
     }
 
-    // Gereksiz genel "Kaydet" butonu ve mantığı kaldırıldı, her şey modaldan anlık kaydediliyor.
     const oldSaveBtn = qs(".admin-save-btn") || qs("#save-btn") || qs("#save-access-btn");
     if(oldSaveBtn) oldSaveBtn.style.display = "none";
 
