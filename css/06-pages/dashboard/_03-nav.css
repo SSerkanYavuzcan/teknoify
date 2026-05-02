@@ -1,79 +1,180 @@
 /* ==========================================================================
-   MOBİL MENÜ BUTONU (Masaüstünde Gizli)
+   1. FLOATING TOGGLE BUTONU (Sidebar Kapalıyken Beliren Tetikleyici)
    ========================================================================== */
 #floating-toggle-btn {
-    display: none; 
+    display: none; /* Varsayılan olarak gizli */
     position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1001; /* Sidebar'ın da üstünde kalmalı */
-    background: var(--primary, #6366f1);
+    bottom: 25px; /* Senin isteğin üzerine alt tarafa alındı */
+    left: 25px;
+    z-index: 1001;
+    background: rgba(99, 102, 241, 0.15); /* Şeffaf mor tema */
+    backdrop-filter: blur(12px); /* Cam efekti */
+    -webkit-backdrop-filter: blur(12px);
     color: white;
-    border: none;
-    width: 42px;
-    height: 42px;
-    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Daire şeklinde */
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#floating-toggle-btn:hover {
+    background: rgba(99, 102, 241, 0.3);
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* Masaüstünde Sidebar KAPALIYKEN butonu göster */
+body.sidebar-closed #floating-toggle-btn {
+    display: flex;
+    animation: fadeInScale 0.3s ease forwards;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 /* ==========================================================================
    2. SIDEBAR & MENU (Ana Stiller)
    ========================================================================== */
 .sidebar {
-    width: 260px; background: var(--dash-sidebar); border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; padding: 0; flex-shrink: 0;
-    transition: all 0.3s ease; overflow: hidden; z-index: 50; opacity: 1;
+    width: 260px; 
+    background: var(--dash-sidebar); 
+    border-right: 1px solid var(--border);
+    display: flex; 
+    flex-direction: column; 
+    padding: 0; 
+    flex-shrink: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    overflow: hidden; 
+    z-index: 50; 
+    opacity: 1;
 }
-body.sidebar-closed .sidebar { width: 0 !important; padding: 0 !important; border: none !important; opacity: 0; pointer-events: none; }
+
+/* Sidebar Kapandığında Genişliği Sıfırla */
+body.sidebar-closed .sidebar { 
+    width: 0 !important; 
+    padding: 0 !important; 
+    border: none !important; 
+    opacity: 0; 
+    pointer-events: none; 
+}
 
 .brand {
-    font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center;
-    gap: 12px; padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap;
+    font-size: 1.25rem; 
+    font-weight: 700; 
+    color: #fff; 
+    display: flex; 
+    align-items: center;
+    gap: 12px; 
+    padding: 24px; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+    white-space: nowrap;
 }
 .brand i { color: var(--primary); font-size: 1.4rem; min-width: 24px; text-align: center; }
 
-.sidebar nav { padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; overflow-x: hidden; }
+.sidebar nav { 
+    padding: 20px 12px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+    flex: 1; 
+    overflow-y: auto; 
+    overflow-x: hidden; 
+}
 
 .menu-item {
-    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-    color: var(--text-muted); font-size: 0.95rem; font-weight: 500; border-radius: 8px;
-    transition: all 0.2s ease; border-left: 4px solid transparent; background: transparent; white-space: nowrap;
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    padding: 12px 16px;
+    color: var(--text-muted); 
+    font-size: 0.95rem; 
+    font-weight: 500; 
+    border-radius: 8px;
+    transition: all 0.2s ease; 
+    border-left: 4px solid transparent; 
+    background: transparent; 
+    white-space: nowrap;
 }
 .menu-item i { width: 24px; text-align: center; font-size: 1rem; transition: 0.2s; flex-shrink: 0; }
+
 .menu-item:hover, .menu-item.active {
     background: linear-gradient(90deg, rgba(115,103,240,0.15) 0%, rgba(115,103,240,0.02) 100%);
-    color: var(--primary); border-left-color: var(--primary); font-weight: 600;
+    color: var(--primary); 
+    border-left-color: var(--primary); 
+    font-weight: 600;
 }
 .menu-item:hover i, .menu-item.active i { color: var(--primary); transform: scale(1.1); }
+
 .menu-spacer { flex: 1; }
 
-.sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; background: var(--dash-sidebar); }
+.sidebar-footer { 
+    padding: 16px; 
+    border-top: 1px solid rgba(255,255,255,0.05); 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    background: var(--dash-sidebar); 
+}
+
 .btn-logout {
-    flex: 1; background: #1f232c; border: 1px solid var(--border); color: #fff;
-    padding: 10px; border-radius: 8px; font-weight: 600; display: flex; align-items: center; justify-content: center;
-    gap: 8px; cursor: pointer; transition: 0.2s; font-size: 0.9rem; text-decoration: none; white-space: nowrap;
+    flex: 1; 
+    background: #1f232c; 
+    border: 1px solid var(--border); 
+    color: #fff;
+    padding: 10px; 
+    border-radius: 8px; 
+    font-weight: 600; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    gap: 8px; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    font-size: 0.9rem; 
+    text-decoration: none; 
+    white-space: nowrap;
 }
 .btn-logout:hover { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; }
+
 .btn-collapse {
-    width: 42px; height: 42px; background: #1f232c; border: 1px solid var(--border); border-radius: 8px;
-    color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0;
+    width: 42px; 
+    height: 42px; 
+    background: #1f232c; 
+    border: 1px solid var(--border); 
+    border-radius: 8px;
+    color: var(--text-muted); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    flex-shrink: 0;
 }
 .btn-collapse:hover { background: #2a2e3a; color: #fff; border-color: #555; }
 
 /* ==========================================================================
-   MOBİL UYUMLULUK (RESPONSIVE)
+   3. MOBİL UYUMLULUK (RESPONSIVE)
    ========================================================================== */
 @media screen and (max-width: 768px) {
-    /* Butonu mobilde görünür yap */
+    /* Butonu mobilde her zaman (üstte) görünür yap */
     #floating-toggle-btn {
         display: flex;
+        top: 15px;
+        bottom: auto; /* Mobilde yukarıda kalsın */
+        left: 15px;
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        background: var(--primary, #6366f1);
     }
 
-    /* Sidebar'ı ekran dışına al ve sabit (fixed) yap */
     .sidebar {
         position: fixed;
         left: -100%; 
@@ -81,11 +182,18 @@ body.sidebar-closed .sidebar { width: 0 !important; padding: 0 !important; borde
         height: 100vh;
         z-index: 1000;
         box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* JS ile tetiklendiğinde sidebar'ı içeri kaydır */
+    /* Mobilde aktifken içeri kaydır */
     .sidebar.active {
         left: 0;
+    }
+    
+    /* Mobilde sidebar-closed mantığı farklı işleyebilir, 
+       bu yüzden genişliği ezmek gerekebilir */
+    body.sidebar-closed .sidebar {
+        width: 260px !important; 
+        left: -100% !important;
+        opacity: 1;
     }
 }
