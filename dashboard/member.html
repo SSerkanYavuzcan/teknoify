@@ -27,6 +27,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      cursor: pointer;
     }
 
     .card-body-content {
@@ -140,12 +141,12 @@
             <div class="mini-stats-row">
               <div class="stat-box">
                 <span>Portföy Değeri</span>
-                <strong>₺385.240</strong>
+                <strong id="portfolio-value">₺385.240</strong>
                 <span class="trend-up"><i class="fas fa-arrow-up"></i> %6,7</span>
               </div>
               <div class="stat-box">
                 <span>Aylık Birikim</span>
-                <strong>₺12.430</strong>
+                <strong id="monthly-savings">₺12.430</strong>
                 <span class="trend-up"><i class="fas fa-arrow-up"></i> %28</span>
               </div>
             </div>
@@ -171,12 +172,12 @@
             <div class="mini-stats-row">
               <div class="stat-box">
                 <span>Kilo</span>
-                <strong>74.8 <small style="font-size:12px; opacity:0.5;">kg</small></strong>
+                <strong><span id="user-weight">74.8</span> <small style="font-size:12px; opacity:0.5;">kg</small></strong>
                 <span class="trend-up" style="color:#71717a;"><i class="fas fa-minus"></i> -1.2 kg</span>
               </div>
               <div class="stat-box">
                 <span>Uyku Süresi</span>
-                <strong>7s 24dk</strong>
+                <strong id="sleep-duration">7s 24dk</strong>
                 <span class="trend-up"><i class="fas fa-check"></i> İyi Kalite</span>
               </div>
             </div>
@@ -194,34 +195,39 @@
           </div>
         </section>
 
-        </div>
+      </div>
     </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  
   <script src="/dashboard/config.js"></script>
-  <script src="/dashboard/shared/auth.js?v=999"></script> 
-  <script src="/dashboard/shared/sidebar.js?v=999"></script>
 
+  <script type="module" src="/dashboard/lib/firebase.js"></script>
+  <script type="module" src="/dashboard/shared/auth.js?v=999"></script> 
+  <script type="module" src="/dashboard/shared/sidebar.js?v=999"></script>
   <script type="module" src="/dashboard/js/pages/member.js?v=999"></script>
 
   <script>
-    window.logoutApp = function(e) { if(e) e.preventDefault(); window.logout(); };
-    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+    window.logoutApp = function(e) { 
+        if(e) e.preventDefault(); 
+        if(window.logout) window.logout(); 
+    };
+    
+    window.toggleSidebar = function() { 
+        document.body.classList.toggle("sidebar-closed"); 
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Finans Teknik Özet Grafiği
-      new ApexCharts(document.querySelector("#finance-summary-chart"), {
-        series: [{ name: 'Portföy', data: [310, 330, 325, 360, 345, 385] }],
-        chart: { type: 'area', height: 150, sparkline: { enabled: true }, animations: { enabled: true } },
-        stroke: { curve: 'smooth', width: 2 },
-        fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
-        colors: ['#6366f1']
-      }).render();
+      // Finans Teknik Özet Grafiği (ApexCharts)
+      if(document.querySelector("#finance-summary-chart")) {
+          new ApexCharts(document.querySelector("#finance-summary-chart"), {
+            series: [{ name: 'Portföy', data: [310, 330, 325, 360, 345, 385] }],
+            chart: { type: 'area', height: 150, sparkline: { enabled: true }, animations: { enabled: true } },
+            stroke: { curve: 'smooth', width: 2 },
+            fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
+            colors: ['#6366f1']
+          }).render();
+      }
     });
   </script>
 </body>
