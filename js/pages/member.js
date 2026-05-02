@@ -1,61 +1,40 @@
-// js/pages/member.js
+// /dashboard/js/pages/member.js
 import { db } from "../lib/firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/**
- * Kullanıcıya özel verileri Firestore'dan çeker ve ekrana basar
- */
 async function loadDashboardData(sess) {
     try {
+        console.log("[member.js] Veriler çekiliyor: ", sess.effectiveUid || sess.uid);
         const effectiveUid = sess.effectiveUid || sess.uid;
-
-        // 1. Profil Bilgilerini Garanti Altına Al
-        const name = sess.name || sess.displayName || "Kullanıcı";
-        const titleEl = document.getElementById("user-name-title");
-        const displayEl = document.getElementById("user-name-display");
-        const avatarEl = document.getElementById("user-avatar");
-
-        if (titleEl) titleEl.textContent = name;
-        if (displayEl) displayEl.textContent = name;
-        if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
-
-        // 2. Firestore'dan Verileri Oku
-        const userSnap = await getDoc(doc(db, "users", effectiveUid));
+        const name = sess.name || "Değerli Kullanıcı";
         
+        document.getElementById("user-name-title").textContent = name;
+        document.getElementById("user-name-display").textContent = name;
+        document.getElementById("user-avatar").textContent = name.charAt(0).toUpperCase();
+
+        const userSnap = await getDoc(doc(db, "users", effectiveUid));
         if (userSnap.exists()) {
             const userDoc = userSnap.data();
-            
-            // Proje Yetkileri (Aktif Hizmet Sayısı)
             const projectAccess = userDoc.projectAccess || {};
             const entitledIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
-            const activeServicesEl = document.getElementById("stat-active-services");
-            if (activeServicesEl) activeServicesEl.textContent = entitledIds.length; 
-
-            // İstatistik Kartları
+            
+            document.getElementById("stat-active-services").textContent = entitledIds.length; 
             const statsData = userDoc.data || {};
-            const savedHoursEl = document.getElementById("stat-saved-hours");
-            const nextPaymentEl = document.getElementById("stat-next-payment");
-            const processedCountEl = document.getElementById("processed-data-count");
-
-            if (savedHoursEl) savedHoursEl.textContent = statsData.savedHours || "0";
-            if (nextPaymentEl) nextPaymentEl.textContent = statsData.nextPayment || "Belirlenmedi";
-            if (processedCountEl) processedCountEl.textContent = statsData.totalProcessed || "0";
+            document.getElementById("stat-saved-hours").textContent = statsData.savedHours || "0";
+            document.getElementById("stat-next-payment").textContent = statsData.nextPayment || "Belirlenmedi";
+            document.getElementById("processed-data-count").textContent = statsData.totalProcessed || "0";
         }
     } catch (err) {
-        console.error("[member.js] Veri yükleme hatası:", err);
+        console.error("[member.js] Firestore Hatası:", err);
     } finally {
-        // Her durumda yükleme ekranını kapat
         const overlay = document.getElementById("loading-overlay");
-        if (overlay) {
-            overlay.style.opacity = "0";
-            setTimeout(() => { overlay.remove(); }, 800);
+        if (overlay) { 
+            overlay.style.opacity = "0"; 
+            setTimeout(() => overlay.remove(), 800); 
         }
     }
 }
 
-/**
- * Merkezi auth.js'in USER_SESSION'ı oluşturmasını bekler
- */
 function init() {
     let attempts = 0;
     const checkSession = setInterval(() => {
@@ -64,14 +43,15 @@ function init() {
             clearInterval(checkSession);
             loadDashboardData(window.USER_SESSION);
         }
-        // 5 saniye içinde oturum gelmezse sonsuz yüklenmeyi engelle
-        if (attempts > 50) {
+        if (attempts > 60) { // 6 saniye bekler
             clearInterval(checkSession);
+            console.error("[member.js] KRİTİK: window.USER_SESSION bulunamadı. auth.js düzgün yüklenmedi.");
             const overlay = document.getElementById("loading-overlay");
-            if (overlay) overlay.remove();
+            if (overlay) {
+                const text = document.getElementById("dynamic-loader-text");
+                if(text) text.innerHTML = "Oturum verisi alınamadı. <br><small>Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.</small>";
+            }
         }
     }, 100);
 }
-
-// Başlat
 init();
