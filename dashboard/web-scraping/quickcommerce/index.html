@@ -84,7 +84,11 @@
     <nav id="tk-main-nav-container">
       <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
       
-      <a href="index.html" class="menu-item active"><i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span></a>
+      <div style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
+        <span>Hizmetler</span>
+      </div>
+      <a href="index.html" class="menu-item active" id="nav-comparison"><i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span></a>
+      <a href="../../market-analysis.html" class="menu-item" id="nav-market"><i class="fas fa-chart-line"></i> <span>Pazar Analizi</span></a>
 
       <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
       <div id="tk-sidebar-projects"></div>
@@ -196,12 +200,35 @@
   <script src="/dashboard/shared/auth.js?v=20260502"></script> 
   <script src="/dashboard/shared/engine.js?v=20260502"></script> 
 
-  <script type="module">
-    import { db } from "/js/lib/firebase.js";
-    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    import { logout } from "/js/lib/auth.js"; 
+  <script>
+    window.onAuthReady = function(session) {
+        const name = session.displayName || session.name || "Kullanıcı";
+        const displayEl = document.getElementById("user-name-display");
+        const avatarEl = document.getElementById("user-avatar");
+        
+        if(displayEl) displayEl.textContent = name;
+        if(avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
 
-    // 1. Çıkış İşlemleri
+        if(typeof window.TK_RENDER_SIDEBAR === "function") {
+            window.TK_RENDER_SIDEBAR();
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if(window.USER_SESSION) {
+            window.onAuthReady(window.USER_SESSION);
+        } else {
+            const checkSession = setInterval(() => {
+                if(window.USER_SESSION) {
+                    clearInterval(checkSession);
+                    window.onAuthReady(window.USER_SESSION);
+                }
+            }, 300);
+        }
+    });
+
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+    
     window.logoutApp = function(e) { 
         if(e) e.preventDefault(); 
         const modal = document.getElementById("tk-logout-modal");
@@ -212,6 +239,12 @@
         const modal = document.getElementById("tk-logout-modal");
         if(modal) modal.style.display = "none";
     };
+  </script>
+
+  <script type="module">
+    import { db } from "/js/lib/firebase.js";
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { logout } from "/js/lib/auth.js"; 
 
     window.executeLogout = async function() {
         window.closeLogoutModal();
@@ -220,34 +253,13 @@
             loader.style.display = "flex";
             loader.style.opacity = "1";
         }
-        await logout(); 
-    };
-
-    // 2. Sidebar Toggle
-    window.toggleSidebar = function() { 
-        document.body.classList.toggle("sidebar-closed"); 
-    };
-
-    // 3. Profil Bilgisini Doldur (auth.js'den gelen data ile)
-    window.onAuthReady = function(session) {
-        const name = session.displayName || "Kullanıcı";
-        const displayEl = document.getElementById("user-name-display");
-        const avatarEl = document.getElementById("user-avatar");
-        if(displayEl) displayEl.textContent = name;
-        if(avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
-
-        // Profil dolduktan sonra Sidebar projelerini yükle
-        if(typeof window.TK_RENDER_SIDEBAR === "function") {
-            window.TK_RENDER_SIDEBAR();
+        if (typeof logout === "function") {
+            await logout(); 
+        } else if (window.logout) {
+            window.logout();
         }
     };
 
-    // Güvenlik: Eğer auth.js çok hızlı çalıştıysa ve onAuthReady beklemediyse manuel tetikle
-    if(window.USER_SESSION) {
-        window.onAuthReady(window.USER_SESSION);
-    }
-
-    // 4. Sidebar Dinamik Proje Doldurma
     window.TK_RENDER_SIDEBAR = async function() {
       const exploreContainer = document.getElementById("explore-services-menu");
       const projectsContainer = document.getElementById("tk-sidebar-projects");
@@ -278,10 +290,7 @@
           }
 
           let icon = data.details?.icon || "fas fa-cube";
-          if (!icon.includes("fa-")) {
-             if(icon === "scraper-icon") icon = "fas fa-spider";
-             else icon = "fas fa-cube";
-          }
+          if (!icon.includes("fa-")) icon = (icon === "scraper-icon") ? "fas fa-spider" : "fas fa-cube";
           
           const name = data.details?.name || "Proje";
           const folder = data.config?.folderPath || "";
