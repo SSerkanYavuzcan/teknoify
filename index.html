@@ -32,13 +32,13 @@
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #a1a1aa;
-            transition: color 0.2s;
-            font-size: 1.1rem;
-            z-index: 10;
+            font-size: 1.2rem;
+            z-index: 999; /* Input'un altında kalmasını kesin engelliyoruz */
+            user-select: none; /* Çift tıklayınca emojinin seçilmesini engeller */
+            transition: transform 0.2s ease-in-out;
         }
         .password-toggle-icon:hover {
-            color: #fff;
+            transform: translateY(-50%) scale(1.1);
         }
         /* Input'un sağ tarafında ikon için boşluk bırakıyoruz */
         .input-wrapper input[type="password"], 
@@ -308,6 +308,7 @@
                             <i class="fas fa-lock"></i>
                             <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
                             <span class="password-toggle-icon" id="togglePassword" onclick="togglePasswordVisibility()">👁️</span>
+                        </div>
                     </div>
 
                     <div class="form-actions">
@@ -431,13 +432,11 @@
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
             passwordInput.classList.add('password-visible');
-            toggleIcon.classList.remove('fa-eye');
-            toggleIcon.classList.add('fa-eye-slash');
+            toggleIcon.textContent = '🧐'; 
         } else {
             passwordInput.type = 'password';
             passwordInput.classList.remove('password-visible');
-            toggleIcon.classList.remove('fa-eye-slash');
-            toggleIcon.classList.add('fa-eye');
+            toggleIcon.textContent = '👁️'; 
         }
     }
 
@@ -487,8 +486,7 @@
         if (passwordInput && passwordInput.type === 'text') {
             passwordInput.type = 'password';
             passwordInput.classList.remove('password-visible');
-            toggleIcon.classList.remove('fa-eye-slash');
-            toggleIcon.classList.add('fa-eye');
+            toggleIcon.textContent = '👁️'; 
         }
 
         // Kısa bir gecikmeyle (animasyon bitince) login ekranına döndür
