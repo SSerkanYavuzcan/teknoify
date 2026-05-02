@@ -10,6 +10,7 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  deleteDoc, // YENİ EKLENDİ: Silme işlemi için
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
@@ -25,6 +26,7 @@ function pickTbody() {
   );
 }
 
+// GÜNCELLENDİ: Sadece hata mesajlarını gösterir, "Yükleniyor/Hazır" gibi yazıları gizler.
 function setStatus(msg, type = "info") {
   let el = qs("#admin-status");
   if (!el) {
@@ -33,8 +35,13 @@ function setStatus(msg, type = "info") {
     anchor.prepend(el);
   }
 
-  el.textContent = msg || "";
-  el.className = `admin-status admin-status--${type}`;
+  if (type === "info" || type === "ok") {
+    el.style.display = "none"; // Gereksiz yazıları gizle
+  } else {
+    el.style.display = "block";
+    el.textContent = msg || "";
+    el.className = `admin-status admin-status--${type}`;
+  }
 }
 
 function ensureButton(selectorList, fallbackText) {
@@ -77,6 +84,7 @@ function setImpersonatedUid(uid, name = "") {
   }
 }
 
+// GÜNCELLENDİ: Aktif değilse gereksiz yazıyı tamamen gizler
 function renderImpersonationBanner({ isAdmin }) {
   const current = getImpersonatedUid();
   if (!isAdmin) return;
@@ -86,14 +94,11 @@ function renderImpersonationBanner({ isAdmin }) {
 
   wrap.innerHTML = "";
   if (!current) {
-    wrap.classList.add("is-empty");
-    wrap.append(
-      createEl("span", { className: "impersonation-label", text: "İmpersonation aktif değil" }),
-      createEl("span", { className: "impersonation-hint", text: "Bir kullanıcıyı seçerek oturumu test edebilirsiniz." })
-    );
+    wrap.style.display = "none"; // Tamamen gizle
     return;
   }
 
+  wrap.style.display = "flex"; // Sadece aktifse göster
   wrap.classList.remove("is-empty");
   const left = createEl("div", {
     className: "impersonation-label",
@@ -154,18 +159,16 @@ function goToUserAs(uid) {
 }
 
 // ----------------------------------------------------
-// YENİ: CREATE ROW FONKSİYONU GÜNCELLENDİ
+// GÜNCELLENEN SATIR OLUŞTURMA (CREATE ROW)
 // ----------------------------------------------------
 function createRow({ user, projects, entitledSet, stateMap, session }) {
   const tr = createEl("tr", { className: "admin-row" });
 
-  // Veritabanı yapısına göre profile objesini alıyoruz
   const profile = user.profile || {};
 
-  // 1. SÜTUN: KULLANICI BİLGİLERİ (İsim(ID) ve Altında Email)
+  // 1. SÜTUN: KULLANICI BİLGİLERİ
   const tdUser = createEl("td", { className: "admin-user-cell" });
   
-  // İsmi ve Emaili "profile" objesinin içinden çekiyoruz
   const fullName = profile.fullName || user.fullName || user.name || (profile.email ? profile.email.split("@")[0] : "İsimsiz Kullanıcı");
   const email = profile.email || user.email || "Email belirtilmemiş";
   
@@ -182,14 +185,19 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   
   tdUser.append(nameLine, emailLine);
 
-  // 2. SÜTUN: ROL VE DURUM (Sadece isimleri büyük harfle)
+  // 2. SÜTUN: ŞİRKET (YENİ EKLENDİ)
+  const tdCompany = createEl("td", { className: "admin-company-cell" });
+  tdCompany.style.verticalAlign = "middle";
+  const companyName = profile.companyName || "-";
+  tdCompany.innerHTML = `<span style="color: #d4d4d8; font-size: 0.9em; font-weight: 500;">${companyName}</span>`;
+
+  // 3. SÜTUN: ROL VE DURUM
   const tdRole = createEl("td", { className: "admin-role-cell" });
   tdRole.style.verticalAlign = "middle";
   
   const roleType = (typeof user.role === 'object' && user.role !== null) ? (user.role.type || 'member') : (user.role || 'member');
   const roleStatus = (typeof user.role === 'object' && user.role !== null) ? (user.role.status || 'active') : (user.status || 'active');
 
-  // İlk harfleri büyütelim (Member, Admin, Active vb.)
   const capRole = roleType.charAt(0).toUpperCase() + roleType.slice(1);
   const capStatus = roleStatus.charAt(0).toUpperCase() + roleStatus.slice(1);
 
@@ -204,14 +212,13 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
       </div>
   `;
 
-  // 3. SÜTUN: PROJE ERİŞİMLERİ (projectAccess içindeki true olanlar)
+  // 4. SÜTUN: PROJE ERİŞİMLERİ
   const tdProjects = createEl("td", { className: "admin-services-cell" });
   const wrap = createEl("div", { className: "admin-service-grid" });
   wrap.style.display = "flex";
   wrap.style.flexWrap = "wrap";
   wrap.style.gap = "6px";
 
-  // Sadece değeri "true" olan projeleri filtreliyoruz
   const accessObj = user.projectAccess || {};
   const allowedIds = Object.keys(accessObj).filter(k => accessObj[k] === true);
 
@@ -219,11 +226,8 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
       wrap.innerHTML = `<span style="font-size: 0.85em; color: #a1a1aa; font-style: italic;">Erişim yok</span>`;
   } else {
       allowedIds.forEach(id => {
-          // Sistemdeki proje listesinden projenin gerçek adını buluyoruz
           const proj = projects.find(p => p.id === id);
-          const pName = proj ? proj.name : id; // Bulamazsa fallback olarak ID yazsın
-
-          // Bulunan projeleri şık bir badge (etiket) olarak ekliyoruz
+          const pName = proj ? proj.name : id; 
           const badge = createEl("span", { text: pName });
           badge.style.cssText = "background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 0.8em; font-weight: 500;";
           wrap.append(badge);
@@ -232,8 +236,9 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   
   tdProjects.append(wrap);
 
-  // 4. SÜTUN: AKSİYONLAR
+  // 5. SÜTUN: AKSİYONLAR (Bitir Butonu Kaldırıldı, Sil Butonu Eklendi)
   const tdActions = createEl("td", { className: "admin-actions-cell" });
+  
   const impBtn = createEl("button", {
     className: "btn btn-sm btn-primary",
     text: "Kullanıcı Olarak Gör"
@@ -242,22 +247,35 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   impBtn.disabled = !session.isAdmin;
   impBtn.addEventListener("click", () => goToUserAs(user.id));
 
-  const stopBtn = createEl("button", {
-    className: "btn btn-sm btn-outline",
-    text: "Bitir",
-    style: "margin-left: 5px;"
+  const deleteBtn = createEl("button", {
+    className: "btn btn-sm",
+    text: "Kullanıcıyı Kaldır",
+    style: "margin-left: 8px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 6px; font-weight: 500; cursor: pointer; transition: 0.2s;"
   });
-  stopBtn.type = "button";
-  stopBtn.disabled = !getImpersonatedUid();
-  stopBtn.addEventListener("click", () => {
-    setImpersonatedUid("");
-    window.location.reload();
+  deleteBtn.type = "button";
+  // Hover efekti
+  deleteBtn.onmouseover = () => deleteBtn.style.background = "rgba(239, 68, 68, 0.25)";
+  deleteBtn.onmouseout = () => deleteBtn.style.background = "rgba(239, 68, 68, 0.15)";
+  
+  // Silme İşlemi
+  deleteBtn.addEventListener("click", async () => {
+    if (confirm(`DİKKAT: ${email} kullanıcısını veritabanından silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) {
+        try {
+            // Firestore'dan kullanıcı dokümanını sil
+            await deleteDoc(doc(db, "users", user.id));
+            tr.remove(); // Tablodan satırı anında kaldır
+            alert("Kullanıcı başarıyla silindi.");
+        } catch (error) {
+            console.error("Silme hatası:", error);
+            alert("Kullanıcı silinirken bir hata oluştu!");
+        }
+    }
   });
 
-  tdActions.append(impBtn, stopBtn);
+  tdActions.append(impBtn, deleteBtn);
 
-  // Satıra tüm sütunları ekle
-  tr.append(tdUser, tdRole, tdProjects, tdActions);
+  // Tüm sütunları ekle (5 Sütun)
+  tr.append(tdUser, tdCompany, tdRole, tdProjects, tdActions);
   return tr;
 }
 
@@ -266,8 +284,6 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
 // ----------------------------------------------------
 async function init() {
   try {
-    setStatus("Yükleniyor...");
-
     const session = await requireAuth();
     if (!session) return;
 
@@ -284,20 +300,18 @@ async function init() {
 
     const tbody = pickTbody();
     if (!tbody) {
-      setStatus(
-        "Admin tablosu bulunamadı. HTML’de bir <tbody> (örn: id='admin-user-table-body') olmalı.",
-        "error"
-      );
+      setStatus("Admin tablosu bulunamadı.", "error");
       return;
     }
 
-    // Tablonun 4 sütunlu olduğundan emin olmak için Thead ekleyelim (Eğer yoksa)
+    // 5 Sütunlu yeni Tablo Başlıkları (ŞİRKET eklendi)
     const table = tbody.parentElement;
     if (table && !table.querySelector("thead")) {
         const thead = createEl("thead");
         thead.innerHTML = `
             <tr>
                 <th style="text-align: left; padding: 10px;">KULLANICI BİLGİLERİ</th>
+                <th style="text-align: left; padding: 10px;">ŞİRKET</th>
                 <th style="text-align: left; padding: 10px;">ROL & DURUM</th>
                 <th style="text-align: left; padding: 10px;">PROJE ERİŞİMLERİ</th>
                 <th style="text-align: right; padding: 10px;">AKSİYONLAR</th>
@@ -336,7 +350,10 @@ async function init() {
     saveBtn.addEventListener("click", async () => {
       try {
         saveBtn.disabled = true;
-        setStatus("Kaydediliyor...");
+        
+        // Sadece kaydetme butonuna basıldığında butonun içini değiştirerek bilgi ver
+        const originalText = saveBtn.innerText;
+        saveBtn.innerText = "Kaydediliyor...";
 
         const writes = [];
         for (const [uid, setOfProjects] of stateMap.entries()) {
@@ -345,16 +362,15 @@ async function init() {
         }
         await Promise.all(writes);
 
-        setStatus("Kaydedildi ✅", "ok");
+        saveBtn.innerText = originalText;
       } catch (e) {
         console.error(e);
-        setStatus("Kaydetme hatası: " + (e?.message || "Bilinmeyen hata"), "error");
+        alert("Kaydetme hatası: " + (e?.message || "Bilinmeyen hata"));
       } finally {
         saveBtn.disabled = false;
       }
     });
 
-    setStatus("Hazır ✅", "ok");
   } catch (e) {
     console.error(e);
     setStatus("Admin sayfası başlatılamadı: " + (e?.message || "Bilinmeyen hata"), "error");
