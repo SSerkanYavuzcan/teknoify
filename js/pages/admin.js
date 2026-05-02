@@ -26,6 +26,15 @@ function destroySaveButtons() {
     if(actionsWrap) actionsWrap.remove();
 }
 
+// HTML'deki inatçı "Değişiklikleri Kaydet" butonunu CSS ile de garanti gizle
+const hideSaveBtnStyle = document.createElement("style");
+hideSaveBtnStyle.innerHTML = `
+    #save-btn, #save-access-btn, .admin-save-btn, #admin-actions {
+        display: none !important;
+    }
+`;
+document.head.appendChild(hideSaveBtnStyle);
+
 function pickTbody() {
   return (
     qs("#admin-user-table-body") ||
@@ -518,8 +527,7 @@ async function init() {
   try {
     // Açılışta Kaydet butonlarını temizleme atışı
     destroySaveButtons();
-    // Güvenlik amaçlı 1 saniye sonra tekrar temizleme (Bazen DOM sonradan yüklenir)
-    setTimeout(destroySaveButtons, 1000);
+    setTimeout(destroySaveButtons, 1000); // DOM garantisi için tekrarla
 
     const session = await requireAuth();
     if (!session) return;
@@ -654,12 +662,9 @@ async function init() {
         // ----------------------------------------------------
         // 2. PROJE TABLOSU ALANI
         // ----------------------------------------------------
-        // Kullanıcı tablosunun kapsayıcı özelliklerini ve classlarını tamamen klonluyoruz
-        const projectWrapClass = userContainer.className || "";
-
-        // Tıpatıp aynı görünüm için Proje Bölümünü oluştur
-        const projectSection = createEl("div", { className: projectWrapClass });
-        projectSection.style.cssText = "margin-top: 60px;"; // Kullanıcı tablosundan ferahça ayırmak için boşluk
+        // Başlığı Kutu (userContainer) dışına, tamamen özgür bir div içine alıyoruz
+        const projectSectionOuter = createEl("div");
+        projectSectionOuter.style.cssText = "margin-top: 60px;";
 
         const projectSectionHeader = createEl("div");
         projectSectionHeader.innerHTML = `
@@ -668,7 +673,10 @@ async function init() {
                 <p style="color: #9ca3af; font-size: 1rem; margin: 0;">Sistemdeki tüm projeleri ve erişim rollerini yönetin.</p>
             </div>
         `;
-        projectSection.appendChild(projectSectionHeader);
+        projectSectionOuter.appendChild(projectSectionHeader);
+
+        // İçerik kutusunu (border/background alanını) klonluyoruz
+        const projectContentBox = createEl("div", { className: userContainer.className || "" });
 
         const activeP = allProjects.filter(p => p.config?.isActive === true).length;
         const prodP = allProjects.filter(p => (p.audit?.status || '').toLowerCase() === 'production').length;
@@ -684,7 +692,7 @@ async function init() {
             ${createKPICard("Test", testP, "#c084fc")}
             ${createKPICard("Development", devP, "#a1a1aa")}
         `;
-        projectSection.appendChild(projKpiWrap);
+        projectContentBox.appendChild(projKpiWrap);
 
         const projFilterWrap = createEl("div");
         projFilterWrap.style.cssText = "display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid #3f3f46;";
@@ -709,9 +717,9 @@ async function init() {
                 <option value="admin">Admin</option>
             </select>
         `;
-        projectSection.appendChild(projFilterWrap);
+        projectContentBox.appendChild(projFilterWrap);
 
-        // TABLONUN GENETİĞİNİ KLONLA (Tıpatıp aynı HTML tag'leri ve class'ları alır)
+        // Tablonun genetiğini ve etrafındaki (table-responsive gibi) class'ları kopyala
         const projectTableWrap = userTable.parentElement.cloneNode(false); 
         const pTable = userTable.cloneNode(false); 
         
@@ -729,10 +737,12 @@ async function init() {
         `;
         
         projectTableWrap.appendChild(pTable);
-        projectSection.appendChild(projectTableWrap);
+        projectContentBox.appendChild(projectTableWrap);
         
-        // Oluşturduğumuz bu yeni Proje Kapsayıcısını, ana sayfanın en altına ekliyoruz.
-        userContainer.parentElement.appendChild(projectSection);
+        // Kutu içeriğini Dış çerçevenin (Başlığın altının) içine koy
+        projectSectionOuter.appendChild(projectContentBox);
+        // Tüm sistemi Ana Konteynere ekle
+        userContainer.parentElement.appendChild(projectSectionOuter);
 
         const projectTbody = qs("#admin-project-table-body");
 
