@@ -1,6 +1,5 @@
 // js/pages/member.js
 import { logout as logoutFn, requireAuth } from "../lib/auth.js";
-import { getUserEntitledProjectIds } from "../lib/data.js";
 import { db } from "../lib/firebase.js";
 import { 
     doc, 
@@ -43,74 +42,6 @@ function hideLoadingOverlay() {
 }
 
 /**
- * DİNAMİK MENÜ RENDER SİSTEMİ
- * Projeleri Firebase'den çeker ve yetki durumuna göre uygun kategoriye basar.
- */
-async function renderDynamicMenu(entitledIds) {
-    const servicesContainer = document.getElementById("dynamic-services-menu");
-    const exploreContainer = document.getElementById("explore-services-menu");
-    
-    if (!servicesContainer || !exploreContainer) return;
-
-    servicesContainer.innerHTML = "";
-    exploreContainer.innerHTML = "";
-
-    try {
-        // Tüm projeleri "projects" koleksiyonundan çekiyoruz
-        const querySnapshot = await getDocs(collection(db, "projects"));
-        
-        querySnapshot.forEach((projectDoc) => {
-            const project = projectDoc.data();
-            const projectId = projectDoc.id;
-            
-            // Kullanıcının bu projeye yetkisi var mı?
-            const hasAccess = entitledIds.includes(projectId);
-            
-            const href = project.demoUrl || project.href || "#";
-            const icon = project.icon || "fas fa-cube";
-            const name = project.name || projectId;
-
-            const menuItem = document.createElement("a");
-            
-            if (hasAccess) {
-                // DURUM 1: YETKİLİ (Hizmetler Bölümü)
-                menuItem.href = href;
-                menuItem.className = "menu-item";
-                menuItem.innerHTML = `
-                    <i class="${icon}"></i> 
-                    <span>${escapeHTML(name)}</span>
-                `;
-                servicesContainer.appendChild(menuItem);
-            } else {
-                // DURUM 2: YETKİSİZ (Keşfet / Kilitli Bölümü)
-                menuItem.href = "#";
-                menuItem.className = "menu-item locked";
-                menuItem.title = "Erişim için iletişime geçin";
-                
-                // Tıklandığında uyarı ver
-                menuItem.onclick = (e) => {
-                    e.preventDefault();
-                    if (window.openContactModal) {
-                        window.openContactModal(`${name} hizmetine erişmek için lütfen bizimle iletişime geçin.`);
-                    } else {
-                        alert(`${name} modülü şu an sizin için kilitli.`);
-                    }
-                };
-
-                menuItem.innerHTML = `
-                    <i class="${icon}"></i> 
-                    <span>${escapeHTML(name)}</span>
-                    <i class="fas fa-lock" style="font-size:10px; margin-left:auto; opacity:0.4;"></i>
-                `;
-                exploreContainer.appendChild(menuItem);
-            }
-        });
-    } catch (err) {
-        console.error("Projeler listelenirken hata oluştu:", err);
-    }
-}
-
-/**
  * BİLDİRİM SİSTEMİ RENDER
  */
 function renderNotifications(list) {
@@ -147,32 +78,46 @@ async function init() {
 
         // 2. Impersonation (Admin ise başka kullanıcı gibi görme) Kontrolü
         const impUid = localStorage.getItem("teknoify_impersonate_uid");
-        const effectiveUserId = (session.role === "admin" && impUid) ? impUid : session.uid;
+        // session.isAdmin, yeni auth yapına göre daha güvenilir bir kontrol
+        const effectiveUserId = (session.isAdmin && impUid) ? impUid : session.uid;
 
         // 3. Kullanıcı Bilgilerini Bas
-        const displayName = session.displayName || (session.email ? session.email.split("@")[0] : "Değerli Kullanıcımız");
+        const displayName = session.name || session.displayName || (session.email ? session.email.split("@")[0] : "Değerli Kullanıcımız");
         setText("user-name-display", displayName);
         setText("user-name-title", displayName);
         setText("user-avatar", displayName.charAt(0).toUpperCase());
 
-        // 4. Yetkili Projeleri Çek ve Menüyü Oluştur
-        const entitledIds = await getUserEntitledProjectIds(effectiveUserId);
-        setText("stat-active-services", entitledIds.length);
-        
-        // Menü Render fonksiyonunu çağırıyoruz
-        await renderDynamicMenu(entitledIds);
-
-        // 5. Ekstra Kullanıcı Verilerini Firestore'dan Çek
+        // 4. Kullanıcının Kendi Dokümanını ve Yetkilerini Çek
         const userSnap = await getDoc(doc(db, "users", effectiveUserId));
+        let entitledIds = [];
+        
         if (userSnap.exists()) {
             const userDoc = userSnap.data();
-            const data = userDoc.data || {};
             
-            setText("stat-saved-hours", data.savedHours || "0");
-            setText("stat-next-payment", data.nextPayment || "Belirlenmedi");
-            setText("processed-data-count", data.totalProcessed || "0");
+            // GÜNCEL SİSTEM: Yetkiler projectAccess içinden okunuyor
+            const projectAccess = userDoc.projectAccess || {};
+            entitledIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
+            
+            // UI Güncellemeleri
+            setText("stat-active-services", entitledIds.length); // Aktif hizmet sayısı doğru yazılacak!
+            
+            const statsData = userDoc.data || {};
+            setText("stat-saved-hours", statsData.savedHours || "0");
+            setText("stat-next-payment", statsData.nextPayment || "Belirlenmedi");
+            setText("processed-data-count", statsData.totalProcessed || "0");
 
-            renderNotifications(data.notifications || []);
+            renderNotifications(statsData.notifications || []);
+        }
+
+        // 5. Dinamik Menüyü (Sidebar) Çizdirmek için window.USER_SESSION objesini güncelle ve Sidebar'ı tetikle
+        // Bu sayede proje sayfalarındaki (shared/auth.js) menü ile %100 aynı menüye sahip olacaksın.
+        window.USER_SESSION = {
+            ...session,
+            projectIds: entitledIds
+        };
+
+        if (typeof window.TK_RENDER_SIDEBAR === "function") {
+            window.TK_RENDER_SIDEBAR();
         }
 
     } catch (err) {
