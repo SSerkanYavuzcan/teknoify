@@ -1,5 +1,7 @@
-// js/pages/login.js
-import { login, requireAuth } from "../lib/auth.js";
+// /js/pages/login.js
+
+// 1. Modüler sisteme uygun Mutlak Yol importu
+import { login, requireAuth } from "/js/lib/auth.js";
 
 function $(id) {
   return document.getElementById(id);
@@ -19,25 +21,24 @@ function normalizeEmail(v) {
 function redirectAfterLogin(session) {
   // session objesinin Firestore'dan gelen verileri (profile, role vb.) içerdiğini varsayıyoruz.
   
-  // 1. Kullanıcının rolünü ve durumunu belirle (Yoksa varsayılan olarak 'member' ve 'pending' say)
+  // 1. Kullanıcının rolünü ve durumunu belirle (Yoksa varsayılan olarak 'member' ve 'active' say)
   const userRole = session?.role?.type || "member"; 
   const userStatus = session?.role?.status || "active";
 
-  // 2. Eğer hesabı aktif değilse yönlendirmeyi durdur (Kurumsal projelerde çok önemlidir)
+  // 2. Eğer hesabı aktif değilse yönlendirmeyi durdur
   if (userStatus !== "active") {
     showError("Hesabınız aktif değil veya askıya alınmış. Lütfen destek ile iletişime geçin.");
-    // Gerekirse burada firebase auth üzerinden çıkış (logout) işlemi de tetiklenebilir.
     return; 
   }
 
-  // 3. Rol bazlı yönlendirme (Role-Based Routing)
+  // 3. Rol bazlı yönlendirme (Mutlak yollar kullanılarak her zaman doğru adrese gidilmesi sağlandı)
   if (userRole === "admin") {
-    window.location.href = "../dashboard/admin.html";
+    window.location.href = "/dashboard/admin.html";
   } else if (userRole === "premium") {
-    window.location.href = "../dashboard/premium.html";
+    window.location.href = "/dashboard/premium.html";
   } else {
     // member veya tanımsız bir rol ise standart üyeye yönlendir
-    window.location.href = "../dashboard/member.html"; 
+    window.location.href = "/dashboard/member.html"; 
   }
 }
 
@@ -48,8 +49,7 @@ async function init() {
   const params = new URLSearchParams(window.location.search);
   const fromLogout = params.get("loggedOut") === "1";
 
-  // Logout'tan geldiysek otomatik yönlendirme yapma.
-  // Kullanıcı login ekranını görsün.
+  // Logout'tan geldiysek otomatik yönlendirme yapma. Kullanıcı login ekranını görsün.
   if (!fromLogout) {
     try {
       const existing = await requireAuth();
@@ -58,7 +58,7 @@ async function init() {
         return;
       }
     } catch {
-      // login değilse devam
+      // login değilse sessizce devam et
     }
   }
 
@@ -81,6 +81,7 @@ async function init() {
       btn.textContent = "Giriş yapılıyor...";
     }
 
+    // Auth.js üzerinden Firebase Login işlemini tetikle
     const result = await login(email, password);
 
     if (btn) {
@@ -93,10 +94,13 @@ async function init() {
       return;
     }
 
-    // Giriş başarılı -> session bilgisini auth üzerinden çekip yönlendir
+    // Giriş başarılı -> session bilgisini auth üzerinden çekip güvenle yönlendir
     const session = await requireAuth();
-    redirectAfterLogin(session);
+    if (session) {
+      redirectAfterLogin(session);
+    }
   });
 }
 
+// Sistemi Başlat
 init();
