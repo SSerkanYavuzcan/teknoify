@@ -245,7 +245,7 @@ function openUserSettingsModal(user, allProjects) {
 }
 
 // ----------------------------------------------------
-// PROJE AYARLARI MODALI (YENİ EKLENDİ)
+// PROJE AYARLARI MODALI
 // ----------------------------------------------------
 function openProjectSettingsModal(project) {
   const config = project.config || {};
@@ -322,9 +322,7 @@ function openProjectSettingsModal(project) {
           await updateDoc(doc(db, "projects", project.id), updates);
           closeModal();
           window.location.reload();
-
       } catch (error) {
-          console.error("Güncelleme hatası:", error);
           alert("Ayarlar kaydedilirken hata oluştu!");
           btn.disabled = false;
           btn.innerText = "Ayarları Kaydet";
@@ -333,13 +331,12 @@ function openProjectSettingsModal(project) {
 }
 
 // ----------------------------------------------------
-// KULLANICI SATIRI OLUŞTURMA
+// SATIR OLUŞTURUCULAR
 // ----------------------------------------------------
 function createUserRow({ user, projects, session }) {
   const tr = createEl("tr", { className: "admin-row" });
   const profile = user.profile || {};
 
-  // -- tdUser, tdCompany, tdRole vb... (Öncekiyle Birebir Aynı) --
   const tdUser = createEl("td", { className: "admin-user-cell" });
   tdUser.style.cssText = "vertical-align: middle; text-align: center;";
   const fullName = profile.fullName || user.fullName || user.name || (profile.email ? profile.email.split("@")[0] : "İsimsiz Kullanıcı");
@@ -357,7 +354,7 @@ function createUserRow({ user, projects, session }) {
   const capRole = roleType.charAt(0).toUpperCase() + roleType.slice(1);
   const capStatus = roleStatus.charAt(0).toUpperCase() + roleStatus.slice(1);
   tdRole.innerHTML = `
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
           <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500;">${capRole}</span>
           <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500;">${capStatus}</span>
       </div>
@@ -411,6 +408,7 @@ function createUserRow({ user, projects, session }) {
         try {
             await deleteDoc(doc(db, "users", user.id));
             tr.remove(); 
+            window.location.reload(); // İstatistikleri güncellemek için reload
         } catch (error) {
             alert("Kullanıcı silinirken hata oluştu!");
         }
@@ -424,9 +422,6 @@ function createUserRow({ user, projects, session }) {
   return tr;
 }
 
-// ----------------------------------------------------
-// YENİ: PROJE SATIRI OLUŞTURMA
-// ----------------------------------------------------
 function createProjectRow(project) {
   const tr = createEl("tr", { className: "admin-row" });
   const details = project.details || {};
@@ -434,13 +429,12 @@ function createProjectRow(project) {
   const audit = project.audit || {};
   const access = project.access || {};
 
-  // 1. SÜTUN: PROJE ADI
   const tdName = createEl("td");
   tdName.style.cssText = "vertical-align: middle; text-align: center;";
   const pName = details.name || "İsimsiz Proje";
   tdName.innerHTML = `<div class="admin-user-name"><strong>${pName}</strong> <br><span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">${project.id}</span></div>`;
 
-  // 2. SÜTUN: STATUS (Aktiflik ve Süreç)
+  // Status alanında boşluklar ve hizalama düzeltildi
   const tdStatus = createEl("td");
   tdStatus.style.cssText = "vertical-align: middle; text-align: center;";
   
@@ -451,19 +445,17 @@ function createProjectRow(project) {
   const auditStatus = audit.status ? (audit.status.charAt(0).toUpperCase() + audit.status.slice(1)) : "Bilinmiyor";
 
   tdStatus.innerHTML = `
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
           <span style="background: ${activeBg}; color: ${activeColor}; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${isActiveText}</span>
           <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${auditStatus}</span>
       </div>
   `;
 
-  // 3. SÜTUN: ERİŞİMLER (Minimum Role)
   const tdAccess = createEl("td");
   tdAccess.style.cssText = "vertical-align: middle; text-align: center;";
   const minRole = access.minimumRole ? (access.minimumRole.charAt(0).toUpperCase() + access.minimumRole.slice(1)) : "Member";
   tdAccess.innerHTML = `<span style="background: rgba(168, 85, 247, 0.15); color: #c084fc; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${minRole}</span>`;
 
-  // 4. SÜTUN: AKSİYONLAR
   const tdActions = createEl("td");
   tdActions.style.cssText = "vertical-align: middle; text-align: center;";
   
@@ -485,6 +477,7 @@ function createProjectRow(project) {
         try {
             await deleteDoc(doc(db, "projects", project.id));
             tr.remove(); 
+            window.location.reload(); // İstatistikleri güncellemek için reload
         } catch (error) {
             alert("Proje silinirken hata oluştu!");
         }
@@ -496,6 +489,18 @@ function createProjectRow(project) {
 
   tr.append(tdName, tdStatus, tdAccess, tdActions);
   return tr;
+}
+
+// ----------------------------------------------------
+// UI YARDIMCI FONKSİYONLARI (KPI & FILTER)
+// ----------------------------------------------------
+function createKPICard(title, value, color) {
+  return `
+    <div style="background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; padding: 16px; flex: 1; min-width: 120px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="font-size: 0.85em; color: #a1a1aa; margin-bottom: 8px; font-weight: 500;">${title}</div>
+        <div style="font-size: 1.8em; font-weight: bold; color: ${color};">${value}</div>
+    </div>
+  `;
 }
 
 // ----------------------------------------------------
@@ -516,50 +521,189 @@ async function init() {
 
     renderImpersonationBanner(session);
 
-    // 1. KULLANICI TABLOSUNU DOLDURMA
+    // Verileri Bir Kere Çek
+    const allUsers = await fetchUsers();
+    
+    const projectsSnap = await getDocs(collection(db, "projects"));
+    const allProjects = [];
+    projectsSnap.forEach(doc => {
+        allProjects.push({ id: doc.id, ...doc.data() });
+    });
+
+    // 1. KULLANICI TABLOSU ALANI
     const userTbody = pickTbody();
     if (userTbody) {
         const userTable = userTbody.parentElement;
-        let thead = userTable.querySelector("thead");
-        if (!thead) {
-            thead = createEl("thead");
-            userTable.prepend(thead);
+        const userContainer = userTable.parentElement;
+
+        // Kullanıcı Tablosu Thead Düzenlemesi
+        let userThead = userTable.querySelector("thead");
+        if (!userThead) {
+            userThead = createEl("thead");
+            userTable.prepend(userThead);
         }
-        thead.innerHTML = `
+        userThead.innerHTML = `
             <tr>
-                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">KULLANICI BİLGİLERİ</th>
-                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">ŞİRKET</th>
-                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">ROL & DURUM</th>
-                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">PROJE ERİŞİMLERİ</th>
-                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">IMPERSONATE</th>
-                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">AKSİYONLAR</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">KULLANICI BİLGİLERİ</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">ŞİRKET</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">ROL & DURUM</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">PROJE ERİŞİMLERİ</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">IMPERSONATE</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">AKSİYONLAR</th>
             </tr>
         `;
 
-        const projectsSnap = await getDocs(collection(db, "projects"));
-        const allProjects = [];
-        projectsSnap.forEach(doc => {
-            allProjects.push({ id: doc.id, ...doc.data() });
+        // Kullanıcı KPI Kartları
+        const activeU = allUsers.filter(u => (u.role?.status || u.status) === 'active').length;
+        const memberU = allUsers.filter(u => (u.role?.type || u.role) === 'member').length;
+        const premiumU = allUsers.filter(u => (u.role?.type || u.role) === 'premium').length;
+
+        const userKpiWrap = createEl("div");
+        userKpiWrap.style.cssText = "display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;";
+        userKpiWrap.innerHTML = `
+            ${createKPICard("Toplam Kullanıcı", allUsers.length, "#3b82f6")}
+            ${createKPICard("Aktif Kullanıcı", activeU, "#4ade80")}
+            ${createKPICard("Member Sayısı", memberU, "#a1a1aa")}
+            ${createKPICard("Premium Sayısı", premiumU, "#f59e0b")}
+        `;
+        userContainer.insertBefore(userKpiWrap, userTable);
+
+        // Kullanıcı Filtre Alanı
+        const userFilterWrap = createEl("div");
+        userFilterWrap.style.cssText = "display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid #3f3f46;";
+        
+        // Proje Select Opsiyonlarını Dinamik Üretme
+        let projOptions = `<option value="">Tüm Projeler</option>`;
+        allProjects.forEach(p => {
+            projOptions += `<option value="${p.id}">${p.details?.name || p.id}</option>`;
         });
 
-        const users = await fetchUsers();
-        userTbody.innerHTML = "";
+        const filterInputStyle = "background: #27272a; border: 1px solid #3f3f46; color: white; padding: 10px; border-radius: 6px; font-size: 0.9em; flex: 1; min-width: 150px;";
+        userFilterWrap.innerHTML = `
+            <input type="text" id="uf-search" placeholder="İsim, e-posta veya şirket ara..." style="${filterInputStyle}">
+            <select id="uf-role" style="${filterInputStyle}">
+                <option value="">Tüm Roller</option>
+                <option value="member">Member</option>
+                <option value="premium">Premium</option>
+                <option value="admin">Admin</option>
+            </select>
+            <select id="uf-status" style="${filterInputStyle}">
+                <option value="">Tüm Durumlar</option>
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+            </select>
+            <select id="uf-project" style="${filterInputStyle}">
+                ${projOptions}
+            </select>
+        `;
+        userContainer.insertBefore(userFilterWrap, userTable);
 
-        for (const user of users) {
-          const row = createUserRow({ user, projects: allProjects, session });
-          userTbody.append(row);
-        }
+        // Kullanıcıları Render Etme Fonksiyonu
+        const renderUsers = () => {
+            const sText = qs("#uf-search").value.toLowerCase();
+            const sRole = qs("#uf-role").value;
+            const sStatus = qs("#uf-status").value;
+            const sProj = qs("#uf-project").value;
 
-        // 2. PROJE YÖNETİMİ TABLOSUNU DİNAMİK OLARAK SAYFAYA EKLEME
-        // Kullanıcı tablosunun kapsayıcısını buluyoruz ve altına yeni projeler bölümünü ekliyoruz.
-        const tableContainer = userTable.parentElement; 
+            userTbody.innerHTML = "";
+            const filtered = allUsers.filter(u => {
+                const profile = u.profile || {};
+                const name = (profile.fullName || u.fullName || u.name || "").toLowerCase();
+                const email = (profile.email || u.email || "").toLowerCase();
+                const company = (profile.companyName || "").toLowerCase();
+                
+                const matchSearch = name.includes(sText) || email.includes(sText) || company.includes(sText);
+                
+                const rType = (typeof u.role === 'object' && u.role !== null) ? (u.role.type || 'member') : (u.role || 'member');
+                const matchRole = !sRole || rType === sRole;
+
+                const rStatus = (typeof u.role === 'object' && u.role !== null) ? (u.role.status || 'active') : (u.status || 'active');
+                const matchStatus = !sStatus || rStatus === sStatus;
+
+                const accessObj = u.projectAccess || {};
+                const matchProj = !sProj || accessObj[sProj] === true;
+
+                return matchSearch && matchRole && matchStatus && matchProj;
+            });
+
+            if(filtered.length === 0) {
+                 userTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: #a1a1aa;">Sonuç bulunamadı.</td></tr>`;
+                 return;
+            }
+
+            filtered.forEach(u => {
+                userTbody.append(createUserRow({ user: u, projects: allProjects, session }));
+            });
+        };
+
+        // Kullanıcı Filtre Event Listenerları
+        qs("#uf-search").addEventListener("input", renderUsers);
+        qs("#uf-role").addEventListener("change", renderUsers);
+        qs("#uf-status").addEventListener("change", renderUsers);
+        qs("#uf-project").addEventListener("change", renderUsers);
+
+        // İlk Yükleme
+        renderUsers();
         
-        const projectSectionHeader = createEl("h2");
-        projectSectionHeader.innerHTML = `Proje Erişim Yönetimi <span style="font-size: 0.6em; color: #9ca3af; font-weight: normal; margin-left: 10px;">Sistemdeki tüm projeleri ve erişim rollerini yönetin.</span>`;
-        projectSectionHeader.style.cssText = "color: white; margin-top: 50px; margin-bottom: 20px; font-size: 1.5rem; font-weight: bold; padding-top: 30px; border-top: 1px solid #3f3f46;";
-        tableContainer.parentElement.appendChild(projectSectionHeader);
 
-        const projectTableWrap = createEl("div", { className: tableContainer.className }); // Aynı stilleri alsın diye
+        // ----------------------------------------------------
+        // 2. PROJE TABLOSU ALANI
+        // ----------------------------------------------------
+        // Proje Başlığı (Kullanıcı başlığı ile BİREBİR aynı tasarım)
+        const projectSectionHeader = createEl("div");
+        projectSectionHeader.innerHTML = `
+            <div style="margin-top: 60px; margin-bottom: 24px;">
+                <h1 style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; color: white;">Proje Erişim Yönetimi</h1>
+                <p style="color: #9ca3af; font-size: 1rem; margin: 0;">Sistemdeki tüm projeleri ve erişim rollerini yönetin.</p>
+            </div>
+        `;
+        userContainer.appendChild(projectSectionHeader);
+
+        // Proje KPI Kartları
+        const activeP = allProjects.filter(p => p.config?.isActive === true).length;
+        const prodP = allProjects.filter(p => (p.audit?.status || '').toLowerCase() === 'production').length;
+        const testP = allProjects.filter(p => (p.audit?.status || '').toLowerCase() === 'test').length;
+        const devP = allProjects.filter(p => (p.audit?.status || '').toLowerCase() === 'development').length;
+
+        const projKpiWrap = createEl("div");
+        projKpiWrap.style.cssText = "display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;";
+        projKpiWrap.innerHTML = `
+            ${createKPICard("Toplam Proje", allProjects.length, "#3b82f6")}
+            ${createKPICard("Aktif", activeP, "#4ade80")}
+            ${createKPICard("Production", prodP, "#f59e0b")}
+            ${createKPICard("Test", testP, "#c084fc")}
+            ${createKPICard("Development", devP, "#a1a1aa")}
+        `;
+        userContainer.appendChild(projKpiWrap);
+
+        // Proje Filtre Alanı
+        const projFilterWrap = createEl("div");
+        projFilterWrap.style.cssText = "display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid #3f3f46;";
+        
+        projFilterWrap.innerHTML = `
+            <input type="text" id="pf-search" placeholder="Proje adı ara..." style="${filterInputStyle}">
+            <select id="pf-active" style="${filterInputStyle}">
+                <option value="">Tüm Durumlar</option>
+                <option value="true">Sadece Active</option>
+                <option value="false">Sadece Inactive</option>
+            </select>
+            <select id="pf-phase" style="${filterInputStyle}">
+                <option value="">Tüm Aşamalar (Audit)</option>
+                <option value="production">Production</option>
+                <option value="test">Test</option>
+                <option value="development">Development</option>
+            </select>
+            <select id="pf-role" style="${filterInputStyle}">
+                <option value="">Tüm Erişim Yetkileri</option>
+                <option value="member">Member</option>
+                <option value="premium">Premium</option>
+                <option value="admin">Admin</option>
+            </select>
+        `;
+        userContainer.appendChild(projFilterWrap);
+
+        // Proje Tablosu İskeleti
+        const projectTableWrap = createEl("div", { className: userTable.parentElement.className }); 
         projectTableWrap.innerHTML = `
             <table style="width: 100%; border-collapse: collapse; text-align: left;">
                 <thead>
@@ -574,18 +718,56 @@ async function init() {
                 </tbody>
             </table>
         `;
-        tableContainer.parentElement.appendChild(projectTableWrap);
-
+        userContainer.appendChild(projectTableWrap);
         const projectTbody = qs("#admin-project-table-body");
-        allProjects.forEach(proj => {
-            const row = createProjectRow(proj);
-            projectTbody.append(row);
-        });
+
+        // Projeleri Render Etme Fonksiyonu
+        const renderProjects = () => {
+            const sText = qs("#pf-search").value.toLowerCase();
+            const sActive = qs("#pf-active").value;
+            const sPhase = qs("#pf-phase").value;
+            const sRole = qs("#pf-role").value;
+
+            projectTbody.innerHTML = "";
+
+            const filteredP = allProjects.filter(p => {
+                const pName = (p.details?.name || p.id).toLowerCase();
+                const matchSearch = pName.includes(sText);
+
+                const isActiveStr = p.config?.isActive === true ? "true" : "false";
+                const matchActive = !sActive || isActiveStr === sActive;
+
+                const auditStatus = (p.audit?.status || "production").toLowerCase();
+                const matchPhase = !sPhase || auditStatus === sPhase;
+
+                const minRole = (p.access?.minimumRole || "member").toLowerCase();
+                const matchRole = !sRole || minRole === sRole;
+
+                return matchSearch && matchActive && matchPhase && matchRole;
+            });
+
+            if(filteredP.length === 0) {
+                 projectTbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color: #a1a1aa;">Sonuç bulunamadı.</td></tr>`;
+                 return;
+            }
+
+            filteredP.forEach(proj => {
+                projectTbody.append(createProjectRow(proj));
+            });
+        };
+
+        // Proje Filtre Event Listenerları
+        qs("#pf-search").addEventListener("input", renderProjects);
+        qs("#pf-active").addEventListener("change", renderProjects);
+        qs("#pf-phase").addEventListener("change", renderProjects);
+        qs("#pf-role").addEventListener("change", renderProjects);
+
+        // İlk Yükleme
+        renderProjects();
     }
 
-    // Gereksiz genel "Kaydet" butonu ve mantığı DOM'dan tamamen gizlendi
-    const oldSaveBtn = qs(".admin-save-btn") || qs("#save-btn") || qs("#save-access-btn");
-    if(oldSaveBtn) oldSaveBtn.style.display = "none";
+    // Gereksiz "Değişiklikleri Kaydet" Butonu Tüm DOM'dan Temizlenir
+    document.querySelectorAll(".admin-save-btn, #save-btn, #save-access-btn").forEach(btn => btn.remove());
 
   } catch (e) {
     console.error(e);
