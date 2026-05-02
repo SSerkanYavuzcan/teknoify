@@ -48,7 +48,6 @@
     .trend-up { color: #10b981; font-size: 0.8rem; font-weight: 600; margin-top: 5px; display: block; }
     .trend-up i { margin-right: 4px; }
 
-    /* GRAFİK ENİNE GENİŞLETİLDİ (flex: 1 ile tüm alanı kaplar) */
     .visual-info {
       display: flex;
       flex-direction: row;
@@ -59,7 +58,6 @@
       flex: 1;
     }
 
-    /* HAPLAR DİKEY OLARAK SAĞA YASLANDI */
     .pills-container { display: flex; flex-direction: column; gap: 8px; min-width: 90px; }
     .data-pill { background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; color: #d4d4d8; display: flex; align-items: center; gap: 8px; }
     .dot-indicator { width: 8px; height: 8px; border-radius: 50%; }
@@ -77,6 +75,17 @@
   <div id="loading-overlay">
     <div style="text-align:center; color:white; font-family:'Fira Code', monospace;">
       <div id="dynamic-loader-text">Veriler senkronize ediliyor...</div>
+    </div>
+  </div>
+
+  <div id="tk-logout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+    <div style="background: #18181b; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #3f3f46; color: white; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      <h3 style="margin-top: 0; font-size: 1.5rem;">Çıkış Yap</h3>
+      <p style="color: #a1a1aa; margin-bottom: 24px;">Hesabınızdan çıkış yapmak istediğinize emin misiniz?</p>
+      <div style="display: flex; justify-content: center; gap: 12px;">
+        <button onclick="window.closeLogoutModal()" style="padding: 10px 20px; background: transparent; border: 1px solid #3f3f46; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s;">İptal</button>
+        <button onclick="window.executeLogout()" style="padding: 10px 20px; background: #ef4444; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s;"><i class="fas fa-power-off"></i> Çıkış Yap</button>
+      </div>
     </div>
   </div>
 
@@ -250,11 +259,35 @@
   <script type="module">
     import { db } from "/js/lib/firebase.js";
     import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { logout } from "/js/lib/auth.js"; // Senin modüler auth dosyanı içeri aktarıyoruz
 
+    // MODAL AÇMA / KAPAMA
     window.logoutApp = function(e) { 
         if(e) e.preventDefault(); 
-        if(window.logout) window.logout(); 
+        const modal = document.getElementById("tk-logout-modal");
+        if(modal) modal.style.display = "flex";
     };
+
+    window.closeLogoutModal = function() {
+        const modal = document.getElementById("tk-logout-modal");
+        if(modal) modal.style.display = "none";
+    };
+
+    // GERÇEK ÇIKIŞ İŞLEMİ (Pop-up'tan onay verilince)
+    window.executeLogout = async function() {
+        window.closeLogoutModal();
+        
+        const loader = document.getElementById("loading-overlay");
+        if (loader) {
+            loader.style.display = "flex";
+            loader.style.opacity = "1";
+            document.getElementById("dynamic-loader-text").textContent = "Güvenli çıkış yapılıyor...";
+        }
+
+        // JS/lib/auth.js içindeki asıl logout fonksiyonunu tetikler
+        await logout(); 
+    };
+
     window.toggleSidebar = function() { 
         document.body.classList.toggle("sidebar-closed"); 
     };
@@ -272,7 +305,6 @@
       const isAdmin = session.isAdmin || session.realIsAdmin;
 
       try {
-        // DOĞRUDAN SENİN VERİTABANINDAN ("projects" koleksiyonundan) ÇEKİLİYOR!
         const querySnapshot = await getDocs(collection(db, "projects"));
         
         let ownedHtml = '';
@@ -284,7 +316,6 @@
           const data = doc.data();
           if (!data.config || data.config.isActive !== true) return;
 
-          // Projenin gerçek ID'si (Örn: Yn0Nl3KsXap06gc3W45D)
           const pId = doc.id; 
           
           let hasAccess = isAdmin;
@@ -297,7 +328,6 @@
           }
 
           let icon = data.details?.icon || "fas fa-cube";
-          // "scraper-icon" gibi CSS sınıfı olmayan özel isimlere FontAwesome desteği
           if (!icon.includes("fa-")) {
              if(icon === "scraper-icon") icon = "fas fa-spider";
              else icon = "fas fa-cube";
@@ -307,7 +337,6 @@
           const folder = data.config?.folderPath || "";
           const entry = data.config?.entryPoint || "index.html";
           
-          // Veritabanındaki yola göre kusursuz link oluşturma
           let href = `/${folder}/${entry}`.replace(/\/\//g, '/');
 
           if (hasAccess) {
@@ -340,7 +369,6 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Grafik yüksekliği tam istendiği gibi (120px kısaltıldı, %100 yayıldı)
       if(document.querySelector("#finance-summary-chart")) {
           new ApexCharts(document.querySelector("#finance-summary-chart"), {
             series: [{ name: 'Portföy', data: [310, 330, 325, 360, 345, 385] }],
