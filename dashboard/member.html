@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
   
   <style>
+    /* Member Sayfasına Özel Genişletilmiş Grid Sistemi */
     .super-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -20,8 +21,9 @@
       width: 100%;
     }
 
+    /* Kartların Teknik Derinliği İçin Ek Stiller */
     .dashboard-card {
-      min-height: 440px; /* KARTLAR BÜYÜTÜLDÜ (Eskisi 380px'di) */
+      min-height: 440px; 
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -36,6 +38,7 @@
       margin-top: 15px;
     }
 
+    /* Rakam ve Trend Alanı */
     .mini-stats-row {
       display: flex;
       justify-content: space-between;
@@ -48,23 +51,26 @@
     .trend-up { color: #10b981; font-size: 0.8rem; font-weight: 600; margin-top: 5px; display: block; }
     .trend-up i { margin-right: 4px; }
 
+    /* Dağılım ve Pill Yapısı */
     .visual-info {
       display: flex;
       align-items: center;
       gap: 20px;
       margin-top: 10px;
-      flex: 1; /* Grafiğin alanı kaplaması sağlandı */
+      flex: 1;
     }
 
     .pills-container { display: flex; flex-direction: column; gap: 8px; }
     .data-pill { background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; color: #d4d4d8; display: flex; align-items: center; gap: 8px; }
     .dot-indicator { width: 8px; height: 8px; border-radius: 50%; }
 
+    /* Sağlık / Verimlilik İlerleme Çubukları */
     .progress-group { display: flex; flex-direction: column; gap: 15px; }
     .prog-item label { display: block; font-size: 0.8rem; color: #a1a1aa; margin-bottom: 6px; }
     .prog-bar-bg { height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
     .prog-bar-fill { height: 100%; transition: width 1s ease-in-out; }
 
+    /* Loading Overlay */
     #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #05080a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
   </style>
 </head>
@@ -82,8 +88,10 @@
     <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
     <nav id="tk-main-nav-container">
       <a href="/member.html" class="menu-item active"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+      
       <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
       <div id="tk-sidebar-projects"></div>
+      
       <div class="tk-nav-section" id="tk-explore-header" style="display: none;"><span>Keşfet</span></div>
       <div id="explore-services-menu"></div>
     </nav>
@@ -124,12 +132,13 @@
                 <span class="trend-up"><i class="fas fa-arrow-up"></i> %28</span>
               </div>
             </div>
-            <div class="visual-info">
-              <div id="finance-summary-chart" style="flex: 1; min-height: 220px;"></div>
-              <div class="pills-container">
-                <div class="data-pill"><div class="dot-indicator" style="background:#6366f1"></div> Hisse %45</div>
-                <div class="data-pill"><div class="dot-indicator" style="background:#a855f7"></div> Fon %25</div>
-                <div class="data-pill"><div class="dot-indicator" style="background:#f59e0b"></div> Altın %15</div>
+            
+            <div class="visual-info" style="flex-direction: column; align-items: stretch; gap: 15px;">
+              <div id="finance-summary-chart" style="width: 100%; min-height: 220px;"></div>
+              <div class="pills-container" style="flex-direction: row; justify-content: center; gap: 15px; width: 100%;">
+                <div class="data-pill" style="flex:1; justify-content:center;"><div class="dot-indicator" style="background:#6366f1"></div> Hisse %45</div>
+                <div class="data-pill" style="flex:1; justify-content:center;"><div class="dot-indicator" style="background:#a855f7"></div> Fon %25</div>
+                <div class="data-pill" style="flex:1; justify-content:center;"><div class="dot-indicator" style="background:#f59e0b"></div> Altın %15</div>
               </div>
             </div>
           </div>
@@ -244,84 +253,32 @@
   <script type="module" src="/js/pages/member.js?v=999"></script>
 
   <script>
+    // Global fonksiyonlar
     window.logoutApp = function(e) { 
         if(e) e.preventDefault(); 
         if(window.logout) window.logout(); 
     };
+    
     window.toggleSidebar = function() { 
         document.body.classList.toggle("sidebar-closed"); 
     };
 
-    window.TK_SERVICES_CONFIG = [
-      { id: "bim_faz_2", title: "API Service", icon: "fas fa-bolt", promoUrl: "bim-istekleri/demo.html" },
-      { id: "market_analysis", title: "Pazar Analizi", icon: "fas fa-chart-line", promoUrl: "demo/market-analysis/index.html" },
-      { id: "web_scraping", title: "Web Scraping", icon: "fas fa-spider", promoUrl: "web-scraping/quickcommerce/index.html" },
-      { id: "geo_intelligence", title: "Geo Intelligence", icon: "fas fa-map-marked-alt", promoUrl: "geo-intelligence/index.html" }
-    ];
-
-    // AKILLI SİDEBAR: Yetkilere göre listeleri ayırır
-    window.TK_RENDER_SIDEBAR = function() {
-      const exploreContainer = document.getElementById("explore-services-menu");
-      const projectsContainer = document.getElementById("tk-sidebar-projects");
-      const projectsHeader = document.getElementById("tk-sidebar-services-header");
-      const exploreHeader = document.getElementById("tk-explore-header");
-
-      if (!exploreContainer || !projectsContainer) return;
-      
-      // member.js tarafından kaydedilen oturum bilgisini al
-      const session = window.USER_SESSION || {};
-      const accessMap = session.projectAccess || {};
-      const isAdmin = session.isAdmin || session.realIsAdmin;
-
-      let ownedHtml = '';
-      let lockedHtml = '';
-      let ownedCount = 0;
-      let lockedCount = 0;
-
-      window.TK_SERVICES_CONFIG.forEach(s => {
-        // Kullanıcının bu projeye yetkisi var mı? (Veya admin mi?)
-        const hasAccess = accessMap[s.id] === true || isAdmin;
-
-        if (hasAccess) {
-          ownedCount++;
-          ownedHtml += `
-            <a href="/${s.promoUrl}" class="menu-item">
-              <i class="${s.icon}"></i> <span>${s.title}</span>
-            </a>
-          `;
-        } else {
-          lockedCount++;
-          lockedHtml += `
-            <a href="/${s.promoUrl}" class="menu-item" style="opacity: 0.7;">
-              <i class="${s.icon}"></i> <span>${s.title}</span>
-              <i class="fas fa-lock" style="margin-left:auto; font-size:0.75rem; opacity:0.5; color:#f97316;"></i>
-            </a>
-          `;
-        }
-      });
-
-      projectsContainer.innerHTML = ownedHtml;
-      exploreContainer.innerHTML = lockedHtml;
-
-      // Eğer yetkili olduğu proje varsa "Projelerim" başlığını göster
-      projectsHeader.style.display = ownedCount > 0 ? "flex" : "none";
-      exploreHeader.style.display = lockedCount > 0 ? "flex" : "none";
-    };
-
     document.addEventListener('DOMContentLoaded', () => {
-      // Grafik yüksekliği 220 olarak güncellendi
+      // Grafik yüksekliği 220 ve genişliği 100% olarak uyarlandı
       if(document.querySelector("#finance-summary-chart")) {
           new ApexCharts(document.querySelector("#finance-summary-chart"), {
             series: [{ name: 'Portföy', data: [310, 330, 325, 360, 345, 385] }],
-            chart: { type: 'area', height: 220, sparkline: { enabled: true }, animations: { enabled: true } },
+            chart: { type: 'area', width: '100%', height: 220, sparkline: { enabled: true }, animations: { enabled: true } },
             stroke: { curve: 'smooth', width: 2 },
             fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
             colors: ['#6366f1']
           }).render();
       }
       
-      // Sidebar ilk yüklemede çağrılır (henüz session gelmemişse boş/kilitli çizer, member.js gelince tekrar çizdirebiliriz)
-      window.TK_RENDER_SIDEBAR();
+      // Sidebar her ihtimale karşı hazırsa manuel tetiklenir (asıl tetikleyici member.js'dir)
+      if (typeof window.TK_RENDER_SIDEBAR === "function") {
+         window.TK_RENDER_SIDEBAR();
+      }
     });
   </script>
 </body>
