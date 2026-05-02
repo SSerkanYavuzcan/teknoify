@@ -14,15 +14,9 @@
   <link rel="stylesheet" href="/css/analysis.css?v=20260502">
 
   <style>
-    /* ========================================================= */
-    /* SCROLLBAR GİZLEME */
-    /* ========================================================= */
     .content-scroll { -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
     .content-scroll::-webkit-scrollbar { display: none; }
 
-    /* ========================================================= */
-    /* FLATPICKR OVERRIDES (Orijinal Stillerin) */
-    /* ========================================================= */
     .flatpickr-calendar { background: #1f232c !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important; border-radius: 16px !important; padding: 15px !important; font-family: 'Inter Tight', sans-serif !important; width: 340px !important; }
     .flatpickr-calendar:before, .flatpickr-calendar:after { display: none !important; }
     .flatpickr-months { background: transparent !important; margin-bottom: 20px !important; align-items: center !important; position: relative; }
@@ -60,50 +54,15 @@
     </div>
   </div>
 
-  <div id="tk-logout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-    <div style="background: #18181b; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #3f3f46; color: white; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-      <h3 style="margin-top: 0; font-size: 1.5rem;">Çıkış Yap</h3>
-      <p style="color: #a1a1aa; margin-bottom: 24px;">Hesabınızdan çıkış yapmak istediğinize emin misiniz?</p>
-      <div style="display: flex; justify-content: center; gap: 12px;">
-        <button onclick="window.closeLogoutModal()" style="padding: 10px 20px; background: transparent; border: 1px solid #3f3f46; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;">İptal</button>
-        <button onclick="window.executeLogout()" style="padding: 10px 20px; background: #ef4444; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fas fa-power-off"></i> Çıkış Yap</button>
-      </div>
-    </div>
-  </div>
-
-  <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
+  <div id="tk-global-sidebar-root"></div>
 
   <div id="toast" class="toast-notification">
     <div class="toast-icon"><i class="fas fa-exclamation-circle"></i></div>
     <div class="toast-content">
       <h4>Dikkat</h4>
-      <p id="toast-message">Mesaj</p>
+      <p id="toast-message"></p>
     </div>
   </div>
-
-  <aside class="sidebar">
-    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
-      
-      <div style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
-        <span>Hizmetler</span>
-      </div>
-      <a href="index.html" class="menu-item active" id="nav-comparison">
-        <i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span>
-      </a>
-      
-      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
-      <div id="tk-sidebar-projects"></div>
-      <div class="tk-nav-section" id="tk-explore-header" style="display: none;"><span>Keşfet</span></div>
-      <div id="explore-services-menu"></div>
-    </nav>
-    <div class="menu-spacer"></div>
-    <div class="sidebar-footer">
-      <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
-      <button class="btn-collapse" onclick="window.toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
-    </div>
-  </aside>
 
   <main class="main-content">
     <header class="top-bar">
@@ -198,15 +157,11 @@
 
   <script src="config.js?v=20260502"></script> 
 
-  <script type="module" src="/js/lib/firebase.js"></script>
+  <script type="module" src="/dashboard/shared/sidebar.js"></script>
 
   <script type="module">
-    import { db } from "/js/lib/firebase.js";
-    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    import { logout } from "/js/lib/auth.js"; 
 
-    // 1. Profil Yükleme İşlemi (Modül içinden güvenli şekilde çalışır)
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -217,10 +172,8 @@
             if(displayEl) displayEl.textContent = name;
             if(avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
 
-            // Session verisini oluştur ve sidebar'ı tetikle
             window.USER_SESSION = { uid: user.uid, name: name, email: user.email };
             
-            // Eğer member.html'deki gibi accessMap veritabanından çekilecekse buraya eklenebilir.
             if(typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();
             }
@@ -228,111 +181,6 @@
             window.location.href = "/login.html";
         }
     });
-
-    // 2. Çıkış Yapma Modalı ve Fonksiyonları (member.html BİREBİR)
-    window.logoutApp = function(e) { 
-        if(e) e.preventDefault(); 
-        const modal = document.getElementById("tk-logout-modal");
-        if(modal) modal.style.display = "flex";
-    };
-
-    window.closeLogoutModal = function() {
-        const modal = document.getElementById("tk-logout-modal");
-        if(modal) modal.style.display = "none";
-    };
-
-    window.executeLogout = async function() {
-        window.closeLogoutModal();
-        const loader = document.getElementById("loading-overlay");
-        if (loader) {
-            loader.style.display = "flex";
-            loader.style.opacity = "1";
-            document.getElementById("dynamic-loader-text").textContent = "Güvenli çıkış yapılıyor...";
-        }
-        await logout(); 
-    };
-
-    // 3. Menü Aç/Kapat
-    window.toggleSidebar = function() { 
-        document.body.classList.toggle("sidebar-closed"); 
-    };
-
-    // 4. Dinamik Sidebar İşlemi (member.html BİREBİR)
-    window.TK_RENDER_SIDEBAR = async function() {
-      const exploreContainer = document.getElementById("explore-services-menu");
-      const projectsContainer = document.getElementById("tk-sidebar-projects");
-      const projectsHeader = document.getElementById("tk-sidebar-services-header");
-      const exploreHeader = document.getElementById("tk-explore-header");
-
-      if (!exploreContainer || !projectsContainer) return;
-
-      const session = window.USER_SESSION || {};
-      const accessMap = session.projectAccess || {};
-      const isAdmin = session.isAdmin || session.realIsAdmin || true; // Test için true yapıldı, gerekirse db'den çekilebilir
-
-      try {
-        const querySnapshot = await getDocs(collection(db, "projects"));
-        
-        let ownedHtml = '';
-        let lockedHtml = '';
-        let ownedCount = 0;
-        let lockedCount = 0;
-
-        querySnapshot.forEach(doc => {
-          const data = doc.data();
-          if (!data.config || data.config.isActive !== true) return;
-
-          const pId = doc.id; 
-          
-          let hasAccess = isAdmin;
-          if (!hasAccess) {
-             if (Array.isArray(accessMap)) {
-                 hasAccess = accessMap.includes(pId);
-             } else {
-                 hasAccess = accessMap[pId] === true;
-             }
-          }
-
-          let icon = data.details?.icon || "fas fa-cube";
-          if (!icon.includes("fa-")) {
-             if(icon === "scraper-icon") icon = "fas fa-spider";
-             else icon = "fas fa-cube";
-          }
-          
-          const name = data.details?.name || "Proje";
-          const folder = data.config?.folderPath || "";
-          const entry = data.config?.entryPoint || "index.html";
-          
-          let href = `/${folder}/${entry}`.replace(/\/\//g, '/');
-
-          if (hasAccess) {
-            ownedCount++;
-            ownedHtml += `
-              <a href="${href}" class="menu-item">
-                <i class="${icon}"></i> <span>${name}</span>
-              </a>
-            `;
-          } else {
-            lockedCount++;
-            lockedHtml += `
-              <a href="#" class="menu-item locked" style="opacity: 0.7;" onclick="alert('${name} modülü şu an kilitli.'); return false;">
-                <i class="${icon}"></i> <span>${name}</span>
-                <i class="fas fa-lock" style="margin-left:auto; font-size:0.75rem; opacity:0.5;"></i>
-              </a>
-            `;
-          }
-        });
-
-        projectsContainer.innerHTML = ownedHtml;
-        exploreContainer.innerHTML = lockedHtml;
-
-        projectsHeader.style.display = ownedCount > 0 ? "flex" : "none";
-        exploreHeader.style.display = lockedCount > 0 ? "flex" : "none";
-
-      } catch(err) {
-        console.error("Sidebar oluşturulurken veritabanı hatası:", err);
-      }
-    };
   </script>
 </body>
 </html>
