@@ -27,7 +27,22 @@
     .legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: #a1a1aa; }
     .dot { width: 8px; height: 8px; border-radius: 50%; }
     .progress-container { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }
-    .progress-fill { height: 100%; background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+    .progress-fill { height: 100%; background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); transition: width 0.5s ease; }
+    
+    /* Güncelleme Modalı İçin Stiller */
+    .btn-update { background: #6366f1; color: #fff; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+    .btn-update:hover { background: #4f46e5; }
+    
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content { background: #11131a; padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); width: 400px; max-width: 90%; position: relative; }
+    .close-modal { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #a1a1aa; cursor: pointer; font-size: 1.2rem; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; color: #d4d4d8; font-size: 0.9rem; }
+    .form-group input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: #05080a; color: #fff; box-sizing: border-box; }
+    .btn-save { background: #10b981; color: #fff; padding: 12px; border: none; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; }
+    .btn-save:hover { background: #059669; }
+    .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   </style>
 </head>
 <body>
@@ -58,8 +73,9 @@
 
   <main class="main-content">
     <header class="top-bar">
-      <div class="page-info">
+      <div class="page-info" style="display: flex; align-items: center; gap: 20px;">
         <h2>Yatırım & Finans</h2>
+        <button class="btn-update" id="openUpdateModal"><i class="fas fa-edit"></i> Verileri Güncelle</button>
       </div>
       
       <div class="user-profile">
@@ -73,27 +89,27 @@
         <div class="dashboard-card portfolio-main-card">
           <div class="card-header">
             <h3>Portföy Değeri</h3>
-            <span class="trend-tag up">+%6,7</span>
+            <span class="trend-tag up" id="ui-portfolio-trend">Güncel</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-            <strong style="font-size: 2.5rem; color: #fff;">₺385.240</strong>
+            <strong style="font-size: 2.5rem; color: #fff;" id="ui-total-value">₺0</strong>
             <div id="chart-portfolio-main" style="width: 150px;"></div>
           </div>
         </div>
 
         <div class="dashboard-card">
           <div class="card-header"><h3>Aylık Birikim</h3></div>
-          <strong style="font-size: 1.8rem; color: #fff;">₺12.430</strong>
+          <strong style="font-size: 1.8rem; color: #fff;" id="ui-savings">₺0</strong>
           <div class="progress-container">
-            <div class="progress-fill" style="width: 65%;"></div>
+            <div class="progress-fill" id="ui-savings-progress" style="width: 0%;"></div>
           </div>
-          <span style="font-size: 0.75rem; color: #71717a;">Hedef: ₺20.000</span>
+          <span style="font-size: 0.75rem; color: #71717a;" id="ui-target-text">Hedef: ₺0</span>
         </div>
 
         <div class="dashboard-card">
-          <div class="card-header"><h3>Tasarruf</h3></div>
-          <strong style="font-size: 1.8rem; color: #fff;">%34</strong>
-          <p style="font-size: 0.75rem; color: #10b981; margin-top: 10px;"><i class="fas fa-arrow-up"></i> Geçen aya göre %4 artış</p>
+          <div class="card-header"><h3>Tasarruf Hedefi</h3></div>
+          <strong style="font-size: 1.8rem; color: #fff;" id="ui-savings-rate">%0</strong>
+          <p style="font-size: 0.75rem; color: #10b981; margin-top: 10px;"><i class="fas fa-check"></i> Hedefinize ulaşma oranınız</p>
         </div>
       </div>
 
@@ -103,15 +119,15 @@
           <div class="asset-distribution-box">
             <div id="chart-assets-donut"></div>
             <div class="asset-legend">
-              <div class="legend-item"><div class="dot" style="background:#6366f1;"></div> Hisse Senedi (%45)</div>
-              <div class="legend-item"><div class="dot" style="background:#a855f7;"></div> Fon (%25)</div>
-              <div class="legend-item"><div class="dot" style="background:#f59e0b;"></div> Altın (%15)</div>
+              <div class="legend-item"><div class="dot" style="background:#6366f1;"></div> Hisse Senedi (<span id="ui-stock-pct">%0</span>)</div>
+              <div class="legend-item"><div class="dot" style="background:#a855f7;"></div> Fon (<span id="ui-fund-pct">%0</span>)</div>
+              <div class="legend-item"><div class="dot" style="background:#f59e0b;"></div> Altın (<span id="ui-gold-pct">%0</span>)</div>
             </div>
           </div>
         </div>
 
         <div class="dashboard-card">
-          <div class="card-header"><h3>Yaklaşan Ödemeler</h3></div>
+          <div class="card-header"><h3>Yaklaşan Ödemeler (Demo)</h3></div>
           <table class="data-table">
             <thead>
               <tr><th>Açıklama</th><th>Tarih</th><th>Tutar</th></tr>
@@ -126,38 +142,225 @@
     </div>
   </main>
 
+  <div class="modal-overlay" id="updateModal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeUpdateModal"><i class="fas fa-times"></i></button>
+      <h3 style="color: #fff; margin-bottom: 20px;">Finans Verilerini Güncelle</h3>
+      
+      <form id="financeForm">
+        <div class="form-group">
+          <label>Toplam Portföy Değeri (₺)</label>
+          <input type="number" id="input-totalValue" required placeholder="Örn: 150000">
+        </div>
+        
+        <div class="grid-2-col">
+          <div class="form-group">
+            <label>Aylık Birikim (₺)</label>
+            <input type="number" id="input-savings" required placeholder="Örn: 5000">
+          </div>
+          <div class="form-group">
+            <label>Aylık Hedef (₺)</label>
+            <input type="number" id="input-target" required placeholder="Örn: 10000">
+          </div>
+        </div>
+
+        <h4 style="color: #a1a1aa; font-size: 0.85rem; margin: 15px 0 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">Varlık Dağılımı (%)</h4>
+        
+        <div class="grid-2-col">
+          <div class="form-group">
+            <label>Hisse Senedi (%)</label>
+            <input type="number" id="input-stock" max="100" required placeholder="45">
+          </div>
+          <div class="form-group">
+            <label>Yatırım Fonu (%)</label>
+            <input type="number" id="input-fund" max="100" required placeholder="25">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Altın / Diğer (%)</label>
+          <input type="number" id="input-gold" max="100" required placeholder="30">
+        </div>
+
+        <button type="submit" class="btn-save" id="btn-save-finance">Kaydet ve Güncelle</button>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  
-  <script src="/dashboard/config.js"></script>
-  <script src="/dashboard/shared/auth.js?v=999"></script>
-  <script src="/dashboard/shared/sidebar.js?v=999"></script>
+  <script src="/dashboard/shared/sidebar.js?v=999" type="module"></script>
 
-  <script>
+  <script type="module">
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const auth = getAuth();
+    const db = getFirestore();
+    let currentUserId = null;
+
     // Ortak Fonksiyonlar
     window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
-    window.logoutApp = function(e) { if(e) e.preventDefault(); window.logout(); };
+    window.logoutApp = function(e) { 
+        if(e) e.preventDefault(); 
+        signOut(auth).then(() => window.location.href = "/login.html");
+    };
 
-    document.addEventListener('DOMContentLoaded', () => {
-      // Grafik 1
-      new ApexCharts(document.querySelector("#chart-portfolio-main"), {
-        series: [{ data: [310, 340, 335, 360, 380, 385] }],
-        chart: { type: 'line', height: 60, sparkline: { enabled: true } },
-        stroke: { curve: 'smooth', width: 3, colors: ['#6366f1'] }
-      }).render();
+    // Grafikleri global tanımlıyoruz ki sonradan verisini güncelleyebilelim
+    let portfolioChart, assetChart;
 
-      // Grafik 2
-      new ApexCharts(document.querySelector("#chart-assets-donut"), {
-        series: [45, 25, 15],
-        chart: { type: 'donut', height: 180 },
-        colors: ['#6366f1', '#a855f7', '#f59e0b'],
-        stroke: { show: false },
-        legend: { show: false },
-        plotOptions: { pie: { donut: { size: '75%' } } }
-      }).render();
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUserId = user.uid;
+            const name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+            document.getElementById("user-name-display").textContent = name;
+            document.getElementById("user-avatar").textContent = name.charAt(0).toUpperCase();
+            
+            if(typeof window.TK_RENDER_SIDEBAR === "function") {
+                window.TK_RENDER_SIDEBAR();
+            }
+
+            initCharts();
+            fetchFinanceData();
+        } else {
+            window.location.href = "/login.html";
+        }
     });
+
+    // GRAFİKLERİ BOŞ OLARAK BAŞLAT
+    function initCharts() {
+        portfolioChart = new ApexCharts(document.querySelector("#chart-portfolio-main"), {
+            series: [{ data: [0, 0, 0, 0, 0, 0] }],
+            chart: { type: 'line', height: 60, sparkline: { enabled: true } },
+            stroke: { curve: 'smooth', width: 3, colors: ['#6366f1'] }
+        });
+        portfolioChart.render();
+
+        assetChart = new ApexCharts(document.querySelector("#chart-assets-donut"), {
+            series: [0, 0, 0],
+            chart: { type: 'donut', height: 180 },
+            colors: ['#6366f1', '#a855f7', '#f59e0b'],
+            stroke: { show: false },
+            legend: { show: false },
+            plotOptions: { pie: { donut: { size: '75%' } } },
+            noData: { text: "Veri Yok", align: 'center', verticalAlign: 'middle', style: { color: '#a1a1aa' } }
+        });
+        assetChart.render();
+    }
+
+    // FİREBASE'DEN VERİLERİ ÇEK VE EKRANA YANSIT
+    async function fetchFinanceData() {
+        if (!currentUserId) return;
+        
+        try {
+            const userRef = doc(db, "users", currentUserId);
+            const snap = await getDoc(userRef);
+            
+            if (snap.exists()) {
+                const data = snap.data();
+                const financeData = data.dashboardStats?.finance || null;
+
+                if (financeData) {
+                    updateUI(financeData);
+                    fillModalInputs(financeData);
+                }
+            }
+        } catch (error) {
+            console.error("Finans verisi çekilemedi:", error);
+        }
+    }
+
+    // ARAYÜZÜ (UI) GÜNCELLEYEN FONKSİYON
+    function updateUI(data) {
+        // Metinleri Güncelle
+        document.getElementById('ui-total-value').textContent = `₺${data.totalValue.toLocaleString('tr-TR')}`;
+        document.getElementById('ui-savings').textContent = `₺${data.savings.toLocaleString('tr-TR')}`;
+        document.getElementById('ui-target-text').textContent = `Hedef: ₺${data.target.toLocaleString('tr-TR')}`;
+        
+        document.getElementById('ui-stock-pct').textContent = `%${data.assets.stocks}`;
+        document.getElementById('ui-fund-pct').textContent = `%${data.assets.funds}`;
+        document.getElementById('ui-gold-pct').textContent = `%${data.assets.gold}`;
+
+        // Yüzde ve Barları Hesapla
+        const progressPct = data.target > 0 ? Math.min(Math.round((data.savings / data.target) * 100), 100) : 0;
+        document.getElementById('ui-savings-progress').style.width = `${progressPct}%`;
+        document.getElementById('ui-savings-rate').textContent = `%${progressPct}`;
+
+        // Grafikleri Güncelle
+        // Not: Portföy grafiği için statik bir yükseliş trendi dizisi simüle ediyoruz (Görsellik için)
+        const baseValue = data.totalValue;
+        const mockHistory = [
+            baseValue * 0.85, baseValue * 0.88, baseValue * 0.92, 
+            baseValue * 0.95, baseValue * 0.98, baseValue
+        ];
+        portfolioChart.updateSeries([{ data: mockHistory }]);
+        
+        assetChart.updateSeries([
+            Number(data.assets.stocks), 
+            Number(data.assets.funds), 
+            Number(data.assets.gold)
+        ]);
+    }
+
+    // MODAL İŞLEMLERİ (Aç/Kapat ve Veri Gönderimi)
+    const modal = document.getElementById('updateModal');
+    const openBtn = document.getElementById('openUpdateModal');
+    const closeBtn = document.getElementById('closeUpdateModal');
+    const form = document.getElementById('financeForm');
+
+    openBtn.addEventListener('click', () => modal.classList.add('active'));
+    closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('active'); });
+
+    function fillModalInputs(data) {
+        document.getElementById('input-totalValue').value = data.totalValue;
+        document.getElementById('input-savings').value = data.savings;
+        document.getElementById('input-target').value = data.target;
+        document.getElementById('input-stock').value = data.assets.stocks;
+        document.getElementById('input-fund').value = data.assets.funds;
+        document.getElementById('input-gold').value = data.assets.gold;
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btn = document.getElementById('btn-save-finance');
+        const originalText = btn.textContent;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...';
+        btn.disabled = true;
+
+        const newData = {
+            totalValue: Number(document.getElementById('input-totalValue').value),
+            savings: Number(document.getElementById('input-savings').value),
+            target: Number(document.getElementById('input-target').value),
+            assets: {
+                stocks: Number(document.getElementById('input-stock').value),
+                funds: Number(document.getElementById('input-fund').value),
+                gold: Number(document.getElementById('input-gold').value)
+            }
+        };
+
+        try {
+            // FIREBASE'E KAYDET (Merge true ile diğer alanları bozmayız)
+            const userRef = doc(db, "users", currentUserId);
+            await setDoc(userRef, {
+                dashboardStats: {
+                    finance: newData
+                }
+            }, { merge: true });
+
+            // UI'ı anında güncelle
+            updateUI(newData);
+            modal.classList.remove('active');
+            
+        } catch (error) {
+            console.error("Kaydetme hatası:", error);
+            alert("Veriler kaydedilirken bir hata oluştu.");
+        } finally {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
+    });
+
   </script>
 </body>
 </html>
