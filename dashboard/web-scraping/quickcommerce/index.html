@@ -161,18 +161,43 @@
 
   <script type="module">
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; // Firestore importu eklendi
 
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            const name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
-            const displayEl = document.getElementById("user-name-display");
-            const avatarEl = document.getElementById("user-avatar");
-            
-            if(displayEl) displayEl.textContent = name;
-            if(avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
+    const db = getFirestore();
 
-            window.USER_SESSION = { uid: user.uid, name: name, email: user.email };
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            let displayName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+
+            try {
+                // Firestore'dan profile.fullName verisini çekiyoruz
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.profile) {
+                        displayName = data.profile.fullName || data.profile.companyName || displayName;
+                    }
+                }
+
+                // UI Güncellemesi
+                const displayEl = document.getElementById("user-name-display");
+                const avatarEl = document.getElementById("user-avatar");
+                
+                if(displayEl) displayEl.textContent = displayName;
+                if(avatarEl) avatarEl.textContent = displayName.charAt(0).toUpperCase();
+
+            } catch (error) {
+                console.error("Profil verisi çekilemedi:", error);
+                // Çökerse varsayılan fallback
+                const fallbackName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+                document.getElementById("user-name-display").textContent = fallbackName;
+                document.getElementById("user-avatar").textContent = fallbackName.charAt(0).toUpperCase();
+            }
+
+            window.USER_SESSION = { uid: user.uid, name: displayName, email: user.email };
             
             // Eğer sidebar hazıra verileri doldur
             if(typeof window.TK_RENDER_SIDEBAR === "function") {
