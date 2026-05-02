@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yönlendiriliyor | Teknoify</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -17,53 +16,52 @@
             height: 100vh;
             font-family: 'Inter Tight', sans-serif;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
         .spinner {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-left-color: #6366f1;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .text { color: #a1a1aa; font-size: 0.95rem; font-weight: 500; }
     </style>
-
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
     <div class="spinner"></div>
-    <div class="text">Yetkileriniz kontrol ediliyor, lütfen bekleyin...</div>
+    <div style="color: #a1a1aa; font-size: 0.9rem;">Yetkileriniz kontrol ediliyor...</div>
 
-    <script type="module" src="/dashboard/shared/auth.js?v=999"></script>
+    <script type="module">
+        import { requireAuth } from "/dashboard/shared/auth.js";
 
-    <script>
-        // auth.js çalışıp USER_SESSION'ı doldurduğunda yakala
-        const checkAuth = setInterval(() => {
-            if (window.USER_SESSION) {
-                clearInterval(checkAuth);
+        async function routeUser() {
+            try {
+                // Senin yazdığın requireAuth() fonksiyonu Firebase oturumunu bekleyip 
+                // bize içinde isAdmin bilgisi olan 'session' objesini hazır getiriyor.
+                const session = await requireAuth();
                 
-                // Senin auth.js dosyan isAdmin bilgisini doğrudan buraya veriyor
-                if (window.USER_SESSION.isAdmin === true) {
-                    window.location.replace("/dashboard/admin.html");
+                if (session) {
+                    // Yetki kontrolü yapıyoruz ve fırlatıyoruz!
+                    if (session.isAdmin === true || session.role?.type === "admin") {
+                        window.location.replace("/dashboard/admin.html");
+                    } else {
+                        window.location.replace("/dashboard/member.html");
+                    }
                 } else {
-                    window.location.replace("/dashboard/member.html");
+                    // Eğer requireAuth oturum bulamazsa null döner, login'e atarız.
+                    window.location.replace("/login.html");
                 }
-            }
-        }, 100); // Saniyede 10 kez kontrol et (Anında yönlendirme için)
-
-        // Güvenlik önlemi: Eğer 5 saniye içinde Firebase yanıt vermezse login'e geri at
-        setTimeout(() => {
-            if (!window.USER_SESSION) {
+            } catch (error) {
+                console.error("Yönlendirme sırasında hata oluştu:", error);
                 window.location.replace("/login.html");
             }
-        }, 5000);
-    </script>
+        }
 
+        // Sistemi başlat
+        routeUser();
+    </script>
 </body>
 </html>
