@@ -1,78 +1,199 @@
-<div class="content-scroll">
-    <div class="super-grid">
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Genel Bakış | Teknoify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/dashboard.css?v=20260502">
+  
+  <style>
+    /* Görseldeki tasarımı yakalamak için sayfaya özel eklemeler */
+    .super-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* 2x2 Izgara yapısı */
+      gap: 24px;
+      padding: 24px;
+    }
+
+    .dashboard-card {
+      background: rgba(24, 24, 27, 0.6);
+      border: 1px solid rgba(63, 63, 70, 0.4);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .dashboard-card:hover {
+      border-color: #6366f1;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card-header h3 { font-size: 1.2rem; color: #fff; font-weight: 600; }
+    .card-header .view-all { font-size: 0.8rem; color: #71717a; }
+
+    /* KPI Blokları */
+    .kpi-row { display: flex; gap: 30px; margin-bottom: 20px; }
+    .kpi-block span { display: block; font-size: 0.85rem; color: #a1a1aa; margin-bottom: 4px; }
+    .kpi-block strong { font-size: 1.6rem; color: #fff; font-family: 'Inter Tight', sans-serif; }
+    .trend-tag { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+    .up { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+
+    /* Sağlık & Su Grafiği simülasyonu */
+    .health-stats { display: flex; justify-content: space-between; align-items: center; }
+    .stat-item { display: flex; align-items: center; gap: 10px; color: #d4d4d8; margin-bottom: 8px; }
+    .stat-item i { color: #6366f1; width: 20px; }
+
+    /* Loading Overlay (Hologram) */
+    #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #05080a; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.8s; }
+  </style>
+</head>
+<body>
+
+  <div id="loading-overlay">
+    <div style="text-align:center; color:white; font-family:'Fira Code', monospace;">
+      <div id="dynamic-loader-text">Sistem Hazırlanıyor...</div>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
+    <nav id="tk-main-nav-container">
+      <a href="/dashboard/member.html" class="menu-item active"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+      <div class="tk-nav-section"><span>Projelerim</span></div>
+      <div id="tk-sidebar-projects"></div>
+      <div class="tk-nav-section"><span>Keşfet</span></div>
+      <div id="explore-services-menu"></div>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <h2>Hoşgeldin, <span id="user-name-title">...</span></h2>
+      <div class="user-profile">
+        <span id="user-name-display">Yükleniyor...</span>
+        <div class="avatar" id="user-avatar">U</div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+      <div class="super-grid">
         
         <section class="dashboard-card" onclick="location.href='member/finance/index.html'">
-            <div class="card-header">
-                <h3><i class="fas fa-chart-line"></i> Yatırım & Finans</h3>
-                <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
+          <div class="card-header">
+            <h3><i class="fas fa-wallet" style="color:#f59e0b"></i> Yatırım & Finans</h3>
+            <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi-block">
+              <span>Portföy Değeri</span>
+              <strong>₺385.240</strong> <span class="trend-tag up">+%6,7</span>
             </div>
-            <div class="card-body">
-                <div class="mini-kpi-row">
-                    <div class="mini-kpi">
-                        <span>Portföy Değeri</span>
-                        <strong id="fin-portfolio">₺0</strong>
-                        <small class="trend-up">+%0</small>
-                    </div>
-                    <div class="mini-kpi">
-                        <span>Aylık Birikim</span>
-                        <strong id="fin-savings">₺0</strong>
-                    </div>
-                </div>
-                <div id="mini-chart-finance"></div> </div>
+            <div class="kpi-block">
+              <span>Aylık Birikim</span>
+              <strong>₺12.430</strong>
+            </div>
+          </div>
+          <div id="chart-finance-mini" style="min-height: 100px;"></div>
         </section>
 
         <section class="dashboard-card" onclick="location.href='member/health/index.html'">
-            <div class="card-header">
-                <h3><i class="fas fa-heartbeat"></i> Sağlık</h3>
-                <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
+          <div class="card-header">
+            <h3><i class="fas fa-heart" style="color:#ef4444"></i> Sağlık</h3>
+            <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
+          </div>
+          <div class="health-stats">
+            <div>
+              <div class="stat-item"><i class="fas fa-moon"></i> 7s 24dk (Uyku)</div>
+              <div class="stat-item"><i class="fas fa-weight"></i> 74.8 kg</div>
+              <div class="stat-item"><i class="fas fa-tint"></i> 1.6 L Su</div>
             </div>
-            <div class="card-body">
-                <div class="health-overview">
-                    <div class="health-circle">
-                        <div id="calory-chart"></div>
-                    </div>
-                    <div class="health-stats">
-                        <div class="h-item"><i class="fas fa-moon"></i> <span>7s 24dk</span></div>
-                        <div class="h-item"><i class="fas fa-weight"></i> <span>74.8 kg</span></div>
-                        <div class="h-item"><i class="fas fa-tint"></i> <span>1.6 L</span></div>
-                    </div>
-                </div>
-            </div>
+            <div id="chart-health-mini"></div>
+          </div>
         </section>
 
         <section class="dashboard-card" onclick="location.href='member/productivity/index.html'">
-            <div class="card-header">
-                <h3><i class="fas fa-bullseye"></i> Hedefler & Verimlilik</h3>
-                <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
-            </div>
-            <div class="card-body">
-                <ul class="task-list">
-                    <li><div class="check"></div> Sabah Meditasyonu <span>7/7 gün</span></li>
-                    <li><div class="check"></div> Kitap Okuma <span>4/7 gün</span></li>
-                </ul>
-                <div class="focus-timer">
-                    <strong id="focus-time">12s 45dk</strong>
-                    <p>Bu Haftaki Odaklanma</p>
-                </div>
-            </div>
+          <div class="card-header">
+            <h3><i class="fas fa-bullseye" style="color:#10b981"></i> Hedefler & Verimlilik</h3>
+            <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
+          </div>
+          <div style="display:flex; justify-content: space-between; align-items:center;">
+             <ul style="list-style:none; padding:0; font-size:0.9rem; color:#a1a1aa;">
+               <li style="margin-bottom:10px;"><i class="far fa-check-circle" style="color:#10b981"></i> Sabah Meditasyonu (7/7)</li>
+               <li><i class="far fa-circle"></i> Kitap Okuma (4/7)</li>
+             </ul>
+             <div style="text-align:right;">
+               <strong style="font-size:1.5rem; color:#fff;">12s 45dk</strong>
+               <p style="font-size:0.7rem; color:#71717a;">Odaklanma Süresi</p>
+             </div>
+          </div>
         </section>
 
         <section class="dashboard-card" onclick="location.href='member/subscriptions/index.html'">
-            <div class="card-header">
-                <h3><i class="fas fa-wallet"></i> Abonelikler & Harcamalar</h3>
-                <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
-            </div>
-            <div class="card-body">
-                <div class="spending-summary">
-                    <strong id="total-spending">₺18.750</strong>
-                    <p>Mayıs 2024 Özeti</p>
-                </div>
-                <div class="sub-list">
-                    <div class="sub-item"><i class="fab fa-netflix"></i> Netflix <span>₺229,90</span></div>
-                    <div class="sub-item"><i class="fab fa-spotify"></i> Spotify <span>₺59,99</span></div>
-                </div>
-            </div>
+          <div class="card-header">
+            <h3><i class="fas fa-receipt" style="color:#6366f1"></i> Abonelikler & Harcamalar</h3>
+            <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
+          </div>
+          <div style="margin-bottom:15px;">
+            <span style="font-size:0.8rem; color:#a1a1aa;">Aylık Harcama</span>
+            <strong style="font-size:1.6rem; color:#fff; display:block;">₺18.750</strong>
+          </div>
+          <div style="display:flex; gap:10px;">
+             <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; flex:1; font-size:0.8rem;">
+               <i class="fab fa-netflix" style="color:#e50914"></i> Netflix
+             </div>
+             <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; flex:1; font-size:0.8rem;">
+               <i class="fab fa-spotify" style="color:#1db954"></i> Spotify
+             </div>
+          </div>
         </section>
 
+      </div>
     </div>
-</div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="../config.js"></script>
+  <script src="/dashboard/shared/auth.js?v=999"></script> 
+  <script src="/dashboard/shared/sidebar.js?v=999"></script>
+  <script type="module" src="../js/pages/member.js?v=999"></script>
+
+  <script>
+    window.logoutApp = function(e) { if(e) e.preventDefault(); window.logout(); };
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+
+    // Sayfa Yüklendiğinde Grafikleri Başlat (ApexCharts)
+    document.addEventListener('DOMContentLoaded', () => {
+      // Finans Mini Grafik
+      new ApexCharts(document.querySelector("#chart-finance-mini"), {
+        series: [{ data: [30, 40, 35, 50, 49, 60, 70] }],
+        chart: { type: 'area', height: 80, sparkline: { enabled: true } },
+        stroke: { curve: 'smooth', width: 2 },
+        colors: ['#f59e0b']
+      }).render();
+
+      // Sağlık Mini Grafik (Donut)
+      new ApexCharts(document.querySelector("#chart-health-mini"), {
+        series: [64],
+        chart: { type: 'radialBar', height: 120, sparkline: { enabled: true } },
+        plotOptions: { radialBar: { hollow: { size: '60%' }, dataLabels: { show: false } } },
+        colors: ['#6366f1']
+      }).render();
+    });
+  </script>
+</body>
+</html>
