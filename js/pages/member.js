@@ -1,7 +1,7 @@
 // /js/pages/member.js
 import { db } from "/js/lib/firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { requireAuth, logout } from "/js/lib/auth.js"; // SENİN MODERN KODUNU BURAYA BAĞLADIK
+import { requireAuth } from "/js/lib/auth.js"; // logout silindi, çünkü artık sidebar.js yönetiyor!
 
 /**
  * UI: Metin ve Değer Güncelleme
@@ -74,7 +74,7 @@ async function init() {
         const session = await requireAuth();
 
         if (session) {
-            // BURASI EKLENDİ: Sidebar'ın yetkileri okuyabilmesi için oturumu globale kaydet
+            // Sidebar'ın yetkileri okuyabilmesi için oturumu globale kaydet
             window.USER_SESSION = session; 
             
             // Oturum varsa dashboard verilerini yükle
@@ -89,13 +89,6 @@ async function init() {
         hideOverlay();
     }
 }
-
-// Global Fonksiyonları window'a bağla
-window.toggleSidebar = () => document.body.classList.toggle("sidebar-closed");
-window.logoutApp = async (e) => { 
-    if(e) e.preventDefault(); 
-    await logout(); // lib/auth.js içindeki logout fonksiyonunu tetikler
-};
 
 // Sistemi Başlat
 init();
