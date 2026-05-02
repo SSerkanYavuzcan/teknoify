@@ -2,65 +2,115 @@
 import { db } from "../lib/firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+/**
+ * UI: Metin ve Değer Güncelleme
+ */
+function updateUI(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value ?? "0";
+}
+
+/**
+ * DASHBOARD VERİ YÜKLEYİCİ
+ * Firestore'dan kullanıcıya özel finans, sağlık ve proje verilerini çeker.
+ */
 async function loadDashboardData(sess) {
     try {
-        console.log("[member.js] Veriler çekiliyor...", sess);
+        console.log("[member.js] Veri senkronizasyonu başlatıldı:", sess.uid);
         const effectiveUid = sess.effectiveUid || sess.uid;
+
+        // 1. Profil Bilgilerini Bas
         const name = sess.name || sess.displayName || "Kullanıcı";
-        
-        // UI Güncelle
-        document.getElementById("user-name-title").textContent = name;
-        document.getElementById("user-name-display").textContent = name;
+        updateUI("user-name-title", name);
+        updateUI("user-name-display", name);
         const avatar = document.getElementById("user-avatar");
         if(avatar) avatar.textContent = name.charAt(0).toUpperCase();
 
+        // 2. Firestore'dan Kullanıcı Dokümanını Oku
         const userSnap = await getDoc(doc(db, "users", effectiveUid));
+        
         if (userSnap.exists()) {
             const userDoc = userSnap.data();
+            const userData = userDoc.data || {}; // Finans, sağlık vb. istatistiklerin olduğu obje
+
+            // --- FİNANS VERİLERİ (Örnek eşleştirme) ---
+            if (userData.finance) {
+                updateUI("portfolio-value", "₺" + (userData.finance.portfolio || "385.240"));
+                updateUI("monthly-savings", "₺" + (userData.finance.savings || "12.430"));
+            }
+
+            // --- SAĞLIK VERİLERİ ---
+            if (userData.health) {
+                updateUI("user-weight", userData.health.weight || "74.8");
+                updateUI("sleep-duration", userData.health.sleep || "7s 24dk");
+            }
+
+            // --- PROJE YETKİLERİ ---
             const projectAccess = userDoc.projectAccess || {};
             const entitledIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
             
-            const activeServicesEl = document.getElementById("stat-active-services");
-            if(activeServicesEl) activeServicesEl.textContent = entitledIds.length; 
+            // Eğer sidebar.js yüklüyse menüyü tetikle
+            if (typeof window.TK_RENDER_SIDEBAR === "function") {
+                window.TK_RENDER_SIDEBAR();
+            }
+        }
 
-            const statsData = userDoc.data || {};
-            if(document.getElementById("stat-saved-hours")) document.getElementById("stat-saved-hours").textContent = statsData.savedHours || "0";
-            if(document.getElementById("stat-next-payment")) document.getElementById("stat-next-payment").textContent = statsData.nextPayment || "Belirlenmedi";
-            if(document.getElementById("processed-data-count")) document.getElementById("processed-data-count").textContent = statsData.totalProcessed || "0";
-        }
     } catch (err) {
-        console.error("[member.js] Dashboard veri hatası:", err);
+        console.error("[member.js] Kritik Hata:", err);
     } finally {
-        const overlay = document.getElementById("loading-overlay");
-        if (overlay) { 
-            overlay.style.opacity = "0"; 
-            setTimeout(() => overlay.remove(), 800); 
-        }
+        // Her durumda yükleme ekranını kapat
+        hideOverlay();
     }
 }
 
-function init() {
-    // window.USER_SESSION gelene kadar her 200ms'de bir kontrol et
-    const checkInterval = setInterval(() => {
-        if (window.USER_SESSION) {
-            clearInterval(checkInterval);
-            loadDashboardData(window.USER_SESSION);
-        }
-    }, 200);
-
-    // Yedek Plan: Eğer 10 saniye boyunca gelmezse ve Firebase login ise zorla çek
-    setTimeout(() => {
-        clearInterval(checkInterval);
-        const overlay = document.getElementById("loading-overlay");
-        if (overlay && overlay.style.opacity !== "0") {
-             // Eğer hala kapanmadıysa bir sorun var demektir
-             console.warn("[member.js] Oturum beklenenden uzun sürdü, manuel deneme yapılıyor...");
-             if(!window.USER_SESSION) {
-                const text = document.getElementById("dynamic-loader-text");
-                if(text) text.innerHTML = "Oturum verisi alınamadı. <br><small>Sayfayı yenilemeyi deneyin.</small>";
-             }
-        }
-    }, 10000);
+/**
+ * UI: Overlay'i akıcı şekilde kaldır
+ */
+function hideOverlay() {
+    const overlay = document.getElementById("loading-overlay");
+    if (overlay) {
+        overlay.style.opacity = "0";
+        setTimeout(() => {
+            overlay.style.display = "none";
+            overlay.remove(); 
+        }, 800);
+    }
 }
 
+/**
+ * INITIALIZE (BAŞLATICI)
+ * Merkezi auth.js'in USER_SESSION değişkenini doldurmasını bekler.
+ */
+function init() {
+    let attempts = 0;
+    const maxAttempts = 50; // 10 saniye limit
+
+    const checkSession = setInterval(() => {
+        attempts++;
+
+        if (window.USER_SESSION) {
+            clearInterval(checkSession);
+            loadDashboardData(window.USER_SESSION);
+        }
+
+        if (attempts >= maxAttempts) {
+            clearInterval(checkSession);
+            console.warn("[member.js] Oturum zaman aşımına uğradı.");
+            const loaderText = document.getElementById("dynamic-loader-text");
+            if (loaderText) loaderText.textContent = "Oturum verisi alınamadı, lütfen sayfayı yenileyin.";
+            
+            // Kullanıcıyı çok bekletmemek için overlay'i 10sn sonra zorla kapatabiliriz
+            // hideOverlay(); 
+        }
+    }, 200);
+}
+
+// Global Fonksiyonları window'a bağla
+window.toggleSidebar = () => document.body.classList.toggle("sidebar-closed");
+window.logoutApp = (e) => { 
+    if(e) e.preventDefault(); 
+    if(window.logout) window.logout(); 
+};
+
+// Start
 init();
