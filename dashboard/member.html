@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="../css/dashboard.css?v=9">
+  <link rel="stylesheet" href="../css/dashboard.css?v=20260502">
 
   <style>
     #loading-overlay {
@@ -40,10 +40,11 @@
     .sub-status { font-size: 11px; color: #6366f1; opacity: 0.8; }
     .terminal-logs { position: absolute; bottom: 40px; left: 40px; font-family: 'Fira Code', monospace; font-size: 10px; color: rgba(99, 102, 241, 0.4); pointer-events: none; }
     
-    .tk-nav-section { margin-top:10px; margin-bottom:5px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase; }
+    .tk-nav-section { margin-top:20px; margin-bottom:10px; padding-left:16px; font-size:0.75rem; color:#666; font-weight:700; text-transform:uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; margin-right: 15px; }
+    .menu-item.locked { cursor: not-allowed; }
   </style>
   
-  </head>
+</head>
 
 <body>
 
@@ -77,21 +78,11 @@
         <i class="fas fa-home"></i> <span>Genel Bakış</span>
       </a>
       
-      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Hizmetler</span></div>
+      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
       <div id="tk-sidebar-projects"></div>
 
-      <div class="tk-nav-section"><span>Keşfet</span></div>
-      <div id="explore-services-menu">
-         <a href="#" class="menu-item">
-           <i class="fas fa-bolt"></i> <span>API Service</span> <i class="fas fa-lock" style="margin-left:auto; font-size:10px; color:#555;"></i>
-         </a>
-         <a href="#" class="menu-item">
-           <i class="fas fa-chart-line"></i> <span>Pazar Analizi</span> <i class="fas fa-lock" style="margin-left:auto; font-size:10px; color:#555;"></i>
-         </a>
-         <a href="#" class="menu-item">
-           <i class="fas fa-spider"></i> <span>Web Scraping</span> <i class="fas fa-lock" style="margin-left:auto; font-size:10px; color:#555;"></i>
-         </a>
-      </div>
+      <div class="tk-nav-section" style="display: none;"><span>Keşfet</span></div>
+      <div id="explore-services-menu"></div>
     </nav>
 
     <div class="menu-spacer"></div>
@@ -112,34 +103,52 @@
 
     <div class="content-scroll">
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-title">Aktif Hizmetler</div><div class="stat-value" id="stat-active-services">0</div></div>
-        <div class="stat-card"><div class="stat-title">İşlenen Veri</div><div class="stat-value" id="processed-data-count">-</div></div>
-        <div class="stat-card"><div class="stat-title">Kazanılan Saat</div><div class="stat-value" id="stat-saved-hours">-</div></div>
-        <div class="stat-card"><div class="stat-title">Sonraki Ödeme</div><div class="stat-value" id="stat-next-payment">-</div></div>
+        <div class="stat-card">
+            <div class="stat-title">Aktif Hizmetler</div>
+            <div class="stat-value" id="stat-active-services">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">İşlenen Veri</div>
+            <div class="stat-value" id="processed-data-count">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">Kazanılan Saat</div>
+            <div class="stat-value" id="stat-saved-hours">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">Sonraki Ödeme</div>
+            <div class="stat-value" id="stat-next-payment">Belirlenmedi</div>
+        </div>
       </div>
-    </div>
+
+      </div>
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script src="../config.js"></script>
-  <script src="./shared/sidebar.js?v=20260228"></script>
-  <script type="module" src="../js/pages/member.js?v=20260228"></script>
+  <script src="./shared/sidebar.js?v=20260502"></script>
+  <script type="module" src="../js/pages/member.js?v=20260502"></script>
 
   <script type="module">
-    import { requireAuth, logout } from "../js/lib/auth.js";
+    import { logout } from "../js/lib/auth.js";
 
+    // Global fonksiyonlar
     window.logoutApp = async () => {
-        await logout();
+        if(confirm("Çıkış yapmak istediğinize emin misiniz?")) {
+            await logout();
+        }
     };
 
     window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
 
+    // Yükleme ekranı animasyon metinleri
     const statusTexts = ["Profil verileri doğrulanıyor...", "Yetkiler kontrol ediliyor...", "Şifrelenmiş tünel kuruluyor...", "Projeler senkronize ediliyor..."];
     let textIdx = 0;
     const textEl = document.getElementById("dynamic-loader-text");
     const terminalEl = document.getElementById("terminal-logs");
     
     const textInterval = setInterval(() => {
+      if(!textEl) return;
       textEl.style.opacity = "0";
       setTimeout(() => { 
         textEl.textContent = statusTexts[textIdx]; 
@@ -153,34 +162,14 @@
       if(terminalEl.children.length > 5) terminalEl.removeChild(terminalEl.firstChild);
     }, 1500);
 
-    document.addEventListener("DOMContentLoaded", async () => {
-        const session = await requireAuth(); 
-        
-        if (!session) return; 
-
-        clearInterval(textInterval);
+    // Sayfa hazır olduğunda interval'i temizle (member.js overlay'i kapatacak)
+    window.addEventListener('load', () => {
+        // Overlay'i üreten süreleri member.js yönettiği için burada sadece log atıyoruz
         const finalLog = document.createElement("div");
-        finalLog.textContent = `> ACCESS_GRANTED: WELCOME ${session.name.toUpperCase()}`;
+        finalLog.textContent = `> SYSTEM_READY... ENJOY`;
         finalLog.style.color = "#4ade80";
-        terminalEl.appendChild(finalLog);
-
-        document.getElementById("user-name-title").textContent = session.name;
-        document.getElementById("user-name-display").textContent = session.name;
-        document.getElementById("user-avatar").textContent = session.name.charAt(0).toUpperCase();
-        window.USER_SESSION = session;
-
-        setTimeout(() => {
-            const overlay = document.getElementById("loading-overlay");
-            if (overlay) {
-                overlay.style.opacity = "0"; 
-                overlay.style.visibility = "hidden";
-                setTimeout(() => overlay.remove(), 800);
-            }
-
-            if (typeof window.TK_RENDER_SIDEBAR === "function") {
-                window.TK_RENDER_SIDEBAR();
-            }
-        }, 1000); 
+        if(terminalEl) terminalEl.appendChild(finalLog);
+        setTimeout(() => clearInterval(textInterval), 2000);
     });
   </script>
 </body>
