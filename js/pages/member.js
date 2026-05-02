@@ -3,14 +3,9 @@ import { logout as logoutFn, requireAuth } from "../lib/auth.js";
 import { db } from "../lib/firebase.js";
 import { 
     doc, 
-    getDoc, 
-    collection, 
-    getDocs 
+    getDoc 
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/**
- * GÜVENLİK: XSS Koruması için HTML Escape fonksiyonu
- */
 function escapeHTML(str) {
     if (!str) return "";
     return String(str)
@@ -21,17 +16,11 @@ function escapeHTML(str) {
         .replace(/'/g, "&#039;");
 }
 
-/**
- * UI: Metin güncelleme yardımcı fonksiyonu
- */
 function setText(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text ?? "";
 }
 
-/**
- * UI: Yükleme ekranını kapatma
- */
 function hideLoadingOverlay() {
     const overlay = document.getElementById("loading-overlay");
     if (!overlay) return;
@@ -41,13 +30,9 @@ function hideLoadingOverlay() {
     }, 600);
 }
 
-/**
- * BİLDİRİM SİSTEMİ RENDER
- */
 function renderNotifications(list) {
     const tbody = document.getElementById("notification-body");
     if (!tbody) return;
-
     tbody.innerHTML = "";
 
     if (!list || list.length === 0) {
@@ -67,39 +52,36 @@ function renderNotifications(list) {
     });
 }
 
-/**
- * DASHBOARD ANA BAŞLATICI (INIT)
- */
 async function init() {
     try {
-        // 1. Oturum Kontrolü
         const session = await requireAuth();
         if (!session) return;
 
-        // 2. Impersonation (Admin ise başka kullanıcı gibi görme) Kontrolü
-        const impUid = localStorage.getItem("teknoify_impersonate_uid");
-        // session.isAdmin, yeni auth yapına göre daha güvenilir bir kontrol
-        const effectiveUserId = (session.isAdmin && impUid) ? impUid : session.uid;
+        // sidebar.js'in veritabanına bağlanabilmesi için global erişim veriyoruz
+        window.db = db; 
 
-        // 3. Kullanıcı Bilgilerini Bas
+        // Admin Rolü Doğru Kontrolü (Rol obje de olsa string de olsa yakalayacak)
+        const isAdmin = session.role?.type === "admin" || session.isAdmin === true || session.role === "admin";
+        const impUid = localStorage.getItem("teknoify_impersonate_uid");
+        
+        // Eğer admin impersonate yapıyorsa onun UID'sine bak, yoksa normal UID
+        const effectiveUserId = (isAdmin && impUid) ? impUid : session.uid;
+
         const displayName = session.name || session.displayName || (session.email ? session.email.split("@")[0] : "Değerli Kullanıcımız");
         setText("user-name-display", displayName);
         setText("user-name-title", displayName);
         setText("user-avatar", displayName.charAt(0).toUpperCase());
 
-        // 4. Kullanıcının Kendi Dokümanını ve Yetkilerini Çek
         const userSnap = await getDoc(doc(db, "users", effectiveUserId));
         let entitledIds = [];
         
         if (userSnap.exists()) {
             const userDoc = userSnap.data();
             
-            // GÜNCEL SİSTEM: Yetkiler projectAccess içinden okunuyor
             const projectAccess = userDoc.projectAccess || {};
             entitledIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
             
-            // UI Güncellemeleri
-            setText("stat-active-services", entitledIds.length); // Aktif hizmet sayısı doğru yazılacak!
+            setText("stat-active-services", entitledIds.length); 
             
             const statsData = userDoc.data || {};
             setText("stat-saved-hours", statsData.savedHours || "0");
@@ -109,13 +91,12 @@ async function init() {
             renderNotifications(statsData.notifications || []);
         }
 
-        // 5. Dinamik Menüyü (Sidebar) Çizdirmek için window.USER_SESSION objesini güncelle ve Sidebar'ı tetikle
-        // Bu sayede proje sayfalarındaki (shared/auth.js) menü ile %100 aynı menüye sahip olacaksın.
         window.USER_SESSION = {
             ...session,
             projectIds: entitledIds
         };
 
+        // Menüyü Çizdir!
         if (typeof window.TK_RENDER_SIDEBAR === "function") {
             window.TK_RENDER_SIDEBAR();
         }
@@ -123,12 +104,10 @@ async function init() {
     } catch (err) {
         console.error("Dashboard yüklenirken kritik hata:", err);
     } finally {
-        // Her durumda yükleme ekranını kapat
         hideLoadingOverlay();
     }
 }
 
-// Global Fonksiyonları window'a bağla (HTML'den erişim için)
 window.logout = async () => { if (confirm("Çıkış yapmak istediğinize emin misiniz?")) await logoutFn(); };
 window.toggleSidebar = () => { document.body.classList.toggle("sidebar-closed"); };
 window.markAllAsRead = () => { 
@@ -137,5 +116,4 @@ window.markAllAsRead = () => {
     alert("Tüm bildirimler okundu olarak işaretlendi."); 
 };
 
-// Start!
 init();
