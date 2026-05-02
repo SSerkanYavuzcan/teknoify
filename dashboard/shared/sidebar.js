@@ -48,6 +48,9 @@ function injectSidebarSkeleton() {
     const root = document.getElementById("tk-global-sidebar-root");
     if (!root || root.hasAttribute("data-injected")) return;
 
+    // İŞTE BÜYÜLÜ SATIR: Wrapper div'in CSS düzenini (boyunu) bozmasını engeller!
+    root.style.display = "contents";
+
     const isGeneralActive = currentPath().includes('member.html') || currentPath().includes('admin.html');
 
     root.innerHTML = `
