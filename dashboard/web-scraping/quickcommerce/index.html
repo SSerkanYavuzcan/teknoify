@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,18 +17,176 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
-  <link rel="stylesheet" href="/css/analysis.css?v=20260502">
+  <link rel="stylesheet" href="../../../css/dashboard.css?v=20260502">
+  <link rel="stylesheet" href="../../../css/analysis.css?v=20260502">
 
   <style>
-    /* Flatpickr Özelleştirmeleri (Senin orijinal stillerin korundu) */
-    .flatpickr-calendar { background: #1f232c !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important; border-radius: 16px !important; padding: 15px !important; font-family: 'Inter Tight', sans-serif !important; width: 340px !important; }
-    .flatpickr-day.selected { background: linear-gradient(135deg, #7367f0, #584cd1) !important; box-shadow: 0 0 15px rgba(115, 103, 240, 0.6) !important; }
-    .multi-option.selected { background: rgba(115, 103, 240, 0.15) !important; color: #fff !important; }
-    
-    /* Scrollbar Gizleme */
-    .content-scroll { -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; }
-    .content-scroll::-webkit-scrollbar { display: none; }
+    /* Flatpickr overrides - Senin Orijinal Kodun */
+    .flatpickr-calendar {
+      background: #1f232c !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+      border-radius: 16px !important;
+      padding: 15px !important;
+      font-family: 'Inter Tight', sans-serif !important;
+      width: 340px !important;
+    }
+
+    .flatpickr-calendar:before,
+    .flatpickr-calendar:after {
+      display: none !important;
+    }
+
+    .flatpickr-months {
+      background: transparent !important;
+      margin-bottom: 20px !important;
+      align-items: center !important;
+      position: relative;
+    }
+
+    .flatpickr-current-month {
+      color: #fff !important;
+      padding-top: 0 !important;
+      font-size: 1.1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month input.cur-year {
+      color: #fff !important;
+      font-weight: 700 !important;
+      background: transparent !important;
+      border: none !important;
+      pointer-events: none !important;
+      appearance: none;
+      margin: 0 5px;
+    }
+
+    .numInputWrapper span {
+      display: none !important;
+    }
+
+    .flatpickr-prev-month,
+    .flatpickr-next-month {
+      fill: #fff !important;
+      padding: 10px !important;
+      top: 5px !important;
+      transition: 0.3s;
+    }
+
+    .flatpickr-prev-month:hover svg,
+    .flatpickr-next-month:hover svg {
+      fill: #7367f0 !important;
+      filter: drop-shadow(0 0 5px rgba(115, 103, 240, 0.8));
+    }
+
+    .flatpickr-weekdays {
+      margin-bottom: 10px;
+    }
+
+    span.flatpickr-weekday {
+      color: #aaa !important;
+      font-weight: 600 !important;
+      font-size: 0.9rem !important;
+    }
+
+    .flatpickr-days {
+      width: 100% !important;
+    }
+
+    .dayContainer {
+      width: 100% !important;
+      min-width: 100% !important;
+      padding: 0 !important;
+      justify-content: space-between !important;
+    }
+
+    .flatpickr-day {
+      border-radius: 8px !important;
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      color: #ddd !important;
+      font-weight: 500 !important;
+      margin: 4px 0 !important;
+      height: 38px !important;
+      line-height: 38px !important;
+      flex-basis: 14.28% !important;
+      max-width: 14.28% !important;
+      box-shadow: none !important;
+      transition: all 0.2s ease;
+    }
+
+    .flatpickr-day:hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: #fff !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange,
+    .flatpickr-day.selected {
+      background: linear-gradient(135deg, #7367f0, #584cd1) !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+      border: none !important;
+      box-shadow: 0 0 15px rgba(115, 103, 240, 0.6) !important;
+      z-index: 2;
+      position: relative;
+    }
+
+    .flatpickr-day.startRange {
+      border-radius: 8px 0 0 8px !important;
+    }
+
+    .flatpickr-day.endRange {
+      border-radius: 0 8px 8px 0 !important;
+    }
+
+    .flatpickr-day.startRange.endRange,
+    .flatpickr-day.selected {
+      border-radius: 8px !important;
+    }
+
+    .flatpickr-day.inRange {
+      background: rgba(115, 103, 240, 0.25) !important;
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: -5px 0 0 rgba(115, 103, 240, 0.25), 5px 0 0 rgba(115, 103, 240, 0.25) !important;
+      z-index: 1;
+    }
+
+    .flatpickr-day.today {
+      border: 1px solid rgba(115, 103, 240, 0.8) !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+    }
+
+    .flatpickr-day.prevMonthDay,
+    .flatpickr-day.nextMonthDay {
+      visibility: hidden !important;
+    }
+
+    .multi-option.selected {
+      background: rgba(115, 103, 240, 0.15) !important;
+      color: #fff !important;
+      font-weight: 500;
+    }
+
+    .multi-option.selected .option-checkbox {
+      background: #7367f0 !important;
+      border-color: #7367f0 !important;
+      box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important;
+    }
+
+    .multi-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
   </style>
 </head>
 
@@ -40,44 +199,60 @@
   </div>
 
   <div id="tk-logout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-    <div style="background: #18181b; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #3f3f46; color: white; width: 90%; max-width: 400px;">
-      <h3 style="margin-top: 0;">Çıkış Yap</h3>
+    <div style="background: #18181b; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #3f3f46; color: white; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      <h3 style="margin-top: 0; font-size: 1.5rem;">Çıkış Yap</h3>
       <p style="color: #a1a1aa; margin-bottom: 24px;">Hesabınızdan çıkış yapmak istediğinize emin misiniz?</p>
       <div style="display: flex; justify-content: center; gap: 12px;">
-        <button onclick="window.closeLogoutModal()" style="padding: 10px 20px; background: transparent; border: 1px solid #3f3f46; color: white; border-radius: 6px; cursor: pointer;">İptal</button>
-        <button onclick="window.executeLogout()" style="padding: 10px 20px; background: #ef4444; border: none; color: white; border-radius: 6px; cursor: pointer;">Çıkış Yap</button>
+        <button onclick="window.closeLogoutModal()" style="padding: 10px 20px; background: transparent; border: 1px solid #3f3f46; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;">İptal</button>
+        <button onclick="window.executeLogout()" style="padding: 10px 20px; background: #ef4444; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fas fa-power-off"></i> Çıkış Yap</button>
       </div>
     </div>
   </div>
 
-  <button id="floating-toggle-btn" onclick="window.toggleSidebar()">
+  <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
     <i class="fas fa-bars"></i>
   </button>
 
   <div id="toast" class="toast-notification">
     <div class="toast-icon"><i class="fas fa-exclamation-circle"></i></div>
-    <div class="toast-content"><h4>Dikkat</h4><p id="toast-message"></p></div>
+    <div class="toast-content">
+      <h4>Dikkat</h4>
+      <p id="toast-message">Mesaj</p>
+    </div>
   </div>
 
   <aside class="sidebar">
-    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
+    <div class="brand">
+      <i class="fas fa-cube"></i> <span>Teknoify</span>
+    </div>
     <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+      <a href="../../member.html" class="menu-item">
+        <i class="fas fa-home"></i> <span>Genel Bakış</span>
+      </a>
       <div style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
-        <span>Servisler</span>
+        <span>Hizmetler</span>
       </div>
-      <a href="index.html" class="menu-item active"><i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span></a>
+      <a href="index.html" class="menu-item active" id="nav-comparison">
+        <i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span>
+      </a>
+      <a href="../../market-analysis.html" class="menu-item" id="nav-market">
+        <i class="fas fa-chart-line"></i> <span>Pazar Analizi</span>
+      </a>
       
-      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
+      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none; margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;"><span>Projelerim</span></div>
       <div id="tk-sidebar-projects"></div>
-      
-      <div class="tk-nav-section" id="tk-explore-header" style="display: none;"><span>Keşfet</span></div>
+      <div class="tk-nav-section" id="tk-explore-header" style="display: none; margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;"><span>Keşfet</span></div>
       <div id="explore-services-menu"></div>
     </nav>
+
     <div class="menu-spacer"></div>
     <div class="sidebar-footer">
-      <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
-      <button class="btn-collapse" onclick="window.toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
+      <a href="#" onclick="window.logoutApp(event)" class="btn-logout" title="Çıkış Yap">
+        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
+      </a>
+      <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
+        <i class="fas fa-chevron-left"></i>
+      </button>
     </div>
   </aside>
 
@@ -91,60 +266,127 @@
     </header>
 
     <div class="content-scroll">
+
       <div class="filter-bar">
         <div class="filter-group" style="min-width:240px;">
-          <label>Rapor Tarihi</label>
+          <label>Rapor Tarihi Seçiniz</label>
           <div class="date-picker-wrapper">
             <i class="fas fa-calendar-alt calendar-icon"></i>
-            <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Seçiniz" readonly>
+            <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz"
+              readonly>
           </div>
         </div>
         <div class="filter-group">
-          <label>Şube</label>
+          <label>Şube Seçiniz</label>
           <div class="multi-select-wrapper" id="wrapper-branch">
-            <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-branch')"><span id="text-branch">Yükleniyor...</span></div>
+            <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-branch')">
+              <span id="text-branch">Şubeler Yükleniyor...</span>
+            </div>
             <div class="multi-select-menu" id="menu-branch"></div>
           </div>
         </div>
         <div class="filter-group">
-          <label>Kategori</label>
+          <label>Kategori Seçiniz</label>
           <div class="multi-select-wrapper" id="wrapper-category">
-            <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-category')"><span id="text-category">Tüm Kategoriler</span></div>
+            <div class="multi-select-trigger" onclick="toggleMultiSelect('menu-category')">
+              <span id="text-category">Tüm Kategoriler</span>
+            </div>
             <div class="multi-select-menu" id="menu-category"></div>
           </div>
         </div>
-        <button class="btn-filter" onclick="applyFilters()"><i class="fas fa-search"></i> Yükle</button>
-        
+        <button class="btn-filter" id="btn-load" onclick="applyFilters()">
+          <i class="fas fa-search"></i> Verileri Yükle
+        </button>
+
         <div class="download-wrapper">
           <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
-            <i class="fas fa-download"></i> İndir
+            <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down"
+              style="font-size:0.8em;margin-left:4px;"></i>
           </button>
           <div id="download-menu" class="download-menu">
-            <div class="download-item" onclick="downloadCSV()">CSV</div>
-            <div class="download-item" onclick="downloadExcel()">Excel</div>
+            <div class="download-item" onclick="downloadCSV()"><i class="fas fa-file-csv" style="color:#10b981;"></i>
+              CSV Olarak İndir</div>
+            <div class="download-item" onclick="downloadExcel()"><i class="fas fa-file-excel"
+                style="color:#10b981;"></i> Excel (.xlsx) İndir</div>
           </div>
         </div>
+      </div>
+
+      <div id="active-filter-banner">
+        <span id="active-filter-text">Filtreleniyor...</span>
+        <button onclick="clearGraphFilters()" title="Filtreyi Temizle">&times;</button>
       </div>
 
       <div class="dashboard-container">
         <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-title">Fiyat Rekabet Endeksi</div>
-                <div class="kpi-value" id="kpi-competition">-</div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-balance-scale"></i></div>
+            <div class="kpi-title">Fiyat Rekabet Endeksi</div>
+            <div class="kpi-value" id="kpi-competition">-</div>
+            <div class="kpi-trend" id="kpi-competition-sub">Veri Bekleniyor...</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-tags"></i></div>
+            <div class="kpi-title">Bizim İndirimli Ürünler</div>
+            <div class="kpi-value" id="kpi-disc-us">-</div>
+            <div class="kpi-trend trend-neutral">Toplam Portföy İçinde</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-percent"></i></div>
+            <div class="kpi-title">Ortalama İndirim Derinliği</div>
+            <div class="kpi-value" id="kpi-depth">%0</div>
+            <div class="progress-bg">
+              <div class="progress-fill" id="kpi-depth-bar" style="width:0%"></div>
             </div>
-            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-trophy"></i></div>
+            <div class="kpi-title">Avantajlı Kategori</div>
+            <div class="kpi-value" id="kpi-best-cat" style="font-size:1.1rem">-</div>
+            <div class="kpi-trend" id="kpi-best-cat-sub">-</div>
+          </div>
+        </div>
+
         <div class="charts-grid">
-          <div class="chart-box"><div id="chart-category"></div></div>
-          <div class="chart-box"><div id="chart-pie"></div></div>
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">Kategori Bazlı Fiyat Endeksi</div>
+              <div style="font-size:0.8rem;color:#666;">(Negatif = Biz Ucuzuz)</div>
+            </div>
+            <div id="chart-category"></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-header">
+              <div class="chart-title">Pazar Konumlandırması</div>
+            </div>
+            <div id="chart-pie"></div>
+          </div>
         </div>
       </div>
 
-      <div class="table-responsive-wrapper">
+      <div id="top-scroll-wrapper" class="top-scroll-wrapper">
+        <div id="top-scroll-content" class="top-scroll-content"></div>
+      </div>
+
+      <div class="table-responsive-wrapper" id="table-scroll-container">
         <table class="comparison-table" id="main-table">
-          <thead><tr id="header-row-top"></tr><tr id="header-row-bottom"></tr></thead>
-          <tbody id="table-body"><tr><td colspan="100%" style="text-align:center;">Veri kaynağı bekleniyor...</td></tr></tbody>
+          <thead>
+            <tr id="header-row-top"></tr>
+            <tr id="header-row-bottom"></tr>
+          </thead>
+          <tbody id="table-body">
+            <tr>
+              <td colspan="100%" style="text-align:center;padding:30px;color:#aaa;">Veri kaynağı bekleniyor...</td>
+            </tr>
+          </tbody>
         </table>
       </div>
+
+      <div id="limit-msg" class="limit-warning">
+        <i class="fas fa-info-circle"></i> Sonuçlar performans için <strong>250 satır</strong> ile sınırlandırılmıştır.
+        Tüm veriyi görmek için <strong>İndir</strong> butonunu kullanınız.
+      </div>
+
     </div>
   </main>
 
@@ -153,64 +395,129 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
-  <script type="module" src="/dashboard/shared/auth.js?v=20260502"></script> 
-  <script type="module" src="/dashboard/shared/engine.js?v=20260502"></script> 
+  <script src="config.js?v=20260502"></script> 
+
+  <script type="module" src="../../shared/engine.js?v=20260502"></script> 
+  <script type="module" src="../../shared/auth.js?v=20260502"></script> 
 
   <script>
-    // Profil ve UI Güncelleyici
+    // Profil Bilgisini Ekrana Basar
     window.onAuthReady = function(session) {
         const name = session.displayName || session.name || "Kullanıcı";
-        document.getElementById("user-name-display").textContent = name;
-        document.getElementById("user-avatar").textContent = name.charAt(0).toUpperCase();
+        const displayEl = document.getElementById("user-name-display");
+        const avatarEl = document.getElementById("user-avatar");
+        
+        if(displayEl) displayEl.textContent = name;
+        if(avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
 
         if(typeof window.TK_RENDER_SIDEBAR === "function") {
             window.TK_RENDER_SIDEBAR();
         }
     };
 
-    // Session Bekleme Döngüsü
-    document.addEventListener('DOMContentLoaded', () => {
-        const check = setInterval(() => {
-            if(window.USER_SESSION) {
-                clearInterval(check);
-                window.onAuthReady(window.USER_SESSION);
-            }
-        }, 300);
-    });
+    // auth.js'in yüklenmesini sabırla bekler (Asla Yükleniyor'da kalmaz)
+    const checkSession = setInterval(() => {
+        if(window.USER_SESSION) {
+            clearInterval(checkSession);
+            window.onAuthReady(window.USER_SESSION);
+        }
+    }, 300);
 
-    window.toggleSidebar = () => document.body.classList.toggle("sidebar-closed");
-    window.logoutApp = (e) => { e.preventDefault(); document.getElementById("tk-logout-modal").style.display = "flex"; };
-    window.closeLogoutModal = () => document.getElementById("tk-logout-modal").style.display = "none";
+    // Sidebar Toggle
+    window.toggleSidebar = function() { 
+        document.body.classList.toggle("sidebar-closed"); 
+    };
+
+    // Çıkış Modalı
+    window.logoutApp = function(e) { 
+        if(e) e.preventDefault(); 
+        const modal = document.getElementById("tk-logout-modal");
+        if(modal) modal.style.display = "flex";
+    };
+
+    window.closeLogoutModal = function() {
+        const modal = document.getElementById("tk-logout-modal");
+        if(modal) modal.style.display = "none";
+    };
   </script>
 
   <script type="module">
+    // Not: member.html'de firebase.js yolu "/js/lib/firebase.js" idi. 
+    // Aynı yolu kullanarak projeleri dinamik sidebar'a çektiriyoruz.
     import { db } from "/js/lib/firebase.js";
     import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
     import { logout } from "/js/lib/auth.js"; 
 
-    window.executeLogout = async () => {
+    window.executeLogout = async function() {
         window.closeLogoutModal();
-        document.getElementById("loading-overlay").style.display = "flex";
-        await logout(); 
+        const loader = document.getElementById("loading-overlay");
+        if (loader) {
+            loader.style.display = "flex";
+            loader.style.opacity = "1";
+        }
+        if (typeof logout === "function") {
+            await logout(); 
+        } else if (window.logout) {
+            window.logout();
+        }
     };
 
-    window.TK_RENDER_SIDEBAR = async () => {
+    window.TK_RENDER_SIDEBAR = async function() {
+      const exploreContainer = document.getElementById("explore-services-menu");
       const projectsContainer = document.getElementById("tk-sidebar-projects");
+      const projectsHeader = document.getElementById("tk-sidebar-services-header");
+      const exploreHeader = document.getElementById("tk-explore-header");
+
+      if (!exploreContainer || !projectsContainer) return;
+
       const session = window.USER_SESSION || {};
       const accessMap = session.projectAccess || {};
+      const isAdmin = session.isAdmin || session.realIsAdmin;
 
       try {
         const querySnapshot = await getDocs(collection(db, "projects"));
-        let ownedHtml = '';
+        
+        let ownedHtml = ''; let lockedHtml = '';
+        let ownedCount = 0; let lockedCount = 0;
+
         querySnapshot.forEach(doc => {
           const data = doc.data();
-          if (accessMap[doc.id] === true || session.isAdmin) {
-             ownedHtml += `<a href="/${data.config.folderPath}/${data.config.entryPoint}" class="menu-item"><i class="fas fa-cube"></i> <span>${data.details.name}</span></a>`;
+          if (!data.config || data.config.isActive !== true) return;
+
+          const pId = doc.id; 
+          let hasAccess = isAdmin;
+          if (!hasAccess) {
+             if (Array.isArray(accessMap)) { hasAccess = accessMap.includes(pId); } 
+             else { hasAccess = accessMap[pId] === true; }
+          }
+
+          let icon = data.details?.icon || "fas fa-cube";
+          if (!icon.includes("fa-")) icon = (icon === "scraper-icon") ? "fas fa-spider" : "fas fa-cube";
+          
+          const name = data.details?.name || "Proje";
+          const folder = data.config?.folderPath || "";
+          const entry = data.config?.entryPoint || "index.html";
+          let href = `/${folder}/${entry}`.replace(/\/\//g, '/');
+
+          if (hasAccess) {
+            ownedCount++;
+            ownedHtml += `<a href="${href}" class="menu-item"><i class="${icon}"></i> <span>${name}</span></a>`;
+          } else {
+            lockedCount++;
+            lockedHtml += `<a href="#" class="menu-item locked" style="opacity: 0.7;" onclick="alert('${name} modülü şu an kilitli.'); return false;"><i class="${icon}"></i> <span>${name}</span><i class="fas fa-lock" style="margin-left:auto; font-size:0.75rem; opacity:0.5;"></i></a>`;
           }
         });
+
         projectsContainer.innerHTML = ownedHtml;
-      } catch(err) { console.error(err); }
+        exploreContainer.innerHTML = lockedHtml;
+        projectsHeader.style.display = ownedCount > 0 ? "flex" : "none";
+        exploreHeader.style.display = lockedCount > 0 ? "flex" : "none";
+
+      } catch(err) {
+        console.error("Sidebar oluşturulurken veritabanı hatası:", err);
+      }
     };
   </script>
+
 </body>
 </html>
