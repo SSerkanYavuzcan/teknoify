@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase.js";
+import { auth, db } from "/js/lib/firebase.js";
 import {
   getIdTokenResult,
   onAuthStateChanged,
