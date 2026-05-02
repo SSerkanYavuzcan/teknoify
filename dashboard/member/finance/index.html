@@ -213,12 +213,19 @@
   <script src="/dashboard/shared/sidebar.js?v=999" type="module"></script>
 
   <script type="module">
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     const auth = getAuth();
     const db = getFirestore();
     let currentUserId = null;
+
+    // Ortak Fonksiyonlar
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+    window.logoutApp = function(e) { 
+        if(e) e.preventDefault(); 
+        signOut(auth).then(() => window.location.href = "/login.html");
+    };
 
     let portfolioChart, assetChart;
 
@@ -226,21 +233,18 @@
         if (user) {
             currentUserId = user.uid;
             
-            // Kullanıcı bilgilerini Firestore'dan çekip doğru ismini gösterelim
             try {
                 const userRef = doc(db, "users", user.uid);
                 const snap = await getDoc(userRef);
                 
-                let displayName = user.email.split('@')[0]; // Varsayılan
+                let displayName = user.email.split('@')[0];
 
                 if (snap.exists()) {
                     const data = snap.data();
-                    // Firestore'da profile.fullName varsa onu al, yoksa companyName'i al
                     if (data.profile) {
                         displayName = data.profile.fullName || data.profile.companyName || displayName;
                     }
 
-                    // Finans Verilerini Yükle
                     const financeData = data.dashboardStats?.finance || null;
                     if (financeData) {
                         updateUI(financeData);
@@ -248,14 +252,18 @@
                     }
                 }
 
+                // Profil İsmini Güncelleme (Hata Düzeltildi: Try bloğunun içine/dışına sağlama alındı)
                 document.getElementById("user-name-display").textContent = displayName;
                 document.getElementById("user-avatar").textContent = displayName.charAt(0).toUpperCase();
 
             } catch (error) {
-                console.error("Kullanıcı verisi çekilemedi:", error);
+                console.error("Kullanıcı verisi çekilemedi veya işlenemedi:", error);
+                // Çökse bile en azından mail adresini basalım
+                const fallbackName = user.email.split('@')[0];
+                document.getElementById("user-name-display").textContent = fallbackName;
+                document.getElementById("user-avatar").textContent = fallbackName.charAt(0).toUpperCase();
             }
 
-            // Global Değişken ve Sidebar Yüklemesi
             window.USER_SESSION = { uid: user.uid, email: user.email };
             if(typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();
@@ -263,7 +271,6 @@
 
             initCharts();
             
-            // Yükleme ekranını kapat
             const loader = document.getElementById("loading-overlay");
             if (loader) {
                 loader.style.opacity = "0";
@@ -275,7 +282,6 @@
         }
     });
 
-    // GRAFİKLERİ BOŞ OLARAK BAŞLAT
     function initCharts() {
         portfolioChart = new ApexCharts(document.querySelector("#chart-portfolio-main"), {
             series: [{ data: [0, 0, 0, 0, 0, 0] }],
@@ -296,32 +302,41 @@
         assetChart.render();
     }
 
-    // ARAYÜZÜ (UI) GÜNCELLEYEN FONKSİYON
+    // ARAYÜZÜ (UI) GÜNCELLEYEN FONKSİYON (GÜVENLİK AĞI EKLENDİ)
     function updateUI(data) {
-        document.getElementById('ui-total-value').textContent = `₺${data.totalValue.toLocaleString('tr-TR')}`;
-        document.getElementById('ui-savings').textContent = `₺${data.savings.toLocaleString('tr-TR')}`;
-        document.getElementById('ui-target-text').textContent = `Hedef: ₺${data.target.toLocaleString('tr-TR')}`;
-        
-        document.getElementById('ui-stock-pct').textContent = `%${data.assets.stocks}`;
-        document.getElementById('ui-fund-pct').textContent = `%${data.assets.funds}`;
-        document.getElementById('ui-gold-pct').textContent = `%${data.assets.gold}`;
+        if(!data) return;
 
-        const progressPct = data.target > 0 ? Math.min(Math.round((data.savings / data.target) * 100), 100) : 0;
+        // Number'a çevirerek veya 0 kabul ederek toLocaleString çökmesini kesin engelliyoruz
+        const totalValue = Number(data.totalValue) || 0;
+        const savings = Number(data.savings) || 0;
+        const target = Number(data.target) || 0;
+        
+        // Assets objesi hiç yoksa hata vermemesi için
+        const assets = data.assets || {};
+        const stocks = Number(assets.stocks) || 0;
+        const funds = Number(assets.funds) || 0;
+        const gold = Number(assets.gold) || 0;
+
+        document.getElementById('ui-total-value').textContent = `₺${totalValue.toLocaleString('tr-TR')}`;
+        document.getElementById('ui-savings').textContent = `₺${savings.toLocaleString('tr-TR')}`;
+        document.getElementById('ui-target-text').textContent = `Hedef: ₺${target.toLocaleString('tr-TR')}`;
+        
+        document.getElementById('ui-stock-pct').textContent = `%${stocks}`;
+        document.getElementById('ui-fund-pct').textContent = `%${funds}`;
+        document.getElementById('ui-gold-pct').textContent = `%${gold}`;
+
+        const progressPct = target > 0 ? Math.min(Math.round((savings / target) * 100), 100) : 0;
         document.getElementById('ui-savings-progress').style.width = `${progressPct}%`;
         document.getElementById('ui-savings-rate').textContent = `%${progressPct}`;
 
-        const baseValue = data.totalValue;
+        const baseValue = totalValue;
         const mockHistory = [
             baseValue * 0.85, baseValue * 0.88, baseValue * 0.92, 
             baseValue * 0.95, baseValue * 0.98, baseValue
         ];
         portfolioChart.updateSeries([{ data: mockHistory }]);
         
-        assetChart.updateSeries([
-            Number(data.assets.stocks), 
-            Number(data.assets.funds), 
-            Number(data.assets.gold)
-        ]);
+        assetChart.updateSeries([stocks, funds, gold]);
     }
 
     // MODAL İŞLEMLERİ
@@ -335,12 +350,14 @@
     modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('active'); });
 
     function fillModalInputs(data) {
-        document.getElementById('input-totalValue').value = data.totalValue;
-        document.getElementById('input-savings').value = data.savings;
-        document.getElementById('input-target').value = data.target;
-        document.getElementById('input-stock').value = data.assets.stocks;
-        document.getElementById('input-fund').value = data.assets.funds;
-        document.getElementById('input-gold').value = data.assets.gold;
+        if(!data) return;
+        const assets = data.assets || {};
+        document.getElementById('input-totalValue').value = data.totalValue || '';
+        document.getElementById('input-savings').value = data.savings || '';
+        document.getElementById('input-target').value = data.target || '';
+        document.getElementById('input-stock').value = assets.stocks || '';
+        document.getElementById('input-fund').value = assets.funds || '';
+        document.getElementById('input-gold').value = assets.gold || '';
     }
 
     form.addEventListener('submit', async (e) => {
