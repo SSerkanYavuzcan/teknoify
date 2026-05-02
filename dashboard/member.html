@@ -12,12 +12,27 @@
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
   
   <style>
-    /* 1. ÜST KARTLAR (MEVCUT YAPI) */
+    /* ========================================================= */
+    /* SCROLLBAR GİZLEME (Kaydırma özelliği çalışır, çubuk görünmez) */
+    /* ========================================================= */
+    .content-scroll {
+      -ms-overflow-style: none;  /* IE ve Edge için */
+      scrollbar-width: none;  /* Firefox için */
+      overflow-y: auto;
+    }
+    .content-scroll::-webkit-scrollbar {
+      display: none; /* Chrome, Safari ve Opera için */
+    }
+
+    /* ========================================================= */
+    /* 1. ÜST KARTLAR */
+    /* ========================================================= */
     .super-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
-      padding: 24px;
+      /* SOL BOŞLUK DARALTILDI (Sidebara yaklaştı, genişlik arttı) */
+      padding: 24px 24px 24px 10px;
       width: 100%;
     }
     .dashboard-card {
@@ -42,16 +57,17 @@
     #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #05080a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
 
     /* ========================================================= */
-    /* 2. YENİ EKLENEN İSTATİSTİK KARTLARI (Görseldeki Tasarım) */
+    /* 2. ÖZET İSTATİSTİK KARTLARI */
     /* ========================================================= */
     .summary-stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
-      padding: 0 24px 24px 24px;
+      /* SOL BOŞLUK DARALTILDI */
+      padding: 0 24px 24px 10px;
     }
     .summary-card {
-      background: #11131a; /* Koyu Dashboard arka planı */
+      background: #11131a; 
       border: 1px solid rgba(255,255,255,0.03);
       border-radius: 12px;
       padding: 20px;
@@ -72,10 +88,11 @@
     .summary-info strong { font-size: 1.4rem; color: #fff; }
 
     /* ========================================================= */
-    /* 3. YENİ EKLENEN "PROJELERİNİZ" LİSTESİ (Görseldeki Tasarım)*/
+    /* 3. "PROJELERİNİZ" LİSTESİ */
     /* ========================================================= */
     .projects-section {
-      padding: 0 24px 40px 24px;
+      /* SOL BOŞLUK DARALTILDI */
+      padding: 0 24px 40px 10px;
     }
     .section-title {
       font-size: 1.2rem; color: #fff; margin-bottom: 20px; font-weight: 600;
@@ -87,7 +104,7 @@
     
     .project-card-wide {
       background: #11131a;
-      border: 1px solid rgba(99, 102, 241, 0.15); /* Hafif morumsu dış sınır */
+      border: 1px solid rgba(99, 102, 241, 0.15); 
       border-radius: 16px;
       padding: 24px;
       display: flex; gap: 24px; position: relative;
@@ -167,7 +184,7 @@
 
   <main class="main-content">
     <header class="top-bar">
-      <h2>Hoşgeldin, <span id="user-name-title">...</span></h2>
+      <h2 style="padding-left: 10px;">Hoşgeldin, <span id="user-name-title">...</span></h2>
       <div class="user-profile">
         <span id="user-name-display">Yükleniyor...</span>
         <div class="avatar" id="user-avatar">U</div>
@@ -300,7 +317,8 @@
           </div>
         </div>
       </div>
-      </div>
+
+    </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
