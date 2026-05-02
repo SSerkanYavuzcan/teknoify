@@ -4,13 +4,15 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-
 
 async function loadDashboardData(sess) {
     try {
-        console.log("[member.js] Veriler çekiliyor: ", sess.effectiveUid || sess.uid);
+        console.log("[member.js] Veriler çekiliyor...", sess);
         const effectiveUid = sess.effectiveUid || sess.uid;
-        const name = sess.name || "Değerli Kullanıcı";
+        const name = sess.name || sess.displayName || "Kullanıcı";
         
+        // UI Güncelle
         document.getElementById("user-name-title").textContent = name;
         document.getElementById("user-name-display").textContent = name;
-        document.getElementById("user-avatar").textContent = name.charAt(0).toUpperCase();
+        const avatar = document.getElementById("user-avatar");
+        if(avatar) avatar.textContent = name.charAt(0).toUpperCase();
 
         const userSnap = await getDoc(doc(db, "users", effectiveUid));
         if (userSnap.exists()) {
@@ -18,14 +20,16 @@ async function loadDashboardData(sess) {
             const projectAccess = userDoc.projectAccess || {};
             const entitledIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
             
-            document.getElementById("stat-active-services").textContent = entitledIds.length; 
+            const activeServicesEl = document.getElementById("stat-active-services");
+            if(activeServicesEl) activeServicesEl.textContent = entitledIds.length; 
+
             const statsData = userDoc.data || {};
-            document.getElementById("stat-saved-hours").textContent = statsData.savedHours || "0";
-            document.getElementById("stat-next-payment").textContent = statsData.nextPayment || "Belirlenmedi";
-            document.getElementById("processed-data-count").textContent = statsData.totalProcessed || "0";
+            if(document.getElementById("stat-saved-hours")) document.getElementById("stat-saved-hours").textContent = statsData.savedHours || "0";
+            if(document.getElementById("stat-next-payment")) document.getElementById("stat-next-payment").textContent = statsData.nextPayment || "Belirlenmedi";
+            if(document.getElementById("processed-data-count")) document.getElementById("processed-data-count").textContent = statsData.totalProcessed || "0";
         }
     } catch (err) {
-        console.error("[member.js] Firestore Hatası:", err);
+        console.error("[member.js] Dashboard veri hatası:", err);
     } finally {
         const overlay = document.getElementById("loading-overlay");
         if (overlay) { 
@@ -36,22 +40,27 @@ async function loadDashboardData(sess) {
 }
 
 function init() {
-    let attempts = 0;
-    const checkSession = setInterval(() => {
-        attempts++;
+    // window.USER_SESSION gelene kadar her 200ms'de bir kontrol et
+    const checkInterval = setInterval(() => {
         if (window.USER_SESSION) {
-            clearInterval(checkSession);
+            clearInterval(checkInterval);
             loadDashboardData(window.USER_SESSION);
         }
-        if (attempts > 60) { // 6 saniye bekler
-            clearInterval(checkSession);
-            console.error("[member.js] KRİTİK: window.USER_SESSION bulunamadı. auth.js düzgün yüklenmedi.");
-            const overlay = document.getElementById("loading-overlay");
-            if (overlay) {
+    }, 200);
+
+    // Yedek Plan: Eğer 10 saniye boyunca gelmezse ve Firebase login ise zorla çek
+    setTimeout(() => {
+        clearInterval(checkInterval);
+        const overlay = document.getElementById("loading-overlay");
+        if (overlay && overlay.style.opacity !== "0") {
+             // Eğer hala kapanmadıysa bir sorun var demektir
+             console.warn("[member.js] Oturum beklenenden uzun sürdü, manuel deneme yapılıyor...");
+             if(!window.USER_SESSION) {
                 const text = document.getElementById("dynamic-loader-text");
-                if(text) text.innerHTML = "Oturum verisi alınamadı. <br><small>Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.</small>";
-            }
+                if(text) text.innerHTML = "Oturum verisi alınamadı. <br><small>Sayfayı yenilemeyi deneyin.</small>";
+             }
         }
-    }, 100);
+    }, 10000);
 }
+
 init();
