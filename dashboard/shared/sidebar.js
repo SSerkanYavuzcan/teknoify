@@ -63,15 +63,56 @@ function injectSidebarSkeleton() {
             
             /* Kilitli Menü Hover Efekti */
             .menu-item.locked:hover { background: rgba(255, 255, 255, 0.05); color: #fff !important; }
+
+            /* ========================================= */
+            /* YENİ MODAL TASARIMI VE IŞIN ANİMASYONU    */
+            /* ========================================= */
+            #tk-logout-modal {
+                display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                background: rgba(0,0,0,0.75); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(8px);
+            }
+            .tk-modal-wrapper {
+                position: relative; padding: 2px; border-radius: 20px; overflow: hidden; 
+                width: 90%; max-width: 480px; /* Modal büyütüldü */
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            }
+            /* Dönen Işın (Conic Gradient) */
+            .tk-modal-wrapper::before {
+                content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+                background: conic-gradient(from 0deg, transparent 70%, #6366f1 85%, #a855f7 100%);
+                animation: tk-spin 3s linear infinite; z-index: 0;
+            }
+            /* Modalın Siyah İç Gövdesi */
+            .tk-modal-inner {
+                position: relative; z-index: 1; background: #11131a; border-radius: 18px; 
+                padding: 40px 30px; text-align: center; display: flex; flex-direction: column; gap: 20px;
+            }
+            @keyframes tk-spin { 100% { transform: rotate(360deg); } }
+            
+            /* Buton Tasarımları */
+            .tk-modal-btn-cancel {
+                padding: 12px 30px; background: transparent; border: 1px solid #3f3f46; color: #e4e4e7; 
+                border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1.05rem; transition: 0.2s;
+            }
+            .tk-modal-btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: #52525b; }
+            
+            .tk-modal-btn-logout {
+                padding: 12px 30px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: white; 
+                border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1.05rem; transition: 0.2s; 
+                display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            }
+            .tk-modal-btn-logout:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
         </style>
 
-        <div id="tk-logout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-            <div style="background: #18181b; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #3f3f46; color: white; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                <h3 style="margin-top: 0; font-size: 1.5rem;">Çıkış Yap</h3>
-                <p style="color: #a1a1aa; margin-bottom: 24px;">Hesabınızdan çıkış yapmak istediğinize emin misiniz?</p>
-                <div style="display: flex; justify-content: center; gap: 12px;">
-                    <button onclick="window.closeLogoutModal()" style="padding: 10px 20px; background: transparent; border: 1px solid #3f3f46; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;">İptal</button>
-                    <button onclick="window.executeLogout()" style="padding: 10px 20px; background: #ef4444; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fas fa-power-off"></i> Çıkış Yap</button>
+        <div id="tk-logout-modal">
+            <div class="tk-modal-wrapper">
+                <div class="tk-modal-inner">
+                    <h3 style="margin: 0; font-size: 1.7rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em;">Çıkış Yap</h3>
+                    <p style="margin: 0; color: #a1a1aa; font-size: 1.1rem; line-height: 1.5;">Hesabınızdan çıkış yapmak istediğinize emin misiniz?</p>
+                    <div style="display: flex; justify-content: center; gap: 16px; margin-top: 10px;">
+                        <button onclick="window.closeLogoutModal()" class="tk-modal-btn-cancel">İptal</button>
+                        <button onclick="window.executeLogout()" class="tk-modal-btn-logout"><i class="fas fa-power-off"></i> Çıkış Yap</button>
+                    </div>
                 </div>
             </div>
         </div>
