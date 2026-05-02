@@ -6,10 +6,13 @@
     --card-bg: rgba(24, 24, 27, 0.6);
     --sidebar-w: 260px;
     --header-h: 70px;
+    /* Akıcı geçişler için özel eğri */
     --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* 1. YÜZEN AÇMA BUTONU */
+/* ==========================================================================
+   1. YÜZEN AÇMA BUTONU (Floating Toggle Button)
+   ========================================================================== */
 #floating-toggle-btn {
     position: fixed;
     bottom: 30px;
@@ -19,7 +22,7 @@
     background: #6366f1; /* Modern Indigo */
     color: #fff;
     border: none;
-    border-radius: 18px; /* Tam yuvarlak yerine modern karemsi yuvarlak */
+    border-radius: 18px; /* Modern karemsi yuvarlak (Squircle) */
     z-index: 10001;
     display: flex;
     justify-content: center;
@@ -46,7 +49,9 @@ body.sidebar-closed #floating-toggle-btn {
     transform: translateY(0) scale(1);
 }
 
-/* 2. ANA İÇERİK YERLEŞİMİ */
+/* ==========================================================================
+   2. ANA İÇERİK YERLEŞİMİ (Main Content)
+   ========================================================================== */
 .main-content {
     margin-left: var(--sidebar-w);
     min-height: 100vh;
@@ -57,48 +62,62 @@ body.sidebar-closed #floating-toggle-btn {
     flex-direction: column;
 }
 
-/* Sidebar kapalıyken içeriği genişlet */
+/* Sidebar kapalıyken içeriği tam genişlik yap ve sola yasla */
 body.sidebar-closed .main-content {
     margin-left: 0;
+    width: 100%;
 }
 
-/* 3. KAYDIRILABİLİR İÇERİK ALANI */
+/* ==========================================================================
+   3. KAYDIRILABİLİR İÇERİK ALANI (Content Scroll)
+   ========================================================================== */
 .content-scroll {
     flex: 1;
-    padding: 30px;
-    max-width: 1600px; /* Çok geniş ekranlarda içeriğin dağılmasını önler */
-    margin: 0 auto;
+    /* Padding-left senin isteğin üzerine 10px'e düşürüldü (Grafikler sola yanaştı) */
+    padding: 30px 24px 30px 10px; 
+    max-width: 100%; /* İçeriğin tam yayılması sağlandı */
+    margin: 0;
     width: 100%;
     overflow-y: auto;
     scroll-behavior: smooth;
+    
+    /* SCROLLBAR GİZLEME (İsteğin Üzerine) */
+    -ms-overflow-style: none;  /* IE/Edge */
+    scrollbar-width: none;     /* Firefox */
 }
 
-/* 4. CUSTOM SCROLLBAR (Görseldeki gibi ince ve şık) */
+/* Chrome, Safari ve Opera için scrollbar gizleme */
 .content-scroll::-webkit-scrollbar {
-    width: 6px;
+    display: none;
 }
 
-.content-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.content-scroll::-webkit-scrollbar-thumb {
-    background: rgba(113, 113, 122, 0.2);
-    border-radius: 10px;
-}
-
-.content-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(113, 113, 122, 0.4);
-}
-
-/* 5. RESPONSIVE DÜZENLEMELER */
+/* ==========================================================================
+   4. RESPONSIVE DÜZENLEMELER
+   ========================================================================== */
 @media (max-width: 1024px) {
     .main-content {
         margin-left: 0;
     }
+    
+    .content-scroll {
+        padding: 20px 15px; /* Mobilde biraz daha fazla boşluk */
+    }
+
     #floating-toggle-btn {
         opacity: 1;
         visibility: visible;
         transform: scale(1);
+        bottom: 20px;
+        left: 20px;
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* Ekran çok genişse içeriğin aşırı yayılmasını önlemek için opsiyonel kısıtlayıcı */
+@media (min-width: 1921px) {
+    .content-scroll {
+        max-width: 1800px;
+        margin: 0 auto;
     }
 }
