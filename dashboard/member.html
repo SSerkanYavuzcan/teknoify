@@ -112,6 +112,14 @@
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.05);
     }
+    /* GÖRSELİN KUTUYA TAM OTURMASI İÇİN EKLENEN KISIM */
+    .project-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    
     .project-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
     
     .project-header-top { display: flex; justify-content: space-between; align-items: center; }
@@ -260,31 +268,8 @@
       <div class="projects-section">
         <h2 class="section-title">Projeleriniz</h2>
         
-        <div class="project-card-wide">
-          <div class="project-image"></div>
-          <div class="project-details">
-            <div>
-              <div class="project-header-top">
-                <h3>Web Scraping</h3>
-                <div class="status-badge-active">Aktif</div>
-              </div>
-              <p class="project-desc-text">Veri analiz aracı</p>
-              
-              <div class="project-tags">
-                <span class="ptag ptag-analytics">Analytics</span>
-                <span class="ptag ptag-geodata">Geo Data</span>
-                <span class="ptag ptag-dashboard">Dashboard</span>
-              </div>
-            </div>
-            
-            <div class="project-footer-bottom">
-              <div class="last-update"><i class="far fa-calendar-alt"></i> Son güncelleme: Bugün</div>
-              <div>
-                <button class="btn-launch-project" onclick="location.href='/dashboard/web-scraping/quickcommerce/index.html'">Projeyi Başlat</button>
-                <a href="#" class="details-link">Detaylar <i class="fas fa-chevron-right"></i></a>
-              </div>
-            </div>
-          </div>
+        <div id="dynamic-projects-container">
+            <p style="color: #a1a1aa; font-size: 0.9rem;">Projeler yükleniyor...</p>
         </div>
       </div>
 
@@ -299,8 +284,11 @@
 
   <script type="module">
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; // Firestore eklendi
 
     const auth = getAuth();
+    const db = getFirestore(); // Firestore başlatıldı
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             const name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
@@ -319,16 +307,104 @@
                 window.TK_RENDER_SIDEBAR();
             }
 
-            // Loading'i kapat
-            const loader = document.getElementById("loading-overlay");
-            if (loader) {
-                loader.style.opacity = "0";
-                setTimeout(() => loader.style.display = "none", 600);
-            }
+            // FIREBASE'DEN PROJELERİ ÇEKME İŞLEMİ
+            fetchUserProjects();
+
         } else {
             window.location.href = "/login.html";
         }
     });
+
+    // PROJELERİ ÇEKEN VE EKRANA BASAN FONKSİYON
+    async function fetchUserProjects() {
+        const container = document.getElementById('dynamic-projects-container');
+        if (!container) return;
+
+        try {
+            const querySnapshot = await getDocs(collection(db, "projects"));
+            
+            if (querySnapshot.empty) {
+                container.innerHTML = '<p style="color: #a1a1aa;">Henüz aktif bir projeniz bulunmuyor.</p>';
+                closeLoader();
+                return;
+            }
+
+            container.innerHTML = ''; // "Yükleniyor" yazısını temizle
+            
+            querySnapshot.forEach((doc) => {
+                const projectData = doc.data();
+                const details = projectData.details || {};
+                
+                // İkon yolunu oluşturuyoruz
+                const iconName = details.icon || 'default-project-icon'; 
+                const imagePath = `/images/${iconName}.png`; 
+                
+                // Etiketleri (Tags) oluşturma
+                let tagsHTML = '';
+                if (details.tags && Array.isArray(details.tags)) {
+                     details.tags.forEach(tag => {
+                         tagsHTML += `<span class="ptag" style="color: #c084fc; border: 1px solid rgba(192,132,252,0.3); background: rgba(192,132,252,0.05); margin-right:5px;">${tag}</span>`;
+                     });
+                } else {
+                     // Eğer etiket yoksa tasarımın bozulmaması için varsayılan birkaç etiket ekleyebiliriz
+                     tagsHTML = `
+                        <span class="ptag ptag-analytics">Analytics</span>
+                        <span class="ptag ptag-dashboard">Dashboard</span>
+                     `;
+                }
+
+                // Proje linki ayarlama
+                const projectLink = projectData.link || '#';
+
+                // Kart HTML'ini oluştur
+                const cardHTML = `
+                    <div class="project-card-wide" style="margin-bottom: 24px;">
+                      <div class="project-image">
+                          <img src="${imagePath}" alt="${projectData.name || 'Proje'} Görseli" onerror="this.src='/images/default-project-icon.png'">
+                      </div>
+                      <div class="project-details">
+                        <div>
+                          <div class="project-header-top">
+                            <h3>${projectData.name || 'İsimsiz Proje'}</h3>
+                            <div class="status-badge-active">${projectData.status || 'Aktif'}</div>
+                          </div>
+                          <p class="project-desc-text">${projectData.description || 'Proje açıklaması bulunmuyor.'}</p>
+                          
+                          <div class="project-tags">
+                            ${tagsHTML}
+                          </div>
+                        </div>
+                        
+                        <div class="project-footer-bottom">
+                          <div class="last-update"><i class="far fa-calendar-alt"></i> Son güncelleme: Bugün</div>
+                          <div>
+                            <button class="btn-launch-project" onclick="location.href='${projectLink}'">Projeyi Başlat</button>
+                            <a href="#" class="details-link">Detaylar <i class="fas fa-chevron-right"></i></a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                `;
+                
+                container.innerHTML += cardHTML;
+            });
+
+            closeLoader();
+
+        } catch (error) {
+            console.error("Projeler çekilirken hata oluştu:", error);
+            container.innerHTML = '<p style="color: #ef4444;">Projeler yüklenirken bir sorun oluştu. Konsolu kontrol edin.</p>';
+            closeLoader();
+        }
+    }
+
+    function closeLoader() {
+        const loader = document.getElementById("loading-overlay");
+        if (loader) {
+            loader.style.opacity = "0";
+            setTimeout(() => loader.style.display = "none", 600);
+        }
+    }
 
     // Sayfa Yüklendiğinde Grafiği Çiz
     document.addEventListener('DOMContentLoaded', () => {
