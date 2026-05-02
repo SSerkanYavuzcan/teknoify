@@ -1,58 +1,58 @@
-/* _05-cards-tables.css - Teknoify Super-App UI Components */
+/* ==========================================================================
+   [PROJECT] TEKNOIFY - _05-cards-tables.css
+   [STYLE] Modern SaaS Dashboard Cards & Grid Logic
+   ========================================================================== */
 
-/* 1. ANA IZGARA (Görseldeki 2x2 Yerleşim İçin) */
+/* 1. ANA IZGARA SİSTEMİ (2 Sütunlu Geniş Yapı) */
 .super-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 Sütunlu yapı */
+    grid-template-columns: repeat(2, 1fr); /* Yan yana tam 2 büyük kart */
     gap: 24px;
-    margin-bottom: 30px;
+    padding: 24px;
+    width: 100%;
 }
 
-/* 2. MODERN DASHBOARD KARTI (Görseldeki Stil) */
+/* 2. MODERN DASHBOARD KARTI */
 .dashboard-card {
-    background: rgba(24, 24, 27, 0.4); /* Glassmorphism arka plan */
-    border: 1px solid rgba(63, 63, 70, 0.3);
+    background: rgba(24, 24, 27, 0.6); /* Glassmorphism */
+    border: 1px solid rgba(63, 63, 70, 0.4);
+    border-radius: 20px;
     padding: 24px;
-    border-radius: 20px; /* Daha yumuşak köşeler */
-    backdrop-filter: blur(12px); /* Arka planı bulanıklaştırır */
+    backdrop-filter: blur(12px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    min-height: 380px; /* Teknik detaylar için yükseklik */
 }
 
 .dashboard-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(99, 102, 241, 0.5); /* Indigo hover rengi */
-    background: rgba(30, 30, 35, 0.6);
+    border-color: #6366f1;
+    transform: translateY(-5px);
+    background: rgba(30, 30, 35, 0.8);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Kart Başlıkları */
+/* 3. KART BAŞLIKLARI */
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .card-header h3 {
-    font-size: 1.1rem;
-    color: #f4f4f5;
+    font-size: 1.15rem;
+    color: #fff;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.card-header h3 i {
-    font-size: 1.2rem;
-    opacity: 0.9;
-}
-
 .card-header .view-all {
     font-size: 0.8rem;
     color: #71717a;
-    font-weight: 500;
     transition: color 0.2s;
 }
 
@@ -60,91 +60,133 @@
     color: #6366f1;
 }
 
-/* 3. KPI & DEĞER YAPILARI */
-.kpi-row {
+/* 4. KPI VE TEKNİK VERİ ALANLARI */
+.mini-stats-row {
     display: flex;
-    gap: 32px;
-    margin-bottom: 24px;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.kpi-block span {
+.stat-box span {
     display: block;
-    color: #a1a1aa;
     font-size: 0.85rem;
+    color: #a1a1aa;
     margin-bottom: 6px;
 }
 
-.kpi-block strong {
-    font-size: 1.8rem;
+.stat-box strong {
+    font-size: 1.7rem;
     color: #fff;
-    font-weight: 700;
     letter-spacing: -0.02em;
 }
 
-/* 4. TABLO TASARIMI (Modern & İnce) */
+.trend-up {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #10b981;
+    margin-top: 4px;
+    display: block;
+}
+
+/* 5. GÖRSEL VERİ VE PILLS (HAPLAR) */
+.visual-info {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 20px;
+    flex: 1;
+}
+
+.pills-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.data-pill {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: #d4d4d8;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dot-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* 6. İLERLEME ÇUBUKLARI (SAĞLIK/VERİMLİLİK) */
+.progress-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.prog-item label {
+    display: block;
+    font-size: 0.85rem;
+    color: #a1a1aa;
+    margin-bottom: 8px;
+}
+
+.prog-bar-bg {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.prog-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 7. MODERN TABLO TASARIMI */
 .data-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background: transparent;
+    margin-top: 10px;
 }
 
 .data-table th {
-    padding: 12px 16px;
-    color: #71717a;
+    padding: 12px;
     font-size: 0.75rem;
-    font-weight: 600;
+    color: #71717a;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid rgba(63, 63, 70, 0.3);
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .data-table td {
-    padding: 16px;
-    color: #d4d4d8;
+    padding: 14px 12px;
     font-size: 0.9rem;
-    border-bottom: 1px solid rgba(63, 63, 70, 0.2);
+    color: #d4d4d8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
 }
 
-.data-table tr:hover td {
-    background: rgba(255, 255, 255, 0.02);
-}
-
-/* 5. TREND ETİKETLERİ */
-.trend-tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.trend-tag.up {
-    color: #10b981;
-    background: rgba(16, 185, 129, 0.1);
-}
-
-.trend-tag.down {
-    color: #ef4444;
-    background: rgba(239, 68, 68, 0.1);
-}
-
-/* ==========================================================================
-   RESPONSIVE DÜZENLEMELER
-   ========================================================================== */
-@media screen and (max-width: 1100px) {
+/* RESPONSIVE */
+@media screen and (max-width: 1200px) {
     .super-grid {
-        grid-template-columns: 1fr; /* Mobilde kartlar alt alta */
+        grid-template-columns: 1fr; /* Orta boy ekranlarda alt alta geçer */
     }
 }
 
 @media screen and (max-width: 768px) {
     .dashboard-card {
-        padding: 16px;
+        padding: 18px;
+        min-height: auto;
     }
-    
-    .kpi-block strong {
+    .stat-box strong {
         font-size: 1.4rem;
     }
 }
