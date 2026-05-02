@@ -45,6 +45,58 @@
         .input-wrapper input.password-visible {
             padding-right: 40px !important;
         }
+
+        /* Özel Bildirim (Toast) Pop-up CSS */
+        .custom-toast {
+            position: fixed;
+            top: 20px;
+            right: -400px; /* Başlangıçta ekranın dışında saklıyoruz */
+            width: 320px;
+            background: #181824; /* Teknoify temasına uygun koyu renk */
+            border-left: 4px solid #ff4b4b; /* Hata kırmızısı */
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            z-index: 99999;
+            transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Tatlı bir sekme animasyonu */
+            color: #fff;
+        }
+        .custom-toast.show {
+            right: 20px; /* Sınıf eklenince ekrana kayar */
+        }
+        .custom-toast .toast-icon {
+            font-size: 24px;
+            color: #ff4b4b;
+            margin-right: 15px;
+        }
+        .custom-toast .toast-body {
+            flex-grow: 1;
+        }
+        .custom-toast .toast-title {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .custom-toast .toast-message {
+            margin: 0;
+            font-size: 13px;
+            color: #a1a1aa;
+            line-height: 1.4;
+        }
+        .custom-toast .toast-close {
+            background: none;
+            border: none;
+            color: #a1a1aa;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.2s;
+            padding: 0;
+        }
+        .custom-toast .toast-close:hover {
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -419,11 +471,43 @@
     </div>
 </footer>
 
+<div id="customToast" class="custom-toast">
+    <div class="toast-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="toast-body">
+        <h4 class="toast-title" id="toastTitle">Hata</h4>
+        <p class="toast-message" id="toastMessage">Bir sorun oluştu.</p>
+    </div>
+    <button class="toast-close" onclick="hideToast()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
 <script src="js/session-manager.js"></script>
 <script src="js/script.js" defer></script>
 <script src="js/cookies.js" defer></script>
 
 <script>
+    // TOAST (POP-UP) GÖSTERME FONKSİYONU
+    function showToast(title, message) {
+        const toast = document.getElementById('customToast');
+        document.getElementById('toastTitle').textContent = title;
+        document.getElementById('toastMessage').textContent = message;
+        
+        toast.classList.add('show');
+
+        // 4 saniye sonra otomatik olarak gizlensin
+        setTimeout(() => {
+            hideToast();
+        }, 4000);
+    }
+
+    // TOAST GİZLEME FONKSİYONU
+    function hideToast() {
+        document.getElementById('customToast').classList.remove('show');
+    }
+
     // ŞİFRE GÖSTER/GİZLE FONKSİYONU
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById('password');
@@ -513,7 +597,8 @@
         const successContent = document.getElementById('reset-success-content');
         
         if (!email) {
-            alert("Lütfen e-posta adresinizi giriniz.");
+            // Eski alert yerine yeni Toast'u kullanıyoruz
+            showToast("Uyarı", "Lütfen e-posta adresinizi giriniz.");
             return;
         }
 
@@ -532,7 +617,9 @@
                 let msg = "Bir hata oluştu.";
                 if (error.code === 'auth/user-not-found') msg = "Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.";
                 if (error.code === 'auth/invalid-email') msg = "Geçersiz e-posta formatı.";
-                alert(msg);
+                
+                // Eski alert yerine yeni Toast'u kullanıyoruz
+                showToast("Hata", msg);
                 
                 // Hata durumunda butonu eski haline getir
                 btn.disabled = false;
