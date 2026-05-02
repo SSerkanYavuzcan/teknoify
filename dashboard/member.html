@@ -12,26 +12,19 @@
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
   
   <style>
-    /* ========================================================= */
-    /* SCROLLBAR GİZLEME (Kaydırma özelliği çalışır, çubuk görünmez) */
-    /* ========================================================= */
     .content-scroll {
-      -ms-overflow-style: none;  /* IE ve Edge için */
-      scrollbar-width: none;  /* Firefox için */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
       overflow-y: auto;
     }
     .content-scroll::-webkit-scrollbar {
-      display: none; /* Chrome, Safari ve Opera için */
+      display: none;
     }
 
-    /* ========================================================= */
-    /* 1. ÜST KARTLAR */
-    /* ========================================================= */
     .super-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
-      /* SOL BOŞLUK DARALTILDI (Sidebara yaklaştı, genişlik arttı) */
       padding: 24px 24px 24px 10px;
       width: 100%;
     }
@@ -56,14 +49,10 @@
 
     #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #05080a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
 
-    /* ========================================================= */
-    /* 2. ÖZET İSTATİSTİK KARTLARI */
-    /* ========================================================= */
     .summary-stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
-      /* SOL BOŞLUK DARALTILDI */
       padding: 0 24px 24px 10px;
     }
     .summary-card {
@@ -87,11 +76,7 @@
     .summary-info span { font-size: 0.8rem; color: #a1a1aa; margin-bottom: 4px; }
     .summary-info strong { font-size: 1.4rem; color: #fff; }
 
-    /* ========================================================= */
-    /* 3. "PROJELERİNİZ" LİSTESİ */
-    /* ========================================================= */
     .projects-section {
-      /* SOL BOŞLUK DARALTILDI */
       padding: 0 24px 40px 10px;
     }
     .section-title {
@@ -153,34 +138,7 @@
     </div>
   </div>
 
-  <div id="tk-logout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-    <div style="background: #18181b; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #3f3f46; color: white; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-      <h3 style="margin-top: 0; font-size: 1.5rem;">Çıkış Yap</h3>
-      <p style="color: #a1a1aa; margin-bottom: 24px;">Hesabınızdan çıkış yapmak istediğinize emin misiniz?</p>
-      <div style="display: flex; justify-content: center; gap: 12px;">
-        <button onclick="window.closeLogoutModal()" style="padding: 10px 20px; background: transparent; border: 1px solid #3f3f46; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;">İptal</button>
-        <button onclick="window.executeLogout()" style="padding: 10px 20px; background: #ef4444; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fas fa-power-off"></i> Çıkış Yap</button>
-      </div>
-    </div>
-  </div>
-
-  <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
-
-  <aside class="sidebar">
-    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item active"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
-      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
-      <div id="tk-sidebar-projects"></div>
-      <div class="tk-nav-section" id="tk-explore-header" style="display: none;"><span>Keşfet</span></div>
-      <div id="explore-services-menu"></div>
-    </nav>
-    <div class="menu-spacer"></div>
-    <div class="sidebar-footer">
-      <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
-      <button class="btn-collapse" onclick="window.toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
-    </div>
-  </aside>
+  <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
     <header class="top-bar">
@@ -327,112 +285,6 @@
   <script type="module" src="/js/pages/member.js?v=999"></script>
 
   <script type="module">
-    import { db } from "/js/lib/firebase.js";
-    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    import { logout } from "/js/lib/auth.js"; 
-
-    window.logoutApp = function(e) { 
-        if(e) e.preventDefault(); 
-        const modal = document.getElementById("tk-logout-modal");
-        if(modal) modal.style.display = "flex";
-    };
-
-    window.closeLogoutModal = function() {
-        const modal = document.getElementById("tk-logout-modal");
-        if(modal) modal.style.display = "none";
-    };
-
-    window.executeLogout = async function() {
-        window.closeLogoutModal();
-        const loader = document.getElementById("loading-overlay");
-        if (loader) {
-            loader.style.display = "flex";
-            loader.style.opacity = "1";
-            document.getElementById("dynamic-loader-text").textContent = "Güvenli çıkış yapılıyor...";
-        }
-        await logout(); 
-    };
-
-    window.toggleSidebar = function() { 
-        document.body.classList.toggle("sidebar-closed"); 
-    };
-
-    window.TK_RENDER_SIDEBAR = async function() {
-      const exploreContainer = document.getElementById("explore-services-menu");
-      const projectsContainer = document.getElementById("tk-sidebar-projects");
-      const projectsHeader = document.getElementById("tk-sidebar-services-header");
-      const exploreHeader = document.getElementById("tk-explore-header");
-
-      if (!exploreContainer || !projectsContainer) return;
-
-      const session = window.USER_SESSION || {};
-      const accessMap = session.projectAccess || {};
-      const isAdmin = session.isAdmin || session.realIsAdmin;
-
-      try {
-        const querySnapshot = await getDocs(collection(db, "projects"));
-        
-        let ownedHtml = '';
-        let lockedHtml = '';
-        let ownedCount = 0;
-        let lockedCount = 0;
-
-        querySnapshot.forEach(doc => {
-          const data = doc.data();
-          if (!data.config || data.config.isActive !== true) return;
-
-          const pId = doc.id; 
-          
-          let hasAccess = isAdmin;
-          if (!hasAccess) {
-             if (Array.isArray(accessMap)) {
-                 hasAccess = accessMap.includes(pId);
-             } else {
-                 hasAccess = accessMap[pId] === true;
-             }
-          }
-
-          let icon = data.details?.icon || "fas fa-cube";
-          if (!icon.includes("fa-")) {
-             if(icon === "scraper-icon") icon = "fas fa-spider";
-             else icon = "fas fa-cube";
-          }
-          
-          const name = data.details?.name || "Proje";
-          const folder = data.config?.folderPath || "";
-          const entry = data.config?.entryPoint || "index.html";
-          
-          let href = `/${folder}/${entry}`.replace(/\/\//g, '/');
-
-          if (hasAccess) {
-            ownedCount++;
-            ownedHtml += `
-              <a href="${href}" class="menu-item">
-                <i class="${icon}"></i> <span>${name}</span>
-              </a>
-            `;
-          } else {
-            lockedCount++;
-            lockedHtml += `
-              <a href="#" class="menu-item locked" style="opacity: 0.7;" onclick="alert('${name} modülü şu an kilitli.'); return false;">
-                <i class="${icon}"></i> <span>${name}</span>
-                <i class="fas fa-lock" style="margin-left:auto; font-size:0.75rem; opacity:0.5;"></i>
-              </a>
-            `;
-          }
-        });
-
-        projectsContainer.innerHTML = ownedHtml;
-        exploreContainer.innerHTML = lockedHtml;
-
-        projectsHeader.style.display = ownedCount > 0 ? "flex" : "none";
-        exploreHeader.style.display = lockedCount > 0 ? "flex" : "none";
-
-      } catch(err) {
-        console.error("Sidebar oluşturulurken veritabanı hatası:", err);
-      }
-    };
-
     document.addEventListener('DOMContentLoaded', () => {
       if(document.querySelector("#finance-summary-chart")) {
           new ApexCharts(document.querySelector("#finance-summary-chart"), {
