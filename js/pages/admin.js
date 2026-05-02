@@ -149,7 +149,7 @@ function goToUserAs(uid) {
 }
 
 // ----------------------------------------------------
-// SATIR OLUŞTURMA (CREATE ROW)
+// SATIR OLUŞTURMA (CREATE ROW) - TÜM SÜTUNLAR ORTALANDI
 // ----------------------------------------------------
 function createRow({ user, projects, entitledSet, stateMap, session }) {
   const tr = createEl("tr", { className: "admin-row" });
@@ -158,6 +158,8 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
 
   // 1. SÜTUN: KULLANICI BİLGİLERİ
   const tdUser = createEl("td", { className: "admin-user-cell" });
+  tdUser.style.verticalAlign = "middle";
+  tdUser.style.textAlign = "center"; // İçerik Ortalandı
   
   const fullName = profile.fullName || user.fullName || user.name || (profile.email ? profile.email.split("@")[0] : "İsimsiz Kullanıcı");
   const email = profile.email || user.email || "Email belirtilmemiş";
@@ -178,12 +180,14 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   // 2. SÜTUN: ŞİRKET BİLGİSİ
   const tdCompany = createEl("td", { className: "admin-company-cell" });
   tdCompany.style.verticalAlign = "middle";
+  tdCompany.style.textAlign = "center"; // İçerik Ortalandı
   const companyName = profile.companyName || "-";
   tdCompany.innerHTML = `<span style="color: #e4e4e7; font-size: 0.9em; font-weight: 500;">${companyName}</span>`;
 
   // 3. SÜTUN: ROL VE DURUM
   const tdRole = createEl("td", { className: "admin-role-cell" });
   tdRole.style.verticalAlign = "middle";
+  tdRole.style.textAlign = "center"; // İçerik Ortalandı
   
   const roleType = (typeof user.role === 'object' && user.role !== null) ? (user.role.type || 'member') : (user.role || 'member');
   const roleStatus = (typeof user.role === 'object' && user.role !== null) ? (user.role.status || 'active') : (user.status || 'active');
@@ -192,7 +196,7 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   const capStatus = roleStatus.charAt(0).toUpperCase() + roleStatus.slice(1);
 
   tdRole.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
           <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500; letter-spacing: 0.5px;">
               ${capRole}
           </span>
@@ -205,10 +209,13 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   // 4. SÜTUN: PROJE ERİŞİMLERİ
   const tdProjects = createEl("td", { className: "admin-services-cell" });
   tdProjects.style.verticalAlign = "middle";
+  tdProjects.style.textAlign = "center"; // İçerik Ortalandı
+  
   const wrap = createEl("div", { className: "admin-service-grid" });
   wrap.style.display = "flex";
   wrap.style.flexWrap = "wrap";
   wrap.style.gap = "6px";
+  wrap.style.justifyContent = "center"; // Etiketler Ortalandı
 
   const accessObj = user.projectAccess || {};
   const allowedIds = Object.keys(accessObj).filter(k => accessObj[k] === true);
@@ -227,47 +234,51 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   
   tdProjects.append(wrap);
 
-  // 5. SÜTUN: AKSİYONLAR (Butonlar hizalandı ve renklendirildi)
+  // 5. SÜTUN: IMPERSONATE (YENİ SÜTUN)
+  const tdImp = createEl("td", { className: "admin-imp-cell" });
+  tdImp.style.verticalAlign = "middle";
+  tdImp.style.textAlign = "center"; // İçerik Ortalandı
+
+  const impBtn = createEl("button", {
+    className: "btn btn-sm btn-primary",
+    text: "Kullanıcı Olarak Gör"
+  });
+  // Temanın ezmemesi için !important eklendi
+  impBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #6366f1 !important; color: #ffffff !important; opacity: 1 !important; display: inline-block;";
+  impBtn.disabled = !session.isAdmin;
+  impBtn.addEventListener("click", () => goToUserAs(user.id));
+  
+  tdImp.append(impBtn);
+
+  // 6. SÜTUN: AKSİYONLAR
   const tdActions = createEl("td", { className: "admin-actions-cell" });
   tdActions.style.verticalAlign = "middle";
+  tdActions.style.textAlign = "center"; // İçerik Ortalandı
   
-  // Butonları yan yana ve şık tutmak için flex kapsayıcı
   const actionsWrap = createEl("div");
   actionsWrap.style.display = "flex";
   actionsWrap.style.gap = "8px";
   actionsWrap.style.flexWrap = "wrap";
-  actionsWrap.style.justifyContent = "flex-end";
+  actionsWrap.style.justifyContent = "center"; // Butonlar Ortalandı
 
-  // 5.1 Kullanıcı Olarak Gör Butonu (Mavi)
-  const impBtn = createEl("button", {
-    className: "btn btn-sm btn-primary",
-    text: "Kullanıcı Olarak Gör",
-    style: "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #6366f1; color: #ffffff;"
-  });
-  impBtn.disabled = !session.isAdmin;
-  impBtn.addEventListener("click", () => goToUserAs(user.id));
-
-  // 5.2 Proje Erişimlerini Güncelle Butonu (Turuncu)
   const updateBtn = createEl("button", {
-    className: "btn btn-sm",
-    text: "Erişimleri Güncelle",
-    style: "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316; color: #ffffff; transition: 0.2s;"
+    text: "Erişimleri Güncelle"
   });
-  updateBtn.onmouseover = () => updateBtn.style.background = "#ea580c";
-  updateBtn.onmouseout = () => updateBtn.style.background = "#f97316";
+  // Temanın ezmemesi için !important eklendi
+  updateBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316 !important; color: #ffffff !important; opacity: 1 !important; display: inline-block; transition: 0.2s;";
+  updateBtn.onmouseover = () => updateBtn.style.background = "#ea580c !important";
+  updateBtn.onmouseout = () => updateBtn.style.background = "#f97316 !important";
   updateBtn.addEventListener("click", () => {
-      // Şimdilik bilgilendirme mesajı veriyor, daha sonra buraya modal/pencere eklenebilir.
       alert(`${fullName} kullanıcısı için proje yetkilendirme modülü yapım aşamasındadır.`);
   });
 
-  // 5.3 Kullanıcıyı Kaldır Butonu (Kırmızı, her zaman aktif görünümlü, beyaz metin)
   const deleteBtn = createEl("button", {
-    className: "btn btn-sm",
-    text: "Kullanıcıyı Kaldır",
-    style: "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #ef4444; color: #ffffff; transition: 0.2s;"
+    text: "Kullanıcıyı Kaldır"
   });
-  deleteBtn.onmouseover = () => deleteBtn.style.background = "#dc2626";
-  deleteBtn.onmouseout = () => deleteBtn.style.background = "#ef4444";
+  // Temanın ezmemesi için !important eklendi
+  deleteBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #ef4444 !important; color: #ffffff !important; opacity: 1 !important; display: inline-block; transition: 0.2s;";
+  deleteBtn.onmouseover = () => deleteBtn.style.background = "#dc2626 !important";
+  deleteBtn.onmouseout = () => deleteBtn.style.background = "#ef4444 !important";
   
   deleteBtn.addEventListener("click", async () => {
     if (confirm(`DİKKAT: ${email} kullanıcısını veritabanından kalıcı olarak silmek istediğinize emin misiniz?`)) {
@@ -282,11 +293,11 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
     }
   });
 
-  actionsWrap.append(impBtn, updateBtn, deleteBtn);
+  actionsWrap.append(updateBtn, deleteBtn);
   tdActions.append(actionsWrap);
 
-  // Satıra tüm sütunları ekle
-  tr.append(tdUser, tdCompany, tdRole, tdProjects, tdActions);
+  // Satıra tüm 6 sütunu ekle
+  tr.append(tdUser, tdCompany, tdRole, tdProjects, tdImp, tdActions);
   return tr;
 }
 
@@ -315,7 +326,7 @@ async function init() {
       return;
     }
 
-    // HTML'DEKİ ESKİ BAŞLIKLARI ZORLA 5 SÜTUNA ÇEVİRİYORUZ
+    // HTML'DEKİ BAŞLIKLARI ZORLA 6 SÜTUNA ÇEVİRİYORUZ (Hepsi Ortalandı)
     const table = tbody.parentElement;
     if (table) {
         let thead = table.querySelector("thead");
@@ -323,14 +334,14 @@ async function init() {
             thead = createEl("thead");
             table.prepend(thead);
         }
-        // Başlıklar tamamen yenilenir, böylece sütun kayması yaşanmaz
         thead.innerHTML = `
             <tr>
-                <th style="text-align: left; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">KULLANICI BİLGİLERİ</th>
-                <th style="text-align: left; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">ŞİRKET</th>
-                <th style="text-align: left; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">ROL & DURUM</th>
-                <th style="text-align: left; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">PROJE ERİŞİMLERİ</th>
-                <th style="text-align: right; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">AKSİYONLAR</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">KULLANICI BİLGİLERİ</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">ŞİRKET</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">ROL & DURUM</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">PROJE ERİŞİMLERİ</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">IMPERSONATE</th>
+                <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px;">AKSİYONLAR</th>
             </tr>
         `;
     }
@@ -357,7 +368,6 @@ async function init() {
       tbody.append(row);
     }
 
-    // Değişiklikleri kaydet butonu mantığı korunuyor
     const saveBtn = ensureButton(
       ["#save-btn", "#save-access-btn", "#save-entitlements", "[data-action='save']"],
       "Değişiklikleri Kaydet"
