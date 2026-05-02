@@ -35,32 +35,29 @@
     <div style="color: #a1a1aa; font-size: 0.9rem;">Yetkileriniz kontrol ediliyor...</div>
 
     <script type="module">
-        import { requireAuth } from "/dashboard/shared/auth.js";
+        // DİKKAT: Yol değiştirildi. Doğrudan çalışan ana modüle bağlanıyoruz!
+        import { requireAuth } from "/js/lib/auth.js";
 
         async function routeUser() {
             try {
-                // Senin yazdığın requireAuth() fonksiyonu Firebase oturumunu bekleyip 
-                // bize içinde isAdmin bilgisi olan 'session' objesini hazır getiriyor.
                 const session = await requireAuth();
                 
                 if (session) {
-                    // Yetki kontrolü yapıyoruz ve fırlatıyoruz!
                     if (session.isAdmin === true || session.role?.type === "admin") {
                         window.location.replace("/dashboard/admin.html");
                     } else {
                         window.location.replace("/dashboard/member.html");
                     }
                 } else {
-                    // Eğer requireAuth oturum bulamazsa null döner, login'e atarız.
                     window.location.replace("/login.html");
                 }
             } catch (error) {
-                console.error("Yönlendirme sırasında hata oluştu:", error);
+                console.error("Modül yüklenirken hata oluştu:", error);
+                // Eğer yine 404 gibi bir hata olursa sonsuza kadar dönmesin, logine atsın
                 window.location.replace("/login.html");
             }
         }
 
-        // Sistemi başlat
         routeUser();
     </script>
 </body>
