@@ -8,7 +8,7 @@
   // ========================================================================
   window.TK_SERVICES_CONFIG = [
     {
-      id: "bim_faz_2", // Firebase'deki tam ID
+      id: "bim_faz_2",
       title: "API Service",
       icon: "fas fa-bolt",
       authUrl: "bim-istekleri/index.html", 
@@ -76,7 +76,6 @@
 
   // URL'den imp_uid yakalayan gelişmiş fonksiyon
   function getImpersonatedUid() {
-    // 1. Önce URL'den bak (Admin linkle yönlendirmişse)
     const urlParams = new URLSearchParams(window.location.search);
     const urlUid = urlParams.get('imp_uid');
     
@@ -85,7 +84,6 @@
         return urlUid;
     }
 
-    // 2. URL'de yoksa Storage'a bak
     return (
       localStorage.getItem("teknoify_impersonate_uid") ||
       localStorage.getItem("tk_impersonate_uid") ||
@@ -143,7 +141,7 @@
     window.location.href = fallback;
   }
 
-  // -------------------- YENİ: Impersonation Banner Ekleme --------------------
+  // -------------------- Impersonation Banner Ekleme --------------------
   function renderImpersonationBanner() {
     const currentImpUid = getImpersonatedUid();
     if (!currentImpUid) return;
@@ -175,7 +173,6 @@
       const snap = await db.collection("users").doc(uid).get();
       if(snap.exists) {
           const data = snap.data();
-          // Eğer profil bilgileri 'profile' objesi içindeyse onu da döndür
           return data.profile ? {...data, ...data.profile} : data;
       }
       return {};
@@ -208,23 +205,19 @@
     return false;
   }
 
-  // Firebase'in yeni yapısına uygun entitlement okuyucu
   async function readEntitlements(uid) {
     try {
-        // Yeni yapıda yetkiler doğrudan users > projectAccess içinde olabilir
         const userDoc = await db.collection("users").doc(uid).get();
         if(userDoc.exists) {
             const data = userDoc.data();
             const projectAccess = data.projectAccess || {};
             const allowedIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
             
-            // Eğer yeni yapıda yetki varsa onu döndür
             if(allowedIds.length > 0) {
                 return { projectIds: allowedIds, allowedStoresByProject: {}, allowedStoresGlobal: [] };
             }
         }
 
-        // Eski entitlements koleksiyonu fallback
         const snap = await db.collection("entitlements").doc(uid).get();
         if (!snap.exists) return { projectIds: [], allowedStoresByProject: {}, allowedStoresGlobal: [] };
 
@@ -261,7 +254,6 @@
 
     let html = '';
 
-    // 1. SAHİP OLUNAN HİZMETLER
     owned.forEach(s => {
       const fullUrl = joinPath(basePath, s.authUrl);
       const isActive = window.location.pathname.includes(s.authUrl) ? "active" : "";
@@ -272,7 +264,6 @@
       `;
     });
 
-    // 2. KİLİTLİ / DEMO HİZMETLER
     if (locked.length > 0) {
       html += `<div style="margin-top:15px;margin-bottom:5px;padding-left:16px;font-size:0.7rem;color:#666;font-weight:700;text-transform:uppercase;">Keşfet</div>`;
       locked.forEach(s => {
@@ -306,7 +297,7 @@
 
       try {
         const realUid = user.uid;
-        const impersonatedUid = getImpersonatedUid(); // URL veya LocalStorage'dan UID çeker
+        const impersonatedUid = getImpersonatedUid(); 
         const isImpersonatingRequested = Boolean(impersonatedUid && impersonatedUid !== realUid);
         const realIsAdmin = await isAdmin(realUid, user);
 
@@ -316,7 +307,7 @@
         if (realIsAdmin && isImpersonatingRequested) {
           effectiveUid = impersonatedUid;
           isImpersonating = true;
-          renderImpersonationBanner(); // Turuncu Banner'ı Çiz
+          renderImpersonationBanner(); 
         } else if (!realIsAdmin && isImpersonatingRequested) {
           clearImpersonation();
         }
@@ -326,12 +317,10 @@
         
         applyUserUI(displayName);
 
-        // ==============================================================
         const entitlementUid = isImpersonating ? effectiveUid : realUid;
         const ent = await readEntitlements(entitlementUid); 
         
         let entitled = true;
-        // Eğer kullanıcı bir proje sayfasındaysa (cfg.projectId varsa) yetkisini kontrol et
         if (cfg.projectId) {
           if (realIsAdmin && !isImpersonating) {
             entitled = true;
@@ -340,7 +329,6 @@
           }
         }
 
-        // Eğer projedeyse ve yetkisi yoksa demo'ya at
         if (!entitled && cfg.projectId) {
           const matchedService = window.TK_SERVICES_CONFIG.find(s => s.id === cfg.projectId);
           if (matchedService && matchedService.promoUrl) {
@@ -371,7 +359,6 @@
           allowedStores,
         };
 
-        // Oturum başarılı, Dinamik Menüyü çiz
         try {
           if (typeof window.TK_RENDER_SIDEBAR === "function") {
             window.TK_RENDER_SIDEBAR();
@@ -402,6 +389,9 @@
     });
   }
 
+  // ========================================================================
+  // GLOBAL ÇIKIŞ MODAL SİSTEMİ (KURŞUN GEÇİRMEZ)
+  // ========================================================================
   document.addEventListener("DOMContentLoaded", () => {
     if (!document.getElementById("tk-logout-modal")) {
       const modalHTML = `
@@ -423,7 +413,7 @@
   window.logout = function (e) {
     if (e) e.preventDefault();
     const modal = document.getElementById("tk-logout-modal");
-    if (modal) modal.style.display = "flex"; // CSS class yerine doğrudan göster
+    if (modal) modal.style.display = "flex";
   };
 
   window.closeLogoutModal = function () {
