@@ -12,18 +12,16 @@
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
   
   <style>
-    /* Member Sayfasına Özel Genişletilmiş Grid Sistemi */
     .super-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr; /* Yan yana tam olarak 2 büyük alan */
+      grid-template-columns: 1fr 1fr;
       gap: 24px;
       padding: 24px;
       width: 100%;
     }
 
-    /* Kartların Teknik Derinliği İçin Ek Stiller */
     .dashboard-card {
-      min-height: 380px; /* İçerik zenginliği için yüksekliği artırdık */
+      min-height: 440px; /* KARTLAR BÜYÜTÜLDÜ (Eskisi 380px'di) */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -38,7 +36,6 @@
       margin-top: 15px;
     }
 
-    /* Rakam ve Trend Alanı */
     .mini-stats-row {
       display: flex;
       justify-content: space-between;
@@ -51,45 +48,23 @@
     .trend-up { color: #10b981; font-size: 0.8rem; font-weight: 600; margin-top: 5px; display: block; }
     .trend-up i { margin-right: 4px; }
 
-    /* Dağılım ve Pill Yapısı */
     .visual-info {
       display: flex;
       align-items: center;
       gap: 20px;
       margin-top: 10px;
+      flex: 1; /* Grafiğin alanı kaplaması sağlandı */
     }
 
-    .pills-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .data-pill {
-      background: rgba(255,255,255,0.03);
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 0.75rem;
-      color: #d4d4d8;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .pills-container { display: flex; flex-direction: column; gap: 8px; }
+    .data-pill { background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; color: #d4d4d8; display: flex; align-items: center; gap: 8px; }
     .dot-indicator { width: 8px; height: 8px; border-radius: 50%; }
 
-    /* Sağlık / Verimlilik İlerleme Çubukları */
-    .progress-group {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
+    .progress-group { display: flex; flex-direction: column; gap: 15px; }
     .prog-item label { display: block; font-size: 0.8rem; color: #a1a1aa; margin-bottom: 6px; }
     .prog-bar-bg { height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
     .prog-bar-fill { height: 100%; transition: width 1s ease-in-out; }
 
-    /* Loading Overlay */
     #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #05080a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
   </style>
 </head>
@@ -109,7 +84,7 @@
       <a href="/member.html" class="menu-item active"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
       <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
       <div id="tk-sidebar-projects"></div>
-      <div class="tk-nav-section"><span>Keşfet</span></div>
+      <div class="tk-nav-section" id="tk-explore-header" style="display: none;"><span>Keşfet</span></div>
       <div id="explore-services-menu"></div>
     </nav>
     <div class="menu-spacer"></div>
@@ -136,7 +111,6 @@
             <h3><i class="fas fa-chart-line" style="color:#6366f1"></i> Yatırım & Finans</h3>
             <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
           </div>
-          
           <div class="card-body-content">
             <div class="mini-stats-row">
               <div class="stat-box">
@@ -150,9 +124,8 @@
                 <span class="trend-up"><i class="fas fa-arrow-up"></i> %28</span>
               </div>
             </div>
-            
             <div class="visual-info">
-              <div id="finance-summary-chart" style="flex: 1; min-height: 150px;"></div>
+              <div id="finance-summary-chart" style="flex: 1; min-height: 220px;"></div>
               <div class="pills-container">
                 <div class="data-pill"><div class="dot-indicator" style="background:#6366f1"></div> Hisse %45</div>
                 <div class="data-pill"><div class="dot-indicator" style="background:#a855f7"></div> Fon %25</div>
@@ -167,7 +140,6 @@
             <h3><i class="fas fa-heartbeat" style="color:#ef4444"></i> Sağlık & Yaşam</h3>
             <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
           </div>
-          
           <div class="card-body-content">
             <div class="mini-stats-row">
               <div class="stat-box">
@@ -181,13 +153,12 @@
                 <span class="trend-up"><i class="fas fa-check"></i> İyi Kalite</span>
               </div>
             </div>
-
-            <div class="progress-group">
+            <div class="progress-group" style="margin-top: 20px;">
               <div class="prog-item">
                 <label>Günlük Kalori (1.620 / 2.200 kcal)</label>
                 <div class="prog-bar-bg"><div class="prog-bar-fill" style="width: 75%; background: #10b981;"></div></div>
               </div>
-              <div class="prog-item">
+              <div class="prog-item" style="margin-top: 15px;">
                 <label>Su Tüketimi (1.6L / 2.5L)</label>
                 <div class="prog-bar-bg"><div class="prog-bar-fill" style="width: 64%; background: #3b82f6;"></div></div>
               </div>
@@ -200,7 +171,6 @@
             <h3><i class="fas fa-bolt" style="color:#a855f7"></i> Verimlilik & Odak</h3>
             <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
           </div>
-          
           <div class="card-body-content">
             <div class="mini-stats-row">
               <div class="stat-box">
@@ -214,13 +184,12 @@
                 <span class="trend-up"><i class="fas fa-check"></i> Tamamlandı</span>
               </div>
             </div>
-
-            <div class="progress-group">
+            <div class="progress-group" style="margin-top: 20px;">
               <div class="prog-item">
                 <label>Proje A İlerlemesi (%85)</label>
                 <div class="prog-bar-bg"><div class="prog-bar-fill" style="width: 85%; background: #a855f7;"></div></div>
               </div>
-              <div class="prog-item">
+              <div class="prog-item" style="margin-top: 15px;">
                 <label>Aylık Hedef (%45)</label>
                 <div class="prog-bar-bg"><div class="prog-bar-fill" style="width: 45%; background: #6366f1;"></div></div>
               </div>
@@ -233,7 +202,6 @@
             <h3><i class="fas fa-sync-alt" style="color:#f59e0b"></i> Abonelikler</h3>
             <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
           </div>
-          
           <div class="card-body-content">
             <div class="mini-stats-row">
               <div class="stat-box">
@@ -247,19 +215,18 @@
                 <span class="trend-up" style="color:#71717a;"><i class="fas fa-minus"></i> Değişmedi</span>
               </div>
             </div>
-
-            <div class="visual-info" style="flex-direction: column; align-items: flex-start; gap: 10px;">
-              <div class="data-pill" style="width: 100%; justify-content: space-between;">
-                <span style="display:flex; align-items:center; gap:8px;"><i class="fab fa-netflix" style="color:#E50914"></i> Netflix</span> 
-                <span>₺229.99</span>
+            <div class="visual-info" style="flex-direction: column; align-items: flex-start; gap: 15px; margin-top:20px;">
+              <div class="data-pill" style="width: 100%; justify-content: space-between; padding:10px 15px;">
+                <span style="display:flex; align-items:center; gap:8px; font-size:14px;"><i class="fab fa-netflix" style="color:#E50914; font-size:16px;"></i> Netflix</span> 
+                <span style="font-size:14px;">₺229.99</span>
               </div>
-              <div class="data-pill" style="width: 100%; justify-content: space-between;">
-                <span style="display:flex; align-items:center; gap:8px;"><i class="fab fa-spotify" style="color:#1DB954"></i> Spotify</span> 
-                <span>₺59.99</span>
+              <div class="data-pill" style="width: 100%; justify-content: space-between; padding:10px 15px;">
+                <span style="display:flex; align-items:center; gap:8px; font-size:14px;"><i class="fab fa-spotify" style="color:#1DB954; font-size:16px;"></i> Spotify</span> 
+                <span style="font-size:14px;">₺59.99</span>
               </div>
-              <div class="data-pill" style="width: 100%; justify-content: space-between;">
-                <span style="display:flex; align-items:center; gap:8px;"><i class="fas fa-robot" style="color:#10b981"></i> ChatGPT Plus</span> 
-                <span>₺650.00</span>
+              <div class="data-pill" style="width: 100%; justify-content: space-between; padding:10px 15px;">
+                <span style="display:flex; align-items:center; gap:8px; font-size:14px;"><i class="fas fa-robot" style="color:#10b981; font-size:16px;"></i> ChatGPT Plus</span> 
+                <span style="font-size:14px;">₺650.00</span>
               </div>
             </div>
           </div>
@@ -277,17 +244,14 @@
   <script type="module" src="/js/pages/member.js?v=999"></script>
 
   <script>
-    // Global fonksiyonlar
     window.logoutApp = function(e) { 
         if(e) e.preventDefault(); 
         if(window.logout) window.logout(); 
     };
-    
     window.toggleSidebar = function() { 
         document.body.classList.toggle("sidebar-closed"); 
     };
 
-    // SİDEBAR MENÜ VERİLERİ VE ÇİZİM FONKSİYONU
     window.TK_SERVICES_CONFIG = [
       { id: "bim_faz_2", title: "API Service", icon: "fas fa-bolt", promoUrl: "bim-istekleri/demo.html" },
       { id: "market_analysis", title: "Pazar Analizi", icon: "fas fa-chart-line", promoUrl: "demo/market-analysis/index.html" },
@@ -295,37 +259,69 @@
       { id: "geo_intelligence", title: "Geo Intelligence", icon: "fas fa-map-marked-alt", promoUrl: "geo-intelligence/index.html" }
     ];
 
+    // AKILLI SİDEBAR: Yetkilere göre listeleri ayırır
     window.TK_RENDER_SIDEBAR = function() {
       const exploreContainer = document.getElementById("explore-services-menu");
-      if (!exploreContainer) return;
+      const projectsContainer = document.getElementById("tk-sidebar-projects");
+      const projectsHeader = document.getElementById("tk-sidebar-services-header");
+      const exploreHeader = document.getElementById("tk-explore-header");
+
+      if (!exploreContainer || !projectsContainer) return;
       
-      let html = '';
+      // member.js tarafından kaydedilen oturum bilgisini al
+      const session = window.USER_SESSION || {};
+      const accessMap = session.projectAccess || {};
+      const isAdmin = session.isAdmin || session.realIsAdmin;
+
+      let ownedHtml = '';
+      let lockedHtml = '';
+      let ownedCount = 0;
+      let lockedCount = 0;
+
       window.TK_SERVICES_CONFIG.forEach(s => {
-        html += `
-          <a href="/${s.promoUrl}" class="menu-item" style="opacity: 0.7;">
-            <i class="${s.icon}"></i> <span>${s.title}</span>
-            <i class="fas fa-lock" style="margin-left:auto; font-size:0.75rem; opacity:0.5; color:#f97316;"></i>
-          </a>
-        `;
+        // Kullanıcının bu projeye yetkisi var mı? (Veya admin mi?)
+        const hasAccess = accessMap[s.id] === true || isAdmin;
+
+        if (hasAccess) {
+          ownedCount++;
+          ownedHtml += `
+            <a href="/${s.promoUrl}" class="menu-item">
+              <i class="${s.icon}"></i> <span>${s.title}</span>
+            </a>
+          `;
+        } else {
+          lockedCount++;
+          lockedHtml += `
+            <a href="/${s.promoUrl}" class="menu-item" style="opacity: 0.7;">
+              <i class="${s.icon}"></i> <span>${s.title}</span>
+              <i class="fas fa-lock" style="margin-left:auto; font-size:0.75rem; opacity:0.5; color:#f97316;"></i>
+            </a>
+          `;
+        }
       });
-      exploreContainer.innerHTML = html;
+
+      projectsContainer.innerHTML = ownedHtml;
+      exploreContainer.innerHTML = lockedHtml;
+
+      // Eğer yetkili olduğu proje varsa "Projelerim" başlığını göster
+      projectsHeader.style.display = ownedCount > 0 ? "flex" : "none";
+      exploreHeader.style.display = lockedCount > 0 ? "flex" : "none";
     };
 
-    // DOM yüklendiğinde çalışacaklar
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Sidebar'ı Çiz
-      window.TK_RENDER_SIDEBAR();
-
-      // 2. Finans Teknik Özet Grafiği (ApexCharts)
+      // Grafik yüksekliği 220 olarak güncellendi
       if(document.querySelector("#finance-summary-chart")) {
           new ApexCharts(document.querySelector("#finance-summary-chart"), {
             series: [{ name: 'Portföy', data: [310, 330, 325, 360, 345, 385] }],
-            chart: { type: 'area', height: 150, sparkline: { enabled: true }, animations: { enabled: true } },
+            chart: { type: 'area', height: 220, sparkline: { enabled: true }, animations: { enabled: true } },
             stroke: { curve: 'smooth', width: 2 },
             fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
             colors: ['#6366f1']
           }).render();
       }
+      
+      // Sidebar ilk yüklemede çağrılır (henüz session gelmemişse boş/kilitli çizer, member.js gelince tekrar çizdirebiliriz)
+      window.TK_RENDER_SIDEBAR();
     });
   </script>
 </body>
