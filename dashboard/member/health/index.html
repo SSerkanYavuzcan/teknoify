@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sağlık ve Yaşam | Teknoify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="../../css/dashboard.css?v=20260502">
+
+  <style>
+    /* Sağlık Sayfasına Özel Tasarım */
+    .health-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .health-main-card {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(99, 102, 241, 0.1));
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .vitals-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .vital-item {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .vital-item i { font-size: 1.2rem; margin-bottom: 8px; display: block; }
+    .vital-item span { font-size: 0.75rem; color: #a1a1aa; display: block; }
+    .vital-item strong { font-size: 1.1rem; color: #fff; }
+
+    /* Su Tüketimi & Kalori Halkaları */
+    .circular-stats {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 20px 0;
+    }
+
+    .stat-circle-box { text-align: center; }
+    .stat-circle-box label { display: block; margin-top: 10px; font-size: 0.85rem; color: #d4d4d8; }
+
+    .meal-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
+    <nav id="tk-main-nav-container">
+      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+      <div class="tk-nav-section"><span>Sağlık Yönetimi</span></div>
+      <a href="#" class="menu-item active"><i class="fas fa-heartbeat"></i> <span>Vücut Analizi</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-utensils"></i> <span>Beslenme Takibi</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-bed"></i> <span>Uyku Düzeni</span></a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="page-info">
+        <a href="/dashboard/member.html" style="color:#71717a; text-decoration:none; font-size:0.8rem;">
+          <i class="fas fa-chevron-left"></i> Geri Dön
+        </a>
+        <h2 style="margin-top:5px;">Sağlık ve Yaşam Paneli</h2>
+      </div>
+      <div class="user-profile">
+        <span id="user-name-display">...</span>
+        <div class="avatar" id="user-avatar">U</div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+      
+      <div class="health-grid">
+        <div class="dashboard-card health-main-card">
+          <div class="card-header">
+            <h3>Günlük Sağlık Özeti</h3>
+            <span class="status-badge" style="background:#10b981; color:white; padding:2px 8px; border-radius:5px; font-size:0.7rem;">Her şey yolunda</span>
+          </div>
+          <p style="color:#d4d4d8; font-size:0.9rem;">Bugün hedeflerine ulaşmak için harika bir gün!</p>
+          
+          <div class="vitals-row">
+            <div class="vital-item">
+              <i class="fas fa-tint" style="color:#3b82f6;"></i>
+              <span>Kan Değerleri</span>
+              <strong>Normal</strong>
+            </div>
+            <div class="vital-item">
+              <i class="fas fa-moon" style="color:#8b5cf6;"></i>
+              <span>Uyku Kalitesi</span>
+              <strong>İyi</strong>
+            </div>
+            <div class="vital-item">
+              <i class="fas fa-fire" style="color:#f59e0b;"></i>
+              <span>Yağ Oranı</span>
+              <strong>%18.6</strong>
+            </div>
+          </div>
+
+          <div class="circular-stats">
+            <div class="stat-circle-box">
+              <div id="water-chart"></div>
+              <label>Su Tüketimi</label>
+            </div>
+            <div class="stat-circle-box">
+              <div id="calory-chart"></div>
+              <label>Kalori Dengesi</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header"><h3>Öğün Takibi</h3></div>
+          <div class="meal-list">
+            <div class="meal-item">
+              <div><span style="color:#f59e0b;">●</span> Kahvaltı</div>
+              <strong>540 kcal</strong>
+            </div>
+            <div class="meal-item">
+              <div><span style="color:#3b82f6;">●</span> Öğle Yemeği</div>
+              <strong>680 kcal</strong>
+            </div>
+            <div class="meal-item">
+              <div><span style="color:#10b981;">●</span> Akşam Yemeği</div>
+              <strong>400 kcal</strong>
+            </div>
+          </div>
+          <div style="margin-top:20px; text-align:center;">
+            <span style="color:#a1a1aa; font-size:0.8rem;">Günlük Kalan Limit</span>
+            <strong style="display:block; font-size:1.5rem; color:#10b981;">580 kcal</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="../../config.js"></script>
+  <script src="../../shared/auth.js?v=999"></script>
+  <script src="../../shared/sidebar.js?v=999"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Su Grafiği
+      new ApexCharts(document.querySelector("#water-chart"), {
+        series: [64],
+        chart: { type: 'radialBar', height: 180, sparkline: { enabled: true } },
+        colors: ['#3b82f6'],
+        plotOptions: {
+          radialBar: {
+            hollow: { size: '65%' },
+            dataLabels: {
+              name: { show: false },
+              value: { fontSize: '20px', color: '#fff', formatter: (v) => v + '%' }
+            }
+          }
+        }
+      }).render();
+
+      // Kalori Grafiği
+      new ApexCharts(document.querySelector("#calory-chart"), {
+        series: [75],
+        chart: { type: 'radialBar', height: 180, sparkline: { enabled: true } },
+        colors: ['#ef4444'],
+        plotOptions: {
+          radialBar: {
+            hollow: { size: '65%' },
+            dataLabels: {
+              name: { show: false },
+              value: { fontSize: '20px', color: '#fff', formatter: (v) => v + '%' }
+            }
+          }
+        }
+      }).render();
+    });
+
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+  </script>
+</body>
+</html>
