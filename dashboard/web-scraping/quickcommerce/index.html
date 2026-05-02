@@ -21,172 +21,31 @@
   <link rel="stylesheet" href="../../../css/analysis.css?v=20260502">
 
   <style>
-    /* Flatpickr overrides - Senin Orijinal Kodun */
-    .flatpickr-calendar {
-      background: #1f232c !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
-      border-radius: 16px !important;
-      padding: 15px !important;
-      font-family: 'Inter Tight', sans-serif !important;
-      width: 340px !important;
-    }
-
-    .flatpickr-calendar:before,
-    .flatpickr-calendar:after {
-      display: none !important;
-    }
-
-    .flatpickr-months {
-      background: transparent !important;
-      margin-bottom: 20px !important;
-      align-items: center !important;
-      position: relative;
-    }
-
-    .flatpickr-current-month {
-      color: #fff !important;
-      padding-top: 0 !important;
-      font-size: 1.1rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .flatpickr-current-month .flatpickr-monthDropdown-months,
-    .flatpickr-current-month input.cur-year {
-      color: #fff !important;
-      font-weight: 700 !important;
-      background: transparent !important;
-      border: none !important;
-      pointer-events: none !important;
-      appearance: none;
-      margin: 0 5px;
-    }
-
-    .numInputWrapper span {
-      display: none !important;
-    }
-
-    .flatpickr-prev-month,
-    .flatpickr-next-month {
-      fill: #fff !important;
-      padding: 10px !important;
-      top: 5px !important;
-      transition: 0.3s;
-    }
-
-    .flatpickr-prev-month:hover svg,
-    .flatpickr-next-month:hover svg {
-      fill: #7367f0 !important;
-      filter: drop-shadow(0 0 5px rgba(115, 103, 240, 0.8));
-    }
-
-    .flatpickr-weekdays {
-      margin-bottom: 10px;
-    }
-
-    span.flatpickr-weekday {
-      color: #aaa !important;
-      font-weight: 600 !important;
-      font-size: 0.9rem !important;
-    }
-
-    .flatpickr-days {
-      width: 100% !important;
-    }
-
-    .dayContainer {
-      width: 100% !important;
-      min-width: 100% !important;
-      padding: 0 !important;
-      justify-content: space-between !important;
-    }
-
-    .flatpickr-day {
-      border-radius: 8px !important;
-      background: transparent !important;
-      border: 1px solid transparent !important;
-      color: #ddd !important;
-      font-weight: 500 !important;
-      margin: 4px 0 !important;
-      height: 38px !important;
-      line-height: 38px !important;
-      flex-basis: 14.28% !important;
-      max-width: 14.28% !important;
-      box-shadow: none !important;
-      transition: all 0.2s ease;
-    }
-
-    .flatpickr-day:hover {
-      background: rgba(255, 255, 255, 0.1) !important;
-      color: #fff !important;
-      border-color: rgba(255, 255, 255, 0.1) !important;
-    }
-
-    .flatpickr-day.startRange,
-    .flatpickr-day.endRange,
-    .flatpickr-day.selected {
-      background: linear-gradient(135deg, #7367f0, #584cd1) !important;
-      color: #ffffff !important;
-      font-weight: 800 !important;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-      border: none !important;
-      box-shadow: 0 0 15px rgba(115, 103, 240, 0.6) !important;
-      z-index: 2;
-      position: relative;
-    }
-
-    .flatpickr-day.startRange {
-      border-radius: 8px 0 0 8px !important;
-    }
-
-    .flatpickr-day.endRange {
-      border-radius: 0 8px 8px 0 !important;
-    }
-
-    .flatpickr-day.startRange.endRange,
-    .flatpickr-day.selected {
-      border-radius: 8px !important;
-    }
-
-    .flatpickr-day.inRange {
-      background: rgba(115, 103, 240, 0.25) !important;
-      color: #ffffff !important;
-      font-weight: 600 !important;
-      border: none !important;
-      border-radius: 0 !important;
-      box-shadow: -5px 0 0 rgba(115, 103, 240, 0.25), 5px 0 0 rgba(115, 103, 240, 0.25) !important;
-      z-index: 1;
-    }
-
-    .flatpickr-day.today {
-      border: 1px solid rgba(115, 103, 240, 0.8) !important;
-      color: #fff !important;
-      font-weight: 700 !important;
-    }
-
-    .flatpickr-day.prevMonthDay,
-    .flatpickr-day.nextMonthDay {
-      visibility: hidden !important;
-    }
-
-    .multi-option.selected {
-      background: rgba(115, 103, 240, 0.15) !important;
-      color: #fff !important;
-      font-weight: 500;
-    }
-
-    .multi-option.selected .option-checkbox {
-      background: #7367f0 !important;
-      border-color: #7367f0 !important;
-      box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important;
-    }
-
-    .multi-option:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
-    }
+    /* Flatpickr overrides */
+    .flatpickr-calendar { background: #1f232c !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important; border-radius: 16px !important; padding: 15px !important; font-family: 'Inter Tight', sans-serif !important; width: 340px !important; }
+    .flatpickr-calendar:before, .flatpickr-calendar:after { display: none !important; }
+    .flatpickr-months { background: transparent !important; margin-bottom: 20px !important; align-items: center !important; position: relative; }
+    .flatpickr-current-month { color: #fff !important; padding-top: 0 !important; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; }
+    .flatpickr-current-month .flatpickr-monthDropdown-months, .flatpickr-current-month input.cur-year { color: #fff !important; font-weight: 700 !important; background: transparent !important; border: none !important; pointer-events: none !important; appearance: none; margin: 0 5px; }
+    .numInputWrapper span { display: none !important; }
+    .flatpickr-prev-month, .flatpickr-next-month { fill: #fff !important; padding: 10px !important; top: 5px !important; transition: 0.3s; }
+    .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg { fill: #7367f0 !important; filter: drop-shadow(0 0 5px rgba(115, 103, 240, 0.8)); }
+    .flatpickr-weekdays { margin-bottom: 10px; }
+    span.flatpickr-weekday { color: #aaa !important; font-weight: 600 !important; font-size: 0.9rem !important; }
+    .flatpickr-days { width: 100% !important; }
+    .dayContainer { width: 100% !important; min-width: 100% !important; padding: 0 !important; justify-content: space-between !important; }
+    .flatpickr-day { border-radius: 8px !important; background: transparent !important; border: 1px solid transparent !important; color: #ddd !important; font-weight: 500 !important; margin: 4px 0 !important; height: 38px !important; line-height: 38px !important; flex-basis: 14.28% !important; max-width: 14.28% !important; box-shadow: none !important; transition: all 0.2s ease; }
+    .flatpickr-day:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+    .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected { background: linear-gradient(135deg, #7367f0, #584cd1) !important; color: #ffffff !important; font-weight: 800 !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important; border: none !important; box-shadow: 0 0 15px rgba(115, 103, 240, 0.6) !important; z-index: 2; position: relative; }
+    .flatpickr-day.startRange { border-radius: 8px 0 0 8px !important; }
+    .flatpickr-day.endRange { border-radius: 0 8px 8px 0 !important; }
+    .flatpickr-day.startRange.endRange, .flatpickr-day.selected { border-radius: 8px !important; }
+    .flatpickr-day.inRange { background: rgba(115, 103, 240, 0.25) !important; color: #ffffff !important; font-weight: 600 !important; border: none !important; border-radius: 0 !important; box-shadow: -5px 0 0 rgba(115, 103, 240, 0.25), 5px 0 0 rgba(115, 103, 240, 0.25) !important; z-index: 1; }
+    .flatpickr-day.today { border: 1px solid rgba(115, 103, 240, 0.8) !important; color: #fff !important; font-weight: 700 !important; }
+    .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { visibility: hidden !important; }
+    .multi-option.selected { background: rgba(115, 103, 240, 0.15) !important; color: #fff !important; font-weight: 500; }
+    .multi-option.selected .option-checkbox { background: #7367f0 !important; border-color: #7367f0 !important; box-shadow: 0 0 10px rgba(115, 103, 240, 0.4) !important; }
+    .multi-option:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
   </style>
 </head>
 
@@ -226,7 +85,7 @@
       <i class="fas fa-cube"></i> <span>Teknoify</span>
     </div>
     <nav id="tk-main-nav-container">
-      <a href="../../member.html" class="menu-item">
+      <a href="/dashboard/member.html" class="menu-item">
         <i class="fas fa-home"></i> <span>Genel Bakış</span>
       </a>
       <div style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
@@ -266,14 +125,12 @@
     </header>
 
     <div class="content-scroll">
-
       <div class="filter-bar">
         <div class="filter-group" style="min-width:240px;">
           <label>Rapor Tarihi Seçiniz</label>
           <div class="date-picker-wrapper">
             <i class="fas fa-calendar-alt calendar-icon"></i>
-            <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz"
-              readonly>
+            <input type="text" id="date-range" class="filter-select flatpickr-input" placeholder="Tarih Aralığı Seçiniz" readonly>
           </div>
         </div>
         <div class="filter-group">
@@ -300,14 +157,11 @@
 
         <div class="download-wrapper">
           <button class="btn-download btn-disabled" id="btn-download" onclick="toggleDownloadMenu()">
-            <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down"
-              style="font-size:0.8em;margin-left:4px;"></i>
+            <i class="fas fa-download"></i> İndir <i class="fas fa-chevron-down" style="font-size:0.8em;margin-left:4px;"></i>
           </button>
           <div id="download-menu" class="download-menu">
-            <div class="download-item" onclick="downloadCSV()"><i class="fas fa-file-csv" style="color:#10b981;"></i>
-              CSV Olarak İndir</div>
-            <div class="download-item" onclick="downloadExcel()"><i class="fas fa-file-excel"
-                style="color:#10b981;"></i> Excel (.xlsx) İndir</div>
+            <div class="download-item" onclick="downloadCSV()"><i class="fas fa-file-csv" style="color:#10b981;"></i> CSV Olarak İndir</div>
+            <div class="download-item" onclick="downloadExcel()"><i class="fas fa-file-excel" style="color:#10b981;"></i> Excel (.xlsx) İndir</div>
           </div>
         </div>
       </div>
@@ -386,7 +240,6 @@
         <i class="fas fa-info-circle"></i> Sonuçlar performans için <strong>250 satır</strong> ile sınırlandırılmıştır.
         Tüm veriyi görmek için <strong>İndir</strong> butonunu kullanınız.
       </div>
-
     </div>
   </main>
 
@@ -395,40 +248,15 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
-  <script src="config.js?v=20260502"></script> 
+  <!-- engine.js TAMAMEN SİLİNDİ, auth.js ise hata vermemesi için TYPE="MODULE" yapıldı -->
+  <script type="module" src="/dashboard/shared/auth.js?v=20260502"></script> 
 
-  <script type="module" src="../../shared/engine.js?v=20260502"></script> 
-  <script type="module" src="../../shared/auth.js?v=20260502"></script> 
-
+  <!-- Global UI Kontrolleri -->
   <script>
-    // Profil Bilgisini Ekrana Basar
-    window.onAuthReady = function(session) {
-        const name = session.displayName || session.name || "Kullanıcı";
-        const displayEl = document.getElementById("user-name-display");
-        const avatarEl = document.getElementById("user-avatar");
-        
-        if(displayEl) displayEl.textContent = name;
-        if(avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
-
-        if(typeof window.TK_RENDER_SIDEBAR === "function") {
-            window.TK_RENDER_SIDEBAR();
-        }
-    };
-
-    // auth.js'in yüklenmesini sabırla bekler (Asla Yükleniyor'da kalmaz)
-    const checkSession = setInterval(() => {
-        if(window.USER_SESSION) {
-            clearInterval(checkSession);
-            window.onAuthReady(window.USER_SESSION);
-        }
-    }, 300);
-
-    // Sidebar Toggle
     window.toggleSidebar = function() { 
         document.body.classList.toggle("sidebar-closed"); 
     };
 
-    // Çıkış Modalı
     window.logoutApp = function(e) { 
         if(e) e.preventDefault(); 
         const modal = document.getElementById("tk-logout-modal");
@@ -441,13 +269,46 @@
     };
   </script>
 
+  <!-- Firebase ve Profil Modülü (Tıpkı member.html gibi çalışır) -->
   <script type="module">
-    // Not: member.html'de firebase.js yolu "/js/lib/firebase.js" idi. 
-    // Aynı yolu kullanarak projeleri dinamik sidebar'a çektiriyoruz.
     import { db } from "/js/lib/firebase.js";
-    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    import { logout } from "/js/lib/auth.js"; 
+    import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { logout } from "/js/lib/auth.js";
 
+    // 1. Profil ve Oturum Güncelleyici
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+            // İsim ve Avatarı Bas
+            const name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+            document.getElementById("user-name-display").textContent = name;
+            document.getElementById("user-avatar").textContent = name.charAt(0).toUpperCase();
+
+            // Yetkileri Firebase'den Çek (Projeler için)
+            let isAdmin = false;
+            let projectAccess = {};
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    isAdmin = userData.isAdmin || false;
+                    projectAccess = userData.projectAccess || {};
+                }
+            } catch(e) { console.error("Kullanıcı yetkileri alınamadı:", e); }
+
+            // Global Session'a Ekle
+            window.USER_SESSION = { uid: user.uid, name: name, email: user.email, isAdmin: isAdmin, projectAccess: projectAccess };
+
+            // Sidebar'ı Çiz
+            if (typeof window.TK_RENDER_SIDEBAR === "function") {
+                window.TK_RENDER_SIDEBAR();
+            }
+        } else {
+            // Oturum kapalıysa girişe yönlendir
+            window.location.href = "/login.html";
+        }
+    });
+
+    // 2. Çıkış İşlemi
     window.executeLogout = async function() {
         window.closeLogoutModal();
         const loader = document.getElementById("loading-overlay");
@@ -455,13 +316,10 @@
             loader.style.display = "flex";
             loader.style.opacity = "1";
         }
-        if (typeof logout === "function") {
-            await logout(); 
-        } else if (window.logout) {
-            window.logout();
-        }
+        await logout();
     };
 
+    // 3. Dinamik Sidebar Menüsü
     window.TK_RENDER_SIDEBAR = async function() {
       const exploreContainer = document.getElementById("explore-services-menu");
       const projectsContainer = document.getElementById("tk-sidebar-projects");
@@ -472,7 +330,7 @@
 
       const session = window.USER_SESSION || {};
       const accessMap = session.projectAccess || {};
-      const isAdmin = session.isAdmin || session.realIsAdmin;
+      const isAdmin = session.isAdmin;
 
       try {
         const querySnapshot = await getDocs(collection(db, "projects"));
@@ -518,6 +376,5 @@
       }
     };
   </script>
-
 </body>
 </html>
