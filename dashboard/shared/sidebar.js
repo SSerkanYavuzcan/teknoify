@@ -1,11 +1,6 @@
-/**
- * dashboard/shared/sidebar.js (MODÜLER V9 UYUMLU)
- * Tüm sistemin sol menüsünü (Sidebar) Firestore'dan okuyarak dinamik çizen motor.
- */
-
-// db nesnesini doğrudan merkezi kütüphanemizden çağırıyoruz
 import { db } from "/js/lib/firebase.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { logout } from "/js/lib/auth.js";
 
 function iconHtml(icon) {
   const i = String(icon || "").trim();
@@ -37,12 +32,10 @@ function isActiveLink(href) {
   return file ? p.endsWith(file) : false;
 }
 
-// URL oluşturucu - Impersonation destekli
 function resolveUrl(folderPath, entryPoint) {
    let path = folderPath ? `/${folderPath}/${entryPoint || 'index.html'}` : "#";
-   path = path.replace(/\/\//g, '/'); // Çift slash önleme
+   path = path.replace(/\/\//g, '/');
    
-   // Eğer admin Impersonation modundaysa URL'ye otomatik ekle!
    const impUid = localStorage.getItem("teknoify_impersonate_uid");
    if (impUid && path !== "#") {
        path += (path.includes('?') ? '&' : '?') + 'imp_uid=' + impUid;
@@ -51,12 +44,54 @@ function resolveUrl(folderPath, entryPoint) {
    return path;
 }
 
+function injectSidebarSkeleton() {
+    const root = document.getElementById("tk-global-sidebar-root");
+    if (!root || root.hasAttribute("data-injected")) return;
+
+    const isGeneralActive = currentPath().includes('member.html') || currentPath().includes('admin.html');
+
+    root.innerHTML = `
+        <div id="tk-logout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+            <div style="background: #18181b; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #3f3f46; color: white; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <h3 style="margin-top: 0; font-size: 1.5rem;">Çıkış Yap</h3>
+                <p style="color: #a1a1aa; margin-bottom: 24px;">Hesabınızdan çıkış yapmak istediğinize emin misiniz?</p>
+                <div style="display: flex; justify-content: center; gap: 12px;">
+                    <button onclick="window.closeLogoutModal()" style="padding: 10px 20px; background: transparent; border: 1px solid #3f3f46; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;">İptal</button>
+                    <button onclick="window.executeLogout()" style="padding: 10px 20px; background: #ef4444; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fas fa-power-off"></i> Çıkış Yap</button>
+                </div>
+            </div>
+        </div>
+
+        <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+        <aside class="sidebar">
+            <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
+            <nav id="tk-main-nav-container">
+                <a href="/dashboard/member.html" class="menu-item ${isGeneralActive ? 'active' : ''}"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+                
+                <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none; margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;"><span>Projelerim</span></div>
+                <div id="tk-sidebar-projects"></div>
+                
+                <div class="tk-nav-section" id="tk-explore-header" style="display: none; margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;"><span>Keşfet</span></div>
+                <div id="explore-services-menu"></div>
+            </nav>
+            <div class="menu-spacer"></div>
+            <div class="sidebar-footer">
+                <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
+                <button class="btn-collapse" onclick="window.toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
+            </div>
+        </aside>
+    `;
+    
+    root.setAttribute("data-injected", "true");
+}
+
 async function initSidebar() {
   const sess = window.USER_SESSION;
   if (!sess) return;
 
   const userProjectIds = Array.isArray(sess.projectIds) ? sess.projectIds : Object.keys(sess.projectAccess || {}).filter(k => sess.projectAccess[k] === true);
-  const isAdmin = sess.isAdmin || sess.realIsAdmin; // Adminse her şeyi görsün
+  const isAdmin = sess.isAdmin || sess.realIsAdmin; 
   
   const container = document.getElementById("tk-sidebar-projects") || document.getElementById("dynamic-services-menu");
   const exploreContainer = document.getElementById("explore-services-menu");
@@ -64,7 +99,6 @@ async function initSidebar() {
   if (!container) return;
 
   try {
-    // V9 Modüler Firestore çekimi
     const querySnapshot = await getDocs(collection(db, "projects"));
     const allProjects = [];
     
@@ -81,13 +115,9 @@ async function initSidebar() {
        return String(nameA).localeCompare(String(nameB));
     });
 
-    // Adminse tüm aktif projeleri owned saysın, değilse projelere yetkisi var mı diye baksın
     const owned = allProjects.filter(p => isAdmin || userProjectIds.includes(p.id));
     const locked = allProjects.filter(p => !isAdmin && !userProjectIds.includes(p.id));
 
-    // ---------------------------------------------
-    // YETKİLİ OLUNAN PROJELER (KİLİTSİZ)
-    // ---------------------------------------------
     let ownedHtml = "";
     owned.forEach(p => {
       const href = resolveUrl(p.config?.folderPath, p.config?.entryPoint);
@@ -108,9 +138,6 @@ async function initSidebar() {
     const header = document.getElementById("tk-sidebar-services-header");
     if (header) header.style.display = owned.length ? "block" : "none";
 
-    // ---------------------------------------------
-    // YETKİSİZ OLUNAN PROJELER (KİLİTLİ / KEŞFET)
-    // ---------------------------------------------
     if (exploreContainer) {
       let lockedHtml = "";
       locked.forEach(p => {
@@ -134,9 +161,41 @@ async function initSidebar() {
     }
 
   } catch (e) {
-    console.error("Sidebar dinamik render hatası:", e);
+    console.error(e);
   }
 }
 
-// Global fonksiyona bağla ki member.js çağırabilsin
 window.TK_RENDER_SIDEBAR = initSidebar;
+
+window.toggleSidebar = function() { 
+    document.body.classList.toggle("sidebar-closed"); 
+};
+
+window.logoutApp = function(e) { 
+    if(e) e.preventDefault(); 
+    const modal = document.getElementById("tk-logout-modal");
+    if(modal) modal.style.display = "flex";
+};
+
+window.closeLogoutModal = function() {
+    const modal = document.getElementById("tk-logout-modal");
+    if(modal) modal.style.display = "none";
+};
+
+window.executeLogout = async function() {
+    window.closeLogoutModal();
+    const loader = document.getElementById("loading-overlay");
+    if (loader) {
+        loader.style.display = "flex";
+        loader.style.opacity = "1";
+        const text = document.getElementById("dynamic-loader-text");
+        if(text) text.textContent = "Güvenli çıkış yapılıyor...";
+    }
+    await logout(); 
+};
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", injectSidebarSkeleton);
+} else {
+    injectSidebarSkeleton();
+}
