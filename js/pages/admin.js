@@ -2,16 +2,15 @@
 import { logout, requireAuth } from "../lib/auth.js";
 import { getProjects } from "../lib/data.js";
 import { createEl, qs } from "../utils/dom.js";
-import { db } from "../lib/firebase.js";
+import { auth, db } from "../lib/firebase.js";
 
+import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
-  setDoc,
-  deleteDoc,
-  serverTimestamp
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const IMPERSONATE_KEY = "teknoify_impersonate_uid";
@@ -43,24 +42,6 @@ function setStatus(msg, type = "info") {
   }
 }
 
-function ensureButton(selectorList, fallbackText) {
-  const selectors = Array.isArray(selectorList) ? selectorList : [selectorList];
-  for (const sel of selectors) {
-    const btn = qs(sel);
-    if (btn) return btn;
-  }
-
-  const btn = createEl("button", {
-    className: "btn btn-primary admin-save-btn",
-    text: fallbackText
-  });
-  btn.type = "button";
-
-  const anchor = qs("#admin-actions") || qs("main") || document.body;
-  anchor.append(btn);
-  return btn;
-}
-
 function getImpersonatedUid() {
   try {
     return localStorage.getItem(IMPERSONATE_KEY) || localStorage.getItem("tk_impersonate_uid") || "";
@@ -69,7 +50,7 @@ function getImpersonatedUid() {
   }
 }
 
-function setImpersonatedUid(uid, name = "") {
+function setImpersonatedUid(uid) {
   try {
     if (!uid) {
       localStorage.removeItem(IMPERSONATE_KEY);
@@ -123,43 +104,173 @@ async function fetchUsers() {
     .sort((a, b) => String(a.email || "").localeCompare(String(b.email || "")));
 }
 
-async function fetchEntitlements(uid) {
-  const entRef = doc(db, "entitlements", uid);
-  const entSnap = await getDoc(entRef);
-  const data = entSnap.exists() ? entSnap.data() : {};
-  const ids = Array.isArray(data.projectIds) ? data.projectIds : [];
-  return ids;
-}
-
-async function saveEntitlements(uid, projectIds) {
-  const entRef = doc(db, "entitlements", uid);
-  await setDoc(
-    entRef,
-    {
-      projectIds: Array.isArray(projectIds) ? projectIds : [],
-      updatedAt: serverTimestamp()
-    },
-    { merge: true }
-  );
-}
-
 function goToUserAs(uid) {
   setImpersonatedUid(uid);
   window.location.href = "/dashboard/index.html";
 }
 
 // ----------------------------------------------------
-// SATIR OLUŞTURMA (CREATE ROW) - TÜM SÜTUNLAR ORTALANDI
+// YENİ: KULLANICI AYARLARI PENCERESİ (MODAL)
 // ----------------------------------------------------
-function createRow({ user, projects, entitledSet, stateMap, session }) {
+function openUserSettingsModal(user, allProjects) {
+  const profile = user.profile || {};
+  const role = user.role || {};
+  const currentAccess = user.projectAccess || {};
+
+  // Arka plan karartması
+  const overlay = createEl("div");
+  overlay.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9998; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);";
+
+  // Modal Kutusu
+  const modal = createEl("div");
+  modal.style.cssText = "background: #18181b; border: 1px solid #3f3f46; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; color: white;";
+
+  // Ortak input stilleri
+  const inputStyle = "width: 100%; padding: 10px; margin-top: 6px; background: #27272a; border: 1px solid #3f3f46; color: white; border-radius: 6px; box-sizing: border-box; font-size: 0.9em;";
+  const labelStyle = "display: block; margin-top: 16px; font-size: 0.85em; color: #a1a1aa; font-weight: 500;";
+
+  // Form HTML İçeriği
+  modal.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #3f3f46; padding-bottom: 10px;">
+          <h2 style="margin: 0; font-size: 1.2em;">Kullanıcı Ayarları</h2>
+          <button id="close-modal-btn" style="background: none; border: none; color: #a1a1aa; font-size: 1.5em; cursor: pointer;">&times;</button>
+      </div>
+
+      <label style="${labelStyle}">Ad Soyad
+          <input type="text" id="m-name" value="${profile.fullName || ''}" style="${inputStyle}">
+      </label>
+
+      <label style="${labelStyle}">Şirket
+          <input type="text" id="m-company" value="${profile.companyName || ''}" style="${inputStyle}">
+      </label>
+
+      <label style="${labelStyle}">Profil Fotoğrafı URL (Opsiyonel)
+          <input type="text" id="m-photo" value="${profile.photoURL || ''}" style="${inputStyle}" placeholder="https://...">
+      </label>
+
+      <div style="display: flex; gap: 10px;">
+          <label style="${labelStyle}; flex: 1;">Hesap Durumu
+              <select id="m-status" style="${inputStyle}">
+                  <option value="active" ${role.status === 'active' ? 'selected' : ''}>Aktif</option>
+                  <option value="suspended" ${role.status === 'suspended' ? 'selected' : ''}>Askıda</option>
+              </select>
+          </label>
+          <label style="${labelStyle}; flex: 1;">Yetki Rolü
+              <select id="m-role" style="${inputStyle}">
+                  <option value="member" ${role.type === 'member' ? 'selected' : ''}>Member</option>
+                  <option value="premium" ${role.type === 'premium' ? 'selected' : ''}>Premium</option>
+                  <option value="admin" ${role.type === 'admin' ? 'selected' : ''}>Admin</option>
+              </select>
+          </label>
+      </div>
+
+      <div style="margin-top: 24px;">
+          <h3 style="font-size: 0.95em; color: #e4e4e7; margin-bottom: 10px;">Projeler & Yetkilendirme</h3>
+          <div id="m-projects" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #27272a; padding: 12px; border-radius: 8px; border: 1px solid #3f3f46;">
+              </div>
+      </div>
+
+      <div style="margin-top: 24px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 16px; border-radius: 8px;">
+          <h3 style="font-size: 0.95em; color: #60a5fa; margin: 0 0 10px 0;">Şifre Yönetimi</h3>
+          <p style="font-size: 0.8em; color: #9ca3af; margin-bottom: 12px; line-height: 1.4;">Güvenlik politikaları gereği şifre doğrudan değiştirilemez. Kullanıcının tanımlı mail adresine şifre sıfırlama bağlantısı gönderebilirsiniz.</p>
+          <button id="btn-reset-pw" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 500;">Sıfırlama Bağlantısı Gönder</button>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end;">
+          <button id="btn-cancel" style="background: transparent; color: white; border: 1px solid #3f3f46; padding: 10px 20px; border-radius: 6px; cursor: pointer;">İptal</button>
+          <button id="btn-save" style="background: #22c55e; color: white; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-weight: bold;">Ayarları Kaydet</button>
+      </div>
+  `;
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  // Proje checkboxlarını dinamik ekle
+  const projectsContainer = modal.querySelector('#m-projects');
+  allProjects.forEach(proj => {
+      const isChecked = currentAccess[proj.id] === true;
+      const lbl = createEl("label");
+      lbl.style.cssText = "display: flex; align-items: center; gap: 8px; font-size: 0.85em; color: #e4e4e7; cursor: pointer;";
+      lbl.innerHTML = `<input type="checkbox" value="${proj.id}" class="m-proj-checkbox" ${isChecked ? 'checked' : ''}> ${proj.name}`;
+      projectsContainer.appendChild(lbl);
+  });
+
+  // Modal Kapatma İşlemi
+  const closeModal = () => overlay.remove();
+  modal.querySelector('#close-modal-btn').onclick = closeModal;
+  modal.querySelector('#btn-cancel').onclick = closeModal;
+
+  // Şifre Sıfırlama Gönderme
+  modal.querySelector('#btn-reset-pw').onclick = async (e) => {
+      const btn = e.target;
+      btn.disabled = true;
+      btn.innerText = "Gönderiliyor...";
+      try {
+          const userEmail = profile.email || user.email;
+          if (!userEmail) throw new Error("Kullanıcının geçerli bir mail adresi bulunamadı.");
+          await sendPasswordResetEmail(auth, userEmail);
+          alert(`${userEmail} adresine şifre sıfırlama bağlantısı gönderildi.`);
+          btn.innerText = "Gönderildi ✅";
+          btn.style.background = "#22c55e";
+      } catch (err) {
+          console.error(err);
+          alert("Mail gönderilemedi: " + err.message);
+          btn.disabled = false;
+          btn.innerText = "Tekrar Dene";
+      }
+  };
+
+  // Verileri Kaydetme İşlemi (Firestore Update)
+  modal.querySelector('#btn-save').onclick = async (e) => {
+      const btn = e.target;
+      btn.disabled = true;
+      btn.innerText = "Kaydediliyor...";
+
+      try {
+          // Checkboxlardan proje izinlerini topla
+          const newProjectAccess = {};
+          modal.querySelectorAll('.m-proj-checkbox').forEach(cb => {
+              if (cb.checked) newProjectAccess[cb.value] = true;
+          });
+
+          // Güncellenecek veriyi hazırla (Nokta notasyonu ile sadece ilgili alanları ez)
+          const updates = {
+              "profile.fullName": modal.querySelector('#m-name').value.trim(),
+              "profile.companyName": modal.querySelector('#m-company').value.trim(),
+              "profile.photoURL": modal.querySelector('#m-photo').value.trim(),
+              "role.status": modal.querySelector('#m-status').value,
+              "role.type": modal.querySelector('#m-role').value,
+              "projectAccess": newProjectAccess
+          };
+
+          // Firestore'u Güncelle
+          const userRef = doc(db, "users", user.id);
+          await updateDoc(userRef, updates);
+
+          closeModal();
+          // Sayfayı yenileyerek yeni verilerin ekrana yansımasını sağla
+          window.location.reload();
+
+      } catch (error) {
+          console.error("Güncelleme hatası:", error);
+          alert("Ayarlar kaydedilirken hata oluştu!");
+          btn.disabled = false;
+          btn.innerText = "Ayarları Kaydet";
+      }
+  };
+}
+
+// ----------------------------------------------------
+// SATIR OLUŞTURMA (CREATE ROW)
+// ----------------------------------------------------
+function createRow({ user, projects, session }) {
   const tr = createEl("tr", { className: "admin-row" });
 
   const profile = user.profile || {};
 
-  // 1. SÜTUN: KULLANICI BİLGİLERİ
   const tdUser = createEl("td", { className: "admin-user-cell" });
   tdUser.style.verticalAlign = "middle";
-  tdUser.style.textAlign = "center"; // İçerik Ortalandı
+  tdUser.style.textAlign = "center"; 
   
   const fullName = profile.fullName || user.fullName || user.name || (profile.email ? profile.email.split("@")[0] : "İsimsiz Kullanıcı");
   const email = profile.email || user.email || "Email belirtilmemiş";
@@ -167,27 +278,22 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
   const nameLine = createEl("div", { className: "admin-user-name" });
   nameLine.innerHTML = `<strong>${fullName}</strong> <br><span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">${user.id}</span>`;
   
-  const emailLine = createEl("div", { 
-      className: "admin-user-meta", 
-      text: email 
-  });
+  const emailLine = createEl("div", { className: "admin-user-meta", text: email });
   emailLine.style.color = "#a1a1aa";
   emailLine.style.fontSize = "0.85em";
   emailLine.style.marginTop = "4px";
   
   tdUser.append(nameLine, emailLine);
 
-  // 2. SÜTUN: ŞİRKET BİLGİSİ
   const tdCompany = createEl("td", { className: "admin-company-cell" });
   tdCompany.style.verticalAlign = "middle";
-  tdCompany.style.textAlign = "center"; // İçerik Ortalandı
+  tdCompany.style.textAlign = "center"; 
   const companyName = profile.companyName || "-";
   tdCompany.innerHTML = `<span style="color: #e4e4e7; font-size: 0.9em; font-weight: 500;">${companyName}</span>`;
 
-  // 3. SÜTUN: ROL VE DURUM
   const tdRole = createEl("td", { className: "admin-role-cell" });
   tdRole.style.verticalAlign = "middle";
-  tdRole.style.textAlign = "center"; // İçerik Ortalandı
+  tdRole.style.textAlign = "center"; 
   
   const roleType = (typeof user.role === 'object' && user.role !== null) ? (user.role.type || 'member') : (user.role || 'member');
   const roleStatus = (typeof user.role === 'object' && user.role !== null) ? (user.role.status || 'active') : (user.status || 'active');
@@ -197,25 +303,20 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
 
   tdRole.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-          <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500; letter-spacing: 0.5px;">
-              ${capRole}
-          </span>
-          <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500; letter-spacing: 0.5px;">
-              ${capStatus}
-          </span>
+          <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500; letter-spacing: 0.5px;">${capRole}</span>
+          <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500; letter-spacing: 0.5px;">${capStatus}</span>
       </div>
   `;
 
-  // 4. SÜTUN: PROJE ERİŞİMLERİ
   const tdProjects = createEl("td", { className: "admin-services-cell" });
   tdProjects.style.verticalAlign = "middle";
-  tdProjects.style.textAlign = "center"; // İçerik Ortalandı
+  tdProjects.style.textAlign = "center"; 
   
-  const wrap = createEl("div", { className: "admin-service-grid" });
+  const wrap = createEl("div");
   wrap.style.display = "flex";
   wrap.style.flexWrap = "wrap";
   wrap.style.gap = "6px";
-  wrap.style.justifyContent = "center"; // Etiketler Ortalandı
+  wrap.style.justifyContent = "center"; 
 
   const accessObj = user.projectAccess || {};
   const allowedIds = Object.keys(accessObj).filter(k => accessObj[k] === true);
@@ -231,51 +332,41 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
           wrap.append(badge);
       });
   }
-  
   tdProjects.append(wrap);
 
-  // 5. SÜTUN: IMPERSONATE (YENİ SÜTUN)
   const tdImp = createEl("td", { className: "admin-imp-cell" });
   tdImp.style.verticalAlign = "middle";
-  tdImp.style.textAlign = "center"; // İçerik Ortalandı
+  tdImp.style.textAlign = "center"; 
 
   const impBtn = createEl("button", {
     className: "btn btn-sm btn-primary",
     text: "Kullanıcı Olarak Gör"
   });
-  // Temanın ezmemesi için !important eklendi
   impBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #6366f1 !important; color: #ffffff !important; opacity: 1 !important; display: inline-block;";
   impBtn.disabled = !session.isAdmin;
   impBtn.addEventListener("click", () => goToUserAs(user.id));
-  
   tdImp.append(impBtn);
 
-  // 6. SÜTUN: AKSİYONLAR
   const tdActions = createEl("td", { className: "admin-actions-cell" });
   tdActions.style.verticalAlign = "middle";
-  tdActions.style.textAlign = "center"; // İçerik Ortalandı
+  tdActions.style.textAlign = "center"; 
   
   const actionsWrap = createEl("div");
   actionsWrap.style.display = "flex";
   actionsWrap.style.gap = "8px";
   actionsWrap.style.flexWrap = "wrap";
-  actionsWrap.style.justifyContent = "center"; // Butonlar Ortalandı
+  actionsWrap.style.justifyContent = "center"; 
 
-  const updateBtn = createEl("button", {
-    text: "Erişimleri Güncelle"
-  });
-  // Temanın ezmemesi için !important eklendi
-  updateBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316 !important; color: #ffffff !important; opacity: 1 !important; display: inline-block; transition: 0.2s;";
-  updateBtn.onmouseover = () => updateBtn.style.background = "#ea580c !important";
-  updateBtn.onmouseout = () => updateBtn.style.background = "#f97316 !important";
-  updateBtn.addEventListener("click", () => {
-      alert(`${fullName} kullanıcısı için proje yetkilendirme modülü yapım aşamasındadır.`);
+  // GÜNCELLENDİ: Kullanıcı Ayarları Butonu
+  const settingsBtn = createEl("button", { text: "Kullanıcı Ayarları" });
+  settingsBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316 !important; color: #ffffff !important; opacity: 1 !important; display: inline-block; transition: 0.2s;";
+  settingsBtn.onmouseover = () => settingsBtn.style.background = "#ea580c !important";
+  settingsBtn.onmouseout = () => settingsBtn.style.background = "#f97316 !important";
+  settingsBtn.addEventListener("click", () => {
+      openUserSettingsModal(user, projects);
   });
 
-  const deleteBtn = createEl("button", {
-    text: "Kullanıcıyı Kaldır"
-  });
-  // Temanın ezmemesi için !important eklendi
+  const deleteBtn = createEl("button", { text: "Kullanıcıyı Kaldır" });
   deleteBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #ef4444 !important; color: #ffffff !important; opacity: 1 !important; display: inline-block; transition: 0.2s;";
   deleteBtn.onmouseover = () => deleteBtn.style.background = "#dc2626 !important";
   deleteBtn.onmouseout = () => deleteBtn.style.background = "#ef4444 !important";
@@ -285,7 +376,6 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
         try {
             await deleteDoc(doc(db, "users", user.id));
             tr.remove(); 
-            alert("Kullanıcı başarıyla silindi.");
         } catch (error) {
             console.error("Silme hatası:", error);
             alert("Kullanıcı silinirken bir hata oluştu!");
@@ -293,24 +383,19 @@ function createRow({ user, projects, entitledSet, stateMap, session }) {
     }
   });
 
-  actionsWrap.append(updateBtn, deleteBtn);
+  actionsWrap.append(settingsBtn, deleteBtn);
   tdActions.append(actionsWrap);
 
-  // Satıra tüm 6 sütunu ekle
   tr.append(tdUser, tdCompany, tdRole, tdProjects, tdImp, tdActions);
   return tr;
 }
 
-// ----------------------------------------------------
-// İNİT FONKSİYONU
-// ----------------------------------------------------
 async function init() {
   try {
     const session = await requireAuth();
     if (!session) return;
 
-    const logoutBtn =
-      qs("#logout-btn") || qs("#logout") || qs("[data-action='logout']");
+    const logoutBtn = qs("#logout-btn") || qs("#logout") || qs("[data-action='logout']");
     if (logoutBtn) logoutBtn.addEventListener("click", logout);
 
     if (!session.isAdmin) {
@@ -326,7 +411,6 @@ async function init() {
       return;
     }
 
-    // HTML'DEKİ BAŞLIKLARI ZORLA 6 SÜTUNA ÇEVİRİYORUZ (Hepsi Ortalandı)
     const table = tbody.parentElement;
     if (table) {
         let thead = table.querySelector("thead");
@@ -347,53 +431,19 @@ async function init() {
     }
 
     const allProjects = await getProjects();
-    const activeProjects = (allProjects || []).filter(
-      (p) => p && p.status === "active"
-    );
+    const activeProjects = (allProjects || []).filter(p => p && p.status === "active");
 
     const users = await fetchUsers();
     tbody.innerHTML = "";
 
-    const stateMap = new Map();
-
     for (const user of users) {
-      const entitled = await fetchEntitlements(user.id);
-      const row = createRow({
-        user,
-        projects: activeProjects,
-        entitledSet: entitled,
-        stateMap,
-        session
-      });
+      const row = createRow({ user, projects: activeProjects, session });
       tbody.append(row);
     }
 
-    const saveBtn = ensureButton(
-      ["#save-btn", "#save-access-btn", "#save-entitlements", "[data-action='save']"],
-      "Değişiklikleri Kaydet"
-    );
-
-    saveBtn.addEventListener("click", async () => {
-      try {
-        saveBtn.disabled = true;
-        const originalText = saveBtn.innerText;
-        saveBtn.innerText = "Kaydediliyor...";
-
-        const writes = [];
-        for (const [uid, setOfProjects] of stateMap.entries()) {
-          const ids = Array.from(setOfProjects);
-          writes.push(saveEntitlements(uid, ids));
-        }
-        await Promise.all(writes);
-
-        saveBtn.innerText = originalText;
-      } catch (e) {
-        console.error(e);
-        alert("Kaydetme hatası: " + (e?.message || "Bilinmeyen hata"));
-      } finally {
-        saveBtn.disabled = false;
-      }
-    });
+    // Gereksiz genel "Kaydet" butonu ve mantığı kaldırıldı, her şey modaldan anlık kaydediliyor.
+    const oldSaveBtn = qs(".admin-save-btn") || qs("#save-btn") || qs("#save-access-btn");
+    if(oldSaveBtn) oldSaveBtn.style.display = "none";
 
   } catch (e) {
     console.error(e);
