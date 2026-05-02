@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abonelikler ve Harcamalar | Teknoify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="../../css/dashboard.css?v=20260502">
+
+  <style>
+    /* Abonelik Sayfasına Özel Stiller */
+    .subs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .subscription-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .subscription-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .sub-brand { display: flex; align-items: center; gap: 15px; }
+    .sub-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.4rem;
+    }
+
+    .sub-details span { display: block; color: #fff; font-size: 0.95rem; font-weight: 500; }
+    .sub-details small { color: #71717a; font-size: 0.75rem; }
+
+    .sub-price { text-align: right; }
+    .sub-price strong { display: block; color: #fff; font-size: 1rem; }
+    .sub-price small { color: #10b981; font-size: 0.75rem; }
+
+    /* Harcama Özeti Kartı */
+    .spending-card {
+      background: linear-gradient(135deg, rgba(31, 41, 55, 0.4), rgba(17, 24, 39, 0.6));
+    }
+
+    .billing-cycle {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 12px;
+      border: 1px dashed rgba(99, 102, 241, 0.3);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
+    <nav id="tk-main-nav-container">
+      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+      <div class="tk-nav-section"><span>Harcama Yönetimi</span></div>
+      <a href="#" class="menu-item active"><i class="fas fa-credit-card"></i> <span>Aboneliklerim</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-file-invoice-dollar"></i> <span>Faturalar</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-tags"></i> <span>Kategoriler</span></a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="page-info">
+        <a href="/dashboard/member.html" style="color:#71717a; text-decoration:none; font-size:0.8rem;">
+          <i class="fas fa-chevron-left"></i> Geri Dön
+        </a>
+        <h2 style="margin-top:5px;">Abonelikler & Harcamalar</h2>
+      </div>
+      <div class="user-profile">
+        <span id="user-name-display">...</span>
+        <div class="avatar" id="user-avatar">U</div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+      
+      <div class="subs-grid">
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Aktif Abonelikler</h3>
+            <span class="view-all">8 Toplam</span>
+          </div>
+          
+          <div class="subscription-item">
+            <div class="sub-brand">
+              <div class="sub-icon" style="background: rgba(229, 9, 20, 0.1); color: #e50914;"><i class="fab fa-netflix"></i></div>
+              <div class="sub-details"><span>Netflix</span><small>Yenileme: 24 Mayıs</small></div>
+            </div>
+            <div class="sub-price"><strong>₺229,99</strong><small>Premium</small></div>
+          </div>
+
+          <div class="subscription-item">
+            <div class="sub-brand">
+              <div class="sub-icon" style="background: rgba(29, 185, 84, 0.1); color: #1db954;"><i class="fab fa-spotify"></i></div>
+              <div class="sub-details"><span>Spotify</span><small>Yenileme: 12 Mayıs</small></div>
+            </div>
+            <div class="sub-price"><strong>₺59,99</strong><small>Aile Planı</small></div>
+          </div>
+
+          <div class="subscription-item">
+            <div class="sub-brand">
+              <div class="sub-icon" style="background: rgba(0, 102, 255, 0.1); color: #0066ff;"><i class="fab fa-app-store-ios"></i></div>
+              <div class="sub-details"><span>iCloud+</span><small>Yenileme: 05 Mayıs</small></div>
+            </div>
+            <div class="sub-price"><strong>₺39,99</strong><small>200 GB</small></div>
+          </div>
+
+          <div class="subscription-item">
+            <div class="sub-brand">
+              <div class="sub-icon" style="background: rgba(255, 255, 255, 0.1); color: #fff;"><i class="fab fa-github"></i></div>
+              <div class="sub-details"><span>GitHub Copilot</span><small>Yenileme: 15 Mayıs</small></div>
+            </div>
+            <div class="sub-price"><strong>$10.00</strong><small>Bireysel</small></div>
+          </div>
+        </div>
+
+        <div class="dashboard-card spending-card">
+          <div class="card-header"><h3>Harcama Analizi</h3></div>
+          <div id="spending-trend-chart"></div>
+          
+          <div class="mini-kpi-row" style="margin-top:20px;">
+            <div class="mini-kpi"><span>Aylık Toplam</span><strong>₺1.850,40</strong></div>
+            <div class="mini-kpi"><span>Yıllık Tahmin</span><strong>₺22.204</strong></div>
+          </div>
+
+          <div class="billing-cycle">
+            <div style="font-size:0.85rem; color:#d4d4d8;">
+              <i class="fas fa-calendar-alt" style="margin-right:8px; color:#6366f1;"></i> 
+              Sonraki Büyük Ödeme
+            </div>
+            <strong style="color:#fff;">24 Mayıs (Netflix)</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="../../config.js"></script>
+  <script src="../../shared/auth.js?v=999"></script>
+  <script src="../../shared/sidebar.js?v=999"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Harcama Trend Grafiği
+      new ApexCharts(document.querySelector("#spending-trend-chart"), {
+        series: [{ name: 'Harcama', data: [1200, 1350, 1280, 1400, 1850] }],
+        chart: { type: 'area', height: 200, sparkline: { enabled: false }, toolbar: { show: false } },
+        colors: ['#6366f1'],
+        stroke: { curve: 'smooth', width: 3 },
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0 } },
+        xaxis: { categories: ['Oca', 'Şub', 'Mar', 'Nis', 'May'], labels: { style: { colors: '#71717a' } } },
+        yaxis: { show: false },
+        grid: { show: false }
+      }).render();
+    });
+
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+  </script>
+</body>
+</html>
