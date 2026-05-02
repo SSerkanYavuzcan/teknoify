@@ -1,89 +1,69 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Dashboard | Teknoify</title>
-        <link rel="stylesheet" href="../css/style.css" />
-        <link rel="stylesheet" href="../css/06-pages/dashboard-portal.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    </head>
-    <body class="dark-dashboard">
-        <header class="header" style="position: static">
-            <nav class="navbar">
-                <div class="nav-container">
-                    <div class="logo">
-                        <a href="../index.html" aria-label="Ana Sayfa">
-                            <span class="logo-icon">T</span>
-                            <span class="logo-text">Teknoify Dashboard</span>
-                        </a>
-                    </div>
-                    <ul class="nav-menu" style="display: flex; align-items: center; gap: 15px;">
-                        <li class="nav-item">
-                            <span class="nav-link" id="session-user-name">Yükleniyor...</span>
-                        </li>
-                        <li class="nav-item" id="admin-link" style="display: none;">
-                            <a href="admin.html" class="nav-link" style="color: var(--primary); font-weight: bold;">Admin Paneli</a>
-                        </li>
-                        <li class="nav-item">
-                            <button id="logout-btn" class="btn btn-sm btn-outline">Çıkış Yap</button>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönlendiriliyor | Teknoify</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background-color: #09090b;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Inter Tight', sans-serif;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .text { color: #a1a1aa; font-size: 0.95rem; font-weight: 500; }
+    </style>
 
-        <main class="page-frame portal-frame">
-            <section class="portal-shell">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div class="spinner"></div>
+    <div class="text">Yetkileriniz kontrol ediliyor, lütfen bekleyin...</div>
+
+    <script type="module" src="/dashboard/shared/auth.js?v=999"></script>
+
+    <script>
+        // auth.js çalışıp USER_SESSION'ı doldurduğunda yakala
+        const checkAuth = setInterval(() => {
+            if (window.USER_SESSION) {
+                clearInterval(checkAuth);
                 
-                <div class="dashboard-stats-grid" id="dashboard-stats">
-                    <div class="stat-box">
-                        <div class="stat-icon" style="color: #a855f7; background: rgba(168, 85, 247, 0.1);"><i class="fa-solid fa-rocket"></i></div>
-                        <div class="stat-info">
-                            <span class="stat-label">Aktif Proje</span>
-                            <h3 class="stat-value" id="stat-active-projects">Yükleniyor..</h3>
-                        </div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"><i class="fa-solid fa-briefcase"></i></div>
-                        <div class="stat-info">
-                            <span class="stat-label">Kullanılabilir Araç</span>
-                            <h3 class="stat-value" id="stat-tools">Yükleniyor..</h3>
-                        </div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-icon" style="color: #22c55e; background: rgba(34, 197, 94, 0.1);"><i class="fa-solid fa-shield-check"></i></div>
-                        <div class="stat-info">
-                            <span class="stat-label">Destek Durumu</span>
-                            <h3 class="stat-value text-success" style="color: #22c55e;">Aktif</h3>
-                        </div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-icon" style="color: #a855f7; background: rgba(168, 85, 247, 0.1);"><i class="fa-solid fa-calendar-alt"></i></div>
-                        <div class="stat-info">
-                            <span class="stat-label">Son Güncelleme</span>
-                            <h3 class="stat-value text-info" style="color: #38bdf8;">Bugün</h3>
-                        </div>
-                    </div>
-                </div>
+                // Senin auth.js dosyan isAdmin bilgisini doğrudan buraya veriyor
+                if (window.USER_SESSION.isAdmin === true) {
+                    window.location.replace("/dashboard/admin.html");
+                } else {
+                    window.location.replace("/dashboard/member.html");
+                }
+            }
+        }, 100); // Saniyede 10 kez kontrol et (Anında yönlendirme için)
 
-                <div class="projects-section-header" style="margin-top: 40px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                    <div class="section-indicator" style="width: 4px; height: 20px; background: #6366f1; border-radius: 4px;"></div>
-                    <h2 style="font-size: 1.25rem; font-weight: 600;">Projeleriniz</h2>
-                </div>
+        // Güvenlik önlemi: Eğer 5 saniye içinde Firebase yanıt vermezse login'e geri at
+        setTimeout(() => {
+            if (!window.USER_SESSION) {
+                window.location.replace("/login.html");
+            }
+        }, 5000);
+    </script>
 
-                <div id="project-list" class="advanced-project-list">
-                    </div>
-
-                <div id="project-empty" style="display: none; text-align: center; margin-top: 50px; padding: 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
-                    <i class="fa-solid fa-folder-open" style="font-size: 40px; color: #6b7280; margin-bottom: 20px;"></i>
-                    <h3 style="margin-bottom: 10px;">Görünüşe Göre Henüz Bir Projeniz Yok</h3>
-                    <p style="color: #9ca3af; margin-bottom: 20px;">Sizin için hazırlayacağımız özel otomasyon ve analiz araçlarına erişmek için uzman ekibimizle görüşün.</p>
-                    <a class="btn btn-primary" href="../index.html#contact">Bizimle İletişime Geçin</a>
-                </div>
-            </section>
-        </main>
-
-        <script type="module" src="../js/pages/dashboard.js"></script>
-    </body>
+</body>
 </html>
