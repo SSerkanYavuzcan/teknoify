@@ -15,14 +15,16 @@ import {
 
 const IMPERSONATE_KEY = "teknoify_impersonate_uid";
 
-// HTML'deki inatçı "Değişiklikleri Kaydet" butonunu kesin olarak yok eden CSS Kuralı
-const hideSaveBtnStyle = document.createElement("style");
-hideSaveBtnStyle.innerHTML = `
-    #save-btn, #save-access-btn, .admin-save-btn, #admin-actions {
-        display: none !important;
-    }
-`;
-document.head.appendChild(hideSaveBtnStyle);
+// İnatçı "Kaydet" Butonunu Bulup Yok Eden Avcı Fonksiyon
+function destroySaveButtons() {
+    document.querySelectorAll("button, a").forEach(el => {
+        if (el.textContent && el.textContent.includes("Değişiklikleri Kaydet")) {
+            el.remove();
+        }
+    });
+    const actionsWrap = qs("#admin-actions");
+    if(actionsWrap) actionsWrap.remove();
+}
 
 function pickTbody() {
   return (
@@ -443,7 +445,6 @@ function createProjectRow(project) {
   const pName = details.name || "İsimsiz Proje";
   tdName.innerHTML = `<div class="admin-user-name"><strong>${pName}</strong> <br><span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">${project.id}</span></div>`;
 
-  // Status Sütununda Satır Yüksekliği (Padding) ve Etiketler Arası Boşluk (Gap) Artırıldı
   const tdStatus = createEl("td");
   tdStatus.style.cssText = "vertical-align: middle; text-align: center; padding: 20px 10px;";
   
@@ -515,10 +516,10 @@ function createKPICard(title, value, color) {
 // ----------------------------------------------------
 async function init() {
   try {
-    // Sayfa içindeki var olan tüm kaydet butonlarını kodla temizleme
-    document.querySelectorAll("button").forEach(b => {
-        if (b.innerText.trim() === "Değişiklikleri Kaydet") b.style.display = "none";
-    });
+    // Açılışta Kaydet butonlarını temizleme atışı
+    destroySaveButtons();
+    // Güvenlik amaçlı 1 saniye sonra tekrar temizleme (Bazen DOM sonradan yüklenir)
+    setTimeout(destroySaveButtons, 1000);
 
     const session = await requireAuth();
     if (!session) return;
@@ -653,12 +654,13 @@ async function init() {
         // ----------------------------------------------------
         // 2. PROJE TABLOSU ALANI
         // ----------------------------------------------------
-        // Araya boşluk ve ayırıcı çizgi atarak Kullanıcı tablosundan tamamen ayırdık
-        const separator = createEl("div");
-        separator.style.cssText = "height: 1px; background: #3f3f46; margin: 80px 0 40px 0; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.5);";
-        userContainer.appendChild(separator);
+        // Kullanıcı tablosunun kapsayıcı özelliklerini ve classlarını tamamen klonluyoruz
+        const projectWrapClass = userContainer.className || "";
 
-        // Başlıklar Kullanıcı tablosuyla birebir aynı tasarıma getirildi
+        // Tıpatıp aynı görünüm için Proje Bölümünü oluştur
+        const projectSection = createEl("div", { className: projectWrapClass });
+        projectSection.style.cssText = "margin-top: 60px;"; // Kullanıcı tablosundan ferahça ayırmak için boşluk
+
         const projectSectionHeader = createEl("div");
         projectSectionHeader.innerHTML = `
             <div style="margin-bottom: 24px;">
@@ -666,7 +668,7 @@ async function init() {
                 <p style="color: #9ca3af; font-size: 1rem; margin: 0;">Sistemdeki tüm projeleri ve erişim rollerini yönetin.</p>
             </div>
         `;
-        userContainer.appendChild(projectSectionHeader);
+        projectSection.appendChild(projectSectionHeader);
 
         const activeP = allProjects.filter(p => p.config?.isActive === true).length;
         const prodP = allProjects.filter(p => (p.audit?.status || '').toLowerCase() === 'production').length;
@@ -682,7 +684,7 @@ async function init() {
             ${createKPICard("Test", testP, "#c084fc")}
             ${createKPICard("Development", devP, "#a1a1aa")}
         `;
-        userContainer.appendChild(projKpiWrap);
+        projectSection.appendChild(projKpiWrap);
 
         const projFilterWrap = createEl("div");
         projFilterWrap.style.cssText = "display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid #3f3f46;";
@@ -707,24 +709,31 @@ async function init() {
                 <option value="admin">Admin</option>
             </select>
         `;
-        userContainer.appendChild(projFilterWrap);
+        projectSection.appendChild(projFilterWrap);
 
-        const projectTableWrap = createEl("div", { className: userTable.parentElement.className }); 
-        projectTableWrap.innerHTML = `
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                <thead>
-                    <tr>
-                        <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">PROJE ADI</th>
-                        <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">STATUS</th>
-                        <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">ERİŞİMLER</th>
-                        <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">AKSİYONLAR</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-project-table-body">
-                </tbody>
-            </table>
+        // TABLONUN GENETİĞİNİ KLONLA (Tıpatıp aynı HTML tag'leri ve class'ları alır)
+        const projectTableWrap = userTable.parentElement.cloneNode(false); 
+        const pTable = userTable.cloneNode(false); 
+        
+        pTable.innerHTML = `
+            <thead>
+                <tr>
+                    <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">PROJE ADI</th>
+                    <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">STATUS</th>
+                    <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">ERİŞİMLER</th>
+                    <th style="text-align: center; padding: 12px 10px; color: #9ca3af; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid #3f3f46;">AKSİYONLAR</th>
+                </tr>
+            </thead>
+            <tbody id="admin-project-table-body">
+            </tbody>
         `;
-        userContainer.appendChild(projectTableWrap);
+        
+        projectTableWrap.appendChild(pTable);
+        projectSection.appendChild(projectTableWrap);
+        
+        // Oluşturduğumuz bu yeni Proje Kapsayıcısını, ana sayfanın en altına ekliyoruz.
+        userContainer.parentElement.appendChild(projectSection);
+
         const projectTbody = qs("#admin-project-table-body");
 
         const renderProjects = () => {
