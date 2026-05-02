@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hedefler ve Verimlilik | Teknoify</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="../../css/dashboard.css?v=20260502">
+
+  <style>
+    /* Verimlilik Sayfasına Özel Stiller */
+    .productivity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .habit-item {
+      margin-bottom: 20px;
+    }
+
+    .habit-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: #d4d4d8;
+    }
+
+    .habit-bar-bg {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .habit-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1s ease-in-out;
+    }
+
+    /* Odaklanma Kartı */
+    .focus-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border: 1px solid transparent;
+      transition: 0.2s;
+    }
+
+    .task-row:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    .task-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #6366f1;
+      cursor: pointer;
+    }
+
+    .task-info { flex: 1; }
+    .task-info span { display: block; font-size: 0.9rem; color: #fff; }
+    .task-info small { color: #71717a; font-size: 0.75rem; }
+
+    .day-pill {
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      font-size: 0.7rem;
+      color: #a1a1aa;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
+    <nav id="tk-main-nav-container">
+      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+      <div class="tk-nav-section"><span>Verimlilik</span></div>
+      <a href="#" class="menu-item active"><i class="fas fa-tasks"></i> <span>Görevlerim</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-history"></i> <span>Alışkanlıklar</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-stopwatch"></i> <span>Odaklanma</span></a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="page-info">
+        <a href="/dashboard/member.html" style="color:#71717a; text-decoration:none; font-size:0.8rem;">
+          <i class="fas fa-chevron-left"></i> Geri Dön
+        </a>
+        <h2 style="margin-top:5px;">Hedefler & Verimlilik</h2>
+      </div>
+      <div class="user-profile">
+        <span id="user-name-display">...</span>
+        <div class="avatar" id="user-avatar">U</div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+      
+      <div class="productivity-grid">
+        <div class="dashboard-card">
+          <div class="card-header"><h3>Alışkanlıklarım</h3></div>
+          
+          <div class="habit-item">
+            <div class="habit-info"><span>Sabah Meditasyonu</span> <span>7/7 Gün</span></div>
+            <div class="habit-bar-bg"><div class="habit-bar-fill" style="width: 100%; background: #10b981;"></div></div>
+          </div>
+
+          <div class="habit-item">
+            <div class="habit-info"><span>Kitap Okuma</span> <span>4/7 Gün</span></div>
+            <div class="habit-bar-bg"><div class="habit-bar-fill" style="width: 57%; background: #6366f1;"></div></div>
+          </div>
+
+          <div class="habit-item">
+            <div class="habit-info"><span>Spor Yapma</span> <span>2/3 Gün</span></div>
+            <div class="habit-bar-bg"><div class="habit-bar-fill" style="width: 66%; background: #f59e0b;"></div></div>
+          </div>
+
+          <div class="dashboard-card focus-card" style="margin-top:20px;">
+            <div id="focus-circle-chart"></div>
+            <strong style="font-size: 1.8rem; color: #fff; margin-top: -20px;">12s 45dk</strong>
+            <p style="color: #a1a1aa; font-size: 0.85rem;">Bu Haftaki Odaklanma</p>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h3>Bugünün Görevleri</h3>
+            <button style="background:#6366f1; color:white; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-size:0.8rem;">
+                <i class="fas fa-plus"></i> Yeni Ekle
+            </button>
+          </div>
+
+          <div class="task-list">
+            <div class="task-row">
+              <input type="checkbox" checked>
+              <div class="task-info">
+                <span style="text-decoration: line-through; opacity: 0.6;">Proje sunumunu hazırla</span>
+                <small>Bitti - 10:30</small>
+              </div>
+              <div class="day-pill">Bugün</div>
+            </div>
+
+            <div class="task-row">
+              <input type="checkbox">
+              <div class="task-info">
+                <span>Müşteri toplantısı</span>
+                <small>Önemli - 14:30</small>
+              </div>
+              <div class="day-pill">Yarın</div>
+            </div>
+
+            <div class="task-row">
+              <input type="checkbox">
+              <div class="task-info">
+                <span>Fatura ödemelerini kontrol et</span>
+                <small>Finans</small>
+              </div>
+              <div class="day-pill">22 Mayıs</div>
+            </div>
+          </div>
+
+          <div class="card-header" style="margin-top:30px;"><h3>Bu Haftanın Hedefleri</h3></div>
+          <div class="mini-kpi-row">
+              <div class="mini-kpi"><span>Tamamlanan</span> <strong>8/12</strong></div>
+              <div class="mini-kpi"><span>Verimlilik</span> <strong>%84</strong></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="../../config.js"></script>
+  <script src="../../shared/auth.js?v=999"></script>
+  <script src="../../shared/sidebar.js?v=999"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Odaklanma Dairesel Grafik
+      new ApexCharts(document.querySelector("#focus-circle-chart"), {
+        series: [85],
+        chart: { type: 'radialBar', height: 250, sparkline: { enabled: true } },
+        colors: ['#8b5cf6'],
+        plotOptions: {
+          radialBar: {
+            startAngle: -135,
+            endAngle: 135,
+            hollow: { size: '70%' },
+            track: { background: "rgba(255,255,255,0.05)", strokeWidth: '67%' },
+            dataLabels: {
+              name: { show: false },
+              value: { show: false }
+            }
+          }
+        },
+        stroke: { lineCap: 'round' }
+      }).render();
+    });
+
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+  </script>
+</body>
+</html>
