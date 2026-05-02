@@ -125,27 +125,22 @@
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  
   <script src="../config.js"></script>
+  <script src="./shared/auth.js?v=20260502"></script> 
   <script src="./shared/sidebar.js?v=20260502"></script>
+  
   <script type="module" src="../js/pages/member.js?v=20260502"></script>
 
-  <script type="module">
-    import { logout } from "../js/lib/auth.js";
-
-    // Global fonksiyonlar
-    window.logoutApp = async () => {
-        if(confirm("Çıkış yapmak istediğinize emin misiniz?")) {
-            await logout();
-        }
-    };
-
+  <script>
+    // Sidebar ve Logout için global köprüler
     window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+    window.logoutApp = function() { if(typeof window.logout === 'function') window.logout(); };
 
     // Yükleme ekranı animasyon metinleri
     const statusTexts = ["Profil verileri doğrulanıyor...", "Yetkiler kontrol ediliyor...", "Şifrelenmiş tünel kuruluyor...", "Projeler senkronize ediliyor..."];
     let textIdx = 0;
     const textEl = document.getElementById("dynamic-loader-text");
-    const terminalEl = document.getElementById("terminal-logs");
     
     const textInterval = setInterval(() => {
       if(!textEl) return;
@@ -155,21 +150,11 @@
         textEl.style.opacity = "1"; 
         textIdx = (textIdx + 1) % statusTexts.length; 
       }, 300);
-      
-      const log = document.createElement("div");
-      log.textContent = `> FETCHING_ACCESS_DATA_${Math.floor(Math.random()*9999)}... OK`;
-      terminalEl.appendChild(log);
-      if(terminalEl.children.length > 5) terminalEl.removeChild(terminalEl.firstChild);
     }, 1500);
 
-    // Sayfa hazır olduğunda interval'i temizle (member.js overlay'i kapatacak)
+    // Overlay kapatma işlemini member.js tetikleyecek
     window.addEventListener('load', () => {
-        // Overlay'i üreten süreleri member.js yönettiği için burada sadece log atıyoruz
-        const finalLog = document.createElement("div");
-        finalLog.textContent = `> SYSTEM_READY... ENJOY`;
-        finalLog.style.color = "#4ade80";
-        if(terminalEl) terminalEl.appendChild(finalLog);
-        setTimeout(() => clearInterval(textInterval), 2000);
+        setTimeout(() => clearInterval(textInterval), 5000);
     });
   </script>
 </body>
