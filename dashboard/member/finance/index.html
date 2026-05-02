@@ -11,56 +11,23 @@
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
 
   <style>
-    /* Sayfaya özel Glassmorphism dokunuşları */
+    /* Finans Sayfasına Özel Ek Stiller */
     .finance-header-grid {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr;
       gap: 24px;
       margin-bottom: 30px;
     }
-
     .portfolio-main-card {
       background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%) !important;
       border: 1px solid rgba(139, 92, 246, 0.3) !important;
     }
-
-    .asset-distribution-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding: 20px 0;
-    }
-
-    .asset-legend {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.85rem;
-      color: #a1a1aa;
-    }
-
+    .asset-distribution-box { display: flex; align-items: center; justify-content: space-around; padding: 20px 0; }
+    .asset-legend { display: flex; flex-direction: column; gap: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: #a1a1aa; }
     .dot { width: 8px; height: 8px; border-radius: 50%; }
-
-    /* Progress bar stilleri */
-    .progress-container {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      margin: 15px 0;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--success);
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
-    }
+    .progress-container { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }
+    .progress-fill { height: 100%; background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
   </style>
 </head>
 <body>
@@ -70,24 +37,31 @@
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
     <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item">
-        <i class="fas fa-chevron-left"></i> <span>Genel Bakış</span>
-      </a>
-      <div class="tk-nav-section"><span>Finans Paneli</span></div>
-      <a href="#" class="menu-item active"><i class="fas fa-chart-pie"></i> <span>Varlıklarım</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-wallet"></i> <span>Bütçe Takibi</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-piggy-bank"></i> <span>Birikimler</span></a>
+      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+      
+      <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
+      <div id="tk-sidebar-projects"></div>
+      
+      <div class="tk-nav-section"><span>Keşfet</span></div>
+      <div id="explore-services-menu"></div>
     </nav>
+    
+    <div class="menu-spacer"></div>
+    
     <div class="sidebar-footer">
-        <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
+      <a href="#" onclick="window.logoutApp(event)" class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
+      </a>
+      <button class="btn-collapse" onclick="window.toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
     </div>
   </aside>
 
   <main class="main-content">
     <header class="top-bar">
       <div class="page-info">
-        <h2 style="font-family: 'Inter Tight';">Yatırım & Finans</h2>
+        <h2>Yatırım & Finans</h2>
       </div>
+      
       <div class="user-profile">
         <span id="user-name-display">Yükleniyor...</span>
         <div class="avatar" id="user-avatar">U</div>
@@ -95,7 +69,6 @@
     </header>
 
     <div class="content-scroll">
-      
       <div class="finance-header-grid">
         <div class="dashboard-card portfolio-main-card">
           <div class="card-header">
@@ -133,44 +106,23 @@
               <div class="legend-item"><div class="dot" style="background:#6366f1;"></div> Hisse Senedi (%45)</div>
               <div class="legend-item"><div class="dot" style="background:#a855f7;"></div> Fon (%25)</div>
               <div class="legend-item"><div class="dot" style="background:#f59e0b;"></div> Altın (%15)</div>
-              <div class="legend-item"><div class="dot" style="background:#10b981;"></div> Nakit (%10)</div>
             </div>
           </div>
         </div>
 
         <div class="dashboard-card">
-          <div class="card-header">
-            <h3>Yaklaşan Ödemeler</h3>
-          </div>
+          <div class="card-header"><h3>Yaklaşan Ödemeler</h3></div>
           <table class="data-table">
             <thead>
-              <tr>
-                <th>Açıklama</th>
-                <th>Tarih</th>
-                <th>Tutar</th>
-              </tr>
+              <tr><th>Açıklama</th><th>Tarih</th><th>Tutar</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Kredi Kartı Ekstresi</td>
-                <td>22 Mayıs</td>
-                <td style="color: #fff;">₺14.250</td>
-              </tr>
-              <tr>
-                <td>Ev Kirası</td>
-                <td>01 Haziran</td>
-                <td style="color: #fff;">₺18.000</td>
-              </tr>
-              <tr>
-                <td>İnternet Faturası</td>
-                <td>05 Haziran</td>
-                <td style="color: #fff;">₺340</td>
-              </tr>
+              <tr><td>Kredi Kartı</td><td>22 Mayıs</td><td style="color:#fff">₺14.250</td></tr>
+              <tr><td>Ev Kirası</td><td>01 Haz</td><td style="color:#fff">₺18.000</td></tr>
             </tbody>
           </table>
         </div>
       </div>
-
     </div>
   </main>
 
@@ -178,33 +130,32 @@
   
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="../../config.js"></script>
-  <script src="../../shared/auth.js?v=999"></script>
-  <script src="../../shared/sidebar.js?v=999"></script>
+  
+  <script src="/dashboard/config.js"></script>
+  <script src="/dashboard/shared/auth.js?v=999"></script>
+  <script src="/dashboard/shared/sidebar.js?v=999"></script>
 
   <script>
-    // Sidebar Toggle
+    // Ortak Fonksiyonlar
     window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
     window.logoutApp = function(e) { if(e) e.preventDefault(); window.logout(); };
 
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Portföy Çizgi Grafik (Küçük)
+      // Grafik 1
       new ApexCharts(document.querySelector("#chart-portfolio-main"), {
         series: [{ data: [310, 340, 335, 360, 380, 385] }],
         chart: { type: 'line', height: 60, sparkline: { enabled: true } },
-        stroke: { curve: 'smooth', width: 3, colors: ['#fff'] },
-        tooltip: { enabled: false }
+        stroke: { curve: 'smooth', width: 3, colors: ['#6366f1'] }
       }).render();
 
-      // 2. Varlık Donut Grafik
+      // Grafik 2
       new ApexCharts(document.querySelector("#chart-assets-donut"), {
-        series: [45, 25, 15, 10, 5],
-        chart: { type: 'donut', height: 200 },
-        labels: ['Hisse', 'Fon', 'Altın', 'Nakit', 'Kripto'],
-        colors: ['#6366f1', '#a855f7', '#f59e0b', '#10b981', '#ef4444'],
+        series: [45, 25, 15],
+        chart: { type: 'donut', height: 180 },
+        colors: ['#6366f1', '#a855f7', '#f59e0b'],
         stroke: { show: false },
         legend: { show: false },
-        plotOptions: { pie: { donut: { size: '75%', labels: { show: false } } } }
+        plotOptions: { pie: { donut: { size: '75%' } } }
       }).render();
     });
   </script>
