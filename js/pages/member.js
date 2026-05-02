@@ -1,8 +1,7 @@
 // /js/pages/member.js
-
-// 1. DÜZELTME: Mutlak yol kullanılarak firebase.js çağrıldı
-import { db } from "/js/lib/firebase.js"; 
+import { db } from "/js/lib/firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { requireAuth, logout } from "/js/lib/auth.js"; // SENİN MODERN KODUNU BURAYA BAĞLADIK
 
 /**
  * UI: Metin ve Değer Güncelleme
@@ -14,15 +13,14 @@ function updateUI(id, value) {
 
 /**
  * DASHBOARD VERİ YÜKLEYİCİ
- * Firestore'dan kullanıcıya özel finans, sağlık ve proje verilerini çeker.
  */
 async function loadDashboardData(sess) {
     try {
         console.log("[member.js] Veri senkronizasyonu başlatıldı:", sess.uid);
-        const effectiveUid = sess.effectiveUid || sess.uid;
+        const effectiveUid = sess.userId || sess.uid;
 
         // 1. Profil Bilgilerini Bas
-        const name = sess.name || sess.displayName || "Kullanıcı";
+        const name = sess.name || "Kullanıcı";
         updateUI("user-name-title", name);
         updateUI("user-name-display", name);
         const avatar = document.getElementById("user-avatar");
@@ -33,9 +31,9 @@ async function loadDashboardData(sess) {
         
         if (userSnap.exists()) {
             const userDoc = userSnap.data();
-            const userData = userDoc.data || {}; // Finans, sağlık vb. istatistiklerin olduğu obje
+            const userData = userDoc.data || {};
 
-            // --- FİNANS VERİLERİ (Örnek eşleştirme) ---
+            // --- FİNANS VERİLERİ ---
             if (userData.finance) {
                 updateUI("portfolio-value", "₺" + (userData.finance.portfolio || "385.240"));
                 updateUI("monthly-savings", "₺" + (userData.finance.savings || "12.430"));
@@ -46,22 +44,14 @@ async function loadDashboardData(sess) {
                 updateUI("user-weight", userData.health.weight || "74.8");
                 updateUI("sleep-duration", userData.health.sleep || "7s 24dk");
             }
-
-            // --- PROJE YETKİLERİ ---
-            const projectAccess = userDoc.projectAccess || {};
-            const entitledIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
             
             // Eğer sidebar.js yüklüyse menüyü tetikle
             if (typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();
             }
         }
-
     } catch (err) {
         console.error("[member.js] Kritik Hata:", err);
-    } finally {
-        // Her durumda yükleme ekranını kapat
-        hideOverlay();
     }
 }
 
@@ -80,39 +70,33 @@ function hideOverlay() {
 }
 
 /**
- * INITIALIZE (BAŞLATICI)
- * Merkezi auth.js'in USER_SESSION değişkenini doldurmasını bekler.
+ * INITIALIZE (BAŞLATICI) - Yeni ve Modern Hali
  */
-function init() {
-    let attempts = 0;
-    const maxAttempts = 50; // 10 saniye limit
+async function init() {
+    try {
+        // Senin auth.js dosyan oturumu denetler (Yoksa zaten login'e yönlendirir)
+        const session = await requireAuth();
 
-    const checkSession = setInterval(() => {
-        attempts++;
-
-        if (window.USER_SESSION) {
-            clearInterval(checkSession);
-            loadDashboardData(window.USER_SESSION);
+        if (session) {
+            // Oturum varsa dashboard verilerini yükle
+            await loadDashboardData(session);
         }
-
-        if (attempts >= maxAttempts) {
-            clearInterval(checkSession);
-            console.warn("[member.js] Oturum zaman aşımına uğradı.");
-            const loaderText = document.getElementById("dynamic-loader-text");
-            if (loaderText) loaderText.textContent = "Oturum verisi alınamadı, lütfen sayfayı yenileyin.";
-            
-            // Kullanıcıyı çok bekletmemek için overlay'i 10sn sonra zorla kapatabiliriz
-            // hideOverlay(); 
-        }
-    }, 200);
+    } catch (err) {
+        console.error("[member.js] Başlatma Hatası:", err);
+        const loaderText = document.getElementById("dynamic-loader-text");
+        if (loaderText) loaderText.textContent = "Bir hata oluştu, lütfen sayfayı yenileyin.";
+    } finally {
+        // Her şey bittiğinde yükleme ekranını KALDIR
+        hideOverlay();
+    }
 }
 
 // Global Fonksiyonları window'a bağla
 window.toggleSidebar = () => document.body.classList.toggle("sidebar-closed");
-window.logoutApp = (e) => { 
+window.logoutApp = async (e) => { 
     if(e) e.preventDefault(); 
-    if(window.logout) window.logout(); 
+    await logout(); // lib/auth.js içindeki logout fonksiyonunu tetikler
 };
 
-// Start
+// Sistemi Başlat
 init();
