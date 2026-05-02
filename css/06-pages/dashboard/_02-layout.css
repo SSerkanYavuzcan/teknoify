@@ -1,12 +1,104 @@
+/* _02-layout.css - Teknoify Super-App Layout Engine */
+
+:root {
+    /* Görseldeki modern renk paleti */
+    --layout-bg: #09090b; /* Saf siyaha yakın derin gri */
+    --card-bg: rgba(24, 24, 27, 0.6);
+    --sidebar-w: 260px;
+    --header-h: 70px;
+    --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
 /* 1. YÜZEN AÇMA BUTONU */
 #floating-toggle-btn {
-    position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px;
-    background: #2f3349; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%;
-    z-index: 10001; display: flex; justify-content: center; align-items: center;
-    cursor: pointer; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    opacity: 0; visibility: hidden; transform: scale(0.8);
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    width: 56px;
+    height: 56px;
+    background: #6366f1; /* Modern Indigo */
+    color: #fff;
+    border: none;
+    border-radius: 18px; /* Tam yuvarlak yerine modern karemsi yuvarlak */
+    z-index: 10001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.4rem;
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.8);
+    transition: var(--transition);
 }
-#floating-toggle-btn:hover { background: var(--primary); transform: scale(1.1); border-color: var(--primary); }
-body.sidebar-closed #floating-toggle-btn { opacity: 1; visibility: visible; transform: scale(1); }
 
+#floating-toggle-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    background: #4f46e5;
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6);
+}
+
+/* Sidebar kapalıyken butonu göster */
+body.sidebar-closed #floating-toggle-btn {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* 2. ANA İÇERİK YERLEŞİMİ */
+.main-content {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+    background-color: var(--layout-bg);
+    transition: var(--transition);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar kapalıyken içeriği genişlet */
+body.sidebar-closed .main-content {
+    margin-left: 0;
+}
+
+/* 3. KAYDIRILABİLİR İÇERİK ALANI */
+.content-scroll {
+    flex: 1;
+    padding: 30px;
+    max-width: 1600px; /* Çok geniş ekranlarda içeriğin dağılmasını önler */
+    margin: 0 auto;
+    width: 100%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+/* 4. CUSTOM SCROLLBAR (Görseldeki gibi ince ve şık) */
+.content-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.content-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.content-scroll::-webkit-scrollbar-thumb {
+    background: rgba(113, 113, 122, 0.2);
+    border-radius: 10px;
+}
+
+.content-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(113, 113, 122, 0.4);
+}
+
+/* 5. RESPONSIVE DÜZENLEMELER */
+@media (max-width: 1024px) {
+    .main-content {
+        margin-left: 0;
+    }
+    #floating-toggle-btn {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+    }
+}
