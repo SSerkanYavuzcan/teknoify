@@ -402,20 +402,16 @@
     });
   }
 
-  // ========================================================================
-  // GLOBAL ÇIKIŞ MODAL SİSTEMİ
-  // ========================================================================
   document.addEventListener("DOMContentLoaded", () => {
     if (!document.getElementById("tk-logout-modal")) {
       const modalHTML = `
-        <div id="tk-logout-modal" class="tk-modal-overlay">
-          <div class="tk-modal">
-            <i class="fas fa-sign-out-alt tk-modal-icon"></i>
-            <div class="tk-modal-title">Çıkış Yap</div>
-            <div class="tk-modal-text">Hesabınızdan çıkış yapmak istediğinize emin misiniz?</div>
-            <div class="tk-modal-actions">
-              <button class="tk-btn-cancel" onclick="window.closeLogoutModal()">İptal</button>
-              <button class="tk-btn-confirm" onclick="window.executeLogout()"><i class="fas fa-power-off"></i> Çıkış</button>
+        <div id="tk-logout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+          <div style="background: #18181b; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #3f3f46; color: white; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <h3 style="margin-top: 0; font-size: 1.5rem;">Çıkış Yap</h3>
+            <p style="color: #a1a1aa; margin-bottom: 24px;">Hesabınızdan veya taklit modundan çıkış yapmak istediğinize emin misiniz?</p>
+            <div style="display: flex; justify-content: center; gap: 12px;">
+              <button onclick="window.closeLogoutModal()" style="padding: 10px 20px; background: transparent; border: 1px solid #3f3f46; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;">İptal</button>
+              <button onclick="window.executeLogout()" style="padding: 10px 20px; background: #ef4444; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fas fa-power-off"></i> Çıkış Yap</button>
             </div>
           </div>
         </div>
@@ -424,14 +420,15 @@
     }
   });
 
-  window.logout = function () {
+  window.logout = function (e) {
+    if (e) e.preventDefault();
     const modal = document.getElementById("tk-logout-modal");
-    if (modal) modal.classList.add("show");
+    if (modal) modal.style.display = "flex"; // CSS class yerine doğrudan göster
   };
 
   window.closeLogoutModal = function () {
     const modal = document.getElementById("tk-logout-modal");
-    if (modal) modal.classList.remove("show");
+    if (modal) modal.style.display = "none";
   };
 
   window.executeLogout = function () {
