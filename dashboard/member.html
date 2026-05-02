@@ -195,12 +195,81 @@
           </div>
         </section>
 
+        <section class="dashboard-card" onclick="location.href='/member/productivity/index.html'">
+          <div class="card-header">
+            <h3><i class="fas fa-bolt" style="color:#a855f7"></i> Verimlilik & Odak</h3>
+            <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
+          </div>
+          
+          <div class="card-body-content">
+            <div class="mini-stats-row">
+              <div class="stat-box">
+                <span>Haftalık Odak</span>
+                <strong>32s 15dk</strong>
+                <span class="trend-up"><i class="fas fa-arrow-up"></i> %12</span>
+              </div>
+              <div class="stat-box">
+                <span>Görevler</span>
+                <strong>48 <small style="font-size:12px; opacity:0.5;">adet</small></strong>
+                <span class="trend-up"><i class="fas fa-check"></i> Tamamlandı</span>
+              </div>
+            </div>
+
+            <div class="progress-group">
+              <div class="prog-item">
+                <label>Proje A İlerlemesi (%85)</label>
+                <div class="prog-bar-bg"><div class="prog-bar-fill" style="width: 85%; background: #a855f7;"></div></div>
+              </div>
+              <div class="prog-item">
+                <label>Aylık Hedef (%45)</label>
+                <div class="prog-bar-bg"><div class="prog-bar-fill" style="width: 45%; background: #6366f1;"></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="dashboard-card" onclick="location.href='/member/subscriptions/index.html'">
+          <div class="card-header">
+            <h3><i class="fas fa-sync-alt" style="color:#f59e0b"></i> Abonelikler</h3>
+            <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
+          </div>
+          
+          <div class="card-body-content">
+            <div class="mini-stats-row">
+              <div class="stat-box">
+                <span>Aylık Gider</span>
+                <strong>₺1.450</strong>
+                <span class="trend-up" style="color:#ef4444;"><i class="fas fa-arrow-up"></i> +₺120</span>
+              </div>
+              <div class="stat-box">
+                <span>Aktif</span>
+                <strong>8 <small style="font-size:12px; opacity:0.5;">servis</small></strong>
+                <span class="trend-up" style="color:#71717a;"><i class="fas fa-minus"></i> Değişmedi</span>
+              </div>
+            </div>
+
+            <div class="visual-info" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+              <div class="data-pill" style="width: 100%; justify-content: space-between;">
+                <span style="display:flex; align-items:center; gap:8px;"><i class="fab fa-netflix" style="color:#E50914"></i> Netflix</span> 
+                <span>₺229.99</span>
+              </div>
+              <div class="data-pill" style="width: 100%; justify-content: space-between;">
+                <span style="display:flex; align-items:center; gap:8px;"><i class="fab fa-spotify" style="color:#1DB954"></i> Spotify</span> 
+                <span>₺59.99</span>
+              </div>
+              <div class="data-pill" style="width: 100%; justify-content: space-between;">
+                <span style="display:flex; align-items:center; gap:8px;"><i class="fas fa-robot" style="color:#10b981"></i> ChatGPT Plus</span> 
+                <span>₺650.00</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
     </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  
   <script src="/config.js"></script>
 
   <script type="module" src="/js/lib/firebase.js"></script>
@@ -208,6 +277,7 @@
   <script type="module" src="/js/pages/member.js?v=999"></script>
 
   <script>
+    // Global fonksiyonlar
     window.logoutApp = function(e) { 
         if(e) e.preventDefault(); 
         if(window.logout) window.logout(); 
@@ -217,8 +287,36 @@
         document.body.classList.toggle("sidebar-closed"); 
     };
 
+    // SİDEBAR MENÜ VERİLERİ VE ÇİZİM FONKSİYONU
+    window.TK_SERVICES_CONFIG = [
+      { id: "bim_faz_2", title: "API Service", icon: "fas fa-bolt", promoUrl: "bim-istekleri/demo.html" },
+      { id: "market_analysis", title: "Pazar Analizi", icon: "fas fa-chart-line", promoUrl: "demo/market-analysis/index.html" },
+      { id: "web_scraping", title: "Web Scraping", icon: "fas fa-spider", promoUrl: "web-scraping/quickcommerce/index.html" },
+      { id: "geo_intelligence", title: "Geo Intelligence", icon: "fas fa-map-marked-alt", promoUrl: "geo-intelligence/index.html" }
+    ];
+
+    window.TK_RENDER_SIDEBAR = function() {
+      const exploreContainer = document.getElementById("explore-services-menu");
+      if (!exploreContainer) return;
+      
+      let html = '';
+      window.TK_SERVICES_CONFIG.forEach(s => {
+        html += `
+          <a href="/${s.promoUrl}" class="menu-item" style="opacity: 0.7;">
+            <i class="${s.icon}"></i> <span>${s.title}</span>
+            <i class="fas fa-lock" style="margin-left:auto; font-size:0.75rem; opacity:0.5; color:#f97316;"></i>
+          </a>
+        `;
+      });
+      exploreContainer.innerHTML = html;
+    };
+
+    // DOM yüklendiğinde çalışacaklar
     document.addEventListener('DOMContentLoaded', () => {
-      // Finans Teknik Özet Grafiği (ApexCharts)
+      // 1. Sidebar'ı Çiz
+      window.TK_RENDER_SIDEBAR();
+
+      // 2. Finans Teknik Özet Grafiği (ApexCharts)
       if(document.querySelector("#finance-summary-chart")) {
           new ApexCharts(document.querySelector("#finance-summary-chart"), {
             series: [{ name: 'Portföy', data: [310, 330, 325, 360, 345, 385] }],
