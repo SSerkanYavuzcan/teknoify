@@ -69,15 +69,14 @@ function hideOverlay() {
     }
 }
 
-/**
- * INITIALIZE (BAŞLATICI) - Yeni ve Modern Hali
- */
 async function init() {
     try {
-        // Senin auth.js dosyan oturumu denetler (Yoksa zaten login'e yönlendirir)
         const session = await requireAuth();
 
         if (session) {
+            // BURASI EKLENDİ: Sidebar'ın yetkileri okuyabilmesi için oturumu globale kaydet
+            window.USER_SESSION = session; 
+            
             // Oturum varsa dashboard verilerini yükle
             await loadDashboardData(session);
         }
