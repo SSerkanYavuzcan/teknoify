@@ -233,6 +233,10 @@
         if (user) {
             currentUserId = user.uid;
             
+            // HATA BURADA ÇÖZÜLDÜ: Grafikleri veriyi çekmeden ÖNCE başlatıyoruz ki,
+            // updateUI fonksiyonu çalıştığında boşlukta çökmesin.
+            initCharts();
+            
             try {
                 const userRef = doc(db, "users", user.uid);
                 const snap = await getDoc(userRef);
@@ -252,14 +256,12 @@
                     }
                 }
 
-                // Profil İsmini Güncelleme (Hata Düzeltildi: Try bloğunun içine/dışına sağlama alındı)
                 document.getElementById("user-name-display").textContent = displayName;
                 document.getElementById("user-avatar").textContent = displayName.charAt(0).toUpperCase();
 
             } catch (error) {
                 console.error("Kullanıcı verisi çekilemedi veya işlenemedi:", error);
-                // Çökse bile en azından mail adresini basalım
-                const fallbackName = user.email.split('@')[0];
+                const fallbackName = user.displayName || user.email.split('@')[0];
                 document.getElementById("user-name-display").textContent = fallbackName;
                 document.getElementById("user-avatar").textContent = fallbackName.charAt(0).toUpperCase();
             }
@@ -268,8 +270,6 @@
             if(typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();
             }
-
-            initCharts();
             
             const loader = document.getElementById("loading-overlay");
             if (loader) {
@@ -302,16 +302,14 @@
         assetChart.render();
     }
 
-    // ARAYÜZÜ (UI) GÜNCELLEYEN FONKSİYON (GÜVENLİK AĞI EKLENDİ)
+    // ARAYÜZÜ (UI) GÜNCELLEYEN FONKSİYON
     function updateUI(data) {
         if(!data) return;
 
-        // Number'a çevirerek veya 0 kabul ederek toLocaleString çökmesini kesin engelliyoruz
         const totalValue = Number(data.totalValue) || 0;
         const savings = Number(data.savings) || 0;
         const target = Number(data.target) || 0;
         
-        // Assets objesi hiç yoksa hata vermemesi için
         const assets = data.assets || {};
         const stocks = Number(assets.stocks) || 0;
         const funds = Number(assets.funds) || 0;
