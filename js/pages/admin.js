@@ -15,6 +15,15 @@ import {
 
 const IMPERSONATE_KEY = "teknoify_impersonate_uid";
 
+// HTML'deki inatçı "Değişiklikleri Kaydet" butonunu kesin olarak yok eden CSS Kuralı
+const hideSaveBtnStyle = document.createElement("style");
+hideSaveBtnStyle.innerHTML = `
+    #save-btn, #save-access-btn, .admin-save-btn, #admin-actions {
+        display: none !important;
+    }
+`;
+document.head.appendChild(hideSaveBtnStyle);
+
 function pickTbody() {
   return (
     qs("#admin-user-table-body") ||
@@ -338,32 +347,32 @@ function createUserRow({ user, projects, session }) {
   const profile = user.profile || {};
 
   const tdUser = createEl("td", { className: "admin-user-cell" });
-  tdUser.style.cssText = "vertical-align: middle; text-align: center;";
+  tdUser.style.cssText = "vertical-align: middle; text-align: center; padding: 16px 8px;";
   const fullName = profile.fullName || user.fullName || user.name || (profile.email ? profile.email.split("@")[0] : "İsimsiz Kullanıcı");
   const email = profile.email || user.email || "Email belirtilmemiş";
   tdUser.innerHTML = `<div class="admin-user-name"><strong>${fullName}</strong> <br><span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">${user.id}</span></div><div class="admin-user-meta" style="color: #a1a1aa; font-size: 0.85em; margin-top: 4px;">${email}</div>`;
 
   const tdCompany = createEl("td", { className: "admin-company-cell" });
-  tdCompany.style.cssText = "vertical-align: middle; text-align: center;";
+  tdCompany.style.cssText = "vertical-align: middle; text-align: center; padding: 16px 8px;";
   tdCompany.innerHTML = `<span style="color: #e4e4e7; font-size: 0.9em; font-weight: 500;">${profile.companyName || "-"}</span>`;
 
   const tdRole = createEl("td", { className: "admin-role-cell" });
-  tdRole.style.cssText = "vertical-align: middle; text-align: center;";
+  tdRole.style.cssText = "vertical-align: middle; text-align: center; padding: 16px 8px;";
   const roleType = (typeof user.role === 'object' && user.role !== null) ? (user.role.type || 'member') : (user.role || 'member');
   const roleStatus = (typeof user.role === 'object' && user.role !== null) ? (user.role.status || 'active') : (user.status || 'active');
   const capRole = roleType.charAt(0).toUpperCase() + roleType.slice(1);
   const capStatus = roleStatus.charAt(0).toUpperCase() + roleStatus.slice(1);
   tdRole.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-          <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500;">${capRole}</span>
-          <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500;">${capStatus}</span>
+          <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500;">${capRole}</span>
+          <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; display: inline-block; width: fit-content; font-weight: 500;">${capStatus}</span>
       </div>
   `;
 
   const tdProjects = createEl("td", { className: "admin-services-cell" });
-  tdProjects.style.cssText = "vertical-align: middle; text-align: center;";
+  tdProjects.style.cssText = "vertical-align: middle; text-align: center; padding: 16px 8px;";
   const wrap = createEl("div");
-  wrap.style.cssText = "display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;";
+  wrap.style.cssText = "display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;";
   
   const accessObj = user.projectAccess || {};
   const allowedIds = Object.keys(accessObj).filter(k => accessObj[k] === true);
@@ -381,26 +390,26 @@ function createUserRow({ user, projects, session }) {
   tdProjects.append(wrap);
 
   const tdImp = createEl("td", { className: "admin-imp-cell" });
-  tdImp.style.cssText = "vertical-align: middle; text-align: center;";
+  tdImp.style.cssText = "vertical-align: middle; text-align: center; padding: 16px 8px;";
   const impBtn = createEl("button", { text: "Kullanıcı Olarak Gör" });
-  impBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #6366f1 !important; color: #ffffff !important; display: inline-block;";
+  impBtn.style.cssText = "padding: 8px 16px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #6366f1 !important; color: #ffffff !important; display: inline-block;";
   impBtn.disabled = !session.isAdmin;
   impBtn.addEventListener("click", () => goToUserAs(user.id));
   tdImp.append(impBtn);
 
   const tdActions = createEl("td", { className: "admin-actions-cell" });
-  tdActions.style.cssText = "vertical-align: middle; text-align: center;";
+  tdActions.style.cssText = "vertical-align: middle; text-align: center; padding: 16px 8px;";
   const actionsWrap = createEl("div");
   actionsWrap.style.cssText = "display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;";
 
   const settingsBtn = createEl("button", { text: "Kullanıcı Ayarları" });
-  settingsBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316 !important; color: #ffffff !important; display: inline-block; transition: 0.2s;";
+  settingsBtn.style.cssText = "padding: 8px 16px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316 !important; color: #ffffff !important; display: inline-block; transition: 0.2s;";
   settingsBtn.onmouseover = () => settingsBtn.style.background = "#ea580c !important";
   settingsBtn.onmouseout = () => settingsBtn.style.background = "#f97316 !important";
   settingsBtn.addEventListener("click", () => openUserSettingsModal(user, projects));
 
   const deleteBtn = createEl("button", { text: "Kullanıcıyı Kaldır" });
-  deleteBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #ef4444 !important; color: #ffffff !important; display: inline-block; transition: 0.2s;";
+  deleteBtn.style.cssText = "padding: 8px 16px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #ef4444 !important; color: #ffffff !important; display: inline-block; transition: 0.2s;";
   deleteBtn.onmouseover = () => deleteBtn.style.background = "#dc2626 !important";
   deleteBtn.onmouseout = () => deleteBtn.style.background = "#ef4444 !important";
   deleteBtn.addEventListener("click", async () => {
@@ -408,7 +417,7 @@ function createUserRow({ user, projects, session }) {
         try {
             await deleteDoc(doc(db, "users", user.id));
             tr.remove(); 
-            window.location.reload(); // İstatistikleri güncellemek için reload
+            window.location.reload(); 
         } catch (error) {
             alert("Kullanıcı silinirken hata oluştu!");
         }
@@ -430,46 +439,44 @@ function createProjectRow(project) {
   const access = project.access || {};
 
   const tdName = createEl("td");
-  tdName.style.cssText = "vertical-align: middle; text-align: center;";
+  tdName.style.cssText = "vertical-align: middle; text-align: center; padding: 20px 10px;";
   const pName = details.name || "İsimsiz Proje";
   tdName.innerHTML = `<div class="admin-user-name"><strong>${pName}</strong> <br><span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">${project.id}</span></div>`;
 
-  // Status alanında boşluklar ve hizalama düzeltildi
+  // Status Sütununda Satır Yüksekliği (Padding) ve Etiketler Arası Boşluk (Gap) Artırıldı
   const tdStatus = createEl("td");
-  tdStatus.style.cssText = "vertical-align: middle; text-align: center;";
+  tdStatus.style.cssText = "vertical-align: middle; text-align: center; padding: 20px 10px;";
   
   const isActiveText = config.isActive === true ? "Active" : "Inactive";
   const activeColor = config.isActive === true ? "#4ade80" : "#ef4444";
   const activeBg = config.isActive === true ? "rgba(34, 197, 94, 0.15)" : "rgba(239, 68, 68, 0.15)";
-  
   const auditStatus = audit.status ? (audit.status.charAt(0).toUpperCase() + audit.status.slice(1)) : "Bilinmiyor";
 
   tdStatus.innerHTML = `
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-          <span style="background: ${activeBg}; color: ${activeColor}; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${isActiveText}</span>
-          <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${auditStatus}</span>
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;">
+          <span style="background: ${activeBg}; color: ${activeColor}; padding: 6px 14px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${isActiveText}</span>
+          <span style="background: rgba(255,255,255,0.1); color: #e4e4e7; padding: 6px 14px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${auditStatus}</span>
       </div>
   `;
 
   const tdAccess = createEl("td");
-  tdAccess.style.cssText = "vertical-align: middle; text-align: center;";
+  tdAccess.style.cssText = "vertical-align: middle; text-align: center; padding: 20px 10px;";
   const minRole = access.minimumRole ? (access.minimumRole.charAt(0).toUpperCase() + access.minimumRole.slice(1)) : "Member";
-  tdAccess.innerHTML = `<span style="background: rgba(168, 85, 247, 0.15); color: #c084fc; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${minRole}</span>`;
+  tdAccess.innerHTML = `<span style="background: rgba(168, 85, 247, 0.15); color: #c084fc; padding: 6px 14px; border-radius: 6px; font-size: 0.85em; display: inline-block; font-weight: 500;">${minRole}</span>`;
 
   const tdActions = createEl("td");
-  tdActions.style.cssText = "vertical-align: middle; text-align: center;";
-  
+  tdActions.style.cssText = "vertical-align: middle; text-align: center; padding: 20px 10px;";
   const actionsWrap = createEl("div");
-  actionsWrap.style.cssText = "display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;";
+  actionsWrap.style.cssText = "display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;";
 
   const settingsBtn = createEl("button", { text: "Proje Ayarları" });
-  settingsBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316 !important; color: #ffffff !important; display: inline-block; transition: 0.2s;";
+  settingsBtn.style.cssText = "padding: 8px 16px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #f97316 !important; color: #ffffff !important; display: inline-block; transition: 0.2s;";
   settingsBtn.onmouseover = () => settingsBtn.style.background = "#ea580c !important";
   settingsBtn.onmouseout = () => settingsBtn.style.background = "#f97316 !important";
   settingsBtn.addEventListener("click", () => openProjectSettingsModal(project));
 
   const deleteBtn = createEl("button", { text: "Projeyi Kaldır" });
-  deleteBtn.style.cssText = "padding: 6px 12px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #ef4444 !important; color: #ffffff !important; display: inline-block; transition: 0.2s;";
+  deleteBtn.style.cssText = "padding: 8px 16px; border-radius: 6px; font-weight: 500; border: none; cursor: pointer; background: #ef4444 !important; color: #ffffff !important; display: inline-block; transition: 0.2s;";
   deleteBtn.onmouseover = () => deleteBtn.style.background = "#dc2626 !important";
   deleteBtn.onmouseout = () => deleteBtn.style.background = "#ef4444 !important";
   deleteBtn.addEventListener("click", async () => {
@@ -477,7 +484,7 @@ function createProjectRow(project) {
         try {
             await deleteDoc(doc(db, "projects", project.id));
             tr.remove(); 
-            window.location.reload(); // İstatistikleri güncellemek için reload
+            window.location.reload(); 
         } catch (error) {
             alert("Proje silinirken hata oluştu!");
         }
@@ -508,6 +515,11 @@ function createKPICard(title, value, color) {
 // ----------------------------------------------------
 async function init() {
   try {
+    // Sayfa içindeki var olan tüm kaydet butonlarını kodla temizleme
+    document.querySelectorAll("button").forEach(b => {
+        if (b.innerText.trim() === "Değişiklikleri Kaydet") b.style.display = "none";
+    });
+
     const session = await requireAuth();
     if (!session) return;
 
@@ -521,7 +533,6 @@ async function init() {
 
     renderImpersonationBanner(session);
 
-    // Verileri Bir Kere Çek
     const allUsers = await fetchUsers();
     
     const projectsSnap = await getDocs(collection(db, "projects"));
@@ -536,7 +547,6 @@ async function init() {
         const userTable = userTbody.parentElement;
         const userContainer = userTable.parentElement;
 
-        // Kullanıcı Tablosu Thead Düzenlemesi
         let userThead = userTable.querySelector("thead");
         if (!userThead) {
             userThead = createEl("thead");
@@ -553,7 +563,6 @@ async function init() {
             </tr>
         `;
 
-        // Kullanıcı KPI Kartları
         const activeU = allUsers.filter(u => (u.role?.status || u.status) === 'active').length;
         const memberU = allUsers.filter(u => (u.role?.type || u.role) === 'member').length;
         const premiumU = allUsers.filter(u => (u.role?.type || u.role) === 'premium').length;
@@ -568,11 +577,9 @@ async function init() {
         `;
         userContainer.insertBefore(userKpiWrap, userTable);
 
-        // Kullanıcı Filtre Alanı
         const userFilterWrap = createEl("div");
         userFilterWrap.style.cssText = "display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid #3f3f46;";
         
-        // Proje Select Opsiyonlarını Dinamik Üretme
         let projOptions = `<option value="">Tüm Projeler</option>`;
         allProjects.forEach(p => {
             projOptions += `<option value="${p.id}">${p.details?.name || p.id}</option>`;
@@ -598,7 +605,6 @@ async function init() {
         `;
         userContainer.insertBefore(userFilterWrap, userTable);
 
-        // Kullanıcıları Render Etme Fonksiyonu
         const renderUsers = () => {
             const sText = qs("#uf-search").value.toLowerCase();
             const sRole = qs("#uf-role").value;
@@ -636,30 +642,32 @@ async function init() {
             });
         };
 
-        // Kullanıcı Filtre Event Listenerları
         qs("#uf-search").addEventListener("input", renderUsers);
         qs("#uf-role").addEventListener("change", renderUsers);
         qs("#uf-status").addEventListener("change", renderUsers);
         qs("#uf-project").addEventListener("change", renderUsers);
 
-        // İlk Yükleme
         renderUsers();
         
 
         // ----------------------------------------------------
         // 2. PROJE TABLOSU ALANI
         // ----------------------------------------------------
-        // Proje Başlığı (Kullanıcı başlığı ile BİREBİR aynı tasarım)
+        // Araya boşluk ve ayırıcı çizgi atarak Kullanıcı tablosundan tamamen ayırdık
+        const separator = createEl("div");
+        separator.style.cssText = "height: 1px; background: #3f3f46; margin: 80px 0 40px 0; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.5);";
+        userContainer.appendChild(separator);
+
+        // Başlıklar Kullanıcı tablosuyla birebir aynı tasarıma getirildi
         const projectSectionHeader = createEl("div");
         projectSectionHeader.innerHTML = `
-            <div style="margin-top: 60px; margin-bottom: 24px;">
+            <div style="margin-bottom: 24px;">
                 <h1 style="font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; color: white;">Proje Erişim Yönetimi</h1>
                 <p style="color: #9ca3af; font-size: 1rem; margin: 0;">Sistemdeki tüm projeleri ve erişim rollerini yönetin.</p>
             </div>
         `;
         userContainer.appendChild(projectSectionHeader);
 
-        // Proje KPI Kartları
         const activeP = allProjects.filter(p => p.config?.isActive === true).length;
         const prodP = allProjects.filter(p => (p.audit?.status || '').toLowerCase() === 'production').length;
         const testP = allProjects.filter(p => (p.audit?.status || '').toLowerCase() === 'test').length;
@@ -676,7 +684,6 @@ async function init() {
         `;
         userContainer.appendChild(projKpiWrap);
 
-        // Proje Filtre Alanı
         const projFilterWrap = createEl("div");
         projFilterWrap.style.cssText = "display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid #3f3f46;";
         
@@ -702,7 +709,6 @@ async function init() {
         `;
         userContainer.appendChild(projFilterWrap);
 
-        // Proje Tablosu İskeleti
         const projectTableWrap = createEl("div", { className: userTable.parentElement.className }); 
         projectTableWrap.innerHTML = `
             <table style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -721,7 +727,6 @@ async function init() {
         userContainer.appendChild(projectTableWrap);
         const projectTbody = qs("#admin-project-table-body");
 
-        // Projeleri Render Etme Fonksiyonu
         const renderProjects = () => {
             const sText = qs("#pf-search").value.toLowerCase();
             const sActive = qs("#pf-active").value;
@@ -756,18 +761,13 @@ async function init() {
             });
         };
 
-        // Proje Filtre Event Listenerları
         qs("#pf-search").addEventListener("input", renderProjects);
         qs("#pf-active").addEventListener("change", renderProjects);
         qs("#pf-phase").addEventListener("change", renderProjects);
         qs("#pf-role").addEventListener("change", renderProjects);
 
-        // İlk Yükleme
         renderProjects();
     }
-
-    // Gereksiz "Değişiklikleri Kaydet" Butonu Tüm DOM'dan Temizlenir
-    document.querySelectorAll(".admin-save-btn, #save-btn, #save-access-btn").forEach(btn => btn.remove());
 
   } catch (e) {
     console.error(e);
