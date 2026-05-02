@@ -18,8 +18,22 @@
       id: "market_analysis",
       title: "Pazar Analizi",
       icon: "fas fa-chart-line",
-      authUrl: "demo/market-analysis/index.html", // Şimdilik authUrl ve promoUrl aynı yere gidiyor
+      authUrl: "demo/market-analysis/index.html", 
       promoUrl: "demo/market-analysis/index.html" 
+    },
+    {
+      id: "web_scraping",
+      title: "Web Scraping",
+      icon: "fas fa-spider",
+      authUrl: "web-scraping/quickcommerce/index.html",
+      promoUrl: "web-scraping/quickcommerce/index.html"
+    },
+    {
+      id: "geo_intelligence",
+      title: "Geo Intelligence",
+      icon: "fas fa-map-marked-alt",
+      authUrl: "geo-intelligence/index.html",
+      promoUrl: "geo-intelligence/index.html"
     }
   ];
 
@@ -60,7 +74,18 @@
     return (A.endsWith("/") ? A.slice(0, -1) : A) + "/" + (B.startsWith("/") ? B.slice(1) : B);
   }
 
+  // URL'den imp_uid yakalayan gelişmiş fonksiyon
   function getImpersonatedUid() {
+    // 1. Önce URL'den bak (Admin linkle yönlendirmişse)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlUid = urlParams.get('imp_uid');
+    
+    if (urlUid) {
+        localStorage.setItem("teknoify_impersonate_uid", urlUid);
+        return urlUid;
+    }
+
+    // 2. URL'de yoksa Storage'a bak
     return (
       localStorage.getItem("teknoify_impersonate_uid") ||
       localStorage.getItem("tk_impersonate_uid") ||
@@ -86,15 +111,16 @@
   function computeDisplayName(profile, user) {
     const email = safeLower(user?.email);
     return (
-      String(profile?.name || "").trim() ||
+      String(profile?.fullName || profile?.name || "").trim() ||
       String(user?.displayName || "").trim() ||
-      (email ? email.split("@")[0] : "User")
+      (email ? email.split("@")[0] : "Kullanıcı")
     );
   }
 
   function applyUserUI(displayName) {
     const nameEl = document.getElementById("user-name-display");
     const avatarEl = document.getElementById("user-avatar");
+    
     if (nameEl) nameEl.textContent = displayName;
     if (avatarEl) avatarEl.textContent = (displayName || "U").charAt(0).toUpperCase();
   }
@@ -117,11 +143,42 @@
     window.location.href = fallback;
   }
 
+  // -------------------- YENİ: Impersonation Banner Ekleme --------------------
+  function renderImpersonationBanner() {
+    const currentImpUid = getImpersonatedUid();
+    if (!currentImpUid) return;
+
+    if (document.getElementById("imp-banner-wrap")) return;
+
+    const banner = document.createElement("div");
+    banner.id = "imp-banner-wrap";
+    banner.className = "impersonation-warning";
+    banner.style.cssText = "background: #f59e0b; color: #fff; padding: 10px; text-align: center; font-weight: 500; font-size: 0.9rem; z-index: 9999; position: sticky; top: 0; display: flex; justify-content: center; align-items: center; gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.5); width: 100%;";
+    
+    banner.innerHTML = `
+        <span><i class="fa-solid fa-user-secret"></i> Şu an farklı bir kullanıcı görünümündesiniz (Admin Modu).</span>
+        <button id="btn-end-imp" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s;">Geri Dön</button>
+    `;
+    
+    document.body.prepend(banner);
+
+    document.getElementById("btn-end-imp").onclick = () => {
+        clearImpersonation();
+        const cfg = window.PROJECT_CONFIG || { basePath: "/dashboard/" };
+        window.location.href = joinPath(cfg.basePath || "/dashboard/", "admin");
+    };
+  }
+
   // -------------------- Firestore Reads --------------------
   async function readUserProfile(uid) {
     try {
       const snap = await db.collection("users").doc(uid).get();
-      return snap.exists ? snap.data() || {} : {};
+      if(snap.exists) {
+          const data = snap.data();
+          // Eğer profil bilgileri 'profile' objesi içindeyse onu da döndür
+          return data.profile ? {...data, ...data.profile} : data;
+      }
+      return {};
     } catch {
       return {};
     }
@@ -145,25 +202,40 @@
 
     try {
       const prof = await readUserProfile(uid);
-      if (prof.role === "admin" || prof.isAdmin === true) return true;
+      if (prof.role === "admin" || prof.isAdmin === true || prof.role?.type === "admin") return true;
     } catch {}
 
     return false;
   }
 
+  // Firebase'in yeni yapısına uygun entitlement okuyucu
   async function readEntitlements(uid) {
     try {
-      const snap = await db.collection("entitlements").doc(uid).get();
-      if (!snap.exists) return { projectIds: [], allowedStoresByProject: {}, allowedStoresGlobal: [] };
+        // Yeni yapıda yetkiler doğrudan users > projectAccess içinde olabilir
+        const userDoc = await db.collection("users").doc(uid).get();
+        if(userDoc.exists) {
+            const data = userDoc.data();
+            const projectAccess = data.projectAccess || {};
+            const allowedIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
+            
+            // Eğer yeni yapıda yetki varsa onu döndür
+            if(allowedIds.length > 0) {
+                return { projectIds: allowedIds, allowedStoresByProject: {}, allowedStoresGlobal: [] };
+            }
+        }
 
-      const data = snap.data() || {};
-      const projectIds = Array.isArray(data.projectIds) ? data.projectIds : [];
-      const projectStores = data.projectStores || data.projectStoreAccess || {};
-      const allowedStoresGlobal = Array.isArray(data.allowedStores) ? data.allowedStores : [];
+        // Eski entitlements koleksiyonu fallback
+        const snap = await db.collection("entitlements").doc(uid).get();
+        if (!snap.exists) return { projectIds: [], allowedStoresByProject: {}, allowedStoresGlobal: [] };
 
-      return { projectIds, allowedStoresByProject: projectStores, allowedStoresGlobal };
+        const data = snap.data() || {};
+        const projectIds = Array.isArray(data.projectIds) ? data.projectIds : [];
+        const projectStores = data.projectStores || data.projectStoreAccess || {};
+        const allowedStoresGlobal = Array.isArray(data.allowedStores) ? data.allowedStores : [];
+
+        return { projectIds, allowedStoresByProject: projectStores, allowedStoresGlobal };
     } catch {
-      return { projectIds: [], allowedStoresByProject: {}, allowedStoresGlobal: [] };
+        return { projectIds: [], allowedStoresByProject: {}, allowedStoresGlobal: [] };
     }
   }
 
@@ -234,7 +306,7 @@
 
       try {
         const realUid = user.uid;
-        const impersonatedUid = getImpersonatedUid();
+        const impersonatedUid = getImpersonatedUid(); // URL veya LocalStorage'dan UID çeker
         const isImpersonatingRequested = Boolean(impersonatedUid && impersonatedUid !== realUid);
         const realIsAdmin = await isAdmin(realUid, user);
 
@@ -244,16 +316,16 @@
         if (realIsAdmin && isImpersonatingRequested) {
           effectiveUid = impersonatedUid;
           isImpersonating = true;
+          renderImpersonationBanner(); // Turuncu Banner'ı Çiz
         } else if (!realIsAdmin && isImpersonatingRequested) {
           clearImpersonation();
         }
 
         const effectiveProfile = await readUserProfile(effectiveUid);
         const displayName = computeDisplayName(effectiveProfile, user);
+        
         applyUserUI(displayName);
 
-        // ==============================================================
-        // DÜZELTME: Veritabanından yetkileri (entitlements) HER ZAMAN ÇEK!
         // ==============================================================
         const entitlementUid = isImpersonating ? effectiveUid : realUid;
         const ent = await readEntitlements(entitlementUid); 
@@ -295,7 +367,7 @@
           name: displayName,
           isAdmin: realIsAdmin,
           impersonating: realIsAdmin && isImpersonating,
-          projectIds: ent.projectIds || [], // BURASI ARTIK DOLU GELECEK!
+          projectIds: ent.projectIds || [], 
           allowedStores,
         };
 
