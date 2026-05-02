@@ -1,40 +1,99 @@
 /* ================================================================
-   [PROJECT] TEKNOIFY v3.3 - DASHBOARD MAIN STYLES (CLEANED)
-   [NOTE] Takvim stilleri analysis.css'e taşındı.
+   [PROJECT] TEKNOIFY v3.3 - DASHBOARD BASE STYLES
+   [CORE] Merkezi Renk Paleti ve Reset Kuralları
    ================================================================ */
 
 :root {
-    --dash-bg: #0b0e11;
-    --dash-sidebar: #14161c;
-    --dash-card: #1f232c;
-   
-    --primary: #7367f0;
-    --primary-hover: #6052d6;
-   
-    --text-main: #f3f4f6;
-    --text-muted: #a1a1aa;
-   
-    --border: rgba(255,255,255,0.08);
-   
+    /* Ana Arka Plan ve Katmanlar */
+    --dash-bg: #09090b;       /* Daha derin, modern siyah gri */
+    --dash-sidebar: #141416;   /* Sidebar derinliği */
+    --dash-card: rgba(24, 24, 27, 0.6); /* Glassmorphism için yarı şeffaf */
+    
+    /* Marka Renkleri */
+    --primary: #6366f1;        /* Indigo (Görseldeki mor tonu) */
+    --primary-hover: #4f46e5;
+    
+    /* Tipografi */
+    --text-main: #f4f4f5;
+    --text-muted: #71717a;
+    
+    /* Kenarlıklar ve Durumlar */
+    --border: rgba(63, 63, 70, 0.4);
     --success: #10b981;
-    --warning: #f97316;
+    --warning: #f59e0b;
     --danger: #ef4444;
 
     --font-main: 'Inter Tight', sans-serif;
     --font-mono: 'Fira Code', monospace;
+    
+    /* Geçiş Efektleri */
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-* { box-sizing: border-box; }
+/* 1. RESET & UNIVERSAL */
+* { 
+    box-sizing: border-box; 
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--dash-bg); /* Kesin arka plan rengi */
+}
 
 body {
     background-color: var(--dash-bg);
     color: var(--text-main);
     font-family: var(--font-main);
-    margin: 0;
     display: flex;
-    height: 100vh;
-    overflow: hidden;
+    overflow: hidden; /* Dış scroll'u engelle, content-scroll yönetsin */
 }
 
-a { text-decoration: none; color: inherit; }
+/* 2. TIPOGRAFI VE LINKLER */
+a { 
+    text-decoration: none; 
+    color: inherit; 
+    transition: var(--transition-fast);
+}
 
+ul, ol { list-style: none; padding: 0; margin: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* 3. UTILITY (YARDIMCI) SINIFLAR */
+.text-primary { color: var(--primary) !important; }
+.text-success { color: var(--success) !important; }
+.text-danger  { color: var(--danger) !important; }
+.text-muted   { color: var(--text-muted) !important; }
+
+/* Görseldeki beyaz kutu sorununu engellemek için zorunlu kural */
+section, div, article {
+    border-color: var(--border);
+}
+
+/* Scrollbar Tasarımı (Global) */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(113, 113, 122, 0.2);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
