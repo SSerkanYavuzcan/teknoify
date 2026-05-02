@@ -237,7 +237,7 @@
                 const userRef = doc(db, "users", user.uid);
                 const snap = await getDoc(userRef);
                 
-                let displayName = user.email.split('@')[0];
+                let displayName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
 
                 if (snap.exists()) {
                     const data = snap.data();
