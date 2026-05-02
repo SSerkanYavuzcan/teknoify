@@ -1,5 +1,7 @@
-// /dashboard/js/pages/member.js
-import { db } from "../lib/firebase.js";
+// /js/pages/member.js
+
+// 1. DÜZELTME: Mutlak yol kullanılarak firebase.js çağrıldı
+import { db } from "/js/lib/firebase.js"; 
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 /**
