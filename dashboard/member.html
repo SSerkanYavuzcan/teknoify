@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
-  <link rel="stylesheet" href="../css/dashboard.css?v=20260502">
+  <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
   
   <style>
     /* Member Sayfasına Özel Genişletilmiş Grid Sistemi */
@@ -106,7 +106,7 @@
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
     <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item active"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+      <a href="/member.html" class="menu-item active"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
       <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none;"><span>Projelerim</span></div>
       <div id="tk-sidebar-projects"></div>
       <div class="tk-nav-section"><span>Keşfet</span></div>
@@ -131,7 +131,7 @@
     <div class="content-scroll">
       <div class="super-grid">
         
-        <section class="dashboard-card" onclick="location.href='member/finance/index.html'">
+        <section class="dashboard-card" onclick="location.href='/member/finance/index.html'">
           <div class="card-header">
             <h3><i class="fas fa-chart-line" style="color:#6366f1"></i> Yatırım & Finans</h3>
             <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
@@ -162,7 +162,7 @@
           </div>
         </section>
 
-        <section class="dashboard-card" onclick="location.href='member/health/index.html'">
+        <section class="dashboard-card" onclick="location.href='/member/health/index.html'">
           <div class="card-header">
             <h3><i class="fas fa-heartbeat" style="color:#ef4444"></i> Sağlık & Yaşam</h3>
             <span class="view-all">Tümünü Gör <i class="fas fa-chevron-right"></i></span>
@@ -200,12 +200,13 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src="/dashboard/config.js"></script>
+  
+  <script src="/config.js"></script>
 
- <script type="module" src="/js/lib/firebase.js"></script>
- <script type="module" src="/shared/auth.js?v=999"></script> 
- <script type="module" src="/shared/sidebar.js?v=999"></script>
- <script type="module" src="/js/pages/member.js?v=999"></script>
+  <script type="module" src="/js/lib/firebase.js"></script>
+  <script type="module" src="/shared/auth.js?v=999"></script> 
+  <script type="module" src="/shared/sidebar.js?v=999"></script>
+  <script type="module" src="/js/pages/member.js?v=999"></script>
 
   <script>
     window.logoutApp = function(e) { 
