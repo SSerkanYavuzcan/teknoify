@@ -81,19 +81,11 @@
   <script type="module" src="../js/pages/member.js?v=20260502"></script>
 
   <script>
-    // Global köprüler (auth.js fonksiyonlarını tetikler)
     window.logoutApp = function(e) { 
         if(e) e.preventDefault();
-        if(typeof window.logout === 'function') {
-            window.logout(); 
-        } else {
-            console.error("Merkezi logout fonksiyonu bulunamadı! auth.js yüklendi mi?");
-        }
+        if(typeof window.logout === 'function') window.logout(); 
     };
-
-    window.toggleSidebar = function() { 
-        document.body.classList.toggle("sidebar-closed"); 
-    };
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
   </script>
 </body>
 </html>
