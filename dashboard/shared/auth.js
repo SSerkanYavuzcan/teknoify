@@ -1,15 +1,8 @@
-/**
- * dashboard/shared/auth.js (Firebase v9 Modular)
- */
 
-// 1. Merkezi firebase.js dosyamızdan auth ve db nesnelerini içe aktarıyoruz
-import { auth, db } from "../lib/firebase.js";
+import { auth, db } from "/dashboard/js/lib/firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// ========================================================================
-// 2. SİSTEMDEKİ TÜM HİZMETLERİN LİSTESİ (AYARLAR BURADAN YAPILIR)
-// ========================================================================
 window.TK_SERVICES_CONFIG = [
   {
     id: "bim_faz_2",
@@ -41,11 +34,9 @@ window.TK_SERVICES_CONFIG = [
   }
 ];
 
-// Eski sayfaların kırılmaması için global nesnelere atama yapıyoruz
 window.auth = window.auth || auth;
 window.db = window.db || db;
 
-// -------------------- Helpers --------------------
 function safeLower(s) {
   return String(s || "").trim().toLowerCase();
 }
@@ -58,7 +49,6 @@ function joinPath(a, b) {
   return (A.endsWith("/") ? A.slice(0, -1) : A) + "/" + (B.startsWith("/") ? B.slice(1) : B);
 }
 
-// URL'den imp_uid yakalayan gelişmiş fonksiyon
 function getImpersonatedUid() {
   const urlParams = new URLSearchParams(window.location.search);
   const urlUid = urlParams.get('imp_uid');
@@ -125,7 +115,6 @@ function redirectToMemberFallback() {
   window.location.href = fallback;
 }
 
-// -------------------- Impersonation Banner Ekleme --------------------
 function renderImpersonationBanner() {
   const currentImpUid = getImpersonatedUid();
   if (!currentImpUid) return;
@@ -151,7 +140,6 @@ function renderImpersonationBanner() {
   };
 }
 
-// -------------------- Firestore Reads (Modüler V9) --------------------
 async function readUserProfile(uid) {
   try {
     const snap = await getDoc(doc(db, "users", uid));
@@ -223,9 +211,6 @@ function resolveAllowedStores(ent, projectId) {
   return Array.isArray(ent.allowedStoresGlobal) ? ent.allowedStoresGlobal : [];
 }
 
-// ========================================================================
-// DİNAMİK SİDEBAR RENDER SİSTEMİ 
-// ========================================================================
 window.TK_RENDER_SIDEBAR = function() {
   const container = document.getElementById("dynamic-services-menu");
   if (!container) return; 
@@ -265,7 +250,6 @@ window.TK_RENDER_SIDEBAR = function() {
   container.innerHTML = html;
 };
 
-// -------------------- Bootstrap --------------------
 async function bootstrap() {
   const cfg = window.PROJECT_CONFIG || {
     projectId: "",
