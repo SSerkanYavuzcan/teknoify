@@ -19,25 +19,24 @@ function normalizeEmail(v) {
 }
 
 function redirectAfterLogin(session) {
-  // session objesinin Firestore'dan gelen verileri (profile, role vb.) içerdiğini varsayıyoruz.
+  // session objesinin Firestore'dan gelen verileri içerdiğini biliyoruz.
+  // Diğer dosyalarda kullandığımız isAdmin mantığını burada da kullanıyoruz.
+  const isAdmin = session?.isAdmin || session?.realIsAdmin || false; 
   
-  // 1. Kullanıcının rolünü ve durumunu belirle (Yoksa varsayılan olarak 'member' ve 'active' say)
-  const userRole = session?.role?.type || "member"; 
-  const userStatus = session?.role?.status || "active";
+  // Eğer veritabanında status diye bir alan varsa kontrol et, yoksa aktif say.
+  const userStatus = session?.status || session?.role?.status || "active";
 
-  // 2. Eğer hesabı aktif değilse yönlendirmeyi durdur
+  // 1. Eğer hesabı aktif değilse yönlendirmeyi durdur
   if (userStatus !== "active") {
     showError("Hesabınız aktif değil veya askıya alınmış. Lütfen destek ile iletişime geçin.");
     return; 
   }
 
-  // 3. Rol bazlı yönlendirme (Mutlak yollar kullanılarak her zaman doğru adrese gidilmesi sağlandı)
-  if (userRole === "admin") {
+  // 2. Rol bazlı yönlendirme (isAdmin bayrağına göre)
+  if (isAdmin) {
     window.location.href = "/dashboard/admin.html";
-  } else if (userRole === "premium") {
-    window.location.href = "/dashboard/premium.html";
   } else {
-    // member veya tanımsız bir rol ise standart üyeye yönlendir
+    // Normal üye ise standart dashboard'a yönlendir
     window.location.href = "/dashboard/member.html"; 
   }
 }
