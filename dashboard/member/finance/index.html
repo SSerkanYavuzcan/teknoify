@@ -3,45 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yatırım ve Finans | Teknoify</title>
+  <title>Yatırım & Finans | Teknoify</title>
+  
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
   <link rel="stylesheet" href="../../css/dashboard.css?v=20260502">
 
   <style>
-    /* Finans Sayfasına Özel Detaylar */
+    /* Sayfaya özel Glassmorphism dokunuşları */
     .finance-header-grid {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr;
-      gap: 20px;
+      gap: 24px;
       margin-bottom: 30px;
     }
 
     .portfolio-main-card {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
-      border: 1px solid rgba(139, 92, 246, 0.3);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%) !important;
+      border: 1px solid rgba(139, 92, 246, 0.3) !important;
     }
 
-    .asset-item {
+    .asset-distribution-box {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      justify-content: space-around;
+      padding: 20px 0;
     }
 
-    .asset-info { display: flex; align-items: center; gap: 12px; }
-    .asset-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-    .transaction-list { margin-top: 20px; }
-    .status-badge {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
+    .asset-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .status-completed { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: #a1a1aa;
+    }
+
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Progress bar stilleri */
+    .progress-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -51,24 +70,26 @@
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
     <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
-      <div class="tk-nav-section"><span>Finans Yönetimi</span></div>
-      <a href="#" class="menu-item active"><i class="fas fa-chart-pie"></i> <span>Portföyüm</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-exchange-alt"></i> <span>İşlemler</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-piggy-bank"></i> <span>Birikim Hedefleri</span></a>
+      <a href="/dashboard/member.html" class="menu-item">
+        <i class="fas fa-chevron-left"></i> <span>Genel Bakış</span>
+      </a>
+      <div class="tk-nav-section"><span>Finans Paneli</span></div>
+      <a href="#" class="menu-item active"><i class="fas fa-chart-pie"></i> <span>Varlıklarım</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-wallet"></i> <span>Bütçe Takibi</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-piggy-bank"></i> <span>Birikimler</span></a>
     </nav>
+    <div class="sidebar-footer">
+        <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
+    </div>
   </aside>
 
   <main class="main-content">
     <header class="top-bar">
       <div class="page-info">
-        <a href="/dashboard/member.html" style="color:#71717a; text-decoration:none; font-size:0.8rem;">
-          <i class="fas fa-chevron-left"></i> Geri Dön
-        </a>
-        <h2 style="margin-top:5px;">Yatırım & Finans Analizi</h2>
+        <h2 style="font-family: 'Inter Tight';">Yatırım & Finans</h2>
       </div>
       <div class="user-profile">
-        <span id="user-name-display">...</span>
+        <span id="user-name-display">Yükleniyor...</span>
         <div class="avatar" id="user-avatar">U</div>
       </div>
     </header>
@@ -78,76 +99,72 @@
       <div class="finance-header-grid">
         <div class="dashboard-card portfolio-main-card">
           <div class="card-header">
-            <h3>Toplam Portföy Değeri</h3>
-            <span class="trend-tag up">+%6.7 (Bu Ay)</span>
+            <h3>Portföy Değeri</h3>
+            <span class="trend-tag up">+%6,7</span>
           </div>
-          <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-            <strong style="font-size:2.8rem; color:#fff;">₺385.240,42</strong>
-            <div id="main-portfolio-chart" style="width:200px;"></div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <strong style="font-size: 2.5rem; color: #fff;">₺385.240</strong>
+            <div id="chart-portfolio-main" style="width: 150px;"></div>
           </div>
         </div>
 
         <div class="dashboard-card">
-          <span style="color:#a1a1aa; font-size:0.9rem;">Aylık Birikim</span>
-          <strong style="font-size:1.8rem; color:#fff; display:block; margin:10px 0;">₺12.430</strong>
-          <div class="progress-bg" style="height:6px; background:rgba(255,255,255,0.05); border-radius:10px;">
-            <div style="width:65%; height:100%; background:#10b981; border-radius:10px;"></div>
+          <div class="card-header"><h3>Aylık Birikim</h3></div>
+          <strong style="font-size: 1.8rem; color: #fff;">₺12.430</strong>
+          <div class="progress-container">
+            <div class="progress-fill" style="width: 65%;"></div>
           </div>
-          <p style="font-size:0.75rem; color:#71717a; margin-top:10px;">Hedefin %65'ine ulaşıldı</p>
+          <span style="font-size: 0.75rem; color: #71717a;">Hedef: ₺20.000</span>
         </div>
 
         <div class="dashboard-card">
-          <span style="color:#a1a1aa; font-size:0.9rem;">Tasarruf Oranı</span>
-          <strong style="font-size:1.8rem; color:#fff; display:block; margin:10px 0;">%34</strong>
-          <span class="trend-tag up">+6 puan</span>
+          <div class="card-header"><h3>Tasarruf</h3></div>
+          <strong style="font-size: 1.8rem; color: #fff;">%34</strong>
+          <p style="font-size: 0.75rem; color: #10b981; margin-top: 10px;"><i class="fas fa-arrow-up"></i> Geçen aya göre %4 artış</p>
         </div>
       </div>
 
       <div class="super-grid">
         <div class="dashboard-card">
           <div class="card-header"><h3>Varlık Dağılımı</h3></div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; align-items:center;">
-            <div id="asset-distribution-chart"></div>
-            <div class="asset-list">
-              <div class="asset-item">
-                <div class="asset-info"><div class="asset-dot" style="background:#6366f1;"></div> Hisse Senedi</div>
-                <strong>%45</strong>
-              </div>
-              <div class="asset-item">
-                <div class="asset-info"><div class="asset-dot" style="background:#a855f7;"></div> Fon</div>
-                <strong>%25</strong>
-              </div>
-              <div class="asset-item">
-                <div class="asset-info"><div class="asset-dot" style="background:#f59e0b;"></div> Altın</div>
-                <strong>%15</strong>
-              </div>
+          <div class="asset-distribution-box">
+            <div id="chart-assets-donut"></div>
+            <div class="asset-legend">
+              <div class="legend-item"><div class="dot" style="background:#6366f1;"></div> Hisse Senedi (%45)</div>
+              <div class="legend-item"><div class="dot" style="background:#a855f7;"></div> Fon (%25)</div>
+              <div class="legend-item"><div class="dot" style="background:#f59e0b;"></div> Altın (%15)</div>
+              <div class="legend-item"><div class="dot" style="background:#10b981;"></div> Nakit (%10)</div>
             </div>
           </div>
         </div>
 
         <div class="dashboard-card">
-          <div class="card-header"><h3>Yaklaşan Ödemeler</h3></div>
+          <div class="card-header">
+            <h3>Yaklaşan Ödemeler</h3>
+          </div>
           <table class="data-table">
             <thead>
               <tr>
                 <th>Açıklama</th>
                 <th>Tarih</th>
                 <th>Tutar</th>
-                <th>Durum</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>Kredi Kartı Ekstresi</td>
                 <td>22 Mayıs</td>
-                <td>₺14.250</td>
-                <td><span class="status-badge status-completed">Beklemede</span></td>
+                <td style="color: #fff;">₺14.250</td>
               </tr>
               <tr>
                 <td>Ev Kirası</td>
                 <td>01 Haziran</td>
-                <td>₺18.000</td>
-                <td><span class="status-badge" style="background:rgba(255,255,255,0.05);">Planlandı</span></td>
+                <td style="color: #fff;">₺18.000</td>
+              </tr>
+              <tr>
+                <td>İnternet Faturası</td>
+                <td>05 Haziran</td>
+                <td style="color: #fff;">₺340</td>
               </tr>
             </tbody>
           </table>
@@ -158,34 +175,38 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="../../config.js"></script>
   <script src="../../shared/auth.js?v=999"></script>
   <script src="../../shared/sidebar.js?v=999"></script>
 
   <script>
-    // Sayfa Grafikleri
+    // Sidebar Toggle
+    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
+    window.logoutApp = function(e) { if(e) e.preventDefault(); window.logout(); };
+
     document.addEventListener('DOMContentLoaded', () => {
-      // Ana Portföy Çizgisi
-      new ApexCharts(document.querySelector("#main-portfolio-chart"), {
-        series: [{ data: [310, 340, 335, 360, 375, 385] }],
+      // 1. Portföy Çizgi Grafik (Küçük)
+      new ApexCharts(document.querySelector("#chart-portfolio-main"), {
+        series: [{ data: [310, 340, 335, 360, 380, 385] }],
         chart: { type: 'line', height: 60, sparkline: { enabled: true } },
         stroke: { curve: 'smooth', width: 3, colors: ['#fff'] },
         tooltip: { enabled: false }
       }).render();
 
-      // Donut Grafik (Varlık Dağılımı)
-      new ApexCharts(document.querySelector("#asset-distribution-chart"), {
+      // 2. Varlık Donut Grafik
+      new ApexCharts(document.querySelector("#chart-assets-donut"), {
         series: [45, 25, 15, 10, 5],
+        chart: { type: 'donut', height: 200 },
         labels: ['Hisse', 'Fon', 'Altın', 'Nakit', 'Kripto'],
-        chart: { type: 'donut', height: 220 },
         colors: ['#6366f1', '#a855f7', '#f59e0b', '#10b981', '#ef4444'],
         stroke: { show: false },
         legend: { show: false },
-        plotOptions: { pie: { donut: { size: '75%' } } }
+        plotOptions: { pie: { donut: { size: '75%', labels: { show: false } } } }
       }).render();
     });
-
-    window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
   </script>
 </body>
 </html>
