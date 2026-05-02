@@ -1,7 +1,6 @@
 /**
  * dashboard/shared/sidebar.js
  * Tüm sistemin sol menüsünü (Sidebar) dinamik olarak çizen merkezi motor.
- * Doğrudan Firestore 'projects' koleksiyonundan beslenir.
  */
 
 (function () {
@@ -35,11 +34,18 @@
     return file ? p.endsWith(file) : false;
   }
 
-  // Veritabanındaki yolları gerçek URL'ye çeviren yardımcı
+  // URL oluşturucu - Impersonation destekli
   function resolveUrl(folderPath, entryPoint) {
      let path = folderPath ? `/${folderPath}/${entryPoint || 'index.html'}` : "#";
-     // Çift slash (//) hatalarını temizler
-     return path.replace(/\/\//g, '/');
+     path = path.replace(/\/\//g, '/');
+     
+     // Eğer admin Impersonation modundaysa URL'ye otomatik ekle!
+     const impUid = localStorage.getItem("teknoify_impersonate_uid");
+     if (impUid && path !== "#") {
+         path += (path.includes('?') ? '&' : '?') + 'imp_uid=' + impUid;
+     }
+     
+     return path;
   }
 
   async function initSidebar() {
@@ -47,42 +53,34 @@
     const sess = window.USER_SESSION;
     if (!sess) return;
 
-    // Kullanıcının yetkili olduğu proje ID'leri
     const userProjectIds = Array.isArray(sess.projectIds) ? sess.projectIds : [];
     
-    // HTML'deki menü alanlarını bul
     const container = document.getElementById("tk-sidebar-projects") || document.getElementById("dynamic-services-menu");
     const exploreContainer = document.getElementById("explore-services-menu");
 
     if (!container) return;
 
     try {
-      // 1. Firestore'dan Tüm Projeleri Çek
       const snap = await window.db.collection("projects").get();
       const allProjects = [];
       
       snap.forEach(doc => {
         const data = doc.data();
-        // Sadece Ayarlardan "Aktif" (isActive: true) yapılmış projeleri al
         if (data.config && data.config.isActive === true) {
           allProjects.push({ id: doc.id, ...data });
         }
       });
 
-      // 2. Projeleri İsimlerine Göre Alfabetik Sırala
       allProjects.sort((a, b) => {
          const nameA = a.details?.name || a.id;
          const nameB = b.details?.name || b.id;
          return String(nameA).localeCompare(String(nameB));
       });
 
-      // 3. Projeleri Sahiplik Durumuna Göre İkiye Böl
       const owned = allProjects.filter(p => userProjectIds.includes(p.id));
       const locked = allProjects.filter(p => !userProjectIds.includes(p.id));
 
-      // ----------------------------------------------------
-      // YETKİLİ OLUNAN PROJELERİ ÇİZ (HİZMETLER)
-      // ----------------------------------------------------
+      // YETKİLİ OLUNAN PROJELER
       let ownedHtml = "";
       owned.forEach(p => {
         const href = resolveUrl(p.config?.folderPath, p.config?.entryPoint);
@@ -100,13 +98,10 @@
 
       container.innerHTML = ownedHtml;
 
-      // Eğer yetkili proje varsa "Hizmetler" başlığını göster, yoksa gizle
       const header = document.getElementById("tk-sidebar-services-header");
       if (header) header.style.display = owned.length ? "block" : "none";
 
-      // ----------------------------------------------------
-      // YETKİSİZ OLUNAN PROJELERİ ÇİZ (KEŞFET / KİLİTLİ)
-      // ----------------------------------------------------
+      // YETKİSİZ OLUNAN PROJELER
       if (exploreContainer) {
         let lockedHtml = "";
         locked.forEach(p => {
@@ -123,7 +118,6 @@
         });
         exploreContainer.innerHTML = lockedHtml;
         
-        // "Keşfet" Başlığının Görünürlüğü
         const exploreHeader = exploreContainer.previousElementSibling;
         if (exploreHeader && exploreHeader.tagName.toLowerCase() === 'div') {
            exploreHeader.style.display = locked.length ? "block" : "none";
@@ -135,6 +129,5 @@
     }
   }
 
-  // Fonksiyonu dışarıya açık hale getiriyoruz ki auth.js veya member.js bunu tetikleyebilsin
   window.TK_RENDER_SIDEBAR = initSidebar;
 })();
