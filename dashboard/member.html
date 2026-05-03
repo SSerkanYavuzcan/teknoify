@@ -13,11 +13,10 @@
   
   <style>
     /* ========================================================= */
-    /* TEMEL YAPI VE SCROLLBAR GİZLEME (DÜZELTİLDİ) */
+    /* TEMEL YAPI VE SCROLLBAR GİZLEME */
     /* ========================================================= */
     body { background-color: #05080a; margin: 0; padding: 0; overflow-x: hidden; }
 
-    /* content-scroll dış CSS'ten etkilenmemesi için zorunlu kolon yapıldı */
     .content-scroll {
       -ms-overflow-style: none;
       scrollbar-width: none;
@@ -26,7 +25,7 @@
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important; 
-      gap: 30px !important; /* Her satır arasına 30px boşluk */
+      gap: 30px !important;
       padding: 30px !important;
       box-sizing: border-box !important;
     }
@@ -39,12 +38,13 @@
     /* ========================================================= */
     .super-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr); /* 2x2 Izgara */
+      grid-template-columns: repeat(2, 1fr);
       gap: 24px;
       width: 100%;
-      max-width: 1400px; /* Merkeze hizalamak için sınır */
+      max-width: 1400px;
       padding: 0;
       box-sizing: border-box;
+      margin-top: 30px; /* Çakışmayı önlemek için eklenen ferahlık payı */
     }
     .dashboard-card {
       background: #11131a;
