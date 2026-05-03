@@ -17,7 +17,6 @@
     /* ========================================================= */
     body { background-color: #05080a; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-    /* Ana İçerik: Ekranı tam kaplayan esnek dikey kutu */
     .main-content {
       height: 100vh !important;
       display: flex !important;
@@ -26,10 +25,9 @@
       overflow: hidden !important;
     }
 
-    /* Üst Bar: İçeriğe göre otomatik yükseklik alır, akışın içinde kalır */
     .top-bar {
-      position: relative !important; /* Dış CSS'teki fixed/absolute ayarını ezer */
-      flex: 0 0 auto !important; /* Esnemez, sadece kendi alanını kaplar */
+      position: relative !important; 
+      flex: 0 0 auto !important; 
       width: 100% !important;
       background: #05080a !important;
       padding: 20px 30px !important;
@@ -37,22 +35,21 @@
       justify-content: space-between !important;
       align-items: center !important;
       box-sizing: border-box !important;
-      border-bottom: 1px solid rgba(255,255,255,0.05); /* Şık ayrım çizgisi */
+      border-bottom: 1px solid rgba(255,255,255,0.05); 
       z-index: 100 !important;
     }
 
-    /* Kaydırılabilir İçerik: Üst bardan kalan tüm boşluğu kaplar */
     .content-scroll {
       -ms-overflow-style: none;
       scrollbar-width: none;
-      flex: 1 1 auto !important; /* Kalan alanı doldur */
+      flex: 1 1 auto !important; 
       overflow-y: auto !important; 
       width: 100% !important;
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important; 
-      gap: 30px !important; 
-      padding: 30px !important; /* Sabit yüksek piksellere artık gerek yok */
+      gap: 40px !important; 
+      padding: 120px 30px 40px 30px !important; 
       box-sizing: border-box !important;
     }
     .content-scroll::-webkit-scrollbar {
@@ -229,7 +226,7 @@
 
     <div class="content-scroll">
       
-      <div class="super-grid">
+      <div class="super-grid" id="personal-cards-grid">
         <section class="dashboard-card" onclick="location.href='/dashboard/member/finance/index.html'">
           <div class="card-header">
             <h3><i class="fas fa-chart-line" style="color:#6366f1"></i> Yatırım & Finans</h3>
@@ -345,9 +342,30 @@
     const auth = getAuth();
     const db = getFirestore(); 
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            const name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+            // Firestore'dan kullanıcı dokümanını çekiyoruz (Rolü öğrenmek için)
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            let name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+            let accountType = "bireysel"; 
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                
+                // Firestore'dan accountType verisini alıyoruz
+                if (userData.profile && userData.profile.accountType) {
+                    accountType = userData.profile.accountType;
+                }
+                
+                // Eğer kurumsalsa ismi şirket ismiyle değiştirebiliriz
+                if (accountType === "kurumsal" && userData.profile && userData.profile.companyName) {
+                    name = userData.profile.companyName;
+                }
+            }
+
+            // UI - İsim Güncellemeleri
             const displayEl = document.getElementById("user-name-display");
             const titleEl = document.getElementById("user-name-title");
             const avatarEl = document.getElementById("user-avatar");
@@ -356,28 +374,33 @@
             if(titleEl) titleEl.textContent = name;
             if(avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
 
-            window.USER_SESSION = { uid: user.uid, name: name, email: user.email };
+            // KURUMSAL KULLANICI İÇİN GİZLEME MANTIĞI
+            const personalCardsGrid = document.getElementById("personal-cards-grid");
+            if (accountType === "kurumsal" && personalCardsGrid) {
+                // Kurumsalsa kişisel kartları tamamen ekrandan kaldır
+                personalCardsGrid.style.display = "none";
+            }
+
+            window.USER_SESSION = { uid: user.uid, name: name, email: user.email, type: accountType };
             
             if(typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();
             }
 
-            fetchUserProjects(user.uid);
+            // Projeleri Çek (Dokümanı tekrar çekmemek için parametre olarak geçiyoruz)
+            fetchUserProjects(user.uid, userDocSnap);
 
         } else {
             window.location.href = "/login.html";
         }
     });
 
-    async function fetchUserProjects(userUid) {
+    async function fetchUserProjects(userUid, userDocSnap) {
         const container = document.getElementById('dynamic-projects-container');
         if (!container) return;
 
         try {
-            const userDocRef = doc(db, "users", userUid);
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (!userDocSnap.exists()) {
+            if (!userDocSnap || !userDocSnap.exists()) {
                 container.innerHTML = '<p style="color: #ef4444;">Kullanıcı profili bulunamadı.</p>';
                 closeLoader();
                 return;
@@ -478,6 +501,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Finans kartı içindeki mini grafik (Eğer kurumsal kullanıcıysa burası DOM'da gizli olacak)
       if(document.querySelector("#finance-summary-chart")) {
           new ApexCharts(document.querySelector("#finance-summary-chart"), {
             series: [{ name: 'Portföy', data: [310, 330, 325, 360, 345, 385] }],
