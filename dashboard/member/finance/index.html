@@ -71,14 +71,30 @@
     
     /* Progress Barlar */
     .prog-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin-top: 10px; }
-    .prog-fill { height: 100%; border-radius: 10px; }
+    .prog-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease-in-out; }
 
     /* ========================================================= */
     /* SATIR 1: ÜST KARTLAR */
     /* ========================================================= */
     .col-portfoy { grid-column: span 5; background: linear-gradient(180deg, #161824 0%, #0d0f16 100%); }
-    .col-birikim { grid-column: span 2; }
-    .col-tasarruf { grid-column: span 2; }
+    
+    /* BİRLEŞTİRİLMİŞ BİRİKİM VE TASARRUF KARTI */
+    .col-combined-savings { 
+        grid-column: span 4; 
+        display: flex; 
+        flex-direction: row; 
+        gap: 20px; 
+        cursor: pointer; 
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; 
+    }
+    .col-combined-savings:hover { 
+        transform: translateY(-3px); 
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.15); 
+        border-color: #6366f1; 
+    }
+    .savings-left { flex: 1; border-right: 1px solid rgba(255,255,255,0.05); padding-right: 20px; display: flex; flex-direction: column; }
+    .savings-right { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
     .col-hedef { grid-column: span 2; align-items: center; text-align: center; }
     .col-gider { grid-column: span 1; }
 
@@ -91,6 +107,23 @@
     .chart-toggle-legend { display: flex; gap: 15px; margin-top: 10px; }
     .toggle-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #d4d4d8; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; }
     .toggle-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    /* ========================================================= */
+    /* MODAL (VERİ GİRİŞ PENCERESİ) STİLLERİ */
+    /* ========================================================= */
+    .tk-modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); align-items: center; justify-content: center; }
+    .tk-modal-content { background: #11131a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 25px; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .tk-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .tk-modal-title { font-size: 1.1rem; font-weight: 600; color: #fff; }
+    .tk-modal-close { background: none; border: none; color: #a1a1aa; font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+    .tk-modal-close:hover { color: #fff; }
+    .tk-form-group { margin-bottom: 15px; }
+    .tk-form-group label { display: block; font-size: 0.8rem; color: #a1a1aa; margin-bottom: 5px; }
+    .tk-form-group input { width: 100%; background: #0d0f16; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; box-sizing: border-box; font-family: 'Inter Tight', sans-serif; outline: none; transition: border-color 0.2s;}
+    .tk-form-group input:focus { border-color: #6366f1; }
+    .tk-btn-save { width: 100%; background: #6366f1; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+    .tk-btn-save:hover { background: #4f46e5; }
+    .tk-btn-save:disabled { background: #4338ca; cursor: not-allowed; opacity: 0.7; }
 
     /* ========================================================= */
     /* SATIR 2: ORTA KARTLAR */
@@ -215,23 +248,20 @@
           </div>
         </div>
 
-        <div class="fin-card col-birikim">
-          <div class="fin-card-title"><span><i class="fas fa-wallet" style="color:#60a5fa;margin-right:5px;"></i> Aylık Birikim</span></div>
-          <h2 class="text-large">₺42.000 <span style="font-size:1rem;color:#71717a;font-weight:400;">TL</span></h2>
-          <h2 class="text-large" style="margin-top:10px;">$1.290 <span style="font-size:1rem;color:#71717a;font-weight:400;">USD</span></h2>
-          <div style="margin-top: auto;">
-              <p class="text-sub">Son 30 gün toplam birikim</p>
+        <div class="fin-card col-combined-savings" id="card-savings" title="Değerleri güncellemek için tıklayın">
+          
+          <div class="savings-left">
+             <div class="fin-card-title"><span><i class="fas fa-wallet" style="color:#60a5fa;margin-right:5px;"></i> Aylık Birikim</span></div>
+             <h2 class="text-large" id="display-savings">₺0 <span style="font-size:1rem;color:#71717a;font-weight:400;">TL</span></h2>
+             <p class="text-sub" style="margin-top:auto;">Tasarrufları güncellemek için tıklayın</p>
           </div>
-        </div>
-
-        <div class="fin-card col-tasarruf">
-          <div class="fin-card-title"><span><i class="fas fa-chart-pie" style="color:#10b981;margin-right:5px;"></i> Tasarruf Oranı</span></div>
-          <h2 class="text-huge">34%</h2>
-          <div class="prog-bg"><div class="prog-fill" style="width:34%; background:#10b981;"></div></div>
-          <div style="margin-top: auto;">
-              <p class="text-sub" style="margin-bottom: 5px;">Gelirinizin %34'ü tasarruf ediliyor.</p>
-              <p class="text-sub">Hedef: %40</p>
+          
+          <div class="savings-right">
+             <div class="fin-card-title"><span><i class="fas fa-chart-pie" style="color:#10b981;margin-right:5px;"></i> Tasarruf Oranı</span></div>
+             <h2 class="text-huge" id="display-rate">0%</h2>
+             <div class="prog-bg"><div class="prog-fill" id="display-rate-bar" style="width:0%; background:#10b981;"></div></div>
           </div>
+          
         </div>
 
         <div class="fin-card col-hedef">
@@ -476,22 +506,65 @@
     </div>
   </main>
 
+  <div id="savings-modal" class="tk-modal">
+      <div class="tk-modal-content">
+          <div class="tk-modal-header">
+              <span class="tk-modal-title">Finansal Durumu Güncelle</span>
+              <button class="tk-modal-close" id="close-savings-modal"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="tk-form-group">
+              <label>Aylık Toplam Gelir (₺) <span style="font-size:0.7rem;">(Tasarruf oranı hesabı için)</span></label>
+              <input type="number" id="input-income" placeholder="Örn: 100000">
+          </div>
+          <div class="tk-form-group">
+              <label>Aylık Toplam Birikim (₺)</label>
+              <input type="number" id="input-savings" placeholder="Örn: 25000">
+          </div>
+          <button class="tk-btn-save" id="btn-save-savings">Değerleri Kaydet</button>
+      </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
 
   <script type="module">
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    // updateDoc fonksiyonunu importlara ekledik
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     const auth = getAuth();
     const db = getFirestore();
 
+    // Verileri Ekrana Yansıtacak Ortak Fonksiyon
+    function updateSavingsUI(savings, income) {
+        // Aylık birikim kısmını güncelle
+        document.getElementById('display-savings').innerHTML = `₺${savings.toLocaleString('tr-TR')} <span style="font-size:1rem;color:#71717a;font-weight:400;">TL</span>`;
+        
+        // Tasarruf oranını hesapla ve güncelle
+        let rate = 0;
+        if(income > 0) {
+            rate = Math.round((savings / income) * 100);
+            if (rate > 100) rate = 100; // Mantıksal hata olmaması için üst sınır
+        }
+        
+        document.getElementById('display-rate').textContent = `${rate}%`;
+        document.getElementById('display-rate-bar').style.width = `${rate}%`;
+        
+        // Orana göre bar rengini değiştirme (İsteğe bağlı güzel bir dokunuş)
+        const bar = document.getElementById('display-rate-bar');
+        if(rate < 15) bar.style.background = '#ef4444'; // Kırmızı
+        else if (rate < 30) bar.style.background = '#f59e0b'; // Sarı
+        else bar.style.background = '#10b981'; // Yeşil
+    }
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             let displayName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+            let currentSavings = 0;
+            let currentIncome = 0;
+            const userRef = doc(db, "users", user.uid);
 
             try {
-                const userRef = doc(db, "users", user.uid);
                 const snap = await getDoc(userRef);
 
                 if (snap.exists()) {
@@ -499,16 +572,19 @@
                     if (data.profile) {
                         displayName = data.profile.fullName || data.profile.companyName || displayName;
                     }
+                    
+                    // Firebase'den değerleri çekme
+                    if (data.dashboardStats && data.dashboardStats.finance) {
+                        currentSavings = data.dashboardStats.finance.savings || 0;
+                        currentIncome = data.dashboardStats.finance.income || 0;
+                    }
                 }
 
                 document.getElementById("user-name-display").textContent = displayName;
                 document.getElementById("user-avatar").textContent = displayName.charAt(0).toUpperCase();
 
             } catch (error) {
-                console.error("Profil verisi çekilemedi:", error);
-                const fallbackName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
-                document.getElementById("user-name-display").textContent = fallbackName;
-                document.getElementById("user-avatar").textContent = fallbackName.charAt(0).toUpperCase();
+                console.error("Veri çekilirken hata:", error);
             }
 
             window.USER_SESSION = { uid: user.uid, name: displayName, email: user.email };
@@ -517,6 +593,68 @@
                 window.TK_RENDER_SIDEBAR();
             }
             
+            // Çekilen verileri ilk açılışta ekrana bas
+            updateSavingsUI(currentSavings, currentIncome);
+
+            // ==========================================
+            // MODAL VE KAYIT İŞLEMLERİ
+            // ==========================================
+            const savingsCard = document.getElementById('card-savings');
+            const savingsModal = document.getElementById('savings-modal');
+            const closeBtn = document.getElementById('close-savings-modal');
+            const saveBtn = document.getElementById('btn-save-savings');
+
+            // Karta tıklandığında modali aç
+            savingsCard.addEventListener('click', () => {
+                document.getElementById('input-savings').value = currentSavings > 0 ? currentSavings : '';
+                document.getElementById('input-income').value = currentIncome > 0 ? currentIncome : '';
+                savingsModal.style.display = 'flex';
+            });
+
+            // Kapat butonuna tıklandığında modali gizle
+            closeBtn.addEventListener('click', () => {
+                savingsModal.style.display = 'none';
+            });
+
+            // Modal dışına tıklandığında gizle
+            window.addEventListener('click', (e) => {
+                if (e.target === savingsModal) {
+                    savingsModal.style.display = 'none';
+                }
+            });
+
+            // Kaydet butonuna basıldığında Firebase'i güncelle
+            saveBtn.addEventListener('click', async () => {
+                const newSavings = Number(document.getElementById('input-savings').value);
+                const newIncome = Number(document.getElementById('input-income').value);
+                
+                saveBtn.textContent = "Kaydediliyor...";
+                saveBtn.disabled = true;
+
+                try {
+                    // UpdateDoc ile sadece belirtilen alanları güncelliyoruz, diğer veriler bozulmaz
+                    await updateDoc(userRef, {
+                        "dashboardStats.finance.savings": newSavings,
+                        "dashboardStats.finance.income": newIncome
+                    });
+                    
+                    // Başarılı olursa lokal değişkenleri ve ekranı güncelle
+                    currentSavings = newSavings;
+                    currentIncome = newIncome;
+                    updateSavingsUI(currentSavings, currentIncome);
+                    
+                    // Modali kapat
+                    savingsModal.style.display = 'none';
+                } catch(error) {
+                    console.error("Firebase güncelleme hatası:", error);
+                    alert("Değerler kaydedilirken bir hata oluştu.");
+                } finally {
+                    saveBtn.textContent = "Değerleri Kaydet";
+                    saveBtn.disabled = false;
+                }
+            });
+            // ==========================================
+
             // GRAFİKLERİ ÇİZ
             renderCharts();
 
