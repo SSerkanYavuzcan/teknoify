@@ -11,6 +11,11 @@ let currentEditingMonth = null;
 let globalHistory = {};
 let globalTargetRate = 35; // Default Hedef
 let currentChartRange = '12'; // Default Filtre (12A)
+let currentCurrency = 'TL'; // Default Para Birimi
+
+// Çift Tıklama Mantığı için Zamanlayıcı Değişkenleri
+let lastClickTime = 0;
+let lastSelectedIdx = -1;
 
 // ==========================================
 // YARDIMCI FONKSİYONLAR
@@ -94,7 +99,49 @@ function getFilteredMonths(range) {
 }
 
 // ==========================================
-// KARMA (MIXED) GRAFİK ÇİZİMİ
+// ALT GRAFİKLER (DONUT VE BAR)
+// ==========================================
+function renderModalBottomCharts() {
+    // 1. Döviz Dağılımı
+    if(document.querySelector("#modal-donut-currency")) {
+        document.querySelector("#modal-donut-currency").innerHTML = "";
+        new ApexCharts(document.querySelector("#modal-donut-currency"), {
+            series: [48, 22, 18, 12],
+            chart: { type: 'donut', height: 200 },
+            labels: ['USD', 'EUR', 'Altın', 'TL Nakit'],
+            colors: ['#6366f1', '#3b82f6', '#f59e0b', '#10b981'],
+            stroke: { show: true, colors: ['#11131a'], width: 2 },
+            plotOptions: { pie: { donut: { size: '70%', labels: { show: true, name: { color: '#a1a1aa', fontSize: '0.8rem' }, value: { color: '#fff', fontSize: '1.2rem', fontWeight: 700 }, total: { show: true, showAlways: true, label: 'Toplam', color: '#a1a1aa', formatter: function(w) { return "$9.850" } } } } } },
+            dataLabels: { enabled: false },
+            theme: { mode: 'dark' },
+            legend: { position: 'right', offsetY: 30 }
+        }).render();
+    }
+
+    // 2. Enflasyon Grafiği
+    if(document.querySelector("#modal-bar-inflation")) {
+        document.querySelector("#modal-bar-inflation").innerHTML = "";
+        new ApexCharts(document.querySelector("#modal-bar-inflation"), {
+            series: [
+                { name: 'Gelir Artışı (%)', data: [28, 27, 30, 32, 29, 28] },
+                { name: 'Enflasyon (%)', data: [20, 20, 21, 23, 25, 27] }
+            ],
+            chart: { type: 'bar', height: 200, toolbar: { show: false } },
+            plotOptions: { bar: { columnWidth: '50%', borderRadius: 4 } },
+            colors: ['#10b981', '#f59e0b'],
+            dataLabels: { enabled: true, formatter: val => "%" + val, style: { fontSize: '10px' }, offsetY: -20 },
+            stroke: { show: true, width: 2, colors: ['transparent'] },
+            xaxis: { categories: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz'], axisBorder: { show: false }, axisTicks: { show: false }, labels: { style: { colors: '#71717a' } } },
+            yaxis: { show: false, max: 60 },
+            grid: { borderColor: 'rgba(255,255,255,0.05)', strokeDashArray: 4 },
+            theme: { mode: 'dark' },
+            legend: { position: 'top', horizontalAlign: 'left' }
+        }).render();
+    }
+}
+
+// ==========================================
+// ANA KARMA (MIXED) GRAFİK ÇİZİMİ
 // ==========================================
 function renderLargeChart(history, range) {
     const months = getFilteredMonths(range);
@@ -112,7 +159,6 @@ function renderLargeChart(history, range) {
 
     updateSummaryCards(history, months);
 
-    // Genişlik ayarlaması (Tümü seçilirse scroll açılsın, diğerlerinde tam sığsın)
     const chartWrapper = document.getElementById('dynamic-chart-width');
     if(chartWrapper) {
         if(range === 'all') chartWrapper.style.minWidth = '2500px';
@@ -130,10 +176,11 @@ function renderLargeChart(history, range) {
             type: 'line',
             stacked: false,
             toolbar: { show: false },
-            zoom: { enabled: false },       // Yakınlaştırmayı Kapattık
-            selection: { enabled: false },  // Seçim alanını kapattık
+            zoom: { enabled: false },       
+            selection: { enabled: false },  
             background: 'transparent',
             events: {
+                // ÇİFT TIKLAMA MANTIĞI EKLENDİ
                 dataPointSelection: (event, chartContext, config) => {
                     const manualBtn = document.getElementById('btn-manual-mode');
                     const isManualMode = manualBtn && manualBtn.classList.contains('active');
@@ -143,9 +190,19 @@ function renderLargeChart(history, range) {
                         return;
                     }
                     
-                    const monthIdx = config.dataPointIndex;
-                    const selectedMonth = months[monthIdx];
-                    openMiniPopup(event, selectedMonth, history[selectedMonth]);
+                    const now = Date.now();
+                    const idx = config.dataPointIndex;
+                    
+                    if (now - lastClickTime < 400 && lastSelectedIdx === idx) {
+                        // Eğer 400ms içinde aynı noktaya ikinci kez tıklandıysa pop-up'ı aç
+                        const selectedMonth = months[idx];
+                        openMiniPopup(event, selectedMonth, history[selectedMonth]);
+                        lastClickTime = 0; // Sıfırla
+                    } else {
+                        // İlk tıklama, zamanı ve indeksi kaydet
+                        lastClickTime = now;
+                        lastSelectedIdx = idx;
+                    }
                 }
             }
         },
@@ -156,13 +213,13 @@ function renderLargeChart(history, range) {
                 borderRadius: 4 
             } 
         },
-        colors: ['#3b82f6', '#4f46e5', '#10b981'], // Net renkler
-        fill: { opacity: [1, 1, 1] }, // Sütunlar solid
+        colors: ['#3b82f6', '#4f46e5', '#10b981'], 
+        fill: { opacity: [1, 1, 1] }, 
         labels: months,
-        markers: { size: 6, hover: { size: 9 }, strokeWidth: 2, strokeColors: '#fff' }, // Tıklanabilirliği artırdık
+        markers: { size: 6, hover: { size: 9 }, strokeWidth: 2, strokeColors: '#fff' }, 
         yaxis: [
-            { title: { text: "Tutar (₺)", style: { color: '#a1a1aa' } }, labels: { style: { colors: '#71717a' }, formatter: v => `₺${v.toLocaleString('tr-TR')}` } },
-            { show: false }, // İkinci sütun için gizli
+            { title: { text: "Tutar", style: { color: '#a1a1aa' } }, labels: { style: { colors: '#71717a' }, formatter: v => `${v.toLocaleString('tr-TR')}` } },
+            { show: false }, 
             { opposite: true, max: 100, title: { text: "Oran (%)", style: { color: '#10b981' } }, labels: { style: { colors: '#10b981' }, formatter: v => `%${v}` } }
         ],
         xaxis: { labels: { style: { colors: '#71717a' } }, tooltip: { enabled: false } },
@@ -172,7 +229,7 @@ function renderLargeChart(history, range) {
         annotations: {
             yaxis: [{
                 y: globalTargetRate,
-                yAxisIndex: 2, // Tasarruf Oranı Eksenine bağlanır (Index 2)
+                yAxisIndex: 2, 
                 borderColor: '#ef4444',
                 strokeDashArray: 5,
                 label: {
@@ -279,26 +336,35 @@ onAuthStateChanged(auth, async (user) => {
     if (document.getElementById('card-savings')) {
         document.getElementById('card-savings').onclick = () => {
             if(mainModal) mainModal.style.display = 'flex';
-            setTimeout(() => renderLargeChart(globalHistory, currentChartRange), 100);
+            setTimeout(() => {
+                renderLargeChart(globalHistory, currentChartRange);
+                renderModalBottomCharts(); // Alt grafikleri yükle
+            }, 100);
         };
     }
 
-    // --- MANUEL DÜZENLE BUTONU MANTIĞI ---
+    // --- MANUEL DÜZENLE BUTONU VE İMLEÇ KONTROLÜ ---
     const manualBtn = document.getElementById('btn-manual-mode');
     if (manualBtn) {
         manualBtn.onclick = () => {
             manualBtn.classList.toggle('active');
             const isActive = manualBtn.classList.contains('active');
             
-            // Kullanıcıya alt tarafta uyarı ver
-            const helperText = document.querySelector('.tk-modal-summary-footer .text-sub');
+            // Eğer aktifse grafiğin üstüne "manual-mode-active" classı ekle ki kalem imleci çıksın
+            const chartArea = document.querySelector('.chart-inner-wrapper');
+            if(chartArea) {
+                if(isActive) chartArea.classList.add('manual-mode-active');
+                else chartArea.classList.remove('manual-mode-active');
+            }
+
+            const helperText = document.getElementById('manual-mode-helper');
             if(helperText) {
                 if(isActive) {
                     helperText.style.color = '#10b981';
-                    helperText.innerText = "Manuel Düzenle aktif! Grafikteki sütunlara veya noktalara tıklayarak düzenleyebilirsiniz.";
+                    helperText.innerText = "Manuel Düzenle aktif! Düzenlemek için grafik üzerindeki noktalara veya sütunlara ÇİFT TIKLAYIN.";
                 } else {
                     helperText.style.color = '#71717a';
-                    helperText.innerText = "Manuel Düzenleme kapalı. Düzenlemek için butonu aktif edin.";
+                    helperText.innerText = "Manuel düzenleme kapalı. Aktif etmek için yukarıdaki butona tıklayın.";
                 }
             }
         };
@@ -326,6 +392,15 @@ onAuthStateChanged(auth, async (user) => {
             e.target.classList.add('active');
             currentChartRange = e.target.getAttribute('data-range');
             renderLargeChart(globalHistory, currentChartRange);
+        };
+    });
+
+    document.querySelectorAll('.currency-filter-btn').forEach(btn => {
+        btn.onclick = (e) => {
+            document.querySelectorAll('.currency-filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentCurrency = e.target.getAttribute('data-curr');
+            // İleride API bağlandığında chartları bu kura göre render edeceğiz. Şimdilik sadece buton görseli değişiyor.
         };
     });
 
