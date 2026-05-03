@@ -13,10 +13,6 @@ let globalTargetRate = 35; // Default Hedef
 let currentChartRange = '12'; // Default Filtre (12A)
 let currentCurrency = 'TL'; // Default Para Birimi
 
-// Çift Tıklama Mantığı için Zamanlayıcı Değişkenleri
-let lastClickTime = 0;
-let lastSelectedIdx = -1;
-
 // ==========================================
 // YARDIMCI FONKSİYONLAR
 // ==========================================
@@ -78,7 +74,6 @@ function updateSummaryCards(history, rangeMonthsArray) {
     if (document.getElementById('target-success-rate')) document.getElementById('target-success-rate').innerText = `%${targetSuccess}`;
 }
 
-// Filtreye göre ay listesini oluşturan fonksiyon
 function getFilteredMonths(range) {
     const months = [];
     const d = new Date();
@@ -102,7 +97,6 @@ function getFilteredMonths(range) {
 // ALT GRAFİKLER (DONUT VE BAR)
 // ==========================================
 function renderModalBottomCharts() {
-    // 1. Döviz Dağılımı
     if(document.querySelector("#modal-donut-currency")) {
         document.querySelector("#modal-donut-currency").innerHTML = "";
         new ApexCharts(document.querySelector("#modal-donut-currency"), {
@@ -118,7 +112,6 @@ function renderModalBottomCharts() {
         }).render();
     }
 
-    // 2. Enflasyon Grafiği
     if(document.querySelector("#modal-bar-inflation")) {
         document.querySelector("#modal-bar-inflation").innerHTML = "";
         new ApexCharts(document.querySelector("#modal-bar-inflation"), {
@@ -180,29 +173,19 @@ function renderLargeChart(history, range) {
             selection: { enabled: false },  
             background: 'transparent',
             events: {
-                // ÇİFT TIKLAMA MANTIĞI EKLENDİ
+                // TEK TIKLAMA (Single Click) ile pop-up açma
                 dataPointSelection: (event, chartContext, config) => {
                     const manualBtn = document.getElementById('btn-manual-mode');
                     const isManualMode = manualBtn && manualBtn.classList.contains('active');
                     
                     if (!isManualMode) {
-                        alert("Lütfen önce yukarıdaki 'Manuel Düzenle' butonunu aktif edin.");
+                        alert("Lütfen önce yukarıdaki 'Düzenle' butonunu aktif edin.");
                         return;
                     }
                     
-                    const now = Date.now();
-                    const idx = config.dataPointIndex;
-                    
-                    if (now - lastClickTime < 400 && lastSelectedIdx === idx) {
-                        // Eğer 400ms içinde aynı noktaya ikinci kez tıklandıysa pop-up'ı aç
-                        const selectedMonth = months[idx];
-                        openMiniPopup(event, selectedMonth, history[selectedMonth]);
-                        lastClickTime = 0; // Sıfırla
-                    } else {
-                        // İlk tıklama, zamanı ve indeksi kaydet
-                        lastClickTime = now;
-                        lastSelectedIdx = idx;
-                    }
+                    const monthIdx = config.dataPointIndex;
+                    const selectedMonth = months[monthIdx];
+                    openMiniPopup(event, selectedMonth, history[selectedMonth]);
                 }
             }
         },
@@ -272,8 +255,9 @@ function openMiniPopup(event, monthStr, data) {
 
     popup.style.display = 'block';
     
-    let posX = event.clientX - 150;
-    let posY = event.clientY - 280;
+    // ApexCharts Custom Eventlerinde clientX bazen undefined olabilir, kontrol edelim:
+    let posX = event ? event.clientX - 150 : window.innerWidth / 2 - 150;
+    let posY = event ? event.clientY - 280 : window.innerHeight / 2 - 150;
     
     if(posX < 10) posX = 10;
     if(posY < 10) posY = 10;
@@ -343,7 +327,7 @@ onAuthStateChanged(auth, async (user) => {
         };
     }
 
-    // --- MANUEL DÜZENLE BUTONU VE İMLEÇ KONTROLÜ ---
+    // --- DÜZENLE BUTONU VE İMLEÇ KONTROLÜ ---
     const manualBtn = document.getElementById('btn-manual-mode');
     if (manualBtn) {
         manualBtn.onclick = () => {
@@ -361,10 +345,10 @@ onAuthStateChanged(auth, async (user) => {
             if(helperText) {
                 if(isActive) {
                     helperText.style.color = '#10b981';
-                    helperText.innerText = "Manuel Düzenle aktif! Düzenlemek için grafik üzerindeki noktalara veya sütunlara ÇİFT TIKLAYIN.";
+                    helperText.innerText = "Düzenleme modu aktif! Grafikteki sütunlara veya noktalara TIKLAYARAK güncelleyebilirsiniz.";
                 } else {
                     helperText.style.color = '#71717a';
-                    helperText.innerText = "Manuel düzenleme kapalı. Aktif etmek için yukarıdaki butona tıklayın.";
+                    helperText.innerText = "Düzenleme modu kapalı. Aktif etmek için yukarıdaki butona tıklayın.";
                 }
             }
         };
@@ -400,7 +384,6 @@ onAuthStateChanged(auth, async (user) => {
             document.querySelectorAll('.currency-filter-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             currentCurrency = e.target.getAttribute('data-curr');
-            // İleride API bağlandığında chartları bu kura göre render edeceğiz. Şimdilik sadece buton görseli değişiyor.
         };
     });
 
