@@ -364,32 +364,37 @@
   <div id="upload-modal" class="tk-center-overlay">
       <div class="tk-center-box small-box">
           <div class="tk-center-header">
-              <span class="tk-center-title">Dosya Yükle</span>
+              <span class="tk-center-title">Toplu Veri Yükle</span>
               <button class="tk-center-close" id="close-upload-modal"><i class="fas fa-times"></i></button>
           </div>
           
           <div style="padding: 10px 30px 30px 30px;">
-              <div class="upload-section-title">İndirilecek şablonu seçin</div>
-              <div class="upload-controls">
-                  <select class="tk-select">
-                      <option>Aylık Birikimler</option>
-                      <option>Portföy İşlemleri</option>
+              
+              <div class="upload-section-title">1. Şablonu İndir</div>
+              <p class="text-sub" style="margin-bottom:10px;">Verilerinizi doğru formatta yüklemek için şablonu kullanın.</p>
+              <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                  <select id="template-format" class="tk-select" style="width: auto;">
+                      <option value="xlsx">Excel (.xlsx)</option>
+                      <option value="csv">CSV (.csv)</option>
                   </select>
-                  <select class="tk-select" disabled>
-                      <option>Dosya Seçilmedi</option>
-                  </select>
-                  <button class="btn-template">Şablonu İndir</button>
+                  <button class="btn-template" id="btn-download-template">
+                      <i class="fas fa-download" style="margin-right:5px;"></i> Şablonu İndir
+                  </button>
               </div>
 
-              <div class="upload-section-title">Yüklenecek dosyayı seçin</div>
-              <div class="upload-zone">
+              <div class="upload-section-title">2. Doldurulan Dosyayı Yükle</div>
+              <input type="file" id="file-upload-input" accept=".csv, .xlsx, .xls" style="display: none;" />
+              
+              <div class="upload-zone" id="upload-drag-zone">
                   <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; margin-bottom: 15px; color:#6366f1;"></i>
-                  <p>Dosyayı yüklemek için bu alana tıklayın veya sürükleyin</p>
+                  <p id="upload-file-name">Dosyayı seçmek için tıklayın veya sürükleyip bırakın</p>
               </div>
 
               <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 25px;">
                   <button class="btn-cancel" id="cancel-upload">Vazgeç</button>
-                  <button class="btn-save-final">Dosyayı Yükle</button>
+                  <button class="btn-save-final" id="btn-confirm-upload" disabled style="opacity:0.5; cursor:not-allowed;">
+                      Dosyayı Yükle
+                  </button>
               </div>
           </div>
       </div>
