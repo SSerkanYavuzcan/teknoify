@@ -81,7 +81,9 @@
 
         <div class="fin-card col-combined-savings" id="card-savings" title="Aylık trendi ve verileri güncellemek için tıklayın">
           <div class="savings-header">
-             <span style="font-size: 0.95rem; font-weight: 600; color: #e4e4e7;"><i class="fas fa-wallet" style="color:#60a5fa; margin-right:8px;"></i>Aylık Birikim ve Tasarruf Trendi</span>
+             <span style="font-size: 0.95rem; font-weight: 600; color: #e4e4e7;">
+                <i class="fas fa-wallet" style="color:#60a5fa; margin-right:8px;"></i>Aylık Birikim ve Tasarruf Trendi
+             </span>
              <span class="badge badge-purple" id="display-current-month">Cari Ay</span>
           </div>
           <div class="savings-body">
@@ -92,13 +94,17 @@
               <div class="rate-data">
                   <h2 class="text-large" id="display-rate" style="margin-bottom: 2px;">0%</h2>
                   <p class="text-sub" style="margin-bottom: 8px;">Tasarruf Oranı</p>
-                  <div class="prog-bg" style="width: 120px; float: right;"><div class="prog-fill" id="display-rate-bar" style="width:0%; background:#10b981;"></div></div>
+                  <div class="prog-bg" style="width: 120px; float: right;">
+                      <div class="prog-fill" id="display-rate-bar" style="width:0%; background:#10b981;"></div>
+                  </div>
               </div>
           </div>
         </div>
 
         <div class="fin-card col-hedef">
-          <div class="fin-card-title" style="width:100%;"><span><i class="fas fa-bullseye" style="color:#a855f7;margin-right:5px;"></i> Hedef Gerçekleşme</span></div>
+          <div class="fin-card-title" style="width:100%;">
+              <span><i class="fas fa-bullseye" style="color:#a855f7;margin-right:5px;"></i> Hedef Gerçekleşme</span>
+          </div>
           <div id="chart-radial-target" style="margin: -10px 0;"></div>
           <div style="width:100%; text-align:left;">
               <p class="text-sub">Toplam Hedef Tutarı <i class="fas fa-chevron-right" style="float:right;"></i></p>
@@ -107,29 +113,55 @@
         </div>
 
         <div class="fin-card col-gider">
-          <div class="fin-card-title"><span><i class="fas fa-credit-card" style="color:#a1a1aa;margin-right:5px;"></i> Toplam Aylık Gider</span></div>
+          <div class="fin-card-title">
+              <span><i class="fas fa-credit-card" style="color:#a1a1aa;margin-right:5px;"></i> Toplam Aylık Gider</span>
+          </div>
           <h2 class="text-large">₺0</h2>
           <p class="text-sub" style="margin-top: 5px;">Geçen aya göre hesaplanamadı</p>
           <div id="chart-expense-spark" style="margin-top:auto; height:50px;"></div>
         </div>
 
         <div class="fin-card col-varlik">
-          <div class="fin-card-title"><span>Varlık Dağılımı <i class="fas fa-info-circle info-icon"></i></span></div>
+          <div class="fin-card-title">
+              <span>Varlık Dağılımı <i class="fas fa-info-circle info-icon"></i></span>
+          </div>
           <div class="varlik-layout">
             <div id="chart-donut-assets" style="width: 180px;"></div>
             <div class="varlik-legend">
-                <div class="varlik-item"><span><div class="toggle-dot" style="background:#a855f7;"></div> Hisse Senedi</span> <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span></div>
+                <div class="varlik-item">
+                    <span><div class="toggle-dot" style="background:#a855f7;"></div> Hisse Senedi</span> 
+                    <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
+                </div>
                 <div class="varlik-subitem"><span>- BIST</span> <span>₺0</span></div>
                 <div class="varlik-subitem"><span>- ABD Hisseleri</span> <span>₺0</span></div>
+                <div class="varlik-subitem"><span>- Temettü</span> <span>₺0</span></div>
                 <div style="height:8px;"></div>
-                <div class="varlik-item"><span><div class="toggle-dot" style="background:#3b82f6;"></div> Fonlar</span> <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span></div>
+                
+                <div class="varlik-item">
+                    <span><div class="toggle-dot" style="background:#3b82f6;"></div> Fonlar</span> 
+                    <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
+                </div>
                 <div class="varlik-subitem"><span>- Hisse Fonları</span> <span>₺0</span></div>
+                <div class="varlik-subitem"><span>- Eurobond Fonları</span> <span>₺0</span></div>
+                <div class="varlik-subitem"><span>- Para Piyasası</span> <span>₺0</span></div>
                 <div style="height:8px;"></div>
-                <div class="varlik-item"><span><div class="toggle-dot" style="background:#f97316;"></div> Kripto</span> <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span></div>
+                
+                <div class="varlik-item">
+                    <span><div class="toggle-dot" style="background:#f97316;"></div> Kripto</span> 
+                    <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
+                </div>
                 <div class="varlik-subitem"><span>- BTC</span> <span>₺0</span></div>
+                <div class="varlik-subitem"><span>- ETH</span> <span>₺0</span></div>
                 <div style="height:8px;"></div>
-                <div class="varlik-item"><span><div class="toggle-dot" style="background:#f59e0b;"></div> Emtia</span> <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span></div>
-                <div class="varlik-item" style="margin-top:5px;"><span><div class="toggle-dot" style="background:#10b981;"></div> Nakit</span> <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span></div>
+                
+                <div class="varlik-item">
+                    <span><div class="toggle-dot" style="background:#f59e0b;"></div> Emtia</span> 
+                    <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
+                </div>
+                <div class="varlik-item" style="margin-top:5px;">
+                    <span><div class="toggle-dot" style="background:#10b981;"></div> Nakit</span> 
+                    <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
+                </div>
             </div>
           </div>
           <div style="font-size:0.7rem; color:#71717a; margin-top:auto;">Son güncelleme: Bugün 10:30</div>
@@ -154,6 +186,14 @@
                       <div class="hedef-pct">0%</div>
                   </div>
               </div>
+              <div class="hedef-item">
+                  <div class="hedef-icon" style="color:#3b82f6;"><i class="fas fa-plane-departure"></i></div>
+                  <div class="hedef-details">
+                      <div class="hedef-row-1"><span class="hedef-title">Tatil Bütçesi</span> <span class="hedef-amounts">₺0 / ₺0</span></div>
+                      <div class="prog-bg" style="width:100%"><div class="prog-fill" style="width:0%; background:#3b82f6;"></div></div>
+                      <div class="hedef-pct">0%</div>
+                  </div>
+              </div>
           </div>
           <div style="text-align:center; margin-top:auto;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm hedefleri görüntüle <i class="fas fa-arrow-right"></i></a></div>
         </div>
@@ -162,8 +202,8 @@
           <div class="fin-card-title">
             <span>Aylık Birikim Akışı</span>
             <div class="portfoy-filters" style="margin-top:0;">
-              <span class="filter-btn active">TL</span>
-              <span class="filter-btn">USD</span>
+                <span class="filter-btn active">TL</span>
+                <span class="filter-btn">USD</span>
             </div>
           </div>
           <div class="chart-toggle-legend" style="margin-top:0; margin-bottom:10px;">
@@ -205,31 +245,49 @@
         <div class="fin-card col-odemeler">
           <div class="fin-card-title"><span>Yaklaşan Ödemeler & Düzenli Giderler</span></div>
           <table class="data-table">
-            <thead><tr><th>Açıklama</th><th>Kategori</th><th>Tarih</th><th>Tutar</th><th>Durum</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Açıklama</th>
+                <th>Kategori</th>
+                <th>Tarih</th>
+                <th>Tutar</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
             <tbody>
               <tr>
                 <td><i class="fab fa-cc-mastercard" style="color:#ef4444;margin-right:5px;"></i> Kredi Kartı</td>
-                <td>Finans</td><td>22 Mayıs 2026</td><td>₺14.250</td>
+                <td>Finans</td>
+                <td>22 Mayıs 2026</td>
+                <td>₺14.250</td>
                 <td><span class="badge badge-blue">Yaklaşan</span></td>
               </tr>
               <tr>
                 <td><i class="fas fa-home" style="color:#3b82f6;margin-right:5px;"></i> Ev Kirası</td>
-                <td>Konut</td><td>01 Haziran 2026</td><td>₺18.000</td>
+                <td>Konut</td>
+                <td>01 Haziran 2026</td>
+                <td>₺18.000</td>
                 <td><span class="badge badge-blue">Yaklaşan</span></td>
               </tr>
               <tr>
                 <td><i class="fas fa-bolt" style="color:#f59e0b;margin-right:5px;"></i> Elektrik</td>
-                <td>Faturalar</td><td>05 Haziran 2026</td><td>₺1.250</td>
+                <td>Faturalar</td>
+                <td>05 Haziran 2026</td>
+                <td>₺1.250</td>
                 <td><span class="badge badge-blue">Yaklaşan</span></td>
               </tr>
               <tr>
                 <td><i class="fas fa-wifi" style="color:#a855f7;margin-right:5px;"></i> İnternet</td>
-                <td>Faturalar</td><td>07 Haziran 2026</td><td>₺499</td>
+                <td>Faturalar</td>
+                <td>07 Haziran 2026</td>
+                <td>₺499</td>
                 <td><span class="badge badge-blue">Yaklaşan</span></td>
               </tr>
               <tr>
                 <td><i class="fab fa-spotify" style="color:#10b981;margin-right:5px;"></i> Spotify</td>
-                <td>Abonelik</td><td>15 Haziran 2026</td><td>₺59</td>
+                <td>Abonelik</td>
+                <td>15 Haziran 2026</td>
+                <td>₺59</td>
                 <td><span class="badge badge-purple">Otomatik</span></td>
               </tr>
             </tbody>
@@ -328,6 +386,13 @@
           <div class="tk-center-header">
               <span class="tk-center-title"><i class="fas fa-chart-line" style="color:#6366f1;"></i> Birikim & Tasarruf Performansı</span>
               <div class="modal-actions">
+                  
+                  <div class="chart-currency-filters" style="display:flex; gap:5px; margin-right:15px; border-right: 1px solid rgba(255,255,255,0.1); padding-right:15px;">
+                      <button class="currency-filter-btn active" data-curr="TL">TL</button>
+                      <button class="currency-filter-btn" data-curr="USD">USD</button>
+                      <button class="currency-filter-btn" data-curr="EUR">EUR</button>
+                  </div>
+                  
                   <div class="chart-time-filters">
                       <button class="time-filter-btn" data-range="3">3A</button>
                       <button class="time-filter-btn" data-range="6">6A</button>
@@ -335,15 +400,30 @@
                       <button class="time-filter-btn" data-range="ytd">YTD</button>
                       <button class="time-filter-btn" data-range="all">Tümü</button>
                   </div>
-                  <button class="btn-modal-action active" id="btn-manual-mode" style="margin-left: 15px;">Manuel Düzenle</button>
+                  
+                  <button class="btn-modal-action" id="btn-manual-mode" style="margin-left: 15px;">Manuel Düzenle</button>
                   <button class="btn-modal-action" id="btn-upload-mode">Yükle</button>
                   <button class="tk-center-close" style="margin-left:15px;"><i class="fas fa-times"></i></button>
               </div>
           </div>
           
-          <div class="chart-scroll-container">
-              <div class="chart-inner-wrapper" id="dynamic-chart-width">
-                  <div id="modal-trend-chart-large"></div>
+          <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
+              <div class="chart-scroll-container">
+                  <div class="chart-inner-wrapper" id="dynamic-chart-width">
+                      <div id="modal-trend-chart-large"></div>
+                  </div>
+              </div>
+
+              <div class="modal-bottom-charts" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; padding: 10px 30px 20px 30px;">
+                  <div class="fin-card" style="box-shadow: none; border-color: rgba(255,255,255,0.05); padding: 15px;">
+                      <div class="fin-card-title">Döviz Bazlı Birikim Dağılımı</div>
+                      <div id="modal-donut-currency"></div>
+                  </div>
+                  <div class="fin-card" style="box-shadow: none; border-color: rgba(255,255,255,0.05); padding: 15px;">
+                      <div class="fin-card-title">Gelir vs Enflasyon</div>
+                      <div id="modal-bar-inflation"></div>
+                      <p style="font-size:0.75rem; color:#10b981; margin-top:10px;"><i class="fas fa-check-circle"></i> Gelir büyümesi son 6 ayda enflasyonun üzerinde seyrediyor.</p>
+                  </div>
               </div>
           </div>
 
@@ -353,7 +433,7 @@
               <div class="mini-summary-card"><p>Ortalama Tasarruf Oranı</p><h3 id="avg-savings-rate">%0</h3></div>
               <div class="mini-summary-card"><p>Hedefe Ulaşma</p><h3 id="target-success-rate">%0</h3></div>
               <div style="flex:1; display:flex; justify-content: flex-end; align-items:center;">
-                  <span class="text-sub" style="font-size: 0.75rem; max-width: 250px; text-align: right;">Manuel Düzenle modundayken grafik üzerindeki noktalara tıklayarak değerleri ve hedefinizi güncelleyebilirsiniz.</span>
+                  <span class="text-sub" id="manual-mode-helper" style="font-size: 0.75rem; max-width: 280px; text-align: right; color:#71717a;">Manuel düzenleme kapalı. Aktif etmek için yukarıdaki butona tıklayın.</span>
               </div>
           </div>
       </div>
