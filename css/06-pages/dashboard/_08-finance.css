@@ -82,7 +82,6 @@
     box-shadow: 0 25px 50px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column; position: relative;
 }
 
-/* BOŞLUK SORUNUNUN ÇÖZÜMÜ: height: 85vh KADIRILDI, max-height VE height: auto EKLENDİ */
 .wide-box { width: 95vw !important; max-width: 1200px !important; height: auto !important; max-height: 90vh !important; }
 .small-box { width: 90vw !important; max-width: 650px !important; height: auto !important; }
 
@@ -92,23 +91,28 @@
 .tk-center-close:hover { color: #ef4444; }
 .modal-actions { display: flex; gap: 10px; align-items: center; }
 
-/* ZAMAN FİLTRELERİ */
+/* PARA BİRİMİ VE ZAMAN FİLTRELERİ */
 .chart-time-filters { display: flex; gap: 5px; background: rgba(255,255,255,0.02); padding: 4px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-right: 15px; }
 .time-filter-btn { background: transparent; border: none; color: #a1a1aa; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .time-filter-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
 .time-filter-btn.active { background: #6366f1; color: #fff; }
 
+.currency-filter-btn { background: transparent; border: none; color: #a1a1aa; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.currency-filter-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.currency-filter-btn.active { background: #10b981; color: #fff; }
+
 /* MODAL İÇİ GRAFİK */
-/* Padding-bottom azaltıldı ve esnemesi düzeltildi */
 .chart-scroll-container { width: 100%; overflow-x: auto; padding: 20px 20px 0 20px; background: #0d0f16; scrollbar-width: thin; scrollbar-color: #3f3f46 transparent; }
 .chart-scroll-container::-webkit-scrollbar { height: 8px; }
 .chart-scroll-container::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
 .chart-inner-wrapper { min-width: 100%; transition: min-width 0.3s ease; padding-bottom: 0px; }
 #modal-trend-chart-large { background: transparent !important; }
 
-/* APEXCHARTS MARKER İÇİN İMLEÇ */
-.apexcharts-marker:hover { cursor: pointer !important; }
-.apexcharts-series[seriesName="Aylık Gelir"] path, .apexcharts-series[seriesName="Birikim Miktarı"] path { cursor: pointer !important; }
+/* YENİ: MANUEL MOD AÇIKKEN KALEM İKONU KULLANIMI */
+.manual-mode-active .apexcharts-series path, 
+.manual-mode-active .apexcharts-marker {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%2310b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>') 0 20, pointer !important;
+}
 
 /* MODAL ALTI SCORECARDLAR */
 .tk-modal-summary-footer { padding: 20px 30px; display: flex; gap: 20px; background: #11131a; border-top: 1px solid rgba(255,255,255,0.05); align-items: center; }
