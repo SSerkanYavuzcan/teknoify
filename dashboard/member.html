@@ -17,6 +17,7 @@
     /* ========================================================= */
     body { background-color: #05080a; margin: 0; padding: 0; overflow-x: hidden; }
 
+    /* ÜST ÇAKIŞMAYI ÖNLEYEN KESİN ÇÖZÜM: padding-top artırıldı */
     .content-scroll {
       -ms-overflow-style: none;
       scrollbar-width: none;
@@ -25,8 +26,8 @@
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important; 
-      gap: 30px !important;
-      padding: 30px !important;
+      gap: 40px !important; /* Satırlar arası boşluk artırıldı */
+      padding: 60px 30px 40px 30px !important; /* Üstten 60px boşluk bırakıldı */
       box-sizing: border-box !important;
     }
     .content-scroll::-webkit-scrollbar {
@@ -44,7 +45,6 @@
       max-width: 1400px;
       padding: 0;
       box-sizing: border-box;
-      margin-top: 30px; /* Çakışmayı önlemek için eklenen ferahlık payı */
     }
     .dashboard-card {
       background: #11131a;
@@ -190,7 +190,7 @@
 
   <main class="main-content">
     <header class="top-bar">
-      <h2 style="padding-left: 10px; font-weight: 600;">Hoşgeldin, <span id="user-name-title" style="color: #6366f1;">...</span></h2>
+      <h2 style="padding-left: 10px; font-weight: 600; margin: 0;">Hoşgeldin, <span id="user-name-title" style="color: #6366f1;">...</span></h2>
       <div class="user-profile">
         <span id="user-name-display" style="font-weight: 500;">Yükleniyor...</span>
         <div class="avatar" id="user-avatar" style="background:#6366f1;">U</div>
