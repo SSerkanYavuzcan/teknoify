@@ -15,15 +15,23 @@
     /* ========================================================= */
     /* GENEL DÜZEN VE GRID SİSTEMİ */
     /* ========================================================= */
-    .main-content { width: 100%; display: flex; flex-direction: column; }
-    
     .content-scroll { 
-      -ms-overflow-style: none; scrollbar-width: none; overflow-y: auto; 
-      padding: 20px; width: 100%; max-width: 98%; margin: 0 auto; box-sizing: border-box; 
+      -ms-overflow-style: none; 
+      scrollbar-width: none; 
+      overflow-y: auto; 
+      padding: 20px; 
+      display: flex; /* İçeriği ortalamak için güvenli yöntem */
+      justify-content: center;
     }
     .content-scroll::-webkit-scrollbar { display: none; }
 
-    .fin-dashboard-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; width: 100%; }
+    .fin-dashboard-grid { 
+      display: grid; 
+      grid-template-columns: repeat(12, 1fr); 
+      gap: 16px; 
+      width: 100%; 
+      max-width: 1600px; /* Çok büyük ekranlarda aşırı uzamasını engeller */
+    }
 
     .fin-card {
       background: #11131a; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;
@@ -109,7 +117,6 @@
     .tk-form-group input { width: 100%; background: #0d0f16; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; box-sizing: border-box; font-family: 'Inter Tight', sans-serif; outline: none; transition: border-color 0.2s; font-size: 1rem;}
     .tk-form-group input:focus { border-color: #6366f1; }
     
-    /* Input type month özelleştirmesi (dark mode uyumu) */
     ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
     
     .tk-btn-save { width: 100%; background: #6366f1; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: auto; transition: background 0.2s; }
@@ -126,7 +133,6 @@
     .col-odemeler { grid-column: span 3; }
     .col-tarayicilar { grid-column: span 9; }
 
-    /* Varlık layout, tablolar vs. mevcut stiller korunuyor */
     .varlik-layout { display: flex; gap: 20px; align-items: center; }
     .varlik-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; }
     .varlik-item { display: flex; justify-content: space-between; color: #d4d4d8; }
@@ -266,12 +272,227 @@
           <div id="chart-expense-spark" style="margin-top:auto; height:50px;"></div>
         </div>
 
-        <div class="fin-card col-varlik"><div class="fin-card-title"><span>Varlık Dağılımı</span></div><div class="varlik-layout"><div id="chart-donut-assets" style="width: 180px;"></div></div></div>
-        <div class="fin-card col-hedefler"><div class="fin-card-title"><span>Tasarruf Hedefleri</span></div></div>
-        <div class="fin-card col-akis"><div class="fin-card-title"><span>Aylık Birikim Akışı</span></div><div id="chart-bar-savings" style="height: 180px;"></div></div>
-        <div class="fin-card col-getiri"><div class="fin-card-title"><span>Karşılaştırmalı Getiri</span></div></div>
-        <div class="fin-card col-odemeler"><div class="fin-card-title"><span>Yaklaşan Ödemeler</span></div></div>
-        <div class="fin-card col-tarayicilar"><div class="fin-card-title"><span>Tarayıcılar</span></div></div>
+        <div class="fin-card col-varlik">
+          <div class="fin-card-title"><span>Varlık Dağılımı <i class="fas fa-info-circle info-icon"></i></span></div>
+          <div class="varlik-layout">
+            <div id="chart-donut-assets" style="width: 180px;"></div>
+            <div class="varlik-legend">
+                <div class="varlik-item"><span><div class="toggle-dot" style="background:#a855f7;"></div> Hisse Senedi</span> <span>40% &nbsp; <strong style="color:#fff;">₺513.800</strong></span></div>
+                <div class="varlik-subitem"><span>- BIST</span> <span>₺256.900</span></div>
+                <div class="varlik-subitem"><span>- ABD Hisseleri</span> <span>₺179.600</span></div>
+                <div class="varlik-subitem"><span>- Temettü</span> <span>₺77.300</span></div>
+                <div style="height:8px;"></div>
+                
+                <div class="varlik-item"><span><div class="toggle-dot" style="background:#3b82f6;"></div> Fonlar</span> <span>25% &nbsp; <strong style="color:#fff;">₺321.100</strong></span></div>
+                <div class="varlik-subitem"><span>- Hisse Fonları</span> <span>₺142.000</span></div>
+                <div class="varlik-subitem"><span>- Eurobond Fonları</span> <span>₺102.600</span></div>
+                <div class="varlik-subitem"><span>- Para Piyasası</span> <span>₺76.500</span></div>
+                <div style="height:8px;"></div>
+                
+                <div class="varlik-item"><span><div class="toggle-dot" style="background:#f97316;"></div> Kripto</span> <span>15% &nbsp; <strong style="color:#fff;">₺192.700</strong></span></div>
+                <div class="varlik-subitem"><span>- BTC</span> <span>₺128.400</span></div>
+                <div class="varlik-subitem"><span>- ETH</span> <span>₺47.300</span></div>
+                <div style="height:8px;"></div>
+                
+                <div class="varlik-item"><span><div class="toggle-dot" style="background:#f59e0b;"></div> Emtia</span> <span>10% &nbsp; <strong style="color:#fff;">₺128.450</strong></span></div>
+                <div class="varlik-item" style="margin-top:5px;"><span><div class="toggle-dot" style="background:#10b981;"></div> Nakit</span> <span>10% &nbsp; <strong style="color:#fff;">₺128.450</strong></span></div>
+            </div>
+          </div>
+          <div style="font-size:0.7rem; color:#71717a; margin-top:auto;">Son güncelleme: Bugün 10:30</div>
+        </div>
+
+        <div class="fin-card col-hedefler">
+          <div class="fin-card-title"><span>Tasarruf Hedefleri</span></div>
+          <div class="hedef-list">
+              <div class="hedef-item">
+                  <div class="hedef-icon" style="color:#10b981;"><i class="fas fa-shield-alt"></i></div>
+                  <div class="hedef-details">
+                      <div class="hedef-row-1"><span class="hedef-title">Acil Durum Fonu</span> <span class="hedef-amounts">₺72.000 / ₺100.000</span></div>
+                      <div class="prog-bg"><div class="prog-fill" style="width:72%; background:#10b981;"></div></div>
+                      <div class="hedef-pct">72%</div>
+                  </div>
+              </div>
+              <div class="hedef-item">
+                  <div class="hedef-icon" style="color:#a855f7;"><i class="fas fa-home"></i></div>
+                  <div class="hedef-details">
+                      <div class="hedef-row-1"><span class="hedef-title">Ev Peşinatı</span> <span class="hedef-amounts">₺612.000 / ₺1.000.000</span></div>
+                      <div class="prog-bg"><div class="prog-fill" style="width:61%; background:#a855f7;"></div></div>
+                      <div class="hedef-pct">61%</div>
+                  </div>
+              </div>
+              <div class="hedef-item">
+                  <div class="hedef-icon" style="color:#3b82f6;"><i class="fas fa-plane-departure"></i></div>
+                  <div class="hedef-details">
+                      <div class="hedef-row-1"><span class="hedef-title">Tatil Bütçesi</span> <span class="hedef-amounts">₺36.000 / ₺60.000</span></div>
+                      <div class="prog-bg"><div class="prog-fill" style="width:60%; background:#3b82f6;"></div></div>
+                      <div class="hedef-pct">60%</div>
+                  </div>
+              </div>
+          </div>
+          <div style="text-align:center; margin-top:auto;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm hedefleri görüntüle <i class="fas fa-arrow-right"></i></a></div>
+        </div>
+
+        <div class="fin-card col-akis">
+          <div class="fin-card-title">
+            <span>Aylık Birikim Akışı</span>
+            <div class="portfoy-filters" style="margin-top:0;">
+              <span class="filter-btn active">TL</span>
+              <span class="filter-btn">USD</span>
+            </div>
+          </div>
+          <div class="chart-toggle-legend" style="margin-top:0; margin-bottom:10px;">
+              <div class="toggle-item" style="background:transparent; padding:0;"><div class="toggle-dot" style="background:#a855f7;"></div> TL Birikim</div>
+              <div class="toggle-item" style="background:transparent; padding:0;"><div class="toggle-dot" style="background:#10b981;"></div> USD Karşılığı</div>
+          </div>
+          <div id="chart-bar-savings" style="height: 180px;"></div>
+          <div style="display:flex; justify-content:space-between; margin-top:15px;">
+              <div><p class="text-sub" style="margin-bottom:4px;">Bu Ay (TL)</p><strong style="color:#fff; font-size:1.1rem;">₺42.000</strong></div>
+              <div><p class="text-sub" style="margin-bottom:4px;">Bu Ay (USD)</p><strong style="color:#fff; font-size:1.1rem;">$1.290</strong></div>
+              <div><p class="text-sub" style="margin-bottom:4px;">Yıllık Toplam (TL)</p><strong style="color:#fff; font-size:1.1rem;">₺316.500</strong></div>
+              <div><p class="text-sub" style="margin-bottom:4px;">Yıllık Toplam (USD)</p><strong style="color:#fff; font-size:1.1rem;">$9.850</strong></div>
+          </div>
+        </div>
+
+        <div class="fin-card col-getiri">
+          <div class="fin-card-title"><span>Karşılaştırmalı Getiri (YTD) <i class="fas fa-info-circle info-icon"></i></span></div>
+          <div class="getiri-list">
+              <div class="getiri-item">
+                  <div class="getiri-left"><div class="getiri-icon" style="background:#a855f7;"><i class="fas fa-chart-line"></i></div> Portföyünüz</div>
+                  <div class="text-green"><i class="fas fa-caret-up"></i> %12,48</div>
+              </div>
+              <div class="getiri-item">
+                  <div class="getiri-left"><div class="getiri-icon" style="background:#10b981;">M</div> BIST 100</div>
+                  <div class="text-green"><i class="fas fa-caret-up"></i> %6,21</div>
+              </div>
+              <div class="getiri-item">
+                  <div class="getiri-left"><div class="getiri-icon" style="background:#f59e0b;"><i class="fas fa-coins"></i></div> Altın (XAUUSD)</div>
+                  <div class="text-green"><i class="fas fa-caret-up"></i> %9,73</div>
+              </div>
+              <div class="getiri-item">
+                  <div class="getiri-left"><div class="getiri-icon" style="background:#f97316;"><i class="fab fa-bitcoin"></i></div> BTC (Bitcoin)</div>
+                  <div class="text-green"><i class="fas fa-caret-up"></i> %28,91</div>
+              </div>
+          </div>
+          <div style="text-align:center; margin-top:auto;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm karşılaştırmaları görüntüle <i class="fas fa-arrow-right"></i></a></div>
+        </div>
+
+        <div class="fin-card col-odemeler">
+          <div class="fin-card-title"><span>Yaklaşan Ödemeler & Düzenli Giderler</span></div>
+          <table class="data-table">
+            <thead><tr><th>Açıklama</th><th>Kategori</th><th>Tarih</th><th>Tutar</th><th>Durum</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><i class="fab fa-cc-mastercard" style="color:#ef4444;margin-right:5px;"></i> Kredi Kartı</td>
+                <td>Finans</td><td>22 Mayıs 2026</td><td>₺14.250</td>
+                <td><span class="badge badge-blue">Yaklaşan</span></td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-home" style="color:#3b82f6;margin-right:5px;"></i> Ev Kirası</td>
+                <td>Konut</td><td>01 Haziran 2026</td><td>₺18.000</td>
+                <td><span class="badge badge-blue">Yaklaşan</span></td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-bolt" style="color:#f59e0b;margin-right:5px;"></i> Elektrik</td>
+                <td>Faturalar</td><td>05 Haziran 2026</td><td>₺1.250</td>
+                <td><span class="badge badge-blue">Yaklaşan</span></td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-wifi" style="color:#a855f7;margin-right:5px;"></i> İnternet</td>
+                <td>Faturalar</td><td>07 Haziran 2026</td><td>₺499</td>
+                <td><span class="badge badge-blue">Yaklaşan</span></td>
+              </tr>
+              <tr>
+                <td><i class="fab fa-spotify" style="color:#10b981;margin-right:5px;"></i> Spotify</td>
+                <td>Abonelik</td><td>15 Haziran 2026</td><td>₺59</td>
+                <td><span class="badge badge-purple">Otomatik</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="text-align:center; margin-top:15px;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm ödemeleri görüntüle <i class="fas fa-arrow-right"></i></a></div>
+        </div>
+
+        <div class="fin-card col-tarayicilar">
+          <div class="fin-card-title"><span>Finansal Tarayıcılar & Sinyaller <i class="fas fa-info-circle info-icon"></i></span></div>
+          <div class="tarayici-grid">
+              
+              <div class="tarayici-col">
+                  <h4>Düşeni Kıranlar</h4>
+                  <table class="mini-table">
+                      <thead><tr><th>SEMBOL</th><th>FİYAT</th><th>DEĞ.</th></tr></thead>
+                      <tbody>
+                          <tr><td>THYAO</td><td>264,50</td><td class="text-green"><i class="fas fa-caret-up"></i> 2,45%</td></tr>
+                          <tr><td>TUPRS</td><td>141,30</td><td class="text-green"><i class="fas fa-caret-up"></i> 2,18%</td></tr>
+                          <tr><td>GARAN</td><td>106,80</td><td class="text-green"><i class="fas fa-caret-up"></i> 1,92%</td></tr>
+                          <tr><td>KOZAL</td><td>23,14</td><td class="text-green"><i class="fas fa-caret-up"></i> 1,73%</td></tr>
+                          <tr><td>SASA</td><td>43,80</td><td class="text-green"><i class="fas fa-caret-up"></i> 1,51%</td></tr>
+                      </tbody>
+                  </table>
+                  <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
+              </div>
+
+              <div class="tarayici-col">
+                  <h4>Alım Sinyali Verenler</h4>
+                  <table class="mini-table">
+                      <thead><tr><th>SEMBOL</th><th>FİYAT</th><th>SİNYAL</th></tr></thead>
+                      <tbody>
+                          <tr><td>ASELS</td><td>145,20</td><td><span class="signal-badge">AL</span></td></tr>
+                          <tr><td>EKGYO</td><td>10,24</td><td><span class="signal-badge">AL</span></td></tr>
+                          <tr><td>SISE</td><td>47,32</td><td><span class="signal-badge">AL</span></td></tr>
+                          <tr><td>KCHOL</td><td>168,50</td><td><span class="signal-badge">AL</span></td></tr>
+                          <tr><td>ENKAI</td><td>56,10</td><td><span class="signal-badge">AL</span></td></tr>
+                      </tbody>
+                  </table>
+                  <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
+              </div>
+
+              <div class="tarayici-col">
+                  <h4>Hacim Patlaması</h4>
+                  <table class="mini-table">
+                      <thead><tr><th>SEMBOL</th><th>HACİM</th><th>DEĞ.</th></tr></thead>
+                      <tbody>
+                          <tr><td>ASYAO</td><td>25.6M</td><td class="text-green"><i class="fas fa-caret-up"></i> 245%</td></tr>
+                          <tr><td>ASELS</td><td>18.3M</td><td class="text-green"><i class="fas fa-caret-up"></i> 198%</td></tr>
+                          <tr><td>SISE</td><td>14.7M</td><td class="text-green"><i class="fas fa-caret-up"></i> 176%</td></tr>
+                          <tr><td>ISCTR</td><td>12.1M</td><td class="text-green"><i class="fas fa-caret-up"></i> 162%</td></tr>
+                          <tr><td>AKBNK</td><td>11.8M</td><td class="text-green"><i class="fas fa-caret-up"></i> 151%</td></tr>
+                      </tbody>
+                  </table>
+                  <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
+              </div>
+
+              <div class="tarayici-col">
+                  <h4>RSI Uygun Olanlar</h4>
+                  <table class="mini-table">
+                      <thead><tr><th>SEMBOL</th><th>RSI (14)</th><th>DURUM</th></tr></thead>
+                      <tbody>
+                          <tr><td>SAHOL</td><td>43,2</td><td class="text-green">Uygun</td></tr>
+                          <tr><td>VESTL</td><td>48,6</td><td class="text-green">Uygun</td></tr>
+                          <tr><td>BIMAS</td><td>46,9</td><td class="text-green">Uygun</td></tr>
+                          <tr><td>MGROS</td><td>41,8</td><td class="text-green">Uygun</td></tr>
+                          <tr><td>CCOLA</td><td>47,1</td><td class="text-green">Uygun</td></tr>
+                      </tbody>
+                  </table>
+                  <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
+              </div>
+
+              <div class="tarayici-col">
+                  <h4>MA50 / MA200 Kesişimi</h4>
+                  <table class="mini-table">
+                      <thead><tr><th>SEMBOL</th><th>FİYAT</th><th>SİNYAL</th></tr></thead>
+                      <tbody>
+                          <tr><td>BTCUSD</td><td>67.890</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                          <tr><td>XAUUSD</td><td>2.345</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                          <tr><td>THYAO</td><td>264,50</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                          <tr><td>ASELS</td><td>145,20</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                          <tr><td>TUPRS</td><td>141,30</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                      </tbody>
+                  </table>
+                  <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
+              </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
   </main>
@@ -324,9 +545,8 @@
 
     const auth = getAuth();
     const db = getFirestore();
-    let modalChartInstance = null; // Modal içindeki grafiği saklamak için
+    let modalChartInstance = null;
 
-    // O anki ayı YYYY-MM formatında alma fonksiyonu
     function getCurrentMonthStr() {
         const d = new Date();
         const year = d.getFullYear();
@@ -334,7 +554,6 @@
         return `${year}-${month}`;
     }
 
-    // Ana Kartı Güncelleyen Fonksiyon (Sadece seçilen/son ayın verisini gösterir)
     function updateDashboardCardUI(historyData, targetMonthStr) {
         const monthData = historyData[targetMonthStr] || { savings: 0, income: 0 };
         const savings = monthData.savings || 0;
@@ -358,11 +577,8 @@
         else bar.style.background = '#10b981'; 
     }
 
-    // Modaldaki Grafiği Çizen/Güncelleyen Fonksiyon
     function renderModalChart(historyData) {
-        // Objeyi array'e çevirip tarihe göre sıralayalım
         const sortedKeys = Object.keys(historyData).sort();
-        // Sadece son 6 ayı alalım
         const recentKeys = sortedKeys.slice(-6);
         
         const categories = [];
@@ -397,37 +613,51 @@
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const userRef = doc(db, "users", user.uid);
-            let historyData = {}; // Global geçmiş verisi
+            let historyData = {}; 
             const currentMonth = getCurrentMonthStr();
+
+            let displayName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
 
             try {
                 const snap = await getDoc(userRef);
                 if (snap.exists()) {
                     const data = snap.data();
                     
-                    // Firebase'den history objesini çekiyoruz (Yoksa boş obje)
+                    if (data.profile) {
+                        displayName = data.profile.fullName || data.profile.companyName || displayName;
+                    }
+                    
                     if (data.dashboardStats && data.dashboardStats.finance && data.dashboardStats.finance.history) {
                         historyData = data.dashboardStats.finance.history;
                     }
                 }
-            } catch (error) { console.error("Veri çekilemedi:", error); }
+                
+                document.getElementById("user-name-display").textContent = displayName;
+                document.getElementById("user-avatar").textContent = displayName.charAt(0).toUpperCase();
 
-            // İlk Açılış
+            } catch (error) { 
+                console.error("Veri çekilemedi:", error); 
+                const fallbackName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+                document.getElementById("user-name-display").textContent = fallbackName;
+                document.getElementById("user-avatar").textContent = fallbackName.charAt(0).toUpperCase();
+            }
+
+            window.USER_SESSION = { uid: user.uid, name: displayName, email: user.email };
+            
+            if(typeof window.TK_RENDER_SIDEBAR === "function") {
+                window.TK_RENDER_SIDEBAR();
+            }
+
             updateDashboardCardUI(historyData, currentMonth);
 
-            // ==========================================
-            // MODAL ETKİLEŞİMLERİ
-            // ==========================================
             const savingsCard = document.getElementById('card-savings');
             const savingsModal = document.getElementById('savings-modal');
             const monthInput = document.getElementById('input-month');
             const incomeInput = document.getElementById('input-income');
             const savingsInput = document.getElementById('input-savings');
             
-            // Başlangıçta input değerini bu aya ayarla
             monthInput.value = currentMonth;
 
-            // Karta Tıklanınca Modalı Aç
             savingsCard.addEventListener('click', () => {
                 const selMonth = monthInput.value;
                 const mData = historyData[selMonth] || { income: '', savings: '' };
@@ -436,11 +666,9 @@
                 savingsInput.value = mData.savings > 0 ? mData.savings : '';
                 
                 savingsModal.style.display = 'flex';
-                // Grafiği gecikmeli render et ki modal display:flex olduktan sonra boyutları doğru alsın
                 setTimeout(() => renderModalChart(historyData), 100);
             });
 
-            // Ay değiştirildiğinde inputlardaki verileri o aya ait verilerle değiştir
             monthInput.addEventListener('change', (e) => {
                 const selMonth = e.target.value;
                 const mData = historyData[selMonth] || { income: '', savings: '' };
@@ -448,11 +676,9 @@
                 savingsInput.value = mData.savings > 0 ? mData.savings : '';
             });
 
-            // Kapatma İşlemleri
             document.getElementById('close-savings-modal').addEventListener('click', () => savingsModal.style.display = 'none');
             window.addEventListener('click', (e) => { if (e.target === savingsModal) savingsModal.style.display = 'none'; });
 
-            // KAYDET BUTONU LOGIC
             const saveBtn = document.getElementById('btn-save-savings');
             saveBtn.addEventListener('click', async () => {
                 const targetMonth = monthInput.value;
@@ -464,18 +690,15 @@
                 saveBtn.textContent = "Kaydediliyor..."; saveBtn.disabled = true;
 
                 try {
-                    // UpdateDoc ile dot notation kullanarak SADECE o ayın verisini güncelliyoruz/ekliyoruz
                     const fieldPath = `dashboardStats.finance.history.${targetMonth}`;
                     await updateDoc(userRef, {
                         [fieldPath]: { savings: newSavings, income: newIncome }
                     });
                     
-                    // Lokal objeyi güncelle
                     historyData[targetMonth] = { savings: newSavings, income: newIncome };
                     
-                    // Arayüzleri Güncelle
-                    updateDashboardCardUI(historyData, currentMonth); // Ana kartı her zaman güncel aya göre ayarla
-                    renderModalChart(historyData); // Grafiği güncelle
+                    updateDashboardCardUI(historyData, currentMonth); 
+                    renderModalChart(historyData); 
                     
                 } catch(error) {
                     console.error("Firebase güncelleme hatası:", error);
@@ -485,23 +708,22 @@
                 }
             });
 
-            // Demo Grafikleri Çiz (Sıfırlandı)
             renderCharts();
             
             const loader = document.getElementById("loading-overlay");
             if (loader) { loader.style.opacity = "0"; setTimeout(() => loader.style.display = "none", 600); }
+        } else {
+            window.location.href = "/login.html";
         }
     });
 
     function renderCharts() {
-        // Portföy Grafiği (Boşaltıldı)
         new ApexCharts(document.querySelector("#chart-main-portfolio"), {
             series: [{ name: 'Portföy', data: [0, 0, 0, 0, 0, 0, 0] }],
             chart: { type: 'line', height: 200, sparkline: { enabled: true } },
             stroke: { curve: 'smooth', width: 2 }, colors: ['#a855f7'], tooltip: { theme: 'dark' }
         }).render();
 
-        // Hedef Grafiği (Sıfırlandı)
         new ApexCharts(document.querySelector("#chart-radial-target"), {
             series: [0],
             chart: { type: 'radialBar', height: 160 },
@@ -509,12 +731,32 @@
             colors: ['#6366f1'], stroke: { lineCap: 'round' }
         }).render();
 
-        // Gider Grafiği (Sıfırlandı)
         new ApexCharts(document.querySelector("#chart-expense-spark"), {
             series: [{ data: [0, 0, 0, 0, 0, 0] }],
             chart: { type: 'area', height: 60, sparkline: { enabled: true } },
             stroke: { curve: 'smooth', width: 2 }, fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0, stops: [0, 100] } },
-            colors: ['#3b82f6'], tooltip: { fixed: { enabled: false } }
+            colors: ['#3b82f6'], tooltip: { fixed: { enabled: false }, marker: { show: false } }
+        }).render();
+        
+        new ApexCharts(document.querySelector("#chart-donut-assets"), {
+            series: [100],
+            chart: { type: 'donut', height: 200 },
+            labels: ['Veri Yok'],
+            colors: ['#1f2233'],
+            stroke: { show: true, colors: ['#11131a'], width: 2 },
+            legend: { show: false },
+            plotOptions: { pie: { donut: { size: '70%', labels: { show: true, name: { color: '#a1a1aa', fontSize: '0.8rem' }, value: { color: '#fff', fontSize: '1.2rem', fontWeight: 700 }, total: { show: true, showAlways: true, label: 'Toplam', color: '#a1a1aa' } } } } },
+            dataLabels: { enabled: false }
+        }).render();
+
+        new ApexCharts(document.querySelector("#chart-bar-savings"), {
+            series: [{ name: 'Veri Yok', data: [0, 0, 0, 0, 0, 0, 0] }],
+            chart: { type: 'bar', height: 220, toolbar: { show: false }, background: 'transparent' },
+            plotOptions: { bar: { columnWidth: '40%', borderRadius: 4 } },
+            colors: ['#1f2233'],
+            dataLabels: { enabled: false },
+            xaxis: { categories: ['1', '2', '3', '4', '5', '6', '7'], axisBorder: { show: false }, axisTicks: { show: false }, labels: { show: false } },
+            yaxis: { show: false }, grid: { show: false }, legend: { show: false }
         }).render();
     }
   </script>
