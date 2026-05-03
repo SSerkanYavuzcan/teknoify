@@ -82,7 +82,7 @@
         <div class="fin-card col-combined-savings" id="card-savings" title="Aylık trendi ve verileri güncellemek için tıklayın">
           <div class="savings-header">
              <span style="font-size: 0.95rem; font-weight: 600; color: #e4e4e7;">
-                <i class="fas fa-wallet" style="color:#60a5fa; margin-right:8px;"></i>Aylık Birikim ve Tasarruf Trendi
+                 <i class="fas fa-wallet" style="color:#60a5fa; margin-right:8px;"></i>Aylık Birikim ve Tasarruf Trendi
              </span>
              <span class="badge badge-purple" id="display-current-month">Cari Ay</span>
           </div>
@@ -173,7 +173,10 @@
               <div class="hedef-item">
                   <div class="hedef-icon" style="color:#10b981;"><i class="fas fa-shield-alt"></i></div>
                   <div class="hedef-details">
-                      <div class="hedef-row-1"><span class="hedef-title">Acil Durum Fonu</span> <span class="hedef-amounts">₺0 / ₺0</span></div>
+                      <div class="hedef-row-1">
+                          <span class="hedef-title">Acil Durum Fonu</span> 
+                          <span class="hedef-amounts">₺0 / ₺0</span>
+                      </div>
                       <div class="prog-bg" style="width:100%"><div class="prog-fill" style="width:0%; background:#10b981;"></div></div>
                       <div class="hedef-pct">0%</div>
                   </div>
@@ -181,7 +184,10 @@
               <div class="hedef-item">
                   <div class="hedef-icon" style="color:#a855f7;"><i class="fas fa-home"></i></div>
                   <div class="hedef-details">
-                      <div class="hedef-row-1"><span class="hedef-title">Ev Peşinatı</span> <span class="hedef-amounts">₺0 / ₺0</span></div>
+                      <div class="hedef-row-1">
+                          <span class="hedef-title">Ev Peşinatı</span> 
+                          <span class="hedef-amounts">₺0 / ₺0</span>
+                      </div>
                       <div class="prog-bg" style="width:100%"><div class="prog-fill" style="width:0%; background:#a855f7;"></div></div>
                       <div class="hedef-pct">0%</div>
                   </div>
@@ -189,13 +195,18 @@
               <div class="hedef-item">
                   <div class="hedef-icon" style="color:#3b82f6;"><i class="fas fa-plane-departure"></i></div>
                   <div class="hedef-details">
-                      <div class="hedef-row-1"><span class="hedef-title">Tatil Bütçesi</span> <span class="hedef-amounts">₺0 / ₺0</span></div>
+                      <div class="hedef-row-1">
+                          <span class="hedef-title">Tatil Bütçesi</span> 
+                          <span class="hedef-amounts">₺0 / ₺0</span>
+                      </div>
                       <div class="prog-bg" style="width:100%"><div class="prog-fill" style="width:0%; background:#3b82f6;"></div></div>
                       <div class="hedef-pct">0%</div>
                   </div>
               </div>
           </div>
-          <div style="text-align:center; margin-top:auto;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm hedefleri görüntüle <i class="fas fa-arrow-right"></i></a></div>
+          <div style="text-align:center; margin-top:auto;">
+              <a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm hedefleri görüntüle <i class="fas fa-arrow-right"></i></a>
+          </div>
         </div>
 
         <div class="fin-card col-akis">
@@ -239,7 +250,9 @@
                   <div class="text-sub">%0,00</div>
               </div>
           </div>
-          <div style="text-align:center; margin-top:auto;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm karşılaştırmaları görüntüle <i class="fas fa-arrow-right"></i></a></div>
+          <div style="text-align:center; margin-top:auto;">
+              <a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm karşılaştırmaları görüntüle <i class="fas fa-arrow-right"></i></a>
+          </div>
         </div>
 
         <div class="fin-card col-odemeler">
@@ -292,7 +305,9 @@
               </tr>
             </tbody>
           </table>
-          <div style="text-align:center; margin-top:15px;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm ödemeleri görüntüle <i class="fas fa-arrow-right"></i></a></div>
+          <div style="text-align:center; margin-top:15px;">
+              <a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm ödemeleri görüntüle <i class="fas fa-arrow-right"></i></a>
+          </div>
         </div>
 
         <div class="fin-card col-tarayicilar">
@@ -383,6 +398,7 @@
 
   <div id="savings-modal" class="tk-center-overlay">
       <div class="tk-center-box wide-box">
+          
           <div class="tk-center-header">
               <span class="tk-center-title"><i class="fas fa-chart-line" style="color:#6366f1;"></i> Birikim & Tasarruf Performansı</span>
               <div class="modal-actions">
@@ -401,7 +417,7 @@
                       <button class="time-filter-btn" data-range="all">Tümü</button>
                   </div>
                   
-                  <button class="btn-modal-action" id="btn-manual-mode" style="margin-left: 15px;">Manuel Düzenle</button>
+                  <button class="btn-modal-action" id="btn-manual-mode" style="margin-left: 15px;">Düzenle</button>
                   <button class="btn-modal-action" id="btn-upload-mode">Yükle</button>
                   <button class="tk-center-close" style="margin-left:15px;"><i class="fas fa-times"></i></button>
               </div>
@@ -433,7 +449,7 @@
               <div class="mini-summary-card"><p>Ortalama Tasarruf Oranı</p><h3 id="avg-savings-rate">%0</h3></div>
               <div class="mini-summary-card"><p>Hedefe Ulaşma</p><h3 id="target-success-rate">%0</h3></div>
               <div style="flex:1; display:flex; justify-content: flex-end; align-items:center;">
-                  <span class="text-sub" id="manual-mode-helper" style="font-size: 0.75rem; max-width: 280px; text-align: right; color:#71717a;">Manuel düzenleme kapalı. Aktif etmek için yukarıdaki butona tıklayın.</span>
+                  <span class="text-sub" id="manual-mode-helper" style="font-size: 0.75rem; max-width: 280px; text-align: right; color:#71717a;">Düzenleme modu kapalı. Aktif etmek için yukarıdaki butona tıklayın.</span>
               </div>
           </div>
       </div>
@@ -448,7 +464,10 @@
           <div style="padding: 10px 30px 30px 30px;">
               <div class="upload-section-title">İndirilecek şablonu seçin</div>
               <div class="upload-controls">
-                  <select class="tk-select" id="template-format"><option value="xlsx">Aylık Birikimler (.xlsx)</option><option value="csv">Aylık Birikimler (.csv)</option></select>
+                  <select class="tk-select" id="template-format">
+                      <option value="xlsx">Aylık Birikimler (.xlsx)</option>
+                      <option value="csv">Aylık Birikimler (.csv)</option>
+                  </select>
                   <select class="tk-select" disabled><option>Dosya Seçilmedi</option></select>
                   <button class="btn-template" id="btn-download-template">Şablonu İndir</button>
               </div>
