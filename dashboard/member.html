@@ -13,45 +13,46 @@
   
   <style>
     /* ========================================================= */
-    /* TEMEL YAPI VE DİNAMİK EKRAN ORANLAMASI (ZOOM FİX) */
+    /* TEMEL YAPI VE DİNAMİK EKRAN ORANLAMASI (ZOOM FIX) */
     /* ========================================================= */
-    body { background-color: #05080a; margin: 0; padding: 0; overflow: hidden; }
+    body { background-color: #05080a; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-    /* Tüm ana alanı %100 ekrana kilitleyip esnek (flex) yaptık */
+    /* Ana İçerik: Ekranı tam kaplayan esnek dikey kutu */
     .main-content {
       height: 100vh !important;
       display: flex !important;
       flex-direction: column !important;
-      overflow: hidden !important;
       box-sizing: border-box !important;
+      overflow: hidden !important;
     }
 
-    /* Üst barın yüksekliğini içeriğe göre otomatik ayarla ve sabit kalsın */
+    /* Üst Bar: İçeriğe göre otomatik yükseklik alır, akışın içinde kalır */
     .top-bar {
-      position: relative !important; 
-      flex: 0 0 auto !important; 
+      position: relative !important; /* Dış CSS'teki fixed/absolute ayarını ezer */
+      flex: 0 0 auto !important; /* Esnemez, sadece kendi alanını kaplar */
       width: 100% !important;
-      box-sizing: border-box !important;
-      z-index: 1000 !important;
-      background: #05080a !important; 
-      padding: 25px 30px 15px 30px !important;
+      background: #05080a !important;
+      padding: 20px 30px !important;
       display: flex !important;
       justify-content: space-between !important;
       align-items: center !important;
+      box-sizing: border-box !important;
+      border-bottom: 1px solid rgba(255,255,255,0.05); /* Şık ayrım çizgisi */
+      z-index: 100 !important;
     }
 
-    /* İçerik alanı kalan tüm boşluğu kaplasın ve sadece kendi içinde scroll olsun */
+    /* Kaydırılabilir İçerik: Üst bardan kalan tüm boşluğu kaplar */
     .content-scroll {
       -ms-overflow-style: none;
       scrollbar-width: none;
-      flex: 1 1 auto !important; 
+      flex: 1 1 auto !important; /* Kalan alanı doldur */
       overflow-y: auto !important; 
       width: 100% !important;
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important; 
       gap: 30px !important; 
-      padding: 10px 30px 60px 30px !important; /* Çakışma ihtimali sıfırlandı */
+      padding: 30px !important; /* Sabit yüksek piksellere artık gerek yok */
       box-sizing: border-box !important;
     }
     .content-scroll::-webkit-scrollbar {
@@ -142,7 +143,7 @@
     .projects-section {
       width: 100%;
       max-width: 1400px;
-      padding: 0;
+      padding: 0 0 40px 0;
       box-sizing: border-box;
     }
     .section-title {
@@ -200,9 +201,10 @@
     .btn-launch-project:hover { background: #6d28d9; }
     .details-link { color: #71717a; font-size: 0.8rem; text-decoration: none; display: block; text-align: right; margin-top: 8px; transition: color 0.2s;}
     .details-link:hover { color: #fff; }
-    
-    .user-profile { display: flex; align-items: center; gap: 10px; }
-    .avatar { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+
+    /* Profil Alanı Stilleri */
+    .user-profile { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.1rem; }
   </style>
 </head>
 <body>
@@ -218,9 +220,9 @@
   <main class="main-content">
     
     <header class="top-bar">
-      <h2 style="font-weight: 600; margin: 0; color: #fff;">Hoşgeldin, <span id="user-name-title" style="color: #6366f1;">...</span></h2>
+      <h2 style="font-weight: 600; margin: 0; color: #fff; font-size: 1.4rem;">Hoşgeldin, <span id="user-name-title" style="color: #6366f1;">...</span></h2>
       <div class="user-profile">
-        <span id="user-name-display" style="font-weight: 500; color: #e4e4e7;">Yükleniyor...</span>
+        <span id="user-name-display" style="font-weight: 500; color: #e4e4e7; font-size: 0.95rem;">Yükleniyor...</span>
         <div class="avatar" id="user-avatar" style="background:#6366f1;">U</div>
       </div>
     </header>
