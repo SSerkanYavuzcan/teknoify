@@ -28,7 +28,6 @@
 }
 .fin-card-title i.info-icon { color: #71717a; font-size: 0.85rem; cursor: help; }
 
-/* Metin Stilleri */
 .text-huge { font-size: 2.2rem; font-weight: 700; color: #fff; margin: 10px 0; letter-spacing: -0.5px; }
 .text-large { font-size: 1.8rem; font-weight: 700; color: #fff; margin: 5px 0; }
 .text-sub { font-size: 0.8rem; color: #a1a1aa; }
@@ -39,7 +38,7 @@
 .prog-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease-in-out, background-color 0.3s; }
 
 /* ========================================================= */
-/* SATIR 1: ÜST KARTLAR VE SCORECARDLAR */
+/* SATIR 1: ÜST KARTLAR */
 /* ========================================================= */
 .col-portfoy { grid-column: span 5; background: linear-gradient(180deg, #161824 0%, #0d0f16 100%); }
 
@@ -69,34 +68,18 @@
 .toggle-dot { width: 10px; height: 10px; border-radius: 3px; }
 
 /* ========================================================= */
-/* MODAL STİLLERİ (TAM ORTALANMIŞ VE KAPSAMLI) */
+/* MODAL VE ÖZEL UI BİLEŞENLERİ */
 /* ========================================================= */
 .tk-center-overlay { 
-    display: none; 
-    position: fixed !important; 
-    z-index: 999999 !important; 
-    inset: 0 !important; 
-    width: 100vw !important; 
-    height: 100vh !important; 
-    background: rgba(5, 8, 10, 0.8) !important; 
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    align-items: center !important; 
-    justify-content: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    display: none; position: fixed !important; z-index: 999999 !important; 
+    inset: 0 !important; width: 100vw !important; height: 100vh !important; 
+    background: rgba(5, 8, 10, 0.85) !important; backdrop-filter: blur(10px) !important;
+    align-items: center !important; justify-content: center !important; margin: 0 !important; padding: 0 !important;
 }
 
 .tk-center-box { 
-    background: #11131a; 
-    border: 1px solid rgba(255,255,255,0.1); 
-    border-radius: 20px; 
-    box-shadow: 0 25px 50px rgba(0,0,0,0.8); 
-    overflow: hidden; 
-    display: flex; 
-    flex-direction: column; 
-    position: relative;
-    box-sizing: border-box;
+    background: #11131a; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; 
+    box-shadow: 0 25px 50px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column; position: relative;
 }
 
 .wide-box { width: 95vw !important; max-width: 1200px !important; height: 85vh !important; }
@@ -108,71 +91,36 @@
 .tk-center-close:hover { color: #ef4444; }
 .modal-actions { display: flex; gap: 10px; align-items: center; }
 
-/* MODAL İÇİ GRAFİK (SCROLLABLE & TRANSPARENT) */
-.chart-scroll-container { 
-    flex: 1; overflow-x: auto; padding: 20px; background: #0d0f16;
-    scrollbar-width: thin; scrollbar-color: #3f3f46 transparent;
-}
+/* ZAMAN FİLTRELERİ */
+.chart-time-filters { display: flex; gap: 5px; background: rgba(255,255,255,0.02); padding: 4px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-right: 15px; }
+.time-filter-btn { background: transparent; border: none; color: #a1a1aa; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.time-filter-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.time-filter-btn.active { background: #6366f1; color: #fff; }
+
+/* MODAL İÇİ GRAFİK */
+.chart-scroll-container { flex: 1; overflow-x: auto; padding: 20px; background: #0d0f16; scrollbar-width: thin; scrollbar-color: #3f3f46 transparent; }
 .chart-scroll-container::-webkit-scrollbar { height: 8px; }
 .chart-scroll-container::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-.chart-inner-wrapper { min-width: 2500px; padding-bottom: 10px;}
+.chart-inner-wrapper { min-width: 100%; transition: min-width 0.3s ease; padding-bottom: 10px; }
+#modal-trend-chart-large { background: transparent !important; }
 
-#modal-trend-chart-large {
-    background: transparent !important;
-}
+/* APEXCHARTS MARKER İÇİN İMLEÇ */
+.apexcharts-marker:hover { cursor: pointer !important; }
+.apexcharts-series[seriesName="Aylık Gelir"] path, .apexcharts-series[seriesName="Birikim Miktarı"] path { cursor: pointer !important; }
 
-/* YENİ: MODAL ALTI ÖZET (SCORECARD) KARTLARI */
-.tk-modal-summary-footer {
-    padding: 20px 30px;
-    display: flex;
-    gap: 20px;
-    background: #11131a;
-    border-top: 1px solid rgba(255,255,255,0.05);
-}
-
-.mini-summary-card {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
-    padding: 12px 20px;
-    border-radius: 10px;
-    min-width: 160px;
-}
-
+/* MODAL ALTI SCORECARDLAR */
+.tk-modal-summary-footer { padding: 20px 30px; display: flex; gap: 20px; background: #11131a; border-top: 1px solid rgba(255,255,255,0.05); }
+.mini-summary-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 10px; min-width: 150px; }
 .mini-summary-card p { font-size: 0.7rem; color: #a1a1aa; margin: 0; }
-.mini-summary-card h3 { font-size: 1.1rem; color: #fff; margin-top: 5px; }
+.mini-summary-card h3 { font-size: 1.2rem; color: #fff; margin-top: 5px; }
 
-/* YENİ: MINI DÜZENLEME POPUP'I (HOVER-TO-EDIT İÇİN) */
-.tk-mini-popup {
-    display: none;
-    position: fixed;
-    z-index: 12000;
-    width: 260px;
-    background: #1c1f2b;
-    border: 1px solid #6366f1;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    padding: 15px;
-}
-
-.mini-popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    padding-bottom: 8px;
-}
-
+/* MINI DÜZENLEME POPUP'I */
+.tk-mini-popup { display: none; position: fixed; z-index: 12000; width: 300px; background: #1c1f2b; border: 1px solid #6366f1; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); padding: 15px; }
+.mini-popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
 .mini-popup-header span { color: #fff; font-weight: 600; font-size: 0.9rem; }
 .mini-popup-header button { background: none; border: none; color: #71717a; cursor: pointer; transition: 0.2s; }
 .mini-popup-header button:hover { color: #ef4444; }
-
 .mini-popup-body { display: flex; flex-direction: column; gap: 10px; }
-
-/* ApexCharts Tıklanabilir Nokta (Marker) Simülasyonu */
-.apexcharts-marker:hover {
-    cursor: cell !important;
-}
 
 /* YÜKLEME PANELİ */
 .upload-section-title { font-size: 0.9rem; color: #e4e4e7; font-weight: 500; margin-bottom: 10px; margin-top: 15px;}
@@ -181,14 +129,10 @@
 .tk-select:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-template { background: #e4e4e7; color: #11131a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;}
 
-.upload-zone {
-    border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 50px 20px;
-    text-align: center; color: #a1a1aa; cursor: pointer; transition: 0.2s; background: #0d0f16;
-}
+.upload-zone { border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 50px 20px; text-align: center; color: #a1a1aa; cursor: pointer; transition: 0.2s; background: #0d0f16; }
 .upload-zone:hover { background: rgba(99, 102, 241, 0.05); border-color: #6366f1; color: #fff; }
 
 .tk-form-group label { display: block; font-size: 0.8rem; color: #a1a1aa; margin-bottom: 5px; font-weight: 500;}
-::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
 /* BUTONLAR */
 .btn-modal-action { background: #1f2233; color: #d4d4d8; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
@@ -227,7 +171,6 @@
 .getiri-left { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: #e4e4e7; }
 .getiri-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; }
 
-/* Tablolar ve Rozetler */
 .data-table { width: 100%; border-collapse: collapse; }
 .data-table th { text-align: left; padding: 10px 5px; font-size: 0.7rem; color: #71717a; text-transform: uppercase; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .data-table td { padding: 12px 5px; font-size: 0.8rem; color: #d4d4d8; border-bottom: 1px solid rgba(255,255,255,0.02); }
@@ -241,5 +184,3 @@
 .mini-table th { font-size: 0.65rem; color: #71717a; text-align: left; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .mini-table td { font-size: 0.75rem; color: #d4d4d8; padding: 8px 0; font-family: 'Fira Code', monospace; }
 .signal-badge { background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; }
-
-#loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #05080a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
