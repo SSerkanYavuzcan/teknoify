@@ -173,7 +173,6 @@ function renderLargeChart(history, range) {
             selection: { enabled: false },  
             background: 'transparent',
             events: {
-                // TEK TIKLAMA (Single Click) ile pop-up açma
                 dataPointSelection: (event, chartContext, config) => {
                     const manualBtn = document.getElementById('btn-manual-mode');
                     const isManualMode = manualBtn && manualBtn.classList.contains('active');
@@ -184,6 +183,8 @@ function renderLargeChart(history, range) {
                     }
                     
                     const monthIdx = config.dataPointIndex;
+                    if(monthIdx === undefined || monthIdx < 0) return; // Boş tıklamaları engelle
+                    
                     const selectedMonth = months[monthIdx];
                     openMiniPopup(event, selectedMonth, history[selectedMonth]);
                 }
@@ -239,7 +240,7 @@ function renderLargeChart(history, range) {
 }
 
 // ==========================================
-// MINI POPUP MANTIĞI
+// MINI POPUP MANTIĞI (DÜZELTİLMİŞ)
 // ==========================================
 function openMiniPopup(event, monthStr, data) {
     const popup = document.getElementById('mini-edit-popup');
@@ -255,15 +256,14 @@ function openMiniPopup(event, monthStr, data) {
 
     popup.style.display = 'block';
     
-    // ApexCharts Custom Eventlerinde clientX bazen undefined olabilir, kontrol edelim:
-    let posX = event ? event.clientX - 150 : window.innerWidth / 2 - 150;
-    let posY = event ? event.clientY - 280 : window.innerHeight / 2 - 150;
+    // Z-INDEX DÜZELTMESİ: Dev modalın önüne geçmesi için zorla
+    popup.style.zIndex = '99999999';
     
-    if(posX < 10) posX = 10;
-    if(posY < 10) posY = 10;
-    
-    popup.style.left = posX + 'px';
-    popup.style.top = posY + 'px';
+    // HİZALAMA DÜZELTMESİ: Ekranın tam ortasına sabitle (Arka planda kalma ihtimaline karşı en güvenli yol)
+    popup.style.position = 'fixed';
+    popup.style.top = '50%';
+    popup.style.left = '50%';
+    popup.style.transform = 'translate(-50%, -50%)';
 }
 
 function calculateMiniRate() {
@@ -299,7 +299,7 @@ onAuthStateChanged(auth, async (user) => {
         if(snap.exists()) {
             const data = snap.data();
             globalHistory = data.dashboardStats?.finance?.history || {};
-            globalTargetRate = data.dashboardStats?.finance?.targetRate || 35; // Hedefi çek
+            globalTargetRate = data.dashboardStats?.finance?.targetRate || 35; 
             if (data.profile) displayName = data.profile.fullName || data.profile.companyName || displayName;
         }
         if(document.getElementById("user-name-display")) {
@@ -322,7 +322,7 @@ onAuthStateChanged(auth, async (user) => {
             if(mainModal) mainModal.style.display = 'flex';
             setTimeout(() => {
                 renderLargeChart(globalHistory, currentChartRange);
-                renderModalBottomCharts(); // Alt grafikleri yükle
+                renderModalBottomCharts();
             }, 100);
         };
     }
@@ -334,7 +334,6 @@ onAuthStateChanged(auth, async (user) => {
             manualBtn.classList.toggle('active');
             const isActive = manualBtn.classList.contains('active');
             
-            // Eğer aktifse grafiğin üstüne "manual-mode-active" classı ekle ki kalem imleci çıksın
             const chartArea = document.querySelector('.chart-inner-wrapper');
             if(chartArea) {
                 if(isActive) chartArea.classList.add('manual-mode-active');
@@ -398,12 +397,12 @@ onAuthStateChanged(auth, async (user) => {
                 const btn = document.getElementById('btn-save-mini');
                 btn.textContent = "Kaydediliyor...";
                 try {
-                    globalTargetRate = target; // Globali güncelle
+                    globalTargetRate = target; 
                     const path = `dashboardStats.finance.history.${currentEditingMonth}`;
                     
                     await updateDoc(userRef, { 
                         [path]: { income: inc, savings: sav },
-                        'dashboardStats.finance.targetRate': globalTargetRate // Hedefi veritabanına yaz
+                        'dashboardStats.finance.targetRate': globalTargetRate 
                     });
                     
                     globalHistory[currentEditingMonth] = { income: inc, savings: sav };
