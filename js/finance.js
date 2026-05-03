@@ -135,8 +135,13 @@ function renderLargeChart(history, range) {
             background: 'transparent',
             events: {
                 dataPointSelection: (event, chartContext, config) => {
-                    const isManualMode = document.getElementById('btn-manual-mode')?.classList.contains('active');
-                    if (!isManualMode) return; // Sadece Manuel moddaysa açılsın
+                    const manualBtn = document.getElementById('btn-manual-mode');
+                    const isManualMode = manualBtn && manualBtn.classList.contains('active');
+                    
+                    if (!isManualMode) {
+                        alert("Lütfen önce yukarıdaki 'Manuel Düzenle' butonunu aktif edin.");
+                        return;
+                    }
                     
                     const monthIdx = config.dataPointIndex;
                     const selectedMonth = months[monthIdx];
@@ -154,7 +159,7 @@ function renderLargeChart(history, range) {
         colors: ['#3b82f6', '#4f46e5', '#10b981'], // Net renkler
         fill: { opacity: [1, 1, 1] }, // Sütunlar solid
         labels: months,
-        markers: { size: 5, hover: { size: 8 } },
+        markers: { size: 6, hover: { size: 9 }, strokeWidth: 2, strokeColors: '#fff' }, // Tıklanabilirliği artırdık
         yaxis: [
             { title: { text: "Tutar (₺)", style: { color: '#a1a1aa' } }, labels: { style: { colors: '#71717a' }, formatter: v => `₺${v.toLocaleString('tr-TR')}` } },
             { show: false }, // İkinci sütun için gizli
@@ -275,6 +280,27 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById('card-savings').onclick = () => {
             if(mainModal) mainModal.style.display = 'flex';
             setTimeout(() => renderLargeChart(globalHistory, currentChartRange), 100);
+        };
+    }
+
+    // --- MANUEL DÜZENLE BUTONU MANTIĞI ---
+    const manualBtn = document.getElementById('btn-manual-mode');
+    if (manualBtn) {
+        manualBtn.onclick = () => {
+            manualBtn.classList.toggle('active');
+            const isActive = manualBtn.classList.contains('active');
+            
+            // Kullanıcıya alt tarafta uyarı ver
+            const helperText = document.querySelector('.tk-modal-summary-footer .text-sub');
+            if(helperText) {
+                if(isActive) {
+                    helperText.style.color = '#10b981';
+                    helperText.innerText = "Manuel Düzenle aktif! Grafikteki sütunlara veya noktalara tıklayarak düzenleyebilirsiniz.";
+                } else {
+                    helperText.style.color = '#71717a';
+                    helperText.innerText = "Manuel Düzenleme kapalı. Düzenlemek için butonu aktif edin.";
+                }
+            }
         };
     }
 
