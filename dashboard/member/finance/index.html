@@ -13,7 +13,7 @@
 </head>
 <body>
 
-  <div id="loading-overlay">
+  <div id="loading-overlay" style="position: fixed; inset: 0; width: 100vw; height: 100vh; background: #05080a; z-index: 9999999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease; margin: 0; padding: 0;">
     <div style="text-align:center; color:white; font-family:'Fira Code', monospace;">
       <div id="dynamic-loader-text">Veriler senkronize ediliyor...</div>
     </div>
@@ -22,11 +22,15 @@
   <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
+    
     <header class="top-bar">
       <div class="page-info" style="display: flex; align-items: center; gap: 20px; padding-left: 10px;">
         <h2>Yatırım & Finans</h2>
-        <button class="filter-btn active" style="padding: 8px 16px; background: #6366f1; border-radius: 8px; color:white;"><i class="fas fa-edit"></i> Verileri Güncelle</button>
+        <button class="filter-btn active" style="padding: 8px 16px; background: #6366f1; border-radius: 8px; color:white; border: none; cursor: pointer;">
+            <i class="fas fa-edit"></i> Verileri Güncelle
+        </button>
       </div>
+      
       <div class="user-profile">
         <div style="text-align: right; line-height: 1.2;">
             <span id="user-name-display" style="display:block; font-weight:600;">Yükleniyor...</span>
@@ -47,15 +51,25 @@
               <span class="filter-btn"><i class="fas fa-expand"></i></span>
             </div>
           </div>
+          
           <div style="display: flex; justify-content: space-between;">
             <div>
               <p class="text-sub">Toplam Portföy Değeri</p>
               <h2 class="text-huge">₺0</h2>
               <div class="portfoy-stats-row">
-                <div class="portfoy-stat-box"><p>Günlük Değişim</p><span class="text-sub">%0,00</span><br><span class="text-sub" style="font-size:0.75rem;">+₺0</span></div>
-                <div class="portfoy-stat-box"><p>Aylık Değişim</p><span class="text-sub">%0,00</span><br><span class="text-sub" style="font-size:0.75rem;">+₺0</span></div>
+                <div class="portfoy-stat-box">
+                  <p>Günlük Değişim</p>
+                  <span class="text-sub">%0,00</span><br>
+                  <span class="text-sub" style="font-size:0.75rem;">+₺0</span>
+                </div>
+                <div class="portfoy-stat-box">
+                  <p>Aylık Değişim</p>
+                  <span class="text-sub">%0,00</span><br>
+                  <span class="text-sub" style="font-size:0.75rem;">+₺0</span>
+                </div>
               </div>
             </div>
+            
             <div style="width: 60%; position: relative;">
                 <div id="chart-main-portfolio" style="height: 180px; margin-top:-20px;"></div>
                 <div class="chart-toggle-legend" style="position: absolute; bottom: 0; right: 0;">
@@ -71,7 +85,10 @@
              <span class="badge badge-purple" id="display-current-month">Cari Ay</span>
           </div>
           <div class="savings-body">
-              <div class="savings-data"><h2 class="text-huge" id="display-savings">₺0</h2><p class="text-sub">Bu ayki toplam birikim</p></div>
+              <div class="savings-data">
+                  <h2 class="text-huge" id="display-savings">₺0</h2>
+                  <p class="text-sub">Bu ayki toplam birikim</p>
+              </div>
               <div class="rate-data">
                   <h2 class="text-large" id="display-rate" style="margin-bottom: 2px;">0%</h2>
                   <p class="text-sub" style="margin-bottom: 8px;">Tasarruf Oranı</p>
@@ -83,7 +100,10 @@
         <div class="fin-card col-hedef">
           <div class="fin-card-title" style="width:100%;"><span><i class="fas fa-bullseye" style="color:#a855f7;margin-right:5px;"></i> Hedef Gerçekleşme</span></div>
           <div id="chart-radial-target" style="margin: -10px 0;"></div>
-          <div style="width:100%; text-align:left;"><p class="text-sub">Toplam Hedef Tutarı <i class="fas fa-chevron-right" style="float:right;"></i></p><h3 style="color:#fff; font-size:1.1rem; margin-top:4px;">₺0</h3></div>
+          <div style="width:100%; text-align:left;">
+              <p class="text-sub">Toplam Hedef Tutarı <i class="fas fa-chevron-right" style="float:right;"></i></p>
+              <h3 style="color:#fff; font-size:1.1rem; margin-top:4px;">₺0</h3>
+          </div>
         </div>
 
         <div class="fin-card col-gider">
@@ -141,7 +161,10 @@
         <div class="fin-card col-akis">
           <div class="fin-card-title">
             <span>Aylık Birikim Akışı</span>
-            <div class="portfoy-filters" style="margin-top:0;"><span class="filter-btn active">TL</span><span class="filter-btn">USD</span></div>
+            <div class="portfoy-filters" style="margin-top:0;">
+              <span class="filter-btn active">TL</span>
+              <span class="filter-btn">USD</span>
+            </div>
           </div>
           <div class="chart-toggle-legend" style="margin-top:0; margin-bottom:10px;">
               <div class="toggle-item" style="background:transparent; padding:0;"><div class="toggle-dot" style="background:#a855f7;"></div> TL Birikim</div>
@@ -159,10 +182,22 @@
         <div class="fin-card col-getiri">
           <div class="fin-card-title"><span>Karşılaştırmalı Getiri (YTD) <i class="fas fa-info-circle info-icon"></i></span></div>
           <div class="getiri-list">
-              <div class="getiri-item"><div class="getiri-left"><div class="getiri-icon" style="background:#a855f7;"><i class="fas fa-chart-line"></i></div> Portföyünüz</div><div class="text-sub">%0,00</div></div>
-              <div class="getiri-item"><div class="getiri-left"><div class="getiri-icon" style="background:#10b981;">M</div> BIST 100</div><div class="text-sub">%0,00</div></div>
-              <div class="getiri-item"><div class="getiri-left"><div class="getiri-icon" style="background:#f59e0b;"><i class="fas fa-coins"></i></div> Altın (XAUUSD)</div><div class="text-sub">%0,00</div></div>
-              <div class="getiri-item"><div class="getiri-left"><div class="getiri-icon" style="background:#f97316;"><i class="fab fa-bitcoin"></i></div> BTC (Bitcoin)</div><div class="text-sub">%0,00</div></div>
+              <div class="getiri-item">
+                  <div class="getiri-left"><div class="getiri-icon" style="background:#a855f7;"><i class="fas fa-chart-line"></i></div> Portföyünüz</div>
+                  <div class="text-sub">%0,00</div>
+              </div>
+              <div class="getiri-item">
+                  <div class="getiri-left"><div class="getiri-icon" style="background:#10b981;">M</div> BIST 100</div>
+                  <div class="text-sub">%0,00</div>
+              </div>
+              <div class="getiri-item">
+                  <div class="getiri-left"><div class="getiri-icon" style="background:#f59e0b;"><i class="fas fa-coins"></i></div> Altın (XAUUSD)</div>
+                  <div class="text-sub">%0,00</div>
+              </div>
+              <div class="getiri-item">
+                  <div class="getiri-left"><div class="getiri-icon" style="background:#f97316;"><i class="fab fa-bitcoin"></i></div> BTC (Bitcoin)</div>
+                  <div class="text-sub">%0,00</div>
+              </div>
           </div>
           <div style="text-align:center; margin-top:auto;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm karşılaştırmaları görüntüle <i class="fas fa-arrow-right"></i></a></div>
         </div>
@@ -172,8 +207,31 @@
           <table class="data-table">
             <thead><tr><th>Açıklama</th><th>Kategori</th><th>Tarih</th><th>Tutar</th><th>Durum</th></tr></thead>
             <tbody>
-              <tr><td><i class="fab fa-cc-mastercard" style="color:#ef4444;margin-right:5px;"></i> Kredi Kartı</td><td>Finans</td><td>22 Mayıs 2026</td><td>₺14.250</td><td><span class="badge badge-blue">Yaklaşan</span></td></tr>
-              <tr><td><i class="fas fa-home" style="color:#3b82f6;margin-right:5px;"></i> Ev Kirası</td><td>Konut</td><td>01 Haziran 2026</td><td>₺18.000</td><td><span class="badge badge-blue">Yaklaşan</span></td></tr>
+              <tr>
+                <td><i class="fab fa-cc-mastercard" style="color:#ef4444;margin-right:5px;"></i> Kredi Kartı</td>
+                <td>Finans</td><td>22 Mayıs 2026</td><td>₺14.250</td>
+                <td><span class="badge badge-blue">Yaklaşan</span></td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-home" style="color:#3b82f6;margin-right:5px;"></i> Ev Kirası</td>
+                <td>Konut</td><td>01 Haziran 2026</td><td>₺18.000</td>
+                <td><span class="badge badge-blue">Yaklaşan</span></td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-bolt" style="color:#f59e0b;margin-right:5px;"></i> Elektrik</td>
+                <td>Faturalar</td><td>05 Haziran 2026</td><td>₺1.250</td>
+                <td><span class="badge badge-blue">Yaklaşan</span></td>
+              </tr>
+              <tr>
+                <td><i class="fas fa-wifi" style="color:#a855f7;margin-right:5px;"></i> İnternet</td>
+                <td>Faturalar</td><td>07 Haziran 2026</td><td>₺499</td>
+                <td><span class="badge badge-blue">Yaklaşan</span></td>
+              </tr>
+              <tr>
+                <td><i class="fab fa-spotify" style="color:#10b981;margin-right:5px;"></i> Spotify</td>
+                <td>Abonelik</td><td>15 Haziran 2026</td><td>₺59</td>
+                <td><span class="badge badge-purple">Otomatik</span></td>
+              </tr>
             </tbody>
           </table>
           <div style="text-align:center; margin-top:15px;"><a href="#" style="color:#6366f1; font-size:0.8rem; text-decoration:none;">Tüm ödemeleri görüntüle <i class="fas fa-arrow-right"></i></a></div>
@@ -182,29 +240,82 @@
         <div class="fin-card col-tarayicilar">
           <div class="fin-card-title"><span>Finansal Tarayıcılar & Sinyaller <i class="fas fa-info-circle info-icon"></i></span></div>
           <div class="tarayici-grid">
+              
               <div class="tarayici-col">
                   <h4>Düşeni Kıranlar</h4>
                   <table class="mini-table">
                       <thead><tr><th>SEMBOL</th><th>FİYAT</th><th>DEĞ.</th></tr></thead>
-                      <tbody><tr><td>THYAO</td><td>264,50</td><td class="text-green"><i class="fas fa-caret-up"></i> 2,45%</td></tr></tbody>
+                      <tbody>
+                          <tr><td>THYAO</td><td>264,50</td><td class="text-green"><i class="fas fa-caret-up"></i> 2,45%</td></tr>
+                          <tr><td>TUPRS</td><td>141,30</td><td class="text-green"><i class="fas fa-caret-up"></i> 2,18%</td></tr>
+                          <tr><td>GARAN</td><td>106,80</td><td class="text-green"><i class="fas fa-caret-up"></i> 1,92%</td></tr>
+                          <tr><td>KOZAL</td><td>23,14</td><td class="text-green"><i class="fas fa-caret-up"></i> 1,73%</td></tr>
+                          <tr><td>SASA</td><td>43,80</td><td class="text-green"><i class="fas fa-caret-up"></i> 1,51%</td></tr>
+                      </tbody>
                   </table>
                   <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
               </div>
+
               <div class="tarayici-col">
                   <h4>Alım Sinyali Verenler</h4>
                   <table class="mini-table">
                       <thead><tr><th>SEMBOL</th><th>FİYAT</th><th>SİNYAL</th></tr></thead>
-                      <tbody><tr><td>ASELS</td><td>145,20</td><td><span class="signal-badge">AL</span></td></tr></tbody>
+                      <tbody>
+                          <tr><td>ASELS</td><td>145,20</td><td><span class="signal-badge">AL</span></td></tr>
+                          <tr><td>EKGYO</td><td>10,24</td><td><span class="signal-badge">AL</span></td></tr>
+                          <tr><td>SISE</td><td>47,32</td><td><span class="signal-badge">AL</span></td></tr>
+                          <tr><td>KCHOL</td><td>168,50</td><td><span class="signal-badge">AL</span></td></tr>
+                          <tr><td>ENKAI</td><td>56,10</td><td><span class="signal-badge">AL</span></td></tr>
+                      </tbody>
                   </table>
                   <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
               </div>
+
               <div class="tarayici-col">
                   <h4>Hacim Patlaması</h4>
                   <table class="mini-table">
                       <thead><tr><th>SEMBOL</th><th>HACİM</th><th>DEĞ.</th></tr></thead>
-                      <tbody><tr><td>ASYAO</td><td>25.6M</td><td class="text-green"><i class="fas fa-caret-up"></i> 245%</td></tr></tbody>
+                      <tbody>
+                          <tr><td>ASYAO</td><td>25.6M</td><td class="text-green"><i class="fas fa-caret-up"></i> 245%</td></tr>
+                          <tr><td>ASELS</td><td>18.3M</td><td class="text-green"><i class="fas fa-caret-up"></i> 198%</td></tr>
+                          <tr><td>SISE</td><td>14.7M</td><td class="text-green"><i class="fas fa-caret-up"></i> 176%</td></tr>
+                          <tr><td>ISCTR</td><td>12.1M</td><td class="text-green"><i class="fas fa-caret-up"></i> 162%</td></tr>
+                          <tr><td>AKBNK</td><td>11.8M</td><td class="text-green"><i class="fas fa-caret-up"></i> 151%</td></tr>
+                      </tbody>
                   </table>
+                  <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
               </div>
+
+              <div class="tarayici-col">
+                  <h4>RSI Uygun Olanlar</h4>
+                  <table class="mini-table">
+                      <thead><tr><th>SEMBOL</th><th>RSI (14)</th><th>DURUM</th></tr></thead>
+                      <tbody>
+                          <tr><td>SAHOL</td><td>43,2</td><td class="text-green">Uygun</td></tr>
+                          <tr><td>VESTL</td><td>48,6</td><td class="text-green">Uygun</td></tr>
+                          <tr><td>BIMAS</td><td>46,9</td><td class="text-green">Uygun</td></tr>
+                          <tr><td>MGROS</td><td>41,8</td><td class="text-green">Uygun</td></tr>
+                          <tr><td>CCOLA</td><td>47,1</td><td class="text-green">Uygun</td></tr>
+                      </tbody>
+                  </table>
+                  <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
+              </div>
+
+              <div class="tarayici-col">
+                  <h4>MA50 / MA200 Kesişimi</h4>
+                  <table class="mini-table">
+                      <thead><tr><th>SEMBOL</th><th>FİYAT</th><th>SİNYAL</th></tr></thead>
+                      <tbody>
+                          <tr><td>BTCUSD</td><td>67.890</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                          <tr><td>XAUUSD</td><td>2.345</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                          <tr><td>THYAO</td><td>264,50</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                          <tr><td>ASELS</td><td>145,20</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                          <tr><td>TUPRS</td><td>141,30</td><td class="text-green"><i class="fas fa-arrow-up"></i> Yukarı</td></tr>
+                      </tbody>
+                  </table>
+                  <div style="text-align:center; margin-top:10px;"><a href="#" style="color:#6366f1; font-size:0.7rem; text-decoration:none;">Tümünü Görüntüle</a></div>
+              </div>
+
           </div>
         </div>
 
@@ -261,12 +372,14 @@
                   <select class="tk-select" disabled><option>Dosya Seçilmedi</option></select>
                   <button class="btn-template" id="btn-download-template">Şablonu İndir</button>
               </div>
+              
               <div class="upload-section-title">Yüklenecek dosyayı seçin</div>
               <input type="file" id="file-upload-input" accept=".csv, .xlsx, .xls" style="display: none;" />
               <div class="upload-zone" id="upload-drag-zone">
                   <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; margin-bottom: 15px; color:#6366f1;"></i>
                   <p id="upload-file-name">Dosyayı yüklemek için bu alana tıklayın veya sürükleyin</p>
               </div>
+              
               <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 25px;">
                   <button class="btn-cancel" id="cancel-upload">Vazgeç</button>
                   <button class="btn-save-final" id="btn-confirm-upload" disabled style="opacity:0.5; cursor:not-allowed;">Dosyayı Yükle</button>
@@ -292,7 +405,7 @@
           <div class="tk-form-group" style="display: flex; gap: 10px;">
               <div style="flex: 1;">
                   <label>Gerçekleşen</label>
-                  <input type="text" id="mini-input-rate" disabled style="background: rgba(255,255,255,0.02); color: #10b981; font-weight: 700;">
+                  <input type="text" id="mini-input-rate" disabled style="background: rgba(255,255,255,0.02); color: #10b981; font-weight: 700; border: 1px solid rgba(255,255,255,0.05); padding: 12px; width: 100%; border-radius: 8px; box-sizing: border-box;">
               </div>
               <div style="flex: 1;">
                   <label>Hedef (%)</label>
@@ -305,6 +418,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
   <script type="module" src="/js/finance.js"></script>
   
