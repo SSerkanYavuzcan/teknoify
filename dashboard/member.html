@@ -13,29 +13,37 @@
   
   <style>
     /* ========================================================= */
-    /* TEMEL YAPI VE SCROLLBAR GİZLEME */
+    /* TEMEL YAPI VE SCROLLBAR GİZLEME (DÜZELTİLDİ) */
     /* ========================================================= */
     body { background-color: #05080a; margin: 0; padding: 0; overflow-x: hidden; }
-    
+
+    /* content-scroll dış CSS'ten etkilenmemesi için zorunlu kolon yapıldı */
     .content-scroll {
       -ms-overflow-style: none;
       scrollbar-width: none;
       overflow-y: auto;
       width: 100%;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important; 
+      gap: 30px !important; /* Her satır arasına 30px boşluk */
+      padding: 30px !important;
+      box-sizing: border-box !important;
     }
     .content-scroll::-webkit-scrollbar {
       display: none;
     }
 
     /* ========================================================= */
-    /* ÜST KARTLAR VE GRID SİSTEMİ */
+    /* 1. SATIR: ÜST 4 BÜYÜK KART (Yatırım, Sağlık vb.) */
     /* ========================================================= */
     .super-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, 1fr); /* 2x2 Izgara */
       gap: 24px;
-      padding: 24px 24px 24px 10px;
       width: 100%;
+      max-width: 1400px; /* Merkeze hizalamak için sınır */
+      padding: 0;
       box-sizing: border-box;
     }
     .dashboard-card {
@@ -51,7 +59,8 @@
     
     .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
     .card-header h3 { font-size: 1.1rem; color: #e4e4e7; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px;}
-    .view-all { font-size: 0.8rem; color: #71717a; }
+    .view-all { font-size: 0.8rem; color: #71717a; transition: 0.2s; }
+    .view-all:hover { color: #fff; }
     
     .card-body-content { display: flex; flex-direction: column; gap: 15px; flex: 1; margin-top: 15px; }
     .mini-stats-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
@@ -71,14 +80,15 @@
     .prog-bar-fill { height: 100%; transition: width 1s ease-in-out; border-radius: 10px; }
 
     /* ========================================================= */
-    /* ÖZET İSTATİSTİK KARTLARI */
+    /* 2. SATIR: 4 ADET KÜÇÜK ÖZET KARTI (SCORECARDS) */
     /* ========================================================= */
     .summary-stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
-      padding: 0 24px 24px 10px;
       width: 100%;
+      max-width: 1400px;
+      padding: 0;
       box-sizing: border-box;
     }
     .summary-card {
@@ -103,11 +113,12 @@
     .summary-info strong { font-size: 1.4rem; color: #fff; }
 
     /* ========================================================= */
-    /* PROJELERİNİZ LİSTESİ */
+    /* 3. SATIR: PROJELER LİSTESİ */
     /* ========================================================= */
     .projects-section {
-      padding: 0 24px 40px 10px;
       width: 100%;
+      max-width: 1400px;
+      padding: 0 0 40px 0;
       box-sizing: border-box;
     }
     .section-title {
@@ -295,7 +306,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
-  
   <script type="module" src="/js/pages/member.js?v=999"></script>
 
   <script type="module">
