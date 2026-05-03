@@ -30,7 +30,7 @@
 
 .text-huge { font-size: 2.2rem; font-weight: 700; color: #fff; margin: 10px 0; letter-spacing: -0.5px; }
 .text-large { font-size: 1.8rem; font-weight: 700; color: #fff; margin: 5px 0; }
-.text-sub { font-size: 0.8rem; color: #a1a1aa; }
+.text-sub { font-size: 0.8rem; color: #a1a1aa; transition: color 0.3s; }
 .text-green { color: #10b981; font-weight: 600; }
 .text-red { color: #ef4444; font-weight: 600; }
 
@@ -82,8 +82,9 @@
     box-shadow: 0 25px 50px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column; position: relative;
 }
 
-.wide-box { width: 95vw !important; max-width: 1200px !important; height: 85vh !important; }
-.small-box { width: 90vw !important; max-width: 650px !important; }
+/* BOŞLUK SORUNUNUN ÇÖZÜMÜ: height: 85vh KADIRILDI, max-height VE height: auto EKLENDİ */
+.wide-box { width: 95vw !important; max-width: 1200px !important; height: auto !important; max-height: 90vh !important; }
+.small-box { width: 90vw !important; max-width: 650px !important; height: auto !important; }
 
 .tk-center-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .tk-center-title { font-size: 1.2rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 10px;}
@@ -98,10 +99,11 @@
 .time-filter-btn.active { background: #6366f1; color: #fff; }
 
 /* MODAL İÇİ GRAFİK */
-.chart-scroll-container { flex: 1; overflow-x: auto; padding: 20px; background: #0d0f16; scrollbar-width: thin; scrollbar-color: #3f3f46 transparent; }
+/* Padding-bottom azaltıldı ve esnemesi düzeltildi */
+.chart-scroll-container { width: 100%; overflow-x: auto; padding: 20px 20px 0 20px; background: #0d0f16; scrollbar-width: thin; scrollbar-color: #3f3f46 transparent; }
 .chart-scroll-container::-webkit-scrollbar { height: 8px; }
 .chart-scroll-container::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-.chart-inner-wrapper { min-width: 100%; transition: min-width 0.3s ease; padding-bottom: 10px; }
+.chart-inner-wrapper { min-width: 100%; transition: min-width 0.3s ease; padding-bottom: 0px; }
 #modal-trend-chart-large { background: transparent !important; }
 
 /* APEXCHARTS MARKER İÇİN İMLEÇ */
@@ -109,7 +111,7 @@
 .apexcharts-series[seriesName="Aylık Gelir"] path, .apexcharts-series[seriesName="Birikim Miktarı"] path { cursor: pointer !important; }
 
 /* MODAL ALTI SCORECARDLAR */
-.tk-modal-summary-footer { padding: 20px 30px; display: flex; gap: 20px; background: #11131a; border-top: 1px solid rgba(255,255,255,0.05); }
+.tk-modal-summary-footer { padding: 20px 30px; display: flex; gap: 20px; background: #11131a; border-top: 1px solid rgba(255,255,255,0.05); align-items: center; }
 .mini-summary-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 10px; min-width: 150px; }
 .mini-summary-card p { font-size: 0.7rem; color: #a1a1aa; margin: 0; }
 .mini-summary-card h3 { font-size: 1.2rem; color: #fff; margin-top: 5px; }
