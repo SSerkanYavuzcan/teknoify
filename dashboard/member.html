@@ -12,13 +12,10 @@
   <link rel="stylesheet" href="/css/dashboard.css?v=20260503">
   
   <style>
-    /* ========================================================= */
-    /* TEMEL YAPI VE DİNAMİK EKRAN ORANLAMASI */
-    /* ========================================================= */
-
     :root {
-      --topbar-height: 92px;
-      --content-top-space: 34px;
+      --sidebar-width: 145px;
+      --topbar-height: 88px;
+      --topbar-gap: 34px;
       --dashboard-max-width: 1400px;
     }
 
@@ -26,42 +23,36 @@
       box-sizing: border-box;
     }
 
+    html,
     body {
-      background-color: #05080a;
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
+      background-color: #05080a;
       font-family: 'Inter Tight', sans-serif;
+      overflow: hidden;
     }
 
-    /* Ana İçerik */
-    .main-content {
+    #member-page .main-content {
+      position: relative !important;
       height: 100vh !important;
-      display: flex !important;
-      flex-direction: column !important;
-      box-sizing: border-box !important;
+      min-height: 100vh !important;
+      display: block !important;
       overflow: hidden !important;
       background: #05080a !important;
+      box-sizing: border-box !important;
     }
 
-    /* ========================================================= */
-    /* HEADER / TOP BAR FIX */
-    /* ========================================================= */
-
-    body .main-content > .top-bar {
-      position: relative !important;
-      top: auto !important;
-      left: auto !important;
-      right: auto !important;
-      bottom: auto !important;
-      transform: none !important;
-
-      flex: 0 0 var(--topbar-height) !important;
-      min-height: var(--topbar-height) !important;
+    #member-page .main-content > .top-bar {
+      position: fixed !important;
+      top: 0 !important;
+      left: var(--sidebar-width) !important;
+      right: 0 !important;
+      width: calc(100% - var(--sidebar-width)) !important;
       height: var(--topbar-height) !important;
+      min-height: var(--topbar-height) !important;
 
-      width: 100% !important;
       background: #05080a !important;
       padding: 20px 30px !important;
 
@@ -69,53 +60,54 @@
       justify-content: space-between !important;
       align-items: center !important;
 
-      border-bottom: 1px solid rgba(255,255,255,0.06) !important;
-      z-index: 100 !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      z-index: 99999 !important;
+      box-sizing: border-box !important;
+      transform: none !important;
+      margin: 0 !important;
     }
 
-    /* Kaydırılabilir İçerik */
-    body .main-content > .content-scroll {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-
-      flex: 1 1 auto !important;
-      overflow-y: auto !important;
-
+    #member-page .main-content > .content-scroll {
+      position: relative !important;
       width: 100% !important;
+      height: 100vh !important;
       min-height: 0 !important;
+
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
 
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important;
-
       gap: 30px !important;
-      padding: var(--content-top-space) 30px 50px 30px !important;
 
-      margin-top: 0 !important;
+      padding: calc(var(--topbar-height) + var(--topbar-gap)) 30px 60px 30px !important;
+
+      margin: 0 !important;
+      top: 0 !important;
       transform: none !important;
       box-sizing: border-box !important;
+
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
-    .content-scroll::-webkit-scrollbar {
+    #member-page .content-scroll::-webkit-scrollbar {
       display: none;
     }
 
-    /* ========================================================= */
-    /* 1. SATIR: ÜST 4 BÜYÜK KART */
-    /* ========================================================= */
-
-    .super-grid {
-      display: grid;
+    #member-page .super-grid {
+      display: grid !important;
       grid-template-columns: repeat(2, 1fr);
       gap: 24px;
       width: 100%;
       max-width: var(--dashboard-max-width);
       padding: 0;
-      margin-top: 0 !important;
+      margin: 0 !important;
       box-sizing: border-box;
     }
 
-    .dashboard-card {
+    #member-page .dashboard-card {
       background: #11131a;
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 12px;
@@ -125,27 +117,27 @@
       flex-direction: column;
       justify-content: space-between;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
       overflow: hidden;
     }
 
-    .dashboard-card:hover {
+    #member-page .dashboard-card:hover {
       transform: translateY(-3px);
       border-color: #6366f1;
-      box-shadow: 0 10px 30px rgba(99,102,241,0.12);
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.12);
     }
     
-    .card-header {
+    #member-page .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       padding-bottom: 10px;
       gap: 16px;
     }
 
-    .card-header h3 {
+    #member-page .card-header h3 {
       font-size: 1.1rem;
       color: #e4e4e7;
       margin: 0;
@@ -155,18 +147,18 @@
       gap: 8px;
     }
 
-    .view-all {
+    #member-page .view-all {
       font-size: 0.8rem;
       color: #71717a;
       transition: 0.2s;
       white-space: nowrap;
     }
 
-    .view-all:hover {
+    #member-page .view-all:hover {
       color: #fff;
     }
     
-    .card-body-content {
+    #member-page .card-body-content {
       display: flex;
       flex-direction: column;
       gap: 15px;
@@ -174,28 +166,28 @@
       margin-top: 15px;
     }
 
-    .mini-stats-row {
+    #member-page .mini-stats-row {
       display: flex;
       justify-content: space-between;
       gap: 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       padding-bottom: 15px;
     }
 
-    .stat-box span {
+    #member-page .stat-box span {
       display: block;
       font-size: 0.85rem;
       color: #71717a;
       margin-bottom: 6px;
     }
 
-    .stat-box strong {
+    #member-page .stat-box strong {
       font-size: 1.8rem;
       color: #fff;
       letter-spacing: -0.02em;
     }
 
-    .trend-up {
+    #member-page .trend-up {
       color: #10b981;
       font-size: 0.8rem;
       font-weight: 600;
@@ -203,11 +195,11 @@
       display: block;
     }
 
-    .trend-up i {
+    #member-page .trend-up i {
       margin-right: 4px;
     }
     
-    .visual-info {
+    #member-page .visual-info {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -217,15 +209,15 @@
       flex: 1;
     }
 
-    .pills-container {
+    #member-page .pills-container {
       display: flex;
       flex-direction: column;
       gap: 8px;
       min-width: 90px;
     }
 
-    .data-pill {
-      background: rgba(255,255,255,0.03);
+    #member-page .data-pill {
+      background: rgba(255, 255, 255, 0.03);
       padding: 6px 12px;
       border-radius: 10px;
       font-size: 0.75rem;
@@ -233,47 +225,43 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      border: 1px solid rgba(255,255,255,0.02);
+      border: 1px solid rgba(255, 255, 255, 0.02);
     }
 
-    .dot-indicator {
+    #member-page .dot-indicator {
       width: 8px;
       height: 8px;
       border-radius: 50%;
     }
     
-    .progress-group {
+    #member-page .progress-group {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    .prog-item label {
+    #member-page .prog-item label {
       display: block;
       font-size: 0.8rem;
       color: #a1a1aa;
       margin-bottom: 6px;
     }
 
-    .prog-bar-bg {
+    #member-page .prog-bar-bg {
       height: 8px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
       overflow: hidden;
       width: 100%;
     }
 
-    .prog-bar-fill {
+    #member-page .prog-bar-fill {
       height: 100%;
       transition: width 1s ease-in-out;
       border-radius: 10px;
     }
 
-    /* ========================================================= */
-    /* 2. SATIR: SCORECARDS */
-    /* ========================================================= */
-
-    .summary-stats-grid {
+    #member-page .summary-stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
@@ -283,9 +271,9 @@
       box-sizing: border-box;
     }
 
-    .summary-card {
+    #member-page .summary-card {
       background: #11131a;
-      border: 1px solid rgba(255,255,255,0.03);
+      border: 1px solid rgba(255, 255, 255, 0.03);
       border-radius: 12px;
       padding: 20px;
       display: flex;
@@ -294,12 +282,12 @@
       transition: transform 0.2s, border-color 0.2s;
     }
 
-    .summary-card:hover {
+    #member-page .summary-card:hover {
       transform: translateY(-3px);
       border-color: #6366f1;
     }
 
-    .summary-icon {
+    #member-page .summary-icon {
       width: 45px;
       height: 45px;
       border-radius: 10px;
@@ -307,38 +295,34 @@
       align-items: center;
       justify-content: center;
       font-size: 1.2rem;
-      background: rgba(255,255,255,0.03);
+      background: rgba(255, 255, 255, 0.03);
       flex: 0 0 auto;
     }
 
-    .summary-info {
+    #member-page .summary-info {
       display: flex;
       flex-direction: column;
     }
 
-    .summary-info span {
+    #member-page .summary-info span {
       font-size: 0.8rem;
       color: #a1a1aa;
       margin-bottom: 4px;
     }
 
-    .summary-info strong {
+    #member-page .summary-info strong {
       font-size: 1.4rem;
       color: #fff;
     }
 
-    /* ========================================================= */
-    /* 3. SATIR: PROJELER LİSTESİ */
-    /* ========================================================= */
-
-    .projects-section {
+    #member-page .projects-section {
       width: 100%;
       max-width: var(--dashboard-max-width);
       padding: 0 0 40px 0;
       box-sizing: border-box;
     }
 
-    .section-title {
+    #member-page .section-title {
       font-size: 1.2rem;
       color: #fff;
       margin: 0 0 20px 0;
@@ -348,7 +332,7 @@
       gap: 10px;
     }
 
-    .section-title::before {
+    #member-page .section-title::before {
       content: "";
       display: inline-block;
       width: 4px;
@@ -357,7 +341,7 @@
       border-radius: 4px;
     }
     
-    .project-card-wide {
+    #member-page .project-card-wide {
       background: #11131a;
       border: 1px solid rgba(99, 102, 241, 0.15);
       border-radius: 16px;
@@ -365,31 +349,31 @@
       display: flex;
       gap: 24px;
       position: relative;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       overflow: hidden;
     }
 
-    .project-image {
+    #member-page .project-image {
       width: 180px;
       height: 180px;
       min-width: 180px;
       background: linear-gradient(135deg, #1e2130, #11131e);
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
     }
 
-    .project-image img {
+    #member-page .project-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       border-radius: 12px;
     }
     
-    .project-details {
+    #member-page .project-details {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -397,20 +381,20 @@
       min-width: 0;
     }
     
-    .project-header-top {
+    #member-page .project-header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 16px;
     }
 
-    .project-header-top h3 {
+    #member-page .project-header-top h3 {
       margin: 0;
       font-size: 1.5rem;
       color: #fff;
     }
 
-    .status-badge-active {
+    #member-page .status-badge-active {
       background: rgba(16, 185, 129, 0.1);
       color: #10b981;
       padding: 6px 12px;
@@ -420,19 +404,19 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      border: 1px solid rgba(16,185,129,0.2);
+      border: 1px solid rgba(16, 185, 129, 0.2);
       white-space: nowrap;
     }
 
-    .status-badge-active::before {
-      content:"";
-      width:6px;
-      height:6px;
-      background:#10b981;
-      border-radius:50%;
+    #member-page .status-badge-active::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
     }
     
-    .project-desc-text {
+    #member-page .project-desc-text {
       color: #a1a1aa;
       font-size: 0.9rem;
       margin: 8px 0 15px 0;
@@ -440,48 +424,48 @@
       line-height: 1.4;
     }
     
-    .project-tags {
+    #member-page .project-tags {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .ptag {
+    #member-page .ptag {
       padding: 6px 16px;
       border-radius: 20px;
       font-size: 0.75rem;
       font-weight: 500;
     }
 
-    .ptag-analytics {
+    #member-page .ptag-analytics {
       color: #c084fc;
-      border: 1px solid rgba(192,132,252,0.3);
-      background: rgba(192,132,252,0.05);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      background: rgba(192, 132, 252, 0.05);
     }
 
-    .ptag-geodata {
+    #member-page .ptag-geodata {
       color: #60a5fa;
-      border: 1px solid rgba(96,165,250,0.3);
-      background: rgba(96,165,250,0.05);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      background: rgba(96, 165, 250, 0.05);
     }
 
-    .ptag-dashboard {
+    #member-page .ptag-dashboard {
       color: #34d399;
-      border: 1px solid rgba(52,211,153,0.3);
-      background: rgba(52,211,153,0.05);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      background: rgba(52, 211, 153, 0.05);
     }
 
-    .project-footer-bottom {
+    #member-page .project-footer-bottom {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       gap: 20px;
       margin-top: auto;
-      border-top: 1px solid rgba(255,255,255,0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
       padding-top: 20px;
     }
 
-    .last-update {
+    #member-page .last-update {
       color: #71717a;
       font-size: 0.85rem;
       display: flex;
@@ -489,7 +473,7 @@
       gap: 8px;
     }
 
-    .btn-launch-project {
+    #member-page .btn-launch-project {
       background: #7c3aed;
       color: #fff;
       padding: 12px 28px;
@@ -503,11 +487,11 @@
       white-space: nowrap;
     }
 
-    .btn-launch-project:hover {
+    #member-page .btn-launch-project:hover {
       background: #6d28d9;
     }
 
-    .details-link {
+    #member-page .details-link {
       color: #71717a;
       font-size: 0.8rem;
       text-decoration: none;
@@ -517,18 +501,17 @@
       transition: color 0.2s;
     }
 
-    .details-link:hover {
+    #member-page .details-link:hover {
       color: #fff;
     }
 
-    /* Profil Alanı */
-    .user-profile {
+    #member-page .user-profile {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .avatar {
+    #member-page .avatar {
       width: 38px;
       height: 38px;
       border-radius: 50%;
@@ -541,79 +524,77 @@
       flex: 0 0 auto;
     }
 
-    /* ========================================================= */
-    /* RESPONSIVE */
-    /* ========================================================= */
-
     @media (max-width: 1200px) {
-      .super-grid {
+      #member-page .super-grid {
         grid-template-columns: 1fr;
       }
 
-      .summary-stats-grid {
+      #member-page .summary-stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
 
     @media (max-width: 768px) {
       :root {
-        --topbar-height: auto;
-        --content-top-space: 24px;
+        --sidebar-width: 0px;
+        --topbar-height: 96px;
+        --topbar-gap: 24px;
       }
 
-      body .main-content > .top-bar {
-        height: auto !important;
-        min-height: 84px !important;
-        flex: 0 0 auto !important;
+      #member-page .main-content > .top-bar {
+        left: 0 !important;
+        width: 100% !important;
+        height: var(--topbar-height) !important;
+        min-height: var(--topbar-height) !important;
         padding: 18px 20px !important;
         align-items: flex-start !important;
         gap: 14px;
       }
 
-      body .main-content > .content-scroll {
-        padding: 24px 18px 40px 18px !important;
+      #member-page .main-content > .content-scroll {
+        padding: calc(var(--topbar-height) + var(--topbar-gap)) 18px 40px 18px !important;
       }
 
-      .summary-stats-grid {
+      #member-page .summary-stats-grid {
         grid-template-columns: 1fr;
       }
 
-      .mini-stats-row {
+      #member-page .mini-stats-row {
         flex-direction: column;
       }
 
-      .visual-info {
+      #member-page .visual-info {
         flex-direction: column;
         align-items: flex-start;
       }
 
-      .project-card-wide {
+      #member-page .project-card-wide {
         flex-direction: column;
       }
 
-      .project-image {
+      #member-page .project-image {
         width: 100%;
         height: 220px;
         min-width: 0;
       }
 
-      .project-desc-text {
+      #member-page .project-desc-text {
         max-width: 100%;
       }
 
-      .project-footer-bottom {
+      #member-page .project-footer-bottom {
         flex-direction: column;
         align-items: flex-start;
       }
 
-      .details-link {
+      #member-page .details-link {
         text-align: left;
       }
     }
   </style>
 </head>
 
-<body>
+<body id="member-page">
 
   <div id="loading-overlay" style="position: fixed; inset: 0; width: 100vw; height: 100vh; background: #05080a; z-index: 9999999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease; margin: 0; padding: 0;">
     <div style="text-align:center; color:white; font-family:'Fira Code', monospace;">
@@ -637,10 +618,8 @@
     </header>
 
     <div class="content-scroll">
-
-  <div class="header-safe-gap"></div>
       
-  <div class="super-grid">
+      <div class="super-grid">
 
         <section class="dashboard-card" onclick="location.href='/dashboard/member/finance/index.html'">
           <div class="card-header">
