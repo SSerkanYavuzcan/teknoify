@@ -108,7 +108,7 @@
 .tk-center-close:hover { color: #ef4444; }
 .modal-actions { display: flex; gap: 10px; align-items: center; }
 
-/* MODAL İÇİ GRAFİK (SCROLLABLE) */
+/* MODAL İÇİ GRAFİK (SCROLLABLE & TRANSPARENT) */
 .chart-scroll-container { 
     flex: 1; overflow-x: auto; padding: 20px; background: #0d0f16;
     scrollbar-width: thin; scrollbar-color: #3f3f46 transparent;
@@ -117,7 +117,62 @@
 .chart-scroll-container::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
 .chart-inner-wrapper { min-width: 2500px; padding-bottom: 10px;}
 
-.tk-center-footer { padding: 25px 30px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; background: #11131a; border-top: 1px solid rgba(255,255,255,0.05); align-items: flex-end;}
+#modal-trend-chart-large {
+    background: transparent !important;
+}
+
+/* YENİ: MODAL ALTI ÖZET (SCORECARD) KARTLARI */
+.tk-modal-summary-footer {
+    padding: 20px 30px;
+    display: flex;
+    gap: 20px;
+    background: #11131a;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.mini-summary-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 12px 20px;
+    border-radius: 10px;
+    min-width: 160px;
+}
+
+.mini-summary-card p { font-size: 0.7rem; color: #a1a1aa; margin: 0; }
+.mini-summary-card h3 { font-size: 1.1rem; color: #fff; margin-top: 5px; }
+
+/* YENİ: MINI DÜZENLEME POPUP'I (HOVER-TO-EDIT İÇİN) */
+.tk-mini-popup {
+    display: none;
+    position: fixed;
+    z-index: 12000;
+    width: 260px;
+    background: #1c1f2b;
+    border: 1px solid #6366f1;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    padding: 15px;
+}
+
+.mini-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 8px;
+}
+
+.mini-popup-header span { color: #fff; font-weight: 600; font-size: 0.9rem; }
+.mini-popup-header button { background: none; border: none; color: #71717a; cursor: pointer; transition: 0.2s; }
+.mini-popup-header button:hover { color: #ef4444; }
+
+.mini-popup-body { display: flex; flex-direction: column; gap: 10px; }
+
+/* ApexCharts Tıklanabilir Nokta (Marker) Simülasyonu */
+.apexcharts-marker:hover {
+    cursor: cell !important;
+}
 
 /* YÜKLEME PANELİ */
 .upload-section-title { font-size: 0.9rem; color: #e4e4e7; font-weight: 500; margin-bottom: 10px; margin-top: 15px;}
