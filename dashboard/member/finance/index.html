@@ -81,25 +81,43 @@
     .toggle-dot { width: 10px; height: 10px; border-radius: 3px; }
 
     /* ========================================================= */
-    /* MODAL STİLLERİ (TAM ORTALANMIŞ VE KAPSAMLI) */
+    /* MODAL STİLLERİ (YENİLENMİŞ VE KESİN MERKEZLENMİŞ) */
     /* ========================================================= */
-    .tk-modal { 
-        display: none; position: fixed; z-index: 11000; 
-        left: 0; top: 0; width: 100vw; height: 100vh; 
-        background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-        align-items: center; justify-content: center;
+    .tk-center-overlay { 
+        display: none; 
+        position: fixed !important; 
+        z-index: 999999 !important; 
+        inset: 0 !important; /* left:0, top:0, right:0, bottom:0 */
+        width: 100vw !important; 
+        height: 100vh !important; 
+        background: rgba(5, 8, 10, 0.8) !important; 
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        align-items: center !important; 
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
-    .tk-modal-content { 
-        background: #11131a; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; 
-        box-shadow: 0 25px 50px rgba(0,0,0,0.7); overflow: hidden; position: relative;
+    
+    .tk-center-box { 
+        background: #11131a; 
+        border: 1px solid rgba(255,255,255,0.1); 
+        border-radius: 20px; 
+        box-shadow: 0 25px 50px rgba(0,0,0,0.8); 
+        overflow: hidden; 
+        display: flex; 
+        flex-direction: column; 
+        position: relative;
+        box-sizing: border-box;
     }
-    .wide-modal { width: 95%; max-width: 1100px; height: 85vh; display: flex; flex-direction: column; }
-    .small-modal { width: 90%; max-width: 650px; }
+    
+    .wide-box { width: 95vw !important; max-width: 1200px !important; height: 85vh !important; }
+    .small-box { width: 90vw !important; max-width: 650px !important; }
 
-    .tk-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .tk-modal-title { font-size: 1.2rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 10px;}
-    .tk-modal-close { background: none; border: none; color: #a1a1aa; font-size: 1.4rem; cursor: pointer; transition: color 0.2s; }
-    .tk-modal-close:hover { color: #ef4444; }
+    .tk-center-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .tk-center-title { font-size: 1.2rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 10px;}
+    .tk-center-close { background: none; border: none; color: #a1a1aa; font-size: 1.4rem; cursor: pointer; transition: color 0.2s; }
+    .tk-center-close:hover { color: #ef4444; }
     .modal-actions { display: flex; gap: 10px; align-items: center; }
     
     /* MODAL İÇİ GRAFİK (SCROLLABLE) */
@@ -107,21 +125,24 @@
         flex: 1; overflow-x: auto; padding: 20px; background: #0d0f16;
         scrollbar-width: thin; scrollbar-color: #3f3f46 transparent;
     }
-    .chart-scroll-container::-webkit-scrollbar { height: 6px; }
+    .chart-scroll-container::-webkit-scrollbar { height: 8px; }
     .chart-scroll-container::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-    .chart-inner-wrapper { min-width: 2500px; } /* 5 yıllık trend için geniş alan */
+    .chart-inner-wrapper { min-width: 2500px; padding-bottom: 10px;}
 
-    .tk-modal-footer-form { padding: 25px 30px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; background: #11131a; border-top: 1px solid rgba(255,255,255,0.05); align-items: flex-end;}
+    .tk-center-footer { padding: 25px 30px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; background: #11131a; border-top: 1px solid rgba(255,255,255,0.05); align-items: flex-end;}
 
     /* YÜKLEME PANELİ (GÖRSEL 2 UI) */
+    .upload-section-title { font-size: 0.9rem; color: #e4e4e7; font-weight: 500; margin-bottom: 10px; margin-top: 15px;}
+    .upload-controls { display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; margin-bottom: 15px; }
+    .tk-select { background: #0d0f16; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none; width: 100%; box-sizing: border-box; font-family: 'Inter Tight', sans-serif;}
+    .tk-select:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-template { background: #e4e4e7; color: #11131a; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;}
+    
     .upload-zone {
-        border: 2px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 40px;
-        text-align: center; color: #a1a1aa; cursor: pointer; transition: 0.2s; margin-top: 20px;
+        border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 50px 20px;
+        text-align: center; color: #a1a1aa; cursor: pointer; transition: 0.2s; background: #0d0f16;
     }
     .upload-zone:hover { background: rgba(99, 102, 241, 0.05); border-color: #6366f1; color: #fff; }
-    .upload-controls { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 20px; }
-    .tk-select { background: #0d0f16; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px; outline: none; width: 100%; box-sizing: border-box; font-family: 'Inter Tight', sans-serif;}
-    .btn-template { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #a1a1aa; padding: 10px 15px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
 
     .tk-form-group label { display: block; font-size: 0.8rem; color: #a1a1aa; margin-bottom: 5px; font-weight: 500;}
     ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
@@ -129,7 +150,9 @@
     /* BUTONLAR */
     .btn-modal-action { background: #1f2233; color: #d4d4d8; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
     .btn-modal-action.active { background: #6366f1; color: #fff; border-color: #6366f1; }
-    .btn-save-final { background: #6366f1; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .btn-save-final { background: #2563eb; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-save-final:hover { background: #1d4ed8; }
+    .btn-cancel { background: transparent; color: #3b82f6; border: none; font-weight: 600; padding: 12px 20px; cursor: pointer; }
 
     /* ========================================================= */
     /* SATIR 2 & 3: DİĞER KARTLAR */
@@ -493,14 +516,14 @@
     </div>
   </main>
 
-  <div id="savings-modal" class="tk-modal">
-      <div class="tk-modal-content wide-modal">
-          <div class="tk-modal-header">
-              <span class="tk-modal-title"><i class="fas fa-chart-line" style="color:#6366f1;"></i> Birikim Trendi (5 Yıllık)</span>
+  <div id="savings-modal" class="tk-center-overlay">
+      <div class="tk-center-box wide-box">
+          <div class="tk-center-header">
+              <span class="tk-center-title"><i class="fas fa-chart-line" style="color:#6366f1;"></i> Birikim Trendi (5 Yıllık)</span>
               <div class="modal-actions">
                   <button class="btn-modal-action active" id="btn-manual-mode">Manuel Düzenle</button>
                   <button class="btn-modal-action" id="btn-upload-mode">Yükle</button>
-                  <button class="tk-modal-close" style="margin-left:15px;"><i class="fas fa-times"></i></button>
+                  <button class="tk-center-close" style="margin-left:15px;"><i class="fas fa-times"></i></button>
               </div>
           </div>
           
@@ -510,7 +533,7 @@
               </div>
           </div>
 
-          <div class="tk-modal-footer-form">
+          <div class="tk-center-footer">
               <div class="tk-form-group">
                   <label>Düzenlenecek Ay</label>
                   <input type="month" id="input-month" class="tk-select">
@@ -528,28 +551,34 @@
       </div>
   </div>
 
-  <div id="upload-modal" class="tk-modal">
-      <div class="tk-modal-content small-modal">
-          <div class="tk-modal-header">
-              <span class="tk-modal-title">Dosya Yükle</span>
-              <button class="tk-modal-close" id="close-upload-modal"><i class="fas fa-times"></i></button>
+  <div id="upload-modal" class="tk-center-overlay">
+      <div class="tk-center-box small-box">
+          <div class="tk-center-header">
+              <span class="tk-center-title">Dosya Yükle</span>
+              <button class="tk-center-close" id="close-upload-modal"><i class="fas fa-times"></i></button>
           </div>
-          <div style="padding: 25px;">
-              <p class="text-sub" style="margin-bottom:15px;">Yükleme yapmak için bir şablon seçin ve dosyanızı bırakın.</p>
-              
+          
+          <div style="padding: 10px 30px 30px 30px;">
+              <div class="upload-section-title">İndirilecek şablonu seçin</div>
               <div class="upload-controls">
-                  <select class="tk-select"><option>Yükleme Tipi Seçin</option><option>Aylık Birikimler</option></select>
-                  <select class="tk-select" disabled><option>Dosya Seçilmedi</option></select>
+                  <select class="tk-select">
+                      <option>Aylık Birikimler</option>
+                      <option>Portföy İşlemleri</option>
+                  </select>
+                  <select class="tk-select" disabled>
+                      <option>Dosya Seçilmedi</option>
+                  </select>
                   <button class="btn-template">Şablonu İndir</button>
               </div>
 
+              <div class="upload-section-title">Yüklenecek dosyayı seçin</div>
               <div class="upload-zone">
-                  <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                  <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; margin-bottom: 15px; color:#6366f1;"></i>
                   <p>Dosyayı yüklemek için bu alana tıklayın veya sürükleyin</p>
               </div>
 
-              <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;">
-                  <button class="btn-modal-action" id="cancel-upload">Vazgeç</button>
+              <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 25px;">
+                  <button class="btn-cancel" id="cancel-upload">Vazgeç</button>
                   <button class="btn-save-final">Dosyayı Yükle</button>
               </div>
           </div>
@@ -671,10 +700,13 @@
             });
 
             // Yükle Butonu
-            document.getElementById('btn-upload-mode').onclick = () => { uploadModal.style.display = 'flex'; };
+            document.getElementById('btn-upload-mode').onclick = () => { 
+                mainModal.style.display = 'none'; // İsteğe bağlı olarak önce arkadakini kapatabiliriz
+                uploadModal.style.display = 'flex'; 
+            };
 
             // Kapatma
-            document.querySelectorAll('.tk-modal-close, #cancel-upload, #close-upload-modal').forEach(btn => {
+            document.querySelectorAll('.tk-center-close, #cancel-upload').forEach(btn => {
                 btn.onclick = () => { mainModal.style.display = 'none'; uploadModal.style.display = 'none'; }
             });
 
