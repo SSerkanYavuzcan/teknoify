@@ -149,15 +149,16 @@ class AuthSystem {
                 const loginBtn = document.getElementById('openLoginBtn');
                 if(loginBtn) {
                     const displayName = user.displayName || user.email.split('@')[0];
-                    loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> '; 
+                    
+                    loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> ';
                     loginBtn.appendChild(document.createTextNode(displayName));
+                    
                     loginBtn.classList.remove('btn-outline');
                     loginBtn.classList.add('btn-secondary');
                 }
             }
         });
     }
-}
 
 /* ---------------------------------------------------------
    2. CONTACT SYSTEM (Cloud Protected)
