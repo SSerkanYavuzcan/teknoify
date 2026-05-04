@@ -21,6 +21,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-appcheck-compat.js"></script>
 
     <script src="https://www.google.com/recaptcha/api.js?render=6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk"></script>
 
@@ -355,7 +357,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" id="btn-contact-submit" class="btn btn-primary btn-block">
+                    <button type="submit" id="btn-contact-submit" class="btn-primary btn-block">
                         <span>Teklif İste / Gönder</span> <i class="fas fa-paper-plane"></i>
                     </button>
                 </form>
@@ -560,6 +562,7 @@
         }
     }
 
+    // MODAL GÖRÜNÜM FONKSİYONLARI
     function toggleResetView(e) {
         if(e) e.preventDefault();
         const loginView = document.getElementById('login-view');
@@ -602,6 +605,7 @@
         if (e.target === this) { resetModalView(); }
     });
 
+    // ŞİFRE SIFIRLAMA LİNKİ GÖNDERME
     function sendResetLink() {
         const email = document.getElementById('reset-email').value;
         const btn = document.getElementById('btn-reset-submit');
@@ -632,86 +636,6 @@
                 btn.innerHTML = originalHtml;
             });
     }
-
-    // ================================================================
-    // BOT AVCI (HONEYPOT & FINGERPRINTING) MANTIĞI
-    // ================================================================
-
-    // URL Temizleme (Token/Query Param sızıntısını önler)
-    function sanitizeUrl(url) {
-        if (!url || url === "Direct") return url;
-        try {
-            const urlObj = new URL(url);
-            return urlObj.origin + urlObj.pathname;
-        } catch (e) { return "Invalid URL"; }
-    }
-
-    async function banAndLogBot() {
-        // İleri Seviye Bot Sinyalleri (Otomasyon Tespiti)
-        const botSignals = {
-            webdriver: navigator.webdriver || false,
-            plugins_count: navigator.plugins ? navigator.plugins.length : 0,
-            languages_count: navigator.languages ? navigator.languages.length : 0,
-            is_headless: /HeadlessChrome/.test(navigator.userAgent) || navigator.languages.length === 0,
-            has_chrome_runtime: !!window.chrome,
-            has_permissions_api: !!navigator.permissions
-        };
-
-        let botFingerprint = {
-            full_url: sanitizeUrl(window.location.href),
-            referrer: sanitizeUrl(document.referrer || "Direct"),
-            userAgent: navigator.userAgent,
-            screen_res: `${window.screen.width}x${window.screen.height}`,
-            platform: navigator.platform,
-            hardware_concurrency: navigator.hardwareConcurrency || 0,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            signals: botSignals,
-            timestamp: new Date(),
-            reason: "Honeypot Triggered (Bot Attempt)"
-        };
-
-        try {
-            const ipRes = await fetch('https://api.ipify.org?format=json');
-            const ipData = await ipRes.json();
-            botFingerprint.ip = ipData.ip;
-        } catch (e) { botFingerprint.ip = "Unknown"; }
-
-        // Firestore'a Sessizce Kaydet
-        try {
-            // Firestore SDK'nın yüklü olduğunu varsayıyoruz
-            await firebase.firestore().collection("banned_logs").add(botFingerprint);
-        } catch (err) { console.error("Security log failed."); }
-
-        // Cihazı Banla ve Yenile
-        localStorage.setItem('tk_access_denied', 'true');
-        location.reload();
-    }
-
-    // FORM GÖNDERME KONTROLÜ
-    document.getElementById('contactForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Honeypot Kontrolü (Eğer gizli alan doluysa bottur)
-        const honeyValue = document.getElementById('tk_hp_field').value;
-        if (honeyValue) {
-            console.warn("Bot detected.");
-            await banAndLogBot();
-            return;
-        }
-
-        // Hız Sınırlaması (Client-side)
-        const lastSend = localStorage.getItem('tk_form_ts');
-        const now = Date.now();
-        if (lastSend && (now - lastSend < 60000)) {
-            showToast("Uyarı", "Çok sık form gönderiyorsunuz. Lütfen 1 dakika bekleyin.");
-            return;
-        }
-
-        // --- Mevcut Form Gönderme Kodlarınız Buraya Gelecek ---
-        // Başarılı gönderimden sonra: localStorage.setItem('tk_form_ts', Date.now());
-        
-        showToast("Başarılı", "Mesajınız başarıyla iletildi.");
-    });
 </script>
 
 </body>
