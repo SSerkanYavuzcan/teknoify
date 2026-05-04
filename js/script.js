@@ -12,6 +12,7 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
+// App Check (Güvenlik Duvarı) Aktif
 if (typeof firebase !== 'undefined' && firebase.appCheck) {
     const appCheck = firebase.appCheck();
     appCheck.activate(
@@ -66,7 +67,13 @@ class AuthSystem {
                             window.location.href = '../dashboard/member.html'; 
                         }
                     } catch (error) {
-                        window.location.href = '../dashboard/member.html';
+                        // Eğer zaten giriş yapmış biri bot olarak algılanırsa
+                        if (error.code === 'permission-denied' || (error.message && error.message.includes('permissions'))) {
+                            auth.signOut();
+                            if (typeof showToast === "function") showToast("Güvenlik Duvarı", "Bot olduğunuz tespit edildiği için oturum kapatıldı.", "error");
+                        } else {
+                            window.location.href = '../dashboard/member.html';
+                        }
                     }
                 } else {
                     this.open();
@@ -141,8 +148,18 @@ class AuthSystem {
 
                 } catch (dbError) {
                     console.error("Veritabanı sorgulama hatası:", dbError);
-                    showToast("Uyarı", "Standart panele yönlendiriliyorsunuz.", "error");
-                    setTimeout(() => { window.location.href = '../dashboard/member.html'; }, 2000);
+                    
+                    // BOT YAKALAYICI (APP CHECK MANTIĞI)
+                    if (dbError.code === 'permission-denied' || (dbError.message && dbError.message.includes('permissions'))) {
+                        auth.signOut(); // Sistemi riske atmamak için kullanıcıyı at
+                        showToast("Güvenlik Duvarı", "Bot olduğunuz tespit edildiği için giriş engellendi.", "error");
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    } else {
+                        // Diğer genel ağ/sunucu hataları
+                        showToast("Uyarı", "Standart panele yönlendiriliyorsunuz.", "error");
+                        setTimeout(() => { window.location.href = '../dashboard/member.html'; }, 2000);
+                    }
                 }
             })
             .catch((error) => {
