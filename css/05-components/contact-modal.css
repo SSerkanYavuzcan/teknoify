@@ -168,12 +168,12 @@ Modern İletişim Formu Tasarımı
 }
 
 /* ================================================================
-GÜNCELLENEN BUTON TASARIMI (Teklif İste / Gönder)
+GÜNCELLENEN BUTON TASARIMI (Daha Zarif ve Dengeli)
 ================================================================ */
 #btn-contact-submit.btn-block {
     width: 100%;
-    padding: 1.2rem 2.5rem;        /* Butonu dikeyde ve yatayda büyüttük */
-    font-size: 1.1rem;             /* Yazıyı büyüttük */
+    padding: 0.9rem 2rem;          /* 1.2rem'den 0.9rem'e çekerek yüksekliği dengeledik */
+    font-size: 1rem;               /* Yazıyı standart ama vurgulu bir boyuta aldık */
     font-weight: 600;
     letter-spacing: 0.5px;
     
@@ -181,34 +181,25 @@ GÜNCELLENEN BUTON TASARIMI (Teklif İste / Gönder)
     color: #fff;
     
     border: none;
-    border-radius: 100px;          /* Tam oval (çember köşeli) yapı */
+    border-radius: 50px;           /* 100px yerine 50px de tam oval yapar ama daha kontrollüdür */
     
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;                     /* Yazı ve ikon arasındaki boşluk */
+    gap: 10px;                     
     
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 6px 12px rgba(99, 102, 241, 0.2);
     margin-top: 1rem;
 }
 
 #btn-contact-submit.btn-block:hover {
-    transform: translateY(-3px);    /* Yukarı hafif zıplama efekti */
-    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
-    filter: brightness(1.1);
+    transform: translateY(-2px);    /* Zıplama etkisini de bir tık yumuşattık */
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    filter: brightness(1.05);
 }
 
 #btn-contact-submit.btn-block:active {
-    transform: translateY(1px);     /* Tıklama basma hissi */
-}
-
-#btn-contact-submit.btn-block i {
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
-}
-
-#btn-contact-submit.btn-block:hover i {
-    transform: translateX(5px) translateY(-5px) rotate(-10deg); /* Kağıt uçak uçuş efekti */
+    transform: translateY(1px);
 }
