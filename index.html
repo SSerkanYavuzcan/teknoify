@@ -29,7 +29,6 @@
     <link rel="stylesheet" href="css/style.css" />
     
     <style>
-        /* Şifre Göster/Gizle Butonu İçin Ek CSS */
         .password-toggle-icon {
             position: absolute;
             right: 15px;
@@ -49,18 +48,17 @@
             padding-right: 40px !important;
         }
 
-        /* Gelişmiş ve Heybetli Toast (Bildirim) Pop-up CSS */
         .custom-toast {
             position: fixed;
             top: 30px;
             right: -500px;
-            width: 380px; /* Genişletildi */
+            width: 380px; 
             background: #181824;
             border-radius: 12px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
-            padding: 20px 25px; /* İç boşluk artırıldı */
+            padding: 20px 25px; 
             z-index: 100000;
             transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             color: #fff;
@@ -71,7 +69,6 @@
             right: 30px;
         }
 
-        /* Başarı (Yeşil) Durumu */
         .custom-toast.success {
             border-left: 6px solid #10b981;
         }
@@ -81,7 +78,6 @@
             margin-right: 15px;
         }
 
-        /* Hata (Kırmızı) Durumu */
         .custom-toast.error {
             border-left: 6px solid #ff4b4b;
         }
@@ -121,12 +117,10 @@
             color: #fff;
         }
 
-        /* Google reCAPTCHA v3 Rozetini Gizleme */
         .grecaptcha-badge { 
             visibility: hidden !important;
         }
 
-        /* HONEYPOT (BALLI TUZAK) GİZLEME */
         .tk-hp-container {
             display: none !important;
             visibility: hidden !important;
@@ -135,7 +129,6 @@
     </style>
 
     <script>
-        // SİTE GİRİŞİNDE BAN KONTROLÜ
         (function() {
             if (localStorage.getItem('tk_access_denied') === 'true') {
                 document.documentElement.innerHTML = `
@@ -552,18 +545,15 @@
 <script src="js/cookies.js" defer></script>
 
 <script>
-    // Dinamik ve Renkli Toast Fonksiyonu
     function showToast(title, message, type = 'error') {
         const toast = document.getElementById('customToast');
         const toastIcon = toast.querySelector('.toast-icon i');
         document.getElementById('toastTitle').textContent = title;
         document.getElementById('toastMessage').textContent = message;
         
-        // Önceki sınıfları temizle ve tipi ekle
         toast.classList.remove('show', 'success', 'error');
         toast.classList.add('show', type);
 
-        // Başarı durumunda yeşil stil ve check ikonu
         if(type === 'success') {
             toastIcon.className = 'fas fa-check-circle';
         } else {
@@ -577,7 +567,6 @@
         document.getElementById('customToast').classList.remove('show');
     }
 
-    // ŞİFRE GÖSTER/GİZLE FONKSİYONU
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById('password');
         const toggleIcon = document.getElementById('togglePassword');
@@ -593,7 +582,6 @@
         }
     }
 
-    // MODAL GÖRÜNÜM FONKSİYONLARI
     function toggleResetView(e) {
         if(e) e.preventDefault();
         const loginView = document.getElementById('login-view');
@@ -637,7 +625,6 @@
         if (e.target === this) { resetModalView(); }
     });
 
-    // ŞİFRE SIFIRLAMA LİNKİ GÖNDERME
     function sendResetLink() {
         const email = document.getElementById('reset-email').value;
         const btn = document.getElementById('btn-reset-submit');
