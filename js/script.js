@@ -114,27 +114,39 @@ class AuthSystem {
         const emailInput = document.getElementById('email').value.trim();
         const passInput = document.getElementById('password').value.trim();
 
-        if (!auth) {
-            if (typeof showToast === "function") showToast("Hata", "Güvenlik sistemi başlatılamadı.");
-            return;
-        }
+        if (!auth) return;
 
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
         btn.disabled = true;
 
         auth.signInWithEmailAndPassword(emailInput, passInput)
-            .then(() => {
-                localStorage.setItem('session_start_time', Date.now());
-                btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
-                btn.style.backgroundColor = '#10b981';
-                setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
+            .then((userCredential) => {
+                // 1. KULLANICININ YETKİ TOKEN'INI (ID TOKEN) İSTE
+                return userCredential.user.getIdTokenResult();
+            })
+            .then((idTokenResult) => {
+                // 2. CUSTOM CLAIM KONTROLÜ (Admin yetkisi var mı?)
+                // Not: Eğer Custom Claim kullanmıyorsan, burada Firestore'daki "users" koleksiyonundan rolünü de okuyabilirsin.
+                if (idTokenResult.claims.admin === true) {
+                    localStorage.setItem('session_start_time', Date.now());
+                    btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
+                    btn.style.backgroundColor = '#10b981';
+                    setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
+                } else {
+                    // Admin değilse şutla (Yetkisiz hesap)
+                    auth.signOut();
+                    throw new Error("unauthorized_role");
+                }
             })
             .catch((error) => {
                 console.error("Giriş Hatası:", error);
+                
                 let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
-                if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız. Biraz bekleyin.";
-                if (typeof showToast === "function") showToast("Giriş Başarısız", msg);
+                if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız. Hesabınız geçici olarak kilitlendi.";
+                if (error.message === "unauthorized_role") msg = "Bu panele erişim yetkiniz bulunmamaktadır.";
+                
+                if (typeof showToast === "function") showToast("Erişim Reddedildi", msg);
                 
                 btn.innerHTML = originalText;
                 btn.disabled = false;
