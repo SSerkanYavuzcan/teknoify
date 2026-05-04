@@ -1,7 +1,7 @@
 /**
  * ================================================================
  * [MAIN] TEKNOIFY GLOBAL SCRIPT (ULTIMATE SHIELD VERSION)
- * Katmanlı Savunma: App Check, Cloud Functions, Honeypot, UI FX
+ * Katmanlı Savunma: App Check, Load Balancer IP, Honeypot, UI FX
  * ================================================================
  */
 
@@ -31,7 +31,6 @@ if (typeof firebase !== 'undefined' && firebase.appCheck) {
 
 const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
-const functions = typeof firebase !== 'undefined' ? firebase.functions() : null;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('loginModal')) {
@@ -122,49 +121,40 @@ class AuthSystem {
 
         auth.signInWithEmailAndPassword(emailInput, passInput)
             .then((userCredential) => {
-                // 1. KULLANICININ YETKİ TOKEN'INI (ID TOKEN) İSTE
                 return userCredential.user.getIdTokenResult();
             })
             .then((idTokenResult) => {
-                // 2. CUSTOM CLAIM KONTROLÜ (Admin yetkisi var mı?)
-                // Not: Eğer Custom Claim kullanmıyorsan, burada Firestore'daki "users" koleksiyonundan rolünü de okuyabilirsin.
                 if (idTokenResult.claims.admin === true) {
                     localStorage.setItem('session_start_time', Date.now());
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
                     setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
                 } else {
-                    // Admin değilse şutla (Yetkisiz hesap)
                     auth.signOut();
                     throw new Error("unauthorized_role");
                 }
             })
             .catch((error) => {
                 console.error("Giriş Hatası:", error);
-                
                 let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
-                if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız. Hesabınız geçici olarak kilitlendi.";
+                if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız.";
                 if (error.message === "unauthorized_role") msg = "Bu panele erişim yetkiniz bulunmamaktadır.";
                 
                 if (typeof showToast === "function") showToast("Erişim Reddedildi", msg);
                 
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                btn.style.backgroundColor = '';
             });
     }
 
-        checkCurrentUser() {
+    checkCurrentUser() {
         if (!auth) return;
         auth.onAuthStateChanged((user) => {
             if (user) {
                 const loginBtn = document.getElementById('openLoginBtn');
                 if(loginBtn) {
                     const displayName = user.displayName || user.email.split('@')[0];
-
-                    loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> ';
-                    loginBtn.appendChild(document.createTextNode(displayName));
-
+                    loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> ' + displayName;
                     loginBtn.classList.remove('btn-outline');
                     loginBtn.classList.add('btn-secondary');
                 }
@@ -172,14 +162,17 @@ class AuthSystem {
         });
     }
 }
+
 /* ---------------------------------------------------------
-   2. CONTACT SYSTEM (Cloud Protected)
+   2. CONTACT SYSTEM (Load Balancer IP Protected)
 --------------------------------------------------------- */
 class ContactSystem {
     constructor() {
         this.form = document.querySelector('.contact-form');
         this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
         this.honeypot = document.getElementById('tk_hp_field');
+        // Yeni Load Balancer IP Adresiniz
+        this.apiUrl = "http://34.111.45.176/submitContactForm";
         
         if (this.form) this.bindEvents();
     }
@@ -188,23 +181,22 @@ class ContactSystem {
         this.form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // 1. KATMAN: HONEYPOT (Ballı Tuzak)
+            // 1. KATMAN: HONEYPOT
             if (this.honeypot && this.honeypot.value) {
-                console.warn("Spam Bot detected.");
-                this.banAndLogBot("Honeypot Triggered");
+                this.banAndLogBot();
                 return;
             }
 
-            // 2. KATMAN: ANTI-FLOOD (Hız Sınırlaması)
+            // 2. KATMAN: ANTI-FLOOD
             const lastSuccess = localStorage.getItem('tk_last_success');
             if (lastSuccess && (Date.now() - lastSuccess < 60000)) {
                 if (typeof showToast === "function") 
-                    showToast("Uyarı", "Kısa sürede çok fazla istek gönderdiniz. Lütfen bekleyin.");
+                    showToast("Uyarı", "Lütfen bir dakika bekleyip tekrar deneyin.");
                 return;
             }
 
             if (this.validateInput()) {
-                this.sendToCloud();
+                this.sendToIP();
             }
         });
     }
@@ -221,61 +213,60 @@ class ContactSystem {
         return true;
     }
 
-    // Bot tespiti durumunda cihazı işaretle ve sayfayı kilitle
-    async banAndLogBot(reason) {
+    async banAndLogBot() {
         localStorage.setItem('tk_access_denied', 'true');
         location.reload();
     }
 
-    async sendToCloud() {
-        if (!this.submitBtn || !functions) return;
+    async sendToIP() {
+        if (!this.submitBtn) return;
         
         const origHtml = this.submitBtn.innerHTML;
-        this.submitBtn.innerHTML = '<i class="fas fa-shield-alt fa-spin"></i> Güvenli Gönderim...';
+        this.submitBtn.innerHTML = '<i class="fas fa-shield-alt fa-spin"></i> Zırhlı Gönderim...';
         this.submitBtn.disabled = true;
 
         try {
-            const submitContactForm = functions.httpsCallable('submitContactForm');
-            
-            // Temiz URL'yi oluştur (Sadece ana alan adı ve sayfa yolu, parametreler hariç)
-            const cleanUrl = window.location.origin + window.location.pathname;
-            
             const payload = {
                 fullname: document.getElementById('fullname').value.trim(),
                 contact_info: document.getElementById('contact_info').value.trim(),
                 service_type: document.getElementById('service_type').value,
                 message: document.getElementById('message').value.trim(),
-                source: "Web Home Cloud",
-                fingerprint: {
-                    url: cleanUrl, // <-- URL Sadeleştirildi
-                    res: `${window.screen.width}x${window.screen.height}`,
-                    ua: navigator.userAgent
-                }
+                visitor_id: localStorage.getItem('tk_visitor_id') || "Web_Client"
             };
 
-            const result = await submitContactForm(payload);
+            // onCall yerine Standart POST isteği (Fetch)
+            const response = await fetch(this.apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
 
-            if (result.data.success) {
+            const result = await response.json();
+
+            if (response.ok && result.success) {
                 localStorage.setItem('tk_last_success', Date.now());
-                if (typeof showToast === "function") showToast("Başarılı", "Mesajınız güvenle iletildi.");
+                if (typeof showToast === "function") showToast("Başarılı", "Mesajınız Cloud Armor korumasıyla iletildi.");
                 this.form.reset();
+            } else {
+                throw new Error(result.error || "Güvenlik engeli veya hata.");
             }
 
         } catch (err) {
-            console.error("Cloud Error:", err);
-            // Backend'den (rate limit vb.) gelen hatayı göster
-            if (typeof showToast === "function") showToast("Hata", err.message || "İşlem reddedildi.");
+            console.error("Network Error:", err);
+            if (typeof showToast === "function") showToast("Sistem Mesajı", err.message);
         } finally {
             setTimeout(() => {
                 this.submitBtn.innerHTML = origHtml;
                 this.submitBtn.disabled = false;
-            }, 2000);
+            }, 1500);
         }
     }
 }
 
 /* ---------------------------------------------------------
-   3. UI & EFFECTS
+   3. UI & EFFECTS (Terminal & Particles)
 --------------------------------------------------------- */
 class UISystem {
     constructor() {
@@ -327,15 +318,15 @@ class TerminalEffect {
         this.container = document.querySelector(selector);
         if (!this.container) return;
         this.lines = [
-            { type: 'comment', text: '# Security Status: CLOUD_PROTECTED' },
-            { type: 'code', text: 'import secure_shield as shield' },
+            { type: 'comment', text: '# Security: LOAD_BALANCER_ACTIVE' },
+            { type: 'code', text: 'shield.connect("34.111.45.176")' },
             { type: 'empty', text: '' },
-            { type: 'comment', text: '# Running Integrity Checks...' },
-            { type: 'output', text: '>> AppCheck Token: VALID' },
-            { type: 'output', text: '>> Endpoint: Cloud Functions' },
-            { type: 'success', text: '>> VERIFIED: Teknoify Secure Layer' },
+            { type: 'comment', text: '# Initializing Cloud Armor...' },
+            { type: 'output', text: '>> WAF Protocol: ENABLED' },
+            { type: 'output', text: '>> Origin IP: HIDDEN' },
+            { type: 'success', text: '>> VERIFIED: Teknoify Secure IP' },
             { type: 'empty', text: '' },
-            { type: 'success', text: '>> STATUS: ARMORED' },
+            { type: 'success', text: '>> STATUS: PROTECTED' },
             { type: 'cursor', text: '_' }
         ];
         this.typeSpeed = 25; this.lineDelay = 600; this.loopDelay = 5000; this.start();
