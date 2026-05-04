@@ -12,7 +12,6 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-// App Check (Güvenlik Duvarı) Aktif
 if (typeof firebase !== 'undefined' && firebase.appCheck) {
     const appCheck = firebase.appCheck();
     appCheck.activate(
@@ -28,13 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('loginModal')) {
         new AuthSystem();
     }
-    
     new UISystem();
-    
     if (document.querySelector('.contact-form')) {
         new ContactSystem();
     }
-    
     setTimeout(() => {
         if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
         if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
@@ -46,7 +42,6 @@ class AuthSystem {
         this.modal = document.getElementById('loginModal');
         this.form = document.getElementById('loginForm');
         this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login');
-        
         this.bindEvents();
         this.checkCurrentUser();
     }
@@ -60,17 +55,16 @@ class AuthSystem {
                     try {
                         const userDoc = await db.collection('users').doc(user.uid).get();
                         if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
-                            window.location.href = '../dashboard/index.html'; 
+                            window.location.href = '../dashboard/index.html';
                         } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
-                            window.location.href = '../dashboard/premium.html'; 
+                            window.location.href = '../dashboard/premium.html';
                         } else {
-                            window.location.href = '../dashboard/member.html'; 
+                            window.location.href = '../dashboard/member.html';
                         }
                     } catch (error) {
-                        // Eğer zaten giriş yapmış biri bot olarak algılanırsa
                         if (error.code === 'permission-denied' || (error.message && error.message.includes('permissions'))) {
                             auth.signOut();
-                            if (typeof showToast === "function") showToast("Güvenlik Duvarı", "Bot olduğunuz tespit edildiği için oturum kapatıldı.", "error");
+                            if (typeof showToast === "function") showToast("Güvenlik Duvarı", "Erişim reddedildi, oturum kapatıldı.", "error");
                         } else {
                             window.location.href = '../dashboard/member.html';
                         }
@@ -82,16 +76,13 @@ class AuthSystem {
         });
 
         const closeBtn = document.querySelector('.modal-close');
-        if(closeBtn) closeBtn.addEventListener('click', () => this.close());
-        
-        if(this.modal) {
+        if (closeBtn) closeBtn.addEventListener('click', () => this.close());
+        if (this.modal) {
             this.modal.addEventListener('click', (e) => {
                 if (e.target === this.modal) this.close();
             });
         }
-        
-        if(this.form) this.form.addEventListener('submit', (e) => this.handleLogin(e));
-        
+        if (this.form) this.form.addEventListener('submit', (e) => this.handleLogin(e));
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.modal && this.modal.classList.contains('active')) {
                 this.close();
@@ -100,14 +91,14 @@ class AuthSystem {
     }
 
     open() {
-        if(this.modal) {
+        if (this.modal) {
             this.modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
     }
 
     close() {
-        if(this.modal) {
+        if (this.modal) {
             this.modal.classList.remove('active');
             document.body.style.overflow = '';
         }
@@ -118,9 +109,7 @@ class AuthSystem {
         const btn = this.form.querySelector('button[type="submit"]');
         const emailInput = document.getElementById('email').value.trim();
         const passInput = document.getElementById('password').value.trim();
-
         if (!auth || !db) return;
-
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
         btn.disabled = true;
@@ -128,35 +117,31 @@ class AuthSystem {
         auth.signInWithEmailAndPassword(emailInput, passInput)
             .then(async (userCredential) => {
                 const user = userCredential.user;
-                
                 try {
                     const userDoc = await db.collection('users').doc(user.uid).get();
-                    
                     localStorage.setItem('session_start_time', Date.now());
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
-
                     setTimeout(() => {
                         if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
-                            window.location.href = '../dashboard/index.html'; 
+                            window.location.href = '../dashboard/index.html';
                         } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
-                            window.location.href = '../dashboard/premium.html'; 
+                            window.location.href = '../dashboard/premium.html';
                         } else {
-                            window.location.href = '../dashboard/member.html'; 
+                            window.location.href = '../dashboard/member.html';
                         }
                     }, 1000);
-
                 } catch (dbError) {
-                    console.error("Veritabanı sorgulama hatası:", dbError);
-                    
-                    // BOT YAKALAYICI (APP CHECK MANTIĞI)
+                    console.error("--- VERİTABANI ERİŞİM HATASI ---");
+                    console.error("Hata Kodu:", dbError.code);
+                    console.error("Hata Mesajı:", dbError.message);
+                    console.dir(dbError);
                     if (dbError.code === 'permission-denied' || (dbError.message && dbError.message.includes('permissions'))) {
-                        auth.signOut(); // Sistemi riske atmamak için kullanıcıyı at
-                        showToast("Güvenlik Duvarı", "Bot olduğunuz tespit edildiği için giriş engellendi.", "error");
+                        auth.signOut();
+                        showToast("Güvenlik Duvarı", "Bot veya yetki hatası tespit edildi.", "error");
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                     } else {
-                        // Diğer genel ağ/sunucu hataları
                         showToast("Uyarı", "Standart panele yönlendiriliyorsunuz.", "error");
                         setTimeout(() => { window.location.href = '../dashboard/member.html'; }, 2000);
                     }
@@ -165,14 +150,9 @@ class AuthSystem {
             .catch((error) => {
                 console.error("Giriş Hatası:", error);
                 let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
-                
                 if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız.";
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                    msg = "E-posta adresi veya şifre hatalı.";
-                }
-                
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') msg = "E-posta adresi veya şifre hatalı.";
                 if (typeof showToast === "function") showToast("Erişim Reddedildi", msg, "error");
-                
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
@@ -183,7 +163,7 @@ class AuthSystem {
         auth.onAuthStateChanged((user) => {
             if (user) {
                 const loginBtn = document.getElementById('openLoginBtn');
-                if(loginBtn) {
+                if (loginBtn) {
                     const displayName = user.displayName || user.email.split('@')[0];
                     loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> ' + displayName;
                     loginBtn.classList.remove('btn-outline');
@@ -200,26 +180,21 @@ class ContactSystem {
         this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
         this.honeypot = document.getElementById('tk_hp_field');
         this.apiUrl = "https://api.teknoify.com/submitContactForm";
-        
         if (this.form) this.bindEvents();
     }
 
     bindEvents() {
         this.form.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             if (this.honeypot && this.honeypot.value) {
                 this.banAndLogBot();
                 return;
             }
-
             const lastSuccess = localStorage.getItem('tk_last_success');
             if (lastSuccess && (Date.now() - lastSuccess < 60000)) {
-                if (typeof showToast === "function") 
-                    showToast("Uyarı", "Lütfen bir dakika bekleyip tekrar deneyin.", "error");
+                if (typeof showToast === "function") showToast("Uyarı", "Lütfen bir dakika bekleyip tekrar deneyin.", "error");
                 return;
             }
-
             if (this.validateInput()) {
                 this.sendToIP();
             }
@@ -230,7 +205,6 @@ class ContactSystem {
         const contactVal = document.getElementById('contact_info').value.trim();
         const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactVal);
         const isPhone = contactVal.replace(/\D/g, '').length >= 10;
-        
         if (!isEmail && !isPhone) {
             if (typeof showToast === "function") showToast("Hata", "Geçerli bir E-posta veya Telefon giriniz.", "error");
             return false;
@@ -245,11 +219,9 @@ class ContactSystem {
 
     async sendToIP() {
         if (!this.submitBtn) return;
-        
         const origHtml = this.submitBtn.innerHTML;
         this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
         this.submitBtn.disabled = true;
-
         try {
             const payload = {
                 fullname: document.getElementById('fullname').value.trim(),
@@ -258,32 +230,22 @@ class ContactSystem {
                 message: document.getElementById('message').value.trim(),
                 visitor_id: localStorage.getItem('tk_visitor_id') || "Web_Client"
             };
-
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
                 mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify(payload)
             });
-
             const result = await response.json().catch(() => ({ error: "Sunucudan geçersiz yanıt alındı." }));
-
             if (response.ok && result.success) {
                 localStorage.setItem('tk_last_success', Date.now());
                 if (typeof showToast === "function") showToast("Başarılı", "Mesajınız güvenli katmanlardan geçerek iletildi.", "success");
                 this.form.reset();
             } else {
-                const errorDetail = result.error || "İşlem reddedildi.";
-                throw new Error(errorDetail);
+                throw new Error(result.error || "İşlem reddedildi.");
             }
-
         } catch (err) {
-            console.error("Network Error Details:", err);
-            const finalMsg = err.message || "Bağlantı hatası oluştu.";
-            if (typeof showToast === "function") showToast("Sistem Mesajı", finalMsg, "error");
+            if (typeof showToast === "function") showToast("Sistem Mesajı", err.message || "Bağlantı hatası oluştu.", "error");
         } finally {
             setTimeout(() => {
                 this.submitBtn.innerHTML = origHtml;
@@ -297,7 +259,7 @@ class UISystem {
     constructor() {
         this.header = document.getElementById('header');
         this.hamburger = document.querySelector('.hamburger');
-        this.navMenu = document.querySelector('.nav-menu'); 
+        this.navMenu = document.querySelector('.nav-menu');
         this.navLinks = document.querySelectorAll('.nav-link');
         this.bindEvents();
     }
@@ -307,31 +269,26 @@ class UISystem {
             if (!this.header) return;
             window.scrollY > 50 ? this.header.classList.add('scrolled') : this.header.classList.remove('scrolled');
         }, { passive: true });
-        
-        if(this.hamburger) {
+        if (this.hamburger) {
             this.hamburger.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.toggleMenu();
             });
         }
-        
         this.navLinks.forEach(link => {
             link.addEventListener('click', () => {
-                if(this.navMenu && this.navMenu.classList.contains('active')) this.toggleMenu();
+                if (this.navMenu && this.navMenu.classList.contains('active')) this.toggleMenu();
             });
         });
-        
         document.addEventListener('click', (e) => {
             if (this.navMenu && this.navMenu.classList.contains('active')) {
-                if (!this.navMenu.contains(e.target) && !this.hamburger.contains(e.target)) {
-                    this.toggleMenu();
-                }
+                if (!this.navMenu.contains(e.target) && !this.hamburger.contains(e.target)) this.toggleMenu();
             }
         });
     }
 
     toggleMenu() {
-        if(this.hamburger && this.navMenu) {
+        if (this.hamburger && this.navMenu) {
             this.hamburger.classList.toggle('active');
             this.navMenu.classList.toggle('active');
         }
@@ -358,7 +315,7 @@ class TerminalEffect {
     }
 
     scrollToBottom() { this.container.scrollTop = this.container.scrollHeight; }
-    
+
     async start() {
         while (true) {
             this.container.innerHTML = '';
