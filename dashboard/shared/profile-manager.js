@@ -23,7 +23,7 @@ class ProfileManager {
 
     init() {
         this.injectModalHTML();
-        this.injectToastHTML(); // Başarı bildirimi için gerekli HTML ve CSS
+        this.injectToastHTML();
         this.bindEvents();
 
         onAuthStateChanged(auth, async (user) => {
@@ -109,6 +109,12 @@ class ProfileManager {
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        const inputs = document.querySelectorAll('#shared-profile-form input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => input.style.borderColor = '#6366f1');
+            input.addEventListener('blur', () => input.style.borderColor = 'rgba(255,255,255,0.1)');
+        });
     }
 
     bindEvents() {
@@ -127,6 +133,12 @@ class ProfileManager {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("Seçtiğiniz fotoğraf çok büyük. Lütfen 2MB'den küçük bir dosya seçin.");
+                    fileInput.value = "";
+                    return;
+                }
+                
                 this.selectedFile = file;
                 const reader = new FileReader();
                 reader.onload = (event) => {
@@ -146,55 +158,96 @@ class ProfileManager {
         const modal = document.getElementById('shared-profile-modal');
         const modalContent = document.getElementById('profile-modal-content');
         this.selectedFile = null;
+        
+        const fileInput = document.getElementById('prof-photo-input');
+        if (fileInput) fileInput.value = "";
+
+        const btn = document.getElementById('btn-save-profile');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Bilgiler Yükleniyor...';
+        btn.disabled = true;
+
         document.getElementById('shared-profile-modal').style.display = 'flex';
         setTimeout(() => { modal.style.opacity = '1'; modalContent.style.transform = 'translateY(0)'; }, 10);
 
-        const userDoc = await getDoc(doc(db, "users", this.currentUser.uid));
-        if (userDoc.exists()) {
-            this.userData = userDoc.data();
-            const profile = this.userData.profile || {};
-            const fullName = profile.fullName || "";
-            const nameParts = fullName.trim().split(" ");
-            document.getElementById('prof-firstname').value = nameParts[0] || "";
-            document.getElementById('prof-lastname').value = nameParts.slice(1).join(" ") || "";
-            
-            const imgPreview = document.getElementById('prof-photo-preview');
-            const placeholder = document.getElementById('default-avatar-placeholder');
-            if (profile.photoURL) {
-                imgPreview.src = profile.photoURL;
-                imgPreview.style.display = 'block';
-                placeholder.style.display = 'none';
-            } else {
-                imgPreview.style.display = 'none';
-                placeholder.style.display = 'flex';
-                placeholder.textContent = (nameParts[0] || "U").charAt(0).toUpperCase();
+        try {
+            const userDoc = await getDoc(doc(db, "users", this.currentUser.uid));
+            if (userDoc.exists()) {
+                this.userData = userDoc.data();
+                const profile = this.userData.profile || {};
+                const fullName = profile.fullName || "";
+                const nameParts = fullName.trim().split(" ");
+                
+                document.getElementById('prof-firstname').value = nameParts[0] || "";
+                document.getElementById('prof-lastname').value = nameParts.slice(1).join(" ") || "";
+                
+                const imgPreview = document.getElementById('prof-photo-preview');
+                const placeholder = document.getElementById('default-avatar-placeholder');
+                
+                if (profile.photoURL) {
+                    imgPreview.src = profile.photoURL;
+                    imgPreview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                } else {
+                    imgPreview.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                    placeholder.textContent = (nameParts[0] || "U").charAt(0).toUpperCase();
+                }
+                
+                const companyWrapper = document.getElementById('company-field-wrapper');
+                if (profile.accountType === "kurumsal") {
+                    companyWrapper.style.display = 'block';
+                    document.getElementById('prof-company').value = profile.companyName || "";
+                } else {
+                    companyWrapper.style.display = 'none'; 
+                }
             }
-            document.getElementById('company-field-wrapper').style.display = profile.accountType === "kurumsal" ? 'block' : 'none';
-            document.getElementById('prof-company').value = profile.companyName || "";
+        } catch (error) {
+            console.error("Profil bilgileri alınamadı:", error);
+        } finally {
+            btn.innerHTML = '<span>Değişiklikleri Kaydet</span>';
+            btn.disabled = false;
         }
     }
 
     closeModal() {
         const modal = document.getElementById('shared-profile-modal');
+        const modalContent = document.getElementById('profile-modal-content');
         modal.style.opacity = '0';
+        modalContent.style.transform = 'translateY(20px)';
         setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+
+    sanitizeInput(str) {
+        if (!str) return "";
+        const div = document.createElement('div');
+        div.textContent = str.trim(); 
+        return div.innerHTML;
     }
 
     async handleProfileSave(e) {
         e.preventDefault();
+        if (!this.currentUser) return;
+
         const btn = document.getElementById('btn-save-profile');
+        const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
         btn.disabled = true;
 
         try {
-            const firstName = document.getElementById('prof-firstname').value.replace(/\s+/g, ' ').trim();
-            const lastName = document.getElementById('prof-lastname').value.replace(/\s+/g, ' ').trim();
-            const fullName = `${firstName} ${lastName}`;
+            const rawFirst = document.getElementById('prof-firstname').value.trim();
+            const rawLast = document.getElementById('prof-lastname').value.trim();
             
-            const updatePayload = { "profile.fullName": fullName };
+            const cleanFirst = rawFirst.replace(/\s+/g, ' ');
+            const cleanLast = rawLast.replace(/\s+/g, ' ');
+            const mergedFullName = `${cleanFirst} ${cleanLast}`;
+            
+            const safeFullName = this.sanitizeInput(mergedFullName);
+            const safeCompany = this.sanitizeInput(document.getElementById('prof-company').value);
 
-            if (this.userData.profile.accountType === "kurumsal") {
-                updatePayload["profile.companyName"] = document.getElementById('prof-company').value.trim();
+            const updatePayload = { "profile.fullName": safeFullName };
+
+            if (this.userData && this.userData.profile && this.userData.profile.accountType === "kurumsal") {
+                updatePayload["profile.companyName"] = safeCompany;
             }
 
             // FOTOĞRAF YÜKLEME (FIREBASE STORAGE)
@@ -205,25 +258,46 @@ class ProfileManager {
                 updatePayload["profile.photoURL"] = downloadURL;
             }
 
+            // Firestore güncellemesi
             await updateDoc(doc(db, "users", this.currentUser.uid), updatePayload);
             
-            this.showSuccessToast(); // Log yerine şık bildirim dönüyoruz
+            this.showSuccessToast();
             
-            // UI Güncelleme
-            const finalName = updatePayload["profile.companyName"] || fullName;
-            document.getElementById("user-name-display").textContent = finalName;
-            document.getElementById("user-name-title").textContent = finalName;
+            // Ekrandaki UI güncellemeleri
+            const finalName = updatePayload["profile.companyName"] || safeFullName;
+            
+            const displayEl = document.getElementById("user-name-display");
+            const titleEl = document.getElementById("user-name-title");
+            const avatarEl = document.getElementById("user-avatar");
+            
+            if(displayEl) displayEl.textContent = finalName;
+            if(titleEl) titleEl.textContent = finalName;
+            
+            if(avatarEl) {
+                const currentPhotoURL = updatePayload["profile.photoURL"] || (this.userData.profile && this.userData.profile.photoURL);
+                if (currentPhotoURL) {
+                    avatarEl.innerHTML = `<img src="${currentPhotoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                } else {
+                    avatarEl.innerHTML = cleanFirst.charAt(0).toUpperCase();
+                }
+            }
 
             setTimeout(() => {
                 this.closeModal();
-                btn.innerHTML = 'Değişiklikleri Kaydet';
+                btn.innerHTML = originalText;
                 btn.disabled = false;
             }, 1000);
 
         } catch (error) {
-            console.error("Hata:", error);
-            btn.innerHTML = 'Hata Oluştu';
-            btn.disabled = false;
+            console.error("Güncelleme Hatası:", error);
+            btn.innerHTML = '<i class="fas fa-times"></i> Hata Oluştu';
+            btn.style.background = '#ef4444';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '#6366f1';
+                btn.disabled = false;
+            }, 3000);
         }
     }
 }
