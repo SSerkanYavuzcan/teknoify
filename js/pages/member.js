@@ -19,12 +19,8 @@ async function loadDashboardData(sess) {
         console.log("[member.js] Veri senkronizasyonu başlatıldı:", sess.uid);
         const effectiveUid = sess.userId || sess.uid;
 
-        // 1. Profil Bilgilerini Bas
-        const name = sess.name || "Kullanıcı";
-        updateUI("user-name-title", name);
-        updateUI("user-name-display", name);
-        const avatar = document.getElementById("user-avatar");
-        if(avatar) avatar.textContent = name.charAt(0).toUpperCase();
+        // DİKKAT: İsim ve Avatar güncelleme kodları buradan kaldırıldı!
+        // O işlemleri artık güvenli bir şekilde member.html içindeki ana script yönetiyor.
 
         // 2. Firestore'dan Kullanıcı Dokümanını Oku
         const userSnap = await getDoc(doc(db, "users", effectiveUid));
