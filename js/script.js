@@ -1,11 +1,3 @@
-/**
- * ================================================================
- * [MAIN] TEKNOIFY GLOBAL SCRIPT (COMPLETE SHIELD VERSION)
- * Katmanlı Savunma: App Check, Load Balancer, Honeypot, UI FX
- * Çoklu Rol Sistemi: Admin & Member Yönlendirmesi
- * ================================================================
- */
-
 const firebaseConfig = {
     apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
     authDomain: "teknoify-9449c.firebaseapp.com",
@@ -16,12 +8,10 @@ const firebaseConfig = {
     measurementId: "G-1DZKJE7BXE"
 };
 
-// 1. Firebase Başlatma
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-// 2. App Check Aktifleştirme
 if (typeof firebase !== 'undefined' && firebase.appCheck) {
     const appCheck = firebase.appCheck();
     appCheck.activate(
@@ -50,9 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 200);
 });
 
-/* ---------------------------------------------------------
-   1. AUTH SYSTEM (Giriş & Güvenlik)
---------------------------------------------------------- */
 class AuthSystem {
     constructor() {
         this.modal = document.getElementById('loginModal');
@@ -65,18 +52,22 @@ class AuthSystem {
 
     bindEvents() {
         this.triggers.forEach((btn) => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 const user = auth ? auth.currentUser : null;
                 if (user) {
-                    // Kullanıcı zaten giriş yapmışsa, rolünü kontrol edip doğru yere at
-                    user.getIdTokenResult().then(idTokenResult => {
-                        if (idTokenResult.claims.admin === true) {
+                    try {
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
                             window.location.href = '../dashboard/index.html'; 
+                        } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
+                            window.location.href = '../premium.html'; 
                         } else {
-                            window.location.href = '../client-portal/index.html'; // Normal kullanıcı paneli (Örnek)
+                            window.location.href = '../member.html'; 
                         }
-                    });
+                    } catch (error) {
+                        window.location.href = '../member.html';
+                    }
                 } else {
                     this.open();
                 }
@@ -121,32 +112,38 @@ class AuthSystem {
         const emailInput = document.getElementById('email').value.trim();
         const passInput = document.getElementById('password').value.trim();
 
-        if (!auth) return;
+        if (!auth || !db) return;
 
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
         btn.disabled = true;
 
         auth.signInWithEmailAndPassword(emailInput, passInput)
-            .then((userCredential) => {
-                return userCredential.user.getIdTokenResult();
-            })
-            .then((idTokenResult) => {
-                localStorage.setItem('session_start_time', Date.now());
-                btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
-                btn.style.backgroundColor = '#10b981';
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    localStorage.setItem('session_start_time', Date.now());
+                    btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
+                    btn.style.backgroundColor = '#10b981';
 
-                // ROL KONTROLÜ VE YÖNLENDİRME
-                setTimeout(() => {
-                    if (idTokenResult.claims.admin === true) {
-                        // Admin ise yönetim paneline gitsin
-                        window.location.href = '../dashboard/index.html'; 
-                    } else {
-                        // Admin değilse (member, premium vb.) müşteri paneline gitsin
-                        // NOT: Buradaki yolu senin gerçek müşteri paneli klasörüne göre güncelleyebilirsin.
-                        window.location.href = '../client-portal/index.html'; 
-                    }
-                }, 1000);
+                    setTimeout(() => {
+                        if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
+                            window.location.href = '../dashboard/index.html'; 
+                        } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
+                            window.location.href = '../premium.html'; 
+                        } else {
+                            window.location.href = '../member.html'; 
+                        }
+                    }, 1000);
+
+                } catch (dbError) {
+                    console.error("Veritabanı sorgulama hatası:", dbError);
+                    showToast("Uyarı", "Standart panele yönlendiriliyorsunuz.", "error");
+                    setTimeout(() => { window.location.href = '../member.html'; }, 2000);
+                }
             })
             .catch((error) => {
                 console.error("Giriş Hatası:", error);
@@ -180,9 +177,6 @@ class AuthSystem {
     }
 }
 
-/* ---------------------------------------------------------
-   2. CONTACT SYSTEM (HTTPS & Error Debugged)
---------------------------------------------------------- */
 class ContactSystem {
     constructor() {
         this.form = document.querySelector('.contact-form');
@@ -282,9 +276,6 @@ class ContactSystem {
     }
 }
 
-/* ---------------------------------------------------------
-   3. UI & EFFECTS (Terminal & Particles)
---------------------------------------------------------- */
 class UISystem {
     constructor() {
         this.header = document.getElementById('header');
