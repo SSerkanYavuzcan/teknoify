@@ -1,7 +1,7 @@
 /**
  * ================================================================
  * [MAIN] TEKNOIFY GLOBAL SCRIPT (ULTIMATE SECURITY VERSION)
- * Katmanlı Savunma: Honeypot, Anti-Flood, Fingerprinting, reCAPTCHA
+ * Katmanlı Savunma: Honeypot, Anti-Flood, Firebase App Check
  * ================================================================
  */
 
@@ -15,8 +15,20 @@ const firebaseConfig = {
     measurementId: "G-1DZKJE7BXE"
 };
 
+// 1. Firebase Çekirdeğini Başlat
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
+}
+
+// 2. App Check Entegrasyonu (reCAPTCHA v3 arka planda çalışır)
+// Not: HTML'de firebase-appcheck.js SDK'sının yüklü olduğundan emin ol.
+if (typeof firebase !== 'undefined' && firebase.appCheck) {
+    const appCheck = firebase.appCheck();
+    appCheck.activate(
+        // Kendi reCAPTCHA v3 Site Key'ini buraya giriyorsun
+        new firebase.appCheck.ReCaptchaV3Provider('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk'),
+        true // Token'ın otomatik yenilenmesini sağlar
+    );
 }
 
 const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
@@ -28,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     new UISystem();
-
+    
     if (document.querySelector('.contact-form')) {
         new ContactSystem();
     }
@@ -75,7 +87,7 @@ class AuthSystem {
         }
         
         if(this.form) this.form.addEventListener('submit', (e) => this.handleLogin(e));
-
+        
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.modal && this.modal.classList.contains('active')) {
                 this.close();
@@ -109,41 +121,28 @@ class AuthSystem {
         }
 
         const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-shield-alt"></i> Güvenlik Kontrolü...';
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
         btn.disabled = true;
 
-        const performLogin = () => {
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
-            auth.signInWithEmailAndPassword(emailInput, passInput)
-                .then((userCredential) => {
-                    localStorage.setItem('session_start_time', Date.now());
-                    btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
-                    btn.style.backgroundColor = '#10b981';
-                    setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
-                })
-                .catch((error) => {
-                    console.error("Giriş Hatası:", error);
-                    let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
-                    if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız. Biraz bekleyin.";
-                    if (typeof showToast === "function") showToast("Giriş Başarısız", msg);
-                    else alert(msg);
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                    btn.style.backgroundColor = '';
-                });
-        };
-
-        if (typeof grecaptcha !== 'undefined') {
-            grecaptcha.ready(() => {
-                grecaptcha.execute('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', {action: 'login'}).then(() => {
-                    performLogin();
-                }).catch(() => {
-                    if (typeof showToast === "function") showToast("Güvenlik", "Bot doğrulaması başarısız.");
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                });
+        // App Check arka planda güvenliği sağladığı için manuel grecaptcha.execute kaldırıldı.
+        auth.signInWithEmailAndPassword(emailInput, passInput)
+            .then((userCredential) => {
+                localStorage.setItem('session_start_time', Date.now());
+                btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
+                btn.style.backgroundColor = '#10b981';
+                setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
+            })
+            .catch((error) => {
+                console.error("Giriş Hatası:", error);
+                let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
+                if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız. Biraz bekleyin.";
+                if (typeof showToast === "function") showToast("Giriş Başarısız", msg);
+                else alert(msg);
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                btn.style.backgroundColor = '';
             });
-        } else { performLogin(); }
     }
 
     checkCurrentUser() {
@@ -163,7 +162,7 @@ class AuthSystem {
 }
 
 /* ---------------------------------------------------------
-   2. CONTACT SYSTEM (Katmanlı Savunma & Bot Hunter)
+   2. CONTACT SYSTEM (Katmanlı Savunma)
 --------------------------------------------------------- */
 class ContactSystem {
     constructor() {
@@ -180,45 +179,30 @@ class ContactSystem {
 
             // 1. KATMAN: HONEYPOT (Ballı Tuzak)
             if (this.honeypot && this.honeypot.value) {
-                console.warn("Spam Bot detected. Triggering silent ban...");
-                this.silentBan(); // Veritabanına yazmadan sadece cihazı engelle
-                return;
+                console.warn("Spam Bot detected.");
+                return; // Sessizce iptal et
             }
 
             // 2. KATMAN: ANTI-FLOOD (Hız Sınırlaması)
             const lastSuccess = localStorage.getItem('tk_last_success');
-            if (lastSuccess && (Date.now() - lastSuccess < 300000)) { // 5 dakika kilit
+            if (lastSuccess && (Date.now() - lastSuccess < 60000)) { // 1 dakika kilit
                 if (typeof showToast === "function") 
-                    showToast("Uyarı", "Çok sık form gönderiyorsunuz. Lütfen 5 dakika bekleyin.");
+                    showToast("Uyarı", "Kısa sürede çok fazla istek gönderdiniz. Lütfen bekleyin.");
                 return;
             }
 
             if (this.validateInput()) {
-                this.processFormWithRecaptcha();
+                // App Check güvenliği üstlendiği için doğrudan formu gönderiyoruz
+                this.sendFormData();
             }
         });
-    }
-
-    // reCAPTCHA ile güvenli form işleme
-    processFormWithRecaptcha() {
-        if (typeof grecaptcha !== 'undefined') {
-            grecaptcha.ready(() => {
-                grecaptcha.execute('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', {action: 'contact_form'})
-                .then((token) => {
-                    // Token alındı, veriyi gönderiyoruz
-                    this.sendFormData();
-                });
-            });
-        } else {
-            this.sendFormData(); // reCAPTCHA yüklenemediyse normal devam et
-        }
     }
 
     validateInput() {
         const contactVal = document.getElementById('contact_info').value.trim();
         const isEmail = contactVal.includes('@') && contactVal.includes('.');
         const isPhone = contactVal.replace(/\D/g, '').length >= 10;
-
+        
         if (!isEmail && !isPhone) {
             if (typeof showToast === "function") showToast("Hata", "Geçerli bir E-posta veya Telefon giriniz.");
             return false;
@@ -233,7 +217,7 @@ class ContactSystem {
 
     async sendFormData() {
         if (!this.submitBtn || !db) return;
-
+        
         const origHtml = this.submitBtn.innerHTML;
         this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
         this.submitBtn.disabled = true;
@@ -246,37 +230,29 @@ class ContactSystem {
                 message: document.getElementById('message').value.trim(),
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 source: "Web Home",
-                // Güvenlik İzleri
                 fingerprint: {
                     url: this.sanitizeUrl(window.location.href),
                     res: `${window.screen.width}x${window.screen.height}`
                 }
             };
 
+            // EĞER BOT İSE VEYA APP CHECK BAŞARISIZ OLURSA, BURASI OTOMATİK HATA FIRLATIR.
             await db.collection("contact_requests").add(formData);
             
-            // Başarılı gönderim: Kilidi bas
             localStorage.setItem('tk_last_success', Date.now());
             
             if (typeof showToast === "function") showToast("Başarılı", "Mesajınız iletildi.");
             this.form.reset();
 
+        } catch (err) {
+            console.error("Firebase Güvenlik/Yazma Hatası:", err);
+            if (typeof showToast === "function") showToast("Hata", "Güvenlik politikası gereği işleminiz reddedildi veya bağlantı koptu.");
+        } finally {
             setTimeout(() => {
                 this.submitBtn.innerHTML = origHtml;
                 this.submitBtn.disabled = false;
             }, 3000);
-
-        } catch (err) {
-            console.error("Form error:", err);
-            this.submitBtn.innerHTML = '<i class="fas fa-times"></i> Hata';
-            setTimeout(() => { this.submitBtn.innerHTML = origHtml; this.submitBtn.disabled = false; }, 3000);
         }
-    }
-
-    // Botu veritabanına yazmadan sessizce banlayan fonksiyon
-    silentBan() {
-        localStorage.setItem('tk_access_denied', 'true');
-        location.reload(); // auth.js zaten girişi engelleyecek
     }
 }
 
@@ -297,7 +273,7 @@ class UISystem {
             if (!this.header) return;
             window.scrollY > 50 ? this.header.classList.add('scrolled') : this.header.classList.remove('scrolled');
         }, { passive: true });
-
+        
         if(this.hamburger) {
             this.hamburger.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -332,7 +308,6 @@ class TerminalEffect {
     constructor(selector) {
         this.container = document.querySelector(selector);
         if (!this.container) return;
-
         this.lines = [
             { type: 'comment', text: '# Initializing Self-Awareness Protocol v4.0...' },
             { type: 'code', text: 'import neural_network as brain' },
@@ -350,7 +325,9 @@ class TerminalEffect {
         ];
         this.typeSpeed = 25; this.lineDelay = 600; this.loopDelay = 5000; this.start();
     }
+
     scrollToBottom() { this.container.scrollTop = this.container.scrollHeight; }
+    
     async start() {
         while (true) {
             this.container.innerHTML = '';
@@ -361,6 +338,7 @@ class TerminalEffect {
             await new Promise(resolve => setTimeout(resolve, this.loopDelay));
         }
     }
+
     typeLine(lineData) {
         return new Promise(resolve => {
             const lineEl = document.createElement('div');
@@ -381,6 +359,7 @@ class TerminalEffect {
             }, this.typeSpeed);
         });
     }
+
     addCursor(lineData) {
         return new Promise(resolve => {
             const lineEl = document.createElement('div');
@@ -397,6 +376,7 @@ class BackgroundFX {
         this.starCount = window.innerWidth < 768 ? 20 : 50;
         this.init();
     }
+
     init() {
         this.container.innerHTML = '';
         const frag = document.createDocumentFragment();
