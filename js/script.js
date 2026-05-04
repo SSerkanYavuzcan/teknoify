@@ -1,7 +1,8 @@
 /**
  * ================================================================
- * [MAIN] TEKNOIFY GLOBAL SCRIPT
+ * [MAIN] TEKNOIFY GLOBAL SCRIPT (PRO-VERSION)
  * Özellikler: AuthSystem, ContactSystem (Bot Hunter), UISystem, FX
+ * Güvenlik: URL Sanitization, Fingerprinting, Honeypot & Device Ban
  * ================================================================
  */
 
@@ -169,7 +170,7 @@ class AuthSystem {
 }
 
 /* ---------------------------------------------------------
-   2. CONTACT SYSTEM (Bot Avcı & Form Gönderimi)
+   2. CONTACT SYSTEM (Bot Hunter & Form Gönderimi)
 --------------------------------------------------------- */
 class ContactSystem {
     constructor() {
@@ -191,7 +192,7 @@ class ContactSystem {
                 return;
             }
 
-            // B. HIZ SINIRLAMASI
+            // B. HIZ SINIRLAMASI (Client-side)
             const lastSend = localStorage.getItem('tk_form_ts');
             if (lastSend && (Date.now() - lastSend < 60000)) {
                 if (typeof showToast === "function") showToast("Uyarı", "Lütfen yeni bir mesaj için 1 dakika bekleyin.");
@@ -214,6 +215,17 @@ class ContactSystem {
             return false;
         }
         return true;
+    }
+
+    // URL'deki query parametrelerini ve tokenları temizleyen yardımcı fonksiyon
+    sanitizeUrl(url) {
+        if (!url || url === "Direct") return url;
+        try {
+            const urlObj = new URL(url);
+            return urlObj.origin + urlObj.pathname;
+        } catch (e) {
+            return "Invalid URL";
+        }
     }
 
     async sendFormData() {
@@ -251,15 +263,13 @@ class ContactSystem {
         }
     }
 
-    // BOT AVCI MANTIĞI
+    // BOT AVCI VE ADLİ BİLİŞİM MANTIĞI
     async banAndLogBot() {
-        const sanitize = (url) => {
-            try { const u = new URL(url); return u.origin + u.pathname; } catch(e) { return "Invalid"; }
-        };
-
         const botFingerprint = {
-            full_url: sanitize(window.location.href),
-            referrer: sanitize(document.referrer || "Direct"),
+            // URL'leri temizleyerek kaydediyoruz
+            full_url: this.sanitizeUrl(window.location.href),
+            referrer: this.sanitizeUrl(document.referrer || "Direct"),
+            
             userAgent: navigator.userAgent,
             screen_res: `${window.screen.width}x${window.screen.height}`,
             platform: navigator.platform,
@@ -267,11 +277,15 @@ class ContactSystem {
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             reason: "Honeypot Triggered",
+            
+            // İleri Seviye Bot Sinyalleri
             signals: {
                 webdriver: navigator.webdriver || false,
                 plugins_count: navigator.plugins ? navigator.plugins.length : 0,
                 languages_count: navigator.languages ? navigator.languages.length : 0,
-                is_headless: /HeadlessChrome/.test(navigator.userAgent) || navigator.languages.length === 0
+                is_headless: /HeadlessChrome/.test(navigator.userAgent) || navigator.languages.length === 0,
+                has_chrome_runtime: !!window.chrome,
+                has_permissions_api: !!navigator.permissions
             }
         };
 
@@ -281,15 +295,21 @@ class ContactSystem {
             botFingerprint.ip = ipData.ip;
         } catch (e) { botFingerprint.ip = "Unknown"; }
 
-        if (db) await db.collection("banned_logs").add(botFingerprint);
+        // Firestore'daki "Sabıka Kaydı"na ekle
+        if (db) {
+            try {
+                await db.collection("banned_logs").add(botFingerprint);
+            } catch (e) { console.error("Log failed"); }
+        }
 
+        // Cihazı yerel olarak banla ve sayfayı kilitle
         localStorage.setItem('tk_access_denied', 'true');
         location.reload();
     }
 }
 
 /* ---------------------------------------------------------
-   3. UI & EFFECTS
+   3. UI & EFFECTS (Görsel Sistemler)
 --------------------------------------------------------- */
 class UISystem {
     constructor() {
