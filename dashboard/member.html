@@ -357,14 +357,14 @@
             if (userDocSnap.exists()) {
                 userData = userDocSnap.data();
                 
-                // Firestore'dan accountType verisini alıyoruz
                 if (userData.profile && userData.profile.accountType) {
                     accountType = userData.profile.accountType;
                 }
                 
-                // Eğer kurumsalsa ismi şirket ismiyle değiştirebiliriz
-                if (accountType === "kurumsal" && userData.profile && userData.profile.companyName) {
-                    name = userData.profile.companyName;
+                // BURASI DÜZELTİLDİ: Hesap türü ne olursa olsun (Kurumsal veya Bireysel)
+                // Her zaman kullanıcının Adını Soyadını (fullName) kullanıyoruz.
+                if (userData.profile && userData.profile.fullName) {
+                    name = userData.profile.fullName;
                 }
             }
 
