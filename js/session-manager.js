@@ -36,13 +36,33 @@ class SessionManager {
                 
                 if (user) {
                     try {
+                        // GÜVENLİK GÜNCELLEMESİ 5: 3 Saatlik Oturum Kontrolü (10.800.000 ms)
+                        const now = Date.now();
+                        let sessionStartTime = localStorage.getItem('session_start_time');
+
+                        if (!sessionStartTime) {
+                            // Eğer zaman damgası yoksa (yeni giriş yapıldıysa), şu anı kaydet
+                            sessionStartTime = now;
+                            localStorage.setItem('session_start_time', sessionStartTime);
+                        }
+
+                        const elapsedTime = now - parseInt(sessionStartTime, 10);
+                        const maxSessionDuration = 3 * 60 * 60 * 1000; // 3 Saat
+
+                        if (elapsedTime > maxSessionDuration) {
+                            console.warn("⏳ Oturum süresi doldu (3 saati geçti). Otomatik çıkış yapılıyor...");
+                            this.destroySession(); // Çıkış yap ve storage'ları temizle
+                            reject('Session Expired');
+                            return;
+                        }
+
                         // GÜVENLİK GÜNCELLEMESİ 1: Sadece Custom Claims'e güveniyoruz.
                         const idTokenResult = await user.getIdTokenResult();
                         
                         // Tek gerçek yetki kaynağı:
                         const isAdmin = !!idTokenResult.claims.admin;
                         
-                        // GÜVENLİK GÜNCELLEMESİ 2: Hardcoded e-posta kontrolü (sserkanyavuzcan99...) tamamen kaldırıldı.
+                        // GÜVENLİK GÜNCELLEMESİ 2: Hardcoded e-posta kontrolü tamamen kaldırıldı.
                         
                         const impersonatedKey = localStorage.getItem('impersonated_user_key');
                         
@@ -78,6 +98,14 @@ class SessionManager {
                 }
             });
         });
+    }
+
+    /**
+     * Oturumu manuel başlatırken çağrılabilir (Örn: script.js içindeki signIn metodunda)
+     * Kullanıcı şifresini yazıp girdiği an süreyi milisaniyesi milisaniyesine sıfırlamak için eklendi.
+     */
+    startSessionTimer() {
+        localStorage.setItem('session_start_time', Date.now());
     }
 
     /**
@@ -158,11 +186,15 @@ class SessionManager {
     destroySession() {
         if (!this.auth) return;
         
+        // Çıkış yapıldığında oturum süresi damgasını ve taklit verilerini temizle
+        localStorage.removeItem('session_start_time');
         localStorage.removeItem('impersonated_user_key');
         localStorage.removeItem('impersonated_user_id');
 
         this.auth.signOut().then(() => {
-            window.location.href = '/pages/login.html';
+            // Not: index.html ana sayfa ise ve modal kullanılıyorsa 
+            // burayı ihtiyacına göre window.location.href = '/' şeklinde de güncelleyebilirsin.
+            window.location.href = '/pages/login.html'; 
         }).catch((error) => {
             console.error("Çıkış hatası:", error);
             window.location.href = '/pages/login.html';
