@@ -397,7 +397,7 @@ class ProfileManager {
             this.showSuccessToast();
             
             // Ekrandaki UI güncellemeleri
-            const finalName = updatePayload["profile.companyName"] || safeFullName;
+            const finalName = safeFullName;
             const displayEl = document.getElementById("user-name-display");
             const titleEl = document.getElementById("user-name-title");
             const avatarEl = document.getElementById("user-avatar");
