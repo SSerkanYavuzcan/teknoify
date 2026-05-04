@@ -21,9 +21,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-appcheck-compat.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
 
     <script src="https://www.google.com/recaptcha/api.js?render=6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk"></script>
@@ -51,53 +49,73 @@
             padding-right: 40px !important;
         }
 
-        /* Özel Bildirim (Toast) Pop-up CSS */
+        /* Gelişmiş ve Heybetli Toast (Bildirim) Pop-up CSS */
         .custom-toast {
             position: fixed;
-            top: 20px;
-            right: -400px;
-            width: 320px;
+            top: 30px;
+            right: -500px;
+            width: 380px; /* Genişletildi */
             background: #181824;
-            border-left: 4px solid #ff4b4b;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
-            padding: 15px 20px;
+            padding: 20px 25px; /* İç boşluk artırıldı */
             z-index: 100000;
             transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             color: #fff;
+            border: 1px solid rgba(255,255,255,0.05);
         }
+
         .custom-toast.show {
-            right: 20px;
+            right: 30px;
         }
-        .custom-toast .toast-icon {
-            font-size: 24px;
-            color: #ff4b4b;
+
+        /* Başarı (Yeşil) Durumu */
+        .custom-toast.success {
+            border-left: 6px solid #10b981;
+        }
+        .custom-toast.success .toast-icon {
+            color: #10b981;
+            font-size: 28px;
             margin-right: 15px;
         }
+
+        /* Hata (Kırmızı) Durumu */
+        .custom-toast.error {
+            border-left: 6px solid #ff4b4b;
+        }
+        .custom-toast.error .toast-icon {
+            color: #ff4b4b;
+            font-size: 28px;
+            margin-right: 15px;
+        }
+
         .custom-toast .toast-body {
             flex-grow: 1;
         }
+
         .custom-toast .toast-title {
-            margin: 0 0 5px 0;
-            font-size: 15px;
-            font-weight: 600;
+            margin: 0 0 4px 0;
+            font-size: 17px;
+            font-weight: 700;
         }
+
         .custom-toast .toast-message {
             margin: 0;
-            font-size: 13px;
+            font-size: 14px;
             color: #a1a1aa;
-            line-height: 1.4;
+            line-height: 1.5;
         }
+
         .custom-toast .toast-close {
             background: none;
             border: none;
             color: #a1a1aa;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
+            padding-left: 10px;
             transition: color 0.2s;
-            padding: 0;
         }
         .custom-toast .toast-close:hover {
             color: #fff;
@@ -117,7 +135,7 @@
     </style>
 
     <script>
-        // SİTE GİRİŞİNDE BAN KONTROLÜ (Bot bir kez yakalanırsa siteye giremez)
+        // SİTE GİRİŞİNDE BAN KONTROLÜ
         (function() {
             if (localStorage.getItem('tk_access_denied') === 'true') {
                 document.documentElement.innerHTML = `
@@ -154,7 +172,7 @@
                         <li><a href="pages/rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
                         <li><a href="pages/webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
                         <li><a href="pages/ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
-                        <li><a href= "pages/api.html"><i class="fas fa-plug"></i>API Entegrasyon Hizmetleri</a></li>
+                        <li><a href= "pages/api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
                         <li><a href="pages/financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
                         <li><a href="pages/training-consulting.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
                     </ul>
@@ -534,14 +552,25 @@
 <script src="js/cookies.js" defer></script>
 
 <script>
-    // TOAST (POP-UP) GÖSTERME FONKSİYONU
-    function showToast(title, message) {
+    // Dinamik ve Renkli Toast Fonksiyonu
+    function showToast(title, message, type = 'error') {
         const toast = document.getElementById('customToast');
+        const toastIcon = toast.querySelector('.toast-icon i');
         document.getElementById('toastTitle').textContent = title;
         document.getElementById('toastMessage').textContent = message;
         
-        toast.classList.add('show');
-        setTimeout(() => { hideToast(); }, 4000);
+        // Önceki sınıfları temizle ve tipi ekle
+        toast.classList.remove('show', 'success', 'error');
+        toast.classList.add('show', type);
+
+        // Başarı durumunda yeşil stil ve check ikonu
+        if(type === 'success') {
+            toastIcon.className = 'fas fa-check-circle';
+        } else {
+            toastIcon.className = 'fas fa-exclamation-triangle';
+        }
+        
+        setTimeout(() => { hideToast(); }, 5000);
     }
 
     function hideToast() {
@@ -601,6 +630,7 @@
             document.getElementById('login-view').style.display = 'block';
             document.getElementById('reset-view').style.display = 'none';
         }, 300);
+        document.body.style.overflow = '';
     }
     
     document.getElementById('loginModal').addEventListener('click', function(e) {
