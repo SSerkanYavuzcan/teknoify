@@ -1,7 +1,7 @@
 /**
  * ================================================================
- * [MAIN] TEKNOIFY GLOBAL SCRIPT (ULTIMATE SECURITY VERSION)
- * Katmanlı Savunma: Honeypot, Anti-Flood, Firebase App Check
+ * [MAIN] TEKNOIFY GLOBAL SCRIPT (ULTIMATE SHIELD VERSION)
+ * Katmanlı Savunma: App Check, Cloud Functions, Honeypot, UI FX
  * ================================================================
  */
 
@@ -15,24 +15,23 @@ const firebaseConfig = {
     measurementId: "G-1DZKJE7BXE"
 };
 
-// 1. Firebase Çekirdeğini Başlat
+// 1. Firebase Başlatma
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-// 2. App Check Entegrasyonu (reCAPTCHA v3 arka planda çalışır)
-// Not: HTML'de firebase-appcheck.js SDK'sının yüklü olduğundan emin ol.
+// 2. App Check Aktifleştirme
 if (typeof firebase !== 'undefined' && firebase.appCheck) {
     const appCheck = firebase.appCheck();
     appCheck.activate(
-        // Kendi reCAPTCHA v3 Site Key'ini buraya giriyorsun
         new firebase.appCheck.ReCaptchaV3Provider('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk'),
-        true // Token'ın otomatik yenilenmesini sağlar
+        true
     );
 }
 
 const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
+const functions = typeof firebase !== 'undefined' ? firebase.functions() : null;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('loginModal')) {
@@ -124,9 +123,8 @@ class AuthSystem {
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
         btn.disabled = true;
 
-        // App Check arka planda güvenliği sağladığı için manuel grecaptcha.execute kaldırıldı.
         auth.signInWithEmailAndPassword(emailInput, passInput)
-            .then((userCredential) => {
+            .then(() => {
                 localStorage.setItem('session_start_time', Date.now());
                 btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                 btn.style.backgroundColor = '#10b981';
@@ -137,7 +135,6 @@ class AuthSystem {
                 let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
                 if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız. Biraz bekleyin.";
                 if (typeof showToast === "function") showToast("Giriş Başarısız", msg);
-                else alert(msg);
                 
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -162,7 +159,7 @@ class AuthSystem {
 }
 
 /* ---------------------------------------------------------
-   2. CONTACT SYSTEM (Katmanlı Savunma)
+   2. CONTACT SYSTEM (Cloud Protected)
 --------------------------------------------------------- */
 class ContactSystem {
     constructor() {
@@ -180,20 +177,20 @@ class ContactSystem {
             // 1. KATMAN: HONEYPOT (Ballı Tuzak)
             if (this.honeypot && this.honeypot.value) {
                 console.warn("Spam Bot detected.");
-                return; // Sessizce iptal et
+                this.banAndLogBot("Honeypot Triggered");
+                return;
             }
 
             // 2. KATMAN: ANTI-FLOOD (Hız Sınırlaması)
             const lastSuccess = localStorage.getItem('tk_last_success');
-            if (lastSuccess && (Date.now() - lastSuccess < 60000)) { // 1 dakika kilit
+            if (lastSuccess && (Date.now() - lastSuccess < 60000)) {
                 if (typeof showToast === "function") 
                     showToast("Uyarı", "Kısa sürede çok fazla istek gönderdiniz. Lütfen bekleyin.");
                 return;
             }
 
             if (this.validateInput()) {
-                // App Check güvenliği üstlendiği için doğrudan formu gönderiyoruz
-                this.sendFormData();
+                this.sendToCloud();
             }
         });
     }
@@ -210,48 +207,53 @@ class ContactSystem {
         return true;
     }
 
-    sanitizeUrl(url) {
-        if (!url || url === "Direct") return url;
-        try { const u = new URL(url); return u.origin + u.pathname; } catch(e) { return "Invalid"; }
+    // Bot tespiti durumunda cihazı işaretle ve sayfayı kilitle
+    async banAndLogBot(reason) {
+        localStorage.setItem('tk_access_denied', 'true');
+        location.reload();
     }
 
-    async sendFormData() {
-        if (!this.submitBtn || !db) return;
+    async sendToCloud() {
+        if (!this.submitBtn || !functions) return;
         
         const origHtml = this.submitBtn.innerHTML;
-        this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
+        this.submitBtn.innerHTML = '<i class="fas fa-shield-alt fa-spin"></i> Güvenli Gönderim...';
         this.submitBtn.disabled = true;
 
         try {
-            const formData = {
+            // Cloud Function Referansı
+            const submitContactForm = functions.httpsCallable('submitContactForm');
+            
+            const payload = {
                 fullname: document.getElementById('fullname').value.trim(),
                 contact_info: document.getElementById('contact_info').value.trim(),
                 service_type: document.getElementById('service_type').value,
                 message: document.getElementById('message').value.trim(),
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                source: "Web Home",
+                source: "Web Home Cloud",
                 fingerprint: {
-                    url: this.sanitizeUrl(window.location.href),
-                    res: `${window.screen.width}x${window.screen.height}`
+                    url: window.location.href,
+                    res: `${window.screen.width}x${window.screen.height}`,
+                    ua: navigator.userAgent
                 }
             };
 
-            // EĞER BOT İSE VEYA APP CHECK BAŞARISIZ OLURSA, BURASI OTOMATİK HATA FIRLATIR.
-            await db.collection("contact_requests").add(formData);
-            
-            localStorage.setItem('tk_last_success', Date.now());
-            
-            if (typeof showToast === "function") showToast("Başarılı", "Mesajınız iletildi.");
-            this.form.reset();
+            const result = await submitContactForm(payload);
+
+            if (result.data.success) {
+                localStorage.setItem('tk_last_success', Date.now());
+                if (typeof showToast === "function") showToast("Başarılı", "Mesajınız güvenle iletildi.");
+                this.form.reset();
+            }
 
         } catch (err) {
-            console.error("Firebase Güvenlik/Yazma Hatası:", err);
-            if (typeof showToast === "function") showToast("Hata", "Güvenlik politikası gereği işleminiz reddedildi veya bağlantı koptu.");
+            console.error("Cloud Error:", err);
+            // Backend'den (rate limit vb.) gelen hatayı göster
+            if (typeof showToast === "function") showToast("Hata", err.message || "İşlem reddedildi.");
         } finally {
             setTimeout(() => {
                 this.submitBtn.innerHTML = origHtml;
                 this.submitBtn.disabled = false;
-            }, 3000);
+            }, 2000);
         }
     }
 }
@@ -309,18 +311,15 @@ class TerminalEffect {
         this.container = document.querySelector(selector);
         if (!this.container) return;
         this.lines = [
-            { type: 'comment', text: '# Initializing Self-Awareness Protocol v4.0...' },
-            { type: 'code', text: 'import neural_network as brain' },
+            { type: 'comment', text: '# Security Status: CLOUD_PROTECTED' },
+            { type: 'code', text: 'import secure_shield as shield' },
             { type: 'empty', text: '' },
-            { type: 'comment', text: '# Step 1: Analyze current efficiency' },
-            { type: 'output', text: '>> Analysis: 14% redundant processes detected.' },
+            { type: 'comment', text: '# Running Integrity Checks...' },
+            { type: 'output', text: '>> AppCheck Token: VALID' },
+            { type: 'output', text: '>> Endpoint: Cloud Functions' },
+            { type: 'success', text: '>> VERIFIED: Teknoify Secure Layer' },
             { type: 'empty', text: '' },
-            { type: 'comment', text: '# Step 2: Refactor and Automate' },
-            { type: 'code', text: 'evo.rewrite_code(target="legacy_modules")' },
-            { type: 'output', text: '>> Optimizing SQL queries... [Done]' },
-            { type: 'success', text: '>> Model Converged. Predictive accuracy: 99.8%' },
-            { type: 'empty', text: '' },
-            { type: 'success', text: '>> EFFICIENCY: MAXIMIZED' },
+            { type: 'success', text: '>> STATUS: ARMORED' },
             { type: 'cursor', text: '_' }
         ];
         this.typeSpeed = 25; this.lineDelay = 600; this.loopDelay = 5000; this.start();
