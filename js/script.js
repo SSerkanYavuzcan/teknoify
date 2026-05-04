@@ -222,7 +222,7 @@ class ContactSystem {
         if (!this.submitBtn) return;
         
         const origHtml = this.submitBtn.innerHTML;
-        this.submitBtn.innerHTML = '<i class="fas fa-shield-alt fa-spin"></i> Zırhlı Gönderim...';
+        this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
         this.submitBtn.disabled = true;
 
         try {
