@@ -1,6 +1,6 @@
 /**
  * ================================================================
- * [MAIN] TEKNOIFY GLOBAL SCRIPT (ULTIMATE SHIELD VERSION)
+ * [MAIN] TEKNOIFY GLOBAL SCRIPT (COMPLETE SHIELD VERSION)
  * Katmanlı Savunma: App Check, Load Balancer, Honeypot, UI FX
  * ================================================================
  */
@@ -164,7 +164,7 @@ class AuthSystem {
 }
 
 /* ---------------------------------------------------------
-   2. CONTACT SYSTEM (Load Balancer & HTTPS Protected)
+   2. CONTACT SYSTEM (HTTPS & Error Debugged)
 --------------------------------------------------------- */
 class ContactSystem {
     constructor() {
@@ -241,20 +241,20 @@ class ContactSystem {
                 body: JSON.stringify(payload)
             });
 
-            const result = await response.json();
+            // Yanıt JSON değilse hata fırlatmak için kontrol
+            const result = await response.json().catch(() => ({ error: "Sunucudan geçersiz yanıt alındı." }));
 
             if (response.ok && result.success) {
                 localStorage.setItem('tk_last_success', Date.now());
                 if (typeof showToast === "function") showToast("Başarılı", "Mesajınız güvenli katmanlardan geçerek iletildi.");
                 this.form.reset();
             } else {
-                // Backend'den gelen hata mesajını veya varsayılanı kullan
-                throw new Error(result.error || "İşlem reddedildi. Lütfen bilgilerinizi kontrol edin.");
+                const errorDetail = result.error || "İşlem reddedildi.";
+                throw new Error(errorDetail);
             }
 
         } catch (err) {
             console.error("Network Error Details:", err);
-            // [object Object] hatasını önlemek için err.message kullanıyoruz
             const finalMsg = err.message || "Bağlantı hatası oluştu.";
             if (typeof showToast === "function") showToast("Sistem Mesajı", finalMsg);
         } finally {
