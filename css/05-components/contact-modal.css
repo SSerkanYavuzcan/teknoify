@@ -81,73 +81,134 @@
   50% { opacity: 0; }
 }
 
-
-
-
 /* ================================================================
 [LAYER 8] CONTACT SECTION
 Modern İletişim Formu Tasarımı
 ================================================================
 */
-.contact-section { padding: 4rem 0 6rem 0; position: relative; overflow: hidden; }
-
-
-
+.contact-section { 
+    padding: 4rem 0 6rem 0; 
+    position: relative; 
+    overflow: hidden; 
+}
 
 .contact-glow {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%); width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-  z-index: -1; pointer-events: none;
+    position: absolute; 
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    width: 600px; 
+    height: 600px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    z-index: -1; 
+    pointer-events: none;
 }
-
-
-
 
 .contact-wrapper {
-  display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem; margin-top: 2rem; align-items: start;
+    display: grid; 
+    grid-template-columns: 1fr 1.5fr; 
+    gap: 4rem; 
+    margin-top: 2rem; 
+    align-items: start;
 }
 
-
-
-
-.contact-info { display: flex; flex-direction: column; gap: 2rem; }
-
-
-
+.contact-info { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 2rem; 
+}
 
 .info-card {
-  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-light);
-  padding: 2rem; border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid var(--border-light);
+    padding: 2rem; 
+    border-radius: var(--radius-md);
 }
 .info-card h3 { color: #fff; margin-bottom: 1rem; font-size: 1.25rem; }
 .info-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
 
-
-
-
-.contact-methods { display: flex; flex-direction: column; gap: 1.5rem; }
-.method-item { display: flex; align-items: center; gap: 1rem; }
+.contact-methods { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1.5rem; 
+}
+.method-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 1rem; 
+}
 .icon-circle {
-  width: 45px; height: 45px; background: rgba(99, 102, 241, 0.1); color: var(--primary);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem; flex-shrink: 0;
+    width: 45px; 
+    height: 45px; 
+    background: rgba(99, 102, 241, 0.1); 
+    color: var(--primary);
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 1.1rem; 
+    flex-shrink: 0;
 }
 .method-item span { display: block; font-size: 0.85rem; color: var(--text-muted); }
 .method-item a, .method-item p { color: #fff; font-weight: 500; font-size: 1rem; }
 .method-item a:hover { color: var(--primary); }
 
-
-
-
 .contact-form {
-  background: var(--bg-surface); border: 1px solid var(--border-light);
-  padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    background: var(--bg-surface); 
+    border: 1px solid var(--border-light);
+    padding: 2.5rem; 
+    border-radius: var(--radius-lg); 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
+.form-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 1.5rem; 
+}
 
+/* ================================================================
+GÜNCELLENEN BUTON TASARIMI (Teklif İste / Gönder)
+================================================================ */
+#btn-contact-submit.btn-block {
+    width: 100%;
+    padding: 1.2rem 2.5rem;        /* Butonu dikeyde ve yatayda büyüttük */
+    font-size: 1.1rem;             /* Yazıyı büyüttük */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    
+    background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%);
+    color: #fff;
+    
+    border: none;
+    border-radius: 100px;          /* Tam oval (çember köşeli) yapı */
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;                     /* Yazı ve ikon arasındaki boşluk */
+    
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+    margin-top: 1rem;
+}
 
+#btn-contact-submit.btn-block:hover {
+    transform: translateY(-3px);    /* Yukarı hafif zıplama efekti */
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+    filter: brightness(1.1);
+}
 
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+#btn-contact-submit.btn-block:active {
+    transform: translateY(1px);     /* Tıklama basma hissi */
+}
 
+#btn-contact-submit.btn-block i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
 
+#btn-contact-submit.btn-block:hover i {
+    transform: translateX(5px) translateY(-5px) rotate(-10deg); /* Kağıt uçak uçuş efekti */
+}
