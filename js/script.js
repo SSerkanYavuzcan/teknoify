@@ -1,3 +1,10 @@
+/**
+ * ================================================================
+ * [MAIN] TEKNOIFY GLOBAL SCRIPT
+ * Özellikler: AuthSystem, ContactSystem (Bot Hunter), UISystem, FX
+ * ================================================================
+ */
+
 const firebaseConfig = {
     apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
     authDomain: "teknoify-9449c.firebaseapp.com",
@@ -13,6 +20,7 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
 }
 
 const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
+const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('loginModal')) {
@@ -31,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 200);
 });
 
+/* ---------------------------------------------------------
+   1. AUTH SYSTEM (Giriş & Güvenlik)
+--------------------------------------------------------- */
 class AuthSystem {
     constructor() {
         this.modal = document.getElementById('loginModal');
@@ -94,7 +105,7 @@ class AuthSystem {
         const passInput = document.getElementById('password').value.trim();
 
         if (!auth) {
-            if (typeof showToast === "function") showToast("Hata", "Güvenlik sistemi başlatılamadı. Lütfen sayfayı yenileyin.");
+            if (typeof showToast === "function") showToast("Hata", "Güvenlik sistemi başlatılamadı.");
             return;
         }
 
@@ -107,46 +118,18 @@ class AuthSystem {
             
             auth.signInWithEmailAndPassword(emailInput, passInput)
                 .then((userCredential) => {
-                    console.log("Giriş Başarılı:", userCredential.user.email);
-                    
                     localStorage.setItem('session_start_time', Date.now());
-                    
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
-                    
-                    setTimeout(() => {
-                        window.location.href = '../dashboard/index.html'; 
-                    }, 1000);
+                    setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
                 })
                 .catch((error) => {
                     console.error("Giriş Hatası:", error);
+                    let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
+                    if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız. Biraz bekleyin.";
                     
-                    let msg = "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.";
-                    
-                    switch (error.code) {
-                        case 'auth/user-not-found':
-                        case 'auth/invalid-credential':
-                            msg = "Böyle bir kullanıcı bulunamadı veya şifre yanlış.";
-                            break;
-                        case 'auth/wrong-password':
-                            msg = "Hatalı şifre girdiniz.";
-                            break;
-                        case 'auth/invalid-email':
-                            msg = "Geçersiz e-posta formatı.";
-                            break;
-                        case 'auth/too-many-requests':
-                            msg = "Çok fazla deneme yaptınız. Lütfen biraz bekleyin.";
-                            break;
-                        case 'auth/network-request-failed':
-                            msg = "Bağlantı hatası. İnternetinizi kontrol edin.";
-                            break;
-                    }
-                    
-                    if (typeof showToast === "function") {
-                        showToast("Giriş Başarısız", msg);
-                    } else {
-                        alert(msg);
-                    }
+                    if (typeof showToast === "function") showToast("Giriş Başarısız", msg);
+                    else alert(msg);
                     
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -155,34 +138,27 @@ class AuthSystem {
         };
 
         if (typeof grecaptcha !== 'undefined') {
-            grecaptcha.ready(function() {
-                grecaptcha.execute('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', {action: 'login'}).then(function(token) {
+            grecaptcha.ready(() => {
+                grecaptcha.execute('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', {action: 'login'}).then((token) => {
                     performLogin();
-                }).catch(function(error) {
-                    console.error("reCAPTCHA Hatası:", error);
-                    if (typeof showToast === "function") {
-                        showToast("Güvenlik İhlali", "Bot doğrulaması başarısız oldu.");
-                    }
+                }).catch((err) => {
+                    if (typeof showToast === "function") showToast("Güvenlik", "Bot doğrulaması başarısız.");
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 });
             });
         } else {
-
-            console.warn("reCAPTCHA yüklenemedi. Doğrudan giriş deneniyor...");
             performLogin();
         }
     }
 
     checkCurrentUser() {
         if (!auth) return;
-        
         auth.onAuthStateChanged((user) => {
             if (user) {
                 const loginBtn = document.getElementById('openLoginBtn');
                 if(loginBtn) {
                     const displayName = user.displayName || user.email.split('@')[0];
-                    
                     loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${displayName}`;
                     loginBtn.classList.remove('btn-outline');
                     loginBtn.classList.add('btn-secondary');
@@ -192,6 +168,129 @@ class AuthSystem {
     }
 }
 
+/* ---------------------------------------------------------
+   2. CONTACT SYSTEM (Bot Avcı & Form Gönderimi)
+--------------------------------------------------------- */
+class ContactSystem {
+    constructor() {
+        this.form = document.querySelector('.contact-form');
+        this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
+        this.honeypot = document.getElementById('tk_hp_field');
+        
+        if (this.form) this.bindEvents();
+    }
+
+    bindEvents() {
+        this.form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // A. HONEYPOT KONTROLÜ (BOT YAKALAMA)
+            if (this.honeypot && this.honeypot.value) {
+                console.warn("Bot detected. Initiating ban protocol...");
+                await this.banAndLogBot();
+                return;
+            }
+
+            // B. HIZ SINIRLAMASI
+            const lastSend = localStorage.getItem('tk_form_ts');
+            if (lastSend && (Date.now() - lastSend < 60000)) {
+                if (typeof showToast === "function") showToast("Uyarı", "Lütfen yeni bir mesaj için 1 dakika bekleyin.");
+                return;
+            }
+
+            if (this.validateInput()) {
+                this.sendFormData();
+            }
+        });
+    }
+
+    validateInput() {
+        const contactVal = document.getElementById('contact_info').value.trim();
+        const isEmail = contactVal.includes('@') && contactVal.includes('.');
+        const isPhone = contactVal.replace(/\D/g, '').length >= 10;
+
+        if (!isEmail && !isPhone) {
+            if (typeof showToast === "function") showToast("Hata", "Geçerli bir E-posta veya Telefon giriniz.");
+            return false;
+        }
+        return true;
+    }
+
+    async sendFormData() {
+        if (!this.submitBtn || !db) return;
+
+        const origHtml = this.submitBtn.innerHTML;
+        this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
+        this.submitBtn.disabled = true;
+
+        try {
+            const formData = {
+                fullname: document.getElementById('fullname').value.trim(),
+                contact_info: document.getElementById('contact_info').value.trim(),
+                service_type: document.getElementById('service_type').value,
+                message: document.getElementById('message').value.trim(),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                source: "Web Home"
+            };
+
+            await db.collection("contact_requests").add(formData);
+            
+            if (typeof showToast === "function") showToast("Başarılı", "Mesajınız iletildi.");
+            this.form.reset();
+            localStorage.setItem('tk_form_ts', Date.now());
+
+            setTimeout(() => {
+                this.submitBtn.innerHTML = origHtml;
+                this.submitBtn.disabled = false;
+            }, 3000);
+
+        } catch (err) {
+            console.error("Form error:", err);
+            this.submitBtn.innerHTML = '<i class="fas fa-times"></i> Hata';
+            setTimeout(() => { this.submitBtn.innerHTML = origHtml; this.submitBtn.disabled = false; }, 3000);
+        }
+    }
+
+    // BOT AVCI MANTIĞI
+    async banAndLogBot() {
+        const sanitize = (url) => {
+            try { const u = new URL(url); return u.origin + u.pathname; } catch(e) { return "Invalid"; }
+        };
+
+        const botFingerprint = {
+            full_url: sanitize(window.location.href),
+            referrer: sanitize(document.referrer || "Direct"),
+            userAgent: navigator.userAgent,
+            screen_res: `${window.screen.width}x${window.screen.height}`,
+            platform: navigator.platform,
+            hardware_concurrency: navigator.hardwareConcurrency || 0,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            reason: "Honeypot Triggered",
+            signals: {
+                webdriver: navigator.webdriver || false,
+                plugins_count: navigator.plugins ? navigator.plugins.length : 0,
+                languages_count: navigator.languages ? navigator.languages.length : 0,
+                is_headless: /HeadlessChrome/.test(navigator.userAgent) || navigator.languages.length === 0
+            }
+        };
+
+        try {
+            const ipRes = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipRes.json();
+            botFingerprint.ip = ipData.ip;
+        } catch (e) { botFingerprint.ip = "Unknown"; }
+
+        if (db) await db.collection("banned_logs").add(botFingerprint);
+
+        localStorage.setItem('tk_access_denied', 'true');
+        location.reload();
+    }
+}
+
+/* ---------------------------------------------------------
+   3. UI & EFFECTS
+--------------------------------------------------------- */
 class UISystem {
     constructor() {
         this.header = document.getElementById('header');
@@ -237,120 +336,6 @@ class UISystem {
     }
 }
 
-class ContactSystem {
-    constructor() {
-        this.formId = "xvgeborr"; 
-        this.form = document.querySelector('.contact-form');
-        this.inputName = document.getElementById('fullname');
-        this.inputContact = document.getElementById('contact_info');
-        this.inputService = document.getElementById('service_type');
-        this.inputMessage = document.getElementById('message');
-        this.errorMsg = document.getElementById('contact-error');
-        this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
-        
-        if (this.form) {
-            this.bindEvents();
-        }
-    }
-
-    bindEvents() {
-        this.form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (this.validateInput()) {
-                this.sendMail();
-            }
-        });
-
-        if(this.inputContact) {
-            this.inputContact.addEventListener('input', () => this.clearError());
-        }
-    }
-
-    validateInput() {
-        const val = this.inputContact.value.trim();
-        const phoneDigits = val.replace(/\D/g, '');
-        const isPhone = phoneDigits.length >= 10;
-        const isEmail = val.includes('@') && val.includes('.');
-
-        if (!isPhone && !isEmail) {
-            this.showError("Lütfen geçerli bir E-posta adresi veya Telefon numarası giriniz.");
-            return false;
-        }
-        this.clearError();
-        return true;
-    }
-
-    showError(message) {
-        if(this.errorMsg) {
-            this.errorMsg.textContent = message;
-            this.errorMsg.style.display = 'block';
-        }
-        this.inputContact.classList.add('input-error');
-    }
-
-    clearError() {
-        if(this.errorMsg) this.errorMsg.style.display = 'none';
-        this.inputContact.classList.remove('input-error');
-    }
-
-    async sendMail() {
-        if (!this.submitBtn) return;
-
-        const originalText = this.submitBtn.innerHTML;
-        const originalColor = this.submitBtn.style.backgroundColor;
-
-        this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
-        this.submitBtn.disabled = true;
-        this.submitBtn.style.opacity = "0.8";
-
-        const formData = new FormData();
-        formData.append("Ad Soyad", this.inputName.value);
-        formData.append("İletişim", this.inputContact.value);
-        formData.append("Hizmet", this.inputService ? this.inputService.value : "Belirtilmedi");
-        formData.append("Mesaj", this.inputMessage.value);
-
-        try {
-            const response = await fetch(`https://formspree.io/f/${this.formId}`, {
-                method: "POST",
-                body: formData,
-                headers: { 'Accept': 'application/json' }
-            });
-
-            if (response.ok) {
-                this.submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mesajınız Gönderildi';
-                this.submitBtn.style.backgroundColor = '#10b981';
-                this.submitBtn.style.opacity = "1";
-                
-                this.form.reset();
-
-                setTimeout(() => {
-                    this.submitBtn.innerHTML = originalText;
-                    this.submitBtn.style.backgroundColor = originalColor;
-                    this.submitBtn.disabled = false;
-                }, 5000);
-            } else {
-                throw new Error("Gönderim başarısız");
-            }
-        } catch (error) {
-            console.error(error);
-            this.submitBtn.innerHTML = '<i class="fas fa-times-circle"></i> Bir Hata Oluştu';
-            this.submitBtn.style.backgroundColor = '#ef4444';
-            
-            setTimeout(() => {
-                this.submitBtn.innerHTML = originalText;
-                this.submitBtn.style.backgroundColor = originalColor;
-                this.submitBtn.disabled = false;
-            }, 3000);
-            
-            if (typeof showToast === "function") {
-                showToast("Hata", "Mesaj gönderilirken bir sorun oluştu.");
-            } else {
-                alert("Mesaj gönderilirken bir sorun oluştu.");
-            }
-        }
-    }
-}
-
 class TerminalEffect {
     constructor(selector) {
         this.container = document.querySelector(selector);
@@ -378,19 +363,14 @@ class TerminalEffect {
         this.start();
     }
 
-    scrollToBottom() {
-        this.container.scrollTop = this.container.scrollHeight;
-    }
+    scrollToBottom() { this.container.scrollTop = this.container.scrollHeight; }
 
     async start() {
         while (true) {
             this.container.innerHTML = '';
             for (let line of this.lines) {
-                if (line.type === 'cursor') {
-                    await this.addCursor(line);
-                } else {
-                    await this.typeLine(line);
-                }
+                if (line.type === 'cursor') await this.addCursor(line);
+                else await this.typeLine(line);
             }
             await new Promise(resolve => setTimeout(resolve, this.loopDelay));
         }
@@ -411,10 +391,7 @@ class TerminalEffect {
             this.container.appendChild(lineEl);
             this.scrollToBottom();
 
-            if (lineData.type === 'empty') {
-                setTimeout(resolve, 100);
-                return;
-            }
+            if (lineData.type === 'empty') { setTimeout(resolve, 100); return; }
 
             let i = 0;
             const interval = setInterval(() => {
