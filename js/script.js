@@ -1,8 +1,7 @@
 /**
  * ================================================================
- * [MAIN] TEKNOIFY GLOBAL SCRIPT (PRO-VERSION)
- * Özellikler: AuthSystem, ContactSystem (Bot Hunter), UISystem, FX
- * Güvenlik: URL Sanitization, Fingerprinting, Honeypot & Device Ban
+ * [MAIN] TEKNOIFY GLOBAL SCRIPT (ULTIMATE SECURITY VERSION)
+ * Katmanlı Savunma: Honeypot, Anti-Flood, Fingerprinting, reCAPTCHA
  * ================================================================
  */
 
@@ -100,7 +99,6 @@ class AuthSystem {
 
     handleLogin(e) {
         e.preventDefault();
-        
         const btn = this.form.querySelector('button[type="submit"]');
         const emailInput = document.getElementById('email').value.trim();
         const passInput = document.getElementById('password').value.trim();
@@ -116,7 +114,6 @@ class AuthSystem {
 
         const performLogin = () => {
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
-            
             auth.signInWithEmailAndPassword(emailInput, passInput)
                 .then((userCredential) => {
                     localStorage.setItem('session_start_time', Date.now());
@@ -128,10 +125,8 @@ class AuthSystem {
                     console.error("Giriş Hatası:", error);
                     let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
                     if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız. Biraz bekleyin.";
-                    
                     if (typeof showToast === "function") showToast("Giriş Başarısız", msg);
                     else alert(msg);
-                    
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                     btn.style.backgroundColor = '';
@@ -140,17 +135,15 @@ class AuthSystem {
 
         if (typeof grecaptcha !== 'undefined') {
             grecaptcha.ready(() => {
-                grecaptcha.execute('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', {action: 'login'}).then((token) => {
+                grecaptcha.execute('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', {action: 'login'}).then(() => {
                     performLogin();
-                }).catch((err) => {
+                }).catch(() => {
                     if (typeof showToast === "function") showToast("Güvenlik", "Bot doğrulaması başarısız.");
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 });
             });
-        } else {
-            performLogin();
-        }
+        } else { performLogin(); }
     }
 
     checkCurrentUser() {
@@ -170,7 +163,7 @@ class AuthSystem {
 }
 
 /* ---------------------------------------------------------
-   2. CONTACT SYSTEM (Bot Hunter & Form Gönderimi)
+   2. CONTACT SYSTEM (Katmanlı Savunma & Bot Hunter)
 --------------------------------------------------------- */
 class ContactSystem {
     constructor() {
@@ -185,24 +178,40 @@ class ContactSystem {
         this.form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // A. HONEYPOT KONTROLÜ (BOT YAKALAMA)
+            // 1. KATMAN: HONEYPOT (Ballı Tuzak)
             if (this.honeypot && this.honeypot.value) {
-                console.warn("Bot detected. Initiating ban protocol...");
-                await this.banAndLogBot();
+                console.warn("Spam Bot detected. Triggering silent ban...");
+                this.silentBan(); // Veritabanına yazmadan sadece cihazı engelle
                 return;
             }
 
-            // B. HIZ SINIRLAMASI (Client-side)
-            const lastSend = localStorage.getItem('tk_form_ts');
-            if (lastSend && (Date.now() - lastSend < 60000)) {
-                if (typeof showToast === "function") showToast("Uyarı", "Lütfen yeni bir mesaj için 1 dakika bekleyin.");
+            // 2. KATMAN: ANTI-FLOOD (Hız Sınırlaması)
+            const lastSuccess = localStorage.getItem('tk_last_success');
+            if (lastSuccess && (Date.now() - lastSuccess < 300000)) { // 5 dakika kilit
+                if (typeof showToast === "function") 
+                    showToast("Uyarı", "Çok sık form gönderiyorsunuz. Lütfen 5 dakika bekleyin.");
                 return;
             }
 
             if (this.validateInput()) {
-                this.sendFormData();
+                this.processFormWithRecaptcha();
             }
         });
+    }
+
+    // reCAPTCHA ile güvenli form işleme
+    processFormWithRecaptcha() {
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.ready(() => {
+                grecaptcha.execute('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', {action: 'contact_form'})
+                .then((token) => {
+                    // Token alındı, veriyi gönderiyoruz
+                    this.sendFormData();
+                });
+            });
+        } else {
+            this.sendFormData(); // reCAPTCHA yüklenemediyse normal devam et
+        }
     }
 
     validateInput() {
@@ -217,15 +226,9 @@ class ContactSystem {
         return true;
     }
 
-    // URL'deki query parametrelerini ve tokenları temizleyen yardımcı fonksiyon
     sanitizeUrl(url) {
         if (!url || url === "Direct") return url;
-        try {
-            const urlObj = new URL(url);
-            return urlObj.origin + urlObj.pathname;
-        } catch (e) {
-            return "Invalid URL";
-        }
+        try { const u = new URL(url); return u.origin + u.pathname; } catch(e) { return "Invalid"; }
     }
 
     async sendFormData() {
@@ -242,14 +245,21 @@ class ContactSystem {
                 service_type: document.getElementById('service_type').value,
                 message: document.getElementById('message').value.trim(),
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                source: "Web Home"
+                source: "Web Home",
+                // Güvenlik İzleri
+                fingerprint: {
+                    url: this.sanitizeUrl(window.location.href),
+                    res: `${window.screen.width}x${window.screen.height}`
+                }
             };
 
             await db.collection("contact_requests").add(formData);
             
+            // Başarılı gönderim: Kilidi bas
+            localStorage.setItem('tk_last_success', Date.now());
+            
             if (typeof showToast === "function") showToast("Başarılı", "Mesajınız iletildi.");
             this.form.reset();
-            localStorage.setItem('tk_form_ts', Date.now());
 
             setTimeout(() => {
                 this.submitBtn.innerHTML = origHtml;
@@ -263,53 +273,15 @@ class ContactSystem {
         }
     }
 
-    // BOT AVCI VE ADLİ BİLİŞİM MANTIĞI
-    async banAndLogBot() {
-        const botFingerprint = {
-            // URL'leri temizleyerek kaydediyoruz
-            full_url: this.sanitizeUrl(window.location.href),
-            referrer: this.sanitizeUrl(document.referrer || "Direct"),
-            
-            userAgent: navigator.userAgent,
-            screen_res: `${window.screen.width}x${window.screen.height}`,
-            platform: navigator.platform,
-            hardware_concurrency: navigator.hardwareConcurrency || 0,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            reason: "Honeypot Triggered",
-            
-            // İleri Seviye Bot Sinyalleri
-            signals: {
-                webdriver: navigator.webdriver || false,
-                plugins_count: navigator.plugins ? navigator.plugins.length : 0,
-                languages_count: navigator.languages ? navigator.languages.length : 0,
-                is_headless: /HeadlessChrome/.test(navigator.userAgent) || navigator.languages.length === 0,
-                has_chrome_runtime: !!window.chrome,
-                has_permissions_api: !!navigator.permissions
-            }
-        };
-
-        try {
-            const ipRes = await fetch('https://api.ipify.org?format=json');
-            const ipData = await ipRes.json();
-            botFingerprint.ip = ipData.ip;
-        } catch (e) { botFingerprint.ip = "Unknown"; }
-
-        // Firestore'daki "Sabıka Kaydı"na ekle
-        if (db) {
-            try {
-                await db.collection("banned_logs").add(botFingerprint);
-            } catch (e) { console.error("Log failed"); }
-        }
-
-        // Cihazı yerel olarak banla ve sayfayı kilitle
+    // Botu veritabanına yazmadan sessizce banlayan fonksiyon
+    silentBan() {
         localStorage.setItem('tk_access_denied', 'true');
-        location.reload();
+        location.reload(); // auth.js zaten girişi engelleyecek
     }
 }
 
 /* ---------------------------------------------------------
-   3. UI & EFFECTS (Görsel Sistemler)
+   3. UI & EFFECTS
 --------------------------------------------------------- */
 class UISystem {
     constructor() {
@@ -376,15 +348,9 @@ class TerminalEffect {
             { type: 'success', text: '>> EFFICIENCY: MAXIMIZED' },
             { type: 'cursor', text: '_' }
         ];
-        
-        this.typeSpeed = 25;
-        this.lineDelay = 600;
-        this.loopDelay = 5000; 
-        this.start();
+        this.typeSpeed = 25; this.lineDelay = 600; this.loopDelay = 5000; this.start();
     }
-
     scrollToBottom() { this.container.scrollTop = this.container.scrollHeight; }
-
     async start() {
         while (true) {
             this.container.innerHTML = '';
@@ -395,46 +361,31 @@ class TerminalEffect {
             await new Promise(resolve => setTimeout(resolve, this.loopDelay));
         }
     }
-
     typeLine(lineData) {
         return new Promise(resolve => {
             const lineEl = document.createElement('div');
             lineEl.style.fontFamily = "'Fira Code', monospace";
             lineEl.style.marginBottom = "4px";
-
             if (lineData.type === 'comment') lineEl.style.color = '#6b7280';
             if (lineData.type === 'code') lineEl.style.color = '#e2e8f0';
             if (lineData.type === 'success') lineEl.style.color = '#10b981';
             if (lineData.type === 'output') lineEl.style.color = '#fbbf24';
             if (lineData.type === 'empty') lineEl.innerHTML = '&nbsp;';
-
             this.container.appendChild(lineEl);
             this.scrollToBottom();
-
             if (lineData.type === 'empty') { setTimeout(resolve, 100); return; }
-
             let i = 0;
             const interval = setInterval(() => {
-                lineEl.textContent += lineData.text.charAt(i);
-                i++;
-                this.scrollToBottom();
-                if (i >= lineData.text.length) {
-                    clearInterval(interval);
-                    setTimeout(resolve, this.lineDelay);
-                }
+                lineEl.textContent += lineData.text.charAt(i); i++; this.scrollToBottom();
+                if (i >= lineData.text.length) { clearInterval(interval); setTimeout(resolve, this.lineDelay); }
             }, this.typeSpeed);
         });
     }
-
     addCursor(lineData) {
         return new Promise(resolve => {
             const lineEl = document.createElement('div');
-            lineEl.classList.add('blink-cursor');
-            lineEl.textContent = lineData.text;
-            lineEl.style.color = '#fff';
-            this.container.appendChild(lineEl);
-            this.scrollToBottom();
-            setTimeout(resolve, 2000);
+            lineEl.classList.add('blink-cursor'); lineEl.textContent = lineData.text; lineEl.style.color = '#fff';
+            this.container.appendChild(lineEl); this.scrollToBottom(); setTimeout(resolve, 2000);
         });
     }
 }
@@ -446,7 +397,6 @@ class BackgroundFX {
         this.starCount = window.innerWidth < 768 ? 20 : 50;
         this.init();
     }
-
     init() {
         this.container.innerHTML = '';
         const frag = document.createDocumentFragment();
