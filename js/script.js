@@ -102,7 +102,6 @@ class AuthSystem {
         btn.innerHTML = '<i class="fas fa-shield-alt"></i> Güvenlik Kontrolü...';
         btn.disabled = true;
 
-        // Firebase giriş işlemini bir fonksiyona ayırıyoruz ki reCAPTCHA'dan sonra çağırabilelim
         const performLogin = () => {
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
             
@@ -110,7 +109,6 @@ class AuthSystem {
                 .then((userCredential) => {
                     console.log("Giriş Başarılı:", userCredential.user.email);
                     
-                    // --- GÜVENLİK: 3 Saatlik Oturum Başlangıcını Kaydet ---
                     localStorage.setItem('session_start_time', Date.now());
                     
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
