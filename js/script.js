@@ -2,6 +2,7 @@
  * ================================================================
  * [MAIN] TEKNOIFY GLOBAL SCRIPT (COMPLETE SHIELD VERSION)
  * Katmanlı Savunma: App Check, Load Balancer, Honeypot, UI FX
+ * Çoklu Rol Sistemi: Admin & Member Yönlendirmesi
  * ================================================================
  */
 
@@ -68,7 +69,14 @@ class AuthSystem {
                 e.preventDefault();
                 const user = auth ? auth.currentUser : null;
                 if (user) {
-                    window.location.href = '../dashboard/index.html'; 
+                    // Kullanıcı zaten giriş yapmışsa, rolünü kontrol edip doğru yere at
+                    user.getIdTokenResult().then(idTokenResult => {
+                        if (idTokenResult.claims.admin === true) {
+                            window.location.href = '../dashboard/index.html'; 
+                        } else {
+                            window.location.href = '../client-portal/index.html'; // Normal kullanıcı paneli (Örnek)
+                        }
+                    });
                 } else {
                     this.open();
                 }
@@ -124,23 +132,32 @@ class AuthSystem {
                 return userCredential.user.getIdTokenResult();
             })
             .then((idTokenResult) => {
-                if (idTokenResult.claims.admin === true) {
-                    localStorage.setItem('session_start_time', Date.now());
-                    btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
-                    btn.style.backgroundColor = '#10b981';
-                    setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
-                } else {
-                    auth.signOut();
-                    throw new Error("unauthorized_role");
-                }
+                localStorage.setItem('session_start_time', Date.now());
+                btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
+                btn.style.backgroundColor = '#10b981';
+
+                // ROL KONTROLÜ VE YÖNLENDİRME
+                setTimeout(() => {
+                    if (idTokenResult.claims.admin === true) {
+                        // Admin ise yönetim paneline gitsin
+                        window.location.href = '../dashboard/index.html'; 
+                    } else {
+                        // Admin değilse (member, premium vb.) müşteri paneline gitsin
+                        // NOT: Buradaki yolu senin gerçek müşteri paneli klasörüne göre güncelleyebilirsin.
+                        window.location.href = '../client-portal/index.html'; 
+                    }
+                }, 1000);
             })
             .catch((error) => {
                 console.error("Giriş Hatası:", error);
                 let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
-                if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız.";
-                if (error.message === "unauthorized_role") msg = "Bu panele erişim yetkiniz bulunmamaktadır.";
                 
-                if (typeof showToast === "function") showToast("Erişim Reddedildi", msg);
+                if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız.";
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    msg = "E-posta adresi veya şifre hatalı.";
+                }
+                
+                if (typeof showToast === "function") showToast("Erişim Reddedildi", msg, "error");
                 
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -188,7 +205,7 @@ class ContactSystem {
             const lastSuccess = localStorage.getItem('tk_last_success');
             if (lastSuccess && (Date.now() - lastSuccess < 60000)) {
                 if (typeof showToast === "function") 
-                    showToast("Uyarı", "Lütfen bir dakika bekleyip tekrar deneyin.");
+                    showToast("Uyarı", "Lütfen bir dakika bekleyip tekrar deneyin.", "error");
                 return;
             }
 
@@ -204,7 +221,7 @@ class ContactSystem {
         const isPhone = contactVal.replace(/\D/g, '').length >= 10;
         
         if (!isEmail && !isPhone) {
-            if (typeof showToast === "function") showToast("Hata", "Geçerli bir E-posta veya Telefon giriniz.");
+            if (typeof showToast === "function") showToast("Hata", "Geçerli bir E-posta veya Telefon giriniz.", "error");
             return false;
         }
         return true;
@@ -241,12 +258,11 @@ class ContactSystem {
                 body: JSON.stringify(payload)
             });
 
-            // Yanıt JSON değilse hata fırlatmak için kontrol
             const result = await response.json().catch(() => ({ error: "Sunucudan geçersiz yanıt alındı." }));
 
             if (response.ok && result.success) {
                 localStorage.setItem('tk_last_success', Date.now());
-                if (typeof showToast === "function") showToast("Başarılı", "Mesajınız güvenli katmanlardan geçerek iletildi.");
+                if (typeof showToast === "function") showToast("Başarılı", "Mesajınız güvenli katmanlardan geçerek iletildi.", "success");
                 this.form.reset();
             } else {
                 const errorDetail = result.error || "İşlem reddedildi.";
@@ -256,7 +272,7 @@ class ContactSystem {
         } catch (err) {
             console.error("Network Error Details:", err);
             const finalMsg = err.message || "Bağlantı hatası oluştu.";
-            if (typeof showToast === "function") showToast("Sistem Mesajı", finalMsg);
+            if (typeof showToast === "function") showToast("Sistem Mesajı", finalMsg, "error");
         } finally {
             setTimeout(() => {
                 this.submitBtn.innerHTML = origHtml;
