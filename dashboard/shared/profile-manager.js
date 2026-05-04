@@ -1,6 +1,7 @@
 /**
  * ================================================================
- * [MODULE] SHARED PROFILE MANAGER (XSS PROTECTED, AVATAR UPLOAD, COMPRESSION & TOAST)
+ * [MODULE] SHARED PROFILE MANAGER
+ * Özellikler: XSS Koruması, Fotoğraf Sıkıştırma, Avatar Arka Plan Fix, Toast
  * Yol: dashboard/shared/profile-manager.js
  * ================================================================
  */
@@ -18,14 +19,14 @@ class ProfileManager {
         this.currentUser = null;
         this.userData = null;
         this.selectedFile = null;
-        this.pendingFile = null; // Sıkıştırılmayı bekleyen büyük dosya
+        this.pendingFile = null; // Sıkıştırılmayı bekleyen dosya
         this.init();
     }
 
     init() {
         this.injectModalHTML();
         this.injectToastHTML();
-        this.injectCompressionModalHTML(); // Yeni: Sıkıştırma Pop-up'ı
+        this.injectCompressionModalHTML();
         this.bindEvents();
 
         onAuthStateChanged(auth, async (user) => {
@@ -61,7 +62,7 @@ class ProfileManager {
                         <i class="fas fa-magic" style="color: #6366f1; font-size: 24px;"></i>
                     </div>
                     <h3 style="color: #fff; margin: 0 0 10px 0; font-family: 'Inter Tight', sans-serif; font-size: 1.2rem;">Fotoğraf Boyutu Büyük</h3>
-                    <p style="color: #a1a1aa; font-size: 0.9rem; margin: 0 0 25px 0; line-height: 1.5;">Seçtiğiniz dosya sistem sınırlarını aşıyor. Yüksek kalitede sıkıştırarak dönüştürmemizi ister misiniz?</p>
+                    <p style="color: #a1a1aa; font-size: 0.9rem; margin: 0 0 25px 0; line-height: 1.5;">Seçtiğiniz dosya 2MB sınırını aşıyor. Yüksek kalitede dönüştürerek yüklememizi ister misiniz?</p>
                     
                     <div style="display: flex; gap: 10px;">
                         <button id="btn-cancel-compress" style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #e4e4e7; padding: 12px; border-radius: 8px; font-family: 'Inter Tight', sans-serif; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">İptal</button>
@@ -87,6 +88,7 @@ class ProfileManager {
                     </div>
 
                     <form id="shared-profile-form">
+                        
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
                             <div style="position: relative; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #1e2130; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; flex-shrink: 0;" id="photo-preview-container">
                                 <div id="default-avatar-placeholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #6366f1; color: white; font-size: 2rem; font-weight: 600;">U</div>
@@ -147,6 +149,7 @@ class ProfileManager {
                 img.src = event.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
+                    
                     // Fotoğrafı en fazla 1024x1024 boyutuna küçült
                     const MAX_WIDTH = 1024;
                     const MAX_HEIGHT = 1024;
@@ -164,7 +167,7 @@ class ProfileManager {
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // %85 Kalite ile JPEG'e dönüştür (2MB'ı her türlü aşacaktır)
+                    // %85 Kalite ile JPEG'e dönüştür
                     canvas.toBlob((blob) => {
                         const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + "_optimized.jpg", {
                             type: 'image/jpeg',
@@ -184,8 +187,11 @@ class ProfileManager {
     bindEvents() {
         const closeBtn = document.getElementById('close-profile-modal');
         const modal = document.getElementById('shared-profile-modal');
+        
         closeBtn.addEventListener('click', () => this.closeModal());
-        modal.addEventListener('click', (e) => { if (e.target === modal) this.closeModal(); });
+        modal.addEventListener('click', (e) => { 
+            if (e.target === modal) this.closeModal(); 
+        });
 
         const form = document.getElementById('shared-profile-form');
         form.addEventListener('submit', (e) => this.handleProfileSave(e));
@@ -247,11 +253,11 @@ class ProfileManager {
         document.getElementById('btn-trigger-upload').addEventListener('click', () => fileInput.click());
         document.getElementById('photo-preview-container').addEventListener('click', () => fileInput.click());
 
-        // Fotoğraf Seçimi
+        // Fotoğraf Seçimi ve 2MB Kontrolü
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                // 2MB (2 * 1024 * 1024) Kontrolü
+                // 2MB (2 * 1024 * 1024) Sınırı
                 if (file.size > 2097152) {
                     this.pendingFile = file;
                     compModal.style.display = 'flex';
@@ -259,10 +265,10 @@ class ProfileManager {
                         compModal.style.opacity = '1';
                         compModalContent.style.transform = 'translateY(0)';
                     }, 10);
-                    return; // İşlemi burada durdur, pop-up'tan onay bekle
+                    return; // Pop-up onayı bekle
                 }
                 
-                // Sınırın altındaysa normal devam et
+                // Sınırın altındaysa normal devam
                 this.selectedFile = file;
                 const reader = new FileReader();
                 reader.onload = (event) => {
@@ -409,8 +415,12 @@ class ProfileManager {
                 const currentPhotoURL = updatePayload["profile.photoURL"] || (this.userData.profile && this.userData.profile.photoURL);
                 if (currentPhotoURL) {
                     avatarEl.innerHTML = `<img src="${currentPhotoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                    // ARKA PLAN DÜZELTMESİ: Fotoğraf yüklendiğinde mor rengi kaldırıyoruz.
+                    avatarEl.style.background = 'transparent'; 
                 } else {
                     avatarEl.innerHTML = cleanFirst.charAt(0).toUpperCase();
+                    // ARKA PLAN DÜZELTMESİ: Fotoğraf yoksa mor rengi geri getiriyoruz.
+                    avatarEl.style.background = '#6366f1'; 
                 }
             }
 
