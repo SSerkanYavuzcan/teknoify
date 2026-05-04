@@ -217,12 +217,13 @@
   <main class="main-content">
     
     <header class="top-bar">
-      <h2 style="font-weight: 600; margin: 0; color: #fff; font-size: 1.4rem;">Hoşgeldin, <span id="user-name-title" style="color: #6366f1;">...</span></h2>
-      <div class="user-profile">
-        <span id="user-name-display" style="font-weight: 500; color: #e4e4e7; font-size: 0.95rem;">Yükleniyor...</span>
-        <div class="avatar" id="user-avatar" style="background:#6366f1;">U</div>
-      </div>
-    </header>
+  <h2 style="font-weight: 600; margin: 0; color: #fff; font-size: 1.4rem;">Hoşgeldin, <span id="user-name-title" style="color: #6366f1;">...</span></h2>
+  <div class="user-profile" style="cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'" onclick="if(window.SharedProfileManager) window.SharedProfileManager.openModal()">
+    <span id="user-name-display" style="font-weight: 500; color: #e4e4e7; font-size: 0.95rem;">Yükleniyor...</span>
+    <div class="avatar" id="user-avatar" style="background:#6366f1;">U</div>
+    <i class="fas fa-chevron-down" style="color: #71717a; font-size: 0.8rem; margin-left: 5px;"></i>
+  </div>
+</header>
 
     <div class="content-scroll">
       
