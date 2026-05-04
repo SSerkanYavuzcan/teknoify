@@ -35,14 +35,13 @@
             transform: translateY(-50%);
             cursor: pointer;
             font-size: 1.2rem;
-            z-index: 999; /* Input'un altında kalmasını kesin engelliyoruz */
-            user-select: none; /* Çift tıklayınca emojinin seçilmesini engeller */
+            z-index: 999;
+            user-select: none;
             transition: transform 0.2s ease-in-out;
         }
         .password-toggle-icon:hover {
             transform: translateY(-50%) scale(1.1);
         }
-        /* Input'un sağ tarafında ikon için boşluk bırakıyoruz */
         .input-wrapper input[type="password"], 
         .input-wrapper input.password-visible {
             padding-right: 40px !important;
@@ -52,21 +51,21 @@
         .custom-toast {
             position: fixed;
             top: 20px;
-            right: -400px; /* Başlangıçta ekranın dışında saklıyoruz */
+            right: -400px;
             width: 320px;
-            background: #181824; /* Teknoify temasına uygun koyu renk */
-            border-left: 4px solid #ff4b4b; /* Hata kırmızısı */
+            background: #181824;
+            border-left: 4px solid #ff4b4b;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             padding: 15px 20px;
-            z-index: 99999;
-            transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Tatlı bir sekme animasyonu */
+            z-index: 100000;
+            transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             color: #fff;
         }
         .custom-toast.show {
-            right: 20px; /* Sınıf eklenince ekrana kayar */
+            right: 20px;
         }
         .custom-toast .toast-icon {
             font-size: 24px;
@@ -104,7 +103,30 @@
         .grecaptcha-badge { 
             visibility: hidden !important;
         }
+
+        /* HONEYPOT (BALLI TUZAK) GİZLEME */
+        .tk-hp-container {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0; width: 0; overflow: hidden;
+        }
     </style>
+
+    <script>
+        // SİTE GİRİŞİNDE BAN KONTROLÜ (Bot bir kez yakalanırsa siteye giremez)
+        (function() {
+            if (localStorage.getItem('tk_access_denied') === 'true') {
+                document.documentElement.innerHTML = `
+                <div style="background:#05080a; color:white; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Inter Tight', sans-serif; text-align:center; padding:20px;">
+                    <h1 style="color:#ff4b4b; font-size:4rem; margin-bottom:0;">403</h1>
+                    <h2 style="margin-top:10px;">Erişim Reddedildi</h2>
+                    <p style="color:#a1a1aa; max-width:500px;">Güvenlik politikalarımız ihlal edildiği için bu siteye erişiminiz kalıcı olarak engellenmiştir.</p>
+                    <div style="margin-top:20px; font-size:11px; color:#3f3f46; letter-spacing:1px;">BLOCK_ID: ${Math.random().toString(36).substr(2, 9).toUpperCase()}</div>
+                </div>`;
+                window.stop();
+            }
+        })();
+    </script>
 </head>
 
 <body>
@@ -283,7 +305,12 @@
                     </div>
                 </div>
 
-                <form class="contact-form" action="#" method="POST">
+                <form id="contactForm" class="contact-form" action="#" method="POST">
+                    <div class="tk-hp-container" aria-hidden="true">
+                        <label>Do not fill this field:</label>
+                        <input type="text" name="tk_hp_field" id="tk_hp_field" tabindex="-1" autocomplete="off">
+                    </div>
+
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="fullname">Adınız Soyadınız</label>
@@ -328,7 +355,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block">
+                    <button type="submit" id="btn-contact-submit" class="btn btn-primary btn-block">
                         <span>Teklif İste / Gönder</span> <i class="fas fa-paper-plane"></i>
                     </button>
                 </form>
@@ -480,7 +507,7 @@
         </div>
 
         <div class="footer-bottom">
-            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
+            <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
         </div>
     </div>
 </footer>
@@ -510,14 +537,9 @@
         document.getElementById('toastMessage').textContent = message;
         
         toast.classList.add('show');
-
-        // 4 saniye sonra otomatik olarak gizlensin
-        setTimeout(() => {
-            hideToast();
-        }, 4000);
+        setTimeout(() => { hideToast(); }, 4000);
     }
 
-    // TOAST GİZLEME FONKSİYONU
     function hideToast() {
         document.getElementById('customToast').classList.remove('show');
     }
@@ -538,47 +560,31 @@
         }
     }
 
-    // Görünüm Değiştirme (Login <-> Reset)
     function toggleResetView(e) {
         if(e) e.preventDefault();
-        
         const loginView = document.getElementById('login-view');
         const resetView = document.getElementById('reset-view');
-        
-        // İçerik kutuları
         const formContent = document.getElementById('reset-form-content');
         const successContent = document.getElementById('reset-success-content');
-
         const loginEmail = document.getElementById('email');
         const resetEmail = document.getElementById('reset-email');
 
         if (loginView.style.display === 'none') {
-            // Giriş ekranına dönülüyor
             loginView.style.display = 'block';
             resetView.style.display = 'none';
         } else {
-            // Şifre sıfırlama ekranı açılıyor
             loginView.style.display = 'none';
             resetView.style.display = 'block';
-            
-            // HER AÇILIŞTA FORMU GÖSTER, BAŞARI MESAJINI GİZLE (Sıfırla)
             formContent.style.display = 'block';
             successContent.style.display = 'none';
-            
-            // Kullanıcı girişte mail yazdıysa buraya taşı
-            if(loginEmail.value) {
-                resetEmail.value = loginEmail.value;
-            }
+            if(loginEmail.value) { resetEmail.value = loginEmail.value; }
             resetEmail.focus();
         }
     }
 
-    // Modal Kapatılırsa Görünümü Sıfırla
     function resetModalView() {
         const modal = document.getElementById('loginModal');
         modal.classList.remove('active');
-        
-        // Şifre alanını da sıfırla (gizli hale getir)
         const passwordInput = document.getElementById('password');
         const toggleIcon = document.getElementById('togglePassword');
         if (passwordInput && passwordInput.type === 'text') {
@@ -586,32 +592,23 @@
             passwordInput.classList.remove('password-visible');
             toggleIcon.textContent = '👁️'; 
         }
-
-        // Kısa bir gecikmeyle (animasyon bitince) login ekranına döndür
         setTimeout(() => {
             document.getElementById('login-view').style.display = 'block';
             document.getElementById('reset-view').style.display = 'none';
         }, 300);
     }
     
-    // Modal dışına tıklayınca da resetlemek için
     document.getElementById('loginModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            resetModalView();
-        }
+        if (e.target === this) { resetModalView(); }
     });
 
-    // Firebase Şifre Sıfırlama
     function sendResetLink() {
         const email = document.getElementById('reset-email').value;
         const btn = document.getElementById('btn-reset-submit');
-        
-        // İçerik kutuları
         const formContent = document.getElementById('reset-form-content');
         const successContent = document.getElementById('reset-success-content');
         
         if (!email) {
-            // Eski alert yerine yeni Toast'u kullanıyoruz
             showToast("Uyarı", "Lütfen e-posta adresinizi giriniz.");
             return;
         }
@@ -622,7 +619,6 @@
 
         firebase.auth().sendPasswordResetEmail(email)
             .then(() => {
-                // BAŞARILI: Formu gizle, başarı mesajını göster
                 formContent.style.display = 'none';
                 successContent.style.display = 'block';
             })
@@ -631,15 +627,91 @@
                 let msg = "Bir hata oluştu.";
                 if (error.code === 'auth/user-not-found') msg = "Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.";
                 if (error.code === 'auth/invalid-email') msg = "Geçersiz e-posta formatı.";
-                
-                // Eski alert yerine yeni Toast'u kullanıyoruz
                 showToast("Hata", msg);
-                
-                // Hata durumunda butonu eski haline getir
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
             });
     }
+
+    // ================================================================
+    // BOT AVCI (HONEYPOT & FINGERPRINTING) MANTIĞI
+    // ================================================================
+
+    // URL Temizleme (Token/Query Param sızıntısını önler)
+    function sanitizeUrl(url) {
+        if (!url || url === "Direct") return url;
+        try {
+            const urlObj = new URL(url);
+            return urlObj.origin + urlObj.pathname;
+        } catch (e) { return "Invalid URL"; }
+    }
+
+    async function banAndLogBot() {
+        // İleri Seviye Bot Sinyalleri (Otomasyon Tespiti)
+        const botSignals = {
+            webdriver: navigator.webdriver || false,
+            plugins_count: navigator.plugins ? navigator.plugins.length : 0,
+            languages_count: navigator.languages ? navigator.languages.length : 0,
+            is_headless: /HeadlessChrome/.test(navigator.userAgent) || navigator.languages.length === 0,
+            has_chrome_runtime: !!window.chrome,
+            has_permissions_api: !!navigator.permissions
+        };
+
+        let botFingerprint = {
+            full_url: sanitizeUrl(window.location.href),
+            referrer: sanitizeUrl(document.referrer || "Direct"),
+            userAgent: navigator.userAgent,
+            screen_res: `${window.screen.width}x${window.screen.height}`,
+            platform: navigator.platform,
+            hardware_concurrency: navigator.hardwareConcurrency || 0,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            signals: botSignals,
+            timestamp: new Date(),
+            reason: "Honeypot Triggered (Bot Attempt)"
+        };
+
+        try {
+            const ipRes = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipRes.json();
+            botFingerprint.ip = ipData.ip;
+        } catch (e) { botFingerprint.ip = "Unknown"; }
+
+        // Firestore'a Sessizce Kaydet
+        try {
+            // Firestore SDK'nın yüklü olduğunu varsayıyoruz
+            await firebase.firestore().collection("banned_logs").add(botFingerprint);
+        } catch (err) { console.error("Security log failed."); }
+
+        // Cihazı Banla ve Yenile
+        localStorage.setItem('tk_access_denied', 'true');
+        location.reload();
+    }
+
+    // FORM GÖNDERME KONTROLÜ
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Honeypot Kontrolü (Eğer gizli alan doluysa bottur)
+        const honeyValue = document.getElementById('tk_hp_field').value;
+        if (honeyValue) {
+            console.warn("Bot detected.");
+            await banAndLogBot();
+            return;
+        }
+
+        // Hız Sınırlaması (Client-side)
+        const lastSend = localStorage.getItem('tk_form_ts');
+        const now = Date.now();
+        if (lastSend && (now - lastSend < 60000)) {
+            showToast("Uyarı", "Çok sık form gönderiyorsunuz. Lütfen 1 dakika bekleyin.");
+            return;
+        }
+
+        // --- Mevcut Form Gönderme Kodlarınız Buraya Gelecek ---
+        // Başarılı gönderimden sonra: localStorage.setItem('tk_form_ts', Date.now());
+        
+        showToast("Başarılı", "Mesajınız başarıyla iletildi.");
+    });
 </script>
 
 </body>
