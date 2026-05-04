@@ -1,6 +1,6 @@
 /**
  * ================================================================
- * [MODULE] SHARED PROFILE MANAGER (XSS PROTECTED, AVATAR UPLOAD & TOAST)
+ * [MODULE] SHARED PROFILE MANAGER (XSS PROTECTED, AVATAR UPLOAD, COMPRESSION & TOAST)
  * Yol: dashboard/shared/profile-manager.js
  * ================================================================
  */
@@ -18,12 +18,14 @@ class ProfileManager {
         this.currentUser = null;
         this.userData = null;
         this.selectedFile = null;
+        this.pendingFile = null; // Sıkıştırılmayı bekleyen büyük dosya
         this.init();
     }
 
     init() {
         this.injectModalHTML();
         this.injectToastHTML();
+        this.injectCompressionModalHTML(); // Yeni: Sıkıştırma Pop-up'ı
         this.bindEvents();
 
         onAuthStateChanged(auth, async (user) => {
@@ -33,6 +35,9 @@ class ProfileManager {
         });
     }
 
+    /* ---------------------------------------------------------
+       1. HTML ENJEKSİYONLARI (Modallar ve Toast)
+    --------------------------------------------------------- */
     injectToastHTML() {
         if (document.getElementById('profile-toast')) return;
         const toastHTML = `
@@ -47,17 +52,31 @@ class ProfileManager {
         document.body.insertAdjacentHTML('beforeend', toastHTML);
     }
 
-    showSuccessToast() {
-        const toast = document.getElementById('profile-toast');
-        toast.style.right = '20px';
-        setTimeout(() => {
-            toast.style.right = '-400px';
-        }, 4000);
+    injectCompressionModalHTML() {
+        if (document.getElementById('compression-modal')) return;
+        const compHTML = `
+            <div id="compression-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease;">
+                <div style="background: #11131a; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; width: 100%; max-width: 400px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; transform: translateY(20px); transition: transform 0.3s ease;" id="comp-modal-content">
+                    <div style="width: 60px; height: 60px; background: rgba(99, 102, 241, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                        <i class="fas fa-magic" style="color: #6366f1; font-size: 24px;"></i>
+                    </div>
+                    <h3 style="color: #fff; margin: 0 0 10px 0; font-family: 'Inter Tight', sans-serif; font-size: 1.2rem;">Fotoğraf Boyutu Büyük</h3>
+                    <p style="color: #a1a1aa; font-size: 0.9rem; margin: 0 0 25px 0; line-height: 1.5;">Seçtiğiniz dosya sistem sınırlarını aşıyor. Yüksek kalitede sıkıştırarak dönüştürmemizi ister misiniz?</p>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button id="btn-cancel-compress" style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #e4e4e7; padding: 12px; border-radius: 8px; font-family: 'Inter Tight', sans-serif; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">İptal</button>
+                        <button id="btn-compress-image" style="flex: 1; background: #6366f1; border: none; color: #fff; padding: 12px; border-radius: 8px; font-weight: 600; font-family: 'Inter Tight', sans-serif; cursor: pointer; transition: background 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">
+                            <i class="fas fa-sync-alt"></i> Fotoğrafı Dönüştür
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', compHTML);
     }
 
     injectModalHTML() {
         if (document.getElementById('shared-profile-modal')) return;
-
         const modalHTML = `
             <div id="shared-profile-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 99999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease;">
                 <div style="background: #11131a; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; width: 100%; max-width: 480px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s ease;" id="profile-modal-content">
@@ -68,7 +87,6 @@ class ProfileManager {
                     </div>
 
                     <form id="shared-profile-form">
-                        
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
                             <div style="position: relative; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #1e2130; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; flex-shrink: 0;" id="photo-preview-container">
                                 <div id="default-avatar-placeholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #6366f1; color: white; font-size: 2rem; font-weight: 600;">U</div>
@@ -117,6 +135,52 @@ class ProfileManager {
         });
     }
 
+    /* ---------------------------------------------------------
+       2. FOTOĞRAF DÖNÜŞTÜRME (COMPRESSION) MANTIĞI
+    --------------------------------------------------------- */
+    async compressImage(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    // Fotoğrafı en fazla 1024x1024 boyutuna küçült
+                    const MAX_WIDTH = 1024;
+                    const MAX_HEIGHT = 1024;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // %85 Kalite ile JPEG'e dönüştür (2MB'ı her türlü aşacaktır)
+                    canvas.toBlob((blob) => {
+                        const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + "_optimized.jpg", {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        resolve(compressedFile);
+                    }, 'image/jpeg', 0.85);
+                };
+                img.onerror = error => reject(error);
+            };
+        });
+    }
+
+    /* ---------------------------------------------------------
+       3. OLAY DİNLEYİCİLERİ (EVENTS)
+    --------------------------------------------------------- */
     bindEvents() {
         const closeBtn = document.getElementById('close-profile-modal');
         const modal = document.getElementById('shared-profile-modal');
@@ -126,19 +190,79 @@ class ProfileManager {
         const form = document.getElementById('shared-profile-form');
         form.addEventListener('submit', (e) => this.handleProfileSave(e));
 
+        // Sıkıştırma Modalı Butonları
+        const compModal = document.getElementById('compression-modal');
+        const compModalContent = document.getElementById('comp-modal-content');
+        const btnCancelComp = document.getElementById('btn-cancel-compress');
+        const btnRunComp = document.getElementById('btn-compress-image');
         const fileInput = document.getElementById('prof-photo-input');
+
+        btnCancelComp.addEventListener('click', () => {
+            compModal.style.opacity = '0';
+            compModalContent.style.transform = 'translateY(20px)';
+            setTimeout(() => compModal.style.display = 'none', 300);
+            this.pendingFile = null;
+            fileInput.value = "";
+        });
+
+        btnRunComp.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (!this.pendingFile) return;
+
+            const origText = btnRunComp.innerHTML;
+            btnRunComp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
+            btnRunComp.disabled = true;
+
+            try {
+                // Fotoğrafı dönüştür
+                this.selectedFile = await this.compressImage(this.pendingFile);
+                
+                // Önizlemeye bas
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imgPreview = document.getElementById('prof-photo-preview');
+                    const placeholder = document.getElementById('default-avatar-placeholder');
+                    imgPreview.src = event.target.result;
+                    imgPreview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                };
+                reader.readAsDataURL(this.selectedFile);
+
+                // Modalı kapat
+                compModal.style.opacity = '0';
+                compModalContent.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    compModal.style.display = 'none';
+                    btnRunComp.innerHTML = origText;
+                    btnRunComp.disabled = false;
+                }, 300);
+
+            } catch (error) {
+                console.error("Dönüştürme hatası:", error);
+                btnRunComp.innerHTML = '<i class="fas fa-times"></i> Hata';
+                setTimeout(() => { btnRunComp.innerHTML = origText; btnRunComp.disabled = false; }, 2000);
+            }
+        });
+
         document.getElementById('btn-trigger-upload').addEventListener('click', () => fileInput.click());
         document.getElementById('photo-preview-container').addEventListener('click', () => fileInput.click());
 
+        // Fotoğraf Seçimi
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                    alert("Seçtiğiniz fotoğraf çok büyük. Lütfen 2MB'den küçük bir dosya seçin.");
-                    fileInput.value = "";
-                    return;
+                // 2MB (2 * 1024 * 1024) Kontrolü
+                if (file.size > 2097152) {
+                    this.pendingFile = file;
+                    compModal.style.display = 'flex';
+                    setTimeout(() => {
+                        compModal.style.opacity = '1';
+                        compModalContent.style.transform = 'translateY(0)';
+                    }, 10);
+                    return; // İşlemi burada durdur, pop-up'tan onay bekle
                 }
                 
+                // Sınırın altındaysa normal devam et
                 this.selectedFile = file;
                 const reader = new FileReader();
                 reader.onload = (event) => {
@@ -153,11 +277,21 @@ class ProfileManager {
         });
     }
 
+    /* ---------------------------------------------------------
+       4. ANA İŞLEMLER (Açma, Kapama, Kaydetme)
+    --------------------------------------------------------- */
+    showSuccessToast() {
+        const toast = document.getElementById('profile-toast');
+        toast.style.right = '20px';
+        setTimeout(() => { toast.style.right = '-400px'; }, 4000);
+    }
+
     async openModal() {
         if (!this.currentUser) return;
         const modal = document.getElementById('shared-profile-modal');
         const modalContent = document.getElementById('profile-modal-content');
         this.selectedFile = null;
+        this.pendingFile = null;
         
         const fileInput = document.getElementById('prof-photo-input');
         if (fileInput) fileInput.value = "";
@@ -166,7 +300,7 @@ class ProfileManager {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Bilgiler Yükleniyor...';
         btn.disabled = true;
 
-        document.getElementById('shared-profile-modal').style.display = 'flex';
+        modal.style.display = 'flex';
         setTimeout(() => { modal.style.opacity = '1'; modalContent.style.transform = 'translateY(0)'; }, 10);
 
         try {
@@ -236,7 +370,6 @@ class ProfileManager {
         try {
             const rawFirst = document.getElementById('prof-firstname').value.trim();
             const rawLast = document.getElementById('prof-lastname').value.trim();
-            
             const cleanFirst = rawFirst.replace(/\s+/g, ' ');
             const cleanLast = rawLast.replace(/\s+/g, ' ');
             const mergedFullName = `${cleanFirst} ${cleanLast}`;
@@ -252,7 +385,7 @@ class ProfileManager {
 
             // FOTOĞRAF YÜKLEME (FIREBASE STORAGE)
             if (this.selectedFile) {
-                const storageRef = ref(storage, `users/${this.currentUser.uid}/profile_photo`);
+                const storageRef = ref(storage, `users/${this.currentUser.uid}/profile_photo.jpg`);
                 await uploadBytes(storageRef, this.selectedFile);
                 const downloadURL = await getDownloadURL(storageRef);
                 updatePayload["profile.photoURL"] = downloadURL;
@@ -265,7 +398,6 @@ class ProfileManager {
             
             // Ekrandaki UI güncellemeleri
             const finalName = updatePayload["profile.companyName"] || safeFullName;
-            
             const displayEl = document.getElementById("user-name-display");
             const titleEl = document.getElementById("user-name-title");
             const avatarEl = document.getElementById("user-avatar");
@@ -292,7 +424,6 @@ class ProfileManager {
             console.error("Güncelleme Hatası:", error);
             btn.innerHTML = '<i class="fas fa-times"></i> Hata Oluştu';
             btn.style.background = '#ef4444';
-            
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.style.background = '#6366f1';
