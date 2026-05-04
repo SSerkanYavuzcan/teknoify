@@ -172,7 +172,7 @@ class ContactSystem {
         this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
         this.honeypot = document.getElementById('tk_hp_field');
         // Yeni Load Balancer IP Adresiniz
-        this.apiUrl = "http://34.111.45.176/submitContactForm";
+        this.apiUrl = "https://api.teknoify.com/submitContactForm";
         
         if (this.form) this.bindEvents();
     }
