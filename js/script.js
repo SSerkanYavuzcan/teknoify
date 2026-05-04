@@ -12,14 +12,6 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-if (typeof firebase !== 'undefined' && firebase.appCheck) {
-    const appCheck = firebase.appCheck();
-    appCheck.activate(
-        new firebase.appCheck.ReCaptchaV3Provider('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk'),
-        true
-    );
-}
-
 const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
