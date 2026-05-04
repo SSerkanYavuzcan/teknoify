@@ -61,12 +61,12 @@ class AuthSystem {
                         if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
                             window.location.href = '../dashboard/index.html'; 
                         } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
-                            window.location.href = '../premium.html'; 
+                            window.location.href = '../dashboard/premium.html'; 
                         } else {
-                            window.location.href = '../member.html'; 
+                            window.location.href = '../dashboard/member.html'; 
                         }
                     } catch (error) {
-                        window.location.href = '../member.html';
+                        window.location.href = '../dashboard/member.html';
                     }
                 } else {
                     this.open();
@@ -133,16 +133,16 @@ class AuthSystem {
                         if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
                             window.location.href = '../dashboard/index.html'; 
                         } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
-                            window.location.href = '../premium.html'; 
+                            window.location.href = '../dashboard/premium.html'; 
                         } else {
-                            window.location.href = '../member.html'; 
+                            window.location.href = '../dashboard/member.html'; 
                         }
                     }, 1000);
 
                 } catch (dbError) {
                     console.error("Veritabanı sorgulama hatası:", dbError);
                     showToast("Uyarı", "Standart panele yönlendiriliyorsunuz.", "error");
-                    setTimeout(() => { window.location.href = '../member.html'; }, 2000);
+                    setTimeout(() => { window.location.href = '../dashboard/member.html'; }, 2000);
                 }
             })
             .catch((error) => {
