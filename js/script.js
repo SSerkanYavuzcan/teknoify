@@ -1,7 +1,7 @@
 /**
  * ================================================================
  * [MAIN] TEKNOIFY GLOBAL SCRIPT (ULTIMATE SHIELD VERSION)
- * Katmanlı Savunma: App Check, Load Balancer IP, Honeypot, UI FX
+ * Katmanlı Savunma: App Check, Load Balancer, Honeypot, UI FX
  * ================================================================
  */
 
@@ -164,14 +164,13 @@ class AuthSystem {
 }
 
 /* ---------------------------------------------------------
-   2. CONTACT SYSTEM (Load Balancer IP Protected)
+   2. CONTACT SYSTEM (Load Balancer & HTTPS Protected)
 --------------------------------------------------------- */
 class ContactSystem {
     constructor() {
         this.form = document.querySelector('.contact-form');
         this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
         this.honeypot = document.getElementById('tk_hp_field');
-        // Yeni Load Balancer IP Adresiniz
         this.apiUrl = "https://api.teknoify.com/submitContactForm";
         
         if (this.form) this.bindEvents();
@@ -181,13 +180,11 @@ class ContactSystem {
         this.form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // 1. KATMAN: HONEYPOT
             if (this.honeypot && this.honeypot.value) {
                 this.banAndLogBot();
                 return;
             }
 
-            // 2. KATMAN: ANTI-FLOOD
             const lastSuccess = localStorage.getItem('tk_last_success');
             if (lastSuccess && (Date.now() - lastSuccess < 60000)) {
                 if (typeof showToast === "function") 
@@ -203,7 +200,7 @@ class ContactSystem {
 
     validateInput() {
         const contactVal = document.getElementById('contact_info').value.trim();
-        const isEmail = contactVal.includes('@') && contactVal.includes('.');
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactVal);
         const isPhone = contactVal.replace(/\D/g, '').length >= 10;
         
         if (!isEmail && !isPhone) {
@@ -234,11 +231,12 @@ class ContactSystem {
                 visitor_id: localStorage.getItem('tk_visitor_id') || "Web_Client"
             };
 
-            // onCall yerine Standart POST isteği (Fetch)
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
+                mode: 'cors',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(payload)
             });
@@ -247,15 +245,18 @@ class ContactSystem {
 
             if (response.ok && result.success) {
                 localStorage.setItem('tk_last_success', Date.now());
-                if (typeof showToast === "function") showToast("Başarılı", "Mesajınız Cloud Armor korumasıyla iletildi.");
+                if (typeof showToast === "function") showToast("Başarılı", "Mesajınız güvenli katmanlardan geçerek iletildi.");
                 this.form.reset();
             } else {
-                throw new Error(result.error || "Güvenlik engeli veya hata.");
+                // Backend'den gelen hata mesajını veya varsayılanı kullan
+                throw new Error(result.error || "İşlem reddedildi. Lütfen bilgilerinizi kontrol edin.");
             }
 
         } catch (err) {
-            console.error("Network Error:", err);
-            if (typeof showToast === "function") showToast("Sistem Mesajı", err.message);
+            console.error("Network Error Details:", err);
+            // [object Object] hatasını önlemek için err.message kullanıyoruz
+            const finalMsg = err.message || "Bağlantı hatası oluştu.";
+            if (typeof showToast === "function") showToast("Sistem Mesajı", finalMsg);
         } finally {
             setTimeout(() => {
                 this.submitBtn.innerHTML = origHtml;
@@ -319,7 +320,7 @@ class TerminalEffect {
         if (!this.container) return;
         this.lines = [
             { type: 'comment', text: '# Security: LOAD_BALANCER_ACTIVE' },
-            { type: 'code', text: 'shield.connect("34.111.45.176")' },
+            { type: 'code', text: 'shield.connect("api.teknoify.com")' },
             { type: 'empty', text: '' },
             { type: 'comment', text: '# Initializing Cloud Armor...' },
             { type: 'output', text: '>> WAF Protocol: ENABLED' },
