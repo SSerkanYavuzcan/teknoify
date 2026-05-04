@@ -99,6 +99,11 @@
         .custom-toast .toast-close:hover {
             color: #fff;
         }
+
+        /* Google reCAPTCHA v3 Rozetini Gizleme */
+        .grecaptcha-badge { 
+            visibility: hidden !important;
+        }
     </style>
 </head>
 
@@ -374,6 +379,13 @@
                     <div class="form-footer">
                         <a href="#" class="link-sm" onclick="toggleResetView(event)">Şifremi Unuttum</a>
                     </div>
+
+                    <div style="font-size: 11px; color: #6b7280; text-align: center; margin-top: 15px; line-height: 1.4;">
+                        Bu site reCAPTCHA ile korunmaktadır. Google 
+                        <a href="https://policies.google.com/privacy" target="_blank" style="color: #7367f0; text-decoration: none;">Gizlilik Politikası</a> ve 
+                        <a href="https://policies.google.com/terms" target="_blank" style="color: #7367f0; text-decoration: none;">Hizmet Şartları</a> geçerlidir.
+                    </div>
+
                 </form>
             </div>
 
@@ -491,6 +503,7 @@
 <script src="js/cookies.js" defer></script>
 
 <script>
+    // TOAST (POP-UP) GÖSTERME FONKSİYONU
     function showToast(title, message) {
         const toast = document.getElementById('customToast');
         document.getElementById('toastTitle').textContent = title;
@@ -498,15 +511,18 @@
         
         toast.classList.add('show');
 
+        // 4 saniye sonra otomatik olarak gizlensin
         setTimeout(() => {
             hideToast();
         }, 4000);
     }
 
+    // TOAST GİZLEME FONKSİYONU
     function hideToast() {
         document.getElementById('customToast').classList.remove('show');
     }
 
+    // ŞİFRE GÖSTER/GİZLE FONKSİYONU
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById('password');
         const toggleIcon = document.getElementById('togglePassword');
@@ -522,12 +538,14 @@
         }
     }
 
+    // Görünüm Değiştirme (Login <-> Reset)
     function toggleResetView(e) {
         if(e) e.preventDefault();
         
         const loginView = document.getElementById('login-view');
         const resetView = document.getElementById('reset-view');
         
+        // İçerik kutuları
         const formContent = document.getElementById('reset-form-content');
         const successContent = document.getElementById('reset-success-content');
 
@@ -535,15 +553,19 @@
         const resetEmail = document.getElementById('reset-email');
 
         if (loginView.style.display === 'none') {
+            // Giriş ekranına dönülüyor
             loginView.style.display = 'block';
             resetView.style.display = 'none';
         } else {
+            // Şifre sıfırlama ekranı açılıyor
             loginView.style.display = 'none';
             resetView.style.display = 'block';
             
+            // HER AÇILIŞTA FORMU GÖSTER, BAŞARI MESAJINI GİZLE (Sıfırla)
             formContent.style.display = 'block';
             successContent.style.display = 'none';
             
+            // Kullanıcı girişte mail yazdıysa buraya taşı
             if(loginEmail.value) {
                 resetEmail.value = loginEmail.value;
             }
@@ -551,10 +573,12 @@
         }
     }
 
+    // Modal Kapatılırsa Görünümü Sıfırla
     function resetModalView() {
         const modal = document.getElementById('loginModal');
         modal.classList.remove('active');
         
+        // Şifre alanını da sıfırla (gizli hale getir)
         const passwordInput = document.getElementById('password');
         const toggleIcon = document.getElementById('togglePassword');
         if (passwordInput && passwordInput.type === 'text') {
@@ -563,18 +587,21 @@
             toggleIcon.textContent = '👁️'; 
         }
 
+        // Kısa bir gecikmeyle (animasyon bitince) login ekranına döndür
         setTimeout(() => {
             document.getElementById('login-view').style.display = 'block';
             document.getElementById('reset-view').style.display = 'none';
         }, 300);
     }
     
+    // Modal dışına tıklayınca da resetlemek için
     document.getElementById('loginModal').addEventListener('click', function(e) {
         if (e.target === this) {
             resetModalView();
         }
     });
 
+    // Firebase Şifre Sıfırlama
     function sendResetLink() {
         const email = document.getElementById('reset-email').value;
         const btn = document.getElementById('btn-reset-submit');
@@ -595,6 +622,7 @@
 
         firebase.auth().sendPasswordResetEmail(email)
             .then(() => {
+                // BAŞARILI: Formu gizle, başarı mesajını göster
                 formContent.style.display = 'none';
                 successContent.style.display = 'block';
             })
@@ -604,8 +632,10 @@
                 if (error.code === 'auth/user-not-found') msg = "Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.";
                 if (error.code === 'auth/invalid-email') msg = "Geçersiz e-posta formatı.";
                 
+                // Eski alert yerine yeni Toast'u kullanıyoruz
                 showToast("Hata", msg);
                 
+                // Hata durumunda butonu eski haline getir
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
             });
