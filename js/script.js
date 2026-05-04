@@ -94,60 +94,86 @@ class AuthSystem {
         const passInput = document.getElementById('password').value.trim();
 
         if (!auth) {
-            showToast("Hata", "Güvenlik sistemi başlatılamadı. Lütfen sayfayı yenileyin.");
+            if (typeof showToast === "function") showToast("Hata", "Güvenlik sistemi başlatılamadı. Lütfen sayfayı yenileyin.");
             return;
         }
 
         const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
+        btn.innerHTML = '<i class="fas fa-shield-alt"></i> Güvenlik Kontrolü...';
         btn.disabled = true;
 
-        auth.signInWithEmailAndPassword(emailInput, passInput)
-            .then((userCredential) => {
-                console.log("Giriş Başarılı:", userCredential.user.email);
-                
-                btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
-                btn.style.backgroundColor = '#10b981';
-                
-                setTimeout(() => {
-                    window.location.href = '../dashboard/index.html'; 
-                }, 1000);
-            })
-            .catch((error) => {
-                console.error("Giriş Hatası:", error);
-                
-                let msg = "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.";
-                
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                    case 'auth/invalid-credential':
-                        msg = "Böyle bir kullanıcı bulunamadı veya şifre yanlış.";
-                        break;
-                    case 'auth/wrong-password':
-                        msg = "Hatalı şifre girdiniz.";
-                        break;
-                    case 'auth/invalid-email':
-                        msg = "Geçersiz e-posta formatı.";
-                        break;
-                    case 'auth/too-many-requests':
-                        msg = "Çok fazla deneme yaptınız. Lütfen biraz bekleyin.";
-                        break;
-                    case 'auth/network-request-failed':
-                        msg = "Bağlantı hatası. İnternetinizi kontrol edin.";
-                        break;
-                }
-                
-                // BURASI DEĞİŞTİRİLDİ: Alert yerine yeni Toast pop-up'ımız çağrılıyor
-                if (typeof showToast === "function") {
-                    showToast("Giriş Başarısız", msg);
-                } else {
-                    alert(msg); // Eger index.html icindeki script calismazsa fallback olarak dursun
-                }
-                
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                btn.style.backgroundColor = '';
+        // Firebase giriş işlemini bir fonksiyona ayırıyoruz ki reCAPTCHA'dan sonra çağırabilelim
+        const performLogin = () => {
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
+            
+            auth.signInWithEmailAndPassword(emailInput, passInput)
+                .then((userCredential) => {
+                    console.log("Giriş Başarılı:", userCredential.user.email);
+                    
+                    // --- GÜVENLİK: 3 Saatlik Oturum Başlangıcını Kaydet ---
+                    localStorage.setItem('session_start_time', Date.now());
+                    
+                    btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
+                    btn.style.backgroundColor = '#10b981';
+                    
+                    setTimeout(() => {
+                        window.location.href = '../dashboard/index.html'; 
+                    }, 1000);
+                })
+                .catch((error) => {
+                    console.error("Giriş Hatası:", error);
+                    
+                    let msg = "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.";
+                    
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                        case 'auth/invalid-credential':
+                            msg = "Böyle bir kullanıcı bulunamadı veya şifre yanlış.";
+                            break;
+                        case 'auth/wrong-password':
+                            msg = "Hatalı şifre girdiniz.";
+                            break;
+                        case 'auth/invalid-email':
+                            msg = "Geçersiz e-posta formatı.";
+                            break;
+                        case 'auth/too-many-requests':
+                            msg = "Çok fazla deneme yaptınız. Lütfen biraz bekleyin.";
+                            break;
+                        case 'auth/network-request-failed':
+                            msg = "Bağlantı hatası. İnternetinizi kontrol edin.";
+                            break;
+                    }
+                    
+                    if (typeof showToast === "function") {
+                        showToast("Giriş Başarısız", msg);
+                    } else {
+                        alert(msg);
+                    }
+                    
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    btn.style.backgroundColor = '';
+                });
+        };
+
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.ready(function() {
+                grecaptcha.execute('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', {action: 'login'}).then(function(token) {
+                    performLogin();
+                }).catch(function(error) {
+                    console.error("reCAPTCHA Hatası:", error);
+                    if (typeof showToast === "function") {
+                        showToast("Güvenlik İhlali", "Bot doğrulaması başarısız oldu.");
+                    }
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
             });
+        } else {
+
+            console.warn("reCAPTCHA yüklenemedi. Doğrudan giriş deneniyor...");
+            performLogin();
+        }
     }
 
     checkCurrentUser() {
