@@ -368,7 +368,6 @@
                 }
             }
 
-            // UI - İsim ve Profil Fotoğrafı Güncellemeleri
             const displayEl = document.getElementById("user-name-display");
             const titleEl = document.getElementById("user-name-title");
             const avatarEl = document.getElementById("user-avatar");
@@ -377,18 +376,17 @@
             if(titleEl) titleEl.textContent = name;
 
             if(avatarEl) {
-                // Eğer Firestore'da kayıtlı bir fotoğraf URL'si varsa onu göster, yoksa baş harfi koy
                 if (userData && userData.profile && userData.profile.photoURL) {
                     avatarEl.innerHTML = `<img src="${userData.profile.photoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                    avatarEl.style.background = 'transparent';
                 } else {
                     avatarEl.innerHTML = name.charAt(0).toUpperCase();
+                    avatarEl.style.background = '#6366f1';
                 }
             }
 
-            // KURUMSAL KULLANICI İÇİN GİZLEME MANTIĞI
             const personalCardsGrid = document.getElementById("personal-cards-grid");
             if (accountType === "kurumsal" && personalCardsGrid) {
-                // Kurumsalsa kişisel kartları tamamen ekrandan kaldır
                 personalCardsGrid.style.display = "none";
             }
 
@@ -398,7 +396,6 @@
                 window.TK_RENDER_SIDEBAR();
             }
 
-            // Projeleri Çek 
             fetchUserProjects(user.uid, userDocSnap);
 
         } else {
