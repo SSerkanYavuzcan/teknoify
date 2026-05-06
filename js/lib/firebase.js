@@ -3,7 +3,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
+  apiKey: "AIzaSyC5Unp9aCYhY1aj2pQqvHeS7tkFOpiqN4E",
   authDomain: "teknoify-9449c.firebaseapp.com",
   projectId: "teknoify-9449c",
   storageBucket: "teknoify-9449c.firebasestorage.app",
