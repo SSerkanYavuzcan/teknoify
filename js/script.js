@@ -54,12 +54,9 @@ class AuthSystem {
                             window.location.href = '../dashboard/member.html';
                         }
                     } catch (error) {
-                        if (error.code === 'permission-denied' || (error.message && error.message.includes('permissions'))) {
-                            auth.signOut();
-                            if (typeof showToast === "function") showToast("Güvenlik Duvarı", "Erişim reddedildi, oturum kapatıldı.", "error");
-                        } else {
-                            window.location.href = '../dashboard/member.html';
-                        }
+                        // Hata durumunda sistemi kapatmak yerine standart üyeye yönlendiriyoruz
+                        console.warn("Kullanıcı rolü kontrol edilemedi, standart üyeye yönlendiriliyor.", error.message);
+                        window.location.href = '../dashboard/member.html';
                     }
                 } else {
                     this.open();
@@ -124,19 +121,14 @@ class AuthSystem {
                         }
                     }, 1000);
                 } catch (dbError) {
-                    console.error("--- VERİTABANI ERİŞİM HATASI ---");
-                    console.error("Hata Kodu:", dbError.code);
-                    console.error("Hata Mesajı:", dbError.message);
-                    console.dir(dbError);
-                    if (dbError.code === 'permission-denied' || (dbError.message && dbError.message.includes('permissions'))) {
-                        auth.signOut();
-                        showToast("Güvenlik Duvarı", "Bot veya yetki hatası tespit edildi.", "error");
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    } else {
-                        showToast("Uyarı", "Standart panele yönlendiriliyorsunuz.", "error");
-                        setTimeout(() => { window.location.href = '../dashboard/member.html'; }, 2000);
-                    }
+                    console.warn("--- VERİTABANI ERİŞİM UYARISI ---", dbError.message);
+                    
+                    // Firestore erişim hatası olsa bile oturumu sonlandırmıyoruz, 
+                    // varsayılan kısıtlı panele güvenli geçiş yapıyoruz.
+                    btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
+                    btn.style.backgroundColor = '#10b981';
+                    
+                    setTimeout(() => { window.location.href = '../dashboard/member.html'; }, 1000);
                 }
             })
             .catch((error) => {
