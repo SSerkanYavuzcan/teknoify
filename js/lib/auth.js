@@ -121,7 +121,7 @@ export async function requireAuth({ allowedRoles = [] } = {}) {
   // Oturum yoksa login'e gönder
   if (!user) {
     console.warn("Oturum bulunamadı, login sayfasına yönlendiriliyor...");
-    window.location.href = getLoginPath();
+   // window.location.href = getLoginPath();
     return null;
   }
 
