@@ -7,24 +7,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// ================================================================
-// APP CHECK ENTEGRASYONU EKLENDİ
-// ================================================================
-import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-appcheck.js";
-import { app } from "/js/lib/firebase.js"; // firebase.js'den app instance'ını çekiyoruz (Eğer export etmediysen firebase.js içine 'export const app = initializeApp(firebaseConfig);' eklemelisin)
-
-// App Check'i başlat (Eğer localhost'ta çalışıyorsan console'a düşen debug token'ı Firebase Console -> App Check sekmesine eklemelisin)
-if (app) {
-    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    }
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk'), // index.html'deki reCAPTCHA anahtarın
-      isTokenAutoRefreshEnabled: true
-    });
-}
-// ================================================================
-
 const IMPERSONATE_UID_KEY = "teknoify_impersonate_uid";
 
 // ================================================================
@@ -59,7 +41,7 @@ function getDashboardPath(roleType = "member") {
   const p = window.location.pathname || "";
   const prefix = (p.includes("/dashboard/") || p.includes("/pages/")) ? "../dashboard/" : "dashboard/";
   
-  if (roleType === "admin") return prefix + "admin.html"; // "index.html" yerine "admin.html" kullanıyorsan burası doğru, aksi halde "index.html" olarak düzeltmelisin.
+  if (roleType === "admin") return prefix + "index.html"; // Yönlendirme hatası olmaması için index.html yapıldı
   if (roleType === "premium") return prefix + "premium.html";
   return prefix + "member.html";
 }
@@ -203,9 +185,6 @@ export async function requireAuth({ allowedRoles = [] } = {}) {
   }
 
   const real = await buildRealSession(user);
-  
-  // EĞER VERİTABANINDAN VERİ ÇEKİLEMEDİYSE (Örn: App Check hatası)
-  // real.isAdmin false olacak ve varsayılan olarak member rolü atanacaktır.
   const effective = await getEffectiveSession(real);
 
   if (effective.role.status !== "active" && !effective.realIsAdmin) {
@@ -215,8 +194,6 @@ export async function requireAuth({ allowedRoles = [] } = {}) {
   }
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(effective.role.type)) {
-    // BURASI ÖNEMLİ: Eğer admin girişi yaptıysa ama App Check yüzünden member olarak algılandıysa,
-    // ve girmeye çalıştığı sayfa admin sayfasıysa, onu mecburen member sayfasına atacaktır.
     window.location.href = getDashboardPath(effective.role.type);
     return null;
   }
