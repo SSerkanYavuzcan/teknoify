@@ -1,30 +1,23 @@
-import { auth, db, app } from "/js/lib/firebase.js"; 
+import { auth, db, app } from "/js/lib/firebase.js";
 import {
-  getIdTokenResult,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
   signOut
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-// DOĞRU CDN LİNKİ: firebase-app-check.js (Tireler eklendi)
 import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check.js";
 
 // ================================================================
-// PROFESYONEL APP CHECK BAŞLATMA
+// APP CHECK BAŞLATMA
 // ================================================================
 if (app) {
-    // Eğer projeyi kendi bilgisayarında (localhost) test ediyorsan engellenmemen için debug modunu açar.
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; 
+        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     }
-    
     initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk'), // reCAPTCHA v3 Site Key
+        provider: new ReCaptchaV3Provider('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk'),
         isTokenAutoRefreshEnabled: true
     });
 }
-// ================================================================
 
 const IMPERSONATE_UID_KEY = "teknoify_impersonate_uid";
 
@@ -37,7 +30,6 @@ function checkSecurityBan() {
         <div style="background:#05080a; color:white; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; text-align:center; padding:20px;">
             <h1 style="color:#ff4b4b; font-size:4rem; margin-bottom:0;">403</h1>
             <h2 style="margin-top:10px;">Erişim Reddedildi</h2>
-            <p style="color:#a1a1aa; max-width:500px;">Güvenlik politikalarımız ihlal edildiği için bu siteye erişiminiz kalıcı olarak engellenmiştir.</p>
         </div>`;
         window.stop();
         return true;
@@ -52,17 +44,14 @@ function normalizeEmail(email) {
 function getLoginPath() {
   const p = window.location.pathname || "";
   if (p.includes("/dashboard/")) return "../pages/login.html";
-  if (p.includes("/pages/")) return "login.html";
   return "pages/login.html";
 }
 
 function getDashboardPath(roleType = "member") {
   const p = window.location.pathname || "";
-  const prefix = (p.includes("/dashboard/") || p.includes("/pages/")) ? "../dashboard/" : "dashboard/";
-  
-  if (roleType === "admin") return prefix + "index.html"; // Adminler için doğru yönlendirme adresi
-  if (roleType === "premium") return prefix + "premium.html";
-  return prefix + "member.html";
+  const prefix = (p.includes("/dashboard/") || p.includes("/pages/")) ? "" : "dashboard/";
+  if (roleType === "admin") return prefix + "index.html";
+  return prefix + roleType + ".html";
 }
 
 async function waitForAuthUser() {
@@ -80,140 +69,79 @@ async function readUserDocument(uid) {
     if (!snap.exists()) return null;
     return snap.data();
   } catch (err) {
-    console.error("Kullanıcı verisi okunamadı:", err);
+    console.error("🚨 KRİTİK: Firestore'dan veri çekilemedi (Permission Denied olabilir):", err);
     return null;
   }
 }
 
-function computeFallbackName(user) {
-  const email = normalizeEmail(user?.email);
-  if (user?.displayName) return user.displayName;
-  if (email) return email.split("@")[0];
-  return "User";
-}
-
 async function buildRealSession(user) {
   const uid = user.uid;
-  const email = normalizeEmail(user.email);
-
   const userDoc = await readUserDocument(uid);
   
   const roleData = userDoc?.role || { type: "member", status: "active" };
   const profileData = userDoc?.profile || {};
-  const projectAccess = userDoc?.projectAccess || {};
   
-  const name = profileData.fullName || computeFallbackName(user);
-  const isAdmin = roleData.type === "admin";
-
   return {
-    userId: uid,
     uid,
-    email,
-    name,
-    profile: profileData,
+    email: normalizeEmail(user.email),
+    name: profileData.fullName || user.email.split("@")[0],
     role: roleData, 
-    projectAccess,
-    isAdmin,
+    isAdmin: roleData.type === "admin",
     issuedAt: Date.now()
   };
 }
 
-export function stopImpersonation({ redirect = true } = {}) {
-  window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-  if (redirect) window.location.href = getDashboardPath("admin");
-}
-
-export async function startImpersonation(targetUid, { to } = {}) {
-  const user = await waitForAuthUser();
-  if (!user) return { ok: false, message: "Oturum yok." };
-
-  const real = await buildRealSession(user);
-  if (!real.isAdmin) return { ok: false, message: "Sadece adminler impersonate başlatabilir." };
-  if (!targetUid) return { ok: false, message: "Hedef kullanıcı boş olamaz." };
-  if (targetUid === real.uid) return { ok: false, message: "Kendi hesabını impersonate edemezsin." };
-
-  const targetDoc = await readUserDocument(targetUid);
-  if (!targetDoc) return { ok: false, message: "Hedef kullanıcı veritabanında bulunamadı." };
-
-  window.localStorage.setItem(IMPERSONATE_UID_KEY, targetUid);
-  if (to) window.location.href = to;
-  return { ok: true, targetUid };
-}
-
 async function getEffectiveSession(realSession) {
-  if (!realSession.isAdmin) {
-    return { ...realSession, impersonating: false, realIsAdmin: false };
-  }
-
   const targetUid = window.localStorage.getItem(IMPERSONATE_UID_KEY);
-  if (!targetUid) {
-    return { ...realSession, impersonating: false, realIsAdmin: true };
-  }
+  if (!realSession.isAdmin || !targetUid) return { ...realSession, impersonating: false };
 
   const targetDoc = await readUserDocument(targetUid);
   if (!targetDoc) {
     window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-    return { ...realSession, impersonating: false, realIsAdmin: true };
+    return { ...realSession, impersonating: false };
   }
 
   return {
     ...realSession,
-    userId: targetUid,
     uid: targetUid,
-    email: targetDoc.profile?.email || realSession.email,
-    name: targetDoc.profile?.fullName || "Kullanıcı",
-    profile: targetDoc.profile || {},
     role: targetDoc.role || { type: "member", status: "active" },
-    projectAccess: targetDoc.projectAccess || {},
     impersonating: true,
-    adminUserId: realSession.uid,
-    adminEmail: realSession.email,
-    realIsAdmin: true,
-    isAdmin: false 
+    realIsAdmin: true
   };
-}
-
-export async function login(email, password) {
-  if (checkSecurityBan()) return null;
-
-  try {
-    await signInWithEmailAndPassword(auth, normalizeEmail(email), password);
-    return { ok: true };
-  } catch {
-    return { ok: false, message: "E-posta veya şifre hatalı." };
-  }
 }
 
 export async function logout() {
   window.localStorage.removeItem(IMPERSONATE_UID_KEY);
-  try {
-    await signOut(auth);
-  } finally {
-    window.location.replace("/");
-  }
+  await signOut(auth);
+  window.location.replace("/");
 }
 
+/**
+ * requireAuth: TEST MODU AKTİF (Redirect Kapatıldı)
+ */
 export async function requireAuth({ allowedRoles = [] } = {}) {
+  console.log("--- REQUIRE_AUTH BAŞLATILDI ---");
+  
   if (checkSecurityBan()) return null;
 
   const user = await waitForAuthUser();
 
+  // 🚨 DİKKAT: Sorunu bulmak için yönlendirmeyi durdurduk
   if (!user) {
-    window.location.href = getLoginPath();
+    console.error("🚨 HATA: Firebase Auth kullanıcısı bulunamadı (User = null).");
+    console.warn("Lütfen 'Preserve Log' açıkken giriş yapmayı deneyin ve buradaki hata mesajına bakın.");
+    // window.location.href = getLoginPath(); // Geçici olarak pasif
     return null;
   }
 
   const real = await buildRealSession(user);
   const effective = await getEffectiveSession(real);
 
-  if (effective.role.status !== "active" && !effective.realIsAdmin) {
-    alert("Hesabınız aktif değil. Lütfen destek ile iletişime geçin.");
-    await logout();
-    return null;
-  }
+  console.log("Oturum Doğrulandı:", effective);
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(effective.role.type)) {
-    window.location.href = getDashboardPath(effective.role.type);
+    console.warn("Yetki Yetersiz. Gerekli Rol:", allowedRoles, "Kullanıcı Rolü:", effective.role.type);
+    // window.location.href = getDashboardPath(effective.role.type); // Geçici olarak pasif
     return null;
   }
 
