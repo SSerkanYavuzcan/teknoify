@@ -4,6 +4,8 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// Doğru CDN bağlantısı
 import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check.js";
 
 // ================================================================
@@ -22,7 +24,7 @@ if (app) {
 const IMPERSONATE_UID_KEY = "teknoify_impersonate_uid";
 
 // ================================================================
-// GÜVENLİK DUVARI (BAN KONTROLÜ)
+// GÜVENLİK YARDIMCI FONKSİYONLARI
 // ================================================================
 function checkSecurityBan() {
     if (localStorage.getItem('tk_access_denied') === 'true') {
@@ -37,21 +39,13 @@ function checkSecurityBan() {
     return false;
 }
 
-function normalizeEmail(email) {
-  return String(email || "").trim().toLowerCase();
-}
-
 function getLoginPath() {
-  const p = window.location.pathname || "";
-  if (p.includes("/dashboard/")) return "../pages/login.html";
-  return "pages/login.html";
+  return "/login.html"; // Ana dizindeki login sayfası
 }
 
 function getDashboardPath(roleType = "member") {
-  const p = window.location.pathname || "";
-  const prefix = (p.includes("/dashboard/") || p.includes("/pages/")) ? "" : "dashboard/";
-  if (roleType === "admin") return prefix + "index.html";
-  return prefix + roleType + ".html";
+  const page = roleType === "admin" ? "admin.html" : `${roleType}.html`;
+  return `/dashboard/${page}`;
 }
 
 async function waitForAuthUser() {
@@ -66,28 +60,27 @@ async function waitForAuthUser() {
 async function readUserDocument(uid) {
   try {
     const snap = await getDoc(doc(db, "users", uid));
-    if (!snap.exists()) return null;
-    return snap.data();
+    return snap.exists() ? snap.data() : null;
   } catch (err) {
-    console.error("🚨 KRİTİK: Firestore'dan veri çekilemedi (Permission Denied olabilir):", err);
+    console.error("🚨 Firestore Veri Hatası:", err);
     return null;
   }
 }
 
+// ================================================================
+// OTURUM YÖNETİMİ
+// ================================================================
 async function buildRealSession(user) {
-  const uid = user.uid;
-  const userDoc = await readUserDocument(uid);
-  
+  const userDoc = await readUserDocument(user.uid);
   const roleData = userDoc?.role || { type: "member", status: "active" };
   const profileData = userDoc?.profile || {};
-  
+
   return {
-    uid,
-    email: normalizeEmail(user.email),
+    uid: user.uid,
+    email: user.email,
     name: profileData.fullName || user.email.split("@")[0],
-    role: roleData, 
-    isAdmin: roleData.type === "admin",
-    issuedAt: Date.now()
+    role: roleData,
+    isAdmin: roleData.type === "admin"
   };
 }
 
@@ -106,7 +99,8 @@ async function getEffectiveSession(realSession) {
     uid: targetUid,
     role: targetDoc.role || { type: "member", status: "active" },
     impersonating: true,
-    realIsAdmin: true
+    realIsAdmin: true,
+    isAdmin: false
   };
 }
 
@@ -117,33 +111,30 @@ export async function logout() {
 }
 
 /**
- * requireAuth: TEST MODU AKTİF (Redirect Kapatıldı)
+ * requireAuth: Sayfa Koruma Fonksiyonu
  */
 export async function requireAuth({ allowedRoles = [] } = {}) {
-  console.log("--- REQUIRE_AUTH BAŞLATILDI ---");
-  
   if (checkSecurityBan()) return null;
 
   const user = await waitForAuthUser();
 
-  // 🚨 DİKKAT: Sorunu bulmak için yönlendirmeyi durdurduk
+  // Oturum yoksa login'e gönder
   if (!user) {
-    console.error("🚨 HATA: Firebase Auth kullanıcısı bulunamadı (User = null).");
-    console.warn("Lütfen 'Preserve Log' açıkken giriş yapmayı deneyin ve buradaki hata mesajına bakın.");
-    // window.location.href = getLoginPath(); // Geçici olarak pasif
+    console.warn("Oturum bulunamadı, login sayfasına yönlendiriliyor...");
+    window.location.href = getLoginPath();
     return null;
   }
 
   const real = await buildRealSession(user);
   const effective = await getEffectiveSession(real);
 
-  console.log("Oturum Doğrulandı:", effective);
-
+  // Rol kontrolü
   if (allowedRoles.length > 0 && !allowedRoles.includes(effective.role.type)) {
-    console.warn("Yetki Yetersiz. Gerekli Rol:", allowedRoles, "Kullanıcı Rolü:", effective.role.type);
-    // window.location.href = getDashboardPath(effective.role.type); // Geçici olarak pasif
+    console.warn("Yetkisiz rol erişimi, dashboard köküne yönlendiriliyor.");
+    window.location.href = getDashboardPath(effective.role.type);
     return null;
   }
 
+  console.log("✅ Oturum başarıyla doğrulandı:", effective.role.type);
   return effective;
 }
