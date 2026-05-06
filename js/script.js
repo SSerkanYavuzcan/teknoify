@@ -8,10 +8,21 @@ const firebaseConfig = {
     measurementId: "G-1DZKJE7BXE"
 };
 
+// 1. Firebase'i Başlat
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
+// 2. Firebase App Check'i Başlat (Kritik Güvenlik Katmanı)
+if (typeof firebase !== 'undefined' && firebase.appCheck) {
+    const appCheck = firebase.appCheck();
+    appCheck.activate(
+        '6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', // index.html'deki reCAPTCHA v3 Site Key'in
+        true // Token otomatik yenilemesi aktif
+    );
+}
+
+// 3. Modülleri Yükle
 const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
@@ -54,7 +65,6 @@ class AuthSystem {
                             window.location.href = '../dashboard/member.html';
                         }
                     } catch (error) {
-                        // Hata durumunda sistemi kapatmak yerine standart üyeye yönlendiriyoruz
                         console.warn("Kullanıcı rolü kontrol edilemedi, standart üyeye yönlendiriliyor.", error.message);
                         window.location.href = '../dashboard/member.html';
                     }
@@ -99,6 +109,7 @@ class AuthSystem {
         const emailInput = document.getElementById('email').value.trim();
         const passInput = document.getElementById('password').value.trim();
         if (!auth || !db) return;
+        
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
         btn.disabled = true;
@@ -109,8 +120,10 @@ class AuthSystem {
                 try {
                     const userDoc = await db.collection('users').doc(user.uid).get();
                     localStorage.setItem('session_start_time', Date.now());
+                    
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
+                    
                     setTimeout(() => {
                         if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
                             window.location.href = '../dashboard/index.html';
@@ -123,8 +136,6 @@ class AuthSystem {
                 } catch (dbError) {
                     console.warn("--- VERİTABANI ERİŞİM UYARISI ---", dbError.message);
                     
-                    // Firestore erişim hatası olsa bile oturumu sonlandırmıyoruz, 
-                    // varsayılan kısıtlı panele güvenli geçiş yapıyoruz.
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
                     
@@ -137,6 +148,7 @@ class AuthSystem {
                 if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız.";
                 if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') msg = "E-posta adresi veya şifre hatalı.";
                 if (typeof showToast === "function") showToast("Erişim Reddedildi", msg, "error");
+                
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
