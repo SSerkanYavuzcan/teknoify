@@ -130,14 +130,14 @@ class AuthSystem {
                     btn.style.backgroundColor = '#10b981';
                     
                     setTimeout(() => {
-                        if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
-                            window.location.href = '../dashboard/index.html';
-                        } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
-                            window.location.href = '../dashboard/premium.html';
-                        } else {
-                            window.location.href = '../dashboard/member.html';
-                        }
-                    }, 1000);
+    if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
+        window.location.href = '/dashboard/admin.html'; // YOL DÜZELTİLDİ
+    } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
+        window.location.href = '/dashboard/premium.html';
+    } else {
+        window.location.href = '/dashboard/member.html';
+    }
+}, 1000);
                 } catch (dbError) {
                     console.warn("--- VERİTABANI ERİŞİM UYARISI ---", dbError.message);
                     
