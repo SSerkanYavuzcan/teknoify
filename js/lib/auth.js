@@ -1,4 +1,4 @@
-import { auth, db } from "/js/lib/firebase.js";
+import { auth, db, app } from "/js/lib/firebase.js"; 
 import {
   getIdTokenResult,
   onAuthStateChanged,
@@ -6,6 +6,25 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// DOĞRU CDN LİNKİ: firebase-app-check.js (Tireler eklendi)
+import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check.js";
+
+// ================================================================
+// PROFESYONEL APP CHECK BAŞLATMA
+// ================================================================
+if (app) {
+    // Eğer projeyi kendi bilgisayarında (localhost) test ediyorsan engellenmemen için debug modunu açar.
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; 
+    }
+    
+    initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk'), // reCAPTCHA v3 Site Key
+        isTokenAutoRefreshEnabled: true
+    });
+}
+// ================================================================
 
 const IMPERSONATE_UID_KEY = "teknoify_impersonate_uid";
 
@@ -41,7 +60,7 @@ function getDashboardPath(roleType = "member") {
   const p = window.location.pathname || "";
   const prefix = (p.includes("/dashboard/") || p.includes("/pages/")) ? "../dashboard/" : "dashboard/";
   
-  if (roleType === "admin") return prefix + "index.html"; // Yönlendirme hatası olmaması için index.html yapıldı
+  if (roleType === "admin") return prefix + "index.html"; // Adminler için doğru yönlendirme adresi
   if (roleType === "premium") return prefix + "premium.html";
   return prefix + "member.html";
 }
