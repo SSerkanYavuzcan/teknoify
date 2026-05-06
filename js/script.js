@@ -13,8 +13,13 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-// 2. Firebase App Check'i Başlat (Kritik Güvenlik Katmanı)
+// 2. Firebase App Check'i Başlat (Güvenlik Katmanı)
 if (typeof firebase !== 'undefined' && firebase.appCheck) {
+    // Localhost testlerinde engellenmemek için debug modunu aç
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    }
+    
     const appCheck = firebase.appCheck();
     appCheck.activate(
         '6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', // index.html'deki reCAPTCHA v3 Site Key'in
