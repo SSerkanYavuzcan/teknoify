@@ -63,15 +63,15 @@ class AuthSystem {
                     try {
                         const userDoc = await db.collection('users').doc(user.uid).get();
                         if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
-                            window.location.href = '../dashboard/index.html';
+                            window.location.href = '/dashboard/admin.html';
                         } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
-                            window.location.href = '../dashboard/premium.html';
+                            window.location.href = '/dashboard/premium.html';
                         } else {
-                            window.location.href = '../dashboard/member.html';
+                            window.location.href = '/dashboard/member.html';
                         }
                     } catch (error) {
                         console.warn("Kullanıcı rolü kontrol edilemedi, standart üyeye yönlendiriliyor.", error.message);
-                        window.location.href = '../dashboard/member.html';
+                        window.location.href = '/dashboard/member.html';
                     }
                 } else {
                     this.open();
@@ -130,21 +130,19 @@ class AuthSystem {
                     btn.style.backgroundColor = '#10b981';
                     
                     setTimeout(() => {
-    if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
-        window.location.href = '/dashboard/admin.html'; // YOL DÜZELTİLDİ
-    } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
-        window.location.href = '/dashboard/premium.html';
-    } else {
-        window.location.href = '/dashboard/member.html';
-    }
-}, 1000);
+                        if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
+                            window.location.href = '/dashboard/admin.html';
+                        } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
+                            window.location.href = '/dashboard/premium.html';
+                        } else {
+                            window.location.href = '/dashboard/member.html';
+                        }
+                    }, 1000);
                 } catch (dbError) {
                     console.warn("--- VERİTABANI ERİŞİM UYARISI ---", dbError.message);
-                    
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
-                    
-                    setTimeout(() => { window.location.href = '../dashboard/member.html'; }, 1000);
+                    setTimeout(() => { window.location.href = '/dashboard/member.html'; }, 1000);
                 }
             })
             .catch((error) => {
