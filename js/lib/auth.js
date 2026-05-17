@@ -39,8 +39,9 @@ function checkSecurityBan() {
     return false;
 }
 
+// GÜNCELLEME: Ayrı bir login sayfası olmadığı için ana sayfaya yönlendiriyoruz
 function getLoginPath() {
-  return "/login.html"; // Ana dizindeki login sayfası
+  return "/"; 
 }
 
 function getDashboardPath(roleType = "member") {
@@ -118,10 +119,10 @@ export async function requireAuth({ allowedRoles = [] } = {}) {
 
   const user = await waitForAuthUser();
 
-  // Oturum yoksa login'e gönder
+  // Oturum yoksa ana sayfaya (login modal'ın olduğu yere) gönder
   if (!user) {
-    console.warn("Oturum bulunamadı, login sayfasına yönlendiriliyor...");
-   // window.location.href = getLoginPath();
+    console.warn("Oturum bulunamadı, ana sayfaya yönlendiriliyor...");
+    window.location.href = getLoginPath(); // GÜNCELLEME: Yorum satırı kaldırıldı
     return null;
   }
 
