@@ -14,7 +14,7 @@
   
   <style>
     /* ========================================================= */
-    /* TEMEL YAPI VE DİNAMİK EKRAN ORANLAMASI */
+    /* TEMEL YAPI VE DİNAMİK EKRAN ORANLAMASI (TAM EKRAN FIX) */
     /* ========================================================= */
     body { background-color: #05080a; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
@@ -24,14 +24,18 @@
       flex-direction: column !important;
       box-sizing: border-box !important;
       overflow: hidden !important;
+      width: auto !important; /* Sidebar dışında kalan tüm alanı kapla */
+      max-width: none !important; /* Kısıtlamaları kaldır */
     }
 
     .top-bar {
       position: relative !important; 
       flex: 0 0 auto !important; 
       width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
       background: #05080a !important;
-      padding: 20px 30px !important;
+      padding: 20px 24px !important;
       display: flex !important;
       justify-content: space-between !important;
       align-items: center !important;
@@ -40,17 +44,26 @@
       z-index: 100 !important;
     }
 
-    /* Sağ sütun (Chat) kendi içinde kayacağı için genel kaydırmayı gizliyoruz */
+    /* SAĞA-SOLA YASLAMA DÜZELTMESİ BURADA */
     .content-scroll {
       -ms-overflow-style: none;
       scrollbar-width: none;
       flex: 1 1 auto !important; 
       overflow: hidden !important; 
       width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
       display: flex !important;
       flex-direction: column !important;
-      align-items: center !important; 
+      align-items: stretch !important; /* ÖNCEKİ "center" KOMUTU "stretch" YAPILDI: Böylece içerik ortalanmaz, sola-sağa tam yayılır */
       box-sizing: border-box !important;
+    }
+
+    /* Dış CSS'lerdeki (grid.css vs) eski genişlik kısıtlamalarını garanti olarak eziyoruz */
+    .agent-dashboard-wrapper {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
     }
 
     /* Profil Alanı Stilleri */
@@ -73,7 +86,7 @@
       </div>
     </header>
 
-    <div class="content-scroll" style="opacity: 0; transition: opacity 0.5s; padding: 20px !important; height: 100%; width: 100%; max-width: 100%;" id="agent-main-view">
+    <div class="content-scroll" style="opacity: 0; transition: opacity 0.5s; padding: 24px !important; height: 100%;" id="agent-main-view">
       
       <div class="agent-dashboard-wrapper">
         
