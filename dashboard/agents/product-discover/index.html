@@ -40,19 +40,18 @@
       z-index: 100 !important;
     }
 
+    /* Sağ sütun (Chat) kendi içinde kayacağı için genel kaydırmayı gizliyoruz */
     .content-scroll {
       -ms-overflow-style: none;
       scrollbar-width: none;
       flex: 1 1 auto !important; 
-      overflow-y: auto !important; 
+      overflow: hidden !important; 
       width: 100% !important;
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important; 
-      padding: 40px 30px !important; 
       box-sizing: border-box !important;
     }
-    .content-scroll::-webkit-scrollbar { display: none; }
 
     /* Profil Alanı Stilleri */
     .user-profile { display: flex; align-items: center; gap: 12px; }
@@ -74,62 +73,83 @@
       </div>
     </header>
 
-    <div class="content-scroll" style="opacity: 0; transition: opacity 0.5s;" id="agent-main-view">
+    <div class="content-scroll" style="opacity: 0; transition: opacity 0.5s; padding: 20px 30px !important; height: 100%;" id="agent-main-view">
       
-      <div class="agent-stats-grid">
-        <div class="agent-summary-card">
-          <div class="agent-summary-icon" style="color: #a855f7; background: rgba(168,85,247,0.1);"><i class="fas fa-clock"></i></div>
-          <div class="agent-summary-info"><span>Toplam Çalışma Süresi</span><strong>12s 45dk</strong></div>
-        </div>
-        <div class="agent-summary-card">
-          <div class="agent-summary-icon" style="color: #3b82f6; background: rgba(59,130,246,0.1);"><i class="fas fa-box-open"></i></div>
-          <div class="agent-summary-info"><span>Toplam Ürün Keşfi</span><strong>1.240</strong></div>
-        </div>
-        <div class="agent-summary-card">
-          <div class="agent-summary-icon" style="color: #10b981; background: rgba(16,185,129,0.1);"><i class="fas fa-globe"></i></div>
-          <div class="agent-summary-info"><span>Toplam Site Keşfi</span><strong>48</strong></div>
-        </div>
-        <div class="agent-summary-card">
-          <div class="agent-summary-icon" style="color: #ef4444; background: rgba(239,68,68,0.1);"><i class="fas fa-coins"></i></div>
-          <div class="agent-summary-info"><span>Toplam Maliyet</span><strong style="color: #ef4444;">₺120.50</strong></div>
-        </div>
-      </div>
-
-      <div class="agent-tools-area">
-          <p><i class="fas fa-tools"></i> Product Discover analiz paneli, grafikler ve raporlar bu alanda görüntülenecektir.</p>
-      </div>
-
-    </div>
-
-    <div class="agent-chat-widget" id="chatWidget">
+      <div class="agent-dashboard-wrapper">
         
-        <div class="chat-panel">
-            <div class="chat-header">
-                <div class="chat-header-icon"><i class="fas fa-search-dollar"></i></div>
-                <div>
-                    <h3 class="chat-header-title">Product Discover</h3>
-                    <p class="chat-header-desc">Ajan Hazır</p>
+        <div class="agent-main-col">
+            
+            <div class="agent-stats-grid">
+                <div class="agent-summary-card">
+                    <div class="agent-summary-icon" style="color: #a855f7; background: rgba(168,85,247,0.1);"><i class="fas fa-satellite-dish"></i></div>
+                    <div class="agent-summary-info"><span>Aktif Tarama Oturumları</span><strong id="kpi-sessions">6</strong></div>
+                </div>
+                <div class="agent-summary-card">
+                    <div class="agent-summary-icon" style="color: #3b82f6; background: rgba(59,130,246,0.1);"><i class="fas fa-globe"></i></div>
+                    <div class="agent-summary-info"><span>Toplam Taranan Site</span><strong id="kpi-sites">1.240</strong></div>
+                </div>
+                <div class="agent-summary-card">
+                    <div class="agent-summary-icon" style="color: #10b981; background: rgba(16,185,129,0.1);"><i class="fas fa-box-open"></i></div>
+                    <div class="agent-summary-info"><span>Bugün Keşfedilen Ürün</span><strong id="kpi-products">148</strong></div>
+                </div>
+                <div class="agent-summary-card">
+                    <div class="agent-summary-icon" style="color: #f59e0b; background: rgba(245,158,11,0.1);"><i class="fas fa-check-circle"></i></div>
+                    <div class="agent-summary-info"><span>Başarı Oranı</span><strong id="kpi-success">%98.6</strong></div>
+                </div>
+                <div class="agent-summary-card">
+                    <div class="agent-summary-icon" style="color: #ef4444; background: rgba(239,68,68,0.1);"><i class="fas fa-wallet"></i></div>
+                    <div class="agent-summary-info"><span>Tahmini Maliyet</span><strong id="kpi-cost" style="color: #ef4444;">₺120.50</strong></div>
                 </div>
             </div>
-            
-            <div class="chat-body" id="chat-container">
-                <div class="msg system">
-                    <div class="msg-avatar system"><i class="fas fa-robot"></i></div>
-                    <div class="msg-bubble">Merhaba <strong id="chat-user-name">Kullanıcı</strong>! Araştırmak istediğin bir niş veya ürün kategorisi var mı? Sana nasıl yardımcı olabilirim?</div>
+
+            <div id="dynamic-widgets-area">
                 </div>
-            </div>
-            
-            <div class="chat-input-area">
-                <div class="chat-input-box">
-                    <textarea id="agent-input" rows="1" placeholder="Ajan için bir komut yazın..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+
+        </div>
+        
+        <div class="agent-chat-col">
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-header-info">
+                        <div class="chat-header-icon"><i class="fas fa-search-dollar"></i></div>
+                        <div>
+                            <h3 class="chat-header-title">Product Discover</h3>
+                            <p class="chat-header-desc">AI Asistan</p>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button><i class="fas fa-search"></i></button>
+                        <button><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
                 </div>
-                <button class="chat-btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                
+                <div class="chat-body" id="chat-container">
+                    <div class="msg system">
+                        <div class="msg-header"><div class="msg-avatar system"><i class="fas fa-robot"></i></div></div>
+                        <div class="msg-bubble">
+                            Merhaba <strong id="chat-user-name">Kullanıcı</strong>! 👋<br>
+                            Product Discover ajanınız şu anda aktif. Size nasıl yardımcı olabilirim?
+                            
+                            <div class="chat-suggestions">
+                                <button class="suggestion-btn" onclick="document.getElementById('agent-input').value='Ajan raporunu göster'; window.sendMessage();"><i class="far fa-file-alt"></i> Ajan raporunu göster</button>
+                                <button class="suggestion-btn" onclick="document.getElementById('agent-input').value='Yeni site taraması başlat'; window.sendMessage();"><i class="fas fa-play"></i> Yeni site taraması başlat</button>
+                                <button class="suggestion-btn" onclick="document.getElementById('agent-input').value='Hedef kategori ekle'; window.sendMessage();"><i class="fas fa-plus"></i> Hedef kategori ekle</button>
+                                <button class="suggestion-btn" onclick="document.getElementById('agent-input').value='Ayarları aç'; window.sendMessage();"><i class="fas fa-cog"></i> Ayarları aç</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="chat-input-box">
+                        <textarea id="agent-input" placeholder="Ajan için bir komut yazın..." oninput="this.style.height = '20px'; this.style.height = this.scrollHeight + 'px'"></textarea>
+                    </div>
+                    <button class="chat-btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
             </div>
         </div>
 
-        <button class="chat-toggle-btn" onclick="toggleChat()">
-            <i class="fas fa-comment-dots"></i>
-        </button>
+      </div>
 
     </div>
   </main>
@@ -144,7 +164,7 @@
     const auth = getAuth();
     const db = getFirestore(); 
 
-    // AJAN ID'Sİ: Bu sayfanın hangi ajana ait olduğu
+    // AJAN ID'Sİ
     const CURRENT_AGENT_ID = "product-discover";
 
     onAuthStateChanged(auth, async (user) => {
@@ -175,40 +195,30 @@
                 avatarEl.innerHTML = name.charAt(0).toUpperCase();
             }
 
-            // 2. GÜVENLİK VE YETKİ KONTROLÜ (KRİTİK BÖLÜM)
+            // 2. GÜVENLİK VE YETKİ KONTROLÜ
             const agentAccess = userData.agentAccess || rootData.agentAccess || {};
             const roleType = (userData.role && typeof userData.role === 'object') ? userData.role.type : (userData.role || 'member');
-            
-            // Token üzerinden Admin kontrolü
             const idTokenResult = await user.getIdTokenResult();
             const isAdmin = idTokenResult.claims.admin || roleType === 'admin';
 
-            // Eğer Admin değilse ve bu ajana yetkisi (true) yoksa dışarı at!
+            // Eğer Admin değilse ve yetkisi yoksa geri fırlat
             if (!isAdmin && agentAccess[CURRENT_AGENT_ID] !== true) {
-                console.warn(`[GÜVENLİK] ${CURRENT_AGENT_ID} yetkisi reddedildi. Ana sayfaya yönlendiriliyor...`);
-                window.location.href = "/dashboard/member.html"; // Yetkisi yoksa geri fırlat
+                window.location.href = "/dashboard/member.html"; 
                 return;
             }
 
-            // --- YETKİ ONAYLANDI: EKRANI GÖSTER ---
+            // YETKİ ONAYLANDI: EKRANI GÖSTER
             window.USER_SESSION = { uid: user.uid, name: name, email: user.email, isAdmin: isAdmin };
             if(typeof window.TK_RENDER_SIDEBAR === "function") window.TK_RENDER_SIDEBAR();
             
-            // Ekranı yumuşak bir şekilde görünür yap
             document.getElementById("agent-main-view").style.opacity = "1";
 
         } else {
-            window.location.href = "/"; // Oturum yoksa login'e at
+            window.location.href = "/"; 
         }
     });
 
-    // CHAT WIDGET AÇ/KAPAT FONKSİYONU
-    window.toggleChat = function() {
-        const widget = document.getElementById("chatWidget");
-        widget.classList.toggle("open");
-    }
-
-    // Basit bir mesaj gönderme simülasyonu
+    // MESAJ GÖNDERME SİMÜLASYONU (Yeni class yapılarına uyarlandı)
     window.sendMessage = function() {
         const input = document.getElementById("agent-input");
         const text = input.value.trim();
@@ -220,13 +230,12 @@
         const userMsg = document.createElement("div");
         userMsg.className = "msg user";
         userMsg.innerHTML = `
-            <div class="msg-avatar user"><i class="fas fa-user"></i></div>
             <div class="msg-bubble">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
         `;
         container.appendChild(userMsg);
         
         input.value = "";
-        input.style.height = "auto";
+        input.style.height = "20px"; // Input kutusunu resetle
         container.scrollTop = container.scrollHeight;
 
         // Ajanın "Düşünüyor..." animasyonu
@@ -234,7 +243,7 @@
             const botMsg = document.createElement("div");
             botMsg.className = "msg system";
             botMsg.innerHTML = `
-                <div class="msg-avatar system"><i class="fas fa-robot"></i></div>
+                <div class="msg-header"><div class="msg-avatar system"><i class="fas fa-robot"></i></div></div>
                 <div class="msg-bubble" style="color:#a1a1aa;"><i>Veriler analiz ediliyor, lütfen bekleyin...</i></div>
             `;
             container.appendChild(botMsg);
