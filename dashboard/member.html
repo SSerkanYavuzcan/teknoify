@@ -206,12 +206,6 @@
 </head>
 <body>
 
-  <div id="loading-overlay" style="position: fixed; inset: 0; width: 100vw; height: 100vh; background: #05080a; z-index: 9999999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease; margin: 0; padding: 0;">
-    <div style="text-align:center; color:white; font-family:'Fira Code', monospace;">
-      <div id="dynamic-loader-text">Veriler senkronize ediliyor...</div>
-    </div>
-  </div>
-
   <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
@@ -399,7 +393,7 @@
             fetchUserProjects(user.uid, userDocSnap);
 
         } else {
-            window.location.href = "/login.html";
+            window.location.href = "/";
         }
     });
 
@@ -410,7 +404,6 @@
         try {
             if (!userDocSnap || !userDocSnap.exists()) {
                 container.innerHTML = '<p style="color: #ef4444;">Kullanıcı profili bulunamadı.</p>';
-                closeLoader();
                 return;
             }
 
@@ -421,7 +414,6 @@
 
             if (allowedProjectIds.length === 0) {
                 container.innerHTML = '<p style="color: #a1a1aa;">Henüz size tanımlanmış aktif bir projeniz bulunmuyor.</p>';
-                closeLoader();
                 return;
             }
 
@@ -491,20 +483,9 @@
                 container.innerHTML += cardHTML;
             });
 
-            closeLoader();
-
         } catch (error) {
             console.error("Projeler çekilirken hata oluştu:", error);
             container.innerHTML = '<p style="color: #ef4444;">Projeler yüklenirken bir sorun oluştu. Konsolu kontrol edin.</p>';
-            closeLoader();
-        }
-    }
-
-    function closeLoader() {
-        const loader = document.getElementById("loading-overlay");
-        if (loader) {
-            loader.style.opacity = "0";
-            setTimeout(() => loader.style.display = "none", 600);
         }
     }
 
