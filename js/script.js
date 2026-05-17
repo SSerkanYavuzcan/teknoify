@@ -137,18 +137,24 @@ class AuthSystem {
             .then(async (userCredential) => {
                 const user = userCredential.user;
                 try {
-                    // 1. Önce Token (Custom Claims) üzerinden kontrol et (session-manager ile uyumlu)
-                    const idTokenResult = await user.getIdTokenResult();
+                    // YARIŞ DURUMU (RACE CONDITION) ÇÖZÜMÜ: 
+                    // Veritabanına sormadan önce Firebase Auth'un oturumu senkronize etmesi için 600ms süre tanıyoruz.
+                    await new Promise(resolve => setTimeout(resolve, 600));
+
+                    // 1. Önce Token (Custom Claims) üzerinden kontrol et (Güncel veriyi zorla çekmek için "true" ekledik)
+                    const idTokenResult = await user.getIdTokenResult(true);
                     let isAdmin = !!idTokenResult.claims.admin;
                     let isPremium = !!idTokenResult.claims.premium;
 
-                    // 2. Token'da yoksa Veritabanına bak (Esnek yapı)
+                    // 2. Token'da yoksa Veritabanına bak
                     if (!isAdmin) {
                         const userDoc = await db.collection('users').doc(user.uid).get();
                         if (userDoc.exists) {
                             const data = userDoc.data();
-                            isAdmin = (data.role && data.role.type === 'admin') || data.role === 'admin';
-                            isPremium = (data.role && data.role.type === 'premium') || data.role === 'premium';
+                            // Hem role: "admin" hem de role: { type: "admin" } formatını hatasız destekler
+                            const roleType = (typeof data.role === 'object' && data.role !== null) ? data.role.type : data.role;
+                            isAdmin = roleType === 'admin';
+                            isPremium = roleType === 'premium';
                         }
                     }
 
@@ -165,7 +171,7 @@ class AuthSystem {
                         } else {
                             window.location.href = '/dashboard/member.html';
                         }
-                    }, 1000);
+                    }, 500);
                 } catch (dbError) {
                     console.warn("--- YETKİ KONTROL UYARISI ---", dbError.message);
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
