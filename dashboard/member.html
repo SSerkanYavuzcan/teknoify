@@ -434,26 +434,35 @@
                 return;
             }
 
-            // GÜNCELLEME: Proje yetkilerini çok daha esnek bir yoldan çekiyoruz
             const rootData = userDocSnap.data() || {};
             const userData = rootData.data || rootData || {};
             
-            // Eğer projectAccess root seviyesindeyse onu, değilse data içindekini al
             const projectAccess = userData.projectAccess || rootData.projectAccess || userData.projects || rootData.projects || {};
 
-            // Veritabanı array de dönse obje de dönse kabul et
             let allowedProjectIds = [];
+            
+            // --- GÜNCELLEME: OBJE VE METİN ÇAKIŞMASI ÇÖZÜLDÜ ---
             if (Array.isArray(projectAccess)) {
-                allowedProjectIds = projectAccess;
+                // Eğer veri bir diziyse, içindeki objelerden saf ID'yi cımbızla
+                allowedProjectIds = projectAccess.map(item => {
+                    if (typeof item === 'string') return item; 
+                    if (item && typeof item === 'object') {
+                        return item.id || item.projectId || item.name; 
+                    }
+                    return null;
+                }).filter(id => id !== null); 
             } else {
+                // Eğer veri normal üye formatındaysa ( { "proje-id": true } )
                 allowedProjectIds = Object.keys(projectAccess).filter(projectId => projectAccess[projectId] === true);
             }
 
-            // --- GÜNCELLEME: KPI KARTLARININ DİNAMİK EŞLENMESİ ---
+            // --- KPI KARTLARININ DİNAMİK EŞLENMESİ ---
             const kpiActive = document.getElementById("kpi-active-projects");
             const kpiTools = document.getElementById("kpi-tools");
             if (kpiActive) kpiActive.textContent = allowedProjectIds.length;
             if (kpiTools) kpiTools.textContent = allowedProjectIds.length;
+
+            console.log("Aranacak Proje ID'leri:", allowedProjectIds);
 
             if (allowedProjectIds.length === 0) {
                 container.innerHTML = '<p style="color: #a1a1aa;">Henüz size tanımlanmış aktif bir projeniz bulunmuyor.</p>';
@@ -468,7 +477,6 @@
             let renderedCount = 0;
 
             projectSnaps.forEach((projectDoc, index) => {
-                // Eğer db'de o ID'ye ait bir proje dökümanı yoksa uyarı fırlat ve atla
                 if (!projectDoc.exists()) {
                     console.warn(`[DİKKAT] Veritabanında "${allowedProjectIds[index]}" ID'sine ait bir proje bulunamadı!`);
                     return; 
@@ -533,9 +541,8 @@
                 renderedCount++;
             });
 
-            // GÜNCELLEME: Eğer yetki dizisinde proje olup da DB'de bulunamayan (hatalı yazım) bir proje varsa uyarı bas
             if (renderedCount === 0) {
-                container.innerHTML = '<p style="color: #ef4444;">Size tanımlanan projeler veritabanında bulunamadı. Lütfen atanmış proje ID\'lerini sistem yöneticisine kontrol ettirin.</p>';
+                container.innerHTML = '<p style="color: #ef4444;">Size tanımlanan projeler veritabanında bulunamadı. Lütfen atanmış proje ID\'lerini kontrol edin.</p>';
             }
 
         } catch (error) {
