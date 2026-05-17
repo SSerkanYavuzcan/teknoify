@@ -299,11 +299,11 @@
       <div class="summary-stats-grid">
         <div class="summary-card">
           <div class="summary-icon" style="color: #a855f7; background: rgba(168,85,247,0.1);"><i class="fas fa-rocket"></i></div>
-          <div class="summary-info"><span>Aktif Proje</span><strong>1</strong></div>
+          <div class="summary-info"><span>Aktif Proje</span><strong id="kpi-active-projects">-</strong></div>
         </div>
         <div class="summary-card">
           <div class="summary-icon" style="color: #3b82f6; background: rgba(59,130,246,0.1);"><i class="fas fa-briefcase"></i></div>
-          <div class="summary-info"><span>Kullanılabilir Araç</span><strong>1</strong></div>
+          <div class="summary-info"><span>Kullanılabilir Araç</span><strong id="kpi-tools">-</strong></div>
         </div>
         <div class="summary-card">
           <div class="summary-icon" style="color: #10b981; background: rgba(16,185,129,0.1);"><i class="fas fa-check-square"></i></div>
@@ -350,14 +350,12 @@
 
             if (userDocSnap.exists()) {
                 const rootData = userDocSnap.data() || {};
-                // GÜNCELLEME: Verinin hem root seviyesindeki hem de nested "data" altındaki hiyerarşiyi tanımasını sağladık
                 userData = rootData.data || rootData || {};
                 
                 if (userData.profile && userData.profile.accountType) {
                     accountType = userData.profile.accountType;
                 }
                 
-                // Hesap türü ne olursa olsun (Kurumsal veya Bireysel) Adını Soyadını (fullName) kullanıyoruz.
                 if (userData.profile && userData.profile.fullName) {
                     name = userData.profile.fullName;
                 }
@@ -388,7 +386,6 @@
             // --- ADMIN BUTONU EKLEME KODU BAŞLANGICI ---
             const roleType = (userData && userData.role && typeof userData.role === 'object') ? userData.role.type : (userData?.role || 'member');
             user.getIdTokenResult().then(idTokenResult => {
-                // Eğer Firebase Token'ında veya veritabanında "admin" ise butonu göster
                 if (idTokenResult.claims.admin || roleType === 'admin') {
                     if (!document.getElementById("btn-go-admin")) {
                         const userProfileDiv = document.querySelector('.user-profile');
@@ -397,18 +394,16 @@
                             adminBtn.id = "btn-go-admin";
                             adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin Paneli';
                             
-                            // Buton Tasarımı (Sitenin renklerine uyumlu, şık bir turuncu)
                             adminBtn.style.cssText = "background: #f97316; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3); transition: all 0.2s;";
                             
                             adminBtn.onmouseover = () => { adminBtn.style.transform = "translateY(-2px)"; adminBtn.style.background = "#ea580c"; };
                             adminBtn.onmouseout = () => { adminBtn.style.transform = "translateY(0)"; adminBtn.style.background = "#f97316"; };
                             
                             adminBtn.onclick = (e) => {
-                                e.stopPropagation(); // Butona basıldığında profil modalının açılmasını engeller
+                                e.stopPropagation(); 
                                 window.location.href = '/dashboard/admin.html';
                             };
 
-                            // Butonu profil alanının en soluna (isminin yanına) ekler
                             userProfileDiv.prepend(adminBtn);
                         }
                     }
@@ -439,12 +434,26 @@
                 return;
             }
 
-            // GÜNCELLEME: Proje erişim listesini hem root seviyesinden hem de iç içe geçmiş data objesinden esnekçe çekecek şekilde düzelttik
+            // GÜNCELLEME: Proje yetkilerini çok daha esnek bir yoldan çekiyoruz
             const rootData = userDocSnap.data() || {};
             const userData = rootData.data || rootData || {};
-            const projectAccess = userData.projectAccess || {};
+            
+            // Eğer projectAccess root seviyesindeyse onu, değilse data içindekini al
+            const projectAccess = userData.projectAccess || rootData.projectAccess || userData.projects || rootData.projects || {};
 
-            const allowedProjectIds = Object.keys(projectAccess).filter(projectId => projectAccess[projectId] === true);
+            // Veritabanı array de dönse obje de dönse kabul et
+            let allowedProjectIds = [];
+            if (Array.isArray(projectAccess)) {
+                allowedProjectIds = projectAccess;
+            } else {
+                allowedProjectIds = Object.keys(projectAccess).filter(projectId => projectAccess[projectId] === true);
+            }
+
+            // --- GÜNCELLEME: KPI KARTLARININ DİNAMİK EŞLENMESİ ---
+            const kpiActive = document.getElementById("kpi-active-projects");
+            const kpiTools = document.getElementById("kpi-tools");
+            if (kpiActive) kpiActive.textContent = allowedProjectIds.length;
+            if (kpiTools) kpiTools.textContent = allowedProjectIds.length;
 
             if (allowedProjectIds.length === 0) {
                 container.innerHTML = '<p style="color: #a1a1aa;">Henüz size tanımlanmış aktif bir projeniz bulunmuyor.</p>';
@@ -455,9 +464,15 @@
 
             const projectPromises = allowedProjectIds.map(id => getDoc(doc(db, "projects", id)));
             const projectSnaps = await Promise.all(projectPromises);
+            
+            let renderedCount = 0;
 
-            projectSnaps.forEach((projectDoc) => {
-                if (!projectDoc.exists()) return; 
+            projectSnaps.forEach((projectDoc, index) => {
+                // Eğer db'de o ID'ye ait bir proje dökümanı yoksa uyarı fırlat ve atla
+                if (!projectDoc.exists()) {
+                    console.warn(`[DİKKAT] Veritabanında "${allowedProjectIds[index]}" ID'sine ait bir proje bulunamadı!`);
+                    return; 
+                }
 
                 const projectData = projectDoc.data();
                 const details = projectData.details || {};
@@ -515,7 +530,13 @@
                 `;
                 
                 container.innerHTML += cardHTML;
+                renderedCount++;
             });
+
+            // GÜNCELLEME: Eğer yetki dizisinde proje olup da DB'de bulunamayan (hatalı yazım) bir proje varsa uyarı bas
+            if (renderedCount === 0) {
+                container.innerHTML = '<p style="color: #ef4444;">Size tanımlanan projeler veritabanında bulunamadı. Lütfen atanmış proje ID\'lerini sistem yöneticisine kontrol ettirin.</p>';
+            }
 
         } catch (error) {
             console.error("Projeler çekilirken hata oluştu:", error);
