@@ -440,10 +440,11 @@
             const projectAccess = userData.projectAccess || rootData.projectAccess || userData.projects || rootData.projects || {};
 
             let allowedProjectIds = [];
+            let projectObjects = []; 
             
-            // --- GÜNCELLEME: OBJE VE METİN ÇAKIŞMASI ÇÖZÜLDÜ ---
+            // Veriyi esnek tarayıp ID'leri bul
             if (Array.isArray(projectAccess)) {
-                // Eğer veri bir diziyse, içindeki objelerden saf ID'yi cımbızla
+                projectObjects = projectAccess;
                 allowedProjectIds = projectAccess.map(item => {
                     if (typeof item === 'string') return item; 
                     if (item && typeof item === 'object') {
@@ -452,17 +453,14 @@
                     return null;
                 }).filter(id => id !== null); 
             } else {
-                // Eğer veri normal üye formatındaysa ( { "proje-id": true } )
                 allowedProjectIds = Object.keys(projectAccess).filter(projectId => projectAccess[projectId] === true);
             }
 
-            // --- KPI KARTLARININ DİNAMİK EŞLENMESİ ---
+            // KPI'ları güncelle
             const kpiActive = document.getElementById("kpi-active-projects");
             const kpiTools = document.getElementById("kpi-tools");
             if (kpiActive) kpiActive.textContent = allowedProjectIds.length;
             if (kpiTools) kpiTools.textContent = allowedProjectIds.length;
-
-            console.log("Aranacak Proje ID'leri:", allowedProjectIds);
 
             if (allowedProjectIds.length === 0) {
                 container.innerHTML = '<p style="color: #a1a1aa;">Henüz size tanımlanmış aktif bir projeniz bulunmuyor.</p>';
@@ -477,13 +475,34 @@
             let renderedCount = 0;
 
             projectSnaps.forEach((projectDoc, index) => {
-                if (!projectDoc.exists()) {
-                    console.warn(`[DİKKAT] Veritabanında "${allowedProjectIds[index]}" ID'sine ait bir proje bulunamadı!`);
-                    return; 
-                }
+                const rawId = allowedProjectIds[index];
+                let projectData = {};
+                let details = {};
 
-                const projectData = projectDoc.data();
-                const details = projectData.details || {};
+                // EĞER VERİTABANINDA YOKSA YEDEK KART OLUŞTUR
+                if (!projectDoc.exists()) {
+                    console.warn(`[BİLGİ] "${rawId}" detayı projects koleksiyonunda yok, yedek kart oluşturuluyor.`);
+                    
+                    let fallbackName = rawId.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    
+                    const foundObj = projectObjects.find(obj => typeof obj === 'object' && (obj.id === rawId || obj.projectId === rawId));
+                    if (foundObj && foundObj.name) fallbackName = foundObj.name;
+
+                    details = {
+                        name: fallbackName,
+                        description: 'Bu proje aktif, ancak sistemde ekstra açıklaması girilmemiş.',
+                        status: 'Aktif',
+                        icon: 'default-project-icon',
+                        tags: ['Erişim Onaylandı']
+                    };
+                    
+                    projectData = {
+                        config: { folderPath: 'dashboard', entryPoint: `${rawId}/index.html` } 
+                    };
+                } else {
+                    projectData = projectDoc.data();
+                    details = projectData.details || {};
+                }
                 
                 const projectName = details.name || projectData.name || 'İsimsiz Proje';
                 const projectDesc = details.description || projectData.description || 'Proje açıklaması bulunmuyor.';
@@ -506,7 +525,8 @@
                      `;
                 }
 
-                const projectLink = projectData.config?.folderPath ? `/${projectData.config.folderPath}/${projectData.config.entryPoint}` : '#';
+                // Hatalı URL'leri engellemek için yedekli link
+                const projectLink = projectData.config?.folderPath ? `/${projectData.config.folderPath}/${projectData.config.entryPoint}` : `/dashboard/${rawId}/index.html`;
 
                 const cardHTML = `
                     <div class="project-card-wide" style="margin-bottom: 24px;">
@@ -540,10 +560,6 @@
                 container.innerHTML += cardHTML;
                 renderedCount++;
             });
-
-            if (renderedCount === 0) {
-                container.innerHTML = '<p style="color: #ef4444;">Size tanımlanan projeler veritabanında bulunamadı. Lütfen atanmış proje ID\'lerini kontrol edin.</p>';
-            }
 
         } catch (error) {
             console.error("Projeler çekilirken hata oluştu:", error);
