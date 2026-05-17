@@ -102,8 +102,13 @@ function injectSidebarSkeleton() {
             <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
             <nav id="tk-main-nav-container">
                 <a href="/dashboard/member.html" class="menu-item ${isGeneralActive ? 'active' : ''}"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
+                
+                <div class="tk-nav-section" id="tk-sidebar-agents-header" style="display: none; margin-top:20px;margin-bottom:10px;padding-left:16px;font-size:0.75rem;color:#71717a;font-weight:700;text-transform:uppercase;"><span>Ajanlar</span></div>
+                <div id="tk-sidebar-agents"></div>
+
                 <div class="tk-nav-section" id="tk-sidebar-services-header" style="display: none; margin-top:20px;margin-bottom:10px;padding-left:16px;font-size:0.75rem;color:#71717a;font-weight:700;text-transform:uppercase;"><span>Projelerim</span></div>
                 <div id="tk-sidebar-projects"></div>
+                
                 <div class="tk-nav-section" id="tk-explore-header" style="display: none; margin-top:20px;margin-bottom:10px;padding-left:16px;font-size:0.75rem;color:#71717a;font-weight:700;text-transform:uppercase;"><span>Keşfet</span></div>
                 <div id="explore-services-menu"></div>
             </nav>
@@ -121,58 +126,80 @@ async function initSidebar() {
   const sess = window.USER_SESSION;
   if (!sess) return;
 
-  const container = document.getElementById("tk-sidebar-projects");
+  const containerProjects = document.getElementById("tk-sidebar-projects");
+  const containerAgents = document.getElementById("tk-sidebar-agents"); // Yeni Ajanlar Konteyneri
   const exploreContainer = document.getElementById("explore-services-menu");
-  if (!container) return;
+  if (!containerProjects) return;
 
   try {
     const userDocRef = doc(db, "users", sess.uid);
     const userDocSnap = await getDoc(userDocRef);
     
     let projectAccess = {};
+    let agentAccess = {}; // Yeni Ajan Erişim Listesi
     let discoverAccess = {};
     let isAdmin = sess.isAdmin || false;
 
     if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
         projectAccess = userData.projectAccess || {};
+        agentAccess = userData.agentAccess || {}; // Kullanıcının ajan yetkilerini çekiyoruz
         discoverAccess = userData.discoverAccess || {};
         isAdmin = isAdmin || userData.isAdmin || false;
     }
 
     const userProjectIds = Object.keys(projectAccess).filter(k => projectAccess[k] === true);
+    const userAgentIds = Object.keys(agentAccess).filter(k => agentAccess[k] === true); // Sahip olunan ajanlar
     const userDiscoverIds = Object.keys(discoverAccess).filter(k => discoverAccess[k] === true);
 
     const allProjects = [];
+    const allAgents = []; // Tüm ajanları tutacağımız dizi
 
-    // GÜVENLİ PROJE ÇEKİMİ: getDocs() yerine tek tek getDoc() kullanıyoruz
     if (isAdmin) {
-        // Admin için tüm koleksiyonu çekmek hala kurallara takılabilir, 
-        // bu yüzden admin panelinde listeletebiliriz. 
-        // Sidebar için admin olsa bile şimdilik sadece kendi erişimlerini çekmesi daha güvenli.
-        const querySnapshot = await getDocs(collection(db, "projects"));
-        querySnapshot.forEach(doc => {
+        // ADMIN: Tüm Projeleri Çek
+        const projectSnapshot = await getDocs(collection(db, "projects"));
+        projectSnapshot.forEach(doc => {
             const data = doc.data();
             if (data.config?.isActive !== false) allProjects.push({ id: doc.id, ...data });
         });
+
+        // ADMIN: Tüm Ajanları Çek
+        const agentSnapshot = await getDocs(collection(db, "agents"));
+        agentSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.config?.isActive !== false) allAgents.push({ id: doc.id, ...data });
+        });
+
     } else {
-        // Normal Kullanıcı: Sadece ID'si bilinen dökümanları çek (Rules bunu engellemez)
-        const targetIds = [...new Set([...userProjectIds, ...userDiscoverIds])];
-        const promises = targetIds.map(id => getDoc(doc(db, "projects", id)));
-        const snaps = await Promise.all(promises);
-        snaps.forEach(snap => {
+        // NORMAL KULLANICI: Sadece İzinli Projeleri Çek
+        const targetProjectIds = [...new Set([...userProjectIds, ...userDiscoverIds])];
+        const projectPromises = targetProjectIds.map(id => getDoc(doc(db, "projects", id)));
+        const projectSnaps = await Promise.all(projectPromises);
+        projectSnaps.forEach(snap => {
             if(snap.exists()){
                 const data = snap.data();
                 if(data.config?.isActive !== false) allProjects.push({ id: snap.id, ...data });
             }
         });
+
+        // NORMAL KULLANICI: Sadece İzinli Ajanları Çek (Keşfet mantığı ajanlara da uygulanabilir)
+        const targetAgentIds = [...new Set([...userAgentIds])]; // Şimdilik sadece sahip oldukları ajanları görsün
+        const agentPromises = targetAgentIds.map(id => getDoc(doc(db, "agents", id)));
+        const agentSnaps = await Promise.all(agentPromises);
+        agentSnaps.forEach(snap => {
+            if(snap.exists()){
+                const data = snap.data();
+                if(data.config?.isActive !== false) allAgents.push({ id: snap.id, ...data });
+            }
+        });
     }
 
     allProjects.sort((a, b) => (a.details?.name || a.id).localeCompare(b.details?.name || b.id));
+    allAgents.sort((a, b) => (a.details?.name || a.id).localeCompare(b.details?.name || b.id));
 
-    // Sahip olunanlar
-    const owned = allProjects.filter(p => isAdmin || userProjectIds.includes(p.id));
-    container.innerHTML = owned.map(p => {
+    // --- 1. PROJELERİ EKRANA BASMA ---
+    const ownedProjects = allProjects.filter(p => isAdmin || userProjectIds.includes(p.id));
+    containerProjects.innerHTML = ownedProjects.map(p => {
         const href = resolveUrl(p.config?.folderPath, p.config?.entryPoint);
         return `
             <a href="${href}" class="menu-item ${isActiveLink(href) ? 'active' : ''}" data-project="${p.id}">
@@ -180,19 +207,32 @@ async function initSidebar() {
                 <span>${p.details?.name || p.id}</span>
             </a>`;
     }).join('');
+    document.getElementById("tk-sidebar-services-header").style.display = ownedProjects.length ? "block" : "none";
 
-    document.getElementById("tk-sidebar-services-header").style.display = owned.length ? "block" : "none";
+    // --- 2. AJANLARI EKRANA BASMA (YENİ) ---
+    const ownedAgents = allAgents.filter(a => isAdmin || userAgentIds.includes(a.id));
+    if (containerAgents) {
+        containerAgents.innerHTML = ownedAgents.map(a => {
+            // Ajanların link yapısı projelerden farklıysa burada revize edilebilir
+            const href = resolveUrl(a.config?.folderPath, a.config?.entryPoint);
+            return `
+                <a href="${href}" class="menu-item ${isActiveLink(href) ? 'active' : ''}" data-agent="${a.id}">
+                    ${iconHtml(a.details?.icon || 'fas fa-robot')} <span>${a.details?.name || a.id}</span>
+                </a>`;
+        }).join('');
+        document.getElementById("tk-sidebar-agents-header").style.display = ownedAgents.length ? "block" : "none";
+    }
 
-    // Keşfet alanı
+    // --- 3. KEŞFET ALANI EKRANA BASMA ---
     if (exploreContainer) {
-        const locked = allProjects.filter(p => !isAdmin && !userProjectIds.includes(p.id) && userDiscoverIds.includes(p.id));
-        exploreContainer.innerHTML = locked.map(p => `
+        const lockedProjects = allProjects.filter(p => !isAdmin && !userProjectIds.includes(p.id) && userDiscoverIds.includes(p.id));
+        exploreContainer.innerHTML = lockedProjects.map(p => `
             <a href="#" class="menu-item locked" style="opacity: 0.6;" onclick="alert('${p.details?.name || p.id} için erişim izniniz bulunmuyor.'); return false;">
                 ${iconHtml(p.details?.icon)}
                 <span>${p.details?.name || p.id}</span>
                 <i class="fas fa-lock" style="margin-left:auto; font-size:12px; color:#f59e0b;"></i>
             </a>`).join('');
-        document.getElementById("tk-explore-header").style.display = locked.length ? "block" : "none";
+        document.getElementById("tk-explore-header").style.display = lockedProjects.length ? "block" : "none";
     }
 
   } catch (e) {
