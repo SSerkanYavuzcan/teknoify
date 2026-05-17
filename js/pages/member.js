@@ -1,22 +1,38 @@
+// /js/pages/member.js
+import { db } from "/js/lib/firebase.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { requireAuth } from "/js/lib/auth.js"; // logout silindi, çünkü artık sidebar.js yönetiyor!
+
+/**
+ * UI: Metin ve Değer Güncelleme
+ */
+function updateUI(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value ?? "0";
+}
+
+/**
+ * DASHBOARD VERİ YÜKLEYİCİ (GÖZ KIRPMA EFEKTİ ENGELLENDİ & DİNAMİK YUKARI KAYDIRMA EKLENDİ)
+ */
 async function loadDashboardData(sess) {
     try {
         console.log("[member.js] Veri senkronizasyonu başlatıldı:", sess.uid);
         const effectiveUid = sess.userId || sess.uid;
 
-        // HTML üzerindeki elementleri ve kapsayıcıları yakalıyoruz
+        // HTML üzerindeki 4 büyük kartı yakalıyoruz
         const cardFinance = document.getElementById("card-finance");
         const cardHealth = document.getElementById("card-health");
         const cardProductivity = document.getElementById("card-productivity");
         const cardSubscriptions = document.getElementById("card-subscriptions");
         
-        // DÜZELTME: Ana ızgara yapısını ve genel içerik alanını yakala
+        // Kapsayıcı ızgara ve ana kaydırma alanını yakalıyoruz
         const personalGrid = document.getElementById("personal-cards-grid");
         const contentScroll = document.querySelector(".content-scroll");
 
         // 2. Firestore'dan Kullanıcı Dokümanını Oku
         const userSnap = await getDoc(doc(db, "users", effectiveUid));
         
-        let hasAnyCard = false; // Kullanıcının herhangi bir kartı var mı kontrolü
+        let hasAnyCard = false; // Kullanıcının erişebildiği herhangi bir kart var mı?
 
         if (userSnap.exists()) {
             const userDoc = userSnap.data();
@@ -62,15 +78,21 @@ async function loadDashboardData(sess) {
             if (typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();
             }
+        } else {
+            // Kullanıcının Firestore'da hiçbir dokümanı yoksa tüm kartları gizli tut
+            if (cardFinance) cardFinance.style.setProperty('display', 'none', 'important');
+            if (cardHealth) cardHealth.style.setProperty('display', 'none', 'important');
+            if (cardProductivity) cardProductivity.style.setProperty('display', 'none', 'important');
+            if (cardSubscriptions) cardSubscriptions.style.setProperty('display', 'none', 'important');
         }
 
-        // --- DÜZELTME: DİNAMİK BOŞLUK VE YUKARI KAYDIRMA YAPISI ---
+        // --- DİNAMİK BOŞLUK VE YUKARI KAYDIRMA AYARI ---
         if (hasAnyCard) {
-            // Eğer en az bir kart varsa normal yerleşimi koru
+            // Eğer en az bir kart görünür durumdaysa normal düzeni koru
             if (personalGrid) personalGrid.style.setProperty('display', 'grid', 'important');
             if (contentScroll) contentScroll.style.setProperty('padding-top', '120px', 'important');
         } else {
-            // Eğer hiçbir kart yoksa, üst boşluğu daralt ve ana kapsayıcıyı tamamen yok et (Yukarı kayar)
+            // Eğer kullanıcının yetkili hiçbir kartı yoksa, üst boşluğu daralt ve alanı yok et (Projeler yukarı kayar)
             if (personalGrid) personalGrid.style.setProperty('display', 'none', 'important');
             if (contentScroll) contentScroll.style.setProperty('padding-top', '40px', 'important');
         }
@@ -79,3 +101,41 @@ async function loadDashboardData(sess) {
         console.error("[member.js] Kritik Hata:", err);
     }
 }
+
+/**
+ * UI: Overlay'i akıcı şekilde kaldır
+ */
+function hideOverlay() {
+    const overlay = document.getElementById("loading-overlay");
+    if (overlay) {
+        overlay.style.opacity = "0";
+        setTimeout(() => {
+            overlay.style.display = "none";
+            overlay.remove(); 
+        }, 800);
+    }
+}
+
+async function init() {
+    try {
+        const session = await requireAuth();
+
+        if (session) {
+            // Sidebar'ın yetkileri okuyabilmesi için oturumu globale kaydet
+            window.USER_SESSION = session; 
+            
+            // Oturum varsa dashboard verilerini yükle
+            await loadDashboardData(session);
+        }
+    } catch (err) {
+        console.error("[member.js] Başlatma Hatası:", err);
+        const loaderText = document.getElementById("dynamic-loader-text");
+        if (loaderText) loaderText.textContent = "Bir hata oluştu, lütfen sayfayı yenileyin.";
+    } finally {
+        // Her şey bittiğinde yükleme ekranını KALDIR
+        hideOverlay();
+    }
+}
+
+// Sistemi Başlat
+init();
