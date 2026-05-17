@@ -1,4 +1,22 @@
-@import url("./04-objects/grid.css");
-@import url("./05-components/scorecard.css");
-@import url("./05-components/chat-widget.css");
-@import url("./06-pages/product-discover.css");
+.agent-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 1400px;
+    margin-bottom: 40px;
+}
+
+.agent-tools-area {
+    width: 100%;
+    max-width: 1400px;
+    padding: 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(255,255,255,0.05);
+    border-radius: 12px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #71717a;
+}
