@@ -1,50 +1,3 @@
-const firebaseConfig = {
-    apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
-    authDomain: "teknoify-9449c.firebaseapp.com",
-    projectId: "teknoify-9449c",
-    storageBucket: "teknoify-9449c.firebasestorage.app",
-    messagingSenderId: "704314596026",
-    appId: "1:704314596026:web:f63fff04c00b7a698ac083",
-    measurementId: "G-1DZKJE7BXE"
-};
-
-// 1. Firebase'i Başlat
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
-// 2. Firebase App Check'i Başlat (Güvenlik Katmanı)
-if (typeof firebase !== 'undefined' && firebase.appCheck) {
-    // Localhost testlerinde engellenmemek için debug modunu aç
-    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    }
-    
-    const appCheck = firebase.appCheck();
-    appCheck.activate(
-        '6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', // index.html'deki reCAPTCHA v3 Site Key'in
-        true // Token otomatik yenilemesi aktif
-    );
-}
-
-// 3. Modülleri Yükle
-const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
-const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('loginModal')) {
-        new AuthSystem();
-    }
-    new UISystem();
-    if (document.querySelector('.contact-form')) {
-        new ContactSystem();
-    }
-    setTimeout(() => {
-        if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
-        if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
-    }, 200);
-});
-
 class AuthSystem {
     constructor() {
         this.modal = document.getElementById('loginModal');
@@ -61,10 +14,24 @@ class AuthSystem {
                 const user = auth ? auth.currentUser : null;
                 if (user) {
                     try {
-                        const userDoc = await db.collection('users').doc(user.uid).get();
-                        if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
+                        // 1. Önce Token (Custom Claims) üzerinden kontrol et (session-manager ile uyumlu)
+                        const idTokenResult = await user.getIdTokenResult();
+                        let isAdmin = !!idTokenResult.claims.admin;
+                        let isPremium = !!idTokenResult.claims.premium;
+
+                        // 2. Token'da yoksa Veritabanına bak (Esnek yapı)
+                        if (!isAdmin) {
+                            const userDoc = await db.collection('users').doc(user.uid).get();
+                            if (userDoc.exists) {
+                                const data = userDoc.data();
+                                isAdmin = (data.role && data.role.type === 'admin') || data.role === 'admin';
+                                isPremium = (data.role && data.role.type === 'premium') || data.role === 'premium';
+                            }
+                        }
+
+                        if (isAdmin) {
                             window.location.href = '/dashboard/admin.html';
-                        } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
+                        } else if (isPremium) {
                             window.location.href = '/dashboard/premium.html';
                         } else {
                             window.location.href = '/dashboard/member.html';
@@ -123,23 +90,37 @@ class AuthSystem {
             .then(async (userCredential) => {
                 const user = userCredential.user;
                 try {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    // 1. Önce Token (Custom Claims) üzerinden kontrol et (session-manager ile uyumlu)
+                    const idTokenResult = await user.getIdTokenResult();
+                    let isAdmin = !!idTokenResult.claims.admin;
+                    let isPremium = !!idTokenResult.claims.premium;
+
+                    // 2. Token'da yoksa Veritabanına bak (Esnek yapı)
+                    if (!isAdmin) {
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists) {
+                            const data = userDoc.data();
+                            isAdmin = (data.role && data.role.type === 'admin') || data.role === 'admin';
+                            isPremium = (data.role && data.role.type === 'premium') || data.role === 'premium';
+                        }
+                    }
+
                     localStorage.setItem('session_start_time', Date.now());
                     
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
                     
                     setTimeout(() => {
-                        if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'admin') {
+                        if (isAdmin) {
                             window.location.href = '/dashboard/admin.html';
-                        } else if (userDoc.exists && userDoc.data().role && userDoc.data().role.type === 'premium') {
+                        } else if (isPremium) {
                             window.location.href = '/dashboard/premium.html';
                         } else {
                             window.location.href = '/dashboard/member.html';
                         }
                     }, 1000);
                 } catch (dbError) {
-                    console.warn("--- VERİTABANI ERİŞİM UYARISI ---", dbError.message);
+                    console.warn("--- YETKİ KONTROL UYARISI ---", dbError.message);
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
                     setTimeout(() => { window.location.href = '/dashboard/member.html'; }, 1000);
@@ -170,216 +151,5 @@ class AuthSystem {
                 }
             }
         });
-    }
-}
-
-class ContactSystem {
-    constructor() {
-        this.form = document.querySelector('.contact-form');
-        this.submitBtn = this.form ? this.form.querySelector('button[type="submit"]') : null;
-        this.honeypot = document.getElementById('tk_hp_field');
-        this.apiUrl = "https://api.teknoify.com/submitContactForm";
-        if (this.form) this.bindEvents();
-    }
-
-    bindEvents() {
-        this.form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (this.honeypot && this.honeypot.value) {
-                this.banAndLogBot();
-                return;
-            }
-            const lastSuccess = localStorage.getItem('tk_last_success');
-            if (lastSuccess && (Date.now() - lastSuccess < 60000)) {
-                if (typeof showToast === "function") showToast("Uyarı", "Lütfen bir dakika bekleyip tekrar deneyin.", "error");
-                return;
-            }
-            if (this.validateInput()) {
-                this.sendToIP();
-            }
-        });
-    }
-
-    validateInput() {
-        const contactVal = document.getElementById('contact_info').value.trim();
-        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactVal);
-        const isPhone = contactVal.replace(/\D/g, '').length >= 10;
-        if (!isEmail && !isPhone) {
-            if (typeof showToast === "function") showToast("Hata", "Geçerli bir E-posta veya Telefon giriniz.", "error");
-            return false;
-        }
-        return true;
-    }
-
-    async banAndLogBot() {
-        localStorage.setItem('tk_access_denied', 'true');
-        location.reload();
-    }
-
-    async sendToIP() {
-        if (!this.submitBtn) return;
-        const origHtml = this.submitBtn.innerHTML;
-        this.submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Gönderiliyor...';
-        this.submitBtn.disabled = true;
-        try {
-            const payload = {
-                fullname: document.getElementById('fullname').value.trim(),
-                contact_info: document.getElementById('contact_info').value.trim(),
-                service_type: document.getElementById('service_type').value,
-                message: document.getElementById('message').value.trim(),
-                visitor_id: localStorage.getItem('tk_visitor_id') || "Web_Client"
-            };
-            const response = await fetch(this.apiUrl, {
-                method: 'POST',
-                mode: 'cors',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json().catch(() => ({ error: "Sunucudan geçersiz yanıt alındı." }));
-            if (response.ok && result.success) {
-                localStorage.setItem('tk_last_success', Date.now());
-                if (typeof showToast === "function") showToast("Başarılı", "Mesajınız güvenli katmanlardan geçerek iletildi.", "success");
-                this.form.reset();
-            } else {
-                throw new Error(result.error || "İşlem reddedildi.");
-            }
-        } catch (err) {
-            if (typeof showToast === "function") showToast("Sistem Mesajı", err.message || "Bağlantı hatası oluştu.", "error");
-        } finally {
-            setTimeout(() => {
-                this.submitBtn.innerHTML = origHtml;
-                this.submitBtn.disabled = false;
-            }, 1500);
-        }
-    }
-}
-
-class UISystem {
-    constructor() {
-        this.header = document.getElementById('header');
-        this.hamburger = document.querySelector('.hamburger');
-        this.navMenu = document.querySelector('.nav-menu');
-        this.navLinks = document.querySelectorAll('.nav-link');
-        this.bindEvents();
-    }
-
-    bindEvents() {
-        window.addEventListener('scroll', () => {
-            if (!this.header) return;
-            window.scrollY > 50 ? this.header.classList.add('scrolled') : this.header.classList.remove('scrolled');
-        }, { passive: true });
-        if (this.hamburger) {
-            this.hamburger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggleMenu();
-            });
-        }
-        this.navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (this.navMenu && this.navMenu.classList.contains('active')) this.toggleMenu();
-            });
-        });
-        document.addEventListener('click', (e) => {
-            if (this.navMenu && this.navMenu.classList.contains('active')) {
-                if (!this.navMenu.contains(e.target) && !this.hamburger.contains(e.target)) this.toggleMenu();
-            }
-        });
-    }
-
-    toggleMenu() {
-        if (this.hamburger && this.navMenu) {
-            this.hamburger.classList.toggle('active');
-            this.navMenu.classList.toggle('active');
-        }
-    }
-}
-
-class TerminalEffect {
-    constructor(selector) {
-        this.container = document.querySelector(selector);
-        if (!this.container) return;
-        this.lines = [
-            { type: 'comment', text: '# Security: LOAD_BALANCER_ACTIVE' },
-            { type: 'code', text: 'shield.connect("api.teknoify.com")' },
-            { type: 'empty', text: '' },
-            { type: 'comment', text: '# Initializing Cloud Armor...' },
-            { type: 'output', text: '>> WAF Protocol: ENABLED' },
-            { type: 'output', text: '>> Origin IP: HIDDEN' },
-            { type: 'success', text: '>> VERIFIED: Teknoify Secure IP' },
-            { type: 'empty', text: '' },
-            { type: 'success', text: '>> STATUS: PROTECTED' },
-            { type: 'cursor', text: '_' }
-        ];
-        this.typeSpeed = 25; this.lineDelay = 600; this.loopDelay = 5000; this.start();
-    }
-
-    scrollToBottom() { this.container.scrollTop = this.container.scrollHeight; }
-
-    async start() {
-        while (true) {
-            this.container.innerHTML = '';
-            for (let line of this.lines) {
-                if (line.type === 'cursor') await this.addCursor(line);
-                else await this.typeLine(line);
-            }
-            await new Promise(resolve => setTimeout(resolve, this.loopDelay));
-        }
-    }
-
-    typeLine(lineData) {
-        return new Promise(resolve => {
-            const lineEl = document.createElement('div');
-            lineEl.style.fontFamily = "'Fira Code', monospace";
-            lineEl.style.marginBottom = "4px";
-            if (lineData.type === 'comment') lineEl.style.color = '#6b7280';
-            if (lineData.type === 'code') lineEl.style.color = '#e2e8f0';
-            if (lineData.type === 'success') lineEl.style.color = '#10b981';
-            if (lineData.type === 'output') lineEl.style.color = '#fbbf24';
-            if (lineData.type === 'empty') lineEl.innerHTML = '&nbsp;';
-            this.container.appendChild(lineEl);
-            this.scrollToBottom();
-            if (lineData.type === 'empty') { setTimeout(resolve, 100); return; }
-            let i = 0;
-            const interval = setInterval(() => {
-                lineEl.textContent += lineData.text.charAt(i); i++; this.scrollToBottom();
-                if (i >= lineData.text.length) { clearInterval(interval); setTimeout(resolve, this.lineDelay); }
-            }, this.typeSpeed);
-        });
-    }
-
-    addCursor(lineData) {
-        return new Promise(resolve => {
-            const lineEl = document.createElement('div');
-            lineEl.classList.add('blink-cursor'); lineEl.textContent = lineData.text; lineEl.style.color = '#fff';
-            this.container.appendChild(lineEl); this.scrollToBottom(); setTimeout(resolve, 2000);
-        });
-    }
-}
-
-class BackgroundFX {
-    constructor(selector) {
-        this.container = document.querySelector(selector);
-        if (!this.container) return;
-        this.starCount = window.innerWidth < 768 ? 20 : 50;
-        this.init();
-    }
-
-    init() {
-        this.container.innerHTML = '';
-        const frag = document.createDocumentFragment();
-        for (let i = 0; i < this.starCount; i++) {
-            const star = document.createElement('div');
-            const size = Math.random() * 2 + 1;
-            star.style.cssText = `
-                position: absolute; width: ${size}px; height: ${size}px;
-                background: rgba(255,255,255, ${Math.random() * 0.4 + 0.1});
-                left: ${Math.random() * 100}%; top: ${Math.random() * 100}%;
-                border-radius: 50%; pointer-events: none;
-                animation: floatParticle ${10 + Math.random() * 20}s linear infinite;
-                animation-delay: -${Math.random() * 20}s;
-            `;
-            frag.appendChild(star);
-        }
-        this.container.appendChild(frag);
     }
 }
