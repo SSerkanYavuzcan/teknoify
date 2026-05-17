@@ -8,6 +8,6 @@
 /* Components (Bileşenler) */
 @import url("./05-components/scorecard.css");
 @import url("./05-components/chat-widget.css");
-
+@import url("./05-components/dashboard-widgets.css");
 /* Pages (Sayfaya Özel Durumlar) */
 @import url("./06-pages/product-discover.css");
