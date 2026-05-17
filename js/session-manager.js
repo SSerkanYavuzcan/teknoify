@@ -192,12 +192,11 @@ class SessionManager {
         localStorage.removeItem('impersonated_user_id');
 
         this.auth.signOut().then(() => {
-            // Not: index.html ana sayfa ise ve modal kullanılıyorsa 
-            // burayı ihtiyacına göre window.location.href = '/' şeklinde de güncelleyebilirsin.
-            window.location.href = '/pages/login.html'; 
+            // Sitenizde ayrı bir login sayfası olmadığı için ana sayfaya yönlendiriyoruz
+            window.location.href = '/'; 
         }).catch((error) => {
             console.error("Çıkış hatası:", error);
-            window.location.href = '/pages/login.html';
+            window.location.href = '/';
         });
     }
 }
