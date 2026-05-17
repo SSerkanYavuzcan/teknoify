@@ -12,7 +12,7 @@ function updateUI(id, value) {
 }
 
 /**
- * DASHBOARD VERİ YÜKLEYİCİ (GÖZ KIRPMA EFEKTİ ENGELLENDİ & DİNAMİK YUKARI KAYDIRMA EKLENDİ)
+ * DASHBOARD VERİ YÜKLEYİCİ (ULTRA DEFANSİF VE GÜVENLİ HALE GETİRİLDİ)
  */
 async function loadDashboardData(sess) {
     try {
@@ -36,10 +36,14 @@ async function loadDashboardData(sess) {
 
         if (userSnap.exists()) {
             const userDoc = userSnap.data();
-            const userData = userDoc.data || {};
+            
+            // Admin ve Member döküman yapısı farklı olabileceği için hem root'a hem data altına bakıyoruz
+            const userData = userDoc.data || userDoc || {};
+
+            console.log("[member.js] Firestore Kullanıcı Datası:", userData);
 
             // --- FİNANS VERİLERİ VE KART ERİŞİM KONTROLÜ ---
-            if (userData.finance) {
+            if (userData.finance && (userData.finance.portfolio || userData.finance.savings)) {
                 hasAnyCard = true;
                 if (cardFinance) cardFinance.style.setProperty('display', 'flex', 'important'); 
                 updateUI("portfolio-value", "₺" + (userData.finance.portfolio || "385.240"));
@@ -49,7 +53,7 @@ async function loadDashboardData(sess) {
             }
 
             // --- SAĞLIK VERİLERİ VE KART ERİŞİM KONTROLÜ ---
-            if (userData.health) {
+            if (userData.health && (userData.health.weight || userData.health.sleep)) {
                 hasAnyCard = true;
                 if (cardHealth) cardHealth.style.setProperty('display', 'flex', 'important'); 
                 updateUI("user-weight", userData.health.weight || "74.8");
@@ -73,11 +77,6 @@ async function loadDashboardData(sess) {
             } else {
                 if (cardSubscriptions) cardSubscriptions.style.setProperty('display', 'none', 'important'); 
             }
-            
-            // Eğer sidebar.js yüklüyse menüyü tetikle
-            if (typeof window.TK_RENDER_SIDEBAR === "function") {
-                window.TK_RENDER_SIDEBAR();
-            }
         } else {
             // Kullanıcının Firestore'da hiçbir dokümanı yoksa tüm kartları gizli tut
             if (cardFinance) cardFinance.style.setProperty('display', 'none', 'important');
@@ -97,8 +96,13 @@ async function loadDashboardData(sess) {
             if (contentScroll) contentScroll.style.setProperty('padding-top', '40px', 'important');
         }
 
+        // En son aşamada sidebar.js yüklüyse menüyü tetikle (Asla kesintiye uğramaz)
+        if (typeof window.TK_RENDER_SIDEBAR === "function") {
+            window.TK_RENDER_SIDEBAR();
+        }
+
     } catch (err) {
-        console.error("[member.js] Kritik Hata:", err);
+        console.error("[member.js] loadDashboardData içerisinde hata:", err);
     }
 }
 
@@ -129,8 +133,6 @@ async function init() {
         }
     } catch (err) {
         console.error("[member.js] Başlatma Hatası:", err);
-        const loaderText = document.getElementById("dynamic-loader-text");
-        if (loaderText) loaderText.textContent = "Bir hata oluştu, lütfen sayfayı yenileyin.";
     } finally {
         // Her şey bittiğinde yükleme ekranını KALDIR
         hideOverlay();
