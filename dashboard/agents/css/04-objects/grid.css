@@ -1,22 +1,37 @@
-.agent-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+/* Ana Taşıyıcı: Sol Taraf (Dashboard) + Sağ Taraf (Chat) */
+.agent-dashboard-wrapper {
+    display: flex;
+    gap: 24px;
     width: 100%;
-    max-width: 1400px;
-    margin-bottom: 40px;
+    height: 100%; /* Ekran yüksekliğine tam oturur */
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
-.agent-tools-area {
-    width: 100%;
-    max-width: 1400px;
-    padding: 20px;
-    background: rgba(255,255,255,0.02);
-    border: 1px dashed rgba(255,255,255,0.05);
-    border-radius: 12px;
-    min-height: 400px;
+/* Sol Taraf: Dashboard Alanı */
+.agent-main-col {
+    flex: 1; /* Kalan tüm alanı kaplar */
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #71717a;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto; /* Kendi içinde scroll olur */
+    padding-right: 5px;
+}
+.agent-main-col::-webkit-scrollbar { display: none; }
+
+/* Sağ Taraf: Sabit Sohbet Alanı */
+.agent-chat-col {
+    width: 360px; /* Sabit Chat Genişliği */
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* 5'li KPI Kartları */
+.agent-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 4 yerine 5 sütun yaptık */
+    gap: 16px;
+    width: 100%;
 }
