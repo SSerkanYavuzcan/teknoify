@@ -349,7 +349,9 @@
             let userData = null;
 
             if (userDocSnap.exists()) {
-                userData = userDocSnap.data();
+                const rootData = userDocSnap.data() || {};
+                // GÜNCELLEME: Verinin hem root seviyesindeki hem de nested "data" altındaki hiyerarşiyi tanımasını sağladık
+                userData = rootData.data || rootData || {};
                 
                 if (userData.profile && userData.profile.accountType) {
                     accountType = userData.profile.accountType;
@@ -437,7 +439,9 @@
                 return;
             }
 
-            const userData = userDocSnap.data();
+            // GÜNCELLEME: Proje erişim listesini hem root seviyesinden hem de iç içe geçmiş data objesinden esnekçe çekecek şekilde düzelttik
+            const rootData = userDocSnap.data() || {};
+            const userData = rootData.data || rootData || {};
             const projectAccess = userData.projectAccess || {};
 
             const allowedProjectIds = Object.keys(projectAccess).filter(projectId => projectAccess[projectId] === true);
