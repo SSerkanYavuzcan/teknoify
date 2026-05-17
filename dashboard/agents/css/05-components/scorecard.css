@@ -1,13 +1,23 @@
-/* ========================================================= */
-/* TEKNOIFY AGENTS - ANA CSS BAŞLATICI */
-/* ========================================================= */
-
-/* Objects (İskelet Yapılar) */
-@import url("./04-objects/grid.css");
-
-/* Components (Bileşenler) */
-@import url("./05-components/scorecard.css");
-@import url("./05-components/chat-widget.css");
-
-/* Pages (Sayfaya Özel Durumlar) */
-@import url("./06-pages/product-discover.css");
+.agent-summary-card {
+    background: #11131a; 
+    border: 1px solid rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.2s, border-color 0.2s;
+}
+.agent-summary-card:hover { 
+    transform: translateY(-3px); 
+    border-color: #6366f1; 
+}
+.agent-summary-icon {
+    width: 45px; height: 45px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; background: rgba(255,255,255,0.03);
+}
+.agent-summary-info { display: flex; flex-direction: column; }
+.agent-summary-info span { font-size: 0.8rem; color: #a1a1aa; margin-bottom: 4px; }
+.agent-summary-info strong { font-size: 1.4rem; color: #fff; }
