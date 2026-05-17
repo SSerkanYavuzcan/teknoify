@@ -82,28 +82,210 @@
             <div class="agent-stats-grid">
                 <div class="agent-summary-card">
                     <div class="agent-summary-icon" style="color: #a855f7; background: rgba(168,85,247,0.1);"><i class="fas fa-satellite-dish"></i></div>
-                    <div class="agent-summary-info"><span>Aktif Tarama Oturumları</span><strong id="kpi-sessions">6</strong></div>
+                    <div class="agent-summary-info">
+                        <span>Aktif Tarama Oturumları</span>
+                        <strong id="kpi-sessions">6</strong>
+                        <span style="font-size: 0.7rem; color: #71717a; margin-top:2px;">↗ 2 son 24 saatte</span>
+                    </div>
                 </div>
                 <div class="agent-summary-card">
                     <div class="agent-summary-icon" style="color: #3b82f6; background: rgba(59,130,246,0.1);"><i class="fas fa-globe"></i></div>
-                    <div class="agent-summary-info"><span>Toplam Taranan Site</span><strong id="kpi-sites">1.240</strong></div>
+                    <div class="agent-summary-info">
+                        <span>Toplam Taranan Site</span>
+                        <strong id="kpi-sites">1.240</strong>
+                        <span style="font-size: 0.7rem; color: #71717a; margin-top:2px;">↗ 156 bugün</span>
+                    </div>
                 </div>
                 <div class="agent-summary-card">
                     <div class="agent-summary-icon" style="color: #10b981; background: rgba(16,185,129,0.1);"><i class="fas fa-box-open"></i></div>
-                    <div class="agent-summary-info"><span>Bugün Keşfedilen Ürün</span><strong id="kpi-products">148</strong></div>
+                    <div class="agent-summary-info">
+                        <span>Bugün Keşfedilen Ürün</span>
+                        <strong id="kpi-products">148</strong>
+                        <span style="font-size: 0.7rem; color: #10b981; margin-top:2px;">↗ 23 dün</span>
+                    </div>
                 </div>
                 <div class="agent-summary-card">
                     <div class="agent-summary-icon" style="color: #f59e0b; background: rgba(245,158,11,0.1);"><i class="fas fa-check-circle"></i></div>
-                    <div class="agent-summary-info"><span>Başarı Oranı</span><strong id="kpi-success">%98.6</strong></div>
+                    <div class="agent-summary-info">
+                        <span>Başarı Oranı</span>
+                        <strong id="kpi-success">%98.6</strong>
+                        <span style="font-size: 0.7rem; color: #f59e0b; margin-top:2px;">↗ %1.2 vs dün</span>
+                    </div>
                 </div>
                 <div class="agent-summary-card">
                     <div class="agent-summary-icon" style="color: #ef4444; background: rgba(239,68,68,0.1);"><i class="fas fa-wallet"></i></div>
-                    <div class="agent-summary-info"><span>Tahmini Maliyet</span><strong id="kpi-cost" style="color: #ef4444;">₺120.50</strong></div>
+                    <div class="agent-summary-info">
+                        <span>Tahmini Maliyet</span>
+                        <strong id="kpi-cost" style="color: #ef4444;">₺120.50</strong>
+                        <span style="font-size: 0.7rem; color: #ef4444; margin-top:2px;">↗ ₺18.20 bugün</span>
+                    </div>
                 </div>
             </div>
 
-            <div id="dynamic-widgets-area">
+            <div class="agent-widget-card">
+                <div class="widget-header">
+                    <div class="widget-title">
+                        Canlı Ajan Aktivitesi 
+                        <span class="widget-title-badge active">Tarama Devam Ediyor</span>
+                    </div>
+                    <button class="btn-scan-now"><i class="fas fa-wave-square"></i> Scanning Now</button>
                 </div>
+                
+                <div style="display: flex; gap: 40px; align-items: flex-end;">
+                    <div style="flex: 1;">
+                        <span style="font-size: 0.75rem; color:#a1a1aa;">Şu Anda Taranan Site</span>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                            <div class="site-icon" style="width: 32px; height: 32px; background: #fff;"><img src="https://logo.clearbit.com/trendyol.com" style="width: 20px;" alt="trendyol"></div>
+                            <span style="color: #fff; font-size: 1.2rem; font-weight: 600;">trendyol.com <i class="fas fa-external-link-alt" style="font-size: 0.8rem; color: #71717a; margin-left: 5px;"></i></span>
+                        </div>
+                        <div style="margin-top: 15px; font-size: 0.8rem; color: #a1a1aa;">
+                            Şu Anda Açılan Sayfa / Kategori <br>
+                            <span style="color: #10b981; font-weight: 500; margin-top: 4px; display: inline-block;">↗ Elektronik > Telefon & Aksesuar > Akıllı Telefonlar</span>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div class="progress-container">
+                            <div class="progress-labels"><span>Genel İlerleme</span><span style="color: #fff; font-weight: 600;">68%</span></div>
+                            <div class="progress-track"><div class="progress-fill" style="width: 68%;"></div></div>
+                            <div style="font-size: 0.75rem; color: #71717a; margin-top: 4px;">Sayfa 24 / 35</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-metrics-grid">
+                    <div class="sub-metric-box">
+                        <div class="sub-metric-icon" style="color: #60a5fa;"><i class="fas fa-cube"></i></div>
+                        <div class="sub-metric-info"><span>Taranan Ürün</span><strong>2.461</strong></div>
+                    </div>
+                    <div class="sub-metric-box">
+                        <div class="sub-metric-icon" style="color: #10b981;"><i class="fas fa-sparkles"></i></div>
+                        <div class="sub-metric-info"><span>Yeni Bulunan Ürün</span><strong>38 <span class="trend-badge">+12</span></strong></div>
+                    </div>
+                    <div class="sub-metric-box">
+                        <div class="sub-metric-icon" style="color: #a855f7;"><i class="fas fa-tachometer-alt"></i></div>
+                        <div class="sub-metric-info"><span>Ortalama Tarama Hızı</span><strong>37.2 <small style="font-size: 0.8rem; color:#71717a;">ürün/dk</small></strong></div>
+                    </div>
+                    <div class="sub-metric-box">
+                        <div class="sub-metric-icon" style="color: #c084fc;"><i class="far fa-clock"></i></div>
+                        <div class="sub-metric-info"><span>Geçen Süre</span><strong>00:12:45</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="three-col-grid">
+                <div class="agent-widget-card">
+                    <div class="widget-header"><div class="widget-title">İzlenen Web Siteleri</div></div>
+                    <table class="widget-table">
+                        <tr><th>Site</th><th>Durum</th><th>Taranan Ürün</th><th>Son Güncelleme</th><th>İlerleme</th></tr>
+                        <tr>
+                            <td><div class="site-cell"><div class="site-icon"><img src="https://logo.clearbit.com/trendyol.com" alt="ty"></div> trendyol.com</div></td>
+                            <td class="status-text scanning"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i> Taranıyor</td>
+                            <td>2.461</td><td>1 dk önce</td>
+                            <td><div class="progress-track" style="width: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;"><div class="progress-fill" style="width: 68%;"></div></div> 68%</td>
+                        </tr>
+                        <tr>
+                            <td><div class="site-cell"><div class="site-icon"><img src="https://logo.clearbit.com/hepsiburada.com" alt="hb"></div> hepsiburada.com</div></td>
+                            <td class="status-text scanning"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i> Taranıyor</td>
+                            <td>1.842</td><td>2 dk önce</td>
+                            <td><div class="progress-track" style="width: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;"><div class="progress-fill" style="width: 55%;"></div></div> 55%</td>
+                        </tr>
+                        <tr>
+                            <td><div class="site-cell"><div class="site-icon"><img src="https://logo.clearbit.com/n11.com" alt="n11"></div> n11.com</div></td>
+                            <td class="status-text waiting"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i> Beklemede</td>
+                            <td>0</td><td>5 dk önce</td>
+                            <td><div class="progress-track" style="width: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;"><div class="progress-fill" style="width: 0%;"></div></div> 0%</td>
+                        </tr>
+                        <tr>
+                            <td><div class="site-cell"><div class="site-icon"><img src="https://logo.clearbit.com/amazon.com.tr" alt="amazon"></div> amazon.com.tr</div></td>
+                            <td class="status-text completed"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i> Tamamlandı</td>
+                            <td>3.109</td><td>10 dk önce</td>
+                            <td><div class="progress-track" style="width: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;"><div class="progress-fill" style="width: 100%;"></div></div> 100%</td>
+                        </tr>
+                    </table>
+                    <a href="#" class="view-all-link">Tüm Siteleri Gör <i class="fas fa-chevron-right" style="font-size:0.7rem; margin-left:2px;"></i></a>
+                </div>
+
+                <div class="agent-widget-card">
+                    <div class="widget-header"><div class="widget-title">Keşif Zaman Çizelgesi</div></div>
+                    <ul class="timeline-list">
+                        <li class="timeline-item"><div class="timeline-icon green"><i class="fas fa-play"></i></div><div class="timeline-text"><strong>trendyol.com</strong> taraması başlatıldı.</div></li>
+                        <li class="timeline-item"><div class="timeline-icon blue"><i class="far fa-folder-open"></i></div><div class="timeline-text"><span style="color:#60a5fa;">Elektronik > Telefon & Aksesuar</span> kategorisi açıldı.</div></li>
+                        <li class="timeline-item"><div class="timeline-icon purple"><i class="fas fa-magic"></i></div><div class="timeline-text">24 yeni ürün eşleşti.</div></li>
+                        <li class="timeline-item"><div class="timeline-icon green"><i class="fas fa-cube"></i></div><div class="timeline-text">12 yeni ürün bulundu.</div></li>
+                        <li class="timeline-item"><div class="timeline-icon green"><i class="fas fa-play"></i></div><div class="timeline-text"><strong>hepsiburada.com</strong> taraması başlatıldı.</div></li>
+                    </ul>
+                    <a href="#" class="view-all-link" style="margin-top: auto;">Tüm Aktiviteyi Gör <i class="fas fa-chevron-right" style="font-size:0.7rem; margin-left:2px;"></i></a>
+                </div>
+
+                <div class="agent-widget-card">
+                    <div class="widget-header">
+                        <div class="widget-title">En Çok Keşfedilen Kategoriler</div>
+                        <span style="font-size:0.75rem; color:#a1a1aa; cursor:pointer;">Bugün <i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <div class="h-bar-row"><div class="h-bar-label">Elektronik</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 100%;"></div></div><div class="h-bar-val">68</div></div>
+                        <div class="h-bar-row"><div class="h-bar-label">Ev & Yaşam</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 47%;"></div></div><div class="h-bar-val">32</div></div>
+                        <div class="h-bar-row"><div class="h-bar-label">Giyim</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 26%;"></div></div><div class="h-bar-val">18</div></div>
+                        <div class="h-bar-row"><div class="h-bar-label">Kozmetik</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 17%;"></div></div><div class="h-bar-val">12</div></div>
+                        <div class="h-bar-row"><div class="h-bar-label">Spor & Outdoor</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 13%;"></div></div><div class="h-bar-val">9</div></div>
+                        <div class="h-bar-row"><div class="h-bar-label">Oyuncak</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 10%;"></div></div><div class="h-bar-val">7</div></div>
+                        <div class="h-bar-row"><div class="h-bar-label">Otomotiv</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 3%;"></div></div><div class="h-bar-val">2</div></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <span>Toplam</span><strong style="color: #fff;">148</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="agent-widget-card" style="margin-bottom: 40px;">
+                <div class="widget-header">
+                    <div class="widget-title">Yeni Keşfedilen Ürünler <span style="font-size: 0.75rem; background: rgba(16,185,129,0.1); color: #10b981; padding: 2px 8px; border-radius: 12px; font-weight: 500;">38 yeni ürün</span></div>
+                </div>
+                <table class="widget-table">
+                    <tr><th>Ürün</th><th>Kategori</th><th>Kaynak Site</th><th>Fiyat</th><th>Güven Skoru</th><th>Keşfedilme Zamanı</th></tr>
+                    <tr>
+                        <td>
+                            <div class="product-name-cell">
+                                <img src="https://m.media-amazon.com/images/I/71d7rfSl0wL._AC_SX679_.jpg" class="product-img" alt="S24">
+                                <span>Samsung Galaxy S24 FE 256GB</span>
+                            </div>
+                        </td>
+                        <td style="color:#a1a1aa;">Elektronik > Telefon & Aksesuar</td>
+                        <td>trendyol.com</td>
+                        <td style="color:#fff;">₺28.999</td>
+                        <td><span class="trust-score">95%</span></td>
+                        <td style="color:#a1a1aa;">1 dk önce</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="product-name-cell">
+                                <img src="https://m.media-amazon.com/images/I/51rP0iY9t9L._AC_SX679_.jpg" class="product-img" alt="JBL">
+                                <span>JBL Tune 520BT Kablosuz Kulaklık</span>
+                            </div>
+                        </td>
+                        <td style="color:#a1a1aa;">Elektronik > Ses Sistemleri</td>
+                        <td>hepsiburada.com</td>
+                        <td style="color:#fff;">₺1.299</td>
+                        <td><span class="trust-score">92%</span></td>
+                        <td style="color:#a1a1aa;">2 dk önce</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="product-name-cell">
+                                <img src="https://m.media-amazon.com/images/I/61y8B2s0KPL._AC_UY695_.jpg" class="product-img" alt="adidas">
+                                <span>adidas Ultraboost 5 Koşu Ayakkabısı</span>
+                            </div>
+                        </td>
+                        <td style="color:#a1a1aa;">Spor & Outdoor > Ayakkabı</td>
+                        <td>amazon.com.tr</td>
+                        <td style="color:#fff;">₺4.799</td>
+                        <td><span class="trust-score">90%</span></td>
+                        <td style="color:#a1a1aa;">4 dk önce</td>
+                    </tr>
+                </table>
+                <a href="#" class="view-all-link">Tüm Yeni Ürünleri Gör <i class="fas fa-chevron-right" style="font-size:0.7rem; margin-left:2px;"></i></a>
+            </div>
 
         </div>
         
@@ -218,7 +400,7 @@
         }
     });
 
-    // MESAJ GÖNDERME SİMÜLASYONU (Yeni class yapılarına uyarlandı)
+    // MESAJ GÖNDERME SİMÜLASYONU
     window.sendMessage = function() {
         const input = document.getElementById("agent-input");
         const text = input.value.trim();
@@ -235,7 +417,7 @@
         container.appendChild(userMsg);
         
         input.value = "";
-        input.style.height = "20px"; // Input kutusunu resetle
+        input.style.height = "20px";
         container.scrollTop = container.scrollHeight;
 
         // Ajanın "Düşünüyor..." animasyonu
@@ -251,7 +433,6 @@
         }, 500);
     }
 
-    // Enter tuşu ile mesaj gönderme (Shift+Enter alt satıra geçer)
     document.getElementById("agent-input").addEventListener("keypress", function(e) {
         if(e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
