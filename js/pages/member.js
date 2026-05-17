@@ -12,7 +12,7 @@ function updateUI(id, value) {
 }
 
 /**
- * DASHBOARD VERİ YÜKLEYİCİ (DİNAMİK YETKİ KONTROLLERİ EKLENDİ)
+ * DASHBOARD VERİ YÜKLEYİCİ (GÖZ KIRPMA EFEKTİ ENGELLENDİ)
  */
 async function loadDashboardData(sess) {
     try {
@@ -34,36 +34,36 @@ async function loadDashboardData(sess) {
 
             // --- FİNANS VERİLERİ VE KART ERİŞİM KONTROLÜ ---
             if (userData.finance) {
-                if (cardFinance) cardFinance.style.display = "flex"; // Yetki varsa göster
+                // Yetki varsa HTML'deki !important kilidini açıp görünür yapar
+                if (cardFinance) cardFinance.style.setProperty('display', 'flex', 'important'); 
                 updateUI("portfolio-value", "₺" + (userData.finance.portfolio || "385.240"));
                 updateUI("monthly-savings", "₺" + (userData.finance.savings || "12.430"));
             } else {
-                if (cardFinance) cardFinance.style.display = "none"; // Yetki yoksa tamamen gizle
+                if (cardFinance) cardFinance.style.setProperty('display', 'none', 'important'); 
             }
 
             // --- SAĞLIK VERİLERİ VE KART ERİŞİM KONTROLÜ ---
             if (userData.health) {
-                if (cardHealth) cardHealth.style.display = "flex"; // Yetki varsa göster
+                // Yetki varsa HTML'deki !important kilidini açıp görünür yapar
+                if (cardHealth) cardHealth.style.setProperty('display', 'flex', 'important'); 
                 updateUI("user-weight", userData.health.weight || "74.8");
                 updateUI("sleep-duration", userData.health.sleep || "7s 24dk");
             } else {
-                if (cardHealth) cardHealth.style.display = "none"; // Yetki yoksa tamamen gizle
+                if (cardHealth) cardHealth.style.setProperty('display', 'none', 'important'); 
             }
             
             // --- VERİMLİLİK KARTI ERİŞİM KONTROLÜ ---
             if (userData.productivity) {
-                if (cardProductivity) cardProductivity.style.display = "flex";
-                // Gelecekte eklemek isteyeceğiniz verimlilik dinamik UI güncellemelerini buraya yazabilirsiniz.
+                if (cardProductivity) cardProductivity.style.setProperty('display', 'flex', 'important');
             } else {
-                if (cardProductivity) cardProductivity.style.display = "none"; // Yetki yoksa gizle
+                if (cardProductivity) cardProductivity.style.setProperty('display', 'none', 'important'); 
             }
 
             // --- ABONELİKLER KARTI ERİŞİM KONTROLÜ ---
             if (userData.subscriptions) {
-                if (cardSubscriptions) cardSubscriptions.style.display = "flex";
-                // Gelecekte eklemek isteyeceğiniz abonelik dinamik UI güncellemelerini buraya yazabilirsiniz.
+                if (cardSubscriptions) cardSubscriptions.style.setProperty('display', 'flex', 'important');
             } else {
-                if (cardSubscriptions) cardSubscriptions.style.display = "none"; // Yetki yoksa gizle
+                if (cardSubscriptions) cardSubscriptions.style.setProperty('display', 'none', 'important'); 
             }
             
             // Eğer sidebar.js yüklüyse menüyü tetikle
@@ -71,11 +71,11 @@ async function loadDashboardData(sess) {
                 window.TK_RENDER_SIDEBAR();
             }
         } else {
-            // Kullanıcının Firestore'da hiçbir dokümanı veya yetkisi yoksa tüm kartları gizle
-            if (cardFinance) cardFinance.style.display = "none";
-            if (cardHealth) cardHealth.style.display = "none";
-            if (cardProductivity) cardProductivity.style.display = "none";
-            if (cardSubscriptions) cardSubscriptions.style.display = "none";
+            // Kullanıcının Firestore'da hiçbir dokümanı veya yetkisi yoksa tüm kartları gizli tut
+            if (cardFinance) cardFinance.style.setProperty('display', 'none', 'important');
+            if (cardHealth) cardHealth.style.setProperty('display', 'none', 'important');
+            if (cardProductivity) cardProductivity.style.setProperty('display', 'none', 'important');
+            if (cardSubscriptions) cardSubscriptions.style.setProperty('display', 'none', 'important');
         }
     } catch (err) {
         console.error("[member.js] Kritik Hata:", err);
