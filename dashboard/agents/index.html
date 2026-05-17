@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Discover | Teknoify Agents</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
+  
+  <style>
+    /* ========================================================= */
+    /* TEMEL YAPI VE DİNAMİK EKRAN ORANLAMASI */
+    /* ========================================================= */
+    body { background-color: #05080a; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
+
+    .main-content {
+      height: 100vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+    }
+
+    .top-bar {
+      position: relative !important; 
+      flex: 0 0 auto !important; 
+      width: 100% !important;
+      background: #05080a !important;
+      padding: 20px 30px !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
+      border-bottom: 1px solid rgba(255,255,255,0.05); 
+      z-index: 100 !important;
+    }
+
+    .content-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      flex: 1 1 auto !important; 
+      overflow-y: hidden !important; /* Sohbet ekranı için özel ayar */
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important; 
+      padding: 30px !important; 
+      box-sizing: border-box !important;
+    }
+    .content-scroll::-webkit-scrollbar { display: none; }
+
+    /* ========================================================= */
+    /* AJAN (AGENT) SOHBET ARAYÜZÜ TASARIMI */
+    /* ========================================================= */
+    .agent-wrapper {
+      width: 100%;
+      max-width: 1000px;
+      height: 100%;
+      background: #11131a;
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .agent-header {
+      padding: 20px 25px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, rgba(17,19,26,1), rgba(30,33,48,1));
+    }
+
+    .agent-info { display: flex; align-items: center; gap: 15px; }
+    .agent-icon {
+      width: 45px; height: 45px; border-radius: 12px;
+      background: rgba(99, 102, 241, 0.1); color: #6366f1;
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+    }
+    .agent-title h2 { margin: 0; font-size: 1.2rem; color: #fff; font-weight: 600; }
+    .agent-title p { margin: 4px 0 0 0; font-size: 0.8rem; color: #a1a1aa; }
+    
+    .status-badge-active {
+      background: rgba(16, 185, 129, 0.1); color: #10b981;
+      padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+      display: flex; align-items: center; gap: 6px; border: 1px solid rgba(16,185,129,0.2);
+    }
+    .status-badge-active::before { content:""; width:6px; height:6px; background:#10b981; border-radius:50%; box-shadow: 0 0 8px #10b981;}
+
+    .agent-chat-area {
+      flex: 1;
+      padding: 25px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .agent-chat-area::-webkit-scrollbar { width: 6px; }
+    .agent-chat-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+    /* Mesaj Balonları */
+    .message { display: flex; gap: 15px; max-width: 85%; }
+    .message.system { align-self: flex-start; }
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
+    
+    .msg-avatar { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; flex-shrink: 0;}
+    .msg-avatar.system { background: #1e2130; border: 1px solid rgba(99,102,241,0.3); color: #6366f1; }
+    .msg-avatar.user { background: #6366f1; color: #fff; }
+
+    .msg-bubble { padding: 14px 18px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; }
+    .system .msg-bubble { background: #1e2130; color: #e4e4e7; border: 1px solid rgba(255,255,255,0.05); border-top-left-radius: 4px; }
+    .user .msg-bubble { background: #6366f1; color: #fff; border-top-right-radius: 4px; }
+
+    .agent-input-area {
+      padding: 20px 25px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      background: #11131a;
+      display: flex;
+      gap: 15px;
+      align-items: flex-end;
+    }
+    
+    .agent-input-box {
+      flex: 1;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      transition: border-color 0.2s;
+    }
+    .agent-input-box:focus-within { border-color: #6366f1; }
+    
+    .agent-input-box textarea {
+      width: 100%; background: transparent; border: none; color: #fff; font-family: 'Inter Tight', sans-serif;
+      font-size: 0.95rem; resize: none; outline: none; max-height: 120px; overflow-y: auto;
+    }
+    .agent-input-box textarea::placeholder { color: #71717a; }
+
+    .btn-send {
+      width: 48px; height: 48px; border-radius: 12px; border: none;
+      background: #6366f1; color: #fff; font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s; flex-shrink: 0;
+    }
+    .btn-send:hover { background: #4f46e5; transform: scale(1.05); }
+
+    /* Profil Alanı Stilleri */
+    .user-profile { display: flex; align-items: center; gap: 12px; }
+    .top-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+
+  <div id="tk-global-sidebar-root"></div>
+
+  <main class="main-content">
+    
+    <header class="top-bar">
+      <h2 style="font-weight: 600; margin: 0; color: #fff; font-size: 1.4rem;">Product Discover <span style="color: #71717a; font-size: 1rem; font-weight:400; margin-left:10px;">| AI Agent</span></h2>
+      <div class="user-profile" style="cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'" onclick="if(window.SharedProfileManager) window.SharedProfileManager.openModal()">
+        <span id="user-name-display" style="font-weight: 500; color: #e4e4e7; font-size: 0.95rem;">Yükleniyor...</span>
+        <div class="top-avatar" id="user-avatar" style="background:#6366f1;">U</div>
+        <i class="fas fa-chevron-down" style="color: #71717a; font-size: 0.8rem; margin-left: 5px;"></i>
+      </div>
+    </header>
+
+    <div class="content-scroll" style="opacity: 0; transition: opacity 0.5s;" id="agent-main-view">
+      
+      <div class="agent-wrapper">
+        <div class="agent-header">
+          <div class="agent-info">
+            <div class="agent-icon"><i class="fas fa-search-dollar"></i></div>
+            <div class="agent-title">
+              <h2>Product Discover</h2>
+              <p>Piyasa Analizi ve Ürün Keşif Asistanı</p>
+            </div>
+          </div>
+          <div class="status-badge-active">Sistem Hazır</div>
+        </div>
+
+        <div class="agent-chat-area" id="chat-container">
+          <div class="message system">
+            <div class="msg-avatar system"><i class="fas fa-robot"></i></div>
+            <div class="msg-bubble">
+              Merhaba <strong id="chat-user-name">Kullanıcı</strong>! Ben Product Discover Ajanı. Piyasada trend olan ürünleri bulmana, fiyat analizleri yapmana ve rakiplerini incelemene yardımcı olabilirim.<br><br>Hangi kategori veya niş üzerinde araştırma yapmak istersin?
+            </div>
+          </div>
+          </div>
+
+        <div class="agent-input-area">
+          <div class="agent-input-box">
+            <textarea id="agent-input" rows="1" placeholder="Ajan için bir komut veya soru yazın..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+          </div>
+          <button class="btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="/dashboard/shared/sidebar.js"></script>
+  <script type="module" src="/dashboard/shared/profile-manager.js"></script>
+
+  <script type="module">
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; 
+
+    const auth = getAuth();
+    const db = getFirestore(); 
+
+    // AJAN ID'Sİ: Bu sayfanın hangi ajana ait olduğu
+    const CURRENT_AGENT_ID = "product-discover";
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if (!userDocSnap.exists()) {
+                window.location.href = "/dashboard/member.html";
+                return;
+            }
+
+            const rootData = userDocSnap.data() || {};
+            const userData = rootData.data || rootData || {};
+            
+            // 1. KİMLİK BİLGİLERİ VE EKRANA BASMA
+            let name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+            if (userData.profile && userData.profile.fullName) name = userData.profile.fullName;
+
+            document.getElementById("user-name-display").textContent = name;
+            document.getElementById("chat-user-name").textContent = name;
+
+            const avatarEl = document.getElementById("user-avatar");
+            if (userData.profile && userData.profile.photoURL) {
+                avatarEl.innerHTML = `<img src="${userData.profile.photoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                avatarEl.style.background = 'transparent';
+            } else {
+                avatarEl.innerHTML = name.charAt(0).toUpperCase();
+            }
+
+            // 2. GÜVENLİK VE YETKİ KONTROLÜ (KRİTİK BÖLÜM)
+            const agentAccess = userData.agentAccess || rootData.agentAccess || {};
+            const roleType = (userData.role && typeof userData.role === 'object') ? userData.role.type : (userData.role || 'member');
+            
+            // Token üzerinden Admin kontrolü
+            const idTokenResult = await user.getIdTokenResult();
+            const isAdmin = idTokenResult.claims.admin || roleType === 'admin';
+
+            // Eğer Admin değilse ve bu ajana yetkisi (true) yoksa dışarı at!
+            if (!isAdmin && agentAccess[CURRENT_AGENT_ID] !== true) {
+                console.warn(`[GÜVENLİK] ${CURRENT_AGENT_ID} yetkisi reddedildi. Ana sayfaya yönlendiriliyor...`);
+                window.location.href = "/dashboard/member.html"; // Yetkisi yoksa geri fırlat
+                return;
+            }
+
+            // --- YETKİ ONAYLANDI: EKRANI GÖSTER ---
+            window.USER_SESSION = { uid: user.uid, name: name, email: user.email, isAdmin: isAdmin };
+            if(typeof window.TK_RENDER_SIDEBAR === "function") window.TK_RENDER_SIDEBAR();
+            
+            // Ekranı yumuşak bir şekilde görünür yap
+            document.getElementById("agent-main-view").style.opacity = "1";
+
+        } else {
+            window.location.href = "/"; // Oturum yoksa login'e at
+        }
+    });
+
+    // Basit bir mesaj gönderme simülasyonu (Bunu ileride kendi AI API'ne bağlayabilirsin)
+    window.sendMessage = function() {
+        const input = document.getElementById("agent-input");
+        const text = input.value.trim();
+        if(!text) return;
+
+        const container = document.getElementById("chat-container");
+        
+        // Kullanıcı Mesajını Ekle
+        const userMsg = document.createElement("div");
+        userMsg.className = "message user";
+        userMsg.innerHTML = `
+            <div class="msg-avatar user"><i class="fas fa-user"></i></div>
+            <div class="msg-bubble">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+        `;
+        container.appendChild(userMsg);
+        
+        input.value = "";
+        input.style.height = "auto";
+        container.scrollTop = container.scrollHeight;
+
+        // Ajanın "Düşünüyor..." animasyonu
+        setTimeout(() => {
+            const botMsg = document.createElement("div");
+            botMsg.className = "message system";
+            botMsg.innerHTML = `
+                <div class="msg-avatar system"><i class="fas fa-robot"></i></div>
+                <div class="msg-bubble" style="color:#a1a1aa;"><i>Veriler analiz ediliyor...</i></div>
+            `;
+            container.appendChild(botMsg);
+            container.scrollTop = container.scrollHeight;
+        }, 500);
+    }
+
+    // Enter tuşu ile mesaj gönderme
+    document.getElementById("agent-input").addEventListener("keypress", function(e) {
+        if(e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            window.sendMessage();
+        }
+    });
+  </script>
+</body>
+</html>
