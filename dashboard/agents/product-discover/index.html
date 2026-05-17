@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
+  <link rel="stylesheet" href="/dashboard/agents/css/agent-main.css?v=1">
   
   <style>
     /* ========================================================= */
@@ -43,115 +44,15 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
       flex: 1 1 auto !important; 
-      overflow-y: hidden !important; /* Sohbet ekranı için özel ayar */
+      overflow-y: auto !important; 
       width: 100% !important;
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important; 
-      padding: 30px !important; 
+      padding: 40px 30px !important; 
       box-sizing: border-box !important;
     }
     .content-scroll::-webkit-scrollbar { display: none; }
-
-    /* ========================================================= */
-    /* AJAN (AGENT) SOHBET ARAYÜZÜ TASARIMI */
-    /* ========================================================= */
-    .agent-wrapper {
-      width: 100%;
-      max-width: 1000px;
-      height: 100%;
-      background: #11131a;
-      border: 1px solid rgba(99, 102, 241, 0.15);
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      overflow: hidden;
-    }
-
-    .agent-header {
-      padding: 20px 25px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: linear-gradient(to right, rgba(17,19,26,1), rgba(30,33,48,1));
-    }
-
-    .agent-info { display: flex; align-items: center; gap: 15px; }
-    .agent-icon {
-      width: 45px; height: 45px; border-radius: 12px;
-      background: rgba(99, 102, 241, 0.1); color: #6366f1;
-      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
-    }
-    .agent-title h2 { margin: 0; font-size: 1.2rem; color: #fff; font-weight: 600; }
-    .agent-title p { margin: 4px 0 0 0; font-size: 0.8rem; color: #a1a1aa; }
-    
-    .status-badge-active {
-      background: rgba(16, 185, 129, 0.1); color: #10b981;
-      padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
-      display: flex; align-items: center; gap: 6px; border: 1px solid rgba(16,185,129,0.2);
-    }
-    .status-badge-active::before { content:""; width:6px; height:6px; background:#10b981; border-radius:50%; box-shadow: 0 0 8px #10b981;}
-
-    .agent-chat-area {
-      flex: 1;
-      padding: 25px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .agent-chat-area::-webkit-scrollbar { width: 6px; }
-    .agent-chat-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
-    /* Mesaj Balonları */
-    .message { display: flex; gap: 15px; max-width: 85%; }
-    .message.system { align-self: flex-start; }
-    .message.user { align-self: flex-end; flex-direction: row-reverse; }
-    
-    .msg-avatar { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; flex-shrink: 0;}
-    .msg-avatar.system { background: #1e2130; border: 1px solid rgba(99,102,241,0.3); color: #6366f1; }
-    .msg-avatar.user { background: #6366f1; color: #fff; }
-
-    .msg-bubble { padding: 14px 18px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; }
-    .system .msg-bubble { background: #1e2130; color: #e4e4e7; border: 1px solid rgba(255,255,255,0.05); border-top-left-radius: 4px; }
-    .user .msg-bubble { background: #6366f1; color: #fff; border-top-right-radius: 4px; }
-
-    .agent-input-area {
-      padding: 20px 25px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      background: #11131a;
-      display: flex;
-      gap: 15px;
-      align-items: flex-end;
-    }
-    
-    .agent-input-box {
-      flex: 1;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      transition: border-color 0.2s;
-    }
-    .agent-input-box:focus-within { border-color: #6366f1; }
-    
-    .agent-input-box textarea {
-      width: 100%; background: transparent; border: none; color: #fff; font-family: 'Inter Tight', sans-serif;
-      font-size: 0.95rem; resize: none; outline: none; max-height: 120px; overflow-y: auto;
-    }
-    .agent-input-box textarea::placeholder { color: #71717a; }
-
-    .btn-send {
-      width: 48px; height: 48px; border-radius: 12px; border: none;
-      background: #6366f1; color: #fff; font-size: 1.1rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s, transform 0.2s; flex-shrink: 0;
-    }
-    .btn-send:hover { background: #4f46e5; transform: scale(1.05); }
 
     /* Profil Alanı Stilleri */
     .user-profile { display: flex; align-items: center; gap: 12px; }
@@ -175,34 +76,60 @@
 
     <div class="content-scroll" style="opacity: 0; transition: opacity 0.5s;" id="agent-main-view">
       
-      <div class="agent-wrapper">
-        <div class="agent-header">
-          <div class="agent-info">
-            <div class="agent-icon"><i class="fas fa-search-dollar"></i></div>
-            <div class="agent-title">
-              <h2>Product Discover</h2>
-              <p>Piyasa Analizi ve Ürün Keşif Asistanı</p>
-            </div>
-          </div>
-          <div class="status-badge-active">Sistem Hazır</div>
+      <div class="agent-stats-grid">
+        <div class="agent-summary-card">
+          <div class="agent-summary-icon" style="color: #a855f7; background: rgba(168,85,247,0.1);"><i class="fas fa-clock"></i></div>
+          <div class="agent-summary-info"><span>Toplam Çalışma Süresi</span><strong>12s 45dk</strong></div>
         </div>
-
-        <div class="agent-chat-area" id="chat-container">
-          <div class="message system">
-            <div class="msg-avatar system"><i class="fas fa-robot"></i></div>
-            <div class="msg-bubble">
-              Merhaba <strong id="chat-user-name">Kullanıcı</strong>! Ben Product Discover Ajanı. Piyasada trend olan ürünleri bulmana, fiyat analizleri yapmana ve rakiplerini incelemene yardımcı olabilirim.<br><br>Hangi kategori veya niş üzerinde araştırma yapmak istersin?
-            </div>
-          </div>
-          </div>
-
-        <div class="agent-input-area">
-          <div class="agent-input-box">
-            <textarea id="agent-input" rows="1" placeholder="Ajan için bir komut veya soru yazın..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-          </div>
-          <button class="btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        <div class="agent-summary-card">
+          <div class="agent-summary-icon" style="color: #3b82f6; background: rgba(59,130,246,0.1);"><i class="fas fa-box-open"></i></div>
+          <div class="agent-summary-info"><span>Toplam Ürün Keşfi</span><strong>1.240</strong></div>
+        </div>
+        <div class="agent-summary-card">
+          <div class="agent-summary-icon" style="color: #10b981; background: rgba(16,185,129,0.1);"><i class="fas fa-globe"></i></div>
+          <div class="agent-summary-info"><span>Toplam Site Keşfi</span><strong>48</strong></div>
+        </div>
+        <div class="agent-summary-card">
+          <div class="agent-summary-icon" style="color: #ef4444; background: rgba(239,68,68,0.1);"><i class="fas fa-coins"></i></div>
+          <div class="agent-summary-info"><span>Toplam Maliyet</span><strong style="color: #ef4444;">₺120.50</strong></div>
         </div>
       </div>
+
+      <div class="agent-tools-area">
+          <p><i class="fas fa-tools"></i> Product Discover analiz paneli, grafikler ve raporlar bu alanda görüntülenecektir.</p>
+      </div>
+
+    </div>
+
+    <div class="agent-chat-widget" id="chatWidget">
+        
+        <div class="chat-panel">
+            <div class="chat-header">
+                <div class="chat-header-icon"><i class="fas fa-search-dollar"></i></div>
+                <div>
+                    <h3 class="chat-header-title">Product Discover</h3>
+                    <p class="chat-header-desc">Ajan Hazır</p>
+                </div>
+            </div>
+            
+            <div class="chat-body" id="chat-container">
+                <div class="msg system">
+                    <div class="msg-avatar system"><i class="fas fa-robot"></i></div>
+                    <div class="msg-bubble">Merhaba <strong id="chat-user-name">Kullanıcı</strong>! Araştırmak istediğin bir niş veya ürün kategorisi var mı? Sana nasıl yardımcı olabilirim?</div>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="chat-input-box">
+                    <textarea id="agent-input" rows="1" placeholder="Ajan için bir komut yazın..." oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                </div>
+                <button class="chat-btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <button class="chat-toggle-btn" onclick="toggleChat()">
+            <i class="fas fa-comment-dots"></i>
+        </button>
 
     </div>
   </main>
@@ -275,7 +202,13 @@
         }
     });
 
-    // Basit bir mesaj gönderme simülasyonu (Bunu ileride kendi AI API'ne bağlayabilirsin)
+    // CHAT WIDGET AÇ/KAPAT FONKSİYONU
+    window.toggleChat = function() {
+        const widget = document.getElementById("chatWidget");
+        widget.classList.toggle("open");
+    }
+
+    // Basit bir mesaj gönderme simülasyonu
     window.sendMessage = function() {
         const input = document.getElementById("agent-input");
         const text = input.value.trim();
@@ -285,7 +218,7 @@
         
         // Kullanıcı Mesajını Ekle
         const userMsg = document.createElement("div");
-        userMsg.className = "message user";
+        userMsg.className = "msg user";
         userMsg.innerHTML = `
             <div class="msg-avatar user"><i class="fas fa-user"></i></div>
             <div class="msg-bubble">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
@@ -299,17 +232,17 @@
         // Ajanın "Düşünüyor..." animasyonu
         setTimeout(() => {
             const botMsg = document.createElement("div");
-            botMsg.className = "message system";
+            botMsg.className = "msg system";
             botMsg.innerHTML = `
                 <div class="msg-avatar system"><i class="fas fa-robot"></i></div>
-                <div class="msg-bubble" style="color:#a1a1aa;"><i>Veriler analiz ediliyor...</i></div>
+                <div class="msg-bubble" style="color:#a1a1aa;"><i>Veriler analiz ediliyor, lütfen bekleyin...</i></div>
             `;
             container.appendChild(botMsg);
             container.scrollTop = container.scrollHeight;
         }, 500);
     }
 
-    // Enter tuşu ile mesaj gönderme
+    // Enter tuşu ile mesaj gönderme (Shift+Enter alt satıra geçer)
     document.getElementById("agent-input").addEventListener("keypress", function(e) {
         if(e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
