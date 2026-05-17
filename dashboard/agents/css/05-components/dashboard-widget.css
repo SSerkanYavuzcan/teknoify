@@ -1,0 +1,132 @@
+/* ========================================================= */
+/* AJAN DASHBOARD İÇERİK KARTLARI (WIDGETS) */
+/* ========================================================= */
+
+.agent-widget-card {
+    background: #11131a;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.widget-title {
+    font-size: 1.15rem;
+    color: #fff;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.widget-title-badge {
+    font-size: 0.8rem;
+    color: #a1a1aa;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.widget-title-badge.active::before {
+    content: ""; width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;
+}
+
+.btn-scan-now {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-scan-now i { animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+/* Alt Metrik (Sub-metric) Kutuları */
+.sub-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+.sub-metric-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.sub-metric-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: rgba(255,255,255,0.05); color: #60a5fa;
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+}
+.sub-metric-info span { font-size: 0.75rem; color: #a1a1aa; display: block; margin-bottom: 4px;}
+.sub-metric-info strong { font-size: 1.3rem; color: #fff; display: flex; align-items: baseline; gap: 8px;}
+.trend-badge { font-size: 0.75rem; background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: 600;}
+
+/* İlerleme Çubukları */
+.progress-container { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa; }
+.progress-track { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #a855f7); border-radius: 10px; }
+
+/* 3'lü Alt Izgara */
+.three-col-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* Tablo Stilleri */
+.widget-table { width: 100%; border-collapse: collapse; text-align: left; }
+.widget-table th { font-size: 0.75rem; color: #71717a; font-weight: 500; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.widget-table td { padding: 12px 0; font-size: 0.85rem; color: #e4e4e7; border-bottom: 1px solid rgba(255,255,255,0.02); }
+.widget-table tr:last-child td { border-bottom: none; }
+.site-cell { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.site-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; }
+.site-icon img { width: 14px; height: 14px; object-fit: contain; }
+
+/* Status Renkleri */
+.status-text.scanning { color: #10b981; }
+.status-text.waiting { color: #f59e0b; }
+.status-text.completed { color: #6366f1; }
+
+/* Zaman Çizelgesi (Timeline) */
+.timeline-list { display: flex; flex-direction: column; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.timeline-item { display: flex; gap: 12px; align-items: flex-start; }
+.timeline-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0; }
+.timeline-icon.green { background: rgba(16,185,129,0.1); color: #10b981; }
+.timeline-icon.purple { background: rgba(168,85,247,0.1); color: #a855f7; }
+.timeline-icon.blue { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.timeline-text { font-size: 0.85rem; color: #e4e4e7; line-height: 1.4; }
+
+/* Yatay Barlar */
+.h-bar-row { display: flex; align-items: center; gap: 12px; font-size: 0.8rem; color: #a1a1aa; margin-bottom: 12px;}
+.h-bar-label { width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.h-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; }
+.h-bar-fill { height: 100%; background: #6366f1; border-radius: 4px; }
+.h-bar-val { width: 24px; text-align: right; color: #fff; font-weight: 500; }
+
+/* View All Link */
+.view-all-link { text-align: center; font-size: 0.8rem; color: #71717a; text-decoration: none; display: block; margin-top: 10px; transition: 0.2s; }
+.view-all-link:hover { color: #fff; }
+
+/* Ürün Tablosu Resim Formatı */
+.product-img { width: 36px; height: 36px; border-radius: 8px; background: #fff; object-fit: contain; padding: 2px;}
+.product-name-cell { display: flex; align-items: center; gap: 12px; font-weight: 500; color: #fff; }
+.trust-score { background: rgba(16,185,129,0.15); color: #10b981; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;}
