@@ -262,7 +262,7 @@ window.submitAddSource = async () => {
 window.processSourceJobs = async (domainKey) => {
     const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
     if (!canonicalGrp) return;
-    const sourceId = canonicalGrp.source_id;
+    const sourceIds = canonicalGrp.__duplicates.map(s => s.source_id);
     const displayName = canonicalGrp.source_name || domainKey;
 
     const btn = document.getElementById(`btn-process-${domainKey}`);
