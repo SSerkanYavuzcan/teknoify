@@ -388,6 +388,7 @@ window.exportAllProductsGlobal = async () => {
     }
 };
 
+// Tüm Verileri Sil (Hard Reset / Nuke)
 window.deleteAllSystemData = async () => {
     window.toggleProductsSettings(); 
     
@@ -401,20 +402,8 @@ window.deleteAllSystemData = async () => {
     window.showToast("Sistemdeki tüm veriler kalıcı olarak siliniyor... Lütfen sayfadan ayrılmayın.", "warning");
 
     try {
-        // Doğrudan backend'deki yepyeni "Reset" endpoint'ine istek atıyoruz
+        // Yeni Eklenen "/system/reset" API'sini kullanarak tüm veritabanını tek seferde sil
         await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/system/reset`, { method: "DELETE" });
-
-        window.showToast("Sistem başarıyla sıfırlandı. Ekran yenileniyor...", "success");
-        
-        setTimeout(() => {
-            window.location.reload();
-        }, 2000);
-        
-    } catch(e) {
-        console.error("Global Silme Hatası:", e);
-        window.showToast("Silme işlemi sırasında hata oluştu.", "error");
-    }
-};
 
         window.showToast("Sistem başarıyla sıfırlandı. Ekran yenileniyor...", "success");
         
