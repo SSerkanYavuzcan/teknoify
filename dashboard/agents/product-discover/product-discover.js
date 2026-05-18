@@ -390,7 +390,7 @@ window.deleteAllSystemData = async () => {
 
     try {
         // DOĞRU VE KESİN ENDPOINT! Swagger arayüzünde ne gördüysek tam olarak o.
-        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/system/reset`, { method: "DELETE" });
+        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/system/reset`, { method: "DELETE" });
         
         if (!res.ok) {
             throw new Error(`Sunucu Hatası: ${res.status}`);
