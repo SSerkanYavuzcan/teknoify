@@ -262,11 +262,21 @@ window.submitAddSource = async () => {
 window.processSourceJobs = async (domainKey) => {
     const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
     if (!canonicalGrp) return;
-    const sourceIds = canonicalGrp.__duplicates.map(s => s.source_id);
+
+    const sourceIds = (canonicalGrp.__duplicates || [])
+        .map(s => s.source_id)
+        .filter(Boolean);
+
+    if (sourceIds.length === 0) {
+        window.showToast("Bu kaynak için geçerli source_id bulunamadı.", "error");
+        return;
+    }
+
     const displayName = canonicalGrp.source_name || domainKey;
 
     const btn = document.getElementById(`btn-process-${domainKey}`);
     let originalBtnHtml = "";
+
     if (btn) {
         originalBtnHtml = btn.innerHTML;
         btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
@@ -276,32 +286,64 @@ window.processSourceJobs = async (domainKey) => {
     }
 
     window.showToast("Ürün çıkarma işleri oluşturuluyor...", "info");
+
     if (window.addBotMessage) {
-        window.addBotMessage(`<strong>${escapeHtml(displayName)}</strong> için ürün işleme talebiniz alındı. Arka planda bağlantılar kazınıyor, lütfen işlemin bitmesini bekleyin... ⏳`);
+        window.addBotMessage(
+            `<strong>${escapeHtml(displayName)}</strong> için ürün işleme talebiniz alındı. Arka planda bağlantılar kazınıyor, lütfen işlemin bitmesini bekleyin... ⏳`
+        );
     }
 
     try {
-        const jobsRes = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls/create-jobs`, {
-            status: "discovered", limit: PRODUCT_DISCOVER_SCAN_BATCH_LIMIT, priority: "normal", batch_id: `frontend-${sourceId}-${Date.now()}`
-        });
+        let allJobIds = [];
+        let remainingLimit = PRODUCT_DISCOVER_SCAN_BATCH_LIMIT;
 
-        let jobIds = Array.isArray(jobsRes) ? jobsRes.map(j => j.job_id || j) :
-                     (jobsRes.jobs ? jobsRes.jobs.map(j => j.job_id || j) :
-                     (jobsRes.items ? jobsRes.items.map(j => j.job_id || j) : jobsRes.job_ids || []));
+        for (const sourceId of sourceIds) {
+            if (remainingLimit <= 0) break;
 
-        if (jobIds && jobIds.length > 0) {
-            const processCount = Math.min(jobIds.length, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT);
+            const jobsRes = await postJson(
+                `${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls/create-jobs`,
+                {
+                    status: "discovered",
+                    limit: remainingLimit,
+                    priority: "normal",
+                    batch_id: `frontend-${sourceId}-${Date.now()}`
+                }
+            );
+
+            const jobIds = Array.isArray(jobsRes)
+                ? jobsRes.map(j => j.job_id || j)
+                : (
+                    jobsRes.jobs
+                        ? jobsRes.jobs.map(j => j.job_id || j)
+                        : (
+                            jobsRes.items
+                                ? jobsRes.items.map(j => j.job_id || j)
+                                : jobsRes.job_ids || []
+                        )
+                );
+
+            if (jobIds.length > 0) {
+                allJobIds.push(...jobIds);
+                remainingLimit -= jobIds.length;
+            }
+        }
+
+        if (allJobIds.length > 0) {
+            const processCount = Math.min(allJobIds.length, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT);
+
             window.showToast(`İlk ${processCount} ürün işleniyor, lütfen bekleyin...`, "info");
-            
+
             await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/jobs/process-many`, {
-                job_ids: jobIds.slice(0, processCount),
+                job_ids: allJobIds.slice(0, processCount),
                 max_jobs: processCount
             });
-            
-            window.showToast("İşleme başarıyla tamamlandı. Otomatik dışa aktarma (CSV) hazırlanıyor...", "success");
-            
+
+            window.showToast("İşleme tamamlandı. Otomatik dışa aktarma hazırlanıyor...", "success");
+
             if (window.addBotMessage) {
-                window.addBotMessage(`✅ <strong>${escapeHtml(displayName)}</strong> için işleme tamamlandı. CSV dosyanız indiriliyor.`);
+                window.addBotMessage(
+                    `✅ <strong>${escapeHtml(displayName)}</strong> için işleme tamamlandı. CSV dosyanız hazırlanıyor.`
+                );
             }
 
             await loadProductDiscoverDashboard();
@@ -311,7 +353,14 @@ window.processSourceJobs = async (domainKey) => {
             }, 1000);
 
         } else {
-            window.showToast("İşlenecek yeni URL bulunamadı veya işler kuyrukta.", "info");
+            window.showToast("İşlenecek yeni URL bulunamadı veya işler zaten kuyrukta.", "info");
+
+            if (window.addBotMessage) {
+                window.addBotMessage(
+                    `ℹ️ <strong>${escapeHtml(displayName)}</strong> için işlenecek yeni URL bulunamadı. URL'ler daha önce kuyruğa alınmış olabilir.`
+                );
+            }
+
             if (btn) {
                 btn.innerHTML = originalBtnHtml;
                 btn.disabled = false;
@@ -319,14 +368,17 @@ window.processSourceJobs = async (domainKey) => {
                 btn.style.cursor = "pointer";
             }
         }
+
     } catch (e) {
         console.error("API İşlem Hatası:", e);
         window.showToast(`Hata: ${e.message}`, "error");
-        
+
         if (window.addBotMessage) {
-            window.addBotMessage(`❌ <strong>${escapeHtml(displayName)}</strong> için işlem sırasında hata oluştu: ${escapeHtml(e.message)}`);
+            window.addBotMessage(
+                `❌ <strong>${escapeHtml(displayName)}</strong> için işlem sırasında hata oluştu: ${escapeHtml(e.message)}`
+            );
         }
-        
+
         if (btn) {
             btn.innerHTML = originalBtnHtml;
             btn.disabled = false;
