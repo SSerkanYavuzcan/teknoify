@@ -1,0 +1,831 @@
+// =========================================================
+// PRODUCT DISCOVER AJANI - ANA JS DOSYASI
+// Dosya Yolu: dashboard/agents/product-discover/product-discover.js
+// =========================================================
+
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; 
+
+// =========================================================
+// API VE YARDIMCI FONKSİYONLAR (HELPERS)
+// =========================================================
+const PRODUCT_DISCOVER_API_BASE_URL = "https://product-discover-api-duk5clo5oa-uc.a.run.app";
+const PRODUCT_DISCOVER_ENDPOINTS = {
+    summary: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/summary`,
+    products: `${PRODUCT_DISCOVER_API_BASE_URL}/products`,
+    sources: `${PRODUCT_DISCOVER_API_BASE_URL}/sources`,
+    activity: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/activity`
+};
+
+// Cost-Safety Rules
+const PRODUCT_DISCOVER_AUTO_PROCESS_JOBS = false;
+const PRODUCT_DISCOVER_SCAN_BATCH_LIMIT = 50;
+
+// Global States
+window.productDiscoverSources = [];
+window.canonicalSourcesMap = new Map(); 
+window.allDiscoveredProducts = [];
+window.activityTimelineData = [];
+
+const escapeHtml = (unsafe) => (unsafe || '').toString().replace(/[&<"'>]/g, (m) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;','\'': '&#039;'})[m]);
+const safeText = (val, fallback = '-') => val ? escapeHtml(val) : fallback;
+const formatNumber = (num) => new Intl.NumberFormat('tr-TR').format(num || 0);
+const formatPercent = (num) => `%${(num || 0).toFixed(1)}`;
+const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const d = new Date(dateString);
+    return new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit'}).format(d);
+};
+
+// Normalization Functions
+const normalizeUrl = (input) => {
+    let url = (input || "").trim();
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    try {
+        const u = new URL(url);
+        let path = u.pathname;
+        if (path !== "/") path = path.replace(/\/+$/, "");
+        return `${u.protocol}//${u.hostname}${path}`;
+    } catch(e) {
+        return url.replace(/\/+$/, "");
+    }
+};
+
+const normalizeDomainFromUrl = (input) => {
+    try {
+        return new URL(normalizeUrl(input)).hostname.toLowerCase().replace(/^www\./i, '').replace(/\.$/, '');
+    } catch(e) { return ""; }
+};
+
+// Bug 1 Fix: Variable Reference Resolution
+const getDomainFromUrl = normalizeDomainFromUrl;
+
+const normalizeText = (value) => {
+    return (value || "").toString().trim().toLowerCase().replace(/\s+/g, " ");
+};
+
+const getSourceDomain = (source) => {
+    return normalizeDomainFromUrl(source.base_url);
+};
+
+const fetchJson = async (url) => {
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+};
+
+const postJson = async (url, body) => {
+    const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+};
+
+const patchJson = async (url, body) => {
+    const res = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+};
+
+const setText = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+};
+
+const DEFAULT_SITE_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+";
+
+// Toast Messages
+window.showToast = function(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast-msg toast-${type}`;
+    
+    let icon = 'fa-info-circle';
+    if(type === 'success') icon = 'fa-check-circle';
+    if(type === 'error') icon = 'fa-exclamation-circle';
+    if(type === 'warning') icon = 'fa-exclamation-triangle';
+
+    toast.innerHTML = `<i class="fas ${icon}"></i> <span>${escapeHtml(message)}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 4000);
+};
+
+// =========================================================
+// YENİ KAYNAK EKLEME / SİTEMAP KEŞİF (Güvenli Akış)
+// =========================================================
+
+const deriveSourceNameFromUrl = (url) => {
+    try {
+        let hostname = new URL(url).hostname.replace(/^www\./i, '');
+        if (!hostname) return "Yeni Site";
+        return hostname.charAt(0).toUpperCase() + hostname.slice(1).split('.')[0];
+    } catch(e) { return "Yeni Site"; }
+};
+
+window.openAddSourceModal = () => {
+    document.getElementById('add-source-url').value = '';
+    document.getElementById('add-source-name').value = '';
+    document.getElementById('add-source-url').disabled = false;
+    document.getElementById('add-source-name').disabled = false;
+    
+    const statusEl = document.getElementById('add-source-status');
+    statusEl.style.display = 'none';
+    statusEl.textContent = 'İşlem bekleniyor...';
+    statusEl.style.color = '#60a5fa'; 
+    
+    document.getElementById('btn-submit-source').disabled = false;
+    document.getElementById('btn-cancel-source').disabled = false;
+    document.getElementById('add-source-modal').style.display = 'flex';
+};
+
+window.closeAddSourceModal = () => { document.getElementById('add-source-modal').style.display = 'none'; };
+
+const setModalBusy = (isBusy) => {
+    document.getElementById('btn-submit-source').disabled = isBusy;
+    document.getElementById('btn-cancel-source').disabled = isBusy;
+    document.getElementById('add-source-url').disabled = isBusy;
+    document.getElementById('add-source-name').disabled = isBusy;
+    document.getElementById('btn-header-add').disabled = isBusy;
+};
+
+const updateModalStatus = (msg, type = 'info') => {
+    const st = document.getElementById('add-source-status');
+    st.style.display = 'block';
+    st.textContent = msg;
+    if(type === 'error') st.style.color = '#ef4444';
+    else if(type === 'success') st.style.color = '#10b981';
+    else st.style.color = '#60a5fa';
+};
+
+window.submitAddSource = async () => {
+    const urlInput = document.getElementById('add-source-url').value;
+    const nameInput = document.getElementById('add-source-name').value;
+    
+    if (!urlInput.trim()) { window.showToast("Lütfen geçerli bir web sitesi adresi girin.", "warning"); return; }
+    setModalBusy(true);
+
+    try {
+        const normalized = normalizeUrl(urlInput);
+        const domainToMatch = normalizeDomainFromUrl(normalized);
+        const sourceName = nameInput.trim() || deriveSourceNameFromUrl(normalized);
+        
+        updateModalStatus("Kaynak kontrol ediliyor...");
+        await loadSourcesDataOnly(); 
+        
+        let matchedDomainKey = null;
+        for (let [key, canSrc] of window.canonicalSourcesMap.entries()) {
+            if (key === domainToMatch || normalizeText(canSrc.source_name) === normalizeText(sourceName)) {
+                matchedDomainKey = key;
+                break;
+            }
+        }
+
+        let sourceId;
+        if (matchedDomainKey) {
+            updateModalStatus("Bu site zaten izleniyor. Mevcut kayıt kullanılacak.", "success");
+            setTimeout(() => {
+                window.closeAddSourceModal();
+                loadProductDiscoverDashboard();
+            }, 1500);
+            return;
+        } else {
+            updateModalStatus("Kaynak oluşturuluyor...");
+            const sourceRes = await postJson(PRODUCT_DISCOVER_ENDPOINTS.sources, {
+                source_name: sourceName,
+                source_type: "retailer",
+                base_url: normalized,
+                country: "TR",
+                language: "tr",
+                is_active: true,
+                priority: 10,
+                crawl_frequency_hours: 24,
+                robots_policy: "respect",
+                notes: "Created from Teknoify Product Discover dashboard"
+            });
+            sourceId = sourceRes.source_id;
+            if (!sourceId) throw new Error("Kaynak oluşturuldu ancak ID alınamadı.");
+        }
+
+        // OTOMATIK ISLEME ENGELI (Cost-Safe Rule)
+        updateModalStatus("Sitemap taraması başlatıldı...");
+        await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { max_child_sitemaps: 5, product_only: false });
+        
+        updateModalStatus("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
+        
+        setTimeout(() => {
+            window.closeAddSourceModal();
+            loadProductDiscoverDashboard();
+        }, 2500);
+
+    } catch(e) {
+        console.error("Kaynak Ekleme Hatası:", e);
+        window.showToast("İşlem sırasında bir hata oluştu.", "error");
+        updateModalStatus(`Hata: ${e.message}`, "error");
+        setModalBusy(false);
+    }
+};
+
+// =========================================================
+// JOBS MANUEL IŞLEME (PROCESS)
+// =========================================================
+
+window.processSourceJobs = async (domainKey) => {
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) return;
+    const sourceId = canonicalGrp.source_id;
+
+    window.showToast("Ürün çıkarma işleri oluşturuluyor...", "info");
+    try {
+        const jobsRes = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls/create-jobs`, {
+            status: "discovered", limit: PRODUCT_DISCOVER_SCAN_BATCH_LIMIT, priority: "normal", batch_id: `frontend-${sourceId}-${Date.now()}`
+        });
+
+        let jobIds = Array.isArray(jobsRes) ? jobsRes.map(j => j.job_id || j) :
+                     (jobsRes.jobs ? jobsRes.jobs.map(j => j.job_id || j) :
+                     (jobsRes.items ? jobsRes.items.map(j => j.job_id || j) : jobsRes.job_ids || []));
+
+        if (jobIds && jobIds.length > 0) {
+            window.showToast(`İlk ${Math.min(jobIds.length, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT)} ürün işleniyor...`, "info");
+            await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/jobs/process-many`, {
+                job_ids: jobIds.slice(0, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT),
+                max_jobs: PRODUCT_DISCOVER_SCAN_BATCH_LIMIT
+            });
+            window.showToast("İşleme isteği başarıyla gönderildi. Veriler yenileniyor.", "success");
+        } else {
+            window.showToast("İşlenecek yeni URL bulunamadı veya işler kuyrukta.", "info");
+        }
+        loadProductDiscoverDashboard();
+    } catch (e) {
+        window.showToast("İşleme sırasında hata oluştu.", "error");
+        console.error(e);
+    }
+};
+
+// =========================================================
+// SİL (DEVRE DIŞI BIRAK) VE DIŞA AKTAR (CSV)
+// =========================================================
+
+window.deleteSourceGroup = async (domainKey) => {
+    if (!confirm("Bu kaynağı izlenen sitelerden kaldırmak istiyor musunuz?")) return;
+    
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) return;
+
+    window.showToast("Kaynak kaldırılıyor...", "info");
+    try {
+        const allIds = canonicalGrp.__duplicates.map(s => s.source_id);
+        await Promise.all(allIds.map(id => 
+            patchJson(`${PRODUCT_DISCOVER_ENDPOINTS.sources}/${id}/active`, { is_active: false })
+        ));
+        
+        window.showToast("Kaynak başarıyla kaldırıldı.", "success");
+        await loadProductDiscoverDashboard();
+    } catch(e) {
+        console.error("Silme hatası", e);
+        window.showToast("Kaynak silinirken bir hata oluştu.", "error");
+    }
+};
+
+const csvEscape = (value) => {
+    if (value === null || value === undefined) return '""';
+    let str = String(value).replace(/\r?\n|\r/g, ' '); 
+    if (str.includes(',') || str.includes('"')) str = '"' + str.replace(/"/g, '""') + '"';
+    return str;
+};
+
+const downloadBlob = (filename, content, mimeType) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 0);
+};
+
+const productBelongsToSourceGroup = (product, duplicatesArr) => {
+    if (!product.evidence || !Array.isArray(product.evidence)) return false;
+    
+    return duplicatesArr.some(source => {
+        const sDomain = getSourceDomain(source);
+        const sName = normalizeText(source.source_name);
+        return product.evidence.some(ev => {
+            const evDomain = normalizeDomainFromUrl(ev.source_url);
+            const evName = normalizeText(ev.source_name);
+            if (sName && evName === sName) return true;
+            if (sDomain && evDomain === sDomain) return true;
+            return false;
+        });
+    });
+};
+
+const fetchAllProductsForExport = async () => {
+    let allItems = []; let offset = 0; const limit = 500; const maxPages = 20; 
+    for (let i = 0; i < maxPages; i++) {
+        try {
+            const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.products}?limit=${limit}&offset=${offset}`);
+            const items = data.items || [];
+            allItems.push(...items);
+            if (items.length < limit) break;
+            offset += limit;
+        } catch (e) { break; }
+    }
+    return allItems;
+};
+
+const buildProductsCsv = (products) => {
+    const headers = ["product_id", "product_name", "barcode", "gtin", "brand", "manufacturer", "category", "status", "confidence_overall", "source_name", "source_url", "image_url", "created_at", "updated_at"];
+    const rows = products.map(p => {
+        const ev = (p.evidence && p.evidence.length > 0) ? p.evidence[0] : {};
+        const conf = (p.confidence && p.confidence.overall) ? p.confidence.overall : '';
+        const img = (p.images && p.images.length > 0) ? p.images[0].url : '';
+        return [p.product_id, p.product_name, p.barcode, p.gtin, p.brand, p.manufacturer, p.category, p.status, conf, ev.source_name, ev.source_url, img, p.created_at, p.updated_at].map(csvEscape).join(',');
+    });
+    return [headers.join(','), ...rows].join('\n');
+};
+
+window.exportSourceProducts = async (domainKey) => {
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp || !canonicalGrp.__stats.exportable) {
+        window.showToast("Bu kaynak için henüz çıkarılmış ürün bulunamadı. İndirme işlemi için ürün işleme tamamlanmalı.", "warning");
+        return;
+    }
+
+    const displayName = canonicalGrp.source_name || domainKey;
+    window.showToast(`${displayName} için veriler toparlanıyor...`, "info");
+
+    setTimeout(async () => {
+        const allProducts = await fetchAllProductsForExport();
+        const filteredProducts = allProducts.filter(p => productBelongsToSourceGroup(p, canonicalGrp.__duplicates));
+
+        if (filteredProducts.length === 0) {
+            window.showToast("Bu kaynak için çıkarılmış eşleşen ürün bulunamadı.", "warning");
+            return;
+        }
+
+        const csvContent = buildProductsCsv(filteredProducts);
+        const dateStr = new Date().toISOString().split('T')[0];
+        const safeName = displayName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        downloadBlob(`product-discover-${safeName}-${dateStr}.csv`, "\uFEFF" + csvContent, "text/csv;charset=utf-8;");
+        window.showToast(`İndirme başlatıldı: ${filteredProducts.length} ürün.`, "success");
+    }, 100);
+};
+
+// =========================================================
+// VERİ ÇEKME VE RENDER FONKSİYONLARI
+// =========================================================
+
+async function loadAllProducts() {
+    try {
+        const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.products}?limit=500&offset=0`);
+        window.allDiscoveredProducts = data.items || [];
+    } catch (e) { window.allDiscoveredProducts = []; }
+}
+
+async function loadActivityDataOnly() {
+    try {
+        const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.activity}?limit=100`);
+        window.activityTimelineData = data.items || [];
+    } catch(e) { window.activityTimelineData = []; }
+}
+
+async function loadSourcesDataOnly() {
+    try {
+        const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
+        window.productDiscoverSources = Array.isArray(data) ? data : (data.items || []);
+        
+        // Deduplikasyon ve Map oluşturma
+        window.canonicalSourcesMap.clear();
+        
+        window.productDiscoverSources.forEach(s => {
+            if(s.is_active === false) return; // Yalnızca aktifleri grupla ve göster
+            
+            let domainKey = getSourceDomain(s) || normalizeText(s.source_name);
+            if (!domainKey) return; 
+
+            if (!window.canonicalSourcesMap.has(domainKey)) {
+                let clone = { ...s, __duplicates: [s] };
+                window.canonicalSourcesMap.set(domainKey, clone);
+            } else {
+                let existing = window.canonicalSourcesMap.get(domainKey);
+                existing.__duplicates.push(s);
+            }
+        });
+    } catch(e) { console.error("Kaynaklar alınamadı", e); }
+}
+
+async function loadSourceStats() {
+    const promises = Array.from(window.canonicalSourcesMap.values()).map(async (canonicalGrp) => {
+        let totalUrls = 0; let processed = 0; let failed = 0; let pending = 0;
+        
+        for (let dup of canonicalGrp.__duplicates) {
+            try {
+                const res = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${dup.source_id}/discovered-urls?limit=500&offset=0`);
+                let urls = Array.isArray(res) ? res : (res.items || []);
+                totalUrls += urls.length;
+                processed += urls.filter(u => u.status === 'processed' || u.status === 'completed').length;
+                failed += urls.filter(u => u.status === 'failed').length;
+                pending += urls.filter(u => u.status === 'discovered' || u.status === 'pending' || u.status === 'running').length;
+            } catch(e) {}
+        }
+        
+        const pCount = window.allDiscoveredProducts.filter(p => productBelongsToSourceGroup(p, canonicalGrp.__duplicates)).length;
+        
+        const isRunningSitemap = window.activityTimelineData.some(a => 
+            canonicalGrp.__duplicates.some(d => a.source_id === d.source_id || (a.message && a.message.includes(d.source_name))) && 
+            a.event_type === 'sitemap_discovery_running'
+        );
+
+        const hasRunningJobs = window.activityTimelineData.some(a => 
+            canonicalGrp.__duplicates.some(d => a.source_id === d.source_id || (a.message && a.message.includes(d.source_name))) && 
+            a.event_type === 'job_running'
+        );
+
+        let progress = 0; let status = 'Aktif'; let exportable = false; let processable = false;
+
+        if (isRunningSitemap) {
+            status = 'Taranıyor';
+            progress = totalUrls > 0 ? Math.min(Math.round(((processed + failed) / totalUrls) * 100), 80) : 10;
+        } else if (pending > 0 || hasRunningJobs) {
+            status = 'İşleniyor';
+            progress = totalUrls > 0 ? Math.min(Math.round(((processed + failed) / totalUrls) * 100), 90) : 20;
+            if (!hasRunningJobs && pending > 0) processable = true; 
+        } else if (totalUrls === 0) {
+            status = 'Beklemede'; progress = 0;
+        } else if (pCount === 0) {
+            status = 'İşleme bekliyor'; progress = 25; processable = true;
+        } else {
+            progress = Math.round(((processed + failed) / totalUrls) * 100);
+            if (progress >= 100) {
+                status = 'Tamamlandı'; progress = 100; exportable = true;
+            } else {
+                status = 'Kısmi hazır'; exportable = true; processable = true;
+            }
+        }
+        
+        canonicalGrp.__stats = { totalUrls, processed, failed, pending, progress, status, exportable, processable, pCount };
+    });
+
+    await Promise.all(promises);
+}
+
+function renderSources() {
+    const tbody = document.getElementById('sources-table-body');
+    if (window.canonicalSourcesMap.size === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="pd-live-empty">İzlenen site bulunamadı.</td></tr>`;
+        return;
+    }
+    
+    const htmlRows = [];
+    for (let [domainKey, canGrp] of window.canonicalSourcesMap.entries()) {
+        const domain = getSourceDomain(canGrp) || domainKey;
+        const stats = canGrp.__stats || { progress: 0, status: 'Aktif', exportable: false, processable: false };
+        
+        let statusClass = 'waiting';
+        if (['Taranıyor', 'İşleniyor', 'Hazırlanıyor', 'İşleme bekliyor', 'Kısmi hazır'].includes(stats.status)) statusClass = 'scanning';
+        else if (stats.status === 'Tamamlandı') statusClass = 'scanning'; 
+
+        // Clearbit Bug Fix
+        let logoSrc = DEFAULT_SITE_SVG;
+        if (domain && domain.includes('.') && domain.length > 4 && !domain.includes(' ')) {
+            logoSrc = `https://logo.clearbit.com/${domain}`;
+        }
+
+        let actionsHtml = '';
+        if (stats.exportable) {
+            actionsHtml += `<button class="btn-download-csv" onclick="window.exportSourceProducts('${domainKey}')" title="Ürünleri indir"><i class="fas fa-download"></i></button>`;
+        } else {
+            actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:auto;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
+        }
+        
+        if (stats.processable && !PRODUCT_DISCOVER_AUTO_PROCESS_JOBS) {
+            actionsHtml += `<button class="btn-process-jobs" onclick="window.processSourceJobs('${domainKey}')" title="İlk 50 ürünü işle"><i class="fas fa-play"></i></button>`;
+        }
+
+        actionsHtml += `<button class="btn-delete-source" onclick="window.deleteSourceGroup('${domainKey}')" title="Kaynağı Kaldır"><i class="fas fa-trash"></i></button>`;
+
+        let progressHtml = `
+        <div style="display:flex; align-items:center; gap:8px;">
+            <div class="progress-track" style="width: 40px; margin:0;"><div class="progress-fill" style="width: ${stats.progress}%;"></div></div> 
+            <span style="min-width:30px; font-size:0.8rem;">%${stats.progress}</span>
+            ${actionsHtml}
+        </div>`;
+
+        htmlRows.push(`
+        <tr>
+            <td>
+                <div class="site-cell">
+                    <div class="site-icon"><img src="${logoSrc}" onerror="this.onerror=null; this.src='${DEFAULT_SITE_SVG}';" alt="icon"></div> 
+                    ${escapeHtml(canGrp.source_name || domain)}
+                </div>
+            </td>
+            <td class="status-text ${statusClass}"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i> ${stats.status}</td>
+            <td>${safeText(canGrp.priority)}</td>
+            <td style="color:#a1a1aa;">${safeText(canGrp.country)} / ${safeText(canGrp.language)}</td>
+            <td>${progressHtml}</td>
+        </tr>
+        `);
+    }
+    tbody.innerHTML = htmlRows.join('');
+}
+
+function renderCategories() {
+    const chart = document.getElementById('categories-chart');
+    const totalEl = document.getElementById('categories-total');
+    
+    if (window.allDiscoveredProducts.length === 0) {
+        chart.innerHTML = `<div class="pd-live-empty">Henüz kategori verisi yok.</div>`;
+        totalEl.textContent = '0';
+        return;
+    }
+
+    const categoryCounts = {};
+    window.allDiscoveredProducts.forEach(p => {
+        const catName = (p.category && p.category.trim() !== "") ? p.category.trim() : "Kategorisiz";
+        categoryCounts[catName] = (categoryCounts[catName] || 0) + 1;
+    });
+
+    const sortedCategories = Object.keys(categoryCounts)
+        .map(key => ({ label: key, count: categoryCounts[key] }))
+        .sort((a, b) => b.count - a.count);
+
+    const topCategories = sortedCategories.slice(0, 7);
+    const maxCount = topCategories.length > 0 ? topCategories[0].count : 1;
+
+    chart.innerHTML = topCategories.map(c => {
+        const widthPct = Math.max(2, Math.round((c.count / maxCount) * 100));
+        return `
+            <div class="h-bar-row">
+                <div class="h-bar-label" title="${escapeHtml(c.label)}">${escapeHtml(c.label)}</div>
+                <div class="h-bar-track">
+                    <div class="h-bar-fill" style="width: ${widthPct}%;"></div>
+                </div>
+                <div class="h-bar-val">${formatNumber(c.count)}</div>
+            </div>
+        `;
+    }).join('');
+
+    totalEl.textContent = formatNumber(window.allDiscoveredProducts.length);
+}
+
+async function loadSummary() {
+    try {
+        const sum = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.summary);
+        
+        setText('kpi-sessions', formatNumber(sum.jobs?.running_jobs));
+        setText('kpi-sessions-sub', `Bekleyen: ${formatNumber(sum.jobs?.pending_jobs)}`);
+        setText('kpi-sites', formatNumber(window.canonicalSourcesMap.size || sum.sources?.active_sources));
+        setText('kpi-sites-sub', `Gerçek Tekil Site`);
+        setText('kpi-products', formatNumber(sum.products?.products_today || sum.products?.total_products));
+        setText('kpi-products-sub', `Toplam: ${formatNumber(sum.products?.total_products)}`);
+        setText('kpi-success', formatPercent(sum.jobs?.success_rate));
+        setText('kpi-success-sub', `Hata: ${formatNumber(sum.jobs?.failed_jobs)}`);
+
+        const isRunning = (sum.jobs?.running_jobs || 0) > 0;
+        const liveStatusEl = document.getElementById('live-agent-status');
+        liveStatusEl.textContent = isRunning ? "Tarama Devam Ediyor" : "Beklemede";
+        liveStatusEl.className = isRunning ? "widget-title-badge active" : "widget-title-badge";
+        
+        if (sum.latest_run) {
+            const sourceId = sum.latest_run.source_id;
+            let displayName = 'Son Tarama';
+            let sourceDomain = '';
+
+            if (sourceId) {
+                let matchedGroup = null;
+                for (let grp of window.canonicalSourcesMap.values()) {
+                    if (grp.__duplicates.some(d => d.source_id === sourceId)) {
+                        matchedGroup = grp; break;
+                    }
+                }
+                if (matchedGroup) {
+                    sourceDomain = getSourceDomain(matchedGroup);
+                    displayName = matchedGroup.source_name || sourceDomain;
+                } else {
+                    displayName = `Kaynak: ${sourceId.slice(0, 8)}...`;
+                }
+            }
+
+            setText('live-current-site-name', displayName);
+
+            const iconEl = document.getElementById('live-current-site-icon');
+            if (sourceDomain && sourceDomain.includes('.') && sourceDomain.length > 4 && !sourceDomain.includes(' ')) {
+                iconEl.src = `https://logo.clearbit.com/${sourceDomain}`;
+                iconEl.onerror = () => { iconEl.onerror = null; iconEl.src = DEFAULT_SITE_SVG; };
+            } else {
+                iconEl.src = DEFAULT_SITE_SVG;
+            }
+
+            setText(
+                'live-current-source-context',
+                `Durum: ${safeText(sum.latest_run.status)} · ${formatNumber(sum.latest_run.products_found || 0)} Ürün URL · ${formatNumber(sum.latest_run.pages_seen || 0)} Sayfa`
+            );
+        } else {
+            setText('live-current-site-name', 'Aktif İş Yok');
+            setText('live-current-source-context', 'Ajan hazır durumda bekliyor.');
+            document.getElementById('live-current-site-icon').src = DEFAULT_SITE_SVG;
+        }
+
+        const total = sum.jobs?.total_jobs || 0;
+        const completed = sum.jobs?.completed_jobs || 0;
+        const progressPct = total > 0 ? Math.round((completed / total) * 100) : 0;
+        
+        setText('overall-progress-label', `${progressPct}%`);
+        document.getElementById('overall-progress-fill').style.width = `${progressPct}%`;
+        setText('overall-progress-detail', `Tamamlanan işler: ${formatNumber(completed)} / ${formatNumber(total)}`);
+        
+    } catch (e) {
+        console.error("Summary API Hatası:", e);
+    }
+}
+
+function renderActivityTimeline() {
+    const list = document.getElementById('activity-timeline');
+    const activities = window.activityTimelineData.slice(0, 10);
+    
+    if (activities.length === 0) {
+        list.innerHTML = `<li class="timeline-item"><div class="timeline-text pd-live-empty">Aktivite bulunamadı.</div></li>`;
+        return;
+    }
+    list.innerHTML = activities.map(item => {
+        let iconCls = "green"; let faCls = "fa-circle";
+        switch(item.event_type) {
+            case 'source_created': iconCls="blue"; faCls="fa-globe"; break;
+            case 'sitemap_discovery_completed': iconCls="green"; faCls="fa-play"; break;
+            case 'sitemap_discovery_failed': iconCls="red"; faCls="fa-exclamation-triangle"; break;
+            case 'sitemap_discovery_running': iconCls="yellow"; faCls="fa-spinner fa-spin"; break;
+            case 'job_completed': iconCls="purple"; faCls="fa-check"; break;
+            case 'job_running': iconCls="yellow"; faCls="fa-spinner fa-spin"; break;
+            case 'job_failed': iconCls="red"; faCls="fa-exclamation-triangle"; break;
+            case 'product_discovered': iconCls="green"; faCls="fa-cube"; break;
+        }
+        return `
+        <li class="timeline-item">
+            <div class="timeline-icon ${iconCls}"><i class="fas ${faCls}"></i></div>
+            <div class="timeline-text">
+                <strong style="color: #e4e4e7;">${safeText(item.title)}</strong><br>
+                <span style="color:#a1a1aa; font-size: 0.75rem;">${safeText(item.message)}</span>
+                <div style="color:#71717a; font-size: 0.65rem; margin-top:2px;">${formatDate(item.event_time)}</div>
+            </div>
+        </li>
+        `;
+    }).join('');
+}
+
+async function loadProductsTable() {
+    const tbody = document.getElementById('products-table-body');
+    try {
+        const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.products}?limit=10&offset=0`);
+        const products = data.items || [];
+        
+        if (products.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="pd-live-empty">Henüz ürün keşfedilmedi.</td></tr>`;
+            return;
+        }
+        
+        tbody.innerHTML = products.map(p => {
+            let imgUrl = p.images && p.images.length > 0 ? p.images[0].url : '';
+            let imgHtml = imgUrl ? `<img src="${escapeHtml(imgUrl)}" class="product-img" alt="ürün">` : `<div class="product-img pd-product-placeholder"><i class="fas fa-box"></i></div>`;
+            
+            let domain = "Bilinmiyor";
+            if (p.evidence && p.evidence.length > 0) {
+                domain = normalizeDomainFromUrl(p.evidence[0].source_url) || p.evidence[0].source_name;
+            }
+            
+            let confScore = p.confidence && p.confidence.overall ? formatPercent(p.confidence.overall * 100) : '%0';
+            
+            return `
+            <tr>
+                <td>
+                    <div class="product-name-cell">
+                        ${imgHtml}
+                        <span title="${safeText(p.product_name)}" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${safeText(p.product_name)}</span>
+                    </div>
+                </td>
+                <td style="color:#a1a1aa;">${safeText(p.category)}</td>
+                <td>${escapeHtml(domain)}</td>
+                <td style="color:#fff;">${safeText(p.status)}</td>
+                <td><span class="trust-score">${confScore}</span></td>
+                <td style="color:#a1a1aa;">${formatDate(p.created_at)}</td>
+            </tr>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error("Products API Hatası:", e);
+        tbody.innerHTML = `<tr><td colspan="6" class="pd-live-error">Veri alınamadı</td></tr>`;
+    }
+}
+
+async function loadProductDiscoverDashboard() {
+    await loadSourcesDataOnly();
+    await loadActivityDataOnly();
+    await loadAllProducts();
+    
+    await loadSourceStats(); 
+
+    renderSources();
+    renderCategories();
+    renderActivityTimeline();
+
+    await Promise.all([
+        loadSummary(),
+        loadProductsTable()
+    ]);
+}
+
+// =========================================================
+// FIREBASE AUTH & İLK YÜKLEME (INIT)
+// =========================================================
+
+const auth = getAuth();
+const db = getFirestore(); 
+const CURRENT_AGENT_ID = "product-discover";
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        if (!userDocSnap.exists()) {
+            window.location.href = "/dashboard/member.html";
+            return;
+        }
+
+        const rootData = userDocSnap.data() || {};
+        const userData = rootData.data || rootData || {};
+        
+        let name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+        if (userData.profile && userData.profile.fullName) name = userData.profile.fullName;
+
+        document.getElementById("user-name-display").textContent = name;
+        document.getElementById("chat-user-name").textContent = name;
+
+        const avatarEl = document.getElementById("user-avatar");
+        if (userData.profile && userData.profile.photoURL) {
+            avatarEl.innerHTML = `<img src="${userData.profile.photoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            avatarEl.style.background = 'transparent';
+        } else {
+            avatarEl.innerHTML = name.charAt(0).toUpperCase();
+        }
+
+        const agentAccess = userData.agentAccess || rootData.agentAccess || {};
+        const roleType = (userData.role && typeof userData.role === 'object') ? userData.role.type : (userData.role || 'member');
+        const idTokenResult = await user.getIdTokenResult();
+        const isAdmin = idTokenResult.claims.admin || roleType === 'admin';
+
+        if (!isAdmin && agentAccess[CURRENT_AGENT_ID] !== true) {
+            window.location.href = "/dashboard/member.html"; 
+            return;
+        }
+
+        window.USER_SESSION = { uid: user.uid, name: name, email: user.email, isAdmin: isAdmin };
+        if(typeof window.TK_RENDER_SIDEBAR === "function") window.TK_RENDER_SIDEBAR();
+        
+        document.getElementById("agent-main-view").style.opacity = "1";
+        
+        loadProductDiscoverDashboard();
+    } else {
+        window.location.href = "/"; 
+    }
+});
+
+// =========================================================
+// CHAT (SOHBET) SİMÜLASYONU
+// =========================================================
+
+window.sendMessage = function() {
+    const input = document.getElementById("agent-input");
+    const text = input.value.trim();
+    if(!text) return;
+
+    const container = document.getElementById("chat-container");
+    const userMsg = document.createElement("div");
+    userMsg.className = "msg user";
+    userMsg.innerHTML = `<div class="msg-bubble">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>`;
+    container.appendChild(userMsg);
+    
+    input.value = "";
+    input.style.height = "20px";
+    container.scrollTop = container.scrollHeight;
+
+    setTimeout(() => {
+        const botMsg = document.createElement("div");
+        botMsg.className = "msg system";
+        botMsg.innerHTML = `
+            <div class="msg-header"><div class="msg-avatar system"><i class="fas fa-robot"></i></div></div>
+            <div class="msg-bubble" style="color:#a1a1aa;"><i>Veriler analiz ediliyor, lütfen bekleyin...</i></div>
+        `;
+        container.appendChild(botMsg);
+        container.scrollTop = container.scrollHeight;
+    }, 500);
+};
+
+document.getElementById("agent-input").addEventListener("keypress", function(e) {
+    if(e.key === "Enter" && !e.shiftKey) { e.preventDefault(); window.sendMessage(); }
+});
