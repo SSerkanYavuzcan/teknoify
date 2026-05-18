@@ -592,44 +592,52 @@ async function loadSummary() {
         liveStatusEl.textContent = isRunning ? "Tarama Devam Ediyor" : "Beklemede";
         liveStatusEl.className = isRunning ? "widget-title-badge active" : "widget-title-badge";
         
-        if (sum.latest_run) {
-            const sourceId = sum.latest_run.source_id;
-            let displayName = 'Son Tarama';
-            let sourceDomain = '';
-
-            if (sourceId) {
-                let matchedGroup = null;
-                for (let grp of window.canonicalSourcesMap.values()) {
-                    if (grp.__duplicates.some(d => d.source_id === sourceId)) {
-                        matchedGroup = grp; break;
-                    }
-                }
-                if (matchedGroup) {
-                    sourceDomain = getSourceDomain(matchedGroup);
-                    displayName = matchedGroup.source_name || sourceDomain;
-                } else {
-                    displayName = `Kaynak: ${sourceId.slice(0, 8)}...`;
-                }
-            }
-
-            setText('live-current-site-name', displayName);
-
-            const iconEl = document.getElementById('live-current-site-icon');
-            if (sourceDomain && sourceDomain.includes('.') && sourceDomain.length > 4 && !sourceDomain.includes(' ')) {
-                iconEl.src = `https://logo.clearbit.com/${sourceDomain}`;
-                iconEl.onerror = () => { iconEl.onerror = null; iconEl.src = DEFAULT_SITE_SVG; };
-            } else {
-                iconEl.src = DEFAULT_SITE_SVG;
-            }
-
-            setText(
-                'live-current-source-context',
-                `Durum: ${safeText(sum.latest_run.status)} · ${formatNumber(sum.latest_run.products_found || 0)} Ürün URL · ${formatNumber(sum.latest_run.pages_seen || 0)} Sayfa`
-            );
-        } else {
+        // Ajanın boşta/beklemede olduğu varsayılan UI durumu
+        const setAgentIdle = () => {
             setText('live-current-site-name', 'Aktif İş Yok');
             setText('live-current-source-context', 'Ajan hazır durumda bekliyor.');
             document.getElementById('live-current-site-icon').src = DEFAULT_SITE_SVG;
+        };
+
+        if (sum.latest_run) {
+            const sourceId = sum.latest_run.source_id;
+            let matchedGroup = null;
+
+            // Ekranda aktif olarak izlenen bir kaynak mı kontrol et
+            if (sourceId) {
+                for (let grp of window.canonicalSourcesMap.values()) {
+                    if (grp.__duplicates.some(d => d.source_id === sourceId)) {
+                        matchedGroup = grp; 
+                        break;
+                    }
+                }
+            }
+
+            // Sadece aktif izlenen bir kaynağa ait son işlem varsa ekranda göster
+            if (matchedGroup) {
+                let sourceDomain = getSourceDomain(matchedGroup);
+                let displayName = matchedGroup.source_name || sourceDomain;
+
+                setText('live-current-site-name', displayName);
+
+                const iconEl = document.getElementById('live-current-site-icon');
+                if (sourceDomain && sourceDomain.includes('.') && sourceDomain.length > 4 && !sourceDomain.includes(' ')) {
+                    iconEl.src = `https://logo.clearbit.com/${sourceDomain}`;
+                    iconEl.onerror = () => { iconEl.onerror = null; iconEl.src = DEFAULT_SITE_SVG; };
+                } else {
+                    iconEl.src = DEFAULT_SITE_SVG;
+                }
+
+                setText(
+                    'live-current-source-context',
+                    `Durum: ${safeText(sum.latest_run.status)} · ${formatNumber(sum.latest_run.products_found || 0)} Ürün URL · ${formatNumber(sum.latest_run.pages_seen || 0)} Sayfa`
+                );
+            } else {
+                // Kaynak silinmişse veya tablo boşsa ghost datayı gösterme
+                setAgentIdle();
+            }
+        } else {
+            setAgentIdle();
         }
 
         const total = sum.jobs?.total_jobs || 0;
