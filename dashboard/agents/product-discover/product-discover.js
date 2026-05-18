@@ -1,8 +1,3 @@
-// =========================================================
-// PRODUCT DISCOVER AJANI - ANA JS DOSYASI
-// Dosya Yolu: dashboard/agents/product-discover/product-discover.js
-// =========================================================
-
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; 
 
@@ -189,11 +184,9 @@ window.submitAddSource = async () => {
 
         let sourceId;
         if (matchedDomainKey) {
-            updateModalStatus("Bu site zaten izleniyor. Mevcut kayıt kullanılacak.", "success");
-            setTimeout(() => {
-                window.closeAddSourceModal();
-                loadProductDiscoverDashboard();
-            }, 1500);
+            window.showToast("Bu site zaten izleniyor. Mevcut kayıt kullanılacak.", "success");
+            window.closeAddSourceModal(); // Hemen Kapat
+            loadProductDiscoverDashboard();
             return;
         } else {
             updateModalStatus("Kaynak oluşturuluyor...");
@@ -215,14 +208,15 @@ window.submitAddSource = async () => {
 
         // OTOMATIK ISLEME ENGELI (Cost-Safe Rule)
         updateModalStatus("Sitemap taraması başlatıldı...");
-        await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { max_child_sitemaps: 5, product_only: false });
+        // Sitemap discovery isteğini bekletmeden gönder, arka planda çalışsın
+        postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { max_child_sitemaps: 5, product_only: false })
+            .catch(e => console.error("Sitemap discovery hatası:", e));
         
-        updateModalStatus("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
+        window.showToast("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
         
-        setTimeout(() => {
-            window.closeAddSourceModal();
-            loadProductDiscoverDashboard();
-        }, 2500);
+        // İşlem başlatıldı mesajından hemen sonra modalı kapat ve ekranı yenile
+        window.closeAddSourceModal();
+        loadProductDiscoverDashboard();
 
     } catch(e) {
         console.error("Kaynak Ekleme Hatası:", e);
@@ -231,10 +225,6 @@ window.submitAddSource = async () => {
         setModalBusy(false);
     }
 };
-
-// =========================================================
-// JOBS MANUEL IŞLEME (PROCESS)
-// =========================================================
 
 window.processSourceJobs = async (domainKey) => {
     const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
