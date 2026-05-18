@@ -99,6 +99,14 @@
     }
     .btn-download-csv:hover { background: rgba(16, 185, 129, 0.2); }
 
+    .btn-process-jobs {
+      background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2);
+      color: #6366f1; width: 26px; height: 26px; border-radius: 4px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+      font-size: 0.75rem; margin-left: auto;
+    }
+    .btn-process-jobs:hover { background: rgba(99, 102, 241, 0.2); }
+
     .btn-delete-source {
       background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);
       color: #ef4444; width: 26px; height: 26px; border-radius: 4px; cursor: pointer;
@@ -396,9 +404,13 @@
       activity: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/activity`
     };
 
+    // Cost-Safety Rules
+    const PRODUCT_DISCOVER_AUTO_PROCESS_JOBS = false;
+    const PRODUCT_DISCOVER_SCAN_BATCH_LIMIT = 50;
+
     // Global States
     window.productDiscoverSources = [];
-    window.canonicalSourcesMap = new Map(); // domainKey -> canonical source obj
+    window.canonicalSourcesMap = new Map(); 
     window.allDiscoveredProducts = [];
     window.activityTimelineData = [];
 
@@ -431,6 +443,9 @@
             return new URL(normalizeUrl(input)).hostname.toLowerCase().replace(/^www\./i, '').replace(/\.$/, '');
         } catch(e) { return ""; }
     };
+    
+    // Bug 1 Fix: ReferenceError
+    const getDomainFromUrl = normalizeDomainFromUrl;
 
     const normalizeText = (value) => {
         return (value || "").toString().trim().toLowerCase().replace(/\s+/g, " ");
@@ -471,7 +486,7 @@
         if (el) el.textContent = text;
     };
 
-    const DEFAULT_SITE_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+";
+    const DEFAULT_SITE_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+";
 
     // Toast Messages
     window.showToast = function(message, type = 'info') {
@@ -490,7 +505,7 @@
     };
 
     // =========================================================
-    // YENİ KAYNAK EKLEME / SİTEMAP KEŞİF VE İŞLEME AKIŞI
+    // YENİ KAYNAK EKLEME / SİTEMAP KEŞİF (Güvenli Akış)
     // =========================================================
 
     const deriveSourceNameFromUrl = (url) => {
@@ -549,10 +564,9 @@
             const sourceName = nameInput.trim() || deriveSourceNameFromUrl(normalized);
             
             updateModalStatus("Kaynak kontrol ediliyor...");
-            await loadSourcesDataOnly(); // Güncel datayı çek
+            await loadSourcesDataOnly(); 
             
             let matchedDomainKey = null;
-            // Map içinde aktif duplicate var mı bakıyoruz
             for (let [key, canSrc] of window.canonicalSourcesMap.entries()) {
                 if (key === domainToMatch || normalizeText(canSrc.source_name) === normalizeText(sourceName)) {
                     matchedDomainKey = key;
@@ -562,10 +576,12 @@
 
             let sourceId;
             if (matchedDomainKey) {
-                const existingGroup = window.canonicalSourcesMap.get(matchedDomainKey);
-                sourceId = existingGroup.source_id; // canonical olanı kullan
-                updateModalStatus("Bu site zaten izleniyor. Mevcut kayıt kullanılacak.");
-                await new Promise(r => setTimeout(r, 1000));
+                updateModalStatus("Bu site zaten izleniyor. Mevcut kayıt kullanılacak.", "success");
+                setTimeout(() => {
+                    window.closeAddSourceModal();
+                    loadProductDiscoverDashboard();
+                }, 1500);
+                return;
             } else {
                 updateModalStatus("Kaynak oluşturuluyor...");
                 const sourceRes = await postJson(PRODUCT_DISCOVER_ENDPOINTS.sources, {
@@ -584,55 +600,58 @@
                 if (!sourceId) throw new Error("Kaynak oluşturuldu ancak ID alınamadı.");
             }
 
-            updateModalStatus("Sitemap ve ürünler kontrol ediliyor...");
-            let discoveredUrlsRes = [];
-            try {
-                discoveredUrlsRes = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls?limit=1&offset=0`);
-            } catch(e) {}
-            let urlsArray = Array.isArray(discoveredUrlsRes) ? discoveredUrlsRes : (discoveredUrlsRes.items || []);
-
-            await loadAllProducts(); 
-            const tempSourceObj = { base_url: normalized, source_name: sourceName };
-            const pCount = window.allDiscoveredProducts.filter(p => productBelongsToSourceGroup(p, [tempSourceObj])).length;
-
-            if (pCount > 0) {
-                updateModalStatus("Bu kaynak için ürünler zaten mevcut. Akış tamamlandı.", "success");
-            } else if (urlsArray.length === 0) {
-                updateModalStatus("Sitemap taraması başlatıldı...");
-                await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { max_child_sitemaps: 5, product_only: false });
-                updateModalStatus("Sitemap taraması başlatıldı. Lütfen aktivite zaman çizelgesini takip edin.", "success");
-            } else {
-                updateModalStatus("Ürün işleme işleri oluşturuluyor...");
-                const jobsRes = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls/create-jobs`, {
-                    status: "discovered", limit: 50, priority: "normal", batch_id: `frontend-${sourceId}-${Date.now()}`
-                });
-
-                let jobIds = [];
-                if (Array.isArray(jobsRes)) jobIds = jobsRes.map(j => j.job_id || j);
-                else if (jobsRes.jobs) jobIds = jobsRes.jobs.map(j => j.job_id || j);
-                else if (jobsRes.items) jobIds = jobsRes.items.map(j => j.job_id || j);
-                else if (jobsRes.job_ids) jobIds = jobsRes.job_ids;
-
-                if (jobIds && jobIds.length > 0) {
-                    updateModalStatus(`Ürünler işleniyor (${jobIds.length} iş)...`);
-                    await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/jobs/process-many`, { job_ids: jobIds.slice(0, 50), max_jobs: 50 });
-                    updateModalStatus("İlk ürün işleme işlemi gönderildi.", "success");
-                } else {
-                    updateModalStatus("İşlenecek yeni URL bulunamadı veya işler kuyrukta.", "success");
-                }
-            }
-
-            updateModalStatus("Veriler yenileniyor...");
-            await loadProductDiscoverDashboard();
-            updateModalStatus("Tamamlandı.", "success");
-            window.showToast("İşlem başarıyla tamamlandı.", "success");
-            setTimeout(() => window.closeAddSourceModal(), 1200);
+            // DO NOT automatically create-jobs or process-many.
+            updateModalStatus("Sitemap taraması başlatıldı...");
+            await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { max_child_sitemaps: 5, product_only: false });
+            
+            updateModalStatus("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
+            
+            setTimeout(() => {
+                window.closeAddSourceModal();
+                loadProductDiscoverDashboard();
+            }, 2500);
 
         } catch(e) {
-            console.error("Tam Tarama Akışı Hatası:", e);
+            console.error("Kaynak Ekleme Hatası:", e);
             window.showToast("İşlem sırasında bir hata oluştu.", "error");
             updateModalStatus(`Hata: ${e.message}`, "error");
             setModalBusy(false);
+        }
+    };
+
+    // =========================================================
+    // JOBS MANUEL IŞLEME (PROCESS)
+    // =========================================================
+
+    window.processSourceJobs = async (domainKey) => {
+        const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+        if (!canonicalGrp) return;
+        const sourceId = canonicalGrp.source_id;
+
+        window.showToast("Ürün çıkarma işleri oluşturuluyor...", "info");
+        try {
+            const jobsRes = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls/create-jobs`, {
+                status: "discovered", limit: PRODUCT_DISCOVER_SCAN_BATCH_LIMIT, priority: "normal", batch_id: `frontend-${sourceId}-${Date.now()}`
+            });
+
+            let jobIds = Array.isArray(jobsRes) ? jobsRes.map(j => j.job_id || j) :
+                         (jobsRes.jobs ? jobsRes.jobs.map(j => j.job_id || j) :
+                         (jobsRes.items ? jobsRes.items.map(j => j.job_id || j) : jobsRes.job_ids || []));
+
+            if (jobIds && jobIds.length > 0) {
+                window.showToast(`İlk ${jobIds.length} ürün işleniyor...`, "info");
+                await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/jobs/process-many`, {
+                    job_ids: jobIds.slice(0, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT),
+                    max_jobs: PRODUCT_DISCOVER_SCAN_BATCH_LIMIT
+                });
+                window.showToast("İşleme isteği başarıyla gönderildi. Veriler yenileniyor.", "success");
+            } else {
+                window.showToast("İşlenecek yeni URL bulunamadı veya işler kuyrukta.", "info");
+            }
+            loadProductDiscoverDashboard();
+        } catch (e) {
+            window.showToast("İşleme sırasında hata oluştu.", "error");
+            console.error(e);
         }
     };
 
@@ -783,7 +802,6 @@
                 } else {
                     let existing = window.canonicalSourcesMap.get(domainKey);
                     existing.__duplicates.push(s);
-                    // Canonical seçimi iyileştirilebilir; şimdilik ilk geleni ana kabul ediyor, duplicates listesini de saklıyoruz.
                 }
             });
         } catch(e) { console.error("Kaynaklar alınamadı", e); }
@@ -793,7 +811,6 @@
         const promises = Array.from(window.canonicalSourcesMap.values()).map(async (canonicalGrp) => {
             let totalUrls = 0; let processed = 0; let failed = 0; let pending = 0;
             
-            // Her duplicate id için discovered url'leri birleştir
             for (let dup of canonicalGrp.__duplicates) {
                 try {
                     const res = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${dup.source_id}/discovered-urls?limit=500&offset=0`);
@@ -817,7 +834,7 @@
                 a.event_type === 'job_running'
             );
 
-            let progress = 0; let status = 'Aktif'; let exportable = false;
+            let progress = 0; let status = 'Aktif'; let exportable = false; let processable = false;
 
             if (isRunningSitemap) {
                 status = 'Taranıyor';
@@ -825,20 +842,21 @@
             } else if (pending > 0 || hasRunningJobs) {
                 status = 'İşleniyor';
                 progress = totalUrls > 0 ? Math.min(Math.round(((processed + failed) / totalUrls) * 100), 90) : 20;
+                if (!hasRunningJobs && pending > 0) processable = true; 
             } else if (totalUrls === 0) {
                 status = 'Beklemede'; progress = 0;
             } else if (pCount === 0) {
-                status = 'İşleme bekliyor'; progress = 25; // URL var ürün yok
+                status = 'İşleme bekliyor'; progress = 25; processable = true;
             } else {
                 progress = Math.round(((processed + failed) / totalUrls) * 100);
                 if (progress >= 100) {
                     status = 'Tamamlandı'; progress = 100; exportable = true;
                 } else {
-                    status = 'Kısmi hazır'; exportable = true; // Kısmi indirmeye izin ver
+                    status = 'Kısmi hazır'; exportable = true; processable = true;
                 }
             }
             
-            canonicalGrp.__stats = { totalUrls, processed, failed, pending, progress, status, exportable, pCount };
+            canonicalGrp.__stats = { totalUrls, processed, failed, pending, progress, status, exportable, processable, pCount };
         });
 
         await Promise.allSettled(promises);
@@ -854,34 +872,42 @@
         const htmlRows = [];
         for (let [domainKey, canGrp] of window.canonicalSourcesMap.entries()) {
             const domain = getSourceDomain(canGrp) || domainKey;
-            const stats = canGrp.__stats || { progress: 0, status: 'Aktif', exportable: false };
+            const stats = canGrp.__stats || { progress: 0, status: 'Aktif', exportable: false, processable: false };
             
             let statusClass = 'waiting';
             if (['Taranıyor', 'İşleniyor', 'Hazırlanıyor', 'İşleme bekliyor', 'Kısmi hazır'].includes(stats.status)) statusClass = 'scanning';
             else if (stats.status === 'Tamamlandı') statusClass = 'scanning'; 
 
-            // Clearbit domain validity check to prevent console errors
             let logoSrc = DEFAULT_SITE_SVG;
-            if (domain && domain.includes('.')) {
+            if (domain && domain.includes('.') && domain.length > 4) {
                 logoSrc = `https://logo.clearbit.com/${domain}`;
             }
+
+            let actionsHtml = '';
+            if (stats.exportable) {
+                actionsHtml += `<button class="btn-download-csv" onclick="window.exportSourceProducts('${domainKey}')" title="Ürünleri indir"><i class="fas fa-download"></i></button>`;
+            } else {
+                actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:auto;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
+            }
+            
+            if (stats.processable && !PRODUCT_DISCOVER_AUTO_PROCESS_JOBS) {
+                actionsHtml += `<button class="btn-process-jobs" onclick="window.processSourceJobs('${domainKey}')" title="İlk 50 ürünü işle"><i class="fas fa-play"></i></button>`;
+            }
+
+            actionsHtml += `<button class="btn-delete-source" onclick="window.deleteSourceGroup('${domainKey}')" title="Kaynağı Kaldır"><i class="fas fa-trash"></i></button>`;
 
             let progressHtml = `
             <div style="display:flex; align-items:center; gap:8px;">
                 <div class="progress-track" style="width: 40px; margin:0;"><div class="progress-fill" style="width: ${stats.progress}%;"></div></div> 
                 <span style="min-width:30px; font-size:0.8rem;">%${stats.progress}</span>
-                ${stats.exportable 
-                    ? `<button class="btn-download-csv" onclick="window.exportSourceProducts('${domainKey}')" title="Ürünleri indir"><i class="fas fa-download"></i></button>` 
-                    : `<span style="font-size:0.75rem; color:#71717a; margin-left:auto;" title="Hazırlanıyor"><i class="fas fa-hourglass-half"></i></span>`
-                }
-                <button class="btn-delete-source" onclick="window.deleteSourceGroup('${domainKey}')" title="Kaynağı Kaldır"><i class="fas fa-trash"></i></button>
+                ${actionsHtml}
             </div>`;
 
             htmlRows.push(`
             <tr>
                 <td>
                     <div class="site-cell">
-                        <div class="site-icon"><img src="${logoSrc}" onerror="this.src='${DEFAULT_SITE_SVG}'" alt="icon"></div> 
+                        <div class="site-icon"><img src="${logoSrc}" onerror="this.onerror=null; this.src='${DEFAULT_SITE_SVG}';" alt="icon"></div> 
                         ${escapeHtml(canGrp.source_name || domain)}
                     </div>
                 </td>
@@ -958,7 +984,6 @@
                 let sourceDomain = '';
 
                 if (sourceId) {
-                    // Try to find the canonical group this ID belongs to
                     let matchedGroup = null;
                     for (let grp of window.canonicalSourcesMap.values()) {
                         if (grp.__duplicates.some(d => d.source_id === sourceId)) {
@@ -976,9 +1001,9 @@
                 setText('live-current-site-name', displayName);
 
                 const iconEl = document.getElementById('live-current-site-icon');
-                if (sourceDomain && sourceDomain.includes('.')) {
+                if (sourceDomain && sourceDomain.includes('.') && sourceDomain.length > 4) {
                     iconEl.src = `https://logo.clearbit.com/${sourceDomain}`;
-                    iconEl.onerror = () => { iconEl.src = DEFAULT_SITE_SVG; };
+                    iconEl.onerror = () => { iconEl.onerror = null; iconEl.src = DEFAULT_SITE_SVG; };
                 } else {
                     iconEl.src = DEFAULT_SITE_SVG;
                 }
@@ -999,7 +1024,7 @@
             
             setText('overall-progress-label', `${progressPct}%`);
             document.getElementById('overall-progress-fill').style.width = `${progressPct}%`;
-            setText('overall-progress-detail', `İşlemler: ${formatNumber(completed)} / ${formatNumber(total)}`);
+            setText('overall-progress-detail', `Tamamlanan işler: ${formatNumber(completed)} / ${formatNumber(total)}`);
             
         } catch (e) {
             console.error("Summary API Hatası:", e);
@@ -1056,7 +1081,7 @@
                 
                 let domain = "Bilinmiyor";
                 if (p.evidence && p.evidence.length > 0) {
-                    domain = getDomainFromUrl(p.evidence[0].source_url) || p.evidence[0].source_name;
+                    domain = normalizeDomainFromUrl(p.evidence[0].source_url) || p.evidence[0].source_name;
                 }
                 
                 let confScore = p.confidence && p.confidence.overall ? formatPercent(p.confidence.overall * 100) : '%0';
