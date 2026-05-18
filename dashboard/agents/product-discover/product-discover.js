@@ -14,7 +14,7 @@ const PRODUCT_DISCOVER_ENDPOINTS = {
 
 // Cost-Safety Rules
 const PRODUCT_DISCOVER_AUTO_PROCESS_JOBS = false;
-const PRODUCT_DISCOVER_SCAN_BATCH_LIMIT = 50;
+const PRODUCT_DISCOVER_SCAN_BATCH_LIMIT = 15;
 
 // Global States
 window.productDiscoverSources = [];
