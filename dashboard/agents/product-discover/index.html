@@ -68,7 +68,7 @@
     .user-profile { display: flex; align-items: center; gap: 12px; }
     .top-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.1rem; }
     
-    /* CANLI API DURUM STİLLERİ (YENİ EKLENDİ) */
+    /* CANLI API DURUM STİLLERİ */
     .pd-live-empty, .pd-live-error, .pd-live-loading {
       text-align: center; color: #71717a; padding: 20px; font-size: 0.85rem; font-style: italic;
     }
@@ -79,6 +79,9 @@
     }
     .timeline-icon.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
     .timeline-icon.yellow { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+    /* Text truncation for categories if they get too long */
+    .h-bar-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
   </style>
 </head>
 <body>
@@ -158,7 +161,9 @@
                     <div style="flex: 1;">
                         <span style="font-size: 0.75rem; color:#a1a1aa;">Şu Anda Taranan Kaynak</span>
                         <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-                            <div class="site-icon" style="width: 32px; height: 32px; background: #fff;"><img id="live-current-site-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+" alt="site"></div>
+                            <div class="site-icon" style="width: 32px; height: 32px; background: #fff;">
+                                <img id="live-current-site-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+" alt="site">
+                            </div>
                             <span style="color: #fff; font-size: 1.2rem; font-weight: 600;"><span id="live-current-site-name">Bekleniyor...</span> <i class="fas fa-external-link-alt" style="font-size: 0.8rem; color: #71717a; margin-left: 5px;"></i></span>
                         </div>
                         <div style="margin-top: 15px; font-size: 0.8rem; color: #a1a1aa;">
@@ -221,19 +226,13 @@
                 <div class="agent-widget-card">
                     <div class="widget-header">
                         <div class="widget-title">En Çok Keşfedilen Kategoriler</div>
-                        <span style="font-size:0.75rem; color:#a1a1aa; cursor:pointer;">Bugün <i class="fas fa-chevron-down"></i></span>
+                        <span style="font-size:0.75rem; color:#a1a1aa; cursor:pointer;">Tümü <i class="fas fa-chevron-down"></i></span>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <div class="h-bar-row"><div class="h-bar-label">Elektronik</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 100%;"></div></div><div class="h-bar-val">68</div></div>
-                        <div class="h-bar-row"><div class="h-bar-label">Ev & Yaşam</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 47%;"></div></div><div class="h-bar-val">32</div></div>
-                        <div class="h-bar-row"><div class="h-bar-label">Giyim</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 26%;"></div></div><div class="h-bar-val">18</div></div>
-                        <div class="h-bar-row"><div class="h-bar-label">Kozmetik</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 17%;"></div></div><div class="h-bar-val">12</div></div>
-                        <div class="h-bar-row"><div class="h-bar-label">Spor & Outdoor</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 13%;"></div></div><div class="h-bar-val">9</div></div>
-                        <div class="h-bar-row"><div class="h-bar-label">Oyuncak</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 10%;"></div></div><div class="h-bar-val">7</div></div>
-                        <div class="h-bar-row"><div class="h-bar-label">Otomotiv</div><div class="h-bar-track"><div class="h-bar-fill" style="width: 3%;"></div></div><div class="h-bar-val">2</div></div>
+                    <div id="categories-chart" style="display: flex; flex-direction: column; gap: 4px;">
+                        <div class="pd-live-loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                        <span>Toplam (Örnek)</span><strong style="color: #fff;">148</strong>
+                        <span>Toplam Ürün</span><strong id="categories-total" style="color: #fff;">-</strong>
                     </div>
                 </div>
             </div>
@@ -320,6 +319,9 @@
       activity: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/activity?limit=10`
     };
 
+    // Global Source Map for linking source_id to source_name/base_url
+    let productDiscoverSourceMap = new Map();
+
     const escapeHtml = (unsafe) => (unsafe || '').toString().replace(/[&<"'>]/g, (m) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;','\'': '&#039;'})[m]);
     const safeText = (val, fallback = '-') => val ? escapeHtml(val) : fallback;
     const formatNumber = (num) => new Intl.NumberFormat('tr-TR').format(num || 0);
@@ -346,9 +348,59 @@
         if (el) el.textContent = text;
     };
 
+    const DEFAULT_SITE_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+";
+
     // =========================================================
     // VERİ ÇEKME VE RENDER FONKSİYONLARI (WIDGETS)
     // =========================================================
+
+    async function loadSources() {
+        const tbody = document.getElementById('sources-table-body');
+        try {
+            const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
+            
+            const sources = Array.isArray(data) ? data : (data.items || []);
+
+            // Populate the global source map
+            productDiscoverSourceMap.clear();
+            sources.forEach(source => {
+                if(source.source_id) {
+                    productDiscoverSourceMap.set(source.source_id, source);
+                }
+            });
+
+            if (sources.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="pd-live-empty">İzlenen site bulunamadı.</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = sources.map(s => {
+                const domain = getDomainFromUrl(s.base_url || s.source_name);
+                const isActive = s.is_active;
+                const statusClass = isActive ? 'scanning' : 'waiting';
+                const statusText = isActive ? 'Aktif' : 'Pasif';
+                const prog = isActive ? '100%' : '0%';
+                
+                return `
+                <tr>
+                    <td>
+                        <div class="site-cell">
+                            <div class="site-icon"><img src="https://logo.clearbit.com/${domain}" onerror="this.src='${DEFAULT_SITE_SVG}'" alt="icon"></div> 
+                            ${escapeHtml(s.source_name || domain)}
+                        </div>
+                    </td>
+                    <td class="status-text ${statusClass}"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i> ${statusText}</td>
+                    <td>${safeText(s.priority)}</td>
+                    <td style="color:#a1a1aa;">${safeText(s.country)} / ${safeText(s.language)}</td>
+                    <td><div class="progress-track" style="width: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;"><div class="progress-fill" style="width: ${prog};"></div></div> ${prog}</td>
+                </tr>
+                `;
+            }).join('');
+        } catch (e) {
+            console.error("Sources API Hatası:", e);
+            tbody.innerHTML = `<tr><td colspan="5" class="pd-live-error">Veri alınamadı</td></tr>`;
+        }
+    }
 
     async function loadSummary() {
         try {
@@ -373,9 +425,32 @@
             liveStatusEl.textContent = isRunning ? "Tarama Devam Ediyor" : "Beklemede";
             liveStatusEl.className = isRunning ? "widget-title-badge active" : "widget-title-badge";
             
-            // YENİ GÜNCELLEME: latest_run bilgisini daha güvenli ve detaylı yansıtıyoruz
             if (sum.latest_run) {
-                setText('live-current-site-name', sum.latest_run.source_id ? `Kaynak: ${sum.latest_run.source_id.slice(0, 8)}...` : 'Son Tarama');
+                const sourceId = sum.latest_run.source_id;
+                let displayName = 'Son Tarama';
+                let sourceDomain = '';
+
+                // Identify source using the mapped sources
+                if (sourceId) {
+                    const matchedSource = productDiscoverSourceMap.get(sourceId);
+                    if (matchedSource) {
+                        displayName = matchedSource.source_name || getDomainFromUrl(matchedSource.base_url);
+                        sourceDomain = getDomainFromUrl(matchedSource.base_url);
+                    } else {
+                        displayName = `Kaynak: ${sourceId.slice(0, 8)}...`;
+                    }
+                }
+
+                setText('live-current-site-name', displayName);
+
+                const iconEl = document.getElementById('live-current-site-icon');
+                if (sourceDomain && sourceDomain !== "Bilinmiyor") {
+                    iconEl.src = `https://logo.clearbit.com/${sourceDomain}`;
+                    iconEl.onerror = () => { iconEl.src = DEFAULT_SITE_SVG; };
+                } else {
+                    iconEl.src = DEFAULT_SITE_SVG;
+                }
+
                 setText(
                     'live-current-source-context',
                     `Durum: ${safeText(sum.latest_run.status)} · ${formatNumber(sum.latest_run.products_found || 0)} Ürün · ${formatNumber(sum.latest_run.pages_seen || 0)} Sayfa`
@@ -383,6 +458,7 @@
             } else {
                 setText('live-current-site-name', 'Aktif İş Yok');
                 setText('live-current-source-context', 'Ajan hazır durumda bekliyor.');
+                document.getElementById('live-current-site-icon').src = DEFAULT_SITE_SVG;
             }
 
             const total = sum.jobs?.total_jobs || 0;
@@ -400,45 +476,6 @@
             
         } catch (e) {
             console.error("Summary API Hatası:", e);
-        }
-    }
-
-    async function loadSources() {
-        const tbody = document.getElementById('sources-table-body');
-        try {
-            const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
-            
-            const sources = data.items || [];
-
-            if (sources.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="pd-live-empty">İzlenen site bulunamadı.</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = sources.map(s => {
-                const domain = getDomainFromUrl(s.base_url || s.source_name);
-                const isActive = s.is_active;
-                const statusClass = isActive ? 'scanning' : 'waiting';
-                const statusText = isActive ? 'Aktif' : 'Pasif';
-                const prog = isActive ? '100%' : '0%';
-                
-                return `
-                <tr>
-                    <td>
-                        <div class="site-cell">
-                            <div class="site-icon"><img src="https://logo.clearbit.com/${domain}" onerror="this.style.display='none'" alt="icon"></div> 
-                            ${escapeHtml(domain)}
-                        </div>
-                    </td>
-                    <td class="status-text ${statusClass}"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i> ${statusText}</td>
-                    <td>${safeText(s.priority)}</td>
-                    <td style="color:#a1a1aa;">${safeText(s.country)} / ${safeText(s.language)}</td>
-                    <td><div class="progress-track" style="width: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;"><div class="progress-fill" style="width: ${prog};"></div></div> ${prog}</td>
-                </tr>
-                `;
-            }).join('');
-        } catch (e) {
-            console.error("Sources API Hatası:", e);
-            tbody.innerHTML = `<tr><td colspan="5" class="pd-live-error">Veri alınamadı</td></tr>`;
         }
     }
 
@@ -528,13 +565,70 @@
         }
     }
 
+    async function loadCategories() {
+        const chart = document.getElementById('categories-chart');
+        const totalEl = document.getElementById('categories-total');
+        try {
+            // Fetch more products to get a better category distribution
+            const data = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/products?limit=500&offset=0`);
+            const products = data.items || [];
+            
+            if (products.length === 0) {
+                chart.innerHTML = `<div class="pd-live-empty">Henüz kategori verisi yok.</div>`;
+                totalEl.textContent = '0';
+                return;
+            }
+
+            // Aggregate counts
+            const categoryCounts = {};
+            products.forEach(p => {
+                const catName = (p.category && p.category.trim() !== "") ? p.category.trim() : "Kategorisiz";
+                categoryCounts[catName] = (categoryCounts[catName] || 0) + 1;
+            });
+
+            // Convert to array and sort descending
+            const sortedCategories = Object.keys(categoryCounts)
+                .map(key => ({ label: key, count: categoryCounts[key] }))
+                .sort((a, b) => b.count - a.count);
+
+            // Get top 7 categories
+            const topCategories = sortedCategories.slice(0, 7);
+            const maxCount = topCategories.length > 0 ? topCategories[0].count : 1;
+            const totalProductsFetched = products.length;
+
+            // Render HTML
+            chart.innerHTML = topCategories.map(c => {
+                // Ensure a minimum visual bar width of 2%
+                const widthPct = Math.max(2, Math.round((c.count / maxCount) * 100));
+                return `
+                    <div class="h-bar-row">
+                        <div class="h-bar-label" title="${escapeHtml(c.label)}">${escapeHtml(c.label)}</div>
+                        <div class="h-bar-track">
+                            <div class="h-bar-fill" style="width: ${widthPct}%;"></div>
+                        </div>
+                        <div class="h-bar-val">${formatNumber(c.count)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            totalEl.textContent = formatNumber(totalProductsFetched);
+
+        } catch (e) {
+            console.error("Categories API Hatası:", e);
+            chart.innerHTML = `<div class="pd-live-error">Kategori verisi alınamadı.</div>`;
+        }
+    }
+
     async function loadProductDiscoverDashboard() {
-        // Hataların sayfa bütünlüğünü bozmaması için allSettled kullanıyoruz
+        // First load sources so the map is fully populated for the summary processing
+        await loadSources();
+
+        // Load the remaining data widgets in parallel
         await Promise.allSettled([
             loadSummary(),
-            loadSources(),
             loadActivity(),
-            loadProducts()
+            loadProducts(),
+            loadCategories()
         ]);
     }
 
