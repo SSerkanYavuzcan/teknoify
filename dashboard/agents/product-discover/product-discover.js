@@ -402,8 +402,13 @@ window.deleteAllSystemData = async () => {
     window.showToast("Sistemdeki tüm veriler kalıcı olarak siliniyor... Lütfen sayfadan ayrılmayın.", "warning");
 
     try {
-        // Yeni Eklenen "/system/reset" API'sini kullanarak tüm veritabanını tek seferde sil
-        await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/system/reset`, { method: "DELETE" });
+        // API isteğini at ve cevabı bekle
+        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/system/reset`, { method: "DELETE" });
+        
+        // Eğer backend 500 hatası veya başka bir hata verdiyse işlemi durdur
+        if (!res.ok) {
+            throw new Error(`Sunucu Hatası: ${res.status}`);
+        }
 
         window.showToast("Sistem başarıyla sıfırlandı. Ekran yenileniyor...", "success");
         
@@ -413,7 +418,7 @@ window.deleteAllSystemData = async () => {
         
     } catch(e) {
         console.error("Global Silme Hatası:", e);
-        window.showToast("Silme işlemi sırasında hata oluştu.", "error");
+        window.showToast(`Silme işlemi başarısız oldu: ${e.message}`, "error");
     }
 };
 
