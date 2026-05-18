@@ -216,7 +216,7 @@ window.submitAddSource = async () => {
         let sourceId;
         if (matchedDomainKey) {
             window.showToast("Bu site zaten izleniyor. Mevcut kayıt kullanılacak.", "success");
-            window.closeAddSourceModal(); // Hemen Kapat
+            window.closeAddSourceModal(); 
             loadProductDiscoverDashboard();
             return;
         } else {
@@ -237,7 +237,6 @@ window.submitAddSource = async () => {
             if (!sourceId) throw new Error("Kaynak oluşturuldu ancak ID alınamadı.");
         }
 
-        // OTOMATIK ISLEME ENGELI (Cost-Safe Rule)
         updateModalStatus("Sitemap taraması başlatıldı...");
         
         // Sitemap discovery isteğini bekletmeden gönder, product_only: true
@@ -248,7 +247,6 @@ window.submitAddSource = async () => {
         
         window.showToast("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
         
-        // İşlem başlatıldı mesajından hemen sonra modalı kapat ve ekranı yenile
         window.closeAddSourceModal();
         loadProductDiscoverDashboard();
 
@@ -345,6 +343,86 @@ window.processSourceJobs = async (domainKey) => {
             btn.style.opacity = "1";
             btn.style.cursor = "pointer";
         }
+    }
+};
+
+// =========================================================
+// YENİ ÜRÜNLER KARTI AYARLARI (TÜMÜNÜ SİL & İNDİR)
+// =========================================================
+
+// Menüyü Aç/Kapat
+window.toggleProductsSettings = () => {
+    const menu = document.getElementById('products-settings-menu');
+    if (menu) menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+};
+
+// Menü Dışına Tıklanınca Kapatma Mantığı
+document.addEventListener('click', (e) => {
+    const dropdown = document.querySelector('.widget-settings-dropdown');
+    if (dropdown && !dropdown.contains(e.target)) {
+        const menu = document.getElementById('products-settings-menu');
+        if (menu) menu.style.display = 'none';
+    }
+});
+
+// Tüm Verileri İndir (Global Export)
+window.exportAllProductsGlobal = async () => {
+    window.toggleProductsSettings(); 
+    window.showToast("Tüm ürünler toparlanıyor, sistemdeki veriler indirilecek...", "info");
+    
+    try {
+        const allProducts = await fetchAllProductsForExport(); 
+        
+        if (allProducts.length === 0) {
+            window.showToast("Sistemde indirilecek ürün bulunamadı.", "warning");
+            return;
+        }
+
+        const csvContent = buildProductsCsv(allProducts);
+        const dateStr = new Date().toISOString().split('T')[0];
+        downloadBlob(`product-discover-all-data-${dateStr}.csv`, "\uFEFF" + csvContent, "text/csv;charset=utf-8;");
+        window.showToast(`İndirme başlatıldı: Toplam ${allProducts.length} ürün.`, "success");
+    } catch(e) {
+        console.error("Global Export Hatası:", e);
+        window.showToast("Tüm ürünler indirilirken hata oluştu.", "error");
+    }
+};
+
+// Tüm Verileri Sil (Hard Reset)
+window.deleteAllSystemData = async () => {
+    window.toggleProductsSettings(); 
+    
+    const userCode = prompt("DİKKAT! Bu işlem sistemdeki TÜM siteleri, url'leri, işleri ve çıkarılan ürünleri kalıcı olarak silecektir.\n\nOnaylamak için 'SIL' yazın:");
+    
+    if (userCode !== 'SIL' && userCode !== 'sıl' && userCode !== 'sil') {
+        window.showToast("Silme işlemi iptal edildi.", "info");
+        return;
+    }
+
+    window.showToast("Sistemdeki tüm veriler kalıcı olarak siliniyor... Lütfen sayfadan ayrılmayın.", "warning");
+
+    try {
+        const allSources = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
+        const sourceList = Array.isArray(allSources) ? allSources : (allSources.items || []);
+        
+        if (sourceList.length === 0) {
+            window.showToast("Silinecek veri bulunamadı.", "info");
+            return;
+        }
+
+        await Promise.all(sourceList.map(s => 
+            fetch(`${PRODUCT_DISCOVER_ENDPOINTS.sources}/${s.source_id}`, { method: "DELETE" }).catch(() => null)
+        ));
+
+        window.showToast("Sistem başarıyla sıfırlandı. Ekran yenileniyor...", "success");
+        
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+        
+    } catch(e) {
+        console.error("Global Silme Hatası:", e);
+        window.showToast("Silme işlemi sırasında hata oluştu.", "error");
     }
 };
 
@@ -487,7 +565,6 @@ const buildProductsCsv = (products) => {
 window.exportSourceProducts = async (domainKey, force = false) => {
     const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
     
-    // Eğer butona manuel basılmadıysa (force) ve export edilebilir durumda değilse uyar.
     if (!canonicalGrp || (!canonicalGrp.__stats?.exportable && !force)) {
         window.showToast("Bu kaynak için henüz çıkarılmış ürün bulunamadı. İndirme işlemi için ürün işleme tamamlanmalı.", "warning");
         return;
@@ -536,11 +613,10 @@ async function loadSourcesDataOnly() {
         const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
         window.productDiscoverSources = Array.isArray(data) ? data : (data.items || []);
         
-        // Deduplikasyon ve Map oluşturma
         window.canonicalSourcesMap.clear();
         
         window.productDiscoverSources.forEach(s => {
-            if(s.is_active === false) return; // Yalnızca aktifleri grupla ve göster
+            if(s.is_active === false) return; 
             
             let domainKey = getSourceDomain(s) || normalizeText(s.source_name);
             if (!domainKey) return; 
@@ -752,7 +828,6 @@ async function loadSummary() {
                 }
             }
 
-            // Sadece aktif izlenen bir kaynağa ait son işlem varsa ekranda göster
             if (matchedGroup) {
                 let sourceDomain = getSourceDomain(matchedGroup);
                 let displayName = matchedGroup.source_name || sourceDomain;
