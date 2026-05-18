@@ -237,11 +237,13 @@ window.submitAddSource = async () => {
             if (!sourceId) throw new Error("Kaynak oluşturuldu ancak ID alınamadı.");
         }
 
-        // OTOMATIK ISLEME ENGELI (Cost-Safe Rule)
         updateModalStatus("Sitemap taraması başlatıldı...");
         // Sitemap discovery isteğini bekletmeden gönder, arka planda çalışsın
-        postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { max_child_sitemaps: 5, product_only: false })
-            .catch(e => console.error("Sitemap discovery hatası:", e));
+        postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { 
+            max_child_sitemaps: 5, 
+            product_only: true // <-- BURASI TRUE OLMALI Kİ FILTRELEME ÇALIŞSIN
+        })
+        .catch(e => console.error("Sitemap discovery hatası:", e));
         
         window.showToast("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
         
