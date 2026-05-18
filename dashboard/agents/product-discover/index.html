@@ -163,8 +163,17 @@
             </div>
 
             <div class="agent-widget-card" style="margin-bottom: 40px;">
-                <div class="widget-header">
+                <div class="widget-header" style="position: relative;">
                     <div class="widget-title">Yeni Keşfedilen Ürünler <span style="font-size: 0.75rem; background: rgba(16,185,129,0.1); color: #10b981; padding: 2px 8px; border-radius: 12px; font-weight: 500;">Canlı Akış</span></div>
+                    
+                    <div class="widget-settings-dropdown">
+                        <button class="btn-widget-settings" onclick="window.toggleProductsSettings()"><i class="fas fa-cog"></i></button>
+                        <div id="products-settings-menu" class="settings-menu-content" style="display: none;">
+                            <button onclick="window.exportAllProductsGlobal()"><i class="fas fa-download"></i> Tüm Verileri İndir</button>
+                            <div class="menu-divider"></div>
+                            <button class="danger" onclick="window.deleteAllSystemData()"><i class="fas fa-trash-alt"></i> Tüm Verileri Sil</button>
+                        </div>
+                    </div>
                 </div>
                 <table class="widget-table">
                     <thead>
