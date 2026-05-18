@@ -640,13 +640,31 @@ async function loadSummary() {
             setAgentIdle();
         }
 
+        // --- İLERLEME ÇUBUĞU (PROGRESS BAR) DÜZELTMESİ ---
         const total = sum.jobs?.total_jobs || 0;
         const completed = sum.jobs?.completed_jobs || 0;
-        const progressPct = total > 0 ? Math.round((completed / total) * 100) : 0;
-        
-        setText('overall-progress-label', `${progressPct}%`);
-        document.getElementById('overall-progress-fill').style.width = `${progressPct}%`;
-        setText('overall-progress-detail', `Tamamlanan işler: ${formatNumber(completed)} / ${formatNumber(total)}`);
+        const pending = sum.jobs?.pending_jobs || 0;
+        const running = sum.jobs?.running_jobs || 0;
+        const fillEl = document.getElementById('overall-progress-fill');
+
+        if (running === 0) {
+            // Ajan şu an aktif bir işlem yapmıyorsa
+            fillEl.style.width = `100%`;
+            fillEl.style.backgroundColor = '#10b981'; // Hazır olduğunu belirten yeşil renk
+            
+            setText('overall-progress-label', `Hazır`);
+            setText('overall-progress-detail', `Şu an aktif bir işlem yok. (Toplam Keşfedilen: ${formatNumber(completed)})`);
+        } else {
+            // Ajan çalışıyorsa canlı ilerlemeyi hesapla
+            const processed = total - pending - running;
+            const progressPct = total > 0 ? Math.round((processed / total) * 100) : 0;
+            
+            fillEl.style.width = `${progressPct}%`;
+            fillEl.style.backgroundColor = ''; // CSS'teki varsayılan renge dön
+            
+            setText('overall-progress-label', `${progressPct}%`);
+            setText('overall-progress-detail', `İşleniyor: ${formatNumber(processed)} / ${formatNumber(total)}`);
+        }
         
     } catch (e) {
         console.error("Summary API Hatası:", e);
