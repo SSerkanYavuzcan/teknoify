@@ -403,7 +403,7 @@ window.deleteAllSystemData = async () => {
 
     try {
         // API isteğini at ve cevabı bekle
-        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/system/reset`, { method: "DELETE" });
+        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/system/reset`, { method: "DELETE" });
         
         // Eğer backend 500 hatası veya başka bir hata verdiyse işlemi durdur
         if (!res.ok) {
