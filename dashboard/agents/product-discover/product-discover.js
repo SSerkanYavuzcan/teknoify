@@ -237,13 +237,14 @@ window.submitAddSource = async () => {
             if (!sourceId) throw new Error("Kaynak oluşturuldu ancak ID alınamadı.");
         }
 
+        // OTOMATIK ISLEME ENGELI (Cost-Safe Rule)
         updateModalStatus("Sitemap taraması başlatıldı...");
-        // Sitemap discovery isteğini bekletmeden gönder, arka planda çalışsın
+        
+        // Sitemap discovery isteğini bekletmeden gönder, product_only: true
         postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { 
             max_child_sitemaps: 5, 
-            product_only: true // <-- BURASI TRUE OLMALI Kİ FILTRELEME ÇALIŞSIN
-        })
-        .catch(e => console.error("Sitemap discovery hatası:", e));
+            product_only: true 
+        }).catch(e => console.error("Sitemap discovery hatası:", e));
         
         window.showToast("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
         
@@ -348,7 +349,7 @@ window.processSourceJobs = async (domainKey) => {
 };
 
 // =========================================================
-// SİL (DEVRE DIŞI BIRAK) VE DIŞA AKTAR (CSV)
+// SİL (DEVRE DIŞI BIRAK), YENİDEN BAŞLAT VE DIŞA AKTAR (CSV)
 // =========================================================
 
 window.deleteSourceGroup = async (domainKey) => {
@@ -369,6 +370,60 @@ window.deleteSourceGroup = async (domainKey) => {
     } catch(e) {
         console.error("Silme hatası", e);
         window.showToast("Kaynak silinirken bir hata oluştu.", "error");
+    }
+};
+
+window.restartSourceGroup = async (domainKey) => {
+    if (!confirm("Bu kaynağa ait TÜM veriler (ürünler, işler, url'ler) silinecek ve tarama sıfırdan başlatılacak. Emin misiniz?")) return;
+    
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) return;
+
+    window.showToast("Eski veriler tamamen siliniyor...", "warning");
+    
+    try {
+        const allIds = canonicalGrp.__duplicates.map(s => s.source_id);
+        
+        // 1. ADIM: Backend'den tamamen sil (Hard Delete)
+        await Promise.all(allIds.map(id => 
+            fetch(`${PRODUCT_DISCOVER_ENDPOINTS.sources}/${id}`, { method: "DELETE" })
+        ));
+        
+        window.showToast("Eski veriler temizlendi. Kaynak yeniden oluşturuluyor...", "info");
+
+        // 2. ADIM: Kaynağı taze bir şekilde yeniden ekle
+        const sourceName = canonicalGrp.source_name;
+        const baseUrl = canonicalGrp.base_url;
+        
+        const sourceRes = await postJson(PRODUCT_DISCOVER_ENDPOINTS.sources, {
+            source_name: sourceName,
+            source_type: "retailer",
+            base_url: baseUrl,
+            country: "TR",
+            language: "tr",
+            is_active: true,
+            priority: 10,
+            crawl_frequency_hours: 24,
+            robots_policy: "respect"
+        });
+
+        const newSourceId = sourceRes.source_id;
+
+        // 3. ADIM: Yeni kaynak için sitemap taramasını başlat
+        window.showToast("Yeni sitemap taraması başlatıldı...", "success");
+        postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${newSourceId}/discover-sitemap`, { 
+            max_child_sitemaps: 5, 
+            product_only: true 
+        }).catch(e => console.error("Sitemap discovery hatası:", e));
+
+        // Ekranı tazele
+        setTimeout(() => {
+            loadProductDiscoverDashboard();
+        }, 1500);
+
+    } catch(e) {
+        console.error("Yeniden başlatma hatası:", e);
+        window.showToast("İşlem sırasında bir hata oluştu. Backend silme işlemini desteklemiyor olabilir.", "error");
     }
 };
 
@@ -585,10 +640,12 @@ function renderSources() {
             actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:auto;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
         }
         
-        // İşleme Butonu - ID atandı
         if (stats.processable && !PRODUCT_DISCOVER_AUTO_PROCESS_JOBS) {
             actionsHtml += `<button id="btn-process-${domainKey}" class="btn-process-jobs" onclick="window.processSourceJobs('${domainKey}')" title="İlk ${PRODUCT_DISCOVER_SCAN_BATCH_LIMIT} ürünü işle"><i class="fas fa-play"></i></button>`;
         }
+
+        // Yeniden Başlat Butonu Eklendi
+        actionsHtml += `<button class="btn-process-jobs" style="color:#f59e0b; border-color:rgba(245,158,11,0.2); background:rgba(245,158,11,0.1);" onclick="window.restartSourceGroup('${domainKey}')" title="Sıfırla ve Yeniden Başlat"><i class="fas fa-sync-alt"></i></button>`;
 
         actionsHtml += `<button class="btn-delete-source" onclick="window.deleteSourceGroup('${domainKey}')" title="Kaynağı Kaldır"><i class="fas fa-trash"></i></button>`;
 
