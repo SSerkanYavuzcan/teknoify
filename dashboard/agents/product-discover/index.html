@@ -103,7 +103,7 @@
       background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2);
       color: #6366f1; width: 26px; height: 26px; border-radius: 4px; cursor: pointer;
       display: flex; align-items: center; justify-content: center; transition: background 0.2s;
-      font-size: 0.75rem; margin-left: auto;
+      font-size: 0.75rem; margin-left: 6px;
     }
     .btn-process-jobs:hover { background: rgba(99, 102, 241, 0.2); }
 
@@ -207,7 +207,7 @@
                 <div class="agent-summary-card">
                     <div class="agent-summary-icon" style="color: #3b82f6; background: rgba(59,130,246,0.1);"><i class="fas fa-globe"></i></div>
                     <div class="agent-summary-info">
-                        <span>Toplam Taranan Site</span>
+                        <span>Toplam İzlenen Site</span>
                         <strong id="kpi-sites">-</strong>
                         <span id="kpi-sites-sub" style="font-size: 0.7rem; color: #71717a; margin-top:2px;">Hesaplanıyor...</span>
                     </div>
@@ -268,24 +268,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="sub-metrics-grid">
-                    <div class="sub-metric-box">
-                        <div class="sub-metric-icon" style="color: #60a5fa;"><i class="fas fa-cube"></i></div>
-                        <div class="sub-metric-info"><span>Taranan / Toplam URL</span><strong id="metric-scanned-products">-</strong></div>
-                    </div>
-                    <div class="sub-metric-box">
-                        <div class="sub-metric-icon" style="color: #10b981;"><i class="fas fa-sparkles"></i></div>
-                        <div class="sub-metric-info"><span>Bugün Bulunan Ürün</span><strong id="metric-new-products">-</strong></div>
-                    </div>
-                    <div class="sub-metric-box">
-                        <div class="sub-metric-icon" style="color: #a855f7;"><i class="fas fa-tachometer-alt"></i></div>
-                        <div class="sub-metric-info"><span>Bekleyen İşler</span><strong id="metric-pending-jobs">-</strong></div>
-                    </div>
-                    <div class="sub-metric-box">
-                        <div class="sub-metric-icon" style="color: #c084fc;"><i class="far fa-clock"></i></div>
-                        <div class="sub-metric-info"><span>Hata Sayısı</span><strong id="metric-failed-jobs">-</strong></div>
-                    </div>
-                </div>
             </div>
 
             <div class="three-col-grid">
@@ -302,7 +284,6 @@
                             <tr><td colspan="5" class="pd-live-loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</td></tr>
                         </tbody>
                     </table>
-                    <a href="#" class="view-all-link">Tüm Siteleri Gör <i class="fas fa-chevron-right" style="font-size:0.7rem; margin-left:2px;"></i></a>
                 </div>
 
                 <div class="agent-widget-card">
@@ -310,13 +291,11 @@
                     <ul class="timeline-list" id="activity-timeline">
                         <li class="timeline-item"><div class="timeline-text pd-live-loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div></li>
                     </ul>
-                    <a href="#" class="view-all-link" style="margin-top: auto;">Tüm Aktiviteyi Gör <i class="fas fa-chevron-right" style="font-size:0.7rem; margin-left:2px;"></i></a>
                 </div>
 
                 <div class="agent-widget-card">
                     <div class="widget-header">
                         <div class="widget-title">En Çok Keşfedilen Kategoriler</div>
-                        <span style="font-size:0.75rem; color:#a1a1aa; cursor:pointer;">Tümü <i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div id="categories-chart" style="display: flex; flex-direction: column; gap: 4px;">
                         <div class="pd-live-loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div>
@@ -339,7 +318,6 @@
                         <tr><td colspan="6" class="pd-live-loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</td></tr>
                     </tbody>
                 </table>
-                <a href="#" class="view-all-link">Tüm Yeni Ürünleri Gör <i class="fas fa-chevron-right" style="font-size:0.7rem; margin-left:2px;"></i></a>
             </div>
 
         </div>
@@ -444,7 +422,7 @@
         } catch(e) { return ""; }
     };
     
-    // Bug 1 Fix: ReferenceError
+    // Bug 1 Fix: Variable Reference Resolution
     const getDomainFromUrl = normalizeDomainFromUrl;
 
     const normalizeText = (value) => {
@@ -486,7 +464,7 @@
         if (el) el.textContent = text;
     };
 
-    const DEFAULT_SITE_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+";
+    const DEFAULT_SITE_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+";
 
     // Toast Messages
     window.showToast = function(message, type = 'info') {
@@ -600,7 +578,7 @@
                 if (!sourceId) throw new Error("Kaynak oluşturuldu ancak ID alınamadı.");
             }
 
-            // DO NOT automatically create-jobs or process-many.
+            // OTOMATIK ISLEME ENGELI (Cost-Safe Rule)
             updateModalStatus("Sitemap taraması başlatıldı...");
             await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { max_child_sitemaps: 5, product_only: false });
             
@@ -639,7 +617,7 @@
                          (jobsRes.items ? jobsRes.items.map(j => j.job_id || j) : jobsRes.job_ids || []));
 
             if (jobIds && jobIds.length > 0) {
-                window.showToast(`İlk ${jobIds.length} ürün işleniyor...`, "info");
+                window.showToast(`İlk ${Math.min(jobIds.length, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT)} ürün işleniyor...`, "info");
                 await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/jobs/process-many`, {
                     job_ids: jobIds.slice(0, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT),
                     max_jobs: PRODUCT_DISCOVER_SCAN_BATCH_LIMIT
@@ -668,7 +646,7 @@
         window.showToast("Kaynak kaldırılıyor...", "info");
         try {
             const allIds = canonicalGrp.__duplicates.map(s => s.source_id);
-            await Promise.allSettled(allIds.map(id => 
+            await Promise.all(allIds.map(id => 
                 patchJson(`${PRODUCT_DISCOVER_ENDPOINTS.sources}/${id}/active`, { is_active: false })
             ));
             
@@ -859,7 +837,7 @@
             canonicalGrp.__stats = { totalUrls, processed, failed, pending, progress, status, exportable, processable, pCount };
         });
 
-        await Promise.allSettled(promises);
+        await Promise.all(promises);
     }
 
     function renderSources() {
@@ -878,8 +856,9 @@
             if (['Taranıyor', 'İşleniyor', 'Hazırlanıyor', 'İşleme bekliyor', 'Kısmi hazır'].includes(stats.status)) statusClass = 'scanning';
             else if (stats.status === 'Tamamlandı') statusClass = 'scanning'; 
 
+            // Clearbit Bug Fix
             let logoSrc = DEFAULT_SITE_SVG;
-            if (domain && domain.includes('.') && domain.length > 4) {
+            if (domain && domain.includes('.') && domain.length > 4 && !domain.includes(' ')) {
                 logoSrc = `https://logo.clearbit.com/${domain}`;
             }
 
@@ -1001,7 +980,7 @@
                 setText('live-current-site-name', displayName);
 
                 const iconEl = document.getElementById('live-current-site-icon');
-                if (sourceDomain && sourceDomain.includes('.') && sourceDomain.length > 4) {
+                if (sourceDomain && sourceDomain.includes('.') && sourceDomain.length > 4 && !sourceDomain.includes(' ')) {
                     iconEl.src = `https://logo.clearbit.com/${sourceDomain}`;
                     iconEl.onerror = () => { iconEl.onerror = null; iconEl.src = DEFAULT_SITE_SVG; };
                 } else {
@@ -1119,7 +1098,7 @@
         renderCategories();
         renderActivityTimeline();
 
-        await Promise.allSettled([
+        await Promise.all([
             loadSummary(),
             loadProductsTable()
         ]);
