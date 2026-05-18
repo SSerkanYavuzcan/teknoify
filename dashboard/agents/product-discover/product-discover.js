@@ -551,6 +551,61 @@ const downloadBlob = (filename, content, mimeType) => {
     setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 0);
 };
 
+
+window.exportDiscoveredUrlsBySourceId = async (sourceId) => {
+    if (!sourceId) {
+        window.showToast("Geçerli bir kaynak bulunamadı.", "warning");
+        return;
+    }
+
+    const limit = 500;
+    const maxPages = 20;
+    const allItems = [];
+    let offset = 0;
+
+    try {
+        for (let i = 0; i < maxPages; i++) {
+            const res = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls?limit=${limit}&offset=${offset}`);
+            const items = Array.isArray(res) ? res : (res.items || []);
+
+            if (!Array.isArray(items) || items.length === 0) break;
+            allItems.push(...items);
+
+            if (items.length < limit) break;
+            offset += limit;
+        }
+
+        if (allItems.length === 0) {
+            window.showToast("Bu kaynak için keşfedilmiş URL kaydı bulunamadı.", "warning");
+            return;
+        }
+
+        const headers = [
+            "url_id",
+            "source_id",
+            "url",
+            "status",
+            "discovery_type",
+            "barcode",
+            "product_id",
+            "first_seen_at",
+            "last_seen_at",
+            "last_checked_at",
+            "error_message"
+        ];
+
+        const rows = allItems.map((item) => headers.map((key) => csvEscape(item?.[key] ?? "")).join(','));
+        const csvContent = [headers.join(','), ...rows].join('\n');
+        const dateStr = new Date().toISOString().split('T')[0];
+        downloadBlob(`product-discover-url-details-${sourceId}-${dateStr}.csv`, "﻿" + csvContent, "text/csv;charset=utf-8;");
+
+        window.showToast(`İndirme başlatıldı: ${formatNumber(allItems.length)} URL kaydı.`, "success");
+    } catch (e) {
+        console.error("Discovered URL export hatası:", e);
+        window.showToast("Detay dışa aktarma sırasında bir hata oluştu.", "error");
+    }
+};
+
 const productBelongsToSourceGroup = (product, duplicatesArr) => {
     if (!product.evidence || !Array.isArray(product.evidence)) return false;
     
@@ -868,10 +923,11 @@ async function loadSummary() {
                     iconEl.src = DEFAULT_SITE_SVG;
                 }
 
-                setText(
-                    'live-current-source-context',
-                    `Durum: ${safeText(sum.latest_run.status)} · ${formatNumber(sum.latest_run.products_found || 0)} Ürün URL · ${formatNumber(sum.latest_run.pages_seen || 0)} Sayfa`
-                );
+                const contextEl = document.getElementById('live-current-source-context');
+                if (contextEl) {
+                    const contextText = `Durum: ${safeText(sum.latest_run.status)} · ${formatNumber(sum.latest_run.products_found || 0)} Ürün URL · ${formatNumber(sum.latest_run.pages_seen || 0)} Sayfa`;
+                    contextEl.innerHTML = `${contextText} <button onclick="window.exportDiscoveredUrlsBySourceId('${escapeHtml(sourceId)}')" style="margin-left:8px; padding:2px 10px; border-radius:999px; border:1px solid rgba(139,92,246,0.45); background:rgba(139,92,246,0.15); color:#c4b5fd; font-size:0.75rem; line-height:1.4; cursor:pointer;">Detay Gör</button>`;
+                }
             } else {
                 setAgentIdle();
             }
