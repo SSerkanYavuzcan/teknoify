@@ -57,7 +57,6 @@ const normalizeDomainFromUrl = (input) => {
     } catch(e) { return ""; }
 };
 
-// Bug 1 Fix: Variable Reference Resolution
 const getDomainFromUrl = normalizeDomainFromUrl;
 
 const normalizeText = (value) => {
@@ -85,7 +84,6 @@ const postJson = async (url, body) => {
         let errorDetail = `HTTP ${res.status}`;
         try {
             const errBody = await res.json();
-            // FastAPI hataları genelde "detail" veya "message" içinde gelir
             errorDetail = errBody.detail || errBody.message || errorDetail;
             if(typeof errorDetail === 'object') errorDetail = JSON.stringify(errorDetail);
         } catch(e) {}
@@ -239,7 +237,6 @@ window.submitAddSource = async () => {
 
         updateModalStatus("Sitemap taraması başlatıldı...");
         
-        // Sitemap discovery isteğini bekletmeden gönder, product_only: true
         postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { 
             max_child_sitemaps: 5, 
             product_only: true 
@@ -268,7 +265,6 @@ window.processSourceJobs = async (domainKey) => {
     const sourceId = canonicalGrp.source_id;
     const displayName = canonicalGrp.source_name || domainKey;
 
-    // UI: Butonu Yükleniyor (Spinner) Moduna Al
     const btn = document.getElementById(`btn-process-${domainKey}`);
     let originalBtnHtml = "";
     if (btn) {
@@ -279,7 +275,6 @@ window.processSourceJobs = async (domainKey) => {
         btn.style.cursor = "not-allowed";
     }
 
-    // UI: Kullanıcıya Toast ve Chatbot mesajı ver
     window.showToast("Ürün çıkarma işleri oluşturuluyor...", "info");
     if (window.addBotMessage) {
         window.addBotMessage(`<strong>${escapeHtml(displayName)}</strong> için ürün işleme talebiniz alındı. Arka planda bağlantılar kazınıyor, lütfen işlemin bitmesini bekleyin... ⏳`);
@@ -298,7 +293,6 @@ window.processSourceJobs = async (domainKey) => {
             const processCount = Math.min(jobIds.length, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT);
             window.showToast(`İlk ${processCount} ürün işleniyor, lütfen bekleyin...`, "info");
             
-            // Backend'e işleme isteğini atıyoruz ve bitmesini bekliyoruz
             await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/jobs/process-many`, {
                 job_ids: jobIds.slice(0, processCount),
                 max_jobs: processCount
@@ -310,17 +304,14 @@ window.processSourceJobs = async (domainKey) => {
                 window.addBotMessage(`✅ <strong>${escapeHtml(displayName)}</strong> için işleme tamamlandı. CSV dosyanız indiriliyor.`);
             }
 
-            // Ekranda yeni ürünleri göstermek için dashboard'u yenile
             await loadProductDiscoverDashboard();
 
-            // Otomatik olarak CSV indirmesini tetikle (force = true)
             setTimeout(() => {
                 window.exportSourceProducts(domainKey, true);
             }, 1000);
 
         } else {
             window.showToast("İşlenecek yeni URL bulunamadı veya işler kuyrukta.", "info");
-            // İşlem yoksa butonu eski haline getir
             if (btn) {
                 btn.innerHTML = originalBtnHtml;
                 btn.disabled = false;
@@ -336,7 +327,6 @@ window.processSourceJobs = async (domainKey) => {
             window.addBotMessage(`❌ <strong>${escapeHtml(displayName)}</strong> için işlem sırasında hata oluştu: ${escapeHtml(e.message)}`);
         }
         
-        // Hata durumunda butonu tıklanabilir eski haline getir
         if (btn) {
             btn.innerHTML = originalBtnHtml;
             btn.disabled = false;
@@ -350,13 +340,11 @@ window.processSourceJobs = async (domainKey) => {
 // YENİ ÜRÜNLER KARTI AYARLARI (TÜMÜNÜ SİL & İNDİR)
 // =========================================================
 
-// Menüyü Aç/Kapat
 window.toggleProductsSettings = () => {
     const menu = document.getElementById('products-settings-menu');
     if (menu) menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
 };
 
-// Menü Dışına Tıklanınca Kapatma Mantığı
 document.addEventListener('click', (e) => {
     const dropdown = document.querySelector('.widget-settings-dropdown');
     if (dropdown && !dropdown.contains(e.target)) {
@@ -365,7 +353,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Tüm Verileri İndir (Global Export)
 window.exportAllProductsGlobal = async () => {
     window.toggleProductsSettings(); 
     window.showToast("Tüm ürünler toparlanıyor, sistemdeki veriler indirilecek...", "info");
@@ -388,8 +375,7 @@ window.exportAllProductsGlobal = async () => {
     }
 };
 
-// Tüm Verileri Sil (Hard Reset / Nuke)
-// Tüm Verileri Sil (Hard Reset / Nuke)
+// TÜM VERİLERİ SİL (TAM ÇÖZÜMÜ BURASI!)
 window.deleteAllSystemData = async () => {
     window.toggleProductsSettings(); 
     
@@ -403,8 +389,8 @@ window.deleteAllSystemData = async () => {
     window.showToast("Sistemdeki tüm veriler kalıcı olarak siliniyor... Lütfen sayfadan ayrılmayın.", "warning");
 
     try {
-        // HATA BURADAYDI: "/sources/system/reset" yerine DOĞRUDAN "/system/reset" olmalı!
-        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/system/reset`, { method: "DELETE" });
+        // DOĞRU VE KESİN ENDPOINT! Swagger arayüzünde ne gördüysek tam olarak o.
+        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/system/reset`, { method: "DELETE" });
         
         if (!res.ok) {
             throw new Error(`Sunucu Hatası: ${res.status}`);
@@ -458,14 +444,12 @@ window.restartSourceGroup = async (domainKey) => {
     try {
         const allIds = canonicalGrp.__duplicates.map(s => s.source_id);
         
-        // 1. ADIM: Backend'den tamamen sil (Hard Delete)
         await Promise.all(allIds.map(id => 
             fetch(`${PRODUCT_DISCOVER_ENDPOINTS.sources}/${id}`, { method: "DELETE" })
         ));
         
         window.showToast("Eski veriler temizlendi. Kaynak yeniden oluşturuluyor...", "info");
 
-        // 2. ADIM: Kaynağı taze bir şekilde yeniden ekle
         const sourceName = canonicalGrp.source_name;
         const baseUrl = canonicalGrp.base_url;
         
@@ -483,14 +467,12 @@ window.restartSourceGroup = async (domainKey) => {
 
         const newSourceId = sourceRes.source_id;
 
-        // 3. ADIM: Yeni kaynak için sitemap taramasını başlat
         window.showToast("Yeni sitemap taraması başlatıldı...", "success");
         postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${newSourceId}/discover-sitemap`, { 
             max_child_sitemaps: 5, 
             product_only: true 
         }).catch(e => console.error("Sitemap discovery hatası:", e));
 
-        // Ekranı tazele
         setTimeout(() => {
             loadProductDiscoverDashboard();
         }, 1500);
@@ -699,7 +681,6 @@ function renderSources() {
         if (['Taranıyor', 'İşleniyor', 'Hazırlanıyor', 'İşleme bekliyor', 'Kısmi hazır'].includes(stats.status)) statusClass = 'scanning';
         else if (stats.status === 'Tamamlandı') statusClass = 'scanning'; 
 
-        // Clearbit Bug Fix
         let logoSrc = DEFAULT_SITE_SVG;
         if (domain && domain.includes('.') && domain.length > 4 && !domain.includes(' ')) {
             logoSrc = `https://logo.clearbit.com/${domain}`;
@@ -716,7 +697,6 @@ function renderSources() {
             actionsHtml += `<button id="btn-process-${domainKey}" class="btn-process-jobs" onclick="window.processSourceJobs('${domainKey}')" title="İlk ${PRODUCT_DISCOVER_SCAN_BATCH_LIMIT} ürünü işle"><i class="fas fa-play"></i></button>`;
         }
 
-        // Yeniden Başlat Butonu Eklendi
         actionsHtml += `<button class="btn-process-jobs" style="color:#f59e0b; border-color:rgba(245,158,11,0.2); background:rgba(245,158,11,0.1);" onclick="window.restartSourceGroup('${domainKey}')" title="Sıfırla ve Yeniden Başlat"><i class="fas fa-sync-alt"></i></button>`;
 
         actionsHtml += `<button class="btn-delete-source" onclick="window.deleteSourceGroup('${domainKey}')" title="Kaynağı Kaldır"><i class="fas fa-trash"></i></button>`;
@@ -803,7 +783,6 @@ async function loadSummary() {
         liveStatusEl.textContent = isRunning ? "Tarama Devam Ediyor" : "Beklemede";
         liveStatusEl.className = isRunning ? "widget-title-badge active" : "widget-title-badge";
         
-        // Ajanın boşta/beklemede olduğu varsayılan UI durumu
         const setAgentIdle = () => {
             setText('live-current-site-name', 'Aktif İş Yok');
             setText('live-current-source-context', 'Ajan hazır durumda bekliyor.');
@@ -814,7 +793,6 @@ async function loadSummary() {
             const sourceId = sum.latest_run.source_id;
             let matchedGroup = null;
 
-            // Ekranda aktif olarak izlenen bir kaynak mı kontrol et
             if (sourceId) {
                 for (let grp of window.canonicalSourcesMap.values()) {
                     if (grp.__duplicates.some(d => d.source_id === sourceId)) {
@@ -849,7 +827,6 @@ async function loadSummary() {
             setAgentIdle();
         }
 
-        // --- İLERLEME ÇUBUĞU (PROGRESS BAR) DÜZELTMESİ ---
         const total = sum.jobs?.total_jobs || 0;
         const completed = sum.jobs?.completed_jobs || 0;
         const pending = sum.jobs?.pending_jobs || 0;
@@ -1058,7 +1035,3 @@ window.sendMessage = function() {
         container.scrollTop = container.scrollHeight;
     }, 500);
 };
-
-document.getElementById("agent-input").addEventListener("keypress", function(e) {
-    if(e.key === "Enter" && !e.shiftKey) { e.preventDefault(); window.sendMessage(); }
-});
