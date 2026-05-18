@@ -82,11 +82,81 @@
 
     /* Text truncation for categories if they get too long */
     .h-bar-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+
+    /* Yeni Eklentiler (Modal, Toast, Butonlar) */
+    .btn-add-source {
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); 
+      color: #fff; width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    .btn-add-source:hover { background: rgba(255, 255, 255, 0.2); }
+    
+    .btn-download-csv {
+      background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
+      color: #10b981; width: 26px; height: 26px; border-radius: 4px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+      font-size: 0.75rem;
+    }
+    .btn-download-csv:hover { background: rgba(16, 185, 129, 0.2); }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-box {
+      background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .modal-box h3 { margin: 0 0 16px 0; color: #fff; font-size: 1.2rem; font-weight: 600; }
+    .modal-box input {
+      width: 100%; padding: 10px 12px; margin-bottom: 12px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: inherit;
+      box-sizing: border-box;
+    }
+    .modal-box input:focus { outline: none; border-color: #6366f1; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+    .modal-actions button {
+      padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; font-family: inherit; transition: opacity 0.2s;
+    }
+    .modal-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-cancel { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; }
+    .btn-cancel:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+    .btn-primary { background: #6366f1; border: none; color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #4f46e5; }
+
+    #toast-container {
+      position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 10000;
+    }
+    .toast-msg {
+      padding: 12px 16px; border-radius: 8px; color: #fff; font-size: 0.85rem; font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: fadein 0.3s, fadeout 0.3s 3.7s forwards;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .toast-info { background: #3b82f6; }
+    .toast-success { background: #10b981; }
+    .toast-error { background: #ef4444; }
+    .toast-warning { background: #f59e0b; }
+
+    @keyframes fadein { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeout { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
   </style>
 </head>
 <body>
 
   <div id="tk-global-sidebar-root"></div>
+
+  <div id="add-source-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <h3>Yeni Site Ekle</h3>
+      <input type="text" id="add-source-url" placeholder="https://www.example.com" autocomplete="off" />
+      <input type="text" id="add-source-name" placeholder="Site adı (opsiyonel)" autocomplete="off" />
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="window.closeAddSourceModal()">İptal</button>
+        <button class="btn-primary" id="btn-submit-source" onclick="window.submitAddSource()">Ekle ve Tara</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container"></div>
 
   <main class="main-content">
     
@@ -203,7 +273,10 @@
 
             <div class="three-col-grid">
                 <div class="agent-widget-card">
-                    <div class="widget-header"><div class="widget-title">İzlenen Web Siteleri</div></div>
+                    <div class="widget-header">
+                        <div class="widget-title">İzlenen Web Siteleri</div>
+                        <button class="btn-add-source" title="Yeni site ekle" onclick="window.openAddSourceModal()"><i class="fas fa-plus"></i></button>
+                    </div>
                     <table class="widget-table">
                         <thead>
                             <tr><th>Site</th><th>Durum</th><th>Öncelik</th><th>Ülke/Dil</th><th>İlerleme</th></tr>
@@ -291,7 +364,7 @@
                     <div class="chat-input-box">
                         <textarea id="agent-input" placeholder="Ajan için bir komut yazın..." oninput="this.style.height = '20px'; this.style.height = this.scrollHeight + 'px'"></textarea>
                     </div>
-                    <button class="chat-btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                    <button class="chat-btn-send" onclick="window.sendMessage()"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -314,13 +387,14 @@
     const PRODUCT_DISCOVER_API_BASE_URL = "https://product-discover-api-duk5clo5oa-uc.a.run.app";
     const PRODUCT_DISCOVER_ENDPOINTS = {
       summary: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/summary`,
-      products: `${PRODUCT_DISCOVER_API_BASE_URL}/products?limit=10&offset=0`,
+      products: `${PRODUCT_DISCOVER_API_BASE_URL}/products`,
       sources: `${PRODUCT_DISCOVER_API_BASE_URL}/sources`,
       activity: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/activity?limit=10`
     };
 
     // Global Source Map for linking source_id to source_name/base_url
     let productDiscoverSourceMap = new Map();
+    let productDiscoverSources = [];
 
     const escapeHtml = (unsafe) => (unsafe || '').toString().replace(/[&<"'>]/g, (m) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;','\'': '&#039;'})[m]);
     const safeText = (val, fallback = '-') => val ? escapeHtml(val) : fallback;
@@ -332,13 +406,25 @@
         return new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit'}).format(d);
     };
     const getDomainFromUrl = (urlStr) => {
-        if (!urlStr) return "Bilinmiyor";
-        try { return new URL(urlStr).hostname.replace('www.', ''); }
-        catch(e) { return safeText(urlStr); }
+        if (!urlStr) return "";
+        try { return new URL(urlStr).hostname.replace(/^www\./i, ''); }
+        catch(e) { return urlStr.replace(/^www\./i, ''); }
     };
+    
+    const normalizeText = (text) => (text || "").trim().toLowerCase();
 
     const fetchJson = async (url) => {
         const res = await fetch(url, { headers: { Accept: "application/json" } });
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return await res.json();
+    };
+
+    const postJson = async (url, body) => {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify(body)
+        });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return await res.json();
     };
@@ -350,6 +436,225 @@
 
     const DEFAULT_SITE_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+";
 
+    // Toast Messages
+    window.showToast = function(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast-msg toast-${type}`;
+        
+        let icon = 'fa-info-circle';
+        if(type === 'success') icon = 'fa-check-circle';
+        if(type === 'error') icon = 'fa-exclamation-circle';
+        if(type === 'warning') icon = 'fa-exclamation-triangle';
+
+        toast.innerHTML = `<i class="fas ${icon}"></i> <span>${escapeHtml(message)}</span>`;
+        container.appendChild(toast);
+        
+        setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 4000);
+    };
+
+    // =========================================================
+    // YENİ KAYNAK EKLEME / SİTEMAP KEŞİF
+    // =========================================================
+
+    const normalizeUrl = (input) => {
+        let url = input.trim();
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        return url;
+    };
+
+    const deriveSourceNameFromUrl = (url) => {
+        try {
+            let hostname = new URL(url).hostname.replace(/^www\./i, '');
+            if (!hostname) return "Yeni Site";
+            return hostname.charAt(0).toUpperCase() + hostname.slice(1).split('.')[0];
+        } catch(e) {
+            return "Yeni Site";
+        }
+    };
+
+    window.openAddSourceModal = () => {
+        document.getElementById('add-source-url').value = '';
+        document.getElementById('add-source-name').value = '';
+        document.getElementById('btn-submit-source').disabled = false;
+        document.getElementById('btn-submit-source').textContent = 'Ekle ve Tara';
+        document.getElementById('add-source-modal').style.display = 'flex';
+    };
+
+    window.closeAddSourceModal = () => {
+        document.getElementById('add-source-modal').style.display = 'none';
+    };
+
+    window.submitAddSource = async () => {
+        const urlInput = document.getElementById('add-source-url').value;
+        const nameInput = document.getElementById('add-source-name').value;
+        
+        if (!urlInput.trim()) {
+            window.showToast("Lütfen geçerli bir web sitesi adresi girin.", "warning");
+            return;
+        }
+
+        const btn = document.getElementById('btn-submit-source');
+        btn.disabled = true;
+
+        try {
+            const normalizedUrl = normalizeUrl(urlInput);
+            const sourceName = nameInput.trim() || deriveSourceNameFromUrl(normalizedUrl);
+            
+            // 1. Kaynak Oluştur
+            btn.textContent = "Kaynak oluşturuluyor...";
+            window.showToast("Kaynak oluşturuluyor...", "info");
+            
+            const sourceRes = await postJson(PRODUCT_DISCOVER_ENDPOINTS.sources, {
+                source_name: sourceName,
+                source_type: "retailer",
+                base_url: normalizedUrl,
+                country: "TR",
+                language: "tr",
+                is_active: true,
+                priority: 10,
+                crawl_frequency_hours: 24,
+                robots_policy: "respect",
+                notes: "Created from Teknoify Product Discover dashboard"
+            });
+
+            const sourceId = sourceRes.source_id;
+            if (!sourceId) throw new Error("Kaynak oluşturuldu ancak ID alınamadı.");
+
+            // 2. Sitemap Taraması Başlat
+            btn.textContent = "Sitemap taranıyor...";
+            window.showToast("Sitemap taraması başlatıldı...", "info");
+            
+            await postJson(`${PRODUCT_DISCOVER_ENDPOINTS.sources}/${sourceId}/discover-sitemap`, {
+                max_child_sitemaps: 5,
+                product_only: false
+            });
+
+            window.showToast("Site eklendi ve tarama başarıyla başlatıldı.", "success");
+            window.closeAddSourceModal();
+            loadProductDiscoverDashboard(); // Yenile
+
+        } catch(e) {
+            console.error("Kaynak Ekleme Hatası:", e);
+            window.showToast("Site eklenemedi veya tarama başlatılamadı.", "error");
+            btn.disabled = false;
+            btn.textContent = "Ekle ve Tara";
+        }
+    };
+
+    // =========================================================
+    // ÜRÜN İNDİRME (CSV EXPORT) FONKSİYONLARI
+    // =========================================================
+    
+    const csvEscape = (value) => {
+        if (value === null || value === undefined) return '""';
+        let str = String(value).replace(/\r?\n|\r/g, ' '); // Satır atlamaları boşluk yap
+        if (str.includes(',') || str.includes('"')) {
+            str = '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+    };
+
+    const downloadBlob = (filename, content, mimeType) => {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    };
+
+    const productBelongsToSource = (product, source) => {
+        if (!product.evidence || !Array.isArray(product.evidence)) return false;
+        const sourceDomain = getDomainFromUrl(source.base_url);
+        const sourceName = normalizeText(source.source_name);
+
+        return product.evidence.some(ev => {
+            const evDomain = getDomainFromUrl(ev.source_url);
+            const evName = normalizeText(ev.source_name);
+            if (sourceName && evName === sourceName) return true;
+            if (sourceDomain && evDomain === sourceDomain) return true;
+            return false;
+        });
+    };
+
+    const fetchAllProductsForExport = async () => {
+        let allItems = [];
+        let offset = 0;
+        const limit = 500;
+        const maxPages = 20; // Güvenlik sınırı, sonsuz döngüyü önler
+        
+        for (let i = 0; i < maxPages; i++) {
+            try {
+                const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.products}?limit=${limit}&offset=${offset}`);
+                const items = data.items || [];
+                allItems.push(...items);
+                if (items.length < limit) break; // Son sayfaya ulaşıldı
+                offset += limit;
+            } catch (e) {
+                console.error("Export fetch hatası:", e);
+                break;
+            }
+        }
+        return allItems;
+    };
+
+    const buildProductsCsv = (products) => {
+        const headers = [
+            "product_id", "product_name", "barcode", "gtin", "brand", 
+            "manufacturer", "category", "status", "confidence_overall", 
+            "source_name", "source_url", "image_url", "created_at", "updated_at"
+        ];
+        
+        const rows = products.map(p => {
+            // Güvenli referans verisi
+            const ev = (p.evidence && p.evidence.length > 0) ? p.evidence[0] : {};
+            const conf = (p.confidence && p.confidence.overall) ? p.confidence.overall : '';
+            const img = (p.images && p.images.length > 0) ? p.images[0].url : '';
+
+            return [
+                p.product_id, p.product_name, p.barcode, p.gtin, p.brand,
+                p.manufacturer, p.category, p.status, conf,
+                ev.source_name, ev.source_url, img, p.created_at, p.updated_at
+            ].map(csvEscape).join(',');
+        });
+
+        return [headers.join(','), ...rows].join('\n');
+    };
+
+    window.exportSourceProducts = async (sourceId) => {
+        const source = productDiscoverSourceMap.get(sourceId);
+        if (!source) {
+            window.showToast("Kaynak verisi bulunamadı.", "error");
+            return;
+        }
+
+        const displayName = source.source_name || getDomainFromUrl(source.base_url);
+        window.showToast(`${displayName} için veriler toparlanıyor...`, "info");
+
+        const allProducts = await fetchAllProductsForExport();
+        const filteredProducts = allProducts.filter(p => productBelongsToSource(p, source));
+
+        if (filteredProducts.length === 0) {
+            window.showToast("Bu kaynak için indirilecek ürün bulunamadı.", "warning");
+            return;
+        }
+
+        const csvContent = buildProductsCsv(filteredProducts);
+        const dateStr = new Date().toISOString().split('T')[0];
+        const safeName = displayName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const fileName = `product-discover-${safeName}-${dateStr}.csv`;
+
+        // UTF-8 BOM ekleniyor ("\uFEFF") Excel Türkçe karakter sorunu için
+        downloadBlob(fileName, "\uFEFF" + csvContent, "text/csv;charset=utf-8;");
+        window.showToast(`İndirme başlatıldı: ${filteredProducts.length} ürün.`, "success");
+    };
+
     // =========================================================
     // VERİ ÇEKME VE RENDER FONKSİYONLARI (WIDGETS)
     // =========================================================
@@ -358,29 +663,36 @@
         const tbody = document.getElementById('sources-table-body');
         try {
             const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
-            
-            const sources = Array.isArray(data) ? data : (data.items || []);
+            productDiscoverSources = Array.isArray(data) ? data : (data.items || []);
 
             // Populate the global source map
             productDiscoverSourceMap.clear();
-            sources.forEach(source => {
+            productDiscoverSources.forEach(source => {
                 if(source.source_id) {
                     productDiscoverSourceMap.set(source.source_id, source);
                 }
             });
 
-            if (sources.length === 0) {
+            if (productDiscoverSources.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="pd-live-empty">İzlenen site bulunamadı.</td></tr>`;
                 return;
             }
             
-            tbody.innerHTML = sources.map(s => {
-                const domain = getDomainFromUrl(s.base_url || s.source_name);
+            tbody.innerHTML = productDiscoverSources.map(s => {
+                const domain = getDomainFromUrl(s.base_url || s.source_name) || "Bilinmeyen";
                 const isActive = s.is_active;
                 const statusClass = isActive ? 'scanning' : 'waiting';
                 const statusText = isActive ? 'Aktif' : 'Pasif';
                 const prog = isActive ? '100%' : '0%';
                 
+                // Progress ve Download Buton yapısı
+                let progressHtml = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="progress-track" style="width: 40px; margin:0;"><div class="progress-fill" style="width: ${prog};"></div></div> 
+                    <span>${prog}</span>
+                    ${isActive ? `<button class="btn-download-csv" onclick="window.exportSourceProducts('${s.source_id}')" title="Ürünleri indir"><i class="fas fa-download"></i></button>` : ''}
+                </div>`;
+
                 return `
                 <tr>
                     <td>
@@ -392,7 +704,7 @@
                     <td class="status-text ${statusClass}"><i class="fas fa-circle" style="font-size:6px; margin-right:4px;"></i> ${statusText}</td>
                     <td>${safeText(s.priority)}</td>
                     <td style="color:#a1a1aa;">${safeText(s.country)} / ${safeText(s.language)}</td>
-                    <td><div class="progress-track" style="width: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;"><div class="progress-fill" style="width: ${prog};"></div></div> ${prog}</td>
+                    <td>${progressHtml}</td>
                 </tr>
                 `;
             }).join('');
@@ -523,7 +835,7 @@
     async function loadProducts() {
         const tbody = document.getElementById('products-table-body');
         try {
-            const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.products);
+            const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.products}?limit=10&offset=0`);
             
             const products = data.items || [];
             
@@ -569,8 +881,7 @@
         const chart = document.getElementById('categories-chart');
         const totalEl = document.getElementById('categories-total');
         try {
-            // Fetch more products to get a better category distribution
-            const data = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/products?limit=500&offset=0`);
+            const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.products}?limit=500&offset=0`);
             const products = data.items || [];
             
             if (products.length === 0) {
@@ -598,7 +909,6 @@
 
             // Render HTML
             chart.innerHTML = topCategories.map(c => {
-                // Ensure a minimum visual bar width of 2%
                 const widthPct = Math.max(2, Math.round((c.count / maxCount) * 100));
                 return `
                     <div class="h-bar-row">
@@ -623,7 +933,7 @@
         // First load sources so the map is fully populated for the summary processing
         await loadSources();
 
-        // Load the remaining data widgets in parallel
+        // Load the remaining data widgets in parallel safely
         await Promise.allSettled([
             loadSummary(),
             loadActivity(),
@@ -723,7 +1033,7 @@
             container.appendChild(botMsg);
             container.scrollTop = container.scrollHeight;
         }, 500);
-    }
+    };
 
     document.getElementById("agent-input").addEventListener("keypress", function(e) {
         if(e.key === "Enter" && !e.shiftKey) {
