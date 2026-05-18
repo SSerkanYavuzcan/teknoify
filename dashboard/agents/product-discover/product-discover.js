@@ -1,5 +1,14 @@
+// =========================================================
+// PRODUCT DISCOVER AJANI - ANA JS DOSYASI
+// Dosya Yolu: dashboard/agents/product-discover/product-discover.js
+// =========================================================
+
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; 
+
+// =========================================================
+// API VE YARDIMCI FONKSİYONLAR (HELPERS)
+// =========================================================
 const PRODUCT_DISCOVER_API_BASE_URL = "https://product-discover-api-duk5clo5oa-uc.a.run.app";
 const PRODUCT_DISCOVER_ENDPOINTS = {
     summary: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/summary`,
@@ -8,9 +17,11 @@ const PRODUCT_DISCOVER_ENDPOINTS = {
     activity: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/activity`
 };
 
+// Cost-Safety Rules
 const PRODUCT_DISCOVER_AUTO_PROCESS_JOBS = false;
-const PRODUCT_DISCOVER_SCAN_BATCH_LIMIT = 15;
+const PRODUCT_DISCOVER_SCAN_BATCH_LIMIT = 15; // Timeout'u engellemek için 15 olarak güncellendi
 
+// Global States
 window.productDiscoverSources = [];
 window.canonicalSourcesMap = new Map(); 
 window.allDiscoveredProducts = [];
@@ -26,6 +37,7 @@ const formatDate = (dateString) => {
     return new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit'}).format(d);
 };
 
+// Normalization Functions
 const normalizeUrl = (input) => {
     let url = (input || "").trim();
     if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
@@ -45,6 +57,7 @@ const normalizeDomainFromUrl = (input) => {
     } catch(e) { return ""; }
 };
 
+// Bug 1 Fix: Variable Reference Resolution
 const getDomainFromUrl = normalizeDomainFromUrl;
 
 const normalizeText = (value) => {
@@ -72,6 +85,7 @@ const postJson = async (url, body) => {
         let errorDetail = `HTTP ${res.status}`;
         try {
             const errBody = await res.json();
+            // FastAPI hataları genelde "detail" veya "message" içinde gelir
             errorDetail = errBody.detail || errBody.message || errorDetail;
             if(typeof errorDetail === 'object') errorDetail = JSON.stringify(errorDetail);
         } catch(e) {}
@@ -97,6 +111,10 @@ const setText = (id, text) => {
 
 const DEFAULT_SITE_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+";
 
+// =========================================================
+// UI GERİ BİLDİRİM FONKSİYONLARI (Toast & Chatbot)
+// =========================================================
+
 window.showToast = function(message, type = 'info') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -111,6 +129,23 @@ window.showToast = function(message, type = 'info') {
     container.appendChild(toast);
     setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 4000);
 };
+
+window.addBotMessage = function(text) {
+    const container = document.getElementById("chat-container");
+    if(!container) return;
+    const botMsg = document.createElement("div");
+    botMsg.className = "msg system";
+    botMsg.innerHTML = `
+        <div class="msg-header"><div class="msg-avatar system"><i class="fas fa-robot"></i></div></div>
+        <div class="msg-bubble" style="color:#a1a1aa;"><i>${text}</i></div>
+    `;
+    container.appendChild(botMsg);
+    container.scrollTop = container.scrollHeight;
+};
+
+// =========================================================
+// YENİ KAYNAK EKLEME / SİTEMAP KEŞİF (Güvenli Akış)
+// =========================================================
 
 const deriveSourceNameFromUrl = (url) => {
     try {
@@ -202,12 +237,15 @@ window.submitAddSource = async () => {
             if (!sourceId) throw new Error("Kaynak oluşturuldu ancak ID alınamadı.");
         }
 
+        // OTOMATIK ISLEME ENGELI (Cost-Safe Rule)
         updateModalStatus("Sitemap taraması başlatıldı...");
+        // Sitemap discovery isteğini bekletmeden gönder, arka planda çalışsın
         postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { max_child_sitemaps: 5, product_only: false })
             .catch(e => console.error("Sitemap discovery hatası:", e));
         
         window.showToast("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
         
+        // İşlem başlatıldı mesajından hemen sonra modalı kapat ve ekranı yenile
         window.closeAddSourceModal();
         loadProductDiscoverDashboard();
 
@@ -219,12 +257,33 @@ window.submitAddSource = async () => {
     }
 };
 
+// =========================================================
+// JOBS MANUEL IŞLEME (PROCESS)
+// =========================================================
+
 window.processSourceJobs = async (domainKey) => {
     const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
     if (!canonicalGrp) return;
     const sourceId = canonicalGrp.source_id;
+    const displayName = canonicalGrp.source_name || domainKey;
 
+    // UI: Butonu Yükleniyor (Spinner) Moduna Al
+    const btn = document.getElementById(`btn-process-${domainKey}`);
+    let originalBtnHtml = "";
+    if (btn) {
+        originalBtnHtml = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        btn.style.cursor = "not-allowed";
+    }
+
+    // UI: Kullanıcıya Toast ve Chatbot mesajı ver
     window.showToast("Ürün çıkarma işleri oluşturuluyor...", "info");
+    if (window.addBotMessage) {
+        window.addBotMessage(`<strong>${escapeHtml(displayName)}</strong> için ürün işleme talebiniz alındı. Arka planda bağlantılar kazınıyor, lütfen işlemin bitmesini bekleyin... ⏳`);
+    }
+
     try {
         const jobsRes = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls/create-jobs`, {
             status: "discovered", limit: PRODUCT_DISCOVER_SCAN_BATCH_LIMIT, priority: "normal", batch_id: `frontend-${sourceId}-${Date.now()}`
@@ -238,6 +297,7 @@ window.processSourceJobs = async (domainKey) => {
             const processCount = Math.min(jobIds.length, PRODUCT_DISCOVER_SCAN_BATCH_LIMIT);
             window.showToast(`İlk ${processCount} ürün işleniyor, lütfen bekleyin...`, "info");
             
+            // Backend'e işleme isteğini atıyoruz ve bitmesini bekliyoruz
             await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/jobs/process-many`, {
                 job_ids: jobIds.slice(0, processCount),
                 max_jobs: processCount
@@ -245,21 +305,49 @@ window.processSourceJobs = async (domainKey) => {
             
             window.showToast("İşleme başarıyla tamamlandı. Otomatik dışa aktarma (CSV) hazırlanıyor...", "success");
             
+            if (window.addBotMessage) {
+                window.addBotMessage(`✅ <strong>${escapeHtml(displayName)}</strong> için işleme tamamlandı. CSV dosyanız indiriliyor.`);
+            }
+
+            // Ekranda yeni ürünleri göstermek için dashboard'u yenile
             await loadProductDiscoverDashboard();
 
+            // Otomatik olarak CSV indirmesini tetikle (force = true)
             setTimeout(() => {
                 window.exportSourceProducts(domainKey, true);
             }, 1000);
 
         } else {
             window.showToast("İşlenecek yeni URL bulunamadı veya işler kuyrukta.", "info");
+            // İşlem yoksa butonu eski haline getir
+            if (btn) {
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                btn.style.cursor = "pointer";
+            }
         }
     } catch (e) {
         console.error("API İşlem Hatası:", e);
         window.showToast(`Hata: ${e.message}`, "error");
+        
+        if (window.addBotMessage) {
+            window.addBotMessage(`❌ <strong>${escapeHtml(displayName)}</strong> için işlem sırasında hata oluştu: ${escapeHtml(e.message)}`);
+        }
+        
+        // Hata durumunda butonu tıklanabilir eski haline getir
+        if (btn) {
+            btn.innerHTML = originalBtnHtml;
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
+        }
     }
 };
 
+// =========================================================
+// SİL (DEVRE DIŞI BIRAK) VE DIŞA AKTAR (CSV)
+// =========================================================
 
 window.deleteSourceGroup = async (domainKey) => {
     if (!confirm("Bu kaynağı izlenen sitelerden kaldırmak istiyor musunuz?")) return;
@@ -342,6 +430,7 @@ const buildProductsCsv = (products) => {
 window.exportSourceProducts = async (domainKey, force = false) => {
     const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
     
+    // Eğer butona manuel basılmadıysa (force) ve export edilebilir durumda değilse uyar.
     if (!canonicalGrp || (!canonicalGrp.__stats?.exportable && !force)) {
         window.showToast("Bu kaynak için henüz çıkarılmış ürün bulunamadı. İndirme işlemi için ürün işleme tamamlanmalı.", "warning");
         return;
@@ -367,6 +456,10 @@ window.exportSourceProducts = async (domainKey, force = false) => {
     }, 100);
 };
 
+// =========================================================
+// VERİ ÇEKME VE RENDER FONKSİYONLARI
+// =========================================================
+
 async function loadAllProducts() {
     try {
         const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.products}?limit=500&offset=0`);
@@ -386,10 +479,11 @@ async function loadSourcesDataOnly() {
         const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
         window.productDiscoverSources = Array.isArray(data) ? data : (data.items || []);
         
+        // Deduplikasyon ve Map oluşturma
         window.canonicalSourcesMap.clear();
         
         window.productDiscoverSources.forEach(s => {
-            if(s.is_active === false) return; 
+            if(s.is_active === false) return; // Yalnızca aktifleri grupla ve göster
             
             let domainKey = getSourceDomain(s) || normalizeText(s.source_name);
             if (!domainKey) return; 
@@ -476,6 +570,7 @@ function renderSources() {
         if (['Taranıyor', 'İşleniyor', 'Hazırlanıyor', 'İşleme bekliyor', 'Kısmi hazır'].includes(stats.status)) statusClass = 'scanning';
         else if (stats.status === 'Tamamlandı') statusClass = 'scanning'; 
 
+        // Clearbit Bug Fix
         let logoSrc = DEFAULT_SITE_SVG;
         if (domain && domain.includes('.') && domain.length > 4 && !domain.includes(' ')) {
             logoSrc = `https://logo.clearbit.com/${domain}`;
@@ -488,8 +583,9 @@ function renderSources() {
             actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:auto;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
         }
         
+        // İşleme Butonu - ID atandı
         if (stats.processable && !PRODUCT_DISCOVER_AUTO_PROCESS_JOBS) {
-            actionsHtml += `<button class="btn-process-jobs" onclick="window.processSourceJobs('${domainKey}')" title="İlk 50 ürünü işle"><i class="fas fa-play"></i></button>`;
+            actionsHtml += `<button id="btn-process-${domainKey}" class="btn-process-jobs" onclick="window.processSourceJobs('${domainKey}')" title="İlk ${PRODUCT_DISCOVER_SCAN_BATCH_LIMIT} ürünü işle"><i class="fas fa-play"></i></button>`;
         }
 
         actionsHtml += `<button class="btn-delete-source" onclick="window.deleteSourceGroup('${domainKey}')" title="Kaynağı Kaldır"><i class="fas fa-trash"></i></button>`;
@@ -576,6 +672,7 @@ async function loadSummary() {
         liveStatusEl.textContent = isRunning ? "Tarama Devam Ediyor" : "Beklemede";
         liveStatusEl.className = isRunning ? "widget-title-badge active" : "widget-title-badge";
         
+        // Ajanın boşta/beklemede olduğu varsayılan UI durumu
         const setAgentIdle = () => {
             setText('live-current-site-name', 'Aktif İş Yok');
             setText('live-current-source-context', 'Ajan hazır durumda bekliyor.');
@@ -586,6 +683,7 @@ async function loadSummary() {
             const sourceId = sum.latest_run.source_id;
             let matchedGroup = null;
 
+            // Ekranda aktif olarak izlenen bir kaynak mı kontrol et
             if (sourceId) {
                 for (let grp of window.canonicalSourcesMap.values()) {
                     if (grp.__duplicates.some(d => d.source_id === sourceId)) {
@@ -595,6 +693,7 @@ async function loadSummary() {
                 }
             }
 
+            // Sadece aktif izlenen bir kaynağa ait son işlem varsa ekranda göster
             if (matchedGroup) {
                 let sourceDomain = getSourceDomain(matchedGroup);
                 let displayName = matchedGroup.source_name || sourceDomain;
@@ -620,6 +719,7 @@ async function loadSummary() {
             setAgentIdle();
         }
 
+        // --- İLERLEME ÇUBUĞU (PROGRESS BAR) DÜZELTMESİ ---
         const total = sum.jobs?.total_jobs || 0;
         const completed = sum.jobs?.completed_jobs || 0;
         const pending = sum.jobs?.pending_jobs || 0;
@@ -742,6 +842,10 @@ async function loadProductDiscoverDashboard() {
     ]);
 }
 
+// =========================================================
+// FIREBASE AUTH & İLK YÜKLEME (INIT)
+// =========================================================
+
 const auth = getAuth();
 const db = getFirestore(); 
 const CURRENT_AGENT_ID = "product-discover";
@@ -793,6 +897,10 @@ onAuthStateChanged(auth, async (user) => {
         window.location.href = "/"; 
     }
 });
+
+// =========================================================
+// CHAT (SOHBET) SİMÜLASYONU
+// =========================================================
 
 window.sendMessage = function() {
     const input = document.getElementById("agent-input");
