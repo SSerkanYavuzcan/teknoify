@@ -389,6 +389,7 @@ window.exportAllProductsGlobal = async () => {
 };
 
 // Tüm Verileri Sil (Hard Reset / Nuke)
+// Tüm Verileri Sil (Hard Reset / Nuke)
 window.deleteAllSystemData = async () => {
     window.toggleProductsSettings(); 
     
@@ -402,10 +403,9 @@ window.deleteAllSystemData = async () => {
     window.showToast("Sistemdeki tüm veriler kalıcı olarak siliniyor... Lütfen sayfadan ayrılmayın.", "warning");
 
     try {
-        // API isteğini at ve cevabı bekle
-        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/system/reset`, { method: "DELETE" });
+        // HATA BURADAYDI: "/sources/system/reset" yerine DOĞRUDAN "/system/reset" olmalı!
+        const res = await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/system/reset`, { method: "DELETE" });
         
-        // Eğer backend 500 hatası veya başka bir hata verdiyse işlemi durdur
         if (!res.ok) {
             throw new Error(`Sunucu Hatası: ${res.status}`);
         }
