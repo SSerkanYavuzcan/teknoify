@@ -388,7 +388,6 @@ window.exportAllProductsGlobal = async () => {
     }
 };
 
-// Tüm Verileri Sil (Hard Reset)
 window.deleteAllSystemData = async () => {
     window.toggleProductsSettings(); 
     
@@ -402,17 +401,20 @@ window.deleteAllSystemData = async () => {
     window.showToast("Sistemdeki tüm veriler kalıcı olarak siliniyor... Lütfen sayfadan ayrılmayın.", "warning");
 
     try {
-        const allSources = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
-        const sourceList = Array.isArray(allSources) ? allSources : (allSources.items || []);
-        
-        if (sourceList.length === 0) {
-            window.showToast("Silinecek veri bulunamadı.", "info");
-            return;
-        }
+        // Doğrudan backend'deki yepyeni "Reset" endpoint'ine istek atıyoruz
+        await fetch(`${PRODUCT_DISCOVER_API_BASE_URL}/system/reset`, { method: "DELETE" });
 
-        await Promise.all(sourceList.map(s => 
-            fetch(`${PRODUCT_DISCOVER_ENDPOINTS.sources}/${s.source_id}`, { method: "DELETE" }).catch(() => null)
-        ));
+        window.showToast("Sistem başarıyla sıfırlandı. Ekran yenileniyor...", "success");
+        
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+        
+    } catch(e) {
+        console.error("Global Silme Hatası:", e);
+        window.showToast("Silme işlemi sırasında hata oluştu.", "error");
+    }
+};
 
         window.showToast("Sistem başarıyla sıfırlandı. Ekran yenileniyor...", "success");
         
