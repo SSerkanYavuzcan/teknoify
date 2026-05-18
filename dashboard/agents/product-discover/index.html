@@ -20,7 +20,10 @@
 
   <div id="add-source-modal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
-      <h3>Yeni Site Ekle & Tara</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="margin: 0;">Yeni Site Ekle & Tara</h3>
+        <button onclick="window.closeAddSourceModal()" class="modal-close-btn" title="Kapat"><i class="fas fa-times"></i></button>
+      </div>
       <input type="text" id="add-source-url" placeholder="https://www.example.com" autocomplete="off" />
       <input type="text" id="add-source-name" placeholder="Site adı (opsiyonel)" autocomplete="off" />
       <div id="add-source-status" class="modal-status-text">İşlem bekleniyor...</div>
