@@ -156,7 +156,7 @@
                 
                 <div style="display: flex; gap: 40px; align-items: flex-end;">
                     <div style="flex: 1;">
-                        <span style="font-size: 0.75rem; color:#a1a1aa;">Şu Anda Taranan Site</span>
+                        <span style="font-size: 0.75rem; color:#a1a1aa;">Şu Anda Taranan Kaynak</span>
                         <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
                             <div class="site-icon" style="width: 32px; height: 32px; background: #fff;"><img id="live-current-site-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTFhMWFhIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIyIiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTBhMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTBhMTUuMyAxNS4zIDAgMCAxIDQtMTB6Ij48L3BhdGg+PC9zdmc+" alt="site"></div>
                             <span style="color: #fff; font-size: 1.2rem; font-weight: 600;"><span id="live-current-site-name">Bekleniyor...</span> <i class="fas fa-external-link-alt" style="font-size: 0.8rem; color: #71717a; margin-left: 5px;"></i></span>
@@ -373,11 +373,13 @@
             liveStatusEl.textContent = isRunning ? "Tarama Devam Ediyor" : "Beklemede";
             liveStatusEl.className = isRunning ? "widget-title-badge active" : "widget-title-badge";
             
+            // YENİ GÜNCELLEME: latest_run bilgisini daha güvenli ve detaylı yansıtıyoruz
             if (sum.latest_run) {
-                const domain = getDomainFromUrl(sum.latest_run.source_url || sum.latest_run.source_name);
-                setText('live-current-site-name', domain);
-                document.getElementById('live-current-site-icon').src = `https://logo.clearbit.com/${domain}`;
-                setText('live-current-source-context', `Durum: ${safeText(sum.latest_run.status)}`);
+                setText('live-current-site-name', sum.latest_run.source_id ? `Kaynak: ${sum.latest_run.source_id.slice(0, 8)}...` : 'Son Tarama');
+                setText(
+                    'live-current-source-context',
+                    `Durum: ${safeText(sum.latest_run.status)} · ${formatNumber(sum.latest_run.products_found || 0)} Ürün · ${formatNumber(sum.latest_run.pages_seen || 0)} Sayfa`
+                );
             } else {
                 setText('live-current-site-name', 'Aktif İş Yok');
                 setText('live-current-source-context', 'Ajan hazır durumda bekliyor.');
@@ -405,11 +407,14 @@
         const tbody = document.getElementById('sources-table-body');
         try {
             const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sources);
-            if (!data || data.length === 0) {
+            
+            const sources = data.items || [];
+
+            if (sources.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="pd-live-empty">İzlenen site bulunamadı.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = data.map(s => {
+            tbody.innerHTML = sources.map(s => {
                 const domain = getDomainFromUrl(s.base_url || s.source_name);
                 const isActive = s.is_active;
                 const statusClass = isActive ? 'scanning' : 'waiting';
@@ -441,11 +446,14 @@
         const list = document.getElementById('activity-timeline');
         try {
             const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.activity);
-            if (!data || data.length === 0) {
+            
+            const activities = data.items || [];
+            
+            if (activities.length === 0) {
                 list.innerHTML = `<li class="timeline-item"><div class="timeline-text pd-live-empty">Aktivite bulunamadı.</div></li>`;
                 return;
             }
-            list.innerHTML = data.map(item => {
+            list.innerHTML = activities.map(item => {
                 let iconCls = "green";
                 let faCls = "fa-circle";
                 
@@ -479,11 +487,15 @@
         const tbody = document.getElementById('products-table-body');
         try {
             const data = await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.products);
-            if (!data || data.length === 0) {
+            
+            const products = data.items || [];
+            
+            if (products.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="pd-live-empty">Henüz ürün keşfedilmedi.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = data.map(p => {
+            
+            tbody.innerHTML = products.map(p => {
                 let imgUrl = p.images && p.images.length > 0 ? p.images[0].url : '';
                 let imgHtml = imgUrl ? `<img src="${escapeHtml(imgUrl)}" class="product-img" alt="ürün">` : `<div class="product-img pd-product-placeholder"><i class="fas fa-box"></i></div>`;
                 
