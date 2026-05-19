@@ -864,84 +864,194 @@ async function fetchSourceDiscoveredUrlStats(sourceId) {
 
 async function loadSourceStats() {
     const fetchSourceProcessingSummary = async (sourceId) => {
-        return await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/processing-summary`);
+        return await fetchJson(
+            `${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/processing-summary`
+        );
     };
+
+    const fetchSourceDiscoveredUrlStats = async (sourceId) => {
+        const limit = 500;
+        const maxPages = 20;
+        let offset = 0;
+        let allUrls = [];
+
+        for (let i = 0; i < maxPages; i++) {
+            const res = await fetchJson(
+                `${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls?limit=${limit}&offset=${offset}`
+            );
+
+            const items = Array.isArray(res) ? res : (res.items || []);
+            allUrls.push(...items);
+
+            if (items.length < limit) break;
+            offset += limit;
+        }
+
+        const productIds = new Set();
+
+        allUrls.forEach((item) => {
+            if (item.product_id) productIds.add(item.product_id);
+        });
+
+        return {
+            total_urls: allUrls.length,
+            discovered_urls: allUrls.filter((u) => u.status === "discovered").length,
+            queued_urls: allUrls.filter((u) => u.status === "queued").length,
+            running_urls: allUrls.filter((u) => u.status === "running").length,
+            completed_urls: allUrls.filter(
+                (u) => u.status === "completed" || u.status === "processed"
+            ).length,
+            failed_urls: allUrls.filter((u) => u.status === "failed").length,
+            not_found_urls: allUrls.filter((u) => u.status === "not_found").length,
+            remaining_urls: allUrls.filter((u) => u.status === "discovered").length,
+            total_products: productIds.size
+        };
+    };
+
     window.fetchSourceProcessingSummary = fetchSourceProcessingSummary;
+    window.fetchSourceDiscoveredUrlStats = fetchSourceDiscoveredUrlStats;
 
     const promises = Array.from(window.canonicalSourcesMap.values()).map(async (canonicalGrp) => {
-        let totalUrls = 0; let processed = 0; let failed = 0; let pending = 0;
-        
+        let totalUrls = 0;
+        let processed = 0;
+        let failed = 0;
+        let pending = 0;
+
         for (let dup of canonicalGrp.__duplicates) {
             try {
                 const summary = await fetchSourceProcessingSummary(dup.source_id);
-                const summaryTotal = Number(summary?.total_urls ?? summary?.total_candidates ?? 0);
+
+                const summaryTotal = Number(
+                    summary?.total_urls ?? summary?.total_candidates ?? 0
+                );
+
                 const summaryData = {
                     total_urls: summaryTotal,
-                    completed_urls: Number(summary?.completed_urls ?? summary?.completed_count ?? summary?.processed_urls ?? 0),
-                    failed_urls: Number(summary?.failed_urls ?? summary?.failed_count ?? 0),
-                    not_found_urls: Number(summary?.not_found_urls ?? summary?.not_found_count ?? 0),
-                    remaining_urls: Number(summary?.remaining_urls ?? summary?.pending_urls ?? summary?.discovered_urls ?? 0)
+                    completed_urls: Number(
+                        summary?.completed_urls ??
+                        summary?.completed_count ??
+                        summary?.processed_urls ??
+                        0
+                    ),
+                    failed_urls: Number(
+                        summary?.failed_urls ??
+                        summary?.failed_count ??
+                        0
+                    ),
+                    not_found_urls: Number(
+                        summary?.not_found_urls ??
+                        summary?.not_found_count ??
+                        0
+                    ),
+                    remaining_urls: Number(
+                        summary?.remaining_urls ??
+                        summary?.pending_urls ??
+                        summary?.discovered_urls ??
+                        0
+                    )
                 };
 
                 let sourceStats = summaryData;
+
                 if (summaryTotal <= 0) {
-                    console.warn(`[ProductDiscover] processing-summary total_urls=0, discovered-urls fallback used. source_id=${dup.source_id}`);
+                    console.warn(
+                        `[ProductDiscover] processing-summary total_urls=0, discovered-urls fallback used. source_id=${dup.source_id}`
+                    );
                     sourceStats = await fetchSourceDiscoveredUrlStats(dup.source_id);
                 }
 
                 totalUrls += Number(sourceStats.total_urls || 0);
                 processed += Number(sourceStats.completed_urls || 0);
-                failed += Number(sourceStats.failed_urls || 0) + Number(sourceStats.not_found_urls || 0);
+                failed += Number(sourceStats.failed_urls || 0) +
+                    Number(sourceStats.not_found_urls || 0);
                 pending += Number(sourceStats.remaining_urls || 0);
-            } catch(e) {
-                console.warn(`[ProductDiscover] processing-summary failed, discovered-urls fallback used. source_id=${dup.source_id}`, e);
+
+            } catch (e) {
+                console.warn(
+                    `[ProductDiscover] processing-summary failed, discovered-urls fallback used. source_id=${dup.source_id}`,
+                    e
+                );
+
                 try {
                     const fallbackStats = await fetchSourceDiscoveredUrlStats(dup.source_id);
+
                     totalUrls += Number(fallbackStats.total_urls || 0);
                     processed += Number(fallbackStats.completed_urls || 0);
-                    failed += Number(fallbackStats.failed_urls || 0) + Number(fallbackStats.not_found_urls || 0);
+                    failed += Number(fallbackStats.failed_urls || 0) +
+                        Number(fallbackStats.not_found_urls || 0);
                     pending += Number(fallbackStats.remaining_urls || 0);
+
                 } catch (fallbackErr) {
-                    console.warn(`[ProductDiscover] discovered-urls fallback failed. source_id=${dup.source_id}`, fallbackErr);
+                    console.warn(
+                        `[ProductDiscover] discovered-urls fallback failed. source_id=${dup.source_id}`,
+                        fallbackErr
+                    );
                 }
             }
         }
-        
-        const pCount = window.allDiscoveredProducts.filter(p => productBelongsToSourceGroup(p, canonicalGrp.__duplicates)).length;
-        
-        const isRunningSitemap = window.activityTimelineData.some(a => 
-            canonicalGrp.__duplicates.some(d => a.source_id === d.source_id || (a.message && a.message.includes(d.source_name))) && 
-            a.event_type === 'sitemap_discovery_running'
+
+        const pCount = window.allDiscoveredProducts.filter((p) =>
+            productBelongsToSourceGroup(p, canonicalGrp.__duplicates)
+        ).length;
+
+        const isRunningSitemap = window.activityTimelineData.some((a) =>
+            canonicalGrp.__duplicates.some(
+                (d) => a.source_id === d.source_id ||
+                    (a.message && a.message.includes(d.source_name))
+            ) &&
+            a.event_type === "sitemap_discovery_running"
         );
 
-        const hasRunningJobs = window.activityTimelineData.some(a => 
-            canonicalGrp.__duplicates.some(d => a.source_id === d.source_id || (a.message && a.message.includes(d.source_name))) && 
-            a.event_type === 'job_running'
+        const hasRunningJobs = window.activityTimelineData.some((a) =>
+            canonicalGrp.__duplicates.some(
+                (d) => a.source_id === d.source_id ||
+                    (a.message && a.message.includes(d.source_name))
+            ) &&
+            a.event_type === "job_running"
         );
 
-        let progress = totalUrls > 0 ? Math.min(100, Math.round((processed / totalUrls) * 100)) : 0;
-        let status = 'İşleme bekliyor'; let exportable = false; let processable = false;
-        const autoState = window.sourceAutoProcessors.get(getSourceDomain(canonicalGrp) || normalizeText(canonicalGrp.source_name));
+        const domainKey = getSourceDomain(canonicalGrp) || normalizeText(canonicalGrp.source_name);
+        const autoState = window.sourceAutoProcessors.get(domainKey);
+
+        let progress = totalUrls > 0
+            ? Math.min(100, Math.round((processed / totalUrls) * 100))
+            : 0;
+
+        let status = "İşleme bekliyor";
+        let exportable = false;
+        let processable = false;
 
         if (isRunningSitemap) {
-            status = 'Taranıyor';
+            status = "Taranıyor";
         } else if (autoState?.running || hasRunningJobs) {
-            status = 'İşleniyor';
+            status = "İşleniyor";
         } else if (autoState?.stopped) {
-            status = 'Durduruldu';
+            status = "Durduruldu";
         } else if (totalUrls === 0) {
-            status = 'Beklemede';
+            status = "Beklemede";
         } else if (pending <= 0) {
-            status = 'Tamamlandı';
+            status = "Tamamlandı";
             progress = 100;
             exportable = true;
         } else {
-            status = 'İşleme bekliyor';
+            status = "İşleme bekliyor";
             processable = true;
             exportable = pCount > 0;
         }
-        canonicalGrp.__stats = { totalUrls, processed, failed, pending, progress, status, exportable, processable, pCount };
-        window.sourceSummaries.set(getSourceDomain(canonicalGrp) || normalizeText(canonicalGrp.source_name), canonicalGrp.__stats);
+
+        canonicalGrp.__stats = {
+            totalUrls,
+            processed,
+            failed,
+            pending,
+            progress,
+            status,
+            exportable,
+            processable,
+            pCount
+        };
+
+        window.sourceSummaries.set(domainKey, canonicalGrp.__stats);
     });
 
     await Promise.all(promises);
