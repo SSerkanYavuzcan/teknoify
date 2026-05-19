@@ -1240,19 +1240,31 @@ const openDetailModal = (title, contentHtml) => {
 
 function renderSources() {
     const tbody = document.getElementById('sources-table-body');
+
     if (window.canonicalSourcesMap.size === 0) {
-        tbody.innerHTML = `<tr><td colspan="1" class="pd-live-empty">İzlenen site bulunamadı.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="pd-live-empty">İzlenen site bulunamadı.</td></tr>`;
         return;
     }
-    
+
     const htmlRows = [];
+
     for (let [domainKey, canGrp] of window.canonicalSourcesMap.entries()) {
         const domain = getSourceDomain(canGrp) || domainKey;
-        const stats = canGrp.__stats || { progress: 0, status: 'Aktif', exportable: false, processable: false };
-        
+        const stats = canGrp.__stats || {
+            progress: 0,
+            status: 'Aktif',
+            exportable: false,
+            processable: false,
+            totalUrls: 0,
+            processed: 0,
+            failed: 0,
+            pending: 0
+        };
+
         let statusClass = 'waiting';
-        if (['Taranıyor', 'İşleniyor', 'Hazırlanıyor', 'İşleme bekliyor', 'Kısmi hazır'].includes(stats.status)) statusClass = 'scanning';
-        else if (stats.status === 'Tamamlandı') statusClass = 'scanning'; 
+        if (['Taranıyor', 'İşleniyor', 'Hazırlanıyor', 'İşleme bekliyor', 'Kısmi hazır', 'Tamamlandı'].includes(stats.status)) {
+            statusClass = 'scanning';
+        }
 
         let logoSrc = DEFAULT_SITE_SVG;
         if (domain && domain.includes('.') && domain.length > 4 && !domain.includes(' ')) {
@@ -1260,56 +1272,163 @@ function renderSources() {
         }
 
         const remaining = Math.max(0, Number(stats.pending || 0));
+        const processed = Number(stats.processed || 0);
+        const totalUrls = Number(stats.totalUrls || 0);
+        const failed = Number(stats.failed || 0);
+        const progress = Number(stats.progress || 0);
+
         const isAutoRunning = !!window.sourceAutoProcessors.get(domainKey)?.running;
         const isBatchLocked = window.sourceBatchLocks.has(domainKey);
         const disableNextBatch = remaining <= 0 || isAutoRunning || isBatchLocked;
+        const disableAutoProcess = remaining <= 0 || isAutoRunning;
+        const sourceName = canGrp.source_name || domain;
+
+        const nextBatchLabel = isBatchLocked
+            ? `<i class="fas fa-spinner fa-spin"></i><span>İşleniyor...</span>`
+            : `<span>Sonraki 20 ürünü işle</span>`;
+
         let actionsHtml = '';
-        actionsHtml += `<button class="source-action-btn btn-view-products" onclick="window.viewSourceProducts('${domainKey}')" title="Ürünleri Gör"><i class="fas fa-eye"></i><span>Ürünleri Gör</span></button>`;
+
+        actionsHtml += `
+            <button
+                class="source-action-btn btn-view-products"
+                onclick="window.viewSourceProducts('${domainKey}')"
+                title="Ürünleri Gör"
+            >
+                <i class="fas fa-eye"></i>
+                <span>Ürünleri Gör</span>
+            </button>
+        `;
+
         if (stats.exportable) {
-            actionsHtml += `<button class="source-action-btn btn-download-csv" onclick="window.exportSourceProducts('${domainKey}')" title="CSV indir"><i class="fas fa-download"></i><span>CSV indir</span></button>`;
+            actionsHtml += `
+                <button
+                    class="source-action-btn btn-download-csv"
+                    onclick="window.exportSourceProducts('${domainKey}')"
+                    title="CSV indir"
+                >
+                    <i class="fas fa-download"></i>
+                    <span>CSV indir</span>
+                </button>
+            `;
         } else {
-            actionsHtml += `<span class="source-action-pending" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i><span>CSV hazır değil</span></span>`;
+            actionsHtml += `
+                <span class="source-action-pending" title="İndirme için hazır değil">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>CSV hazır değil</span>
+                </span>
+            `;
         }
-        
-        actionsHtml += `<button id="btn-next-batch-${domainKey}" class="source-action-btn btn-process-jobs btn-process-text" ${disableNextBatch ? 'disabled' : ''} onclick="window.processNextSourceBatch('${domainKey}')" title="Sonraki 20 ürünü işle">Sonraki 20 ürünü işle</button>`;
-        actionsHtml += `<button class="source-action-btn btn-process-jobs btn-process-text" ${remaining <= 0 || isAutoRunning ? 'disabled' : ''} onclick="window.startAutoProcessSource('${domainKey}')" title="Tümünü sırayla işle">Tümünü sırayla işle</button>`;
-        actionsHtml += `<button class="source-action-btn btn-process-jobs btn-process-text btn-stop" ${!isAutoRunning ? 'disabled' : ''} onclick="window.stopAutoProcessSource('${domainKey}')" title="Durdur">Durdur</button>`;
 
-        actionsHtml += `<button class="source-action-btn btn-process-jobs btn-restart-source" onclick="window.restartSourceGroup('${domainKey}')" title="Yeniden Başlat"><i class="fas fa-sync-alt"></i><span>Yeniden Başlat</span></button>`;
+        actionsHtml += `
+            <button
+                id="btn-next-batch-${domainKey}"
+                class="source-action-btn btn-process-jobs btn-process-text"
+                ${disableNextBatch ? 'disabled' : ''}
+                onclick="window.processNextSourceBatch('${domainKey}')"
+                title="Sonraki 20 ürünü işle"
+            >
+                ${nextBatchLabel}
+            </button>
+        `;
 
-        actionsHtml += `<button class="source-action-btn btn-delete-source" onclick="window.deleteSourceGroup('${domainKey}')" title="Sil"><i class="fas fa-trash"></i><span>Sil</span></button>`;
+        actionsHtml += `
+            <button
+                class="source-action-btn btn-process-jobs btn-process-text"
+                ${disableAutoProcess ? 'disabled' : ''}
+                onclick="window.startAutoProcessSource('${domainKey}')"
+                title="Tümünü sırayla işle"
+            >
+                <span>Tümünü sırayla işle</span>
+            </button>
+        `;
 
-        const metricsText = `${formatNumber(stats.totalUrls)} URL · ${formatNumber(stats.processed)} işlendi · ${formatNumber(remaining)} bekliyor${stats.failed ? ` · ${formatNumber(stats.failed)} hatalı` : ''}`;
-        const progressHtml = `
-        <div class="source-row-card">
-            <div class="source-row-main">
-                <div class="source-identity">
-                    <div class="site-cell">
-                        <div class="site-icon"><img src="${logoSrc}" onerror="this.onerror=null; this.src='${DEFAULT_SITE_SVG}';" alt="icon"></div>
-                        <span class="source-name">${escapeHtml(canGrp.source_name || domain)}</span>
+        actionsHtml += `
+            <button
+                class="source-action-btn btn-process-jobs btn-process-text btn-stop"
+                ${!isAutoRunning ? 'disabled' : ''}
+                onclick="window.stopAutoProcessSource('${domainKey}')"
+                title="Durdur"
+            >
+                <span>Durdur</span>
+            </button>
+        `;
+
+        actionsHtml += `
+            <button
+                class="source-action-btn btn-process-jobs btn-restart-source"
+                onclick="window.restartSourceGroup('${domainKey}')"
+                title="Yeniden Başlat"
+            >
+                <i class="fas fa-sync-alt"></i>
+                <span>Yeniden Başlat</span>
+            </button>
+        `;
+
+        actionsHtml += `
+            <button
+                class="source-action-btn btn-delete-source"
+                onclick="window.deleteSourceGroup('${domainKey}')"
+                title="Sil"
+            >
+                <i class="fas fa-trash"></i>
+                <span>Sil</span>
+            </button>
+        `;
+
+        const metricsText = `${formatNumber(totalUrls)} URL · ${formatNumber(processed)} işlendi · ${formatNumber(remaining)} bekliyor${failed ? ` · ${formatNumber(failed)} hatalı` : ''}`;
+
+        const sourceCardHtml = `
+            <div class="source-row-card">
+                <div class="source-row-main">
+                    <div class="source-identity">
+                        <div class="site-cell">
+                            <div class="site-icon">
+                                <img
+                                    src="${logoSrc}"
+                                    onerror="this.onerror=null; this.src='${DEFAULT_SITE_SVG}';"
+                                    alt="icon"
+                                >
+                            </div>
+                            <span class="source-name">${escapeHtml(sourceName)}</span>
+                        </div>
+
+                        <div class="source-meta-line">
+                            <span class="source-status-badge ${statusClass}">
+                                <i class="fas fa-circle"></i>
+                                ${safeText(stats.status)}
+                            </span>
+                            <span class="source-meta-chip">Öncelik: ${safeText(canGrp.priority)}</span>
+                            <span class="source-meta-chip">${safeText(canGrp.country)} / ${safeText(canGrp.language)}</span>
+                        </div>
                     </div>
-                    <div class="source-meta-line">
-                        <span class="source-status-badge ${statusClass}"><i class="fas fa-circle"></i>${safeText(stats.status)}</span>
-                        <span class="source-meta-chip">Öncelik: ${safeText(canGrp.priority)}</span>
-                        <span class="source-meta-chip">${safeText(canGrp.country)} / ${safeText(canGrp.language)}</span>
+
+                    <div class="source-progress-summary">
+                        <div class="source-metrics-line">${metricsText}</div>
+
+                        <div class="source-progress-line">
+                            <div class="progress-track source-progress-track">
+                                <div class="progress-fill" style="width: ${progress}%;"></div>
+                            </div>
+                            <span class="source-progress-pct">%${progress}</span>
+                            <span class="source-remaining-count">Kalan: ${formatNumber(remaining)}</span>
+                        </div>
                     </div>
                 </div>
-                <div class="source-progress-summary">
-                    <div class="source-metrics-line">${metricsText}</div>
-                    <div class="source-progress-line">
-                        <div class="progress-track source-progress-track"><div class="progress-fill" style="width: ${stats.progress}%;"></div></div>
-                        <span class="source-progress-pct">%${stats.progress}</span>
-                        <span class="source-remaining-count">Kalan: ${formatNumber(remaining)}</span>
-                    </div>
+
+                <div class="source-actions-toolbar">
+                    ${actionsHtml}
                 </div>
             </div>
-            <div class="source-actions-toolbar">${actionsHtml}</div>
-        </div>`;
+        `;
 
         htmlRows.push(`
-        <tr class="source-card-row"><td>${progressHtml}</td></tr>
+            <tr class="source-card-row">
+                <td colspan="5">${sourceCardHtml}</td>
+            </tr>
         `);
     }
+
     tbody.innerHTML = htmlRows.join('');
 }
 
