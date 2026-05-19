@@ -26,6 +26,9 @@ window.productDiscoverSources = [];
 window.canonicalSourcesMap = new Map(); 
 window.allDiscoveredProducts = [];
 window.activityTimelineData = [];
+window.sourceAutoProcessors = new Map();
+window.sourceSummaries = new Map();
+window.sourceBatchLocks = new Set();
 
 const escapeHtml = (unsafe) => (unsafe || '').toString().replace(/[&<"'>]/g, (m) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;','\'': '&#039;'})[m]);
 const safeText = (val, fallback = '-') => val ? escapeHtml(val) : fallback;
@@ -36,6 +39,7 @@ const formatDate = (dateString) => {
     const d = new Date(dateString);
     return new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit'}).format(d);
 };
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Normalization Functions
 const normalizeUrl = (input) => {
@@ -807,19 +811,100 @@ async function loadSourcesDataOnly() {
     } catch(e) { console.error("Kaynaklar alınamadı", e); }
 }
 
+async function fetchSourceDiscoveredUrlStats(sourceId) {
+    const limit = 500;
+    const maxPages = 20;
+    const allItems = [];
+    let offset = 0;
+
+    for (let i = 0; i < maxPages; i++) {
+        const res = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls?limit=${limit}&offset=${offset}`);
+        const items = Array.isArray(res) ? res : (res.items || []);
+        if (!Array.isArray(items) || items.length === 0) break;
+        allItems.push(...items);
+        if (items.length < limit) break;
+        offset += limit;
+    }
+
+    const statusCounts = {
+        discovered_urls: 0,
+        queued_urls: 0,
+        running_urls: 0,
+        completed_urls: 0,
+        failed_urls: 0,
+        not_found_urls: 0
+    };
+    const productIds = new Set();
+
+    for (const item of allItems) {
+        const st = (item?.status || '').toString().toLowerCase();
+        if (st === 'discovered') statusCounts.discovered_urls += 1;
+        if (st === 'queued') statusCounts.queued_urls += 1;
+        if (st === 'running') statusCounts.running_urls += 1;
+        if (st === 'completed' || st === 'processed') statusCounts.completed_urls += 1;
+        if (st === 'failed') statusCounts.failed_urls += 1;
+        if (st === 'not_found') statusCounts.not_found_urls += 1;
+
+        const productId = (item?.product_id || '').toString().trim();
+        if (productId) productIds.add(productId);
+    }
+
+    return {
+        total_urls: allItems.length,
+        discovered_urls: statusCounts.discovered_urls,
+        queued_urls: statusCounts.queued_urls,
+        running_urls: statusCounts.running_urls,
+        completed_urls: statusCounts.completed_urls,
+        failed_urls: statusCounts.failed_urls,
+        not_found_urls: statusCounts.not_found_urls,
+        remaining_urls: statusCounts.discovered_urls,
+        total_products: productIds.size
+    };
+}
+
 async function loadSourceStats() {
+    const fetchSourceProcessingSummary = async (sourceId) => {
+        return await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/processing-summary`);
+    };
+    window.fetchSourceProcessingSummary = fetchSourceProcessingSummary;
+
     const promises = Array.from(window.canonicalSourcesMap.values()).map(async (canonicalGrp) => {
         let totalUrls = 0; let processed = 0; let failed = 0; let pending = 0;
         
         for (let dup of canonicalGrp.__duplicates) {
             try {
-                const res = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${dup.source_id}/discovered-urls?limit=500&offset=0`);
-                let urls = Array.isArray(res) ? res : (res.items || []);
-                totalUrls += urls.length;
-                processed += urls.filter(u => u.status === 'processed' || u.status === 'completed').length;
-                failed += urls.filter(u => u.status === 'failed').length;
-                pending += urls.filter(u => u.status === 'discovered' || u.status === 'pending' || u.status === 'running').length;
-            } catch(e) {}
+                const summary = await fetchSourceProcessingSummary(dup.source_id);
+                const summaryTotal = Number(summary?.total_urls ?? summary?.total_candidates ?? 0);
+                const summaryData = {
+                    total_urls: summaryTotal,
+                    completed_urls: Number(summary?.completed_urls ?? summary?.completed_count ?? summary?.processed_urls ?? 0),
+                    failed_urls: Number(summary?.failed_urls ?? summary?.failed_count ?? 0),
+                    not_found_urls: Number(summary?.not_found_urls ?? summary?.not_found_count ?? 0),
+                    remaining_urls: Number(summary?.remaining_urls ?? summary?.pending_urls ?? summary?.discovered_urls ?? 0)
+                };
+
+                let sourceStats = summaryData;
+                if (summaryTotal <= 0) {
+                    console.warn(`[ProductDiscover] processing-summary total_urls=0, discovered-urls fallback used. source_id=${dup.source_id}`);
+                    sourceStats = await fetchSourceDiscoveredUrlStats(dup.source_id);
+                }
+
+                totalUrls += Number(sourceStats.total_urls || 0);
+                processed += Number(sourceStats.completed_urls || 0);
+                failed += Number(sourceStats.failed_urls || 0) + Number(sourceStats.not_found_urls || 0);
+                pending += Number(sourceStats.remaining_urls || 0);
+            } catch(e) {
+                console.warn(`[ProductDiscover] processing-summary failed, discovered-urls fallback used. source_id=${dup.source_id}`, e);
+                try {
+                    const fallbackStats = await fetchSourceDiscoveredUrlStats(dup.source_id);
+                    totalUrls += Number(fallbackStats.total_urls || 0);
+                    processed += Number(fallbackStats.completed_urls || 0);
+                    failed += Number(fallbackStats.failed_urls || 0) + Number(fallbackStats.not_found_urls || 0);
+                    pending += Number(fallbackStats.remaining_urls || 0);
+                } catch (fallbackErr) {
+                    console.warn(`[ProductDiscover] discovered-urls fallback failed. source_id=${dup.source_id}`, fallbackErr);
+                }
+            }
         }
         
         const pCount = window.allDiscoveredProducts.filter(p => productBelongsToSourceGroup(p, canonicalGrp.__duplicates)).length;
@@ -834,33 +919,94 @@ async function loadSourceStats() {
             a.event_type === 'job_running'
         );
 
-        let progress = 0; let status = 'Aktif'; let exportable = false; let processable = false;
+        let progress = totalUrls > 0 ? Math.min(100, Math.round((processed / totalUrls) * 100)) : 0;
+        let status = 'İşleme bekliyor'; let exportable = false; let processable = false;
+        const autoState = window.sourceAutoProcessors.get(getSourceDomain(canonicalGrp) || normalizeText(canonicalGrp.source_name));
 
         if (isRunningSitemap) {
             status = 'Taranıyor';
-            progress = totalUrls > 0 ? Math.min(Math.round(((processed + failed) / totalUrls) * 100), 80) : 10;
-        } else if (pending > 0 || hasRunningJobs) {
+        } else if (autoState?.running || hasRunningJobs) {
             status = 'İşleniyor';
-            progress = totalUrls > 0 ? Math.min(Math.round(((processed + failed) / totalUrls) * 100), 90) : 20;
-            if (!hasRunningJobs && pending > 0) processable = true; 
+        } else if (autoState?.stopped) {
+            status = 'Durduruldu';
         } else if (totalUrls === 0) {
-            status = 'Beklemede'; progress = 0;
-        } else if (pCount === 0) {
-            status = 'İşleme bekliyor'; progress = 25; processable = true;
+            status = 'Beklemede';
+        } else if (pending <= 0) {
+            status = 'Tamamlandı';
+            progress = 100;
+            exportable = true;
         } else {
-            progress = Math.round(((processed + failed) / totalUrls) * 100);
-            if (progress >= 100) {
-                status = 'Tamamlandı'; progress = 100; exportable = true;
-            } else {
-                status = 'Kısmi hazır'; exportable = true; processable = true;
-            }
+            status = 'İşleme bekliyor';
+            processable = true;
+            exportable = pCount > 0;
         }
-        
         canonicalGrp.__stats = { totalUrls, processed, failed, pending, progress, status, exportable, processable, pCount };
+        window.sourceSummaries.set(getSourceDomain(canonicalGrp) || normalizeText(canonicalGrp.source_name), canonicalGrp.__stats);
     });
 
     await Promise.all(promises);
 }
+
+window.processNextSourceBatch = async (domainKey) => {
+    if (window.sourceBatchLocks.has(domainKey)) return;
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) return;
+    const stats = canonicalGrp.__stats || {};
+    if ((stats.pending || 0) <= 0) return;
+    window.sourceBatchLocks.add(domainKey);
+    try {
+        let totalCreated = 0;
+        for (const dup of canonicalGrp.__duplicates) {
+            const res = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${dup.source_id}/process-next-batch`, {
+                batch_size: 20,
+                priority: "normal",
+                status: "discovered"
+            });
+            const created = Number(res.created_count || 0);
+            totalCreated += created;
+            if (created > 0) break;
+        }
+        await loadProductDiscoverDashboard();
+        const refreshed = window.canonicalSourcesMap.get(domainKey)?.__stats;
+        if (totalCreated > 0) {
+            window.showToast(`${formatNumber(totalCreated)} URL işlendi. Kalan: ${formatNumber(refreshed?.pending || 0)}`, "success");
+        } else {
+            window.showToast("İşlenecek yeni URL bulunamadı.", "info");
+        }
+    } catch (e) {
+        window.showToast(`Batch işleme hatası: ${e.message}`, "error");
+    } finally {
+        window.sourceBatchLocks.delete(domainKey);
+    }
+};
+
+window.startAutoProcessSource = async (domainKey) => {
+    const current = window.sourceAutoProcessors.get(domainKey);
+    if (current?.running) return;
+    window.sourceAutoProcessors.set(domainKey, { running: true, stopped: false });
+    window.showToast("Sırayla işleme başlatıldı.", "info");
+    while (window.sourceAutoProcessors.get(domainKey)?.running) {
+        const group = window.canonicalSourcesMap.get(domainKey);
+        const pending = group?.__stats?.pending || 0;
+        if (pending <= 0) {
+            window.sourceAutoProcessors.set(domainKey, { running: false, stopped: false });
+            break;
+        }
+        await window.processNextSourceBatch(domainKey);
+        if (!window.sourceAutoProcessors.get(domainKey)?.running) break;
+        const jitterMs = 1500 + Math.floor(Math.random() * 1000);
+        await sleep(jitterMs);
+    }
+    await loadProductDiscoverDashboard();
+};
+
+window.stopAutoProcessSource = (domainKey) => {
+    const current = window.sourceAutoProcessors.get(domainKey);
+    if (!current) return;
+    window.sourceAutoProcessors.set(domainKey, { running: false, stopped: true });
+    window.showToast("Sırayla işleme durduruldu.", "warning");
+    loadProductDiscoverDashboard();
+};
 
 function renderSources() {
     const tbody = document.getElementById('sources-table-body');
@@ -883,6 +1029,7 @@ function renderSources() {
             logoSrc = `https://logo.clearbit.com/${domain}`;
         }
 
+        const remaining = Math.max(0, Number(stats.pending || 0));
         let actionsHtml = '';
         actionsHtml += `<button class="btn-view-products" onclick="window.viewSourceProducts('${domainKey}')" title="Ürünleri Gör"><i class="fas fa-eye"></i></button>`;
         if (stats.exportable) {
@@ -891,19 +1038,24 @@ function renderSources() {
             actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:6px;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
         }
         
-        if (stats.processable && !PRODUCT_DISCOVER_AUTO_PROCESS_JOBS) {
-            actionsHtml += `<button id="btn-process-${domainKey}" class="btn-process-jobs" onclick="window.processSourceJobs('${domainKey}')" title="İlk ${PRODUCT_DISCOVER_SCAN_BATCH_LIMIT} ürünü işle"><i class="fas fa-play"></i></button>`;
-        }
+        actionsHtml += `<button class="btn-process-jobs btn-process-text" ${remaining <= 0 ? 'disabled' : ''} onclick="window.processNextSourceBatch('${domainKey}')" title="Sonraki 20 ürünü işle">Sonraki 20 ürünü işle</button>`;
+        actionsHtml += `<button class="btn-process-jobs btn-process-text" ${remaining <= 0 || window.sourceAutoProcessors.get(domainKey)?.running ? 'disabled' : ''} onclick="window.startAutoProcessSource('${domainKey}')" title="Tümünü sırayla işle">Tümünü sırayla işle</button>`;
+        actionsHtml += `<button class="btn-process-jobs btn-process-text btn-stop" ${!window.sourceAutoProcessors.get(domainKey)?.running ? 'disabled' : ''} onclick="window.stopAutoProcessSource('${domainKey}')" title="Durdur">Durdur</button>`;
 
         actionsHtml += `<button class="btn-process-jobs" style="color:#f59e0b; border-color:rgba(245,158,11,0.2); background:rgba(245,158,11,0.1);" onclick="window.restartSourceGroup('${domainKey}')" title="Sıfırla ve Yeniden Başlat"><i class="fas fa-sync-alt"></i></button>`;
 
         actionsHtml += `<button class="btn-delete-source" onclick="window.deleteSourceGroup('${domainKey}')" title="Kaynağı Kaldır"><i class="fas fa-trash"></i></button>`;
 
+        const metricsText = `${formatNumber(stats.totalUrls)} URL · ${formatNumber(stats.processed)} işlendi · ${formatNumber(remaining)} bekliyor${stats.failed ? ` · ${formatNumber(stats.failed)} hatalı` : ''}`;
         let progressHtml = `
-        <div style="display:flex; align-items:center; gap:8px;">
-            <div class="progress-track" style="width: 40px; margin:0;"><div class="progress-fill" style="width: ${stats.progress}%;"></div></div> 
-            <span style="min-width:30px; font-size:0.8rem;">%${stats.progress}</span>
-            ${actionsHtml}
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:0.75rem; color:#a1a1aa;">${metricsText}</div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <div class="progress-track" style="width: 70px; margin:0;"><div class="progress-fill" style="width: ${stats.progress}%;"></div></div> 
+                <span style="min-width:30px; font-size:0.8rem;">%${stats.progress}</span>
+                <span style="font-size:0.75rem; color:#cbd5e1;">Kalan: ${formatNumber(remaining)}</span>
+                ${actionsHtml}
+            </div>
         </div>`;
 
         htmlRows.push(`

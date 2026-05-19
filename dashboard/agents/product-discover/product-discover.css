@@ -168,6 +168,19 @@ body {
     margin-left: 6px;
 }
 .btn-process-jobs:hover { background: rgba(99, 102, 241, 0.2); }
+.btn-process-jobs:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-process-text {
+    width: auto;
+    padding: 0 8px;
+    min-width: auto;
+    font-size: 0.68rem;
+    white-space: nowrap;
+}
+.btn-stop {
+    color: #f59e0b;
+    border-color: rgba(245,158,11,0.2);
+    background: rgba(245,158,11,0.1);
+}
 
 .btn-delete-source {
     background: rgba(239, 68, 68, 0.1); 
