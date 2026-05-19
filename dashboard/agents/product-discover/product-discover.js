@@ -1105,6 +1105,15 @@ async function getFreshSourceGroupStats(domainKey) {
     return { totalUrls, processed, failed, pending };
 }
 
+const setNextBatchButtonState = (domainKey, state = {}) => {
+    const btn = document.getElementById(`btn-next-batch-${domainKey}`);
+    if (!btn) return;
+    if (typeof state.disabled === 'boolean') btn.disabled = state.disabled;
+    if (typeof state.label === 'string') btn.textContent = state.label;
+    if (typeof state.opacity === 'number') btn.style.opacity = String(state.opacity);
+    else btn.style.opacity = '';
+};
+
 window.processNextSourceBatch = async (domainKey, options = {}) => {
     const { silent = false, fromAuto = false } = options;
     if (!fromAuto && window.sourceAutoProcessors.get(domainKey)?.running) {
@@ -1126,6 +1135,15 @@ window.processNextSourceBatch = async (domainKey, options = {}) => {
 
     window.sourceBatchLocks.add(domainKey);
     try {
+        if (!silent) {
+            const sourceName = canonicalGrp.source_name || getSourceDomain(canonicalGrp) || domainKey;
+            window.showToast("Sonraki 20 ürün işleniyor...", "info");
+            window.addBotMessage(`<strong>${escapeHtml(sourceName)}</strong> için sonraki 20 URL işlenmeye başladı... ⏳`);
+        }
+        if (canonicalGrp.__stats) canonicalGrp.__stats.status = "İşleniyor";
+        setNextBatchButtonState(domainKey, { disabled: true, label: "İşleniyor...", opacity: 0.7 });
+        renderSources();
+
         let batchResult = null;
         for (const dup of canonicalGrp.__duplicates) {
             const res = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${dup.source_id}/process-next-batch`, {
@@ -1157,10 +1175,17 @@ window.processNextSourceBatch = async (domainKey, options = {}) => {
             return { created: 0, pending: refreshedPending };
         }
     } catch (e) {
+        setNextBatchButtonState(domainKey, { disabled: false, label: "Sonraki 20 ürünü işle", opacity: 1 });
         window.showToast(`Batch işleme hatası: ${e.message}`, "error");
+        if (!fromAuto) window.addBotMessage(`❌ Batch işleme hatası: ${escapeHtml(e.message)}`);
         return { created: 0, pending: null, error: e };
     } finally {
         window.sourceBatchLocks.delete(domainKey);
+        const latestStats = window.canonicalSourcesMap.get(domainKey)?.__stats;
+        const latestPending = Number(latestStats?.pending || 0);
+        const isAutoRunning = !!window.sourceAutoProcessors.get(domainKey)?.running;
+        const keepDisabled = latestPending <= 0 || isAutoRunning || window.sourceBatchLocks.has(domainKey);
+        setNextBatchButtonState(domainKey, { disabled: keepDisabled, label: "Sonraki 20 ürünü işle", opacity: keepDisabled ? 0.7 : 1 });
     }
 };
 
@@ -1229,7 +1254,7 @@ function renderSources() {
             actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:6px;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
         }
         
-        actionsHtml += `<button class="btn-process-jobs btn-process-text" ${disableNextBatch ? 'disabled' : ''} onclick="window.processNextSourceBatch('${domainKey}')" title="Sonraki 20 ürünü işle">Sonraki 20 ürünü işle</button>`;
+        actionsHtml += `<button id="btn-next-batch-${domainKey}" class="btn-process-jobs btn-process-text" style="${disableNextBatch ? 'opacity:0.7;' : ''}" ${disableNextBatch ? 'disabled' : ''} onclick="window.processNextSourceBatch('${domainKey}')" title="Sonraki 20 ürünü işle">Sonraki 20 ürünü işle</button>`;
         actionsHtml += `<button class="btn-process-jobs btn-process-text" ${remaining <= 0 || isAutoRunning ? 'disabled' : ''} onclick="window.startAutoProcessSource('${domainKey}')" title="Tümünü sırayla işle">Tümünü sırayla işle</button>`;
         actionsHtml += `<button class="btn-process-jobs btn-process-text btn-stop" ${!isAutoRunning ? 'disabled' : ''} onclick="window.stopAutoProcessSource('${domainKey}')" title="Durdur">Durdur</button>`;
 
