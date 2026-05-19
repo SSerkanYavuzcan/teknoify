@@ -29,6 +29,8 @@ window.activityTimelineData = [];
 window.sourceAutoProcessors = new Map();
 window.sourceSummaries = new Map();
 window.sourceBatchLocks = new Set();
+const COMPACT_ACTIVITY_LIMIT = 5;
+const COMPACT_CATEGORY_LIMIT = 5;
 
 const escapeHtml = (unsafe) => (unsafe || '').toString().replace(/[&<"'>]/g, (m) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;','\'': '&#039;'})[m]);
 const safeText = (val, fallback = '-') => val ? escapeHtml(val) : fallback;
@@ -1221,6 +1223,21 @@ window.stopAutoProcessSource = (domainKey) => {
     loadProductDiscoverDashboard();
 };
 
+window.closeProductDiscoverModal = (modalId) => {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.style.display = 'none';
+};
+
+const openDetailModal = (title, contentHtml) => {
+    const modal = document.getElementById('product-discover-detail-modal');
+    const titleEl = document.getElementById('product-discover-detail-title');
+    const contentEl = document.getElementById('product-discover-detail-content');
+    if (!modal || !titleEl || !contentEl) return;
+    titleEl.textContent = title;
+    contentEl.innerHTML = contentHtml;
+    modal.style.display = 'flex';
+};
+
 function renderSources() {
     const tbody = document.getElementById('sources-table-body');
     if (window.canonicalSourcesMap.size === 0) {
@@ -1264,12 +1281,14 @@ function renderSources() {
 
         const metricsText = `${formatNumber(stats.totalUrls)} URL · ${formatNumber(stats.processed)} işlendi · ${formatNumber(remaining)} bekliyor${stats.failed ? ` · ${formatNumber(stats.failed)} hatalı` : ''}`;
         let progressHtml = `
-        <div style="display:flex; flex-direction:column; gap:8px;">
-            <div style="font-size:0.75rem; color:#a1a1aa;">${metricsText}</div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div class="progress-track" style="width: 70px; margin:0;"><div class="progress-fill" style="width: ${stats.progress}%;"></div></div> 
+        <div class="source-progress-cell">
+            <div class="source-metrics-line">${metricsText}</div>
+            <div class="source-progress-line">
+                <div class="progress-track" style="width: 90px; margin:0;"><div class="progress-fill" style="width: ${stats.progress}%;"></div></div> 
                 <span style="min-width:30px; font-size:0.8rem;">%${stats.progress}</span>
                 <span style="font-size:0.75rem; color:#cbd5e1;">Kalan: ${formatNumber(remaining)}</span>
+            </div>
+            <div class="source-actions-toolbar">
                 ${actionsHtml}
             </div>
         </div>`;
@@ -1312,7 +1331,7 @@ function renderCategories() {
         .map(key => ({ label: key, count: categoryCounts[key] }))
         .sort((a, b) => b.count - a.count);
 
-    const topCategories = sortedCategories.slice(0, 7);
+    const topCategories = sortedCategories.slice(0, COMPACT_CATEGORY_LIMIT);
     const maxCount = topCategories.length > 0 ? topCategories[0].count : 1;
 
     chart.innerHTML = topCategories.map(c => {
@@ -1424,7 +1443,7 @@ async function loadSummary() {
 
 function renderActivityTimeline() {
     const list = document.getElementById('activity-timeline');
-    const activities = window.activityTimelineData.slice(0, 10);
+    const activities = window.activityTimelineData.slice(0, COMPACT_ACTIVITY_LIMIT);
     
     if (activities.length === 0) {
         list.innerHTML = `<li class="timeline-item"><div class="timeline-text pd-live-empty">Aktivite bulunamadı.</div></li>`;
@@ -1454,6 +1473,75 @@ function renderActivityTimeline() {
         `;
     }).join('');
 }
+
+window.openSourcesDetailModal = function() {
+    const rows = [];
+    for (const [domainKey, canGrp] of window.canonicalSourcesMap.entries()) {
+        const stats = canGrp.__stats || {};
+        const remaining = Math.max(0, Number(stats.pending || 0));
+        rows.push(`
+            <tr>
+                <td>${safeText(canGrp.source_name || domainKey)}</td>
+                <td>${safeText(canGrp.base_url || domainKey)}</td>
+                <td>${safeText(stats.status)}</td>
+                <td>${formatNumber(stats.totalUrls)}</td>
+                <td>${formatNumber(stats.processed)}</td>
+                <td>${formatNumber(remaining)}</td>
+                <td>${formatNumber(stats.failed)}</td>
+                <td>%${safeText(stats.progress, '0')}</td>
+                <td>${safeText(canGrp.priority)}</td>
+                <td>${safeText(canGrp.country)} / ${safeText(canGrp.language)}</td>
+                <td>
+                    <div class="source-actions-toolbar">
+                        <button class="btn-view-products" onclick="window.viewSourceProducts('${domainKey}')" title="Ürünleri Gör"><i class="fas fa-eye"></i></button>
+                        <button class="btn-download-csv" onclick="window.exportSourceProducts('${domainKey}')" title="Ürünleri indir"><i class="fas fa-download"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `);
+    }
+    openDetailModal('İzlenen Web Siteleri - Tüm Detaylar', `
+        <table class="source-products-table">
+            <thead><tr><th>Kaynak</th><th>Domain / URL</th><th>Durum</th><th>Toplam URL</th><th>İşlendi</th><th>Kalan</th><th>Hatalı</th><th>İlerleme</th><th>Öncelik</th><th>Ülke / Dil</th><th>İşlemler</th></tr></thead>
+            <tbody>${rows.join('') || '<tr><td colspan="11" class="source-products-empty">Veri bulunamadı.</td></tr>'}</tbody>
+        </table>
+    `);
+};
+
+window.openActivityDetailModal = function() {
+    const activities = window.activityTimelineData;
+    const items = activities.map(item => `
+        <li class="timeline-item">
+            <div class="timeline-icon blue"><i class="fas fa-stream"></i></div>
+            <div class="timeline-text">
+                <strong style="color: #e4e4e7;">${safeText(item.title)}</strong><br>
+                <span style="color:#a1a1aa; font-size: 0.78rem;">${safeText(item.message)}</span>
+                <div style="color:#71717a; font-size: 0.68rem; margin-top:3px;">Tür: ${safeText(item.event_type)} · Kaynak: ${safeText(item.source_name || item.domain || '-')} · Zaman: ${formatDate(item.event_time)}</div>
+            </div>
+        </li>
+    `).join('');
+    openDetailModal('Keşif Zaman Çizelgesi - Tüm Kayıtlar', `<ul class="timeline-list">${items || '<li class="timeline-item"><div class="timeline-text pd-live-empty">Aktivite bulunamadı.</div></li>'}</ul>`);
+};
+
+window.openCategoriesDetailModal = function() {
+    const total = window.allDiscoveredProducts.length;
+    const counts = {};
+    window.allDiscoveredProducts.forEach((p) => {
+        const category = (p.category && p.category.trim()) ? p.category.trim() : 'Kategorisiz';
+        counts[category] = (counts[category] || 0) + 1;
+    });
+    const rows = Object.keys(counts)
+        .map((name) => ({ name, count: counts[name], pct: total > 0 ? ((counts[name] / total) * 100) : 0 }))
+        .sort((a, b) => b.count - a.count)
+        .map((c) => `<tr><td>${escapeHtml(c.name)}</td><td>${formatNumber(c.count)}</td><td>%${c.pct.toFixed(1)}</td></tr>`)
+        .join('');
+    openDetailModal('En Çok Keşfedilen Kategoriler - Tüm Liste', `
+        <table class="source-products-table">
+            <thead><tr><th>Kategori</th><th>Ürün Sayısı</th><th>Oran</th></tr></thead>
+            <tbody>${rows || '<tr><td colspan="3" class="source-products-empty">Kategori verisi bulunamadı.</td></tr>'}</tbody>
+        </table>
+    `);
+};
 
 async function loadProductsTable() {
     const tbody = document.getElementById('products-table-body');
