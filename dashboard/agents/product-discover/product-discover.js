@@ -238,7 +238,8 @@ window.submitAddSource = async () => {
         updateModalStatus("Sitemap taraması başlatıldı...");
         
         postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discover-sitemap`, { 
-            max_child_sitemaps: 5, 
+            max_child_sitemaps: 100, 
+            max_sitemaps: 100,
             product_only: true 
         }).catch(e => console.error("Sitemap discovery hatası:", e));
         
@@ -521,7 +522,8 @@ window.restartSourceGroup = async (domainKey) => {
 
         window.showToast("Yeni sitemap taraması başlatıldı...", "success");
         postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${newSourceId}/discover-sitemap`, { 
-            max_child_sitemaps: 5, 
+            max_child_sitemaps: 100, 
+            max_sitemaps: 100,
             product_only: true 
         }).catch(e => console.error("Sitemap discovery hatası:", e));
 
