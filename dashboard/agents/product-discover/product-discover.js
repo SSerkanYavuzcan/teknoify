@@ -1057,15 +1057,76 @@ async function loadSourceStats() {
     await Promise.all(promises);
 }
 
-window.processNextSourceBatch = async (domainKey) => {
-    if (window.sourceBatchLocks.has(domainKey)) return;
+const mapSummaryToStats = (summary) => {
+    const totalUrls = Number(summary?.total_urls ?? summary?.total_candidates ?? 0);
+    return {
+        totalUrls,
+        processed: Number(summary?.completed_urls ?? summary?.completed_count ?? summary?.processed_urls ?? 0),
+        failed: Number(summary?.failed_urls ?? summary?.failed_count ?? 0) + Number(summary?.not_found_urls ?? summary?.not_found_count ?? 0),
+        pending: Number(summary?.remaining_urls ?? summary?.pending_urls ?? summary?.discovered_urls ?? 0)
+    };
+};
+
+async function getFreshSourceGroupStats(domainKey) {
     const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
-    if (!canonicalGrp) return;
-    const stats = canonicalGrp.__stats || {};
-    if ((stats.pending || 0) <= 0) return;
+    if (!canonicalGrp) return null;
+
+    let totalUrls = 0;
+    let processed = 0;
+    let failed = 0;
+    let pending = 0;
+
+    for (const dup of canonicalGrp.__duplicates || []) {
+        try {
+            const summary = await window.fetchSourceProcessingSummary(dup.source_id);
+            const summaryStats = mapSummaryToStats(summary);
+            if (summaryStats.totalUrls > 0) {
+                totalUrls += summaryStats.totalUrls;
+                processed += summaryStats.processed;
+                failed += summaryStats.failed;
+                pending += summaryStats.pending;
+                continue;
+            }
+        } catch (e) {
+            console.warn(`[ProductDiscover] fresh processing-summary failed. source_id=${dup.source_id}`, e);
+        }
+
+        try {
+            const fallbackStats = await window.fetchSourceDiscoveredUrlStats(dup.source_id);
+            totalUrls += Number(fallbackStats.total_urls || 0);
+            processed += Number(fallbackStats.completed_urls || 0);
+            failed += Number(fallbackStats.failed_urls || 0) + Number(fallbackStats.not_found_urls || 0);
+            pending += Number(fallbackStats.remaining_urls || 0);
+        } catch (fallbackErr) {
+            console.warn(`[ProductDiscover] fresh discovered-urls fallback failed. source_id=${dup.source_id}`, fallbackErr);
+        }
+    }
+
+    return { totalUrls, processed, failed, pending };
+}
+
+window.processNextSourceBatch = async (domainKey, options = {}) => {
+    const { silent = false, fromAuto = false } = options;
+    if (!fromAuto && window.sourceAutoProcessors.get(domainKey)?.running) {
+        if (!silent) window.showToast("Sırayla işleme zaten devam ediyor.", "info");
+        return null;
+    }
+    if (window.sourceBatchLocks.has(domainKey)) {
+        if (!silent) window.showToast("Bu kaynak için bir batch zaten işleniyor.", "info");
+        return null;
+    }
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) return null;
+
+    const freshStats = await getFreshSourceGroupStats(domainKey);
+    if (!freshStats || freshStats.pending <= 0) {
+        if (!silent) window.showToast("İşlenecek bekleyen URL bulunamadı.", "info");
+        return { created: 0, pending: 0 };
+    }
+
     window.sourceBatchLocks.add(domainKey);
     try {
-        let totalCreated = 0;
+        let batchResult = null;
         for (const dup of canonicalGrp.__duplicates) {
             const res = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${dup.source_id}/process-next-batch`, {
                 batch_size: 20,
@@ -1073,18 +1134,31 @@ window.processNextSourceBatch = async (domainKey) => {
                 status: "discovered"
             });
             const created = Number(res.created_count || 0);
-            totalCreated += created;
-            if (created > 0) break;
+            if (created > 0) {
+                batchResult = res;
+                break;
+            }
         }
         await loadProductDiscoverDashboard();
         const refreshed = window.canonicalSourcesMap.get(domainKey)?.__stats;
-        if (totalCreated > 0) {
-            window.showToast(`${formatNumber(totalCreated)} URL işlendi. Kalan: ${formatNumber(refreshed?.pending || 0)}`, "success");
+        const refreshedPending = Number(refreshed?.pending || 0);
+        const createdCount = Number(batchResult?.created_count || 0);
+        if (createdCount > 0) {
+            const completedCount = Number(batchResult?.completed_count || createdCount);
+            const notFoundCount = Number(batchResult?.not_found_count || 0);
+            const failedCount = Number(batchResult?.failed_count || 0);
+            const remainingUrls = Number(batchResult?.remaining_urls ?? refreshedPending);
+            if (!silent) {
+                window.showToast(`20 URL işlendi. Başarılı: ${formatNumber(completedCount)}, Bulunamadı: ${formatNumber(notFoundCount)}, Hatalı: ${formatNumber(failedCount)}, Kalan: ${formatNumber(remainingUrls)}`, "success");
+            }
+            return { created: createdCount, pending: remainingUrls };
         } else {
-            window.showToast("İşlenecek yeni URL bulunamadı.", "info");
+            if (!silent) window.showToast("İşlenecek bekleyen URL bulunamadı.", "info");
+            return { created: 0, pending: refreshedPending };
         }
     } catch (e) {
         window.showToast(`Batch işleme hatası: ${e.message}`, "error");
+        return { created: 0, pending: null, error: e };
     } finally {
         window.sourceBatchLocks.delete(domainKey);
     }
@@ -1096,13 +1170,17 @@ window.startAutoProcessSource = async (domainKey) => {
     window.sourceAutoProcessors.set(domainKey, { running: true, stopped: false });
     window.showToast("Sırayla işleme başlatıldı.", "info");
     while (window.sourceAutoProcessors.get(domainKey)?.running) {
-        const group = window.canonicalSourcesMap.get(domainKey);
-        const pending = group?.__stats?.pending || 0;
-        if (pending <= 0) {
+        const freshStats = await getFreshSourceGroupStats(domainKey);
+        if (!freshStats || freshStats.pending <= 0) {
             window.sourceAutoProcessors.set(domainKey, { running: false, stopped: false });
             break;
         }
-        await window.processNextSourceBatch(domainKey);
+        const batchResult = await window.processNextSourceBatch(domainKey, { silent: true, fromAuto: true });
+        if (batchResult?.error) break;
+        if ((batchResult?.created || 0) <= 0) {
+            window.sourceAutoProcessors.set(domainKey, { running: false, stopped: false });
+            break;
+        }
         if (!window.sourceAutoProcessors.get(domainKey)?.running) break;
         const jitterMs = 1500 + Math.floor(Math.random() * 1000);
         await sleep(jitterMs);
@@ -1140,6 +1218,9 @@ function renderSources() {
         }
 
         const remaining = Math.max(0, Number(stats.pending || 0));
+        const isAutoRunning = !!window.sourceAutoProcessors.get(domainKey)?.running;
+        const isBatchLocked = window.sourceBatchLocks.has(domainKey);
+        const disableNextBatch = remaining <= 0 || isAutoRunning || isBatchLocked;
         let actionsHtml = '';
         actionsHtml += `<button class="btn-view-products" onclick="window.viewSourceProducts('${domainKey}')" title="Ürünleri Gör"><i class="fas fa-eye"></i></button>`;
         if (stats.exportable) {
@@ -1148,9 +1229,9 @@ function renderSources() {
             actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:6px;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
         }
         
-        actionsHtml += `<button class="btn-process-jobs btn-process-text" ${remaining <= 0 ? 'disabled' : ''} onclick="window.processNextSourceBatch('${domainKey}')" title="Sonraki 20 ürünü işle">Sonraki 20 ürünü işle</button>`;
-        actionsHtml += `<button class="btn-process-jobs btn-process-text" ${remaining <= 0 || window.sourceAutoProcessors.get(domainKey)?.running ? 'disabled' : ''} onclick="window.startAutoProcessSource('${domainKey}')" title="Tümünü sırayla işle">Tümünü sırayla işle</button>`;
-        actionsHtml += `<button class="btn-process-jobs btn-process-text btn-stop" ${!window.sourceAutoProcessors.get(domainKey)?.running ? 'disabled' : ''} onclick="window.stopAutoProcessSource('${domainKey}')" title="Durdur">Durdur</button>`;
+        actionsHtml += `<button class="btn-process-jobs btn-process-text" ${disableNextBatch ? 'disabled' : ''} onclick="window.processNextSourceBatch('${domainKey}')" title="Sonraki 20 ürünü işle">Sonraki 20 ürünü işle</button>`;
+        actionsHtml += `<button class="btn-process-jobs btn-process-text" ${remaining <= 0 || isAutoRunning ? 'disabled' : ''} onclick="window.startAutoProcessSource('${domainKey}')" title="Tümünü sırayla işle">Tümünü sırayla işle</button>`;
+        actionsHtml += `<button class="btn-process-jobs btn-process-text btn-stop" ${!isAutoRunning ? 'disabled' : ''} onclick="window.stopAutoProcessSource('${domainKey}')" title="Durdur">Durdur</button>`;
 
         actionsHtml += `<button class="btn-process-jobs" style="color:#f59e0b; border-color:rgba(245,158,11,0.2); background:rgba(245,158,11,0.1);" onclick="window.restartSourceGroup('${domainKey}')" title="Sıfırla ve Yeniden Başlat"><i class="fas fa-sync-alt"></i></button>`;
 
