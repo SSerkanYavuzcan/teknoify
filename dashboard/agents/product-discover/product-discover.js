@@ -675,6 +675,94 @@ window.exportSourceProducts = async (domainKey, force = false) => {
     }, 100);
 };
 
+window.closeSourceProductsModal = () => {
+    const modal = document.getElementById('source-products-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+const getProductPrimaryEvidence = (product) => {
+    if (!product?.evidence || !Array.isArray(product.evidence) || product.evidence.length === 0) return {};
+    return product.evidence[0] || {};
+};
+
+const renderSourceProductsModalContent = (products) => {
+    const contentEl = document.getElementById('source-products-content');
+    if (!contentEl) return;
+
+    if (!products || products.length === 0) {
+        contentEl.innerHTML = `<div class="source-products-empty">Bu kaynak için henüz çıkarılmış ürün bulunamadı.</div>`;
+        return;
+    }
+
+    contentEl.innerHTML = `
+        <table class="source-products-table">
+            <thead>
+                <tr>
+                    <th>Görsel</th>
+                    <th>Ürün Adı</th>
+                    <th>Kategori</th>
+                    <th>Marka</th>
+                    <th>Durum</th>
+                    <th>Güven</th>
+                    <th>Kaynak URL</th>
+                    <th>Oluşturulma</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${products.map((p) => {
+                    const ev = getProductPrimaryEvidence(p);
+                    const img = (p.images && p.images.length > 0 && p.images[0]?.url) ? p.images[0].url : '';
+                    const conf = typeof p?.confidence?.overall === 'number' ? p.confidence.overall.toFixed(2) : '-';
+                    const sourceUrl = ev?.source_url || '-';
+                    return `
+                        <tr>
+                            <td>${img ? `<img class="source-products-thumb" src="${escapeHtml(img)}" alt="Ürün">` : `<div class="pd-product-placeholder" style="width:42px;height:42px;">-</div>`}</td>
+                            <td>${safeText(p.product_name)}</td>
+                            <td>${safeText(p.category)}</td>
+                            <td>${safeText(p.brand)}</td>
+                            <td>${safeText(p.status)}</td>
+                            <td>${conf}</td>
+                            <td>${sourceUrl !== '-' ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer" style="color:#60a5fa;">Bağlantı</a>` : '-'}</td>
+                            <td>${formatDate(p.created_at)}</td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+};
+
+window.viewSourceProducts = async (domainKey) => {
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) {
+        window.showToast("Kaynak bulunamadı.", "warning");
+        return;
+    }
+
+    const modal = document.getElementById('source-products-modal');
+    const titleEl = document.getElementById('source-products-title');
+    const subtitleEl = document.getElementById('source-products-subtitle');
+    const csvBtn = document.getElementById('source-products-csv-btn');
+    const displayName = canonicalGrp.source_name || domainKey;
+
+    titleEl.textContent = displayName;
+    subtitleEl.textContent = 'Yükleniyor...';
+    renderSourceProductsModalContent([]);
+    modal.style.display = 'flex';
+
+    csvBtn.onclick = () => window.exportSourceProducts(domainKey, true);
+
+    try {
+        const allProducts = await fetchAllProductsForExport();
+        const filteredProducts = allProducts.filter((p) => productBelongsToSourceGroup(p, canonicalGrp.__duplicates));
+        subtitleEl.textContent = `${formatNumber(filteredProducts.length)} ürün`;
+        renderSourceProductsModalContent(filteredProducts);
+    } catch (e) {
+        subtitleEl.textContent = '0 ürün';
+        renderSourceProductsModalContent([]);
+    }
+};
+
 // =========================================================
 // VERİ ÇEKME VE RENDER FONKSİYONLARI
 // =========================================================
@@ -794,10 +882,11 @@ function renderSources() {
         }
 
         let actionsHtml = '';
+        actionsHtml += `<button class="btn-view-products" onclick="window.viewSourceProducts('${domainKey}')" title="Ürünleri Gör"><i class="fas fa-eye"></i></button>`;
         if (stats.exportable) {
             actionsHtml += `<button class="btn-download-csv" onclick="window.exportSourceProducts('${domainKey}')" title="Ürünleri indir"><i class="fas fa-download"></i></button>`;
         } else {
-            actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:auto;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
+            actionsHtml += `<span style="font-size:0.75rem; color:#71717a; margin-left:6px;" title="İndirme için hazır değil"><i class="fas fa-hourglass-half"></i></span>`;
         }
         
         if (stats.processable && !PRODUCT_DISCOVER_AUTO_PROCESS_JOBS) {
