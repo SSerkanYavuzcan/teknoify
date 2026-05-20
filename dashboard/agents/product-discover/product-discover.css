@@ -649,3 +649,5 @@ body {
     text-align: center;
     padding: 28px 8px;
 }
+
+.source-detail-grid{display:flex;flex-wrap:wrap;gap:8px;}
