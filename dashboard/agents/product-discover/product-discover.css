@@ -218,6 +218,18 @@ body {
     overflow: auto;
 }
 
+
+.product-discover-lower-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.product-discover-lower-grid > .agent-widget-card {
+    min-width: 0;
+}
+
 /* Compact dashboard cards */
 .compact-sources-wrap {
     max-height: 290px;
@@ -229,10 +241,6 @@ body {
     overflow: auto;
 }
 
-.compact-categories-wrap {
-    max-height: 280px;
-    overflow: auto;
-}
 
 /* Source list/card layout */
 .compact-sources-wrap .widget-table {
@@ -272,7 +280,8 @@ body {
 }
 
 .source-identity {
-    min-width: 220px;
+    min-width: 280px;
+    flex: 1 1 320px;
     display: flex;
     flex-direction: column;
     gap: 7px;
@@ -323,8 +332,8 @@ body {
 }
 
 .source-progress-summary {
-    flex: 1;
-    min-width: 260px;
+    flex: 1 1 360px;
+    min-width: 320px;
     display: flex;
     flex-direction: column;
     gap: 7px;
@@ -410,6 +419,10 @@ body {
 }
 
 @media (max-width: 1180px) {
+    .product-discover-lower-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .compact-sources-wrap .widget-table thead {
         display: none;
     }

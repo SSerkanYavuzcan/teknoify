@@ -1435,7 +1435,9 @@ function renderSources() {
 function renderCategories() {
     const chart = document.getElementById('categories-chart');
     const totalEl = document.getElementById('categories-total');
-    
+
+    if (!chart || !totalEl) return;
+
     if (window.allDiscoveredProducts.length === 0) {
         chart.innerHTML = `<div class="pd-live-empty">Henüz kategori verisi yok.</div>`;
         totalEl.textContent = '0';
@@ -1716,7 +1718,6 @@ async function loadProductDiscoverDashboard() {
     await loadSourceStats(); 
 
     renderSources();
-    renderCategories();
     renderActivityTimeline();
 
     await Promise.all([
