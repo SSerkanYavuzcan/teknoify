@@ -14,7 +14,9 @@ const PRODUCT_DISCOVER_ENDPOINTS = {
     summary: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/summary`,
     products: `${PRODUCT_DISCOVER_API_BASE_URL}/products`,
     sources: `${PRODUCT_DISCOVER_API_BASE_URL}/sources`,
-    activity: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/activity`
+    activity: `${PRODUCT_DISCOVER_API_BASE_URL}/dashboard/activity`,
+    sourceScrape: (sourceId) => `${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/scrape`,
+    sourceScraperCapability: (sourceId) => `${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/scraper-capability`
 };
 
 // Cost-Safety Rules
@@ -29,6 +31,7 @@ window.activityTimelineData = [];
 window.sourceAutoProcessors = new Map();
 window.sourceSummaries = new Map();
 window.sourceBatchLocks = new Set();
+window.sourceScraperRunLocks = new Set();
 window.lastBatchSummary = null;
 const COMPACT_ACTIVITY_LIMIT = 5;
 const COMPACT_CATEGORY_LIMIT = 5;
@@ -44,6 +47,12 @@ const formatDate = (dateString) => {
 };
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const formatDurationSec = (sec) => `${Math.max(0, Math.round(sec || 0))} sn`;
+
+const updateLastRunSummaryText = (text) => {
+    const summaryEl = document.getElementById('last-run-summary');
+    if (!summaryEl) return;
+    summaryEl.textContent = text;
+};
 
 const updateLastRunSummary = (payload = null) => {
     if (payload) window.lastBatchSummary = payload;
@@ -970,6 +979,41 @@ async function fetchSourceDiscoveredUrlStats(sourceId) {
     };
 }
 
+
+async function fetchSourceScraperCapability(sourceId) {
+    return await fetchJson(PRODUCT_DISCOVER_ENDPOINTS.sourceScraperCapability(sourceId));
+}
+
+async function loadSourceScraperCapabilities() {
+    const capabilityPromises = Array.from(window.canonicalSourcesMap.values()).map(async (canonicalGrp) => {
+        const fallback = {
+            has_custom_scraper: false,
+            scraper_name: null,
+            supported_domain: getSourceDomain(canonicalGrp) || null
+        };
+        const capabilities = [];
+
+        for (const dup of canonicalGrp.__duplicates || []) {
+            try {
+                const capability = await fetchSourceScraperCapability(dup.source_id);
+                capabilities.push(capability || {});
+            } catch (err) {
+                console.warn(`[ProductDiscover] scraper capability alınamadı. source_id=${dup.source_id}`, err);
+            }
+        }
+
+        const preferred = capabilities.find((c) => c?.has_custom_scraper) || capabilities[0] || fallback;
+        canonicalGrp.__scraperCapability = {
+            source_id: preferred?.source_id || null,
+            has_custom_scraper: !!preferred?.has_custom_scraper,
+            scraper_name: preferred?.scraper_name || null,
+            supported_domain: preferred?.supported_domain || fallback.supported_domain
+        };
+    });
+
+    await Promise.all(capabilityPromises);
+}
+
 async function loadSourceStats() {
     const fetchSourceProcessingSummary = async (sourceId) => {
         return await fetchJson(
@@ -1332,6 +1376,80 @@ window.processNextSourceBatch = async (domainKey, options = {}) => {
     }
 };
 
+window.runSourceScraper = async (domainKey, options = {}) => {
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) return;
+    if (window.sourceScraperRunLocks.has(domainKey)) {
+        window.showToast('Bu kaynak için scraper zaten çalışıyor.', 'info');
+        return;
+    }
+
+    const capability = canonicalGrp.__scraperCapability || {};
+    const shouldForceGeneric = !!options.force_generic;
+    const canUseCustom = !!capability.has_custom_scraper && !shouldForceGeneric;
+
+    if (!canUseCustom && !shouldForceGeneric) {
+        window.showToast('Bu kaynakta custom scraper bulunamadı.', 'warning');
+        return;
+    }
+
+    const duplicateSources = canonicalGrp.__duplicates || [];
+    let targetSource = duplicateSources[0];
+
+    if (canUseCustom) {
+        for (const dup of duplicateSources) {
+            try {
+                const dupCapability = await fetchSourceScraperCapability(dup.source_id);
+                if (dupCapability?.has_custom_scraper) {
+                    targetSource = dup;
+                    canonicalGrp.__scraperCapability = {
+                        source_id: dupCapability?.source_id || dup.source_id,
+                        has_custom_scraper: true,
+                        scraper_name: dupCapability?.scraper_name || null,
+                        supported_domain: dupCapability?.supported_domain || capability?.supported_domain || null
+                    };
+                    break;
+                }
+            } catch (err) {
+                console.warn(`[ProductDiscover] scraper capability kontrolü başarısız. source_id=${dup.source_id}`, err);
+            }
+        }
+    }
+
+    const runLabel = canUseCustom ? 'Custom scraper çalıştırılıyor...' : 'Generic discovery çalıştırılıyor...';
+    window.showToast(runLabel, 'info');
+    window.sourceScraperRunLocks.add(domainKey);
+    renderSources();
+
+    try {
+        const scrapeResult = await postJson(PRODUCT_DISCOVER_ENDPOINTS.sourceScrape(targetSource.source_id), {
+            limit: Number(options.limit || 100),
+            force_generic: shouldForceGeneric
+        });
+
+        await loadProductDiscoverDashboard();
+
+        const finishedScraperName = scrapeResult?.scraper_name || (shouldForceGeneric ? 'Generic Discovery' : 'Custom Scraper');
+        const persistedCount = Number(scrapeResult?.persisted_count || 0);
+        const skippedCount = Number(scrapeResult?.skipped_count || 0);
+        const errorCount = Number(scrapeResult?.error_count || 0);
+        const scrapedCount = Number(scrapeResult?.scraped_count || 0);
+
+        const refreshedGroup = window.canonicalSourcesMap.get(domainKey);
+        if (refreshedGroup) refreshedGroup.__lastScrapeResult = scrapeResult;
+        updateLastRunSummaryText(`Son işlem: ${finishedScraperName} · ${formatNumber(scrapedCount)} ürün tarandı · ${formatNumber(persistedCount)} kaydedildi · ${formatNumber(skippedCount)} atlandı · ${formatNumber(errorCount)} hata`);
+
+        window.showToast(`${finishedScraperName} tamamlandı: ${formatNumber(persistedCount)} ürün kaydedildi, ${formatNumber(skippedCount)} atlandı, ${formatNumber(errorCount)} hata`, errorCount > 0 ? 'warning' : 'success');
+        window.openSourceDetailModal(domainKey);
+    } catch (err) {
+        console.warn(`[ProductDiscover] scraper run failed. domainKey=${domainKey}`, err);
+        window.showToast(`Scraper hatası: ${err.message}`, 'error');
+    } finally {
+        window.sourceScraperRunLocks.delete(domainKey);
+        renderSources();
+    }
+};
+
 window.startAutoProcessSource = async (domainKey) => {
     const current = window.sourceAutoProcessors.get(domainKey);
     if (current?.running) return;
@@ -1443,6 +1561,10 @@ function renderSources() {
         const disableNextBatch = remaining <= 0 || isAutoRunning || isBatchLocked;
         const disableAutoProcess = remaining <= 0 || isAutoRunning;
         const sourceName = canGrp.source_name || domain;
+        const scraperCapability = canGrp.__scraperCapability || { has_custom_scraper: false };
+        const scraperBadgeText = scraperCapability.has_custom_scraper
+            ? `Custom Scraper: ${scraperCapability.scraper_name || 'Registered'}`
+            : 'Generic Discovery';
 
         const nextBatchLabel = isBatchLocked
             ? `<i class="fas fa-spinner fa-spin"></i><span>İşleniyor...</span>`
@@ -1458,6 +1580,30 @@ function renderSources() {
             >
                 <i class="fas fa-tools"></i>
                 <span>Kurtarma</span>
+            </button>
+        `;
+
+        actionsHtml += `
+            <button
+                class="source-action-btn btn-run-scraper"
+                ${!scraperCapability.has_custom_scraper || window.sourceScraperRunLocks.has(domainKey) ? 'disabled' : ''}
+                onclick="window.runSourceScraper('${domainKey}', { force_generic: false, limit: 100 })"
+                title="Custom Scraper ile Tara"
+            >
+                <i class="fas fa-spider"></i>
+                <span>Custom Scraper ile Tara</span>
+            </button>
+        `;
+
+        actionsHtml += `
+            <button
+                class="source-action-btn btn-run-generic"
+                ${window.sourceScraperRunLocks.has(domainKey) ? 'disabled' : ''}
+                onclick="window.runSourceScraper('${domainKey}', { force_generic: true, limit: 100 })"
+                title="Generic ile Tara"
+            >
+                <i class="fas fa-globe"></i>
+                <span>Generic ile Tara</span>
             </button>
         `;
 
@@ -1570,6 +1716,7 @@ function renderSources() {
                                 <i class="fas fa-circle"></i>
                                 ${safeText(stats.status)}
                             </span>
+                            <span class="source-meta-chip source-scraper-badge">${escapeHtml(scraperBadgeText)}</span>
                             <span class="source-meta-chip">Öncelik: ${safeText(canGrp.priority)}</span>
                             <span class="source-meta-chip">${safeText(canGrp.country)} / ${safeText(canGrp.language)}</span>
                         </div>
@@ -1808,8 +1955,15 @@ window.openSourceDetailModal = function(domainKey) {
     if (!canGrp) return;
     const stats = canGrp.__stats || {};
     const sourceName = canGrp.source_name || domainKey;
+    const scraperCapability = canGrp.__scraperCapability || { has_custom_scraper: false };
+    const lastScrape = canGrp.__lastScrapeResult || null;
     openDetailModal(`${escapeHtml(sourceName)} - Kaynak Detayı`, `
         <div class="source-detail-grid">
+            <div class="source-meta-chip">Scraper Method: ${safeText(lastScrape?.method || (scraperCapability.has_custom_scraper ? 'custom_scraper' : 'generic_discovery'))}</div>
+            <div class="source-meta-chip">Custom Scraper: ${scraperCapability.has_custom_scraper ? 'Evet' : 'Hayır'}</div>
+            <div class="source-meta-chip">Scraper Name: ${safeText(scraperCapability.scraper_name || '-')}</div>
+            <div class="source-meta-chip">Supported Domain: ${safeText(scraperCapability.supported_domain || '-')}</div>
+            <div class="source-meta-chip">Last Scrape Persisted: ${formatNumber(lastScrape?.persisted_count || 0)}</div>
             <div class="source-meta-chip">Toplam URL: ${formatNumber(stats.totalUrls)}</div>
             <div class="source-meta-chip">Completed: ${formatNumber(stats.processed)}</div>
             <div class="source-meta-chip">Remaining/Discovered: ${formatNumber(stats.pending)}</div>
@@ -1819,6 +1973,8 @@ window.openSourceDetailModal = function(domainKey) {
             <div class="source-meta-chip">Products Extracted: ${formatNumber(stats.pCount)}</div>
         </div>
         <div class="source-actions-toolbar" style="margin-top:14px;">
+            <button class="source-action-btn btn-run-scraper" ${!scraperCapability.has_custom_scraper ? 'disabled' : ''} onclick="window.runSourceScraper('${domainKey}', { force_generic: false, limit: 100 })">Custom Scraper ile Tara</button>
+            <button class="source-action-btn btn-run-generic" onclick="window.runSourceScraper('${domainKey}', { force_generic: true, limit: 100 })">Generic ile Tara</button>
             <button class="source-action-btn btn-process-jobs" onclick="window.retrySourceProblemUrls('${domainKey}', ['failed','not_found'], 100)">Retry failed + not_found</button>
             <button class="source-action-btn btn-process-jobs" onclick="window.resetSourceQueuedUrls('${domainKey}', 100)">Reset queued</button>
             <button class="source-action-btn btn-process-jobs" onclick="window.retrySourceProblemUrls('${domainKey}', ['failed','not_found','queued'], 100)">Retry all problematic</button>
@@ -1911,7 +2067,13 @@ async function loadProductDiscoverDashboard() {
     await loadActivityDataOnly();
     await loadAllProducts();
     
-    await loadSourceStats(); 
+    await loadSourceStats();
+
+    try {
+        await loadSourceScraperCapabilities();
+    } catch (capErr) {
+        console.warn('[ProductDiscover] scraper capabilities yüklenemedi, generic fallback kullanılacak.', capErr);
+    }
 
     renderSources();
     renderActivityTimeline();

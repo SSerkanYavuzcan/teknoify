@@ -651,3 +651,21 @@ body {
 }
 
 .source-detail-grid{display:flex;flex-wrap:wrap;gap:8px;}
+
+.source-scraper-badge {
+    border-color: rgba(139,92,246,0.35);
+    color: #c4b5fd;
+    background: rgba(139,92,246,0.1);
+}
+
+.btn-run-scraper {
+    color: #a78bfa;
+    border-color: rgba(167,139,250,0.3);
+    background: rgba(167,139,250,0.12);
+}
+
+.btn-run-generic {
+    color: #38bdf8;
+    border-color: rgba(56,189,248,0.28);
+    background: rgba(56,189,248,0.1);
+}
