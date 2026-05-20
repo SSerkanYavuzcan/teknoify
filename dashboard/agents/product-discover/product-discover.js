@@ -614,6 +614,63 @@ window.exportDiscoveredUrlsBySourceId = async (sourceId) => {
     }
 };
 
+const fetchAllDiscoveredUrlsBySourceId = async (sourceId, limit = 500, maxPages = 20) => {
+    const allItems = [];
+    let offset = 0;
+    for (let i = 0; i < maxPages; i++) {
+        const res = await fetchJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${sourceId}/discovered-urls?limit=${limit}&offset=${offset}`);
+        const items = Array.isArray(res) ? res : (res.items || []);
+        if (!Array.isArray(items) || items.length === 0) break;
+        allItems.push(...items);
+        if (items.length < limit) break;
+        offset += limit;
+    }
+    return allItems;
+};
+
+window.exportSourceErrorUrlsCsv = async (domainKey) => {
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) return;
+    try {
+        const allItems = [];
+        for (const dup of canonicalGrp.__duplicates || []) allItems.push(...await fetchAllDiscoveredUrlsBySourceId(dup.source_id));
+        const filtered = allItems.filter((item) => ['failed', 'not_found', 'queued'].includes((item?.status || '').toLowerCase()));
+        if (filtered.length === 0) return window.showToast("Hatalı/queued URL bulunamadı.", "info");
+        const headers = ["url", "status", "error_message", "product_id", "last_checked_at"];
+        const rows = filtered.map((item) => headers.map((key) => csvEscape(item?.[key] ?? "")).join(','));
+        const csvContent = [headers.join(','), ...rows].join('\n');
+        const dateStr = new Date().toISOString().split('T')[0];
+        const safeName = (canonicalGrp.source_name || domainKey).toLowerCase().replace(/[^a-z0-9]/g, '-');
+        downloadBlob(`product-discover-errors-${safeName}-${dateStr}.csv`, "\uFEFF" + csvContent, "text/csv;charset=utf-8;");
+        window.showToast(`İndirme başlatıldı: ${formatNumber(filtered.length)} hatalı URL.`, "success");
+    } catch (e) {
+        console.error("Hatalı URL CSV export hatası:", e);
+        window.showToast("Hatalı URL CSV dışa aktarımı başarısız oldu.", "error");
+    }
+};
+
+window.retrySourceProblemUrls = async (domainKey, statuses = ["failed", "not_found"], limit = 100) => {
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canonicalGrp) return;
+    if (!window.confirm("Bu işlem hatalı URL’leri tekrar discovered durumuna alacak. Devam edilsin mi?")) return;
+    let resetCount = 0;
+    try {
+        for (const dup of canonicalGrp.__duplicates || []) {
+            const res = await postJson(`${PRODUCT_DISCOVER_API_BASE_URL}/sources/${dup.source_id}/discovered-urls/retry`, { statuses, limit });
+            resetCount += Number(res?.reset_count || 0);
+        }
+        const sourceName = canonicalGrp.source_name || domainKey;
+        window.showToast(`${formatNumber(resetCount)} URL tekrar işlenebilir hale getirildi.`, "success");
+        setText('live-current-source-context', `${sourceName} için ${formatNumber(resetCount)} hatalı URL tekrar kuyruğa alındı.`);
+        await loadProductDiscoverDashboard();
+    } catch (e) {
+        console.error("Retry URL hatası:", e);
+        window.showToast("URL kurtarma işlemi sırasında hata oluştu.", "error");
+    }
+};
+
+window.resetSourceQueuedUrls = async (domainKey, limit = 100) => window.retrySourceProblemUrls(domainKey, ["queued"], limit);
+
 const productBelongsToSourceGroup = (product, duplicatesArr) => {
     if (!product.evidence || !Array.isArray(product.evidence)) return false;
     
@@ -918,6 +975,9 @@ async function loadSourceStats() {
         let processed = 0;
         let failed = 0;
         let pending = 0;
+        let failedUrls = 0;
+        let notFoundUrls = 0;
+        let queuedUrls = 0;
 
         for (let dup of canonicalGrp.__duplicates) {
             try {
@@ -964,8 +1024,13 @@ async function loadSourceStats() {
 
                 totalUrls += Number(sourceStats.total_urls || 0);
                 processed += Number(sourceStats.completed_urls || 0);
-                failed += Number(sourceStats.failed_urls || 0) +
-                    Number(sourceStats.not_found_urls || 0);
+                const thisFailed = Number(sourceStats.failed_urls || 0);
+                const thisNotFound = Number(sourceStats.not_found_urls || 0);
+                const thisQueued = Number(sourceStats.queued_urls || 0);
+                failed += thisFailed + thisNotFound;
+                failedUrls += thisFailed;
+                notFoundUrls += thisNotFound;
+                queuedUrls += thisQueued;
                 pending += Number(sourceStats.remaining_urls || 0);
 
             } catch (e) {
@@ -979,8 +1044,13 @@ async function loadSourceStats() {
 
                     totalUrls += Number(fallbackStats.total_urls || 0);
                     processed += Number(fallbackStats.completed_urls || 0);
-                    failed += Number(fallbackStats.failed_urls || 0) +
-                        Number(fallbackStats.not_found_urls || 0);
+                    const thisFailed = Number(fallbackStats.failed_urls || 0);
+                    const thisNotFound = Number(fallbackStats.not_found_urls || 0);
+                    const thisQueued = Number(fallbackStats.queued_urls || 0);
+                    failed += thisFailed + thisNotFound;
+                    failedUrls += thisFailed;
+                    notFoundUrls += thisNotFound;
+                    queuedUrls += thisQueued;
                     pending += Number(fallbackStats.remaining_urls || 0);
 
                 } catch (fallbackErr) {
@@ -1050,7 +1120,10 @@ async function loadSourceStats() {
             status,
             exportable,
             processable,
-            pCount
+            pCount,
+            failedUrls,
+            notFoundUrls,
+            queuedUrls
         };
 
         window.sourceSummaries.set(domainKey, canonicalGrp.__stats);
@@ -1288,6 +1361,17 @@ function renderSources() {
             : `<span>Sonraki 20 ürünü işle</span>`;
 
         let actionsHtml = '';
+
+        actionsHtml += `
+            <button
+                class="source-action-btn btn-view-products"
+                onclick="window.openSourceDetailModal('${domainKey}')"
+                title="Kurtarma ve Detay"
+            >
+                <i class="fas fa-tools"></i>
+                <span>Kurtarma</span>
+            </button>
+        `;
 
         actionsHtml += `
             <button
@@ -1628,6 +1712,30 @@ window.openSourcesDetailModal = function() {
             <thead><tr><th>Kaynak</th><th>Domain / URL</th><th>Durum</th><th>Toplam URL</th><th>İşlendi</th><th>Kalan</th><th>Hatalı</th><th>İlerleme</th><th>Öncelik</th><th>Ülke / Dil</th><th>İşlemler</th></tr></thead>
             <tbody>${rows.join('') || '<tr><td colspan="11" class="source-products-empty">Veri bulunamadı.</td></tr>'}</tbody>
         </table>
+    `);
+};
+
+window.openSourceDetailModal = function(domainKey) {
+    const canGrp = window.canonicalSourcesMap.get(domainKey);
+    if (!canGrp) return;
+    const stats = canGrp.__stats || {};
+    const sourceName = canGrp.source_name || domainKey;
+    openDetailModal(`${escapeHtml(sourceName)} - Kaynak Detayı`, `
+        <div class="source-detail-grid">
+            <div class="source-meta-chip">Toplam URL: ${formatNumber(stats.totalUrls)}</div>
+            <div class="source-meta-chip">Completed: ${formatNumber(stats.processed)}</div>
+            <div class="source-meta-chip">Remaining/Discovered: ${formatNumber(stats.pending)}</div>
+            <div class="source-meta-chip">Failed: ${formatNumber(stats.failedUrls)}</div>
+            <div class="source-meta-chip">Not Found: ${formatNumber(stats.notFoundUrls)}</div>
+            <div class="source-meta-chip">Queued: ${formatNumber(stats.queuedUrls)}</div>
+            <div class="source-meta-chip">Products Extracted: ${formatNumber(stats.pCount)}</div>
+        </div>
+        <div class="source-actions-toolbar" style="margin-top:14px;">
+            <button class="source-action-btn btn-process-jobs" onclick="window.retrySourceProblemUrls('${domainKey}', ['failed','not_found'], 100)">Retry failed + not_found</button>
+            <button class="source-action-btn btn-process-jobs" onclick="window.resetSourceQueuedUrls('${domainKey}', 100)">Reset queued</button>
+            <button class="source-action-btn btn-process-jobs" onclick="window.retrySourceProblemUrls('${domainKey}', ['failed','not_found','queued'], 100)">Retry all problematic</button>
+            <button class="source-action-btn btn-download-csv" onclick="window.exportSourceErrorUrlsCsv('${domainKey}')">Hatalı URL CSV indir</button>
+        </div>
     `);
 };
 
