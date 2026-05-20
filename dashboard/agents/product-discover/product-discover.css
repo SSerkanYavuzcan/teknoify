@@ -235,6 +235,15 @@ body {
     max-height: 290px;
     overflow: auto;
 }
+.source-status-legend {
+    font-size: 0.68rem;
+    color: #a1a1aa;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    border: 1px dashed rgba(255,255,255,0.15);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+}
 
 .compact-timeline-wrap {
     max-height: 270px;
@@ -318,6 +327,11 @@ body {
     border-color: rgba(16,185,129,0.45);
     color: #10b981;
     background: rgba(16,185,129,0.1);
+}
+.source-status-badge.error {
+    border-color: rgba(239,68,68,0.45);
+    color: #ef4444;
+    background: rgba(239,68,68,0.12);
 }
 
 .source-status-badge.waiting {
@@ -416,6 +430,14 @@ body {
     color: #f59e0b;
     border-color: rgba(245,158,11,0.25);
     background: rgba(245,158,11,0.1);
+}
+.product-discover-last-run-card {
+    margin-top: 14px;
+}
+.last-run-summary-text {
+    font-size: 0.82rem;
+    color: #d4d4d8;
+    line-height: 1.45;
 }
 
 @media (max-width: 1180px) {

@@ -29,6 +29,7 @@ window.activityTimelineData = [];
 window.sourceAutoProcessors = new Map();
 window.sourceSummaries = new Map();
 window.sourceBatchLocks = new Set();
+window.lastBatchSummary = null;
 const COMPACT_ACTIVITY_LIMIT = 5;
 const COMPACT_CATEGORY_LIMIT = 5;
 
@@ -42,6 +43,28 @@ const formatDate = (dateString) => {
     return new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit'}).format(d);
 };
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const formatDurationSec = (sec) => `${Math.max(0, Math.round(sec || 0))} sn`;
+
+const updateLastRunSummary = (payload = null) => {
+    if (payload) window.lastBatchSummary = payload;
+    const summaryEl = document.getElementById('last-run-summary');
+    if (!summaryEl) return;
+    const s = window.lastBatchSummary;
+    if (!s) {
+        summaryEl.textContent = 'Henüz batch işlem yapılmadı.';
+        return;
+    }
+    const parts = [
+        `Son işlem: ${s.sourceName || 'Kaynak'} için ${formatNumber(s.batchSize || 0)} URL işlendi`,
+        `${formatNumber(s.completed || 0)} başarılı`,
+        `${formatNumber(s.notFound || 0)} bulunamadı`,
+        `${formatNumber(s.failed || 0)} hatalı`,
+        `${formatNumber(s.remaining || 0)} bekliyor`
+    ];
+    if (typeof s.durationSec === 'number') parts.push(formatDurationSec(s.durationSec));
+    parts.push(`(${s.actionType || 'manual batch'})`);
+    summaryEl.textContent = parts.join(' · ');
+};
 
 // Normalization Functions
 const normalizeUrl = (input) => {
@@ -92,7 +115,9 @@ const postJson = async (url, body) => {
             const errBody = await res.json();
             errorDetail = errBody.detail || errBody.message || errorDetail;
             if(typeof errorDetail === 'object') errorDetail = JSON.stringify(errorDetail);
-        } catch(e) {}
+        } catch(e) {
+            console.warn("[ProductDiscover] postJson error body parse failed.", e);
+        }
         throw new Error(errorDetail);
     }
     return await res.json();
@@ -248,6 +273,15 @@ window.submitAddSource = async () => {
             max_sitemaps: 100,
             product_only: true 
         }).catch(e => console.error("Sitemap discovery hatası:", e));
+        updateLastRunSummary({
+            sourceName,
+            batchSize: 0,
+            completed: 0,
+            notFound: 0,
+            failed: 0,
+            remaining: 0,
+            actionType: "sitemap discovery"
+        });
         
         window.showToast("URL keşfi başlatıldı. Ürün çıkarmayı başlatmak için İşlemeyi Başlat butonunu kullanın.", "success");
         
@@ -532,6 +566,15 @@ window.restartSourceGroup = async (domainKey) => {
             max_sitemaps: 100,
             product_only: true 
         }).catch(e => console.error("Sitemap discovery hatası:", e));
+        updateLastRunSummary({
+            sourceName: sourceName || domainKey,
+            batchSize: 0,
+            completed: 0,
+            notFound: 0,
+            failed: 0,
+            remaining: 0,
+            actionType: "restart"
+        });
 
         setTimeout(() => {
             loadProductDiscoverDashboard();
@@ -779,14 +822,20 @@ async function loadAllProducts() {
     try {
         const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.products}?limit=500&offset=0`);
         window.allDiscoveredProducts = data.items || [];
-    } catch (e) { window.allDiscoveredProducts = []; }
+    } catch (e) {
+        console.warn("[ProductDiscover] product fetch failed.", e);
+        window.allDiscoveredProducts = [];
+    }
 }
 
 async function loadActivityDataOnly() {
     try {
         const data = await fetchJson(`${PRODUCT_DISCOVER_ENDPOINTS.activity}?limit=100`);
         window.activityTimelineData = data.items || [];
-    } catch(e) { window.activityTimelineData = []; }
+    } catch(e) {
+        console.warn("[ProductDiscover] activity fetch failed.", e);
+        window.activityTimelineData = [];
+    }
 }
 
 async function loadSourcesDataOnly() {
@@ -1031,6 +1080,10 @@ async function loadSourceStats() {
             status = "Durduruldu";
         } else if (totalUrls === 0) {
             status = "Beklemede";
+        } else if (pending <= 0 && failed > 0 && processed <= 0) {
+            status = "Hatalı";
+            progress = 100;
+            exportable = false;
         } else if (pending <= 0) {
             status = "Tamamlandı";
             progress = 100;
@@ -1136,6 +1189,7 @@ window.processNextSourceBatch = async (domainKey, options = {}) => {
     }
 
     window.sourceBatchLocks.add(domainKey);
+    const batchStartedAt = Date.now();
     try {
         if (!silent) {
             const sourceName = canonicalGrp.source_name || getSourceDomain(canonicalGrp) || domainKey;
@@ -1168,6 +1222,19 @@ window.processNextSourceBatch = async (domainKey, options = {}) => {
             const notFoundCount = Number(batchResult?.not_found_count || 0);
             const failedCount = Number(batchResult?.failed_count || 0);
             const remainingUrls = Number(batchResult?.remaining_urls ?? refreshedPending);
+            const sourceName = canonicalGrp.source_name || getSourceDomain(canonicalGrp) || domainKey;
+            updateLastRunSummary({
+                sourceName,
+                batchSize: createdCount,
+                completed: completedCount,
+                notFound: notFoundCount,
+                failed: failedCount,
+                remaining: remainingUrls,
+                startedAt: batchStartedAt,
+                finishedAt: Date.now(),
+                durationSec: (Date.now() - batchStartedAt) / 1000,
+                actionType: fromAuto ? "auto batch" : "manual batch"
+            });
             if (!silent) {
                 window.showToast(`20 URL işlendi. Başarılı: ${formatNumber(completedCount)}, Bulunamadı: ${formatNumber(notFoundCount)}, Hatalı: ${formatNumber(failedCount)}, Kalan: ${formatNumber(remainingUrls)}`, "success");
             }
@@ -1177,6 +1244,7 @@ window.processNextSourceBatch = async (domainKey, options = {}) => {
             return { created: 0, pending: refreshedPending };
         }
     } catch (e) {
+        console.warn(`[ProductDiscover] batch processing failed. domainKey=${domainKey}`, e);
         setNextBatchButtonState(domainKey, { disabled: false, label: "Sonraki 20 ürünü işle", opacity: 1 });
         window.showToast(`Batch işleme hatası: ${e.message}`, "error");
         if (!fromAuto) window.addBotMessage(`❌ Batch işleme hatası: ${escapeHtml(e.message)}`);
@@ -1195,7 +1263,18 @@ window.startAutoProcessSource = async (domainKey) => {
     const current = window.sourceAutoProcessors.get(domainKey);
     if (current?.running) return;
     window.sourceAutoProcessors.set(domainKey, { running: true, stopped: false });
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    const sourceName = canonicalGrp?.source_name || getSourceDomain(canonicalGrp || {}) || domainKey;
     window.showToast("Sırayla işleme başlatıldı.", "info");
+    updateLastRunSummary({
+        sourceName,
+        batchSize: 0,
+        completed: 0,
+        notFound: 0,
+        failed: 0,
+        remaining: Number(canonicalGrp?.__stats?.pending || 0),
+        actionType: "auto batch"
+    });
     while (window.sourceAutoProcessors.get(domainKey)?.running) {
         const freshStats = await getFreshSourceGroupStats(domainKey);
         if (!freshStats || freshStats.pending <= 0) {
@@ -1220,6 +1299,16 @@ window.stopAutoProcessSource = (domainKey) => {
     if (!current) return;
     window.sourceAutoProcessors.set(domainKey, { running: false, stopped: true });
     window.showToast("Sırayla işleme durduruldu.", "warning");
+    const canonicalGrp = window.canonicalSourcesMap.get(domainKey);
+    updateLastRunSummary({
+        sourceName: canonicalGrp?.source_name || domainKey,
+        batchSize: 0,
+        completed: 0,
+        notFound: 0,
+        failed: 0,
+        remaining: Number(canonicalGrp?.__stats?.pending || 0),
+        actionType: "durdur"
+    });
     loadProductDiscoverDashboard();
 };
 
@@ -1262,9 +1351,8 @@ function renderSources() {
         };
 
         let statusClass = 'waiting';
-        if (['Taranıyor', 'İşleniyor', 'Hazırlanıyor', 'İşleme bekliyor', 'Kısmi hazır', 'Tamamlandı'].includes(stats.status)) {
-            statusClass = 'scanning';
-        }
+        if (['Taranıyor', 'İşleniyor', 'İşleme bekliyor', 'Tamamlandı'].includes(stats.status)) statusClass = 'scanning';
+        if (['Hatalı'].includes(stats.status)) statusClass = 'error';
 
         let logoSrc = DEFAULT_SITE_SVG;
         if (domain && domain.includes('.') && domain.length > 4 && !domain.includes(' ')) {
@@ -1719,6 +1807,7 @@ async function loadProductDiscoverDashboard() {
 
     renderSources();
     renderActivityTimeline();
+    updateLastRunSummary();
 
     await Promise.all([
         loadSummary(),
