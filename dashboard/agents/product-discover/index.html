@@ -140,7 +140,7 @@
                 </div>
             </div>
 
-            <div class="three-col-grid">
+            <div class="product-discover-lower-grid">
                 
                 <div class="agent-widget-card">
                     <div class="widget-header">
@@ -151,6 +151,9 @@
                         </div>
                     </div>
                     <div class="compact-card-content compact-sources-wrap">
+                    <div class="source-status-legend" title="URL: keşfedilen ürün adayı bağlantı • İşlendi: extraction tamamlandı • Bekliyor: henüz işlenmedi • Hatalı: failed/not_found">
+                        URL: keşfedilen aday bağlantı · İşlendi: tamamlanan çıkarım · Bekliyor: sıradaki URL · Hatalı: failed/not_found
+                    </div>
                     <table class="widget-table">
                         <thead>
                             <tr><th>Site</th><th>Durum</th><th>Öncelik</th><th>Ülke/Dil</th><th>İlerleme & İşlem</th></tr>
@@ -173,21 +176,13 @@
                     </ul>
                     </div>
                 </div>
+            </div>
 
-                <div class="agent-widget-card">
-                    <div class="widget-header">
-                        <div class="widget-title">En Çok Keşfedilen Kategoriler</div>
-                        <button class="btn-detail-view" onclick="window.openCategoriesDetailModal()">Detay Gör</button>
-                    </div>
-                    <div class="compact-card-content compact-categories-wrap">
-                    <div id="categories-chart" style="display: flex; flex-direction: column; gap: 4px;">
-                        <div class="pd-live-loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #a1a1aa; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                        <span>Toplam Ürün</span><strong id="categories-total" style="color: #fff;">-</strong>
-                    </div>
-                    </div>
+            <div class="agent-widget-card product-discover-last-run-card">
+                <div class="widget-header">
+                    <div class="widget-title">Son İşlem Özeti</div>
                 </div>
+                <div id="last-run-summary" class="last-run-summary-text">Henüz batch işlem yapılmadı.</div>
             </div>
 
             <div class="agent-widget-card" style="margin-bottom: 40px;">
