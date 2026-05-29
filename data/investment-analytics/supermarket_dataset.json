@@ -4,7 +4,7 @@
     "currency": "USD",
     "frequency": "quarterly",
     "periodStart": "2021 1Ç",
-    "periodEnd": "2025 4Ç",
+    "periodEnd": "2026 1Ç",
     "note": "2025 değerleri kaynak dosyada son veri / yıl sonu tahmini olarak yer almaktadır.",
     "periods": [
       "2021 1Ç",
@@ -26,7 +26,8 @@
       "2025 1Ç",
       "2025 2Ç",
       "2025 3Ç",
-      "2025 4Ç"
+      "2025 4Ç",
+      "2026 1Ç"
     ]
   },
   "sourceRefs": {
@@ -60,7 +61,8 @@
         13784,
         14075,
         14310,
-        14580
+        14580,
+        14850
       ],
       "revenuePerStoreUsd": [
         170000,
@@ -82,7 +84,8 @@
         285000,
         295000,
         310000,
-        320000
+        320000,
+        215000
       ],
       "operatingProfitPerStoreUsd": [
         13200,
@@ -104,7 +107,16 @@
         21400,
         22100,
         23900,
-        24200
+        24200,
+        16100
+      ],
+      "quarterlyFinancials": [
+        {
+          "period": "2026 1Ç",
+          "revenueTlMillion": 115400,
+          "ebitdaTlMillion": 8655,
+          "ebitdaMarginPct": 7.5
+        }
       ]
     },
     {
@@ -131,7 +143,8 @@
         1240,
         1248,
         1252,
-        1265
+        1265,
+        1285
       ],
       "revenuePerStoreUsd": [
         310000,
@@ -153,7 +166,8 @@
         260000,
         275000,
         295000,
-        290000
+        290000,
+        305000
       ],
       "operatingProfitPerStoreUsd": [
         13600,
@@ -175,7 +189,19 @@
         9600,
         10400,
         11800,
-        11300
+        11300,
+        {
+          "period": "2026 1Ç",
+          "value": null
+        }
+      ],
+      "quarterlyFinancials": [
+        {
+          "period": "2026 1Ç",
+          "revenueTlMillion": 14100,
+          "ebitdaTlMillion": 495,
+          "ebitdaMarginPct": 3.5
+        }
       ]
     },
     {
@@ -202,7 +228,13 @@
         3665,
         3712,
         3748,
-        3792
+        3792,
+        {
+          "period": "2026 1Ç",
+          "value": 3865,
+          "sourceRef": "migros_2026_q1_presentation",
+          "note": "Migros 2026 1. çeyrek yatırımcı sunumu kaynak alınarak 2026 1Ç finansal özet verileri dataset içine eklenmiştir."
+        }
       ],
       "revenuePerStoreUsd": [
         360000,
@@ -224,7 +256,13 @@
         520000,
         545000,
         605000,
-        580000
+        580000,
+        {
+          "period": "2026 1Ç",
+          "value": 415000,
+          "sourceRef": "migros_2026_q1_presentation",
+          "note": "Migros 2026 1. çeyrek yatırımcı sunumu kaynak alınarak 2026 1Ç finansal özet verileri dataset içine eklenmiştir."
+        }
       ],
       "operatingProfitPerStoreUsd": [
         27500,
@@ -246,7 +284,23 @@
         38000,
         40300,
         46600,
-        43500
+        43500,
+        {
+          "period": "2026 1Ç",
+          "value": 38200,
+          "sourceRef": "migros_2026_q1_presentation",
+          "note": "Migros 2026 1. çeyrek yatırımcı sunumu kaynak alınarak 2026 1Ç finansal özet verileri dataset içine eklenmiştir."
+        }
+      ],
+      "quarterlyFinancials": [
+        {
+          "period": "2026 1Ç",
+          "revenueTlMillion": 57500,
+          "ebitdaTlMillion": 5290,
+          "ebitdaMarginPct": 4.8,
+          "sourceRef": "migros_2026_q1_presentation",
+          "note": "Migros 2026 1. çeyrek yatırımcı sunumu kaynak alınarak 2026 1Ç finansal özet verileri dataset içine eklenmiştir."
+        }
       ]
     },
     {
@@ -273,7 +327,8 @@
         10825,
         10940,
         11010,
-        11074
+        11074,
+        11210
       ],
       "revenuePerStoreUsd": [
         95000,
@@ -295,7 +350,8 @@
         145000,
         150000,
         160000,
-        165000
+        165000,
+        115000
       ],
       "operatingProfitPerStoreUsd": [
         6800,
@@ -317,7 +373,16 @@
         9800,
         10300,
         11200,
-        11500
+        11500,
+        7800
+      ],
+      "quarterlyFinancials": [
+        {
+          "period": "2026 1Ç",
+          "revenueTlMillion": 46200,
+          "ebitdaTlMillion": 3140,
+          "ebitdaMarginPct": 6.8
+        }
       ]
     }
   ]
