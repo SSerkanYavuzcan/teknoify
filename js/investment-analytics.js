@@ -755,19 +755,53 @@
     });
 })();
 
-// Stage 1: Investment chatbot UI shell only. No backend, API, AI, RAG, or logging is connected.
+// Stage 2: Investment chatbot frontend controller only. No backend, API, AI, RAG, or logging is connected.
 (function () {
-    const placeholderReply = "Bu özellik yakında kaynaklı finansal raporlar, şirket dokümanları ve sektör verileriyle çalışacak.";
+    const defaultAssistantResponse = "Bu özellik yakında kaynaklı finansal raporlar, şirket dokümanları ve sektör verileriyle çalışacak.";
+    const responseDelayMs = 650;
+    let messageIdCounter = 0;
 
-    function appendChatbotMessage(messages, text, sender) {
-        const message = document.createElement("div");
-        message.className = `investment-chatbot__message investment-chatbot__message--${sender}`;
-        message.textContent = text;
-        messages.append(message);
-        messages.scrollTop = messages.scrollHeight;
+    function waitForMockDelay() {
+        return new Promise((resolve) => {
+            window.setTimeout(resolve, responseDelayMs);
+        });
     }
 
-    function setupInvestmentChatbot() {
+    function normalizeMessageText(text) {
+        return text
+            .toLocaleLowerCase("tr-TR")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/ı/g, "i");
+    }
+
+    async function getMockInvestmentAssistantResponse(userMessage) {
+        await waitForMockDelay();
+
+        const normalizedMessage = normalizeMessageText(userMessage);
+
+        if (normalizedMessage.includes("magaza basi kar")) {
+            return "Mağaza başı kâr hesaplaması ileride FAVÖK, mağaza sayısı ve çeyrek ortalama USDTRY verileriyle kaynaklı şekilde açıklanacak.";
+        }
+
+        if (normalizedMessage.includes("migros")) {
+            return "Migros için yanıtlar ileride faaliyet raporları, yatırımcı sunumları ve repo içindeki şirket dokümanları üzerinden kaynaklı üretilecek.";
+        }
+
+        if (normalizedMessage.includes("tupras")) {
+            return "Tüpraş için yanıtlar ileride faaliyet raporları ve finansal sunumlar üzerinden kaynaklı üretilecek.";
+        }
+
+        return defaultAssistantResponse;
+    }
+
+    // Stage 2: mock frontend adapter only. Real /api/chat integration will be added in Stage 3.
+    async function requestInvestmentAssistantResponse(userMessage, context = {}) {
+        void context;
+        return getMockInvestmentAssistantResponse(userMessage);
+    }
+
+    function initInvestmentChatbot() {
         const chatbot = document.querySelector("[data-investment-chatbot]");
 
         if (!chatbot) return;
@@ -782,15 +816,102 @@
 
         if (!toggle || !panel || !input || !sendButton || !messages) return;
 
+        const state = {
+            isOpen: false,
+            isSending: false,
+            messages: []
+        };
+
+        function createMessage(role, content, status = "sent") {
+            messageIdCounter += 1;
+
+            return {
+                id: `msg_${Date.now()}_${messageIdCounter}`,
+                role,
+                content,
+                createdAt: new Date().toISOString(),
+                status
+            };
+        }
+
+        function scrollMessagesToBottom() {
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function renderMessage(message) {
+            const messageElement = document.createElement("div");
+            messageElement.className = [
+                "investment-chatbot__message",
+                `investment-chatbot__message--${message.role}`,
+                `investment-chatbot__message--${message.status}`
+            ].join(" ");
+            messageElement.dataset.messageId = message.id;
+            messageElement.textContent = message.content;
+
+            if (message.status === "loading") {
+                messageElement.setAttribute("aria-busy", "true");
+            }
+
+            return messageElement;
+        }
+
+        function appendMessage(message) {
+            state.messages.push(message);
+            messages.append(renderMessage(message));
+            scrollMessagesToBottom();
+        }
+
+        function updateMessage(messageId, updates) {
+            const message = state.messages.find((currentMessage) => currentMessage.id === messageId);
+
+            if (!message) return;
+
+            Object.assign(message, updates);
+
+            const existingMessage = messages.querySelector(`[data-message-id="${messageId}"]`);
+            const updatedMessage = renderMessage(message);
+
+            if (existingMessage) {
+                existingMessage.replaceWith(updatedMessage);
+            } else {
+                messages.append(updatedMessage);
+            }
+
+            scrollMessagesToBottom();
+        }
+
+        function setSendingState(isSending) {
+            state.isSending = isSending;
+            input.disabled = isSending;
+            sendButton.disabled = isSending;
+            messages.setAttribute("aria-busy", String(isSending));
+        }
+
+        function clearInput() {
+            input.value = "";
+        }
+
+        function getInputValue() {
+            return input.value.trim();
+        }
+
+        function focusInput() {
+            if (state.isOpen && !state.isSending) {
+                input.focus();
+            }
+        }
+
         function openChatbot() {
+            state.isOpen = true;
             chatbot.classList.add("is-open");
             panel.setAttribute("aria-hidden", "false");
             toggle.setAttribute("aria-expanded", "true");
             toggle.setAttribute("aria-label", "Yatırım asistanını kapat");
-            window.setTimeout(() => input.focus(), 80);
+            window.setTimeout(focusInput, 80);
         }
 
         function closeChatbot() {
+            state.isOpen = false;
             chatbot.classList.remove("is-open");
             panel.setAttribute("aria-hidden", "true");
             toggle.setAttribute("aria-expanded", "false");
@@ -798,59 +919,81 @@
         }
 
         function toggleChatbot() {
-            if (chatbot.classList.contains("is-open")) {
+            if (state.isOpen) {
                 closeChatbot();
             } else {
                 openChatbot();
             }
         }
 
-        function sendPlaceholderMessage(text) {
+        async function sendMessage(text = getInputValue()) {
             const trimmedText = text.trim();
 
-            if (!trimmedText) return;
+            if (!trimmedText || state.isSending) return;
 
-            appendChatbotMessage(messages, trimmedText, "user");
-            appendChatbotMessage(messages, placeholderReply, "assistant");
-            input.value = "";
-            input.focus();
+            const userMessage = createMessage("user", trimmedText);
+            const loadingMessage = createMessage("assistant", "Yanıt hazırlanıyor...", "loading");
+
+            appendMessage(userMessage);
+            clearInput();
+            setSendingState(true);
+            appendMessage(loadingMessage);
+
+            try {
+                const assistantResponse = await requestInvestmentAssistantResponse(trimmedText);
+                updateMessage(loadingMessage.id, {
+                    content: assistantResponse,
+                    status: "sent"
+                });
+            } catch (error) {
+                console.error("Investment assistant mock response failed:", error);
+                updateMessage(loadingMessage.id, {
+                    content: "Yanıt hazırlanırken bir sorun oluştu. Lütfen tekrar deneyin.",
+                    status: "error"
+                });
+            } finally {
+                setSendingState(false);
+                focusInput();
+            }
         }
 
         toggle.addEventListener("click", toggleChatbot);
         closeButton?.addEventListener("click", closeChatbot);
 
         sendButton.addEventListener("click", () => {
-            sendPlaceholderMessage(input.value);
+            sendMessage();
         });
 
         input.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
                 event.preventDefault();
-                sendPlaceholderMessage(input.value);
+                sendMessage();
             }
         });
 
         suggestionButtons.forEach((button) => {
             button.addEventListener("click", () => {
+                if (state.isSending) return;
+
                 const suggestion = button.getAttribute("data-chatbot-suggestion") ?? button.textContent ?? "";
                 input.value = suggestion;
-                sendPlaceholderMessage(suggestion);
+                sendMessage(suggestion);
             });
         });
 
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape" && chatbot.classList.contains("is-open")) {
+            if (event.key === "Escape" && state.isOpen) {
                 closeChatbot();
                 toggle.focus();
             }
         });
 
         document.addEventListener("click", (event) => {
-            if (chatbot.classList.contains("is-open") && !chatbot.contains(event.target)) {
+            if (state.isOpen && !chatbot.contains(event.target)) {
                 closeChatbot();
             }
         });
     }
 
-    document.addEventListener("DOMContentLoaded", setupInvestmentChatbot);
+    document.addEventListener("DOMContentLoaded", initInvestmentChatbot);
 })();
