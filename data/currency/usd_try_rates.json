@@ -3,12 +3,15 @@
     "baseCurrency": "USD",
     "quoteCurrency": "TRY",
     "source": "TCMB",
+    "series": "TP.DK.USD.A.YTL",
     "frequency": "daily",
     "startDate": "2020-01-01",
     "endDate": null,
     "lastUpdatedAt": null,
+    "rateField": "usdTry",
     "notes": [
-      "This file is intended to store historical USD/TRY rates from TCMB.",
+      "Historical USD/TRY rates are fetched from TCMB EVDS.",
+      "Rates are stored as normalized daily values in YYYY-MM-DD format.",
       "Do not manually invent exchange rates. Use the update script or verified source data."
     ]
   },
