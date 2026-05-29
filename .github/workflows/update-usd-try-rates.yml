@@ -1,0 +1,44 @@
+name: Update USD/TRY rates
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub Actions cron is evaluated in UTC. Retry daily on days 1-7 in case TCMB data is delayed.
+    - cron: '0 6 1-7 * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-usd-try-rates
+  cancel-in-progress: false
+
+jobs:
+  update-usd-try-rates:
+    runs-on: ubuntu-latest
+    env:
+      TCMB_EVDS_API_KEY: ${{ secrets.TCMB_EVDS_API_KEY }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Update USD/TRY rates
+        run: npm run update:usdtry
+
+      - name: Commit USD/TRY data changes
+        run: |
+          if git diff --quiet -- data/currency/usd_try_rates.json; then
+            echo "No USD/TRY data changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/currency/usd_try_rates.json
+          git commit -m "chore(data): update USD TRY rates"
+          git push
