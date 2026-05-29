@@ -217,6 +217,19 @@
     border-top-right-radius: 0.35rem;
 }
 
+.investment-chatbot__message--loading {
+    color: rgba(226, 232, 240, 0.74);
+    border-color: rgba(125, 211, 252, 0.14);
+    background: rgba(14, 165, 233, 0.06);
+    font-style: italic;
+}
+
+.investment-chatbot__message--error {
+    color: rgba(254, 226, 226, 0.94);
+    border-color: rgba(248, 113, 113, 0.22);
+    background: rgba(127, 29, 29, 0.22);
+}
+
 .investment-chatbot__suggestions {
     display: flex;
     flex-wrap: wrap;
@@ -284,6 +297,12 @@
     border-color: rgba(129, 140, 248, 0.42);
     background: rgba(255, 255, 255, 0.045);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+}
+
+.investment-chatbot__input:disabled,
+.investment-chatbot__send:disabled {
+    cursor: wait;
+    opacity: 0.62;
 }
 
 .investment-chatbot__send {
