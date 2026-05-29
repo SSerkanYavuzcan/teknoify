@@ -27,12 +27,15 @@ const retailStoreCountData = [
 
 (function () {
     const chartMountId = "retail-store-count-chart";
+    const modalChartMountId = "retail-store-count-chart-modal";
+    const modalId = "retail-store-count-modal";
     const svgNamespace = "http://www.w3.org/2000/svg";
+    const chartTitle = "BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza sayısı çizgi grafiği";
     const series = [
-        { key: "bim", label: "BİM", color: "#60a5fa" },
-        { key: "sok", label: "ŞOK Marketler", color: "#22d3ee" },
-        { key: "migros", label: "Migros", color: "#a78bfa" },
-        { key: "carrefoursa", label: "CarrefourSA", color: "#34d399" }
+        { key: "bim", label: "BİM", color: "#ef4444" },
+        { key: "carrefoursa", label: "CarrefourSA", color: "#3b82f6" },
+        { key: "migros", label: "Migros", color: "#facc15" },
+        { key: "sok", label: "ŞOK Marketler", color: "#f97316" }
     ];
 
     function createSvgElement(tagName, attributes) {
@@ -65,6 +68,7 @@ const retailStoreCountData = [
             const legendItem = document.createElement("span");
             const marker = document.createElement("span");
             marker.style.backgroundColor = item.color;
+            marker.style.color = item.color;
 
             legendItem.append(marker, item.label);
             legend.appendChild(legendItem);
@@ -101,11 +105,15 @@ const retailStoreCountData = [
         }
     }
 
-    function renderXAxis(svg, chartConfig) {
+    function renderXAxis(svg, chartConfig, mode) {
         const { left, top, width, height } = chartConfig;
 
         retailStoreCountData.forEach((dataPoint, index) => {
-            if (!dataPoint.period.endsWith("4Ç")) return;
+            const shouldShowLabel = mode === "modal"
+                ? dataPoint.period.endsWith("2Ç") || dataPoint.period.endsWith("4Ç")
+                : dataPoint.period.endsWith("4Ç");
+
+            if (!shouldShowLabel) return;
 
             const x = left + (index / (retailStoreCountData.length - 1)) * width;
 
@@ -129,7 +137,66 @@ const retailStoreCountData = [
         });
     }
 
-    function renderSeries(svg, chartConfig, tooltip) {
+    function renderEndpointLabel(svg, item, point, value, chartConfig) {
+        const labelGroup = createSvgElement("g", {
+            class: "investment-chart-endpoint-label",
+            transform: `translate(${point.x + 12}, ${point.y - 10})`
+        });
+        const labelText = formatStoreCount(value);
+        const textWidth = Math.max(48, labelText.length * 8.6);
+        const labelX = point.x + 12 + textWidth > chartConfig.left + chartConfig.width ? -textWidth - 18 : 0;
+
+        labelGroup.setAttribute("transform", `translate(${point.x + 12 + labelX}, ${point.y - 10})`);
+        labelGroup.appendChild(
+            createSvgElement("rect", {
+                x: "0",
+                y: "-17",
+                width: String(textWidth),
+                height: "24",
+                rx: "12",
+                fill: item.color,
+                opacity: "0.16",
+                stroke: item.color,
+                "stroke-width": "1"
+            })
+        );
+        labelGroup.appendChild(
+            createSvgElement("text", {
+                x: String(textWidth / 2),
+                y: "0",
+                "text-anchor": "middle",
+                fill: item.color,
+                class: "investment-chart-value-label"
+            })
+        ).textContent = labelText;
+
+        svg.appendChild(labelGroup);
+    }
+
+    function renderPointLabel(svg, item, point, value, index) {
+        if (index % 4 !== 3) return;
+
+        svg.appendChild(
+            createSvgElement("text", {
+                x: point.x,
+                y: point.y - 12,
+                "text-anchor": "middle",
+                fill: item.color,
+                class: "investment-chart-point-label"
+            })
+        ).textContent = formatStoreCount(value);
+    }
+
+    function createTooltipContent(item, dataPoint) {
+        return `
+            <span class="investment-chart-tooltip__accent" style="background:${item.color}"></span>
+            <strong>${item.label}</strong>
+            <span>${dataPoint.period}</span>
+            <b>${formatStoreCount(dataPoint[item.key])} mağaza</b>
+        `;
+    }
+
+    function renderSeries(svg, chartConfig, tooltip, mode) {
         series.forEach((item) => {
             const points = retailStoreCountData.map((dataPoint, index) => {
                 const point = getPoint(index, dataPoint[item.key], chartConfig);
@@ -141,37 +208,46 @@ const retailStoreCountData = [
                     points: points.join(" "),
                     fill: "none",
                     stroke: item.color,
-                    "stroke-width": "3",
+                    "stroke-width": mode === "modal" ? "3.4" : "3",
                     "stroke-linecap": "round",
                     "stroke-linejoin": "round",
-                    class: "investment-chart-line"
+                    class: "investment-chart-line",
+                    style: `--series-color: ${item.color}`
                 })
             );
 
             retailStoreCountData.forEach((dataPoint, index) => {
-                const point = getPoint(index, dataPoint[item.key], chartConfig);
+                const value = dataPoint[item.key];
+                const point = getPoint(index, value, chartConfig);
                 const marker = createSvgElement("circle", {
                     cx: point.x,
                     cy: point.y,
-                    r: "4",
+                    r: mode === "modal" ? "5" : "4",
                     fill: item.color,
                     class: "investment-chart-point",
                     tabindex: "0"
                 });
-                const tooltipText = `${dataPoint.period} · ${item.label}: ${formatStoreCount(dataPoint[item.key])}`;
 
-                marker.addEventListener("mouseenter", () => showTooltip(tooltip, tooltipText, point));
+                marker.addEventListener("mouseenter", () => showTooltip(tooltip, createTooltipContent(item, dataPoint), point));
                 marker.addEventListener("mouseleave", () => hideTooltip(tooltip));
-                marker.addEventListener("focus", () => showTooltip(tooltip, tooltipText, point));
+                marker.addEventListener("focus", () => showTooltip(tooltip, createTooltipContent(item, dataPoint), point));
                 marker.addEventListener("blur", () => hideTooltip(tooltip));
 
                 svg.appendChild(marker);
+
+                if (mode === "modal") {
+                    renderPointLabel(svg, item, point, value, index);
+                }
+
+                if (index === retailStoreCountData.length - 1) {
+                    renderEndpointLabel(svg, item, point, value, chartConfig);
+                }
             });
         });
     }
 
-    function showTooltip(tooltip, text, point) {
-        tooltip.textContent = text;
+    function showTooltip(tooltip, content, point) {
+        tooltip.innerHTML = content;
         tooltip.style.left = `${point.x}px`;
         tooltip.style.top = `${point.y}px`;
         tooltip.classList.add("is-visible");
@@ -181,37 +257,98 @@ const retailStoreCountData = [
         tooltip.classList.remove("is-visible");
     }
 
-    function renderRetailStoreCountChart() {
-        const mount = document.getElementById(chartMountId);
+    function getChartConfig(mode) {
+        if (mode === "modal") {
+            return {
+                left: 84,
+                top: 34,
+                width: 940,
+                height: 430,
+                maxValue: 15000,
+                viewBox: "0 0 1100 540"
+            };
+        }
+
+        return {
+            left: 78,
+            top: 28,
+            width: 820,
+            height: 320,
+            maxValue: 15000,
+            viewBox: "0 0 980 420"
+        };
+    }
+
+    function renderRetailStoreCountChart(mountId, mode) {
+        const mount = document.getElementById(mountId);
         if (!mount || !retailStoreCountData.length) return;
 
-        const chartConfig = {
-            left: 72,
-            top: 24,
-            width: 640,
-            height: 280,
-            maxValue: 15000
-        };
+        const chartConfig = getChartConfig(mode);
+        const titleId = `${mountId}-title`;
         const svg = createSvgElement("svg", {
-            viewBox: "0 0 760 360",
+            viewBox: chartConfig.viewBox,
             role: "img",
-            "aria-labelledby": "retail-store-count-chart-title"
+            "aria-labelledby": titleId
         });
-        const title = createSvgElement("title", { id: "retail-store-count-chart-title" });
+        const title = createSvgElement("title", { id: titleId });
         const tooltip = document.createElement("div");
 
-        title.textContent = "BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza sayısı çizgi grafiği";
-        tooltip.className = "investment-chart-tooltip";
+        title.textContent = chartTitle;
+        tooltip.className = `investment-chart-tooltip${mode === "modal" ? " investment-chart-tooltip-large" : ""}`;
 
         svg.appendChild(title);
         renderGrid(svg, chartConfig);
-        renderXAxis(svg, chartConfig);
-        renderSeries(svg, chartConfig, tooltip);
+        renderXAxis(svg, chartConfig, mode);
+        renderSeries(svg, chartConfig, tooltip, mode);
 
         mount.textContent = "";
         mount.append(svg, tooltip);
         renderLegend(mount);
     }
 
-    document.addEventListener("DOMContentLoaded", renderRetailStoreCountChart);
+    function setupRetailStoreCountModal() {
+        const modal = document.getElementById(modalId);
+        const openButtons = document.querySelectorAll("[data-retail-store-modal-open]");
+        const closeButtons = document.querySelectorAll("[data-retail-store-modal-close]");
+        let lastFocusedElement = null;
+
+        if (!modal || !openButtons.length) return;
+
+        function openModal() {
+            lastFocusedElement = document.activeElement;
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("investment-modal-open");
+            renderRetailStoreCountChart(modalChartMountId, "modal");
+            modal.querySelector(".investment-chart-modal__close")?.focus();
+        }
+
+        function closeModal() {
+            modal.classList.remove("is-open");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("investment-modal-open");
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        }
+
+        openButtons.forEach((button) => {
+            button.addEventListener("click", openModal);
+        });
+
+        closeButtons.forEach((button) => {
+            button.addEventListener("click", closeModal);
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && modal.classList.contains("is-open")) {
+                closeModal();
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        renderRetailStoreCountChart(chartMountId, "default");
+        setupRetailStoreCountModal();
+    });
 })();

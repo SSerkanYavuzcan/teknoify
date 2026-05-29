@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -97,19 +96,21 @@
                 </p>
             </div>
 
-            <div class="investment-dashboard-grid">
-                <article class="investment-chart-card">
+            <div class="investment-dashboard-grid investment-dashboard-grid-single">
+                <article class="investment-chart-card investment-chart-card-wide">
                     <div class="investment-chart-card-header">
                         <div>
                             <h3>Mağaza Sayısı</h3>
                             <p>Çeyreklik mağaza ağı gelişimi</p>
                         </div>
-                        <span class="investment-metric-pill">Quarterly</span>
+                        <button class="investment-detail-button" type="button" data-retail-store-modal-open>
+                            Detay Gör
+                        </button>
                     </div>
 
                     <div
                         id="retail-store-count-chart"
-                        class="investment-chart"
+                        class="investment-chart investment-chart-store-count"
                         aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA çeyreklik mağaza sayısı grafiği"
                     ></div>
 
@@ -117,21 +118,34 @@
                         2025 değerleri kaynak dosyada son veri / yıl sonu tahmini olarak yer almaktadır.
                     </p>
                 </article>
-
-                <article class="investment-chart-card">
-                    <div class="investment-chart-card-header">
-                        <div>
-                            <h3>Mağaza Başı Ortalama Ciro ($)</h3>
-                            <p>Çeyreklik mağaza başı ortalama ciro</p>
-                        </div>
-                        <span class="investment-metric-pill">USD</span>
-                    </div>
-
-                    <div class="investment-chart-placeholder" role="img" aria-label="Mağaza başı ortalama ciro grafiği için boş yer tutucu">
-                        <span>Veri eklendiğinde grafik burada gösterilecek.</span>
-                    </div>
-                </article>
             </div>
+
+            <article class="investment-chart-card investment-revenue-card">
+                <div class="investment-chart-card-header">
+                    <div>
+                        <h3>Mağaza Başı Ortalama Ciro ($)</h3>
+                        <p>Çeyreklik mağaza başı ortalama ciro</p>
+                    </div>
+                    <span class="investment-metric-pill">Hazırlanıyor</span>
+                </div>
+
+                <div class="investment-revenue-placeholder" role="img" aria-label="Mağaza başı ortalama ciro için kolon grafik iskeleti">
+                    <div class="investment-revenue-bars" aria-hidden="true">
+                        <span style="--bar-height: 48%"></span>
+                        <span style="--bar-height: 64%"></span>
+                        <span style="--bar-height: 36%"></span>
+                        <span style="--bar-height: 72%"></span>
+                        <span style="--bar-height: 54%"></span>
+                        <span style="--bar-height: 82%"></span>
+                        <span style="--bar-height: 60%"></span>
+                        <span style="--bar-height: 76%"></span>
+                    </div>
+                    <div class="investment-revenue-placeholder-content">
+                        <span>Kolon grafik alanı</span>
+                        <strong>Gerçek ciro verileri sonraki adımda eklenecektir.</strong>
+                    </div>
+                </div>
+            </article>
 
             <div class="investment-note-card">
                 <i class="fas fa-circle-info" aria-hidden="true"></i>
@@ -221,6 +235,35 @@
     </div>
 </div>
 
+<div
+    class="investment-chart-modal"
+    id="retail-store-count-modal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="retail-store-count-modal-title"
+>
+    <div class="investment-chart-modal__backdrop" data-retail-store-modal-close></div>
+    <div class="investment-chart-modal__dialog" role="document">
+        <div class="investment-chart-modal__header">
+            <div>
+                <span class="investment-eyebrow">Detaylı İnceleme</span>
+                <h2 id="retail-store-count-modal-title">Mağaza Sayısı Detayı</h2>
+            </div>
+            <button class="investment-chart-modal__close" type="button" aria-label="Detay grafiğini kapat" data-retail-store-modal-close>
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="investment-chart-modal__body">
+            <div
+                id="retail-store-count-chart-modal"
+                class="investment-chart investment-chart-modal-mount"
+                aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA büyük mağaza sayısı grafiği"
+            ></div>
+        </div>
+    </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="../js/session-manager.js"></script>
@@ -228,4 +271,3 @@
 <script src="../js/investment-analytics.js" defer></script>
 </body>
 </html>
-```
