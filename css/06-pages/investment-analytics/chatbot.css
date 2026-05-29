@@ -1,0 +1,270 @@
+/* Stage 1: Investment chatbot UI shell only. Backend/RAG/logging will be added later. */
+.investment-chatbot {
+    position: fixed;
+    right: clamp(1rem, 2.5vw, 2rem);
+    bottom: clamp(1rem, 2.5vw, 2rem);
+    z-index: 1100;
+    font-family: "Inter Tight", sans-serif;
+}
+
+.investment-chatbot__launcher {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 3.1rem;
+    padding: 0.68rem 0.95rem;
+    border: 1px solid rgba(129, 140, 248, 0.34);
+    border-radius: 999px;
+    color: #e5eefb;
+    background:
+        radial-gradient(circle at 28% 20%, rgba(34, 211, 238, 0.14), transparent 36%),
+        linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.86));
+    box-shadow:
+        0 14px 36px rgba(2, 6, 23, 0.42),
+        0 0 24px rgba(99, 102, 241, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    backdrop-filter: blur(16px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.investment-chatbot__launcher:hover,
+.investment-chatbot__launcher:focus-visible {
+    border-color: rgba(103, 232, 249, 0.52);
+    color: #f8fafc;
+    box-shadow:
+        0 16px 42px rgba(2, 6, 23, 0.48),
+        0 0 28px rgba(34, 211, 238, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.investment-chatbot__launcher-icon {
+    display: grid;
+    width: 1.85rem;
+    height: 1.85rem;
+    place-items: center;
+    border: 1px solid rgba(103, 232, 249, 0.18);
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.72);
+    box-shadow: inset 0 0 16px rgba(103, 232, 249, 0.08);
+    color: #a5b4fc;
+}
+
+.investment-chatbot__launcher-label {
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.investment-chatbot__panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.8rem);
+    display: flex;
+    flex-direction: column;
+    width: min(380px, calc(100vw - 2rem));
+    max-height: min(540px, calc(100vh - 7rem));
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 1.2rem;
+    color: #dbeafe;
+    background:
+        radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.1), transparent 38%),
+        rgba(7, 12, 28, 0.92);
+    box-shadow:
+        0 22px 62px rgba(2, 6, 23, 0.56),
+        0 0 34px rgba(99, 102, 241, 0.12);
+    backdrop-filter: blur(22px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px) scale(0.98);
+    transform-origin: bottom right;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.investment-chatbot.is-open .investment-chatbot__panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.investment-chatbot__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1rem 0.9rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(15, 23, 42, 0.46);
+}
+
+.investment-chatbot__eyebrow {
+    margin: 0 0 0.32rem;
+    color: #67e8f9;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.investment-chatbot__header h2 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 1.08rem;
+    font-weight: 800;
+}
+
+.investment-chatbot__header p:last-child {
+    margin: 0.35rem 0 0;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    line-height: 1.35;
+}
+
+.investment-chatbot__close,
+.investment-chatbot__send {
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #dbeafe;
+    background: rgba(15, 23, 42, 0.78);
+    cursor: pointer;
+    transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.investment-chatbot__close {
+    width: 2.15rem;
+    height: 2.15rem;
+    border-radius: 50%;
+}
+
+.investment-chatbot__close:hover,
+.investment-chatbot__close:focus-visible,
+.investment-chatbot__send:hover,
+.investment-chatbot__send:focus-visible {
+    border-color: rgba(103, 232, 249, 0.48);
+    color: #ffffff;
+    background: rgba(30, 41, 59, 0.88);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.investment-chatbot__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.9rem;
+    min-height: 0;
+    padding: 0.95rem;
+    overflow-y: auto;
+}
+
+.investment-chatbot__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.investment-chatbot__message {
+    max-width: 88%;
+    padding: 0.72rem 0.84rem;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 0.95rem;
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+.investment-chatbot__message--assistant {
+    align-self: flex-start;
+    color: #dbeafe;
+    background: rgba(30, 41, 59, 0.72);
+    border-top-left-radius: 0.35rem;
+}
+
+.investment-chatbot__message--user {
+    align-self: flex-end;
+    color: #ffffff;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.72), rgba(14, 165, 233, 0.36));
+    border-color: rgba(125, 211, 252, 0.2);
+    border-top-right-radius: 0.35rem;
+}
+
+.investment-chatbot__suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.investment-chatbot__chip {
+    border: 1px solid rgba(103, 232, 249, 0.2);
+    border-radius: 999px;
+    padding: 0.5rem 0.68rem;
+    color: #c7d2fe;
+    background: rgba(15, 23, 42, 0.58);
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.investment-chatbot__chip:hover,
+.investment-chatbot__chip:focus-visible {
+    border-color: rgba(103, 232, 249, 0.48);
+    color: #ffffff;
+    background: rgba(79, 70, 229, 0.18);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.investment-chatbot__footer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.6rem;
+    padding: 0.85rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(15, 23, 42, 0.52);
+}
+
+.investment-chatbot__input-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.investment-chatbot__input {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 999px;
+    padding: 0.72rem 0.9rem;
+    color: #f8fafc;
+    background: rgba(2, 6, 23, 0.56);
+    outline: none;
+}
+
+.investment-chatbot__input::placeholder {
+    color: #718096;
+}
+
+.investment-chatbot__input:focus {
+    border-color: rgba(103, 232, 249, 0.56);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+}
+
+.investment-chatbot__send {
+    width: 2.55rem;
+    height: 2.55rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.78), rgba(14, 165, 233, 0.34));
+}

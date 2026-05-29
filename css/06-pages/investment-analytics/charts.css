@@ -1,0 +1,149 @@
+.investment-chart {
+    position: relative;
+    min-height: 350px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    background:
+        radial-gradient(circle at 20% 10%, rgba(34, 211, 238, 0.09), transparent 28%),
+        linear-gradient(180deg, rgba(99, 102, 241, 0.08), rgba(255, 255, 255, 0.015));
+}
+
+.investment-chart-store-count,
+.investment-chart-revenue-per-store {
+    min-height: 420px;
+}
+
+.investment-chart-operating-profit-per-store {
+    min-height: 460px;
+}
+
+.investment-chart svg {
+    display: block;
+    width: 100%;
+    height: 350px;
+}
+
+.investment-chart-store-count svg,
+.investment-chart-revenue-per-store svg {
+    height: 420px;
+}
+
+.investment-chart-operating-profit-per-store svg {
+    height: 460px;
+}
+
+.investment-chart-grid-line {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1;
+}
+
+.investment-chart-grid-line-vertical {
+    stroke-dasharray: 4 8;
+    opacity: 0.72;
+}
+
+.investment-chart-axis-label {
+    fill: rgba(243, 244, 246, 0.72);
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.investment-chart-line {
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--series-color) 42%, transparent));
+}
+
+.investment-chart-point {
+    cursor: pointer;
+    outline: none;
+    stroke: rgba(5, 5, 5, 0.9);
+    stroke-width: 2;
+    transition:
+        r var(--ease-fast),
+        stroke var(--ease-fast);
+}
+
+.investment-chart-point:hover,
+.investment-chart-point:focus {
+    r: 6;
+    stroke: rgba(255, 255, 255, 0.9);
+}
+
+.investment-chart-point-label {
+    cursor: help;
+    font-size: 0.68rem;
+    font-weight: 800;
+    opacity: 0.76;
+    paint-order: stroke;
+    stroke: rgba(5, 5, 5, 0.78);
+    stroke-width: 3px;
+}
+
+.investment-chart-all-point-label {
+    fill: rgba(243, 244, 246, 0.78);
+    font-size: 0.62rem;
+    font-weight: 700;
+    cursor: help;
+    paint-order: stroke;
+    pointer-events: auto;
+    stroke: rgba(5, 5, 5, 0.78);
+    stroke-width: 2px;
+}
+
+.investment-chart-all-point-label:hover,
+.investment-chart-all-point-label:focus,
+.investment-chart-point-label:hover,
+.investment-chart-point-label:focus {
+    fill: #fff;
+    outline: none;
+}
+
+.investment-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem 1rem;
+    padding: 0 1rem 1rem;
+}
+
+.investment-chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: rgba(243, 244, 246, 0.82);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.investment-chart-legend span span {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    box-shadow: 0 0 14px currentcolor;
+}
+
+.investment-chart-note {
+    margin-top: 0.85rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.investment-chart-operating-profit-per-store .investment-chart-line {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--series-color) 46%, transparent));
+}
+
+.investment-chart-error {
+    position: absolute;
+    inset: 1rem;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    border: 1px solid rgba(248, 113, 113, 0.24);
+    border-radius: 18px;
+    background: rgba(127, 29, 29, 0.14);
+    color: #fecaca;
+    font-size: 0.94rem;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+}
