@@ -1,0 +1,192 @@
+@media (max-width: 860px) {
+    .investment-hero-layout {
+        grid-template-columns: 1fr;
+        gap: 2.75rem;
+        text-align: center;
+    }
+
+    .investment-hero-content .hero-badge {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .investment-hero-content .hero-subtitle {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .investment-hero-content .hero-ctas {
+        justify-content: center;
+    }
+
+    .investment-hero-visual {
+        width: min(100%, 560px);
+        min-height: 330px;
+        margin: 0 auto;
+    }
+
+    .investment-section {
+        padding: 4rem 0;
+    }
+
+    .investment-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .investment-chart-store-count,
+    .investment-chart-store-count svg,
+    .investment-chart-revenue-per-store,
+    .investment-chart-revenue-per-store svg,
+    .investment-chart-operating-profit-per-store,
+    .investment-chart-operating-profit-per-store svg {
+        min-height: 360px;
+        height: 360px;
+    }
+
+    .investment-chart-modal__dialog {
+        max-height: 92vh;
+    }
+
+    .investment-chart-modal__body {
+        max-height: calc(92vh - 106px);
+        padding: 1rem;
+    }
+
+    .investment-chart-modal-mount,
+    .investment-chart-modal-mount svg {
+        min-height: 480px;
+        height: 480px;
+    }
+}
+
+@media (max-width: 560px) {
+    .investment-hero-layout {
+        gap: 2rem;
+    }
+
+    .investment-hero-visual {
+        min-height: 286px;
+    }
+
+    .investment-orbit-system {
+        width: min(92%, 318px);
+    }
+
+    .investment-orbit-core {
+        width: 94px;
+        height: 94px;
+    }
+
+    .investment-orbit-core-icon {
+        width: 58px;
+        height: 58px;
+        font-size: 1.5rem;
+    }
+
+    .investment-orbit-node {
+        width: 32px;
+        height: 32px;
+        font-size: 0.82rem;
+    }
+
+    .investment-orbit-particle--two {
+        display: none;
+    }
+
+    .investment-chart-card-header,
+    .investment-note-card,
+    .investment-chart-modal__header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .investment-detail-button {
+        width: 100%;
+    }
+
+    .investment-chart-placeholder,
+    .investment-revenue-placeholder {
+        min-height: 260px;
+    }
+
+    .investment-chart,
+    .investment-chart svg,
+    .investment-chart-store-count,
+    .investment-chart-store-count svg,
+    .investment-chart-revenue-per-store,
+    .investment-chart-revenue-per-store svg,
+    .investment-chart-operating-profit-per-store,
+    .investment-chart-operating-profit-per-store svg {
+        min-height: 320px;
+        height: 320px;
+    }
+
+    .investment-chart-axis-label {
+        font-size: 0.65rem;
+    }
+
+    .investment-chart-legend {
+        padding: 0 0.85rem 0.85rem;
+    }
+
+    .investment-revenue-bars {
+        inset: 3rem 1rem 2.6rem;
+        gap: 0.45rem;
+    }
+
+    .investment-chart-modal {
+        padding: 0.7rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .investment-hero-visual::before,
+    .investment-orbit-path,
+    .investment-orbit-node,
+    .investment-orbit-particle {
+        animation: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .investment-chatbot {
+        right: 0.75rem;
+        bottom: calc(0.75rem + env(safe-area-inset-bottom));
+        left: 0.75rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .investment-chatbot__launcher {
+        width: 3.05rem;
+        min-height: 3.05rem;
+        padding: 0;
+    }
+
+    .investment-chatbot__launcher-label {
+        display: none;
+    }
+
+    .investment-chatbot__panel {
+        right: 0;
+        bottom: calc(100% + 0.75rem);
+        width: calc(100vw - 24px);
+        max-height: min(70vh, 540px);
+    }
+
+    .investment-chatbot__header,
+    .investment-chatbot__body,
+    .investment-chatbot__footer {
+        padding-inline: 0.85rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .investment-chatbot__launcher,
+    .investment-chatbot__panel,
+    .investment-chatbot__close,
+    .investment-chatbot__send,
+    .investment-chatbot__chip {
+        transition: none;
+    }
+}

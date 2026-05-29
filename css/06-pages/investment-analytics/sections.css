@@ -1,0 +1,266 @@
+.investment-section {
+    position: relative;
+    padding: 6rem 0;
+    overflow: hidden;
+}
+
+.investment-section::before {
+    content: "";
+    position: absolute;
+    inset: 8% auto auto 50%;
+    width: min(560px, 70vw);
+    height: min(560px, 70vw);
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.14), transparent 68%);
+    filter: blur(18px);
+    transform: translateX(-50%);
+}
+
+.investment-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.investment-section-header {
+    max-width: 820px;
+    margin-bottom: 2rem;
+}
+
+.investment-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0.9rem;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid rgba(99, 102, 241, 0.28);
+    border-radius: 999px;
+    background: rgba(99, 102, 241, 0.08);
+    color: #c7d2fe;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.investment-section-header h2 {
+    margin-bottom: 1rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+}
+
+.investment-section-header p {
+    max-width: 760px;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.investment-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.investment-dashboard-grid-single {
+    grid-template-columns: 1fr;
+}
+
+.investment-chart-card,
+.investment-note-card {
+    border: 1px solid var(--border-light);
+    background: linear-gradient(145deg, rgba(15, 16, 20, 0.96), rgba(8, 9, 13, 0.94));
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+}
+
+.investment-chart-card {
+    padding: 1.35rem;
+    border-radius: var(--radius-lg);
+}
+
+.investment-chart-card-wide {
+    grid-column: 1 / -1;
+    border-color: rgba(99, 102, 241, 0.24);
+    box-shadow:
+        0 28px 90px rgba(0, 0, 0, 0.38),
+        0 0 36px rgba(99, 102, 241, 0.08);
+}
+
+.investment-revenue-card,
+.investment-operating-profit-card {
+    margin-top: 0;
+}
+
+.investment-chart-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.investment-chart-card h3 {
+    margin-bottom: 0.35rem;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+}
+
+.investment-chart-card p {
+    color: var(--text-muted);
+    font-size: 0.94rem;
+}
+
+.investment-metric-pill,
+.investment-detail-button {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.investment-metric-pill {
+    padding: 0.35rem 0.65rem;
+    border: 1px solid rgba(14, 165, 233, 0.26);
+    background: rgba(14, 165, 233, 0.08);
+    color: #bae6fd;
+}
+
+.investment-detail-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid rgba(99, 102, 241, 0.5);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(14, 165, 233, 0.08));
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 0 22px rgba(99, 102, 241, 0.2);
+    color: #e0e7ff;
+    cursor: pointer;
+    transition:
+        transform var(--ease-fast),
+        border-color var(--ease-fast),
+        box-shadow var(--ease-fast),
+        color var(--ease-fast);
+}
+
+.investment-detail-button:hover,
+.investment-detail-button:focus-visible {
+    border-color: rgba(125, 211, 252, 0.86);
+    box-shadow:
+        0 0 0 1px rgba(125, 211, 252, 0.18) inset,
+        0 0 30px rgba(14, 165, 233, 0.28);
+    color: #fff;
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.investment-chart-placeholder,
+.investment-revenue-placeholder {
+    position: relative;
+    display: grid;
+    min-height: 310px;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    background-color: rgba(255, 255, 255, 0.02);
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(99, 102, 241, 0.08), rgba(14, 165, 233, 0.02));
+    background-size: 100% 25%, 12.5% 100%, 100% 100%;
+}
+
+.investment-chart-placeholder::after,
+.investment-revenue-placeholder::after {
+    content: "";
+    position: absolute;
+    inset: auto 1.25rem 1.25rem 1.25rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.58), transparent);
+}
+
+.investment-chart-placeholder span {
+    max-width: 260px;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(5, 5, 5, 0.72);
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.investment-revenue-placeholder {
+    min-height: 340px;
+}
+
+.investment-revenue-bars {
+    position: absolute;
+    inset: 3.2rem 2rem 3rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(0.6rem, 2vw, 1.3rem);
+    opacity: 0.72;
+}
+
+.investment-revenue-bars span {
+    width: min(8%, 56px);
+    height: var(--bar-height);
+    min-height: 54px;
+    border: 1px solid rgba(125, 211, 252, 0.18);
+    border-radius: 14px 14px 4px 4px;
+    background: linear-gradient(180deg, rgba(125, 211, 252, 0.42), rgba(99, 102, 241, 0.18));
+    box-shadow: 0 0 24px rgba(99, 102, 241, 0.14);
+}
+
+.investment-revenue-placeholder-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 0.55rem;
+    max-width: 420px;
+    padding: 1rem 1.15rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    background: rgba(5, 5, 5, 0.74);
+    text-align: center;
+    backdrop-filter: blur(12px);
+}
+
+.investment-revenue-placeholder-content span {
+    color: #c7d2fe;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.investment-revenue-placeholder-content strong {
+    color: rgba(243, 244, 246, 0.9);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.investment-note-card {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+}
+
+.investment-note-card i {
+    color: var(--secondary);
+}
+
+.investment-note-card p {
+    margin: 0;
+    line-height: 1.6;
+}

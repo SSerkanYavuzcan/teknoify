@@ -1,0 +1,13 @@
+.investment-hero-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.85fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
+    width: 100%;
+}
+
+.investment-hero-content {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+}
