@@ -96,8 +96,8 @@
                 </p>
             </div>
 
-            <div class="investment-dashboard-grid investment-dashboard-grid-single">
-                <article class="investment-chart-card investment-chart-card-wide">
+            <div class="investment-dashboard-grid">
+                <article class="investment-chart-card">
                     <div class="investment-chart-card-header">
                         <div>
                             <h3>Mağaza Sayısı</h3>
@@ -118,40 +118,32 @@
                         2025 değerleri kaynak dosyada son veri / yıl sonu tahmini olarak yer almaktadır.
                     </p>
                 </article>
+
+                <article class="investment-chart-card investment-revenue-card">
+                    <div class="investment-chart-card-header">
+                        <div>
+                            <h3>Mağaza Başı Ortalama Ciro ($)</h3>
+                            <p>Çeyreklik mağaza başı ortalama ciro</p>
+                        </div>
+                    </div>
+
+                    <div
+                        id="retail-revenue-per-store-chart"
+                        class="investment-chart investment-chart-revenue-per-store"
+                        aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başı ortalama ciro kolon grafiği"
+                    ></div>
+
+                    <p class="investment-chart-note">
+                        Değerler çeyreklik mağaza başı ortalama ciroyu yaklaşık USD bazında gösterir.
+                    </p>
+                </article>
             </div>
-
-            <article class="investment-chart-card investment-revenue-card">
-                <div class="investment-chart-card-header">
-                    <div>
-                        <h3>Mağaza Başı Ortalama Ciro ($)</h3>
-                        <p>Çeyreklik mağaza başı ortalama ciro</p>
-                    </div>
-                    <span class="investment-metric-pill">Hazırlanıyor</span>
-                </div>
-
-                <div class="investment-revenue-placeholder" role="img" aria-label="Mağaza başı ortalama ciro için kolon grafik iskeleti">
-                    <div class="investment-revenue-bars" aria-hidden="true">
-                        <span style="--bar-height: 48%"></span>
-                        <span style="--bar-height: 64%"></span>
-                        <span style="--bar-height: 36%"></span>
-                        <span style="--bar-height: 72%"></span>
-                        <span style="--bar-height: 54%"></span>
-                        <span style="--bar-height: 82%"></span>
-                        <span style="--bar-height: 60%"></span>
-                        <span style="--bar-height: 76%"></span>
-                    </div>
-                    <div class="investment-revenue-placeholder-content">
-                        <span>Kolon grafik alanı</span>
-                        <strong>Gerçek ciro verileri sonraki adımda eklenecektir.</strong>
-                    </div>
-                </div>
-            </article>
 
             <div class="investment-note-card">
                 <i class="fas fa-circle-info" aria-hidden="true"></i>
                 <p>
-                    Mağaza sayısı grafiği şirket bazlı ve çeyreklik formatta eklenmiştir.
-                    Mağaza başı ortalama ciro verisi sonraki adımda eklenecektir.
+                    Mağaza sayısı ve mağaza başı ortalama ciro grafikleri repo içindeki JSON veri dosyasından oluşturulur.
+                    Excel kaynak dosyaları sonraki bir adımda bu JSON formatına dönüştürülebilir.
                 </p>
             </div>
         </div>
@@ -243,9 +235,9 @@
     aria-modal="true"
     aria-labelledby="retail-store-count-modal-title"
 >
-    <div class="investment-chart-modal__backdrop" data-retail-store-modal-close></div>
+    <div class="investment-chart-modal-overlay investment-chart-modal__backdrop" data-retail-store-modal-close></div>
     <div class="investment-chart-modal__dialog" role="document">
-        <div class="investment-chart-modal__header">
+        <div class="investment-chart-modal-header investment-chart-modal__header">
             <div>
                 <span class="investment-eyebrow">Detaylı İnceleme</span>
                 <h2 id="retail-store-count-modal-title">Mağaza Sayısı Detayı</h2>
@@ -254,7 +246,7 @@
                 <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
-        <div class="investment-chart-modal__body">
+        <div class="investment-chart-modal-body investment-chart-modal__body">
             <div
                 id="retail-store-count-chart-modal"
                 class="investment-chart investment-chart-modal-mount"

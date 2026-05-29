@@ -1,42 +1,15 @@
-const retailStoreCountData = [
-    { period: "2021 1Ç", bim: 9812, sok: 8524, migros: 2383, carrefoursa: 710 },
-    { period: "2021 2Ç", bim: 10152, sok: 8874, migros: 2450, carrefoursa: 722 },
-    { period: "2021 3Ç", bim: 10334, sok: 9074, migros: 2518, carrefoursa: 738 },
-    { period: "2021 4Ç", bim: 10489, sok: 9247, migros: 2565, carrefoursa: 754 },
-
-    { period: "2022 1Ç", bim: 10787, sok: 9435, migros: 2620, carrefoursa: 782 },
-    { period: "2022 2Ç", bim: 11064, sok: 9682, migros: 2695, carrefoursa: 825 },
-    { period: "2022 3Ç", bim: 11272, sok: 9870, migros: 2784, carrefoursa: 851 },
-    { period: "2022 4Ç", bim: 11525, sok: 10141, migros: 2927, carrefoursa: 895 },
-
-    { period: "2023 1Ç", bim: 11692, sok: 10220, migros: 3003, carrefoursa: 915 },
-    { period: "2023 2Ç", bim: 11968, sok: 10415, migros: 3102, carrefoursa: 960 },
-    { period: "2023 3Ç", bim: 12181, sok: 10602, migros: 3225, carrefoursa: 1002 },
-    { period: "2023 4Ç", bim: 12421, sok: 10281, migros: 3363, carrefoursa: 1047 },
-
-    { period: "2024 1Ç", bim: 12652, sok: 10320, migros: 3415, carrefoursa: 1095 },
-    { period: "2024 2Ç", bim: 13011, sok: 10512, migros: 3488, carrefoursa: 1150 },
-    { period: "2024 3Ç", bim: 13254, sok: 10690, migros: 3560, carrefoursa: 1185 },
-    { period: "2024 4Ç", bim: 13583, sok: 10981, migros: 3621, carrefoursa: 1225 },
-
-    { period: "2025 1Ç", bim: 13784, sok: 10825, migros: 3665, carrefoursa: 1240 },
-    { period: "2025 2Ç", bim: 14075, sok: 10940, migros: 3712, carrefoursa: 1248 },
-    { period: "2025 3Ç", bim: 14310, sok: 11010, migros: 3748, carrefoursa: 1252 },
-    { period: "2025 4Ç", bim: 14580, sok: 11074, migros: 3792, carrefoursa: 1265 }
-];
-
 (function () {
+    const supermarketDatasetUrl = "../data/investment-analytics/supermarket_dataset.json";
     const chartMountId = "retail-store-count-chart";
+    const revenueChartMountId = "retail-revenue-per-store-chart";
     const modalChartMountId = "retail-store-count-chart-modal";
     const modalId = "retail-store-count-modal";
     const svgNamespace = "http://www.w3.org/2000/svg";
     const chartTitle = "BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza sayısı çizgi grafiği";
-    const series = [
-        { key: "bim", label: "BİM", color: "#ef4444" },
-        { key: "carrefoursa", label: "CarrefourSA", color: "#3b82f6" },
-        { key: "migros", label: "Migros", color: "#facc15" },
-        { key: "sok", label: "ŞOK Marketler", color: "#f97316" }
-    ];
+    let supermarketDataset = null;
+    let selectedRevenuePeriod = "2025 4Ç";
+
+    // Excel source files can be converted to this JSON format in a later step.
 
     function createSvgElement(tagName, attributes) {
         const element = document.createElementNS(svgNamespace, tagName);
@@ -52,32 +25,65 @@ const retailStoreCountData = [
         return value.toLocaleString("tr-TR");
     }
 
-    function getPoint(index, value, chartConfig) {
+    function formatUsdCompact(value) {
+        return `$${Math.round(value / 1000).toLocaleString("tr-TR")}K`;
+    }
+
+    function getCompanies() {
+        return supermarketDataset?.companies ?? [];
+    }
+
+    function getPeriods(metricKey) {
+        return getCompanies()[0]?.[metricKey]?.map((item) => item.period) ?? [];
+    }
+
+    function getValueForPeriod(company, metricKey, period) {
+        return company[metricKey]?.find((item) => item.period === period)?.value ?? 0;
+    }
+
+    function getMaxValue(metricKey) {
+        const values = getCompanies().flatMap((company) => company[metricKey]?.map((item) => item.value) ?? []);
+        return Math.max(...values, 1);
+    }
+
+    function showErrorState(mountId, message) {
+        const mount = document.getElementById(mountId);
+        if (!mount) return;
+
+        mount.textContent = "";
+        const error = document.createElement("div");
+        error.className = "investment-chart-error";
+        error.textContent = message;
+        mount.appendChild(error);
+    }
+
+    function getPoint(index, value, periods, chartConfig) {
         const { left, top, width, height, maxValue } = chartConfig;
-        const x = left + (index / (retailStoreCountData.length - 1)) * width;
+        const divisor = Math.max(periods.length - 1, 1);
+        const x = left + (index / divisor) * width;
         const y = top + height - (value / maxValue) * height;
 
         return { x, y };
     }
 
-    function renderLegend(container) {
+    function renderLegend(container, companies) {
         const legend = document.createElement("div");
         legend.className = "investment-chart-legend";
 
-        series.forEach((item) => {
+        companies.forEach((company) => {
             const legendItem = document.createElement("span");
             const marker = document.createElement("span");
-            marker.style.backgroundColor = item.color;
-            marker.style.color = item.color;
+            marker.style.backgroundColor = company.color;
+            marker.style.color = company.color;
 
-            legendItem.append(marker, item.label);
+            legendItem.append(marker, company.name);
             legend.appendChild(legendItem);
         });
 
         container.appendChild(legend);
     }
 
-    function renderGrid(svg, chartConfig) {
+    function renderLineGrid(svg, chartConfig) {
         const { left, top, width, height, maxValue } = chartConfig;
         const gridSteps = 4;
 
@@ -105,17 +111,17 @@ const retailStoreCountData = [
         }
     }
 
-    function renderXAxis(svg, chartConfig, mode) {
+    function renderLineXAxis(svg, chartConfig, periods, mode) {
         const { left, top, width, height } = chartConfig;
 
-        retailStoreCountData.forEach((dataPoint, index) => {
+        periods.forEach((period, index) => {
             const shouldShowLabel = mode === "modal"
-                ? dataPoint.period.endsWith("2Ç") || dataPoint.period.endsWith("4Ç")
-                : dataPoint.period.endsWith("4Ç");
+                ? period.endsWith("2Ç") || period.endsWith("4Ç")
+                : period.endsWith("4Ç");
 
             if (!shouldShowLabel) return;
 
-            const x = left + (index / (retailStoreCountData.length - 1)) * width;
+            const x = left + (index / Math.max(periods.length - 1, 1)) * width;
 
             svg.appendChild(
                 createSvgElement("line", {
@@ -133,20 +139,19 @@ const retailStoreCountData = [
                     "text-anchor": "middle",
                     class: "investment-chart-axis-label"
                 })
-            ).textContent = dataPoint.period;
+            ).textContent = period;
         });
     }
 
-    function renderEndpointLabel(svg, item, point, value, chartConfig) {
-        const labelGroup = createSvgElement("g", {
-            class: "investment-chart-endpoint-label",
-            transform: `translate(${point.x + 12}, ${point.y - 10})`
-        });
+    function renderEndpointLabel(svg, company, point, value, chartConfig) {
         const labelText = formatStoreCount(value);
         const textWidth = Math.max(48, labelText.length * 8.6);
         const labelX = point.x + 12 + textWidth > chartConfig.left + chartConfig.width ? -textWidth - 18 : 0;
+        const labelGroup = createSvgElement("g", {
+            class: "investment-chart-endpoint-label",
+            transform: `translate(${point.x + 12 + labelX}, ${point.y - 10})`
+        });
 
-        labelGroup.setAttribute("transform", `translate(${point.x + 12 + labelX}, ${point.y - 10})`);
         labelGroup.appendChild(
             createSvgElement("rect", {
                 x: "0",
@@ -154,9 +159,9 @@ const retailStoreCountData = [
                 width: String(textWidth),
                 height: "24",
                 rx: "12",
-                fill: item.color,
+                fill: company.color,
                 opacity: "0.16",
-                stroke: item.color,
+                stroke: company.color,
                 "stroke-width": "1"
             })
         );
@@ -165,7 +170,7 @@ const retailStoreCountData = [
                 x: String(textWidth / 2),
                 y: "0",
                 "text-anchor": "middle",
-                fill: item.color,
+                fill: company.color,
                 class: "investment-chart-value-label"
             })
         ).textContent = labelText;
@@ -173,7 +178,7 @@ const retailStoreCountData = [
         svg.appendChild(labelGroup);
     }
 
-    function renderPointLabel(svg, item, point, value, index) {
+    function renderPointLabel(svg, company, point, value, index) {
         if (index % 4 !== 3) return;
 
         svg.appendChild(
@@ -181,25 +186,25 @@ const retailStoreCountData = [
                 x: point.x,
                 y: point.y - 12,
                 "text-anchor": "middle",
-                fill: item.color,
+                fill: company.color,
                 class: "investment-chart-point-label"
             })
         ).textContent = formatStoreCount(value);
     }
 
-    function createTooltipContent(item, dataPoint) {
+    function createStoreTooltipContent(company, dataPoint) {
         return `
-            <span class="investment-chart-tooltip__accent" style="background:${item.color}"></span>
-            <strong>${item.label}</strong>
+            <span class="investment-chart-tooltip__accent" style="background:${company.color}"></span>
+            <strong>${company.name}</strong>
             <span>${dataPoint.period}</span>
-            <b>${formatStoreCount(dataPoint[item.key])} mağaza</b>
+            <b>${formatStoreCount(dataPoint.value)} mağaza</b>
         `;
     }
 
-    function renderSeries(svg, chartConfig, tooltip, mode) {
-        series.forEach((item) => {
-            const points = retailStoreCountData.map((dataPoint, index) => {
-                const point = getPoint(index, dataPoint[item.key], chartConfig);
+    function renderLineSeries(svg, chartConfig, tooltip, periods, companies, mode) {
+        companies.forEach((company) => {
+            const points = company.storeCounts.map((dataPoint, index) => {
+                const point = getPoint(index, dataPoint.value, periods, chartConfig);
                 return `${point.x},${point.y}`;
             });
 
@@ -207,40 +212,39 @@ const retailStoreCountData = [
                 createSvgElement("polyline", {
                     points: points.join(" "),
                     fill: "none",
-                    stroke: item.color,
+                    stroke: company.color,
                     "stroke-width": mode === "modal" ? "3.4" : "3",
                     "stroke-linecap": "round",
                     "stroke-linejoin": "round",
                     class: "investment-chart-line",
-                    style: `--series-color: ${item.color}`
+                    style: `--series-color: ${company.color}`
                 })
             );
 
-            retailStoreCountData.forEach((dataPoint, index) => {
-                const value = dataPoint[item.key];
-                const point = getPoint(index, value, chartConfig);
+            company.storeCounts.forEach((dataPoint, index) => {
+                const point = getPoint(index, dataPoint.value, periods, chartConfig);
                 const marker = createSvgElement("circle", {
                     cx: point.x,
                     cy: point.y,
                     r: mode === "modal" ? "5" : "4",
-                    fill: item.color,
+                    fill: company.color,
                     class: "investment-chart-point",
                     tabindex: "0"
                 });
 
-                marker.addEventListener("mouseenter", () => showTooltip(tooltip, createTooltipContent(item, dataPoint), point));
+                marker.addEventListener("mouseenter", () => showTooltip(tooltip, createStoreTooltipContent(company, dataPoint), point));
                 marker.addEventListener("mouseleave", () => hideTooltip(tooltip));
-                marker.addEventListener("focus", () => showTooltip(tooltip, createTooltipContent(item, dataPoint), point));
+                marker.addEventListener("focus", () => showTooltip(tooltip, createStoreTooltipContent(company, dataPoint), point));
                 marker.addEventListener("blur", () => hideTooltip(tooltip));
 
                 svg.appendChild(marker);
 
                 if (mode === "modal") {
-                    renderPointLabel(svg, item, point, value, index);
+                    renderPointLabel(svg, company, point, dataPoint.value, index);
                 }
 
-                if (index === retailStoreCountData.length - 1) {
-                    renderEndpointLabel(svg, item, point, value, chartConfig);
+                if (index === company.storeCounts.length - 1) {
+                    renderEndpointLabel(svg, company, point, dataPoint.value, chartConfig);
                 }
             });
         });
@@ -257,14 +261,14 @@ const retailStoreCountData = [
         tooltip.classList.remove("is-visible");
     }
 
-    function getChartConfig(mode) {
+    function getLineChartConfig(mode) {
         if (mode === "modal") {
             return {
                 left: 84,
                 top: 34,
                 width: 940,
                 height: 430,
-                maxValue: 15000,
+                maxValue: Math.ceil(getMaxValue("storeCounts") / 1000) * 1000,
                 viewBox: "0 0 1100 540"
             };
         }
@@ -274,16 +278,18 @@ const retailStoreCountData = [
             top: 28,
             width: 820,
             height: 320,
-            maxValue: 15000,
+            maxValue: Math.ceil(getMaxValue("storeCounts") / 1000) * 1000,
             viewBox: "0 0 980 420"
         };
     }
 
     function renderRetailStoreCountChart(mountId, mode) {
         const mount = document.getElementById(mountId);
-        if (!mount || !retailStoreCountData.length) return;
+        const companies = getCompanies();
+        const periods = getPeriods("storeCounts");
+        if (!mount || !companies.length || !periods.length) return;
 
-        const chartConfig = getChartConfig(mode);
+        const chartConfig = getLineChartConfig(mode);
         const titleId = `${mountId}-title`;
         const svg = createSvgElement("svg", {
             viewBox: chartConfig.viewBox,
@@ -297,13 +303,132 @@ const retailStoreCountData = [
         tooltip.className = `investment-chart-tooltip${mode === "modal" ? " investment-chart-tooltip-large" : ""}`;
 
         svg.appendChild(title);
-        renderGrid(svg, chartConfig);
-        renderXAxis(svg, chartConfig, mode);
-        renderSeries(svg, chartConfig, tooltip, mode);
+        renderLineGrid(svg, chartConfig);
+        renderLineXAxis(svg, chartConfig, periods, mode);
+        renderLineSeries(svg, chartConfig, tooltip, periods, companies, mode);
 
         mount.textContent = "";
         mount.append(svg, tooltip);
-        renderLegend(mount);
+        renderLegend(mount, companies);
+    }
+
+    function renderRevenueChartControls(mount, periods) {
+        const controls = document.createElement("div");
+        const label = document.createElement("label");
+        const select = document.createElement("select");
+
+        controls.className = "investment-chart-controls";
+        label.setAttribute("for", "retail-revenue-period-select");
+        label.textContent = "Dönem";
+        select.id = "retail-revenue-period-select";
+        select.className = "investment-chart-select";
+
+        periods.forEach((period) => {
+            const option = document.createElement("option");
+            option.value = period;
+            option.textContent = period;
+            option.selected = period === selectedRevenuePeriod;
+            select.appendChild(option);
+        });
+
+        select.addEventListener("change", (event) => {
+            selectedRevenuePeriod = event.target.value;
+            renderRevenuePerStoreChart();
+        });
+
+        controls.append(label, select);
+        mount.appendChild(controls);
+    }
+
+    function renderRevenuePerStoreChart() {
+        const mount = document.getElementById(revenueChartMountId);
+        const companies = getCompanies();
+        const periods = getPeriods("revenuePerStoreUsd");
+        if (!mount || !companies.length || !periods.length) return;
+
+        if (!periods.includes(selectedRevenuePeriod)) {
+            selectedRevenuePeriod = periods[periods.length - 1];
+        }
+
+        const chartConfig = {
+            left: 74,
+            top: 34,
+            width: 720,
+            height: 280,
+            maxValue: Math.ceil(getMaxValue("revenuePerStoreUsd") / 100000) * 100000,
+            viewBox: "0 0 880 390"
+        };
+        const titleId = `${revenueChartMountId}-title`;
+        const svg = createSvgElement("svg", {
+            viewBox: chartConfig.viewBox,
+            role: "img",
+            "aria-labelledby": titleId
+        });
+        const title = createSvgElement("title", { id: titleId });
+        const gridSteps = 4;
+        const barGap = 34;
+        const barWidth = Math.min(94, (chartConfig.width - barGap * (companies.length - 1)) / companies.length);
+        const groupWidth = barWidth * companies.length + barGap * (companies.length - 1);
+        const startX = chartConfig.left + (chartConfig.width - groupWidth) / 2;
+
+        title.textContent = `${selectedRevenuePeriod} mağaza başı ortalama ciro kolon grafiği`;
+        svg.appendChild(title);
+
+        for (let step = 0; step <= gridSteps; step += 1) {
+            const y = chartConfig.top + (chartConfig.height / gridSteps) * step;
+            const value = chartConfig.maxValue - (chartConfig.maxValue / gridSteps) * step;
+
+            svg.appendChild(createSvgElement("line", {
+                x1: chartConfig.left,
+                y1: y,
+                x2: chartConfig.left + chartConfig.width,
+                y2: y,
+                class: "investment-chart-grid-line"
+            }));
+            svg.appendChild(createSvgElement("text", {
+                x: chartConfig.left - 14,
+                y: y + 4,
+                "text-anchor": "end",
+                class: "investment-chart-axis-label"
+            })).textContent = formatUsdCompact(value);
+        }
+
+        companies.forEach((company, index) => {
+            const value = getValueForPeriod(company, "revenuePerStoreUsd", selectedRevenuePeriod);
+            const barHeight = (value / chartConfig.maxValue) * chartConfig.height;
+            const x = startX + index * (barWidth + barGap);
+            const y = chartConfig.top + chartConfig.height - barHeight;
+            const labelX = x + barWidth / 2;
+
+            svg.appendChild(createSvgElement("rect", {
+                x,
+                y,
+                width: barWidth,
+                height: barHeight,
+                rx: "14",
+                fill: company.color,
+                class: "investment-revenue-bar",
+                style: `--series-color: ${company.color}`
+            }));
+            svg.appendChild(createSvgElement("text", {
+                x: labelX,
+                y: y - 12,
+                "text-anchor": "middle",
+                fill: company.color,
+                class: "investment-chart-value-label investment-revenue-value-label"
+            })).textContent = formatUsdCompact(value);
+            svg.appendChild(createSvgElement("text", {
+                x: labelX,
+                y: chartConfig.top + chartConfig.height + 30,
+                "text-anchor": "middle",
+                class: "investment-chart-axis-label investment-revenue-company-label"
+            })).textContent = company.name;
+        });
+
+        mount.textContent = "";
+        renderRevenueChartControls(mount, periods);
+        mount.appendChild(svg);
+        renderLegend(mount, companies);
     }
 
     function setupRetailStoreCountModal() {
@@ -347,8 +472,27 @@ const retailStoreCountData = [
         });
     }
 
+    async function loadSupermarketDataset() {
+        try {
+            const response = await fetch(supermarketDatasetUrl);
+            if (!response.ok) {
+                throw new Error(`Supermarket dataset request failed: ${response.status}`);
+            }
+            supermarketDataset = await response.json();
+            const revenuePeriods = getPeriods("revenuePerStoreUsd");
+            selectedRevenuePeriod = supermarketDataset.meta?.periodEnd ?? revenuePeriods[revenuePeriods.length - 1] ?? selectedRevenuePeriod;
+            renderRetailStoreCountChart(chartMountId, "default");
+            renderRevenuePerStoreChart();
+        } catch (error) {
+            console.error(error);
+            showErrorState(chartMountId, "Grafik verisi yüklenemedi. Lütfen daha sonra tekrar deneyin.");
+            showErrorState(revenueChartMountId, "Ciro grafiği verisi yüklenemedi. Lütfen daha sonra tekrar deneyin.");
+            showErrorState(modalChartMountId, "Detay grafiği verisi yüklenemedi.");
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
-        renderRetailStoreCountChart(chartMountId, "default");
         setupRetailStoreCountModal();
+        loadSupermarketDataset();
     });
 })();
