@@ -1,3 +1,4 @@
+```js
 (function () {
     const supermarketDatasetUrl = "../data/investment-analytics/supermarket_dataset.json";
     const storeCountChartMountId = "retail-store-count-chart";
@@ -45,16 +46,6 @@
 
     function normalizeMetricValues(metricValues) {
         return (metricValues ?? []).map((item) => (typeof item === "number" ? item : item.value));
-    }
-
-    function getMetricMax(metricKey) {
-        const values = getCompanies().flatMap((company) => normalizeMetricValues(company[metricKey]));
-        return Math.max(...values, 1);
-    }
-
-    function getMetricMin(metricKey) {
-        const values = getCompanies().flatMap((company) => normalizeMetricValues(company[metricKey]));
-        return Math.min(...values, 0);
     }
 
     function showErrorState(mountId, message) {
@@ -110,6 +101,7 @@
                 y2: y,
                 class: "investment-chart-grid-line"
             }));
+
             svg.appendChild(createSvgElement("text", {
                 x: left - 14,
                 y: y + 4,
@@ -138,6 +130,7 @@
                 y2: top + height,
                 class: "investment-chart-grid-line investment-chart-grid-line-vertical"
             }));
+
             svg.appendChild(createSvgElement("text", {
                 x,
                 y: top + height + 32,
@@ -168,6 +161,7 @@
             stroke: item.color,
             "stroke-width": "1"
         }));
+
         labelGroup.appendChild(createSvgElement("text", {
             x: String(textWidth / 2),
             y: "0",
@@ -445,10 +439,13 @@
     async function loadSupermarketDataset() {
         try {
             const response = await fetch(supermarketDatasetUrl);
+
             if (!response.ok) {
                 throw new Error(`Supermarket dataset request failed: ${response.status}`);
             }
+
             supermarketDataset = await response.json();
+
             renderRetailStoreCountChart(storeCountChartMountId);
             renderRevenuePerStoreChart();
             renderOperatingProfitPerStoreChart();
@@ -466,3 +463,4 @@
         loadSupermarketDataset();
     });
 })();
+```
