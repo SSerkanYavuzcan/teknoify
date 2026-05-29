@@ -5,17 +5,22 @@
   "description": "Manifest format for source documents stored for a Turkish listed company.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["companyKey", "companyName", "market", "country", "documents"],
+  "required": ["companyKey", "companyName", "ticker", "market", "country", "documents"],
   "properties": {
     "companyKey": {
       "type": "string",
-      "description": "Stable lowercase kebab-case company key matching the folder name.",
-      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      "description": "Stable lowercase BIST ticker code matching the folder name.",
+      "pattern": "^[a-z0-9]+$"
     },
     "companyName": {
       "type": "string",
       "description": "Official or commonly used company name.",
       "minLength": 1
+    },
+    "ticker": {
+      "type": "string",
+      "description": "Uppercase BIST ticker code.",
+      "pattern": "^[A-Z0-9]+$"
     },
     "market": {
       "type": "string",
@@ -83,7 +88,7 @@
             "pattern": "^(reports|investor-presentations|financial-statements)/[a-z0-9]+(?:-[a-z0-9]+)*\\.pdf$"
           },
           "sourceUrl": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Original source URL for the document.",
             "format": "uri"
           },

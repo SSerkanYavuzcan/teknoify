@@ -1,6 +1,7 @@
 {
-  "companyKey": "carrefoursa",
+  "companyKey": "crfsa",
   "companyName": "CarrefourSA Carrefour Sabancı Ticaret Merkezi A.Ş.",
+  "ticker": "CRFSA",
   "market": "BIST",
   "country": "TR",
   "documents": []
