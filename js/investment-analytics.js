@@ -69,6 +69,14 @@
         return (metricValues ?? []).map((item, index) => normalizeMetricPoint(item, index, periods));
     }
 
+    function isValidMetricValue(value) {
+        return Number.isFinite(value);
+    }
+
+    function isMissingMetricValue(value) {
+        return value === null || value === undefined;
+    }
+
     function escapeHtml(value) {
         return String(value ?? "").replace(/[&<>"]/g, (character) => ({
             "&": "&amp;",
@@ -290,9 +298,11 @@
         const tooltipController = createTooltipController(tooltip);
 
         series.forEach((item) => {
-            const points = item.points.map((pointData, index) => {
+            const points = item.points.flatMap((pointData, index) => {
+                if (!isValidMetricValue(pointData.value)) return [];
+
                 const point = getPoint(index, pointData.value, periods, chartConfig);
-                return `${point.x},${point.y}`;
+                return [`${point.x},${point.y}`];
             });
 
             svg.appendChild(createSvgElement("polyline", {
@@ -307,6 +317,8 @@
             }));
 
             item.points.forEach((pointData, index) => {
+                if (!isValidMetricValue(pointData.value)) return;
+
                 const point = getPoint(index, pointData.value, periods, chartConfig);
                 const marker = createSvgElement("circle", {
                     cx: point.x,
@@ -419,7 +431,7 @@
                 name: company.name,
                 color: company.color,
                 points,
-                values: points.map((point) => point.value)
+                values: points.map((point) => point.value).filter(isValidMetricValue)
             };
         });
     }
@@ -428,7 +440,9 @@
         const mount = document.getElementById(mountId);
         const periods = getPeriods();
         const series = buildSeries(metricKey, periods).filter((item) => (
-            item.points.length === periods.length && item.points.every((point) => Number.isFinite(point.value))
+            item.points.length === periods.length
+                && item.points.every((point) => isValidMetricValue(point.value) || isMissingMetricValue(point.value))
+                && item.values.length
         ));
 
         if (!mount || !series.length || !periods.length) return;
