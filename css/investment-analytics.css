@@ -338,6 +338,16 @@
     opacity: 0.76;
 }
 
+.investment-chart-all-point-label {
+    fill: rgba(243, 244, 246, 0.78);
+    font-size: 0.62rem;
+    font-weight: 700;
+    paint-order: stroke;
+    pointer-events: none;
+    stroke: rgba(5, 5, 5, 0.78);
+    stroke-width: 2px;
+}
+
 .investment-chart-legend {
     display: flex;
     flex-wrap: wrap;

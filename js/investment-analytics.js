@@ -1,3 +1,4 @@
+```js
 (function () {
     const supermarketDatasetUrl = "../data/investment-analytics/supermarket_dataset.json";
     const storeCountChartMountId = "retail-store-count-chart";
@@ -45,16 +46,6 @@
 
     function normalizeMetricValues(metricValues) {
         return (metricValues ?? []).map((item) => (typeof item === "number" ? item : item.value));
-    }
-
-    function getMetricMax(metricKey) {
-        const values = getCompanies().flatMap((company) => normalizeMetricValues(company[metricKey]));
-        return Math.max(...values, 1);
-    }
-
-    function getMetricMin(metricKey) {
-        const values = getCompanies().flatMap((company) => normalizeMetricValues(company[metricKey]));
-        return Math.min(...values, 0);
     }
 
     function showErrorState(mountId, message) {
@@ -110,6 +101,7 @@
                 y2: y,
                 class: "investment-chart-grid-line"
             }));
+
             svg.appendChild(createSvgElement("text", {
                 x: left - 14,
                 y: y + 4,
@@ -138,6 +130,7 @@
                 y2: top + height,
                 class: "investment-chart-grid-line investment-chart-grid-line-vertical"
             }));
+
             svg.appendChild(createSvgElement("text", {
                 x,
                 y: top + height + 32,
@@ -168,6 +161,7 @@
             stroke: item.color,
             "stroke-width": "1"
         }));
+
         labelGroup.appendChild(createSvgElement("text", {
             x: String(textWidth / 2),
             y: "0",
@@ -188,6 +182,15 @@
             "text-anchor": "middle",
             fill: item.color,
             class: "investment-chart-point-label"
+        })).textContent = formatValue(value);
+    }
+
+    function renderAllPointLabel(svg, point, value, chartConfig, formatValue) {
+        svg.appendChild(createSvgElement("text", {
+            x: point.x,
+            y: Math.max(chartConfig.top + 12, point.y - 10),
+            "text-anchor": "middle",
+            class: "investment-chart-all-point-label"
         })).textContent = formatValue(value);
     }
 
@@ -251,6 +254,10 @@
                 marker.addEventListener("blur", () => hideTooltip(tooltip));
 
                 svg.appendChild(marker);
+
+                if (options.showAllPointLabels && index !== item.values.length - 1) {
+                    renderAllPointLabel(svg, point, value, chartConfig, options.formatEndpointValue);
+                }
 
                 if (options.mode === "modal") {
                     renderPointLabel(svg, item, point, value, index, options.formatEndpointValue);
@@ -381,6 +388,7 @@
             title: "BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başına operasyonel kâr çizgi grafiği",
             axisStep: 5000,
             variant: "wide",
+            showAllPointLabels: true,
             formatAxisValue: formatUsdCompact,
             formatEndpointValue: formatUsdCompact,
             formatTooltipValue: (value) => `${formatUsdCompact(value)} mağaza başı operasyonel kâr`
@@ -431,10 +439,13 @@
     async function loadSupermarketDataset() {
         try {
             const response = await fetch(supermarketDatasetUrl);
+
             if (!response.ok) {
                 throw new Error(`Supermarket dataset request failed: ${response.status}`);
             }
+
             supermarketDataset = await response.json();
+
             renderRetailStoreCountChart(storeCountChartMountId);
             renderRevenuePerStoreChart();
             renderOperatingProfitPerStoreChart();
@@ -452,3 +463,4 @@
         loadSupermarketDataset();
     });
 })();
+```
