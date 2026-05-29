@@ -133,8 +133,8 @@
 .investment-orbit-node {
     position: absolute;
     display: grid;
-    width: clamp(40px, 4.2vw, 52px);
-    height: clamp(40px, 4.2vw, 52px);
+    width: clamp(34px, 3.6vw, 46px);
+    height: clamp(34px, 3.6vw, 46px);
     place-items: center;
     border: 1px solid var(--node-border);
     border-radius: 50%;
@@ -142,10 +142,10 @@
         radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.24), transparent 26%),
         linear-gradient(145deg, rgba(15, 23, 42, 0.88), rgba(2, 6, 23, 0.72));
     box-shadow:
-        0 0 22px var(--node-glow),
+        0 0 18px var(--node-glow),
         inset 0 1px 0 rgba(255, 255, 255, 0.12);
     color: var(--node-color);
-    font-size: clamp(1rem, 1.7vw, 1.28rem);
+    font-size: clamp(0.88rem, 1.45vw, 1.08rem);
     transform: translate(-50%, -50%);
     animation: investmentNodeCounterRotate var(--orbit-speed, 38s) linear infinite,
         investmentNodePulse 4.8s ease-in-out var(--node-delay, 0s) infinite;
@@ -165,10 +165,17 @@
     left: 50%;
 }
 
-.investment-orbit-node--trend {
-    --node-color: #67e8f9;
-    --node-border: rgba(103, 232, 249, 0.38);
-    --node-glow: rgba(103, 232, 249, 0.34);
+.investment-orbit-node-label {
+    font-size: clamp(0.52rem, 0.78vw, 0.64rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1;
+}
+
+.investment-orbit-node--googl {
+    --node-color: #7dd3fc;
+    --node-border: rgba(125, 211, 252, 0.4);
+    --node-glow: rgba(59, 130, 246, 0.34);
     --node-delay: 1.5s;
 
     top: 100%;
@@ -185,10 +192,10 @@
     left: 100%;
 }
 
-.investment-orbit-node--pie {
-    --node-color: #c4b5fd;
-    --node-border: rgba(196, 181, 253, 0.38);
-    --node-glow: rgba(196, 181, 253, 0.34);
+.investment-orbit-node--msft {
+    --node-color: #93c5fd;
+    --node-border: rgba(147, 197, 253, 0.4);
+    --node-glow: rgba(96, 165, 250, 0.34);
     --node-delay: 2s;
 
     top: 50%;
@@ -205,10 +212,10 @@
     left: 82%;
 }
 
-.investment-orbit-node--percent {
-    --node-color: #22d3ee;
-    --node-border: rgba(34, 211, 238, 0.38);
-    --node-glow: rgba(34, 211, 238, 0.34);
+.investment-orbit-node--enr {
+    --node-color: #5eead4;
+    --node-border: rgba(45, 212, 191, 0.4);
+    --node-glow: rgba(20, 184, 166, 0.34);
     --node-delay: 2.6s;
 
     top: 85%;
@@ -999,12 +1006,16 @@ body.investment-modal-open {
     }
 
     .investment-orbit-node {
-        width: 38px;
-        height: 38px;
-        font-size: 0.95rem;
+        width: 32px;
+        height: 32px;
+        font-size: 0.82rem;
     }
 
-    .investment-orbit-node--percent,
+    .investment-orbit-node-label {
+        font-size: 0.47rem;
+        letter-spacing: 0.02em;
+    }
+
     .investment-orbit-particle--two {
         display: none;
     }
