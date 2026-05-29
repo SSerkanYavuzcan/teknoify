@@ -78,12 +78,14 @@
 }
 
 .investment-chart-card-wide {
+    grid-column: 1 / -1;
     border-color: rgba(99, 102, 241, 0.24);
     box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38), 0 0 36px rgba(99, 102, 241, 0.08);
 }
 
-.investment-revenue-card {
-    margin-top: 1.5rem;
+.investment-revenue-card,
+.investment-operating-profit-card {
+    margin-top: 0;
 }
 
 .investment-chart-card-header {
@@ -264,8 +266,13 @@
         linear-gradient(180deg, rgba(99, 102, 241, 0.08), rgba(255, 255, 255, 0.015));
 }
 
-.investment-chart-store-count {
+.investment-chart-store-count,
+.investment-chart-revenue-per-store {
     min-height: 420px;
+}
+
+.investment-chart-operating-profit-per-store {
+    min-height: 460px;
 }
 
 .investment-chart svg {
@@ -274,8 +281,13 @@
     height: 350px;
 }
 
-.investment-chart-store-count svg {
+.investment-chart-store-count svg,
+.investment-chart-revenue-per-store svg {
     height: 420px;
+}
+
+.investment-chart-operating-profit-per-store svg {
+    height: 460px;
 }
 
 .investment-chart-grid-line {
@@ -513,7 +525,11 @@ body.investment-modal-open {
     }
 
     .investment-chart-store-count,
-    .investment-chart-store-count svg {
+    .investment-chart-store-count svg,
+    .investment-chart-revenue-per-store,
+    .investment-chart-revenue-per-store svg,
+    .investment-chart-operating-profit-per-store,
+    .investment-chart-operating-profit-per-store svg {
         min-height: 360px;
         height: 360px;
     }
@@ -554,7 +570,11 @@ body.investment-modal-open {
     .investment-chart,
     .investment-chart svg,
     .investment-chart-store-count,
-    .investment-chart-store-count svg {
+    .investment-chart-store-count svg,
+    .investment-chart-revenue-per-store,
+    .investment-chart-revenue-per-store svg,
+    .investment-chart-operating-profit-per-store,
+    .investment-chart-operating-profit-per-store svg {
         min-height: 320px;
         height: 320px;
     }
@@ -581,72 +601,13 @@ body.investment-modal-open {
     }
 }
 
-.investment-revenue-card {
-    margin-top: 0;
+
+.investment-chart-endpoint-label rect {
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.26));
 }
 
-.investment-chart-revenue-per-store {
-    min-height: 420px;
-}
-
-.investment-chart-revenue-per-store svg {
-    height: 390px;
-}
-
-.investment-chart-controls {
-    position: absolute;
-    top: 0.85rem;
-    right: 0.85rem;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.35rem 0.45rem 0.35rem 0.7rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
-    background: rgba(5, 5, 5, 0.72);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
-    backdrop-filter: blur(12px);
-}
-
-.investment-chart-controls label {
-    color: rgba(243, 244, 246, 0.72);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.investment-chart-select {
-    min-width: 98px;
-    border: 1px solid rgba(125, 211, 252, 0.28);
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.92);
-    color: #f8fafc;
-    font: inherit;
-    font-size: 0.78rem;
-    font-weight: 800;
-    padding: 0.32rem 1.75rem 0.32rem 0.7rem;
-    cursor: pointer;
-}
-
-.investment-chart-select:focus-visible {
-    border-color: rgba(125, 211, 252, 0.82);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
-}
-
-.investment-revenue-bar {
-    filter: drop-shadow(0 12px 20px color-mix(in srgb, var(--series-color) 24%, transparent));
-}
-
-.investment-revenue-value-label {
-    font-size: 0.82rem;
-}
-
-.investment-revenue-company-label {
-    font-size: 0.7rem;
-    font-weight: 800;
+.investment-chart-operating-profit-per-store .investment-chart-line {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--series-color) 46%, transparent));
 }
 
 .investment-chart-error {
@@ -673,24 +634,4 @@ body.investment-modal-open {
 .investment-chart-modal-header,
 .investment-chart-modal-body {
     position: relative;
-}
-
-@media (max-width: 560px) {
-    .investment-chart-revenue-per-store,
-    .investment-chart-revenue-per-store svg {
-        min-height: 360px;
-        height: 360px;
-    }
-
-    .investment-chart-controls {
-        position: relative;
-        top: auto;
-        right: auto;
-        justify-content: space-between;
-        margin: 0.8rem 0.8rem 0;
-    }
-
-    .investment-chart-select {
-        flex: 1;
-    }
 }
