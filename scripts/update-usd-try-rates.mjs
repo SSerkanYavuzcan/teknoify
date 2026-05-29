@@ -384,7 +384,8 @@ async function fetchEvdsCandidate({ apiKey, candidate }) {
     const finalUrl = sanitizeDiagnosticValue(response.url, apiKey);
     const responsePreview = sanitizeResponsePreview(responseText, apiKey);
     const trimmedResponseText = responseText.trimStart();
-    const isJsonLike = contentType.toLowerCase().includes('application/json') || trimmedResponseText.startsWith('{');
+    const isJsonLike =
+        contentType.toLowerCase().includes('application/json') || trimmedResponseText.startsWith('{');
     const isHtmlLike = trimmedResponseText.startsWith('<') || responseText.includes('<!DOCTYPE');
     const failureBase = {
         name: candidate.name,
