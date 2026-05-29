@@ -1,3 +1,4 @@
+```css
 .investment-hero-layout {
     display: grid;
     grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
@@ -21,13 +22,10 @@
 .investment-hero-visual::before {
     content: "";
     position: absolute;
-    pointer-events: none;
-}
-
-.investment-hero-visual::before {
     inset: 12% 10%;
     z-index: -1;
     border-radius: 999px;
+    pointer-events: none;
     background: radial-gradient(circle, rgba(99, 102, 241, 0.26), transparent 62%);
     filter: blur(28px);
     animation: investmentPulseGlow 6s ease-in-out infinite;
@@ -113,20 +111,17 @@
 
 .investment-orbit-path--inner {
     --orbit-speed: 32s;
-
     width: 48%;
 }
 
 .investment-orbit-path--middle {
     --orbit-speed: 42s;
-
     width: 66%;
     animation-direction: reverse;
 }
 
 .investment-orbit-path--outer {
     --orbit-speed: 54s;
-
     width: 84%;
 }
 
@@ -147,22 +142,13 @@
     color: var(--node-color);
     font-size: clamp(0.88rem, 1.45vw, 1.08rem);
     transform: translate(-50%, -50%);
-    animation: investmentNodeCounterRotate var(--orbit-speed, 38s) linear infinite,
+    animation:
+        investmentNodeCounterRotate var(--orbit-speed, 38s) linear infinite,
         investmentNodePulse 4.8s ease-in-out var(--node-delay, 0s) infinite;
 }
 
 .investment-orbit-path--middle .investment-orbit-node {
     animation-direction: reverse, normal;
-}
-
-.investment-orbit-node--dollar {
-    --node-color: #34d399;
-    --node-border: rgba(52, 211, 153, 0.38);
-    --node-glow: rgba(52, 211, 153, 0.34);
-    --node-delay: 0.4s;
-
-    top: 0;
-    left: 50%;
 }
 
 .investment-orbit-node__icon {
@@ -185,6 +171,16 @@
 .investment-orbit-node__icon--siemens {
     width: 66%;
     height: 66%;
+}
+
+.investment-orbit-node--dollar {
+    --node-color: #34d399;
+    --node-border: rgba(52, 211, 153, 0.38);
+    --node-glow: rgba(52, 211, 153, 0.34);
+    --node-delay: 0.4s;
+
+    top: 0;
+    left: 50%;
 }
 
 .investment-orbit-node--google {
@@ -427,7 +423,9 @@
 .investment-chart-card-wide {
     grid-column: 1 / -1;
     border-color: rgba(99, 102, 241, 0.24);
-    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38), 0 0 36px rgba(99, 102, 241, 0.08);
+    box-shadow:
+        0 28px 90px rgba(0, 0, 0, 0.38),
+        0 0 36px rgba(99, 102, 241, 0.08);
 }
 
 .investment-revenue-card,
@@ -478,16 +476,24 @@
     padding: 0.55rem 0.9rem;
     border: 1px solid rgba(99, 102, 241, 0.5);
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(14, 165, 233, 0.08));
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04) inset, 0 0 22px rgba(99, 102, 241, 0.2);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 0 22px rgba(99, 102, 241, 0.2);
     color: #e0e7ff;
     cursor: pointer;
-    transition: transform var(--ease-fast), border-color var(--ease-fast), box-shadow var(--ease-fast), color var(--ease-fast);
+    transition:
+        transform var(--ease-fast),
+        border-color var(--ease-fast),
+        box-shadow var(--ease-fast),
+        color var(--ease-fast);
 }
 
 .investment-detail-button:hover,
 .investment-detail-button:focus-visible {
     border-color: rgba(125, 211, 252, 0.86);
-    box-shadow: 0 0 0 1px rgba(125, 211, 252, 0.18) inset, 0 0 30px rgba(14, 165, 233, 0.28);
+    box-shadow:
+        0 0 0 1px rgba(125, 211, 252, 0.18) inset,
+        0 0 30px rgba(14, 165, 233, 0.28);
     color: #fff;
     outline: none;
     transform: translateY(-1px);
@@ -662,7 +668,9 @@
     outline: none;
     stroke: rgba(5, 5, 5, 0.9);
     stroke-width: 2;
-    transition: r var(--ease-fast), stroke var(--ease-fast);
+    transition:
+        r var(--ease-fast),
+        stroke var(--ease-fast);
 }
 
 .investment-chart-point:hover,
@@ -672,17 +680,13 @@
 }
 
 .investment-chart-point-label {
-    font-size: 0.78rem;
+    cursor: help;
+    font-size: 0.68rem;
     font-weight: 800;
+    opacity: 0.76;
     paint-order: stroke;
     stroke: rgba(5, 5, 5, 0.78);
     stroke-width: 3px;
-}
-
-.investment-chart-point-label {
-    cursor: help;
-    font-size: 0.68rem;
-    opacity: 0.76;
 }
 
 .investment-chart-all-point-label {
@@ -745,7 +749,9 @@
     border: 1px solid rgba(148, 163, 184, 0.22);
     border-radius: 12px;
     background: linear-gradient(145deg, rgba(9, 15, 28, 0.96), rgba(2, 6, 23, 0.9));
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.36),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
     color: #fff;
     font-size: 0.7rem;
     line-height: 1.35;
@@ -873,7 +879,9 @@
     background:
         radial-gradient(circle at 12% 10%, rgba(99, 102, 241, 0.18), transparent 36%),
         linear-gradient(145deg, rgba(15, 16, 20, 0.98), rgba(8, 9, 13, 0.98));
-    box-shadow: 0 36px 100px rgba(0, 0, 0, 0.56), 0 0 50px rgba(99, 102, 241, 0.16);
+    box-shadow:
+        0 36px 100px rgba(0, 0, 0, 0.56),
+        0 0 50px rgba(99, 102, 241, 0.16);
 }
 
 .investment-chart-modal__header {
@@ -906,7 +914,10 @@
     background: rgba(255, 255, 255, 0.04);
     color: rgba(243, 244, 246, 0.88);
     cursor: pointer;
-    transition: border-color var(--ease-fast), background var(--ease-fast), transform var(--ease-fast);
+    transition:
+        border-color var(--ease-fast),
+        background var(--ease-fast),
+        transform var(--ease-fast);
 }
 
 .investment-chart-modal__close:hover,
@@ -933,6 +944,36 @@
 
 body.investment-modal-open {
     overflow: hidden;
+}
+
+.investment-chart-operating-profit-per-store .investment-chart-line {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--series-color) 46%, transparent));
+}
+
+.investment-chart-error {
+    position: absolute;
+    inset: 1rem;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    border: 1px solid rgba(248, 113, 113, 0.24);
+    border-radius: 18px;
+    background: rgba(127, 29, 29, 0.14);
+    color: #fecaca;
+    font-size: 0.94rem;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.investment-chart-modal-overlay {
+    position: absolute;
+    inset: 0;
+}
+
+.investment-chart-modal-header,
+.investment-chart-modal-body {
+    position: relative;
 }
 
 @media (max-width: 860px) {
@@ -1076,38 +1117,6 @@ body.investment-modal-open {
     }
 }
 
-
-
-.investment-chart-operating-profit-per-store .investment-chart-line {
-    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--series-color) 46%, transparent));
-}
-
-.investment-chart-error {
-    position: absolute;
-    inset: 1rem;
-    display: grid;
-    place-items: center;
-    padding: 1rem;
-    border: 1px solid rgba(248, 113, 113, 0.24);
-    border-radius: 18px;
-    background: rgba(127, 29, 29, 0.14);
-    color: #fecaca;
-    font-size: 0.94rem;
-    font-weight: 700;
-    line-height: 1.5;
-    text-align: center;
-}
-
-.investment-chart-modal-overlay {
-    position: absolute;
-    inset: 0;
-}
-
-.investment-chart-modal-header,
-.investment-chart-modal-body {
-    position: relative;
-}
-
 @media (prefers-reduced-motion: reduce) {
     .investment-hero-visual::before,
     .investment-orbit-path,
@@ -1116,3 +1125,4 @@ body.investment-modal-open {
         animation: none;
     }
 }
+```
