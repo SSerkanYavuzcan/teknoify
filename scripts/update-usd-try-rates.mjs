@@ -237,19 +237,28 @@ function normalizeEvdsRows(rows) {
     );
 }
 
-function createEvdsUrl({ startDate, endDate }) {
-    const params = new URLSearchParams({
-        series: EVDS_USD_TRY_SERIES,
-        startDate: toEvdsDate(startDate),
-        endDate: toEvdsDate(endDate),
-        type: 'json'
-    });
+function createEvdsUrl({ apiKey, startDate, endDate }) {
+    const startDateForEvds = toEvdsDate(startDate);
+    const endDateForEvds = toEvdsDate(endDate);
+    const evdsUrl =
+        `${EVDS_BASE_URL}series=${encodeURIComponent(EVDS_USD_TRY_SERIES)}` +
+        `&startDate=${startDateForEvds}` +
+        `&endDate=${endDateForEvds}` +
+        '&type=json' +
+        `&key=${encodeURIComponent(apiKey)}`;
 
-    return new URL(params.toString(), EVDS_BASE_URL);
+    return new URL(evdsUrl);
+}
+
+function sanitizeResponsePreview(responseText) {
+    return responseText
+        .slice(0, 300)
+        .replace(/(key=)[^&\s"'<>]+/gi, '$1***')
+        .replace(/(TCMB_EVDS_API_KEY[\s:=]+)[^\s"'<>]+/gi, '$1***');
 }
 
 async function fetchUsdTryRates({ apiKey, startDate, endDate }) {
-    const url = createEvdsUrl({ startDate, endDate });
+    const url = createEvdsUrl({ apiKey, startDate, endDate });
 
     let response;
 
@@ -263,19 +272,28 @@ async function fetchUsdTryRates({ apiKey, startDate, endDate }) {
         throw new Error(`Network error while requesting TCMB EVDS: ${error.message}`);
     }
 
-    if (!response.ok) {
-        const responseText = await response.text().catch(() => '');
-        const responseSnippet = responseText ? ` Response: ${responseText.slice(0, 300)}` : '';
+    const responseText = await response.text();
+    const responsePreview = sanitizeResponsePreview(responseText);
+    const responseSnippet = responsePreview ? ` Response preview: ${responsePreview}` : '';
 
+    if (!response.ok) {
         throw new Error(
             `TCMB EVDS request failed with HTTP ${response.status} ${response.statusText}.${responseSnippet}`
         );
     }
 
+    const trimmedResponseText = responseText.trimStart();
+
+    if (trimmedResponseText.startsWith('<') || responseText.includes('<!DOCTYPE')) {
+        throw new Error(
+            `TCMB EVDS returned HTML instead of JSON. Check EVDS URL format, API key, or endpoint availability.${responseSnippet}`
+        );
+    }
+
     try {
-        return await response.json();
+        return JSON.parse(responseText);
     } catch (error) {
-        throw new Error(`TCMB EVDS returned invalid JSON: ${error.message}`);
+        throw new Error(`TCMB EVDS returned invalid JSON: ${error.message}.${responseSnippet}`);
     }
 }
 
