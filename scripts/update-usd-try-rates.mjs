@@ -356,6 +356,7 @@ function logEvdsCandidateDiagnostics(failure) {
     console.log(`Result: ${failure.result}, trying next candidate...`);
 }
 
+```js
 async function fetchEvdsCandidate({ apiKey, candidate }) {
     let response;
 
@@ -385,8 +386,10 @@ async function fetchEvdsCandidate({ apiKey, candidate }) {
     const finalUrl = sanitizeDiagnosticValue(response.url, apiKey);
     const responsePreview = sanitizeResponsePreview(responseText, apiKey);
     const trimmedResponseText = responseText.trimStart();
-    const isJsonLike = contentType.toLowerCase().includes('application/json') || trimmedResponseText.startsWith('{');
+    const isJsonLike =
+        contentType.toLowerCase().includes('application/json') || trimmedResponseText.startsWith('{');
     const isHtmlLike = trimmedResponseText.startsWith('<') || responseText.includes('<!DOCTYPE');
+
     const failureBase = {
         name: candidate.name,
         url: sanitizeDiagnosticValue(candidate.url.href, apiKey),
@@ -434,6 +437,8 @@ async function fetchEvdsCandidate({ apiKey, candidate }) {
         }
     };
 }
+```
+
 
 async function fetchUsdTryRates({ apiKey, startDate, endDate }) {
     const candidates = createEvdsRequestCandidates({ apiKey, startDate, endDate });
