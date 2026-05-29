@@ -1,4 +1,3 @@
-```js
 (function () {
     const supermarketDatasetUrl = "../data/investment-analytics/supermarket_dataset.json";
     const storeCountChartMountId = "retail-store-count-chart";
@@ -463,4 +462,3 @@
         loadSupermarketDataset();
     });
 })();
-```
