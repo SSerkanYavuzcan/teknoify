@@ -12,18 +12,19 @@ The goal is to make answers traceable, source-backed, and safe for financial ana
 
 ## 2. Current stage
 
-Stage 6A only creates the first safe document catalog layer for future retrieval-augmented generation (RAG).
+Stage 6B creates the first text extraction layer for future retrieval-augmented generation (RAG). Stage 6A created the normalized central document catalog; Stage 6B reads that catalog and extracts page/chunk text JSON from local PDFs.
 
 This stage implements:
 
 - Documentation for the future RAG pipeline.
 - A schema description for the normalized central document catalog.
 - A safe catalog builder that reads company `manifest.json` files and writes document metadata into `data/stock/turkey/document-catalog.json`.
+- PDF text extraction that creates page-level and chunk-level JSON for future embeddings.
+- A text extraction catalog at `data/stock/turkey/text-extraction-catalog.json`.
 
 This stage does **not** implement:
 
-- PDF text extraction.
-- Page-level chunking.
+- OCR.
 - Embeddings.
 - Vector database storage.
 - Retrieval.
@@ -51,7 +52,7 @@ Planned responsibilities for each step:
 
 1. **PDF manifests**: Company-level `manifest.json` files register source documents and human-curated metadata.
 2. **Central document catalog**: A generated metadata-only index normalizes document metadata across company folders.
-3. **PDF text extraction**: Future tooling extracts text from PDFs without changing the original files.
+3. **PDF text extraction**: Stage 6B extracts page/chunk text JSON from PDFs without changing the original files.
 4. **Page-level text chunks**: Extracted text is split into page-aware chunks to preserve citation context.
 5. **Chunk metadata**: Each chunk stores document id, company, fiscal period, page number, and source path metadata.
 6. **Embeddings**: Future embedding jobs convert approved chunks into vectors.
@@ -91,7 +92,7 @@ Company folders use lowercase BIST ticker keys. Each PDF should live in the rele
 - Use `sourceUrl` when an official source URL is available.
 - Use `localPath` for repository documents.
 - Preserve company, period, fiscal year, quarter, document type, title, language, upload date, and notes metadata.
-- The central catalog stores metadata only; extracted text and embeddings belong to later pipeline stages.
+- The central catalog stores metadata only; extracted text belongs to Stage 6B outputs and embeddings belong to later pipeline stages.
 
 ## 6. Safety rules
 
