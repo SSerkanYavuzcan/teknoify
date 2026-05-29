@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teknoify.local/schemas/turkey-company-document-manifest.schema.json",
+  "title": "Turkish Listed Company Document Manifest",
+  "description": "Manifest format for source documents stored for a Turkish listed company.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["companyKey", "companyName", "market", "country", "documents"],
+  "properties": {
+    "companyKey": {
+      "type": "string",
+      "description": "Stable lowercase kebab-case company key matching the folder name.",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "companyName": {
+      "type": "string",
+      "description": "Official or commonly used company name.",
+      "minLength": 1
+    },
+    "market": {
+      "type": "string",
+      "description": "Exchange or market where the company is listed.",
+      "minLength": 1
+    },
+    "country": {
+      "type": "string",
+      "description": "ISO 3166-1 alpha-2 country code.",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "documents": {
+      "type": "array",
+      "description": "Documents stored in the company folder.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "period",
+          "fiscalYear",
+          "quarter",
+          "documentType",
+          "title",
+          "localPath",
+          "sourceUrl",
+          "language",
+          "uploadedAt",
+          "notes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable lowercase kebab-case document identifier.",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "period": {
+            "type": "string",
+            "description": "Human-readable reporting period, for example '2026 1Ç'."
+          },
+          "fiscalYear": {
+            "type": "integer",
+            "description": "Fiscal year covered by the document.",
+            "minimum": 1900
+          },
+          "quarter": {
+            "type": ["integer", "null"],
+            "description": "Fiscal quarter covered by the document, or null for annual/non-quarterly documents.",
+            "minimum": 1,
+            "maximum": 4
+          },
+          "documentType": {
+            "type": "string",
+            "description": "Document category such as activity_report, annual_report, investor_presentation, or financial_statement.",
+            "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"
+          },
+          "title": {
+            "type": "string",
+            "description": "Document title as published by the source.",
+            "minLength": 1
+          },
+          "localPath": {
+            "type": "string",
+            "description": "Path to the PDF relative to the company folder.",
+            "pattern": "^(reports|investor-presentations|financial-statements)/[a-z0-9]+(?:-[a-z0-9]+)*\\.pdf$"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "description": "Original source URL for the document.",
+            "format": "uri"
+          },
+          "language": {
+            "type": "string",
+            "description": "ISO 639-1 language code for the document.",
+            "pattern": "^[a-z]{2}$"
+          },
+          "uploadedAt": {
+            "type": ["string", "null"],
+            "description": "Timestamp when the document was added to the repository, or null if not recorded.",
+            "format": "date-time"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes about the document. Keep empty if not needed."
+          }
+        }
+      }
+    }
+  }
+}
