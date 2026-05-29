@@ -48,3 +48,7 @@ Current status: **mock only**. This contract does not call a real AI model, RAG 
 - `disclaimer`: Non-advice disclaimer text shown by the frontend when present.
 
 Real AI responses, RAG/document retrieval, Firestore logging, web search, and automation logic are not implemented in this stage.
+
+## Related Logging Endpoint
+
+`POST /api/chat-log` is the Stage 5 chatbot query logging contract endpoint. It currently performs no-op validation only: valid metadata-only events are accepted, but no logs are stored, no database writes are made, and no Firestore/Supabase integration exists in Stage 5.
