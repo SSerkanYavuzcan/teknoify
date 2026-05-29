@@ -12,7 +12,7 @@ The goal is to make answers traceable, source-backed, and safe for financial ana
 
 ## 2. Current stage
 
-Stage 6B creates the first text extraction layer for future retrieval-augmented generation (RAG). Stage 6A created the normalized central document catalog; Stage 6B reads that catalog and extracts page/chunk text JSON from local PDFs.
+Stage 6C adds local keyword retrieval testing over extracted chunks before embeddings or vector database storage. Stage 6A created the normalized central document catalog; Stage 6B reads that catalog and extracts page/chunk text JSON from local PDFs; Stage 6C validates extraction and chunk quality with deterministic command-line searches.
 
 This stage implements:
 
@@ -21,6 +21,7 @@ This stage implements:
 - A safe catalog builder that reads company `manifest.json` files and writes document metadata into `data/stock/turkey/document-catalog.json`.
 - PDF text extraction that creates page-level and chunk-level JSON for future embeddings.
 - A text extraction catalog at `data/stock/turkey/text-extraction-catalog.json`.
+- A local keyword search script for testing extracted chunk retrieval quality before embeddings/vector DB.
 
 This stage does **not** implement:
 
