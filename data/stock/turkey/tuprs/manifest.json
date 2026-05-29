@@ -1,0 +1,22 @@
+{
+  "companyKey": "tuprs",
+  "companyName": "Türkiye Petrol Rafinerileri A.Ş.",
+  "ticker": "TUPRS",
+  "market": "BIST",
+  "country": "TR",
+  "documents": [
+    {
+      "id": "tuprs-2026-q1-activity-report",
+      "period": "2026 1Ç",
+      "fiscalYear": 2026,
+      "quarter": 1,
+      "documentType": "activity_report",
+      "title": "2026 1. Çeyrek Ara Dönem Faaliyet Raporu",
+      "localPath": "reports/tuprs-2026-q1-activity-report.pdf",
+      "sourceUrl": null,
+      "language": "tr",
+      "uploadedAt": null,
+      "notes": ""
+    }
+  ]
+}
