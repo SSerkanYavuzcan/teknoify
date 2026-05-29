@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "generatedAt": "2026-05-29T21:15:14.213Z",
+    "sourceRoot": "data/stock/turkey",
+    "documentCount": 2,
+    "companyCount": 5,
+    "notes": [
+      "Generated from company manifest.json files.",
+      "This catalog stores document metadata only. It does not contain extracted PDF text or embeddings."
+    ]
+  },
+  "documents": [
+    {
+      "documentId": "mgros-2026-q1-activity-report",
+      "companyKey": "mgros",
+      "companyName": "Migros Ticaret A.Ş.",
+      "ticker": "MGROS",
+      "market": "BIST",
+      "country": "TR",
+      "period": "2026 1Ç",
+      "fiscalYear": 2026,
+      "quarter": 1,
+      "documentType": "activity_report",
+      "title": "2026 1. Çeyrek Faaliyet Raporu",
+      "localPath": "data/stock/turkey/mgros/reports/mgros-2026-q1-activity-report.pdf",
+      "sourceUrl": null,
+      "language": "tr",
+      "uploadedAt": null,
+      "notes": "",
+      "indexStatus": "metadata_only",
+      "textExtractionStatus": "not_started",
+      "embeddingStatus": "not_started"
+    },
+    {
+      "documentId": "tuprs-2026-q1-activity-report",
+      "companyKey": "tuprs",
+      "companyName": "Türkiye Petrol Rafinerileri A.Ş.",
+      "ticker": "TUPRS",
+      "market": "BIST",
+      "country": "TR",
+      "period": "2026 1Ç",
+      "fiscalYear": 2026,
+      "quarter": 1,
+      "documentType": "activity_report",
+      "title": "2026 1. Çeyrek Ara Dönem Faaliyet Raporu",
+      "localPath": "data/stock/turkey/tuprs/reports/tuprs-2026-q1-activity-report.pdf",
+      "sourceUrl": null,
+      "language": "tr",
+      "uploadedAt": null,
+      "notes": "",
+      "indexStatus": "metadata_only",
+      "textExtractionStatus": "not_started",
+      "embeddingStatus": "not_started"
+    }
+  ]
+}

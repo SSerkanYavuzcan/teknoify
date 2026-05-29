@@ -82,6 +82,18 @@ A future document item should follow this general shape:
 }
 ```
 
+## Document catalog builder
+
+After adding or updating company PDFs and `manifest.json` files, rebuild the generated document catalog for future RAG metadata workflows:
+
+```sh
+npm run build:stock-doc-catalog
+# or
+node scripts/build-stock-document-catalog.mjs
+```
+
+`document-catalog.json` is generated metadata only. It does not contain extracted PDF text or embeddings.
+
 ## Large file note
 
 If PDF files become large or the repository starts storing many documents, consider Git LFS before committing many files.
