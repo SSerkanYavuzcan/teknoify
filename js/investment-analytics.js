@@ -86,6 +86,24 @@
         }[character]));
     }
 
+    function clampNumber(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+    }
+
+    function getCompactTooltipNote(note, maxLength = 110) {
+        const compactNote = String(note ?? "").replace(/\s+/g, " ").trim();
+
+        if (compactNote.length <= maxLength) {
+            return compactNote;
+        }
+
+        const trimmedNote = compactNote.slice(0, maxLength).trimEnd();
+        const lastSpaceIndex = trimmedNote.lastIndexOf(" ");
+        const summary = lastSpaceIndex > 64 ? trimmedNote.slice(0, lastSpaceIndex) : trimmedNote;
+
+        return `${summary}…`;
+    }
+
     function resolvePointSource(pointData) {
         const referencedSource = pointData.sourceRef
             ? supermarketDataset?.sourceRefs?.[pointData.sourceRef]
@@ -226,8 +244,9 @@
         const safeName = escapeHtml(item.name);
         const safePeriod = escapeHtml(pointData.period);
         const safeValue = escapeHtml(options.formatTooltipValue(pointData.value));
-        const noteMarkup = pointData.note
-            ? `<p class="investment-chart-tooltip__note">${escapeHtml(pointData.note)}</p>`
+        const compactNote = getCompactTooltipNote(pointData.note);
+        const noteMarkup = compactNote
+            ? `<p class="investment-chart-tooltip__note">${escapeHtml(compactNote)}</p>`
             : "";
         const sourceTitleMarkup = source.title
             ? `<span class="investment-chart-tooltip__source-title">Kaynak: ${escapeHtml(source.title)}</span>`
@@ -251,11 +270,29 @@
 
     function showTooltip(tooltip, content, point, chartConfig) {
         const [viewBoxWidth, viewBoxHeight] = chartConfig.viewBox.split(" ").slice(2).map(Number);
+        const svg = tooltip.previousElementSibling;
+        const chartWidth = svg?.clientWidth || tooltip.parentElement?.clientWidth || viewBoxWidth;
+        const chartHeight = svg?.clientHeight || viewBoxHeight;
+        const pointLeft = (point.x / viewBoxWidth) * chartWidth;
+        const pointTop = (point.y / viewBoxHeight) * chartHeight;
+        const safeGap = 8;
 
         tooltip.innerHTML = content;
-        tooltip.style.left = `${(point.x / viewBoxWidth) * 100}%`;
-        tooltip.style.top = `${(point.y / viewBoxHeight) * 100}%`;
+        tooltip.style.transform = "none";
+        tooltip.style.left = "0";
+        tooltip.style.top = "0";
         tooltip.classList.add("is-visible");
+
+        const tooltipWidth = tooltip.offsetWidth;
+        const tooltipHeight = tooltip.offsetHeight;
+        const maxLeft = Math.max(safeGap, chartWidth - tooltipWidth - safeGap);
+        const maxTop = Math.max(safeGap, chartHeight - tooltipHeight - safeGap);
+        const preferredTop = pointTop - tooltipHeight - safeGap;
+        const fallbackTop = pointTop + safeGap;
+        const top = preferredTop >= safeGap ? preferredTop : fallbackTop;
+
+        tooltip.style.left = `${clampNumber(pointLeft - (tooltipWidth / 2), safeGap, maxLeft)}px`;
+        tooltip.style.top = `${clampNumber(top, safeGap, maxTop)}px`;
     }
 
     function hideTooltip(tooltip) {
