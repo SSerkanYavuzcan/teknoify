@@ -34,6 +34,10 @@
     "migros_2026_q1_presentation": {
       "title": "Migros 2026 1. Çeyrek Yatırımcı Sunumu",
       "url": "https://migroskurumsalstr.blob.core.windows.net/migroskurumsalstr/migros-sunum-1c-2026-639136247117208427.pdf"
+    },
+    "migros_2026_q1_activity_report": {
+      "title": "Migros 2026 1. Çeyrek Faaliyet Raporu",
+      "url": "https://migroskurumsalstr.blob.core.windows.net/migroskurumsalstr/migros-ticaret-a-s-fr-mart-2026-639136249430245871.pdf"
     }
   },
   "companies": [
@@ -231,9 +235,8 @@
         3792,
         {
           "period": "2026 1Ç",
-          "value": 3865,
-          "sourceRef": "migros_2026_q1_presentation",
-          "note": "Migros 2026 1. çeyrek yatırımcı sunumu kaynak alınarak 2026 1Ç finansal özet verileri dataset içine eklenmiştir."
+          "value": 3812,
+          "sourceRef": "migros_2026_q1_activity_report"
         }
       ],
       "revenuePerStoreUsd": [
@@ -259,9 +262,9 @@
         580000,
         {
           "period": "2026 1Ç",
-          "value": 415000,
-          "sourceRef": "migros_2026_q1_presentation",
-          "note": "Migros 2026 1. çeyrek yatırımcı sunumu kaynak alınarak 2026 1Ç finansal özet verileri dataset içine eklenmiştir."
+          "value": null,
+          "derivePerStoreUsdFrom": "revenueTlMillion",
+          "sourceRef": "migros_2026_q1_activity_report"
         }
       ],
       "operatingProfitPerStoreUsd": [
@@ -287,19 +290,24 @@
         43500,
         {
           "period": "2026 1Ç",
-          "value": 38200,
-          "sourceRef": "migros_2026_q1_presentation",
-          "note": "Migros 2026 1. çeyrek yatırımcı sunumu kaynak alınarak 2026 1Ç finansal özet verileri dataset içine eklenmiştir."
+          "value": null,
+          "derivePerStoreUsdFrom": "ebitdaTlMillion",
+          "sourceRef": "migros_2026_q1_activity_report"
         }
       ],
       "quarterlyFinancials": [
         {
           "period": "2026 1Ç",
-          "revenueTlMillion": 57500,
-          "ebitdaTlMillion": 5290,
+          "totalStoreCount": 3812,
+          "revenueTlMillion": 109236.956,
+          "ebitdaTlMillion": 5289.783,
           "ebitdaMarginPct": 4.8,
-          "sourceRef": "migros_2026_q1_presentation",
-          "note": "Migros 2026 1. çeyrek yatırımcı sunumu kaynak alınarak 2026 1Ç finansal özet verileri dataset içine eklenmiştir."
+          "netIncomeTlMillion": 1610.25,
+          "sourceRef": "migros_2026_q1_activity_report",
+          "sourceTitle": "01.01.2026-31.03.2026 Ara Hesap Dönemine Ait Faaliyet Raporu",
+          "sourceUrl": "https://migroskurumsalstr.blob.core.windows.net/migroskurumsalstr/migros-ticaret-a-s-fr-mart-2026-639136249430245871.pdf",
+          "sourcePage": "10, 11",
+          "calculationNote": "Veriler doğrudan 1Ç (1 Ocak - 31 Mart 2026) dönemi olarak kaynak dokümandan alınmış ve TL değerleri milyon TL olarak normalize edilmiştir."
         }
       ]
     },
