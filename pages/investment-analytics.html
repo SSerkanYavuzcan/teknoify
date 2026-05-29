@@ -339,6 +339,75 @@
     </div>
 </div>
 
+<!-- Stage 1: UI shell only. Backend/RAG/logging will be added in later steps. -->
+<div class="investment-chatbot" data-investment-chatbot>
+    <button
+        class="investment-chatbot__launcher"
+        type="button"
+        aria-label="Yatırım asistanını aç"
+        aria-expanded="false"
+        aria-controls="investment-chatbot-panel"
+        data-chatbot-toggle
+    >
+        <span class="investment-chatbot__launcher-icon" aria-hidden="true">
+            <i class="fas fa-wand-magic-sparkles"></i>
+        </span>
+        <span class="investment-chatbot__launcher-label">Asistan</span>
+    </button>
+
+    <section
+        class="investment-chatbot__panel"
+        id="investment-chatbot-panel"
+        role="dialog"
+        aria-modal="false"
+        aria-hidden="true"
+        aria-labelledby="investment-chatbot-title"
+        aria-describedby="investment-chatbot-subtitle"
+        data-chatbot-panel
+    >
+        <div class="investment-chatbot__header">
+            <div>
+                <p class="investment-chatbot__eyebrow">Kaynaklı Finansal Asistan</p>
+                <h2 id="investment-chatbot-title">Yatırım Asistanı</h2>
+                <p id="investment-chatbot-subtitle">Finansal raporlar ve sektör verileri için kaynaklı cevaplar</p>
+            </div>
+            <button class="investment-chatbot__close" type="button" aria-label="Yatırım asistanını kapat" data-chatbot-close>
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+
+        <div class="investment-chatbot__body">
+            <div class="investment-chatbot__messages" data-chatbot-messages aria-live="polite">
+                <div class="investment-chatbot__message investment-chatbot__message--assistant">
+                    Merhaba, yatırım analizleri sayfasındaki finansal raporlar ve sektör verileri için yakında kaynaklı cevaplar sunacağım.
+                </div>
+            </div>
+
+            <div class="investment-chatbot__suggestions" aria-label="Önerilen sorular">
+                <button class="investment-chatbot__chip" type="button" data-chatbot-suggestion="Migros 2026 1Ç mağaza sayısı kaç?">Migros 2026 1Ç mağaza sayısı kaç?</button>
+                <button class="investment-chatbot__chip" type="button" data-chatbot-suggestion="Mağaza başı kâr nasıl hesaplanıyor?">Mağaza başı kâr nasıl hesaplanıyor?</button>
+                <button class="investment-chatbot__chip" type="button" data-chatbot-suggestion="BİM ve ŞOK mağaza sayısı trendi nasıl?">BİM ve ŞOK mağaza sayısı trendi nasıl?</button>
+                <button class="investment-chatbot__chip" type="button" data-chatbot-suggestion="Tüpraş son raporunda öne çıkanlar neler?">Tüpraş son raporunda öne çıkanlar neler?</button>
+            </div>
+        </div>
+
+        <div class="investment-chatbot__footer">
+            <label class="investment-chatbot__input-label" for="investment-chatbot-input">Yatırım asistanına mesaj yaz</label>
+            <input
+                class="investment-chatbot__input"
+                id="investment-chatbot-input"
+                type="text"
+                placeholder="Sorunuzu yazın..."
+                autocomplete="off"
+                data-chatbot-input
+            >
+            <button class="investment-chatbot__send" type="button" aria-label="Mesaj gönder" data-chatbot-send>
+                <i class="fas fa-paper-plane" aria-hidden="true"></i>
+            </button>
+        </div>
+    </section>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
