@@ -324,7 +324,6 @@
     stroke: rgba(255, 255, 255, 0.9);
 }
 
-.investment-chart-value-label,
 .investment-chart-point-label {
     font-size: 0.78rem;
     font-weight: 800;
@@ -334,6 +333,7 @@
 }
 
 .investment-chart-point-label {
+    cursor: help;
     font-size: 0.68rem;
     opacity: 0.76;
 }
@@ -342,10 +342,19 @@
     fill: rgba(243, 244, 246, 0.78);
     font-size: 0.62rem;
     font-weight: 700;
+    cursor: help;
     paint-order: stroke;
-    pointer-events: none;
+    pointer-events: auto;
     stroke: rgba(5, 5, 5, 0.78);
     stroke-width: 2px;
+}
+
+.investment-chart-all-point-label:hover,
+.investment-chart-all-point-label:focus,
+.investment-chart-point-label:hover,
+.investment-chart-point-label:focus {
+    fill: #fff;
+    outline: none;
 }
 
 .investment-chart-legend {
@@ -382,17 +391,18 @@
     position: absolute;
     z-index: 2;
     display: grid;
-    gap: 0.2rem;
-    min-width: 150px;
-    max-width: 220px;
-    padding: 0.65rem 0.78rem 0.65rem 0.95rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    background: rgba(5, 5, 5, 0.92);
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.36);
+    gap: 0.24rem;
+    min-width: 160px;
+    max-width: min(260px, calc(100% - 1.5rem));
+    padding: 0.7rem 0.82rem 0.72rem 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(9, 15, 28, 0.96), rgba(2, 6, 23, 0.9));
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     color: #fff;
     font-size: 0.78rem;
     opacity: 0;
+    overflow-wrap: anywhere;
     pointer-events: none;
     transform: translate(-50%, calc(-100% - 12px));
     transition: opacity var(--ease-fast);
@@ -400,26 +410,72 @@
 
 .investment-chart-tooltip strong,
 .investment-chart-tooltip b,
-.investment-chart-tooltip span {
+.investment-chart-tooltip span,
+.investment-chart-tooltip p,
+.investment-chart-tooltip a,
+.investment-chart-tooltip div {
     position: relative;
     z-index: 1;
 }
 
-.investment-chart-tooltip span:not(.investment-chart-tooltip__accent) {
-    color: rgba(243, 244, 246, 0.72);
+.investment-chart-tooltip__header {
+    color: #fff;
+    font-size: 0.82rem;
+    letter-spacing: -0.01em;
+}
+
+.investment-chart-tooltip__period {
+    color: rgba(226, 232, 240, 0.72);
     font-size: 0.72rem;
     font-weight: 700;
 }
 
-.investment-chart-tooltip b {
-    font-size: 0.86rem;
+.investment-chart-tooltip__value {
+    color: #f8fafc;
+    font-size: 0.88rem;
+}
+
+.investment-chart-tooltip__note {
+    margin: 0.28rem 0 0;
+    color: rgba(226, 232, 240, 0.82);
+    font-size: 0.72rem;
+    line-height: 1.42;
+}
+
+.investment-chart-tooltip__source {
+    display: grid;
+    gap: 0.22rem;
+    margin-top: 0.28rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.investment-chart-tooltip__source-title {
+    color: rgba(226, 232, 240, 0.76);
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.investment-chart-tooltip__source-link {
+    justify-self: start;
+    color: #67e8f9;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.investment-chart-tooltip__source-link:hover,
+.investment-chart-tooltip__source-link:focus {
+    color: #bae6fd;
+    text-decoration: underline;
 }
 
 .investment-chart-tooltip__accent {
     position: absolute;
     inset: 0 auto 0 0;
     width: 4px;
-    border-radius: 12px 0 0 12px;
+    border-radius: 14px 0 0 14px;
 }
 
 .investment-chart-tooltip-large {
@@ -430,6 +486,7 @@
 
 .investment-chart-tooltip.is-visible {
     opacity: 1;
+    pointer-events: auto;
 }
 
 .investment-chart-modal {
@@ -593,10 +650,6 @@ body.investment-modal-open {
         font-size: 0.65rem;
     }
 
-    .investment-chart-value-label {
-        font-size: 0.7rem;
-    }
-
     .investment-chart-legend {
         padding: 0 0.85rem 0.85rem;
     }
@@ -612,9 +665,6 @@ body.investment-modal-open {
 }
 
 
-.investment-chart-endpoint-label rect {
-    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.26));
-}
 
 .investment-chart-operating-profit-per-store .investment-chart-line {
     filter: drop-shadow(0 0 10px color-mix(in srgb, var(--series-color) 46%, transparent));

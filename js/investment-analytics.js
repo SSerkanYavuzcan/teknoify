@@ -43,8 +43,50 @@
         return firstMetric.map((item) => item.period).filter(Boolean);
     }
 
-    function normalizeMetricValues(metricValues) {
-        return (metricValues ?? []).map((item) => (typeof item === "number" ? item : item.value));
+    function normalizeMetricPoint(rawPoint, index, periods) {
+        if (typeof rawPoint === "number") {
+            return {
+                period: periods[index] ?? "",
+                value: rawPoint,
+                note: null,
+                sourceTitle: null,
+                sourceUrl: null,
+                sourceRef: null
+            };
+        }
+
+        return {
+            period: rawPoint?.period ?? periods[index] ?? "",
+            value: rawPoint?.value,
+            note: rawPoint?.note ?? null,
+            sourceTitle: rawPoint?.sourceTitle ?? null,
+            sourceUrl: rawPoint?.sourceUrl ?? null,
+            sourceRef: rawPoint?.sourceRef ?? null
+        };
+    }
+
+    function normalizeMetricPoints(metricValues, periods) {
+        return (metricValues ?? []).map((item, index) => normalizeMetricPoint(item, index, periods));
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"]/g, (character) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;"
+        }[character]));
+    }
+
+    function resolvePointSource(pointData) {
+        const referencedSource = pointData.sourceRef
+            ? supermarketDataset?.sourceRefs?.[pointData.sourceRef]
+            : null;
+
+        return {
+            title: pointData.sourceTitle ?? referencedSource?.title ?? null,
+            url: pointData.sourceUrl ?? referencedSource?.url ?? null
+        };
     }
 
     function showErrorState(mountId, message) {
@@ -139,66 +181,63 @@
         });
     }
 
-    function renderEndpointLabel(svg, item, point, value, chartConfig, formatValue) {
-        const labelText = formatValue(value);
-        const textWidth = Math.max(52, labelText.length * 8.8);
-        const overflowsRight = point.x + 14 + textWidth > chartConfig.left + chartConfig.width;
-        const labelOffsetX = overflowsRight ? -textWidth - 18 : 0;
-        const labelGroup = createSvgElement("g", {
-            class: "investment-chart-endpoint-label",
-            transform: `translate(${point.x + 12 + labelOffsetX}, ${point.y - 10})`
-        });
-
-        labelGroup.appendChild(createSvgElement("rect", {
-            x: "0",
-            y: "-17",
-            width: String(textWidth),
-            height: "24",
-            rx: "12",
-            fill: item.color,
-            opacity: "0.16",
-            stroke: item.color,
-            "stroke-width": "1"
-        }));
-
-        labelGroup.appendChild(createSvgElement("text", {
-            x: String(textWidth / 2),
-            y: "0",
-            "text-anchor": "middle",
-            fill: item.color,
-            class: "investment-chart-value-label"
-        })).textContent = labelText;
-
-        svg.appendChild(labelGroup);
-    }
-
     function renderPointLabel(svg, item, point, value, index, formatValue) {
-        if (index % 4 !== 3) return;
+        if (index % 4 !== 3) return null;
 
-        svg.appendChild(createSvgElement("text", {
+        const label = createSvgElement("text", {
             x: point.x,
             y: point.y - 12,
             "text-anchor": "middle",
             fill: item.color,
             class: "investment-chart-point-label"
-        })).textContent = formatValue(value);
+        });
+
+        label.textContent = formatValue(value);
+        svg.appendChild(label);
+
+        return label;
     }
 
     function renderAllPointLabel(svg, point, value, chartConfig, formatValue) {
-        svg.appendChild(createSvgElement("text", {
+        const label = createSvgElement("text", {
             x: point.x,
             y: Math.max(chartConfig.top + 12, point.y - 10),
             "text-anchor": "middle",
             class: "investment-chart-all-point-label"
-        })).textContent = formatValue(value);
+        });
+
+        label.textContent = formatValue(value);
+        svg.appendChild(label);
+
+        return label;
     }
 
-    function createTooltipContent(item, period, value, options) {
+    function createTooltipContent(item, pointData, options) {
+        const source = resolvePointSource(pointData);
+        const safeColor = escapeHtml(item.color);
+        const safeName = escapeHtml(item.name);
+        const safePeriod = escapeHtml(pointData.period);
+        const safeValue = escapeHtml(options.formatTooltipValue(pointData.value));
+        const noteMarkup = pointData.note
+            ? `<p class="investment-chart-tooltip__note">${escapeHtml(pointData.note)}</p>`
+            : "";
+        const sourceTitleMarkup = source.title
+            ? `<span class="investment-chart-tooltip__source-title">Kaynak: ${escapeHtml(source.title)}</span>`
+            : "";
+        const sourceLinkMarkup = source.url
+            ? `<a class="investment-chart-tooltip__source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">Kaynağı Aç</a>`
+            : "";
+        const sourceMarkup = sourceTitleMarkup || sourceLinkMarkup
+            ? `<div class="investment-chart-tooltip__source">${sourceTitleMarkup}${sourceLinkMarkup}</div>`
+            : "";
+
         return `
-            <span class="investment-chart-tooltip__accent" style="background:${item.color}"></span>
-            <strong>${item.name}</strong>
-            <span>${period}</span>
-            <b>${options.formatTooltipValue(value)}</b>
+            <span class="investment-chart-tooltip__accent" style="background:${safeColor}"></span>
+            <strong class="investment-chart-tooltip__header">${safeName}</strong>
+            <span class="investment-chart-tooltip__period">${safePeriod}</span>
+            <b class="investment-chart-tooltip__value">${safeValue}</b>
+            ${noteMarkup}
+            ${sourceMarkup}
         `;
     }
 
@@ -215,10 +254,44 @@
         tooltip.classList.remove("is-visible");
     }
 
+    function createTooltipController(tooltip) {
+        let hideTimer = null;
+
+        function cancelHide() {
+            window.clearTimeout(hideTimer);
+            hideTimer = null;
+        }
+
+        function scheduleHide() {
+            cancelHide();
+            hideTimer = window.setTimeout(() => hideTooltip(tooltip), 180);
+        }
+
+        tooltip.addEventListener("mouseenter", cancelHide);
+        tooltip.addEventListener("mouseleave", scheduleHide);
+
+        return { cancelHide, scheduleHide };
+    }
+
+    function bindTooltipTrigger(trigger, tooltip, tooltipController, tooltipContent, point, chartConfig) {
+        trigger.addEventListener("mouseenter", () => {
+            tooltipController.cancelHide();
+            showTooltip(tooltip, tooltipContent, point, chartConfig);
+        });
+        trigger.addEventListener("mouseleave", tooltipController.scheduleHide);
+        trigger.addEventListener("focus", () => {
+            tooltipController.cancelHide();
+            showTooltip(tooltip, tooltipContent, point, chartConfig);
+        });
+        trigger.addEventListener("blur", tooltipController.scheduleHide);
+    }
+
     function renderLineSeries(svg, chartConfig, tooltip, periods, series, options) {
+        const tooltipController = createTooltipController(tooltip);
+
         series.forEach((item) => {
-            const points = item.values.map((value, index) => {
-                const point = getPoint(index, value, periods, chartConfig);
+            const points = item.points.map((pointData, index) => {
+                const point = getPoint(index, pointData.value, periods, chartConfig);
                 return `${point.x},${point.y}`;
             });
 
@@ -233,9 +306,8 @@
                 style: `--series-color: ${item.color}`
             }));
 
-            item.values.forEach((value, index) => {
-                const period = periods[index] ?? "";
-                const point = getPoint(index, value, periods, chartConfig);
+            item.points.forEach((pointData, index) => {
+                const point = getPoint(index, pointData.value, periods, chartConfig);
                 const marker = createSvgElement("circle", {
                     cx: point.x,
                     cy: point.y,
@@ -243,27 +315,29 @@
                     fill: item.color,
                     class: "investment-chart-point",
                     tabindex: "0",
-                    "aria-label": `${item.name} ${period}: ${options.formatTooltipValue(value)}`
+                    "aria-label": `${item.name} ${pointData.period}: ${options.formatTooltipValue(pointData.value)}`
                 });
-                const tooltipContent = createTooltipContent(item, period, value, options);
+                const tooltipContent = createTooltipContent(item, pointData, options);
 
-                marker.addEventListener("mouseenter", () => showTooltip(tooltip, tooltipContent, point, chartConfig));
-                marker.addEventListener("mouseleave", () => hideTooltip(tooltip));
-                marker.addEventListener("focus", () => showTooltip(tooltip, tooltipContent, point, chartConfig));
-                marker.addEventListener("blur", () => hideTooltip(tooltip));
+                bindTooltipTrigger(marker, tooltip, tooltipController, tooltipContent, point, chartConfig);
 
                 svg.appendChild(marker);
 
-                if (options.showAllPointLabels && index !== item.values.length - 1) {
-                    renderAllPointLabel(svg, point, value, chartConfig, options.formatEndpointValue);
+                if (options.showAllPointLabels) {
+                    const label = renderAllPointLabel(svg, point, pointData.value, chartConfig, options.formatEndpointValue);
+                    label.setAttribute("tabindex", "0");
+                    label.setAttribute("aria-label", `${item.name} ${pointData.period}: ${options.formatTooltipValue(pointData.value)}`);
+                    bindTooltipTrigger(label, tooltip, tooltipController, tooltipContent, point, chartConfig);
                 }
 
                 if (options.mode === "modal") {
-                    renderPointLabel(svg, item, point, value, index, options.formatEndpointValue);
-                }
+                    const label = renderPointLabel(svg, item, point, pointData.value, index, options.formatEndpointValue);
 
-                if (index === item.values.length - 1) {
-                    renderEndpointLabel(svg, item, point, value, chartConfig, options.formatEndpointValue);
+                    if (label) {
+                        label.setAttribute("tabindex", "0");
+                        label.setAttribute("aria-label", `${item.name} ${pointData.period}: ${options.formatTooltipValue(pointData.value)}`);
+                        bindTooltipTrigger(label, tooltip, tooltipController, tooltipContent, point, chartConfig);
+                    }
                 }
             });
         });
@@ -336,19 +410,26 @@
         renderLegend(container, series);
     }
 
-    function buildSeries(metricKey) {
-        return getCompanies().map((company) => ({
-            key: company.key,
-            name: company.name,
-            color: company.color,
-            values: normalizeMetricValues(company[metricKey])
-        }));
+    function buildSeries(metricKey, periods) {
+        return getCompanies().map((company) => {
+            const points = normalizeMetricPoints(company[metricKey], periods);
+
+            return {
+                key: company.key,
+                name: company.name,
+                color: company.color,
+                points,
+                values: points.map((point) => point.value)
+            };
+        });
     }
 
     function renderMetricChart(mountId, metricKey, options) {
         const mount = document.getElementById(mountId);
         const periods = getPeriods();
-        const series = buildSeries(metricKey).filter((item) => item.values.length === periods.length);
+        const series = buildSeries(metricKey, periods).filter((item) => (
+            item.points.length === periods.length && item.points.every((point) => Number.isFinite(point.value))
+        ));
 
         if (!mount || !series.length || !periods.length) return;
 
@@ -357,7 +438,8 @@
             mountId,
             periods,
             axisStep: options.axisStep,
-            mode: options.mode ?? "default"
+            mode: options.mode ?? "default",
+            showEndpointLabels: options.showEndpointLabels ?? false
         });
     }
 
