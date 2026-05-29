@@ -1,5 +1,6 @@
 (function () {
     const supermarketDatasetUrl = "../data/investment-analytics/supermarket_dataset.json";
+    const usdTryRatesUrl = "../data/currency/usd_try_rates.json";
     const storeCountChartMountId = "retail-store-count-chart";
     const revenuePerStoreChartMountId = "retail-revenue-per-store-chart";
     const operatingProfitPerStoreChartMountId = "retail-operating-profit-per-store-chart";
@@ -7,6 +8,7 @@
     const modalId = "retail-store-count-modal";
     const svgNamespace = "http://www.w3.org/2000/svg";
     let supermarketDataset = null;
+    let usdTryRatesPromise = null;
 
     function createSvgElement(tagName, attributes = {}) {
         const element = document.createElementNS(svgNamespace, tagName);
@@ -24,6 +26,12 @@
 
     function formatUsdCompact(value) {
         return `$${Math.round(value / 1000).toLocaleString("tr-TR")}K`;
+    }
+
+    function formatTlMillion(value) {
+        return Number(value).toLocaleString("tr-TR", {
+            maximumFractionDigits: 3
+        });
     }
 
     function getCompanies() {
@@ -51,7 +59,8 @@
                 note: null,
                 sourceTitle: null,
                 sourceUrl: null,
-                sourceRef: null
+                sourceRef: null,
+                derivePerStoreUsdFrom: null
             };
         }
 
@@ -61,7 +70,8 @@
             note: rawPoint?.note ?? null,
             sourceTitle: rawPoint?.sourceTitle ?? null,
             sourceUrl: rawPoint?.sourceUrl ?? null,
-            sourceRef: rawPoint?.sourceRef ?? null
+            sourceRef: rawPoint?.sourceRef ?? null,
+            derivePerStoreUsdFrom: rawPoint?.derivePerStoreUsdFrom ?? null
         };
     }
 
@@ -105,13 +115,15 @@
     }
 
     function resolvePointSource(pointData) {
-        const referencedSource = pointData.sourceRef
-            ? supermarketDataset?.sourceRefs?.[pointData.sourceRef]
+        const financials = pointData.quarterlyFinancials ?? null;
+        const sourceRef = pointData.sourceRef ?? financials?.sourceRef ?? null;
+        const referencedSource = sourceRef
+            ? supermarketDataset?.sourceRefs?.[sourceRef]
             : null;
 
         return {
-            title: pointData.sourceTitle ?? referencedSource?.title ?? null,
-            url: pointData.sourceUrl ?? referencedSource?.url ?? null
+            title: pointData.sourceTitle ?? financials?.sourceTitle ?? referencedSource?.title ?? null,
+            url: pointData.sourceUrl ?? financials?.sourceUrl ?? referencedSource?.url ?? null
         };
     }
 
@@ -125,6 +137,98 @@
         error.textContent = message;
         mount.appendChild(error);
     }
+    function parseQuarterPeriod(period) {
+        const match = String(period ?? "").trim().match(/^(\d{4})\s+([1-4])Ç$/);
+
+        if (!match) return null;
+
+        return {
+            year: Number(match[1]),
+            quarter: Number(match[2])
+        };
+    }
+
+    function getQuarterDateBounds(period) {
+        const parsedPeriod = parseQuarterPeriod(period);
+
+        if (!parsedPeriod) return null;
+
+        const startMonth = (parsedPeriod.quarter - 1) * 3 + 1;
+        const endMonth = startMonth + 2;
+        const startDate = `${parsedPeriod.year}-${String(startMonth).padStart(2, "0")}-01`;
+        const endDate = new Date(Date.UTC(parsedPeriod.year, endMonth, 0))
+            .toISOString()
+            .slice(0, 10);
+
+        return { startDate, endDate };
+    }
+
+    async function loadUsdTryRates() {
+        if (!usdTryRatesPromise) {
+            usdTryRatesPromise = fetch(usdTryRatesUrl, { cache: "no-cache" })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`USD/TRY rates request failed: ${response.status}`);
+                    }
+
+                    return response.json();
+                });
+        }
+
+        return usdTryRatesPromise;
+    }
+
+    function getValidUsdTryRates(data) {
+        if (!Array.isArray(data?.rates)) return [];
+
+        return data.rates.filter((rate) => (
+            /^\d{4}-\d{2}-\d{2}$/.test(rate?.date)
+                && Number.isFinite(rate?.usdTry)
+        ));
+    }
+
+    async function getQuarterAverageUsdTry(period) {
+        const bounds = getQuarterDateBounds(period);
+
+        if (!bounds) return null;
+
+        const data = await loadUsdTryRates();
+        const rates = getValidUsdTryRates(data).filter((rate) => (
+            rate.date >= bounds.startDate && rate.date <= bounds.endDate
+        ));
+
+        if (!rates.length) return null;
+
+        return rates.reduce((sum, rate) => sum + rate.usdTry, 0) / rates.length;
+    }
+
+    async function applyDerivedPerStoreUsdValues() {
+        const calculations = [];
+
+        getCompanies().forEach((company) => {
+            ["revenuePerStoreUsd", "operatingProfitPerStoreUsd"].forEach((metricKey) => {
+                (company[metricKey] ?? []).forEach((point) => {
+                    if (!point?.derivePerStoreUsdFrom) return;
+
+                    const financials = (company.quarterlyFinancials ?? [])
+                        .find((item) => item.period === point.period);
+                    const tlMillion = financials?.[point.derivePerStoreUsdFrom];
+                    const storeCount = financials?.totalStoreCount;
+
+                    if (!Number.isFinite(tlMillion) || !Number.isFinite(storeCount) || storeCount <= 0) return;
+
+                    calculations.push(getQuarterAverageUsdTry(point.period).then((quarterAverageUsdTry) => {
+                        if (!Number.isFinite(quarterAverageUsdTry) || quarterAverageUsdTry <= 0) return;
+
+                        point.value = (tlMillion * 1000000) / storeCount / quarterAverageUsdTry;
+                    }));
+                });
+            });
+        });
+
+        await Promise.all(calculations);
+    }
+
 
     function renderLegend(container, series) {
         const legend = document.createElement("div");
@@ -238,8 +342,63 @@
         return label;
     }
 
+    function createSourceMarkup(source, showTitle = true) {
+        const sourceTitleMarkup = showTitle && source.title
+            ? `<span class="investment-chart-tooltip__source-title">Kaynak: ${escapeHtml(source.title)}</span>`
+            : "";
+        const sourceLinkMarkup = source.url
+            ? `<a class="investment-chart-tooltip__source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">Kaynağı Aç</a>`
+            : "";
+
+        return sourceTitleMarkup || sourceLinkMarkup
+            ? `<div class="investment-chart-tooltip__source">${sourceTitleMarkup}${sourceLinkMarkup}</div>`
+            : "";
+    }
+
+    function createFinancialTooltipContent(item, pointData, options, source) {
+        const financials = pointData.quarterlyFinancials;
+        const metricConfig = {
+            revenuePerStoreUsd: {
+                label: "Hasılat",
+                value: financials?.revenueTlMillion,
+                perStoreLabel: "Mağaza başı ciro",
+                formula: "Hasılat / mağaza sayısı / çeyrek ort. USDTRY"
+            },
+            operatingProfitPerStoreUsd: {
+                label: "FAVÖK",
+                value: financials?.ebitdaTlMillion,
+                perStoreLabel: "Mağaza başı kâr",
+                formula: "FAVÖK / mağaza sayısı / çeyrek ort. USDTRY"
+            }
+        }[options.metricKey];
+
+        if (
+            !metricConfig
+                || !Number.isFinite(metricConfig.value)
+                || !Number.isFinite(financials?.totalStoreCount)
+        ) {
+            return null;
+        }
+
+        return `
+            <span class="investment-chart-tooltip__accent" style="background:${escapeHtml(item.color)}"></span>
+            <strong class="investment-chart-tooltip__header">${escapeHtml(item.name)} — ${escapeHtml(pointData.period)}</strong>
+            <span>Mağaza sayısı: ${escapeHtml(formatNumber(financials.totalStoreCount))}</span>
+            <span>${escapeHtml(metricConfig.label)}: ${escapeHtml(formatTlMillion(metricConfig.value))} mn TL</span>
+            <b class="investment-chart-tooltip__value">${escapeHtml(metricConfig.perStoreLabel)}: ${escapeHtml(formatUsdCompact(pointData.value))}</b>
+            <span>Formül: ${escapeHtml(metricConfig.formula)}</span>
+            ${createSourceMarkup(source, false)}
+        `;
+    }
+
     function createTooltipContent(item, pointData, options) {
         const source = resolvePointSource(pointData);
+        const financialTooltip = pointData.quarterlyFinancials
+            ? createFinancialTooltipContent(item, pointData, options, source)
+            : null;
+
+        if (financialTooltip) return financialTooltip;
+
         const safeColor = escapeHtml(item.color);
         const safeName = escapeHtml(item.name);
         const safePeriod = escapeHtml(pointData.period);
@@ -248,15 +407,7 @@
         const noteMarkup = compactNote
             ? `<p class="investment-chart-tooltip__note">${escapeHtml(compactNote)}</p>`
             : "";
-        const sourceTitleMarkup = source.title
-            ? `<span class="investment-chart-tooltip__source-title">Kaynak: ${escapeHtml(source.title)}</span>`
-            : "";
-        const sourceLinkMarkup = source.url
-            ? `<a class="investment-chart-tooltip__source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">Kaynağı Aç</a>`
-            : "";
-        const sourceMarkup = sourceTitleMarkup || sourceLinkMarkup
-            ? `<div class="investment-chart-tooltip__source">${sourceTitleMarkup}${sourceLinkMarkup}</div>`
-            : "";
+        const sourceMarkup = createSourceMarkup(source);
 
         return `
             <span class="investment-chart-tooltip__accent" style="background:${safeColor}"></span>
@@ -461,7 +612,13 @@
 
     function buildSeries(metricKey, periods) {
         return getCompanies().map((company) => {
-            const points = normalizeMetricPoints(company[metricKey], periods);
+            const financialsByPeriod = new Map(
+                (company.quarterlyFinancials ?? []).map((item) => [item.period, item])
+            );
+            const points = normalizeMetricPoints(company[metricKey], periods).map((point) => ({
+                ...point,
+                quarterlyFinancials: financialsByPeriod.get(point.period) ?? null
+            }));
 
             return {
                 key: company.key,
@@ -487,6 +644,7 @@
         renderLineChart(mount, series, {
             ...options,
             mountId,
+            metricKey,
             periods,
             axisStep: options.axisStep,
             mode: options.mode ?? "default",
@@ -577,6 +735,7 @@
             }
 
             supermarketDataset = await response.json();
+            await applyDerivedPerStoreUsdValues();
 
             renderRetailStoreCountChart(storeCountChartMountId);
             renderRevenuePerStoreChart();
