@@ -755,11 +755,13 @@
     });
 })();
 
-// Stage 2: Investment chatbot frontend controller only. No backend, API, AI, RAG, or logging is connected.
+// Stage 3: Investment chatbot frontend controller with mock /api/chat contract and local fallback.
 (function () {
     const defaultAssistantResponse = "Bu özellik yakında kaynaklı finansal raporlar, şirket dokümanları ve sektör verileriyle çalışacak.";
+    const assistantDisclaimer = "Bu yanıt yatırım tavsiyesi değildir; kaynaklı finansal asistan altyapısı geliştirme aşamasındadır.";
     const responseDelayMs = 650;
     let messageIdCounter = 0;
+    let inMemorySessionId = null;
 
     function waitForMockDelay() {
         return new Promise((resolve) => {
@@ -795,10 +797,75 @@
         return defaultAssistantResponse;
     }
 
-    // Stage 2: mock frontend adapter only. Real /api/chat integration will be added in Stage 3.
+    function getOrCreateInMemorySessionId() {
+        if (!inMemorySessionId) {
+            inMemorySessionId = `chat_session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        }
+
+        return inMemorySessionId;
+    }
+
     async function requestInvestmentAssistantResponse(userMessage, context = {}) {
-        void context;
-        return getMockInvestmentAssistantResponse(userMessage);
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: userMessage,
+                    sessionId: getOrCreateInMemorySessionId(),
+                    page: "investment-analytics",
+                    context: {
+                        source: "investment-chatbot",
+                        stage: "mock",
+                        ...context
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Investment assistant API request failed: ${response.status}`);
+            }
+
+            const payload = await response.json();
+
+            if (!payload || typeof payload.answer !== "string") {
+                throw new Error("Investment assistant API response was malformed.");
+            }
+
+            return payload;
+        } catch {
+            return {
+                answer: await getMockInvestmentAssistantResponse(userMessage),
+                sources: [],
+                usedCache: false,
+                modelTier: "local-mock",
+                status: "fallback",
+                disclaimer: assistantDisclaimer
+            };
+        }
+    }
+
+    function normalizeAssistantResponse(response) {
+        if (typeof response === "string") {
+            return {
+                answer: response,
+                disclaimer: ""
+            };
+        }
+
+        if (response && typeof response.answer === "string") {
+            return {
+                answer: response.answer,
+                disclaimer: typeof response.disclaimer === "string" ? response.disclaimer : ""
+            };
+        }
+
+        return {
+            answer: "",
+            disclaimer: ""
+        };
     }
 
     function initInvestmentChatbot() {
@@ -846,7 +913,21 @@
                 `investment-chatbot__message--${message.status}`
             ].join(" ");
             messageElement.dataset.messageId = message.id;
-            messageElement.textContent = message.content;
+
+            const normalizedContent = message.role === "assistant"
+                ? normalizeAssistantResponse(message.content)
+                : { answer: String(message.content ?? ""), disclaimer: "" };
+
+            const answerElement = document.createElement("span");
+            answerElement.textContent = normalizedContent.answer;
+            messageElement.append(answerElement);
+
+            if (normalizedContent.disclaimer) {
+                const disclaimerElement = document.createElement("small");
+                disclaimerElement.className = "investment-chatbot__disclaimer";
+                disclaimerElement.textContent = normalizedContent.disclaimer;
+                messageElement.append(disclaimerElement);
+            }
 
             if (message.status === "loading") {
                 messageElement.setAttribute("aria-busy", "true");
