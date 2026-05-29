@@ -755,7 +755,7 @@
     });
 })();
 
-// Stage 3: Investment chatbot frontend controller with mock /api/chat contract and local fallback.
+// Stage 4: Investment chatbot frontend controller with structured mock responses and safe source rendering.
 (function () {
     const defaultAssistantResponse = "Bu özellik yakında kaynaklı finansal raporlar, şirket dokümanları ve sektör verileriyle çalışacak.";
     const assistantDisclaimer = "Bu yanıt yatırım tavsiyesi değildir; kaynaklı finansal asistan altyapısı geliştirme aşamasındadır.";
@@ -830,6 +830,10 @@
 
             const payload = await response.json();
 
+            if (typeof payload === "string") {
+                return payload;
+            }
+
             if (!payload || typeof payload.answer !== "string") {
                 throw new Error("Investment assistant API response was malformed.");
             }
@@ -847,25 +851,153 @@
         }
     }
 
+    function getSafeSourceUrl(url) {
+        if (typeof url !== "string" || !url.trim()) {
+            return null;
+        }
+
+        const sourceUrl = url.trim();
+        const parser = document.createElement("a");
+        parser.href = sourceUrl;
+
+        if (!["http:", "https:"].includes(parser.protocol)) {
+            return null;
+        }
+
+        return parser.href;
+    }
+
+    function getTrimmedText(value) {
+        return typeof value === "string" ? value.trim() : "";
+    }
+
+    function normalizeSources(sources) {
+        if (!Array.isArray(sources)) {
+            return [];
+        }
+
+        return sources
+            .map((source) => ({
+                title: getTrimmedText(source?.title),
+                url: getSafeSourceUrl(source?.url),
+                page: getTrimmedText(source?.page),
+                documentType: getTrimmedText(source?.documentType),
+                period: getTrimmedText(source?.period)
+            }))
+            .filter((source) => source.title || source.url || source.page || source.documentType || source.period);
+    }
+
     function normalizeAssistantResponse(response) {
         if (typeof response === "string") {
             return {
                 answer: response,
-                disclaimer: ""
+                sources: [],
+                disclaimer: "",
+                usedCache: null,
+                modelTier: "",
+                status: ""
             };
         }
 
         if (response && typeof response.answer === "string") {
             return {
                 answer: response.answer,
-                disclaimer: typeof response.disclaimer === "string" ? response.disclaimer : ""
+                sources: normalizeSources(response.sources),
+                disclaimer: getTrimmedText(response.disclaimer),
+                usedCache: typeof response.usedCache === "boolean" ? response.usedCache : null,
+                modelTier: getTrimmedText(response.modelTier),
+                status: getTrimmedText(response.status)
             };
         }
 
         return {
             answer: "",
-            disclaimer: ""
+            sources: [],
+            disclaimer: "",
+            usedCache: null,
+            modelTier: "",
+            status: ""
         };
+    }
+
+    function renderResponseMeta(responseMeta) {
+        const metaItems = [];
+
+        if (responseMeta.modelTier) {
+            metaItems.push(`Model: ${responseMeta.modelTier}`);
+        }
+
+        if (responseMeta.status) {
+            metaItems.push(`Durum: ${responseMeta.status}`);
+        }
+
+        if (typeof responseMeta.usedCache === "boolean") {
+            metaItems.push(`Önbellek: ${responseMeta.usedCache ? "Evet" : "Hayır"}`);
+        }
+
+        if (!metaItems.length) {
+            return null;
+        }
+
+        const metaElement = document.createElement("small");
+        metaElement.className = "investment-chatbot__response-meta";
+        metaElement.textContent = metaItems.join(" · ");
+
+        return metaElement;
+    }
+
+    function renderSources(sources) {
+        if (!sources.length) {
+            return null;
+        }
+
+        const sourcesElement = document.createElement("div");
+        sourcesElement.className = "investment-chatbot__sources";
+
+        sources.forEach((source) => {
+            const sourceElement = document.createElement("article");
+            sourceElement.className = "investment-chatbot__source";
+
+            const titleElement = document.createElement("strong");
+            titleElement.className = "investment-chatbot__source-title";
+            titleElement.textContent = source.title || "Kaynak";
+            sourceElement.append(titleElement);
+
+            const sourceMetaItems = [];
+
+            if (source.page) {
+                sourceMetaItems.push(`Sayfa: ${source.page}`);
+            }
+
+            if (source.period) {
+                sourceMetaItems.push(`Dönem: ${source.period}`);
+            }
+
+            if (source.documentType) {
+                sourceMetaItems.push(`Tür: ${source.documentType}`);
+            }
+
+            if (sourceMetaItems.length) {
+                const sourceMetaElement = document.createElement("span");
+                sourceMetaElement.className = "investment-chatbot__source-meta";
+                sourceMetaElement.textContent = sourceMetaItems.join(" · ");
+                sourceElement.append(sourceMetaElement);
+            }
+
+            if (source.url) {
+                const sourceLink = document.createElement("a");
+                sourceLink.className = "investment-chatbot__source-link";
+                sourceLink.href = source.url;
+                sourceLink.target = "_blank";
+                sourceLink.rel = "noopener noreferrer";
+                sourceLink.textContent = "Kaynağı Aç";
+                sourceElement.append(sourceLink);
+            }
+
+            sourcesElement.append(sourceElement);
+        });
+
+        return sourcesElement;
     }
 
     function initInvestmentChatbot() {
@@ -889,7 +1021,7 @@
             messages: []
         };
 
-        function createMessage(role, content, status = "sent") {
+        function createMessage(role, content, status = "sent", responseMeta = null) {
             messageIdCounter += 1;
 
             return {
@@ -897,7 +1029,8 @@
                 role,
                 content,
                 createdAt: new Date().toISOString(),
-                status
+                status,
+                responseMeta
             };
         }
 
@@ -915,18 +1048,34 @@
             messageElement.dataset.messageId = message.id;
 
             const normalizedContent = message.role === "assistant"
-                ? normalizeAssistantResponse(message.content)
-                : { answer: String(message.content ?? ""), disclaimer: "" };
+                ? normalizeAssistantResponse(message.responseMeta ?? message.content)
+                : { answer: String(message.content ?? ""), sources: [], disclaimer: "" };
 
             const answerElement = document.createElement("span");
             answerElement.textContent = normalizedContent.answer;
             messageElement.append(answerElement);
+
+            const sourcesElement = message.role === "assistant"
+                ? renderSources(normalizedContent.sources)
+                : null;
+
+            if (sourcesElement) {
+                messageElement.append(sourcesElement);
+            }
 
             if (normalizedContent.disclaimer) {
                 const disclaimerElement = document.createElement("small");
                 disclaimerElement.className = "investment-chatbot__disclaimer";
                 disclaimerElement.textContent = normalizedContent.disclaimer;
                 messageElement.append(disclaimerElement);
+            }
+
+            const responseMetaElement = message.role === "assistant"
+                ? renderResponseMeta(normalizedContent)
+                : null;
+
+            if (responseMetaElement) {
+                messageElement.append(responseMetaElement);
             }
 
             if (message.status === "loading") {
@@ -1022,14 +1171,17 @@
 
             try {
                 const assistantResponse = await requestInvestmentAssistantResponse(trimmedText);
+                const normalizedAssistantResponse = normalizeAssistantResponse(assistantResponse);
                 updateMessage(loadingMessage.id, {
-                    content: assistantResponse,
+                    content: normalizedAssistantResponse.answer,
+                    responseMeta: typeof assistantResponse === "string" ? null : assistantResponse,
                     status: "sent"
                 });
             } catch (error) {
                 console.error("Investment assistant mock response failed:", error);
                 updateMessage(loadingMessage.id, {
                     content: "Yanıt hazırlanırken bir sorun oluştu. Lütfen tekrar deneyin.",
+                    responseMeta: null,
                     status: "error"
                 });
             } finally {
