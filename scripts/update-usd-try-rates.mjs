@@ -1,3 +1,4 @@
+// Deprecated: GitHub workflow uses scripts/update-usd-try-rates.py.
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,7 +14,10 @@ import { fileURLToPath } from 'node:url';
 const EVDS_USD_TRY_SERIES = 'TP.DK.USD.A.YTL';
 const DEFAULT_START_DATE = '2020-01-01';
 const DEFAULT_LOOKBACK_DAYS = 7;
-const EVDS_BASE_URL = 'https://evds2.tcmb.gov.tr/service/evds/';
+const EVDS_DEFAULT_BASE_URLS = [
+    'https://evds2.tcmb.gov.tr/service/evds',
+    'https://evds3.tcmb.gov.tr/service/evds'
+];
 const DATE_ARGUMENT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const KNOWN_DATE_FIELDS = ['Tarih', 'Date', 'date'];
 const KNOWN_SERIES_FIELDS = [EVDS_USD_TRY_SERIES.replaceAll('.', '_')];
@@ -237,46 +241,229 @@ function normalizeEvdsRows(rows) {
     );
 }
 
-function createEvdsUrl({ startDate, endDate }) {
-    const params = new URLSearchParams({
-        series: EVDS_USD_TRY_SERIES,
-        startDate: toEvdsDate(startDate),
-        endDate: toEvdsDate(endDate),
-        type: 'json'
-    });
-
-    return new URL(params.toString(), EVDS_BASE_URL);
+function normalizeBaseUrl(baseUrl) {
+    return baseUrl.replace(/\/+$/u, '');
 }
 
-async function fetchUsdTryRates({ apiKey, startDate, endDate }) {
-    const url = createEvdsUrl({ startDate, endDate });
+function createEvdsCandidateUrl({ apiKey, baseUrl, format, startDate, endDate }) {
+    const normalizedBaseUrl = normalizeBaseUrl(baseUrl);
+    const startDateForEvds = toEvdsDate(startDate);
+    const endDateForEvds = toEvdsDate(endDate);
+    const encodedSeries = encodeURIComponent(EVDS_USD_TRY_SERIES);
+    const encodedApiKey = encodeURIComponent(apiKey);
+    const evdsParameters =
+        `series=${encodedSeries}` +
+        `&startDate=${startDateForEvds}` +
+        `&endDate=${endDateForEvds}` +
+        '&type=json' +
+        `&key=${encodedApiKey}`;
+    const separator = format === 'query' ? '?' : '/';
 
+    return new URL(`${normalizedBaseUrl}${separator}${evdsParameters}`);
+}
+
+function getEvdsCandidateBaseUrls() {
+    const candidateBaseUrls = [];
+    const configuredBaseUrl = process.env.TCMB_EVDS_BASE_URL?.trim();
+
+    if (configuredBaseUrl) {
+        candidateBaseUrls.push(configuredBaseUrl);
+    }
+
+    candidateBaseUrls.push(...EVDS_DEFAULT_BASE_URLS);
+
+    return [...new Set(candidateBaseUrls.map((baseUrl) => normalizeBaseUrl(baseUrl)))];
+}
+
+function createEvdsRequestCandidates({ apiKey, startDate, endDate }) {
+    const candidateBaseUrls = getEvdsCandidateBaseUrls();
+    const candidates = [];
+
+    for (const baseUrl of candidateBaseUrls) {
+        const hostname = new URL(baseUrl).hostname.split('.')[0] ?? 'evds';
+        const isDefaultBaseUrl = EVDS_DEFAULT_BASE_URLS.includes(baseUrl);
+        const prefix = isDefaultBaseUrl ? '' : 'override-';
+
+        candidates.push(
+            {
+                name: `${prefix}legacy-path-${hostname}`,
+                url: createEvdsCandidateUrl({
+                    apiKey,
+                    baseUrl,
+                    format: 'path',
+                    startDate,
+                    endDate
+                })
+            },
+            {
+                name: `${prefix}query-${hostname}`,
+                url: createEvdsCandidateUrl({
+                    apiKey,
+                    baseUrl,
+                    format: 'query',
+                    startDate,
+                    endDate
+                })
+            }
+        );
+    }
+
+    return candidates;
+}
+
+function sanitizeDiagnosticValue(value, apiKey = '') {
+    let sanitizedValue = String(value)
+        .replace(/([?&]key=)[^&\s"'<>]*/gi, '$1***')
+        .replace(/(key=)[^&\s"'<>]+/gi, '$1***')
+        .replace(/(TCMB_EVDS_API_KEY[\s:=]+)[^\s"'<>]+/gi, '$1***');
+
+    if (apiKey) {
+        sanitizedValue = sanitizedValue.replaceAll(apiKey, '***');
+    }
+
+    return sanitizedValue;
+}
+
+function sanitizeResponsePreview(responseText, apiKey) {
+    return sanitizeDiagnosticValue(responseText.slice(0, 300), apiKey);
+}
+
+function createCandidateFailureSummary(failure) {
+    const details = [
+        `${failure.name}: ${failure.result}`,
+        `URL=${failure.url}`,
+        `status=${failure.status ?? 'n/a'}`,
+        `content-type=${failure.contentType || 'n/a'}`,
+        `final-url=${failure.finalUrl || 'n/a'}`
+    ];
+
+    if (failure.responsePreview) {
+        details.push(`preview=${failure.responsePreview}`);
+    }
+
+    return details.join(' | ');
+}
+
+function logEvdsCandidateDiagnostics(failure) {
+    console.log(`Status: ${failure.status ?? 'n/a'}`);
+    console.log(`Content-Type: ${failure.contentType || 'n/a'}`);
+    console.log(`Final URL: ${failure.finalUrl || 'n/a'}`);
+
+    if (failure.responsePreview) {
+        console.log(`Response preview: ${failure.responsePreview}`);
+    }
+
+    console.log(`Result: ${failure.result}, trying next candidate...`);
+}
+
+async function fetchEvdsCandidate({ apiKey, candidate }) {
     let response;
 
     try {
-        response = await fetch(url, {
+        response = await fetch(candidate.url, {
             headers: {
                 key: apiKey
             }
         });
     } catch (error) {
-        throw new Error(`Network error while requesting TCMB EVDS: ${error.message}`);
+        return {
+            ok: false,
+            failure: {
+                name: candidate.name,
+                url: sanitizeDiagnosticValue(candidate.url.href, apiKey),
+                status: null,
+                contentType: null,
+                finalUrl: null,
+                responsePreview: '',
+                result: `Network error: ${sanitizeDiagnosticValue(error.message, apiKey)}`
+            }
+        };
     }
 
-    if (!response.ok) {
-        const responseText = await response.text().catch(() => '');
-        const responseSnippet = responseText ? ` Response: ${responseText.slice(0, 300)}` : '';
+    const responseText = await response.text();
+    const contentType = response.headers.get('content-type') ?? '';
+    const finalUrl = sanitizeDiagnosticValue(response.url, apiKey);
+    const responsePreview = sanitizeResponsePreview(responseText, apiKey);
+    const trimmedResponseText = responseText.trimStart();
+    const isJsonLike = contentType.toLowerCase().includes('application/json') || trimmedResponseText.startsWith('{');
+    const isHtmlLike = trimmedResponseText.startsWith('<') || responseText.includes('<!DOCTYPE');
+    const failureBase = {
+        name: candidate.name,
+        url: sanitizeDiagnosticValue(candidate.url.href, apiKey),
+        status: response.status,
+        contentType,
+        finalUrl,
+        responsePreview
+    };
 
-        throw new Error(
-            `TCMB EVDS request failed with HTTP ${response.status} ${response.statusText}.${responseSnippet}`
-        );
+    if (isJsonLike) {
+        try {
+            return {
+                ok: true,
+                json: JSON.parse(responseText),
+                status: response.status,
+                contentType,
+                finalUrl
+            };
+        } catch (error) {
+            return {
+                ok: false,
+                failure: {
+                    ...failureBase,
+                    result: `Invalid JSON: ${sanitizeDiagnosticValue(error.message, apiKey)}`
+                }
+            };
+        }
     }
 
-    try {
-        return await response.json();
-    } catch (error) {
-        throw new Error(`TCMB EVDS returned invalid JSON: ${error.message}`);
+    if (isHtmlLike) {
+        return {
+            ok: false,
+            failure: {
+                ...failureBase,
+                result: 'HTML response'
+            }
+        };
     }
+
+    return {
+        ok: false,
+        failure: {
+            ...failureBase,
+            result: response.ok ? 'Non-JSON response' : `HTTP ${response.status} ${response.statusText}`
+        }
+    };
+}
+
+async function fetchUsdTryRates({ apiKey, startDate, endDate }) {
+    const candidates = createEvdsRequestCandidates({ apiKey, startDate, endDate });
+    const failures = [];
+
+    for (const candidate of candidates) {
+        const sanitizedUrl = sanitizeDiagnosticValue(candidate.url.href, apiKey);
+
+        console.log(`Trying TCMB EVDS candidate: ${candidate.name}`);
+        console.log(`URL: ${sanitizedUrl}`);
+
+        const result = await fetchEvdsCandidate({ apiKey, candidate });
+
+        if (result.ok) {
+            console.log(`Status: ${result.status}`);
+            console.log(`Content-Type: ${result.contentType || 'n/a'}`);
+            console.log(`Final URL: ${result.finalUrl || 'n/a'}`);
+            console.log(`Result: valid JSON response from ${candidate.name}.`);
+
+            return result.json;
+        }
+
+        failures.push(result.failure);
+        logEvdsCandidateDiagnostics(result.failure);
+    }
+
+    throw new Error(
+        'All TCMB EVDS request candidates failed. Check EVDS endpoint availability, URL format, or API key. ' +
+            failures.map(createCandidateFailureSummary).join(' || ')
+    );
 }
 
 async function readUsdTryRatesFile() {
