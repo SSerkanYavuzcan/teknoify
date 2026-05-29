@@ -15,21 +15,10 @@
     position: relative;
     isolation: isolate;
     min-height: clamp(340px, 38vw, 470px);
-    overflow: hidden;
-    border: 1px solid rgba(125, 211, 252, 0.14);
-    border-radius: 32px;
-    background:
-        radial-gradient(circle at 50% 48%, rgba(14, 165, 233, 0.2), transparent 28%),
-        radial-gradient(circle at 70% 22%, rgba(124, 58, 237, 0.2), transparent 28%),
-        linear-gradient(145deg, rgba(15, 23, 42, 0.74), rgba(4, 7, 13, 0.9));
-    box-shadow:
-        0 30px 90px rgba(0, 0, 0, 0.38),
-        0 0 46px rgba(99, 102, 241, 0.14),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    overflow: visible;
 }
 
-.investment-hero-visual::before,
-.investment-hero-visual::after {
+.investment-hero-visual::before {
     content: "";
     position: absolute;
     pointer-events: none;
@@ -44,19 +33,11 @@
     animation: investmentPulseGlow 6s ease-in-out infinite;
 }
 
-.investment-hero-visual::after {
-    inset: 1px;
-    border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 34%, rgba(125, 211, 252, 0.08));
-    mask-image: linear-gradient(#000, transparent 62%);
-    opacity: 0.58;
-}
-
 .investment-hero-grid {
     position: absolute;
     inset: 0;
     z-index: -2;
-    opacity: 0.4;
+    opacity: 0.28;
     background-image:
         linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
         linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
@@ -71,7 +52,6 @@
     width: min(88%, 430px);
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
-    animation: investmentFloatDrift 9s ease-in-out infinite;
 }
 
 .investment-orbit-system::before,
@@ -265,99 +245,33 @@
     top: 50%;
     left: 50%;
     display: grid;
-    width: clamp(150px, 15vw, 198px);
-    height: clamp(150px, 15vw, 198px);
+    width: clamp(104px, 10vw, 132px);
+    height: clamp(104px, 10vw, 132px);
     place-items: center;
-    border: 1px solid rgba(125, 211, 252, 0.22);
     border-radius: 50%;
-    background:
-        radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.16), transparent 18%),
-        radial-gradient(circle, rgba(14, 165, 233, 0.16), transparent 58%),
-        linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(17, 24, 39, 0.74));
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.16), transparent 68%);
     box-shadow:
-        0 0 42px rgba(14, 165, 233, 0.24),
-        0 0 94px rgba(99, 102, 241, 0.2),
-        inset 0 0 34px rgba(125, 211, 252, 0.08);
+        0 0 42px rgba(14, 165, 233, 0.22),
+        0 0 88px rgba(99, 102, 241, 0.18);
     transform: translate(-50%, -50%);
-    animation: investmentCoreFloat 7s ease-in-out infinite;
-}
-
-.investment-orbit-core-ring {
-    position: absolute;
-    inset: 12%;
-    border: 1px dashed rgba(125, 211, 252, 0.34);
-    border-radius: inherit;
-    animation: investmentOrbitRotate 24s linear infinite;
-}
-
-.investment-orbit-core-ring::before,
-.investment-orbit-core-ring::after {
-    content: "";
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #67e8f9;
-    box-shadow: 0 0 16px rgba(103, 232, 249, 0.82);
-}
-
-.investment-orbit-core-ring::before {
-    top: 7%;
-    left: 22%;
-}
-
-.investment-orbit-core-ring::after {
-    right: 12%;
-    bottom: 18%;
-    background: #a78bfa;
-    box-shadow: 0 0 16px rgba(167, 139, 250, 0.72);
 }
 
 .investment-orbit-core-icon {
     display: grid;
-    width: 74px;
-    height: 74px;
+    width: 78px;
+    height: 78px;
     place-items: center;
-    border: 1px solid rgba(125, 211, 252, 0.2);
+    border: 1px solid rgba(125, 211, 252, 0.26);
     border-radius: 50%;
-    background: linear-gradient(145deg, rgba(14, 165, 233, 0.2), rgba(99, 102, 241, 0.2));
+    background:
+        radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.16), transparent 28%),
+        linear-gradient(145deg, rgba(14, 165, 233, 0.22), rgba(99, 102, 241, 0.18));
     color: #e0f2fe;
-    font-size: 2rem;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 28px rgba(14, 165, 233, 0.26);
-}
-
-.investment-orbit-core-copy {
-    position: absolute;
-    bottom: 24px;
-    display: grid;
-    gap: 0.1rem;
-    text-align: center;
-}
-
-.investment-orbit-core-copy span {
-    color: rgba(199, 210, 254, 0.82);
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.investment-orbit-core-copy strong {
-    color: #fff;
-    font-size: 0.95rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-@keyframes investmentCoreFloat {
-    0%,
-    100% {
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-    50% {
-        transform: translate(-50%, calc(-50% - 8px)) scale(1.015);
-    }
+    font-size: 2.05rem;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 0 30px rgba(14, 165, 233, 0.3),
+        0 0 58px rgba(99, 102, 241, 0.2);
 }
 
 @keyframes investmentPulseGlow {
@@ -370,17 +284,6 @@
     50% {
         opacity: 1;
         transform: scale(1.04);
-    }
-}
-
-@keyframes investmentFloatDrift {
-    0%,
-    100% {
-        transform: translate(-50%, -50%);
-    }
-
-    50% {
-        transform: translate(calc(-50% + 8px), calc(-50% - 10px));
     }
 }
 
@@ -1078,7 +981,6 @@ body.investment-modal-open {
 
     .investment-hero-visual {
         min-height: 286px;
-        border-radius: 24px;
     }
 
     .investment-orbit-system {
@@ -1086,22 +988,14 @@ body.investment-modal-open {
     }
 
     .investment-orbit-core {
-        width: 138px;
-        height: 138px;
+        width: 94px;
+        height: 94px;
     }
 
     .investment-orbit-core-icon {
-        width: 56px;
-        height: 56px;
+        width: 58px;
+        height: 58px;
         font-size: 1.5rem;
-    }
-
-    .investment-orbit-core-copy {
-        bottom: 17px;
-    }
-
-    .investment-orbit-core-copy span {
-        font-size: 0.58rem;
     }
 
     .investment-orbit-node {
@@ -1195,11 +1089,8 @@ body.investment-modal-open {
 
 @media (prefers-reduced-motion: reduce) {
     .investment-hero-visual::before,
-    .investment-orbit-system,
     .investment-orbit-path,
     .investment-orbit-node,
-    .investment-orbit-core,
-    .investment-orbit-core-ring,
     .investment-orbit-particle {
         animation: none;
     }
