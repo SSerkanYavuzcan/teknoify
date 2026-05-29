@@ -61,8 +61,8 @@ jobs:
       - name: Compile extraction script
         run: python -m py_compile scripts/extract-stock-document-text.py
 
-      - name: Build extraction arguments
-        id: args
+      - name: Run dry-run extraction
+        if: ${{ inputs.mode == 'dry-run' || inputs.mode == 'normal' }}
         shell: bash
         env:
           COMPANY: ${{ inputs.company }}
@@ -83,24 +83,55 @@ jobs:
             args+=("--strict")
           fi
 
-          printf 'args=' >> "$GITHUB_OUTPUT"
-          printf '%q ' "${args[@]}" >> "$GITHUB_OUTPUT"
-          printf '\n' >> "$GITHUB_OUTPUT"
-
-      - name: Run dry-run extraction
-        if: ${{ inputs.mode == 'dry-run' || inputs.mode == 'normal' }}
-        shell: bash
-        run: python scripts/extract-stock-document-text.py --dry-run ${{ steps.args.outputs.args }}
+          python scripts/extract-stock-document-text.py --dry-run "${args[@]}"
 
       - name: Run normal extraction
         if: ${{ inputs.mode == 'normal' }}
         shell: bash
-        run: python scripts/extract-stock-document-text.py ${{ steps.args.outputs.args }}
+        env:
+          COMPANY: ${{ inputs.company }}
+          DOCUMENT_ID: ${{ inputs.document_id }}
+          STRICT: ${{ inputs.strict }}
+        run: |
+          args=()
+
+          if [ -n "$COMPANY" ]; then
+            args+=("--company=$COMPANY")
+          fi
+
+          if [ -n "$DOCUMENT_ID" ]; then
+            args+=("--document-id=$DOCUMENT_ID")
+          fi
+
+          if [ "$STRICT" = "true" ]; then
+            args+=("--strict")
+          fi
+
+          python scripts/extract-stock-document-text.py "${args[@]}"
 
       - name: Run force extraction
         if: ${{ inputs.mode == 'force' }}
         shell: bash
-        run: python scripts/extract-stock-document-text.py --force ${{ steps.args.outputs.args }}
+        env:
+          COMPANY: ${{ inputs.company }}
+          DOCUMENT_ID: ${{ inputs.document_id }}
+          STRICT: ${{ inputs.strict }}
+        run: |
+          args=()
+
+          if [ -n "$COMPANY" ]; then
+            args+=("--company=$COMPANY")
+          fi
+
+          if [ -n "$DOCUMENT_ID" ]; then
+            args+=("--document-id=$DOCUMENT_ID")
+          fi
+
+          if [ "$STRICT" = "true" ]; then
+            args+=("--strict")
+          fi
+
+          python scripts/extract-stock-document-text.py --force "${args[@]}"
 
       - name: Validate generated JSON outputs
         if: ${{ inputs.mode == 'normal' || inputs.mode == 'force' }}
