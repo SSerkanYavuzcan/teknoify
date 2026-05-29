@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "baseCurrency": "USD",
+    "quoteCurrency": "TRY",
+    "source": "TCMB",
+    "frequency": "daily",
+    "startDate": "2020-01-01",
+    "endDate": null,
+    "lastUpdatedAt": null,
+    "notes": [
+      "This file is intended to store historical USD/TRY rates from TCMB.",
+      "Do not manually invent exchange rates. Use the update script or verified source data."
+    ]
+  },
+  "rates": []
+}
