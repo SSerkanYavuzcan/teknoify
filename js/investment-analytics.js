@@ -851,6 +851,179 @@
         }
     }
 
+
+    // Stage 5: Safe chatbot query logging contract (metadata-only, no storage).
+    function createSafeTextPreview(text) {
+        const normalizedText = String(text ?? "")
+            .replace(/[\r\n\t]+/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+        const redactedText = normalizedText
+            .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[redacted-email]")
+            .replace(/(?:\+?\d[\d\s().-]{7,}\d)/g, "[redacted-phone]");
+
+        return redactedText.slice(0, 160);
+    }
+
+    function inferBasicQueryMetadata(text) {
+        const normalizedText = normalizeMessageText(String(text ?? ""));
+        let detectedCompany = null;
+        let detectedPeriod = null;
+        let normalizedIntent = "unknown";
+
+        if (/\b(mgros|migros)\b/.test(normalizedText)) {
+            detectedCompany = "mgros";
+        } else if (/\b(bim|bimas)\b/.test(normalizedText)) {
+            detectedCompany = "bimas";
+        } else if (/\b(sok|sokm)\b/.test(normalizedText)) {
+            detectedCompany = "sokm";
+        } else if (/\b(carrefour|carrefoursa|crfsa)\b/.test(normalizedText)) {
+            detectedCompany = "crfsa";
+        } else if (/\b(tupras|tuprs)\b/.test(normalizedText)) {
+            detectedCompany = "tuprs";
+        }
+
+        const periodMatch = normalizedText.match(/\b(20\d{2})\s*(?:-|\/|\s)?\s*([1-4])\s*(?:c|ceyrek|q)\b|\b(20\d{2})\s*q\s*([1-4])\b/);
+
+        if (periodMatch) {
+            const year = periodMatch[1] || periodMatch[3];
+            const quarter = periodMatch[2] || periodMatch[4];
+            detectedPeriod = `${year} ${quarter}Ç`;
+        }
+
+        if (normalizedText.includes("magaza sayisi") || normalizedText.includes("store count")) {
+            normalizedIntent = "store_count";
+        } else if (normalizedText.includes("magaza basi kar") || normalizedText.includes("operasyonel kar")) {
+            normalizedIntent = "profit_per_store";
+        } else if (normalizedText.includes("magaza basi ciro") || normalizedText.includes("hasilat")) {
+            normalizedIntent = "revenue_per_store";
+        } else if (normalizedText.includes("faaliyet raporu") || normalizedText.includes("one cikanlar") || normalizedText.includes("rapor")) {
+            normalizedIntent = "report_summary";
+        }
+
+        return {
+            textPreview: createSafeTextPreview(text),
+            textLength: String(text ?? "").length,
+            normalizedIntent,
+            detectedCompany,
+            detectedPeriod
+        };
+    }
+
+    function buildChatLogEvent(eventType, partialPayload = {}) {
+        return {
+            eventType,
+            sessionId: getOrCreateInMemorySessionId(),
+            page: "investment-analytics",
+            timestamp: new Date().toISOString(),
+            query: {
+                textPreview: "",
+                textLength: 0,
+                normalizedIntent: "unknown",
+                detectedCompany: null,
+                detectedPeriod: null,
+                ...(partialPayload.query ?? {})
+            },
+            response: {
+                status: "mock",
+                modelTier: "mock",
+                usedCache: false,
+                sourceCount: 0,
+                latencyMs: 0,
+                ...(partialPayload.response ?? {})
+            },
+            privacy: {
+                containsPersonalData: false,
+                loggingMode: "metadata_only",
+                ...(partialPayload.privacy ?? {})
+            },
+            ...Object.fromEntries(
+                Object.entries(partialPayload).filter(([key]) => !["query", "response", "privacy"].includes(key))
+            )
+        };
+    }
+
+    function sendChatLogEvent(eventPayload) {
+        try {
+            const body = JSON.stringify(eventPayload);
+
+            if (body.length > 10000) {
+                return;
+            }
+
+            if (window.navigator?.sendBeacon) {
+                const beaconBody = new window.Blob([body], { type: "application/json" });
+
+                if (window.navigator.sendBeacon("/api/chat-log", beaconBody)) {
+                    return;
+                }
+            }
+
+            fetch("/api/chat-log", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body,
+                keepalive: true
+            }).catch(() => {});
+        } catch {
+            // Logging is intentionally best-effort and must never affect chat UX.
+        }
+    }
+
+    function trackChatMessageSent(message) {
+        try {
+            sendChatLogEvent(buildChatLogEvent("chat_message_sent", {
+                messageId: message?.id,
+                query: inferBasicQueryMetadata(message?.content)
+            }));
+        } catch {
+            // Ignore logging failures.
+        }
+    }
+
+    function trackChatResponseReceived(message, responsePayload, latencyMs) {
+        try {
+            const normalizedResponse = normalizeAssistantResponse(responsePayload);
+
+            sendChatLogEvent(buildChatLogEvent("chat_response_received", {
+                messageId: message?.id,
+                answerId: responsePayload?.answerId,
+                query: inferBasicQueryMetadata(message?.content),
+                response: {
+                    status: normalizedResponse.status || "mock",
+                    modelTier: normalizedResponse.modelTier || "mock",
+                    usedCache: normalizedResponse.usedCache === true,
+                    sourceCount: normalizedResponse.sources.length,
+                    latencyMs: Math.max(0, Math.round(Number(latencyMs) || 0))
+                }
+            }));
+        } catch {
+            // Ignore logging failures.
+        }
+    }
+
+    function trackChatError(errorContext = {}) {
+        try {
+            const message = errorContext.message;
+
+            sendChatLogEvent(buildChatLogEvent("chat_error", {
+                messageId: message?.id,
+                query: inferBasicQueryMetadata(message?.content),
+                response: {
+                    status: "error",
+                    modelTier: "local-mock",
+                    usedCache: false,
+                    sourceCount: 0,
+                    latencyMs: Math.max(0, Math.round(Number(errorContext.latencyMs) || 0))
+                }
+            }));
+        } catch {
+            // Ignore logging failures.
+        }
+    }
+
     function getSafeSourceUrl(url) {
         if (typeof url !== "string" || !url.trim()) {
             return null;
@@ -1165,25 +1338,32 @@
             const loadingMessage = createMessage("assistant", "Yanıt hazırlanıyor...", "loading");
 
             appendMessage(userMessage);
+            trackChatMessageSent(userMessage);
             clearInput();
             setSendingState(true);
             appendMessage(loadingMessage);
 
+            const responseStartedAt = window.performance.now();
+
             try {
                 const assistantResponse = await requestInvestmentAssistantResponse(trimmedText);
+                const latencyMs = window.performance.now() - responseStartedAt;
                 const normalizedAssistantResponse = normalizeAssistantResponse(assistantResponse);
                 updateMessage(loadingMessage.id, {
                     content: normalizedAssistantResponse.answer,
                     responseMeta: typeof assistantResponse === "string" ? null : assistantResponse,
                     status: "sent"
                 });
+                trackChatResponseReceived(userMessage, assistantResponse, latencyMs);
             } catch (error) {
+                const latencyMs = window.performance.now() - responseStartedAt;
                 console.error("Investment assistant mock response failed:", error);
                 updateMessage(loadingMessage.id, {
                     content: "Yanıt hazırlanırken bir sorun oluştu. Lütfen tekrar deneyin.",
                     responseMeta: null,
                     status: "error"
                 });
+                trackChatError({ message: userMessage, latencyMs });
             } finally {
                 setSendingState(false);
                 focusInput();
