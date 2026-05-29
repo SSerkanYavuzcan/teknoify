@@ -1,3 +1,4 @@
+```css
 .investment-section {
     position: relative;
     padding: 6rem 0;
@@ -160,6 +161,109 @@
     line-height: 1.6;
 }
 
+.investment-chart {
+    position: relative;
+    min-height: 350px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    background:
+        radial-gradient(circle at 20% 10%, rgba(34, 211, 238, 0.09), transparent 28%),
+        linear-gradient(180deg, rgba(99, 102, 241, 0.08), rgba(255, 255, 255, 0.015));
+}
+
+.investment-chart svg {
+    display: block;
+    width: 100%;
+    height: 350px;
+}
+
+.investment-chart-grid-line {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1;
+}
+
+.investment-chart-grid-line-vertical {
+    stroke-dasharray: 4 8;
+    opacity: 0.72;
+}
+
+.investment-chart-axis-label {
+    fill: rgba(243, 244, 246, 0.72);
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.investment-chart-line {
+    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.24));
+}
+
+.investment-chart-point {
+    cursor: pointer;
+    outline: none;
+    stroke: rgba(5, 5, 5, 0.9);
+    stroke-width: 2;
+    transition: r var(--ease-fast), stroke var(--ease-fast);
+}
+
+.investment-chart-point:hover,
+.investment-chart-point:focus {
+    r: 6;
+    stroke: rgba(255, 255, 255, 0.9);
+}
+
+.investment-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem 1rem;
+    padding: 0 1rem 1rem;
+}
+
+.investment-chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: rgba(243, 244, 246, 0.82);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.investment-chart-legend span span {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    box-shadow: 0 0 14px currentcolor;
+}
+
+.investment-chart-note {
+    margin-top: 0.85rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.investment-chart-tooltip {
+    position: absolute;
+    z-index: 2;
+    max-width: 220px;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    background: rgba(5, 5, 5, 0.9);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.36);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, calc(-100% - 12px));
+    transition: opacity var(--ease-fast);
+}
+
+.investment-chart-tooltip.is-visible {
+    opacity: 1;
+}
+
 @media (max-width: 860px) {
     .investment-section {
         padding: 4rem 0;
@@ -180,4 +284,19 @@
     .investment-chart-placeholder {
         min-height: 260px;
     }
+
+    .investment-chart,
+    .investment-chart svg {
+        min-height: 320px;
+        height: 320px;
+    }
+
+    .investment-chart-axis-label {
+        font-size: 0.65rem;
+    }
+
+    .investment-chart-legend {
+        padding: 0 0.85rem 0.85rem;
+    }
 }
+```

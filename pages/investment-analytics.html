@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -78,16 +79,16 @@
 
                 <div class="hero-ctas">
                     <a href="#" class="btn btn-primary btn-lg">Hisse İncele</a>
-                    <a href="#" class="btn btn-primary btn-lg">Sektör İncele</a>
+                    <a href="#retail-store-performance" class="btn btn-primary btn-lg">Sektör İncele</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="investment-section" aria-labelledby="retail-performance-title">
+    <section id="retail-store-performance" class="investment-section" aria-labelledby="retail-performance-title">
         <div class="container">
             <div class="investment-section-header">
-                <span class="investment-eyebrow">Sektör Analiz İskeleti</span>
+                <span class="investment-eyebrow">Sektör Analizleri</span>
                 <h2 id="retail-performance-title">Perakende Sektörü Mağaza Performansları</h2>
                 <p>
                     BİM, Migros, CarrefourSA ve benzeri perakende şirketlerinin mağaza ağı
@@ -106,9 +107,15 @@
                         <span class="investment-metric-pill">Quarterly</span>
                     </div>
 
-                    <div class="investment-chart-placeholder" role="img" aria-label="Mağaza sayısı grafiği için boş yer tutucu">
-                        <span>Veri eklendiğinde grafik burada gösterilecek.</span>
-                    </div>
+                    <div
+                        id="retail-store-count-chart"
+                        class="investment-chart"
+                        aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA çeyreklik mağaza sayısı grafiği"
+                    ></div>
+
+                    <p class="investment-chart-note">
+                        2025 değerleri kaynak dosyada son veri / yıl sonu tahmini olarak yer almaktadır.
+                    </p>
                 </article>
 
                 <article class="investment-chart-card">
@@ -129,8 +136,8 @@
             <div class="investment-note-card">
                 <i class="fas fa-circle-info" aria-hidden="true"></i>
                 <p>
-                    Veriler sonraki adımda şirket bazlı ve çeyreklik formatta eklenecek.
-                    Bu alan şu an yalnızca grafik iskeletidir.
+                    Mağaza sayısı grafiği şirket bazlı ve çeyreklik formatta eklenmiştir.
+                    Mağaza başı ortalama ciro verisi sonraki adımda eklenecektir.
                 </p>
             </div>
         </div>
@@ -218,5 +225,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="../js/session-manager.js"></script>
 <script src="../js/script.js" defer></script>
+<script src="../js/investment-analytics.js" defer></script>
 </body>
 </html>
+```
