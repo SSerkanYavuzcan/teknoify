@@ -15,10 +15,13 @@ These documents will later be used for investment analytics and chatbot/RAG feat
 
 ## Folder conventions
 
-Company folders use lowercase BIST ticker keys, such as:
+Company folders use lowercase BIST ticker codes. Examples:
 
 ```text
+bimas
+crfsa
 mgros
+sokm
 tuprs
 ````
 
@@ -44,7 +47,7 @@ Keep filenames lowercase, kebab-case, and descriptive.
 Suggested filename format:
 
 ```text
-company-year-quarter-document-type.pdf
+ticker-year-quarter-document-type.pdf
 ```
 
 Examples:
@@ -52,6 +55,9 @@ Examples:
 ```text
 mgros-2026-q1-activity-report.pdf
 tuprs-2026-q1-activity-report.pdf
+bimas-2026-q1-activity-report.pdf
+crfsa-2026-q1-activity-report.pdf
+sokm-2026-q1-activity-report.pdf
 ```
 
 ## Manifest rule
