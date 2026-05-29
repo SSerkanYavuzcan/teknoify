@@ -2,6 +2,22 @@ name: Update USD/TRY rates
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "Update mode"
+        type: choice
+        options:
+          - incremental
+          - full
+        default: incremental
+      start:
+        description: "Optional start date YYYY-MM-DD"
+        required: false
+        type: string
+      end:
+        description: "Optional end date YYYY-MM-DD"
+        required: false
+        type: string
   schedule:
     # GitHub Actions cron is evaluated in UTC. Retry daily on days 1-7 in case TCMB data is delayed.
     - cron: '0 6 1-7 * *'
@@ -22,13 +38,40 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          node-version: 20
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install evds
 
       - name: Update USD/TRY rates
-        run: npm run update:usdtry
+        shell: bash
+        env:
+          RUN_MODE: ${{ inputs.mode }}
+          START_DATE: ${{ inputs.start }}
+          END_DATE: ${{ inputs.end }}
+        run: |
+          args=()
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            if [[ "${RUN_MODE}" == "full" ]]; then
+              args+=("--full")
+            fi
+
+            if [[ -n "${START_DATE}" ]]; then
+              args+=("--start=${START_DATE}")
+            fi
+
+            if [[ -n "${END_DATE}" ]]; then
+              args+=("--end=${END_DATE}")
+            fi
+          fi
+
+          python scripts/update-usd-try-rates.py "${args[@]}"
 
       - name: Commit USD/TRY data changes
         run: |
