@@ -754,3 +754,103 @@
         loadSupermarketDataset();
     });
 })();
+
+// Stage 1: Investment chatbot UI shell only. No backend, API, AI, RAG, or logging is connected.
+(function () {
+    const placeholderReply = "Bu özellik yakında kaynaklı finansal raporlar, şirket dokümanları ve sektör verileriyle çalışacak.";
+
+    function appendChatbotMessage(messages, text, sender) {
+        const message = document.createElement("div");
+        message.className = `investment-chatbot__message investment-chatbot__message--${sender}`;
+        message.textContent = text;
+        messages.append(message);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function setupInvestmentChatbot() {
+        const chatbot = document.querySelector("[data-investment-chatbot]");
+
+        if (!chatbot) return;
+
+        const toggle = chatbot.querySelector("[data-chatbot-toggle]");
+        const panel = chatbot.querySelector("[data-chatbot-panel]");
+        const closeButton = chatbot.querySelector("[data-chatbot-close]");
+        const input = chatbot.querySelector("[data-chatbot-input]");
+        const sendButton = chatbot.querySelector("[data-chatbot-send]");
+        const messages = chatbot.querySelector("[data-chatbot-messages]");
+        const suggestionButtons = chatbot.querySelectorAll("[data-chatbot-suggestion]");
+
+        if (!toggle || !panel || !input || !sendButton || !messages) return;
+
+        function openChatbot() {
+            chatbot.classList.add("is-open");
+            panel.setAttribute("aria-hidden", "false");
+            toggle.setAttribute("aria-expanded", "true");
+            toggle.setAttribute("aria-label", "Yatırım asistanını kapat");
+            window.setTimeout(() => input.focus(), 80);
+        }
+
+        function closeChatbot() {
+            chatbot.classList.remove("is-open");
+            panel.setAttribute("aria-hidden", "true");
+            toggle.setAttribute("aria-expanded", "false");
+            toggle.setAttribute("aria-label", "Yatırım asistanını aç");
+        }
+
+        function toggleChatbot() {
+            if (chatbot.classList.contains("is-open")) {
+                closeChatbot();
+            } else {
+                openChatbot();
+            }
+        }
+
+        function sendPlaceholderMessage(text) {
+            const trimmedText = text.trim();
+
+            if (!trimmedText) return;
+
+            appendChatbotMessage(messages, trimmedText, "user");
+            appendChatbotMessage(messages, placeholderReply, "assistant");
+            input.value = "";
+            input.focus();
+        }
+
+        toggle.addEventListener("click", toggleChatbot);
+        closeButton?.addEventListener("click", closeChatbot);
+
+        sendButton.addEventListener("click", () => {
+            sendPlaceholderMessage(input.value);
+        });
+
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendPlaceholderMessage(input.value);
+            }
+        });
+
+        suggestionButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const suggestion = button.getAttribute("data-chatbot-suggestion") ?? button.textContent ?? "";
+                input.value = suggestion;
+                sendPlaceholderMessage(suggestion);
+            });
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && chatbot.classList.contains("is-open")) {
+                closeChatbot();
+                toggle.focus();
+            }
+        });
+
+        document.addEventListener("click", (event) => {
+            if (chatbot.classList.contains("is-open") && !chatbot.contains(event.target)) {
+                closeChatbot();
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", setupInvestmentChatbot);
+})();
