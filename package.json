@@ -8,7 +8,8 @@
         "format:check": "prettier --check \"**/*.{html,css,js,md,json}\"",
         "lint:js": "eslint js/**/*.js",
         "lint:css": "stylelint \"css/**/*.css\"",
-        "check": "npm run format:check && npm run lint:js && npm run lint:css"
+        "check": "npm run format:check && npm run lint:js && npm run lint:css",
+        "update:usdtry": "node scripts/update-usd-try-rates.mjs"
     },
     "devDependencies": {
         "stylelint": "file:tools/stylelint",
