@@ -1,0 +1,22 @@
+{
+  "companyKey": "mgros",
+  "companyName": "Migros Ticaret A.Ş.",
+  "ticker": "MGROS",
+  "market": "BIST",
+  "country": "TR",
+  "documents": [
+    {
+      "id": "mgros-2026-q1-activity-report",
+      "period": "2026 1Ç",
+      "fiscalYear": 2026,
+      "quarter": 1,
+      "documentType": "activity_report",
+      "title": "2026 1. Çeyrek Faaliyet Raporu",
+      "localPath": "reports/mgros-2026-q1-activity-report.pdf",
+      "sourceUrl": null,
+      "language": "tr",
+      "uploadedAt": null,
+      "notes": ""
+    }
+  ]
+}
