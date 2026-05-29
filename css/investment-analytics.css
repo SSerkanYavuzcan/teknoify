@@ -1,3 +1,4 @@
+```css
 .investment-section {
     position: relative;
     padding: 6rem 0;
@@ -160,28 +161,6 @@
     line-height: 1.6;
 }
 
-@media (max-width: 860px) {
-    .investment-section {
-        padding: 4rem 0;
-    }
-
-    .investment-dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 560px) {
-    .investment-chart-card-header,
-    .investment-note-card {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .investment-chart-placeholder {
-        min-height: 260px;
-    }
-}
-
 .investment-chart {
     position: relative;
     min-height: 350px;
@@ -285,7 +264,27 @@
     opacity: 1;
 }
 
+@media (max-width: 860px) {
+    .investment-section {
+        padding: 4rem 0;
+    }
+
+    .investment-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 560px) {
+    .investment-chart-card-header,
+    .investment-note-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .investment-chart-placeholder {
+        min-height: 260px;
+    }
+
     .investment-chart,
     .investment-chart svg {
         min-height: 320px;
@@ -300,3 +299,4 @@
         padding: 0 0.85rem 0.85rem;
     }
 }
+```
