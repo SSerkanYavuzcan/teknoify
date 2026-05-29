@@ -33,8 +33,18 @@ Current status: **mock only**. This contract does not call a real AI model, RAG 
 }
 ```
 
-## Future Fields
+## Response Fields
 
-Planned response metadata may include `sources`, `usedCache`, `modelTier`, `answerId`, `confidence`, and `retrievalMode`.
+- `answer`: Assistant answer text.
+- `sources`: Source list for future retrieval-backed answers. Real document retrieval is **not implemented yet**, so mock responses currently return an empty array.
+- `sources[].title`: Source title.
+- `sources[].url`: Optional source URL.
+- `sources[].page`: Optional page reference, for example `"10, 11"`.
+- `sources[].documentType`: Optional document type.
+- `sources[].period`: Optional reporting period, for example `"2026 1Ç"`.
+- `usedCache`: Boolean cache indicator.
+- `modelTier`: Current response tier, currently `"mock"`.
+- `status`: Current response status, currently `"mock"`.
+- `disclaimer`: Non-advice disclaimer text shown by the frontend when present.
 
 Real AI responses, RAG/document retrieval, Firestore logging, web search, and automation logic are not implemented in this stage.
