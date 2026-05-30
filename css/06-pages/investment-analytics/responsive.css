@@ -33,6 +33,16 @@
         grid-template-columns: 1fr;
     }
 
+    .investment-sector-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .investment-sector-header__action {
+        justify-content: flex-start;
+        padding-top: 0;
+    }
+
     .investment-chart-store-count,
     .investment-chart-store-count svg,
     .investment-chart-revenue-per-store,
@@ -100,8 +110,13 @@
         flex-direction: column;
     }
 
-    .investment-detail-button {
+    .investment-detail-button,
+    .investment-sector-detail-button {
         width: 100%;
+    }
+
+    .investment-sector-placeholder {
+        flex-direction: column;
     }
 
     .investment-chart-placeholder,
