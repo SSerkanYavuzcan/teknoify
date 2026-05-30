@@ -65,6 +65,11 @@
     grid-template-columns: 1fr;
 }
 
+.investment-dashboard-grid-single .investment-chart-card-wide {
+    width: 100%;
+    justify-self: stretch;
+}
+
 .investment-chart-card,
 .investment-note-card {
     border: 1px solid var(--border-light);

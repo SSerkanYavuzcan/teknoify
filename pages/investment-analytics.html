@@ -155,54 +155,13 @@
                 <span class="investment-eyebrow">Sektör Analizleri</span>
                 <h2 id="retail-performance-title">Perakende Sektörü Mağaza Performansları</h2>
                 <p>
-                    BİM, Migros, CarrefourSA ve benzeri perakende şirketlerinin mağaza ağı
-                    ve mağaza başı ortalama ciro gelişimini çeyreklik bazda izlemek için
-                    hazırlanacak analiz alanı.
+                    BİM, Migros, CarrefourSA ve benzeri perakende şirketlerinin mağaza başına
+                    operasyonel kâr gelişimini çeyreklik bazda izlemek için hazırlanacak
+                    analiz alanı.
                 </p>
             </div>
 
-            <div class="investment-dashboard-grid">
-                <article class="investment-chart-card">
-                    <div class="investment-chart-card-header">
-                        <div>
-                            <h3>Mağaza Sayısı</h3>
-                            <p>Çeyreklik mağaza ağı gelişimi</p>
-                        </div>
-                        <button class="investment-detail-button" type="button" data-retail-store-modal-open>
-                            Detay Gör
-                        </button>
-                    </div>
-
-                    <div
-                        id="retail-store-count-chart"
-                        class="investment-chart investment-chart-store-count"
-                        aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA çeyreklik mağaza sayısı çizgi grafiği"
-                    ></div>
-
-                    <p class="investment-chart-note">
-                        2025 değerleri kaynak dosyada son veri / yıl sonu tahmini olarak yer almaktadır.
-                    </p>
-                </article>
-
-                <article class="investment-chart-card investment-revenue-card">
-                    <div class="investment-chart-card-header">
-                        <div>
-                            <h3>Mağaza Başı Ortalama Ciro ($)</h3>
-                            <p>Çeyreklik mağaza başı ortalama ciro</p>
-                        </div>
-                    </div>
-
-                    <div
-                        id="retail-revenue-per-store-chart"
-                        class="investment-chart investment-chart-revenue-per-store"
-                        aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başı ortalama ciro çizgi grafiği"
-                    ></div>
-
-                    <p class="investment-chart-note">
-                        Değerler yaklaşık USD bazında çeyreklik mağaza başı ortalama ciroyu göstermektedir.
-                    </p>
-                </article>
-
+            <div class="investment-dashboard-grid investment-dashboard-grid-single">
                 <article class="investment-chart-card investment-chart-card-wide investment-operating-profit-card">
                     <div class="investment-chart-card-header">
                         <div>
@@ -226,7 +185,7 @@
             <div class="investment-note-card">
                 <i class="fas fa-circle-info" aria-hidden="true"></i>
                 <p>
-                    Mağaza sayısı, mağaza başı ortalama ciro ve mağaza başına operasyonel kâr grafikleri repo içindeki JSON veri dosyasından oluşturulur.
+                    Mağaza başına operasyonel kâr grafiği repo içindeki JSON veri dosyasından oluşturulur.
                 </p>
             </div>
         </div>
@@ -310,34 +269,6 @@
     </div>
 </div>
 
-<div
-    class="investment-chart-modal"
-    id="retail-store-count-modal"
-    aria-hidden="true"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="retail-store-count-modal-title"
->
-    <div class="investment-chart-modal-overlay investment-chart-modal__backdrop" data-retail-store-modal-close></div>
-    <div class="investment-chart-modal__dialog" role="document">
-        <div class="investment-chart-modal-header investment-chart-modal__header">
-            <div>
-                <span class="investment-eyebrow">Detaylı İnceleme</span>
-                <h2 id="retail-store-count-modal-title">Mağaza Sayısı Detayı</h2>
-            </div>
-            <button class="investment-chart-modal__close" type="button" aria-label="Detay grafiğini kapat" data-retail-store-modal-close>
-                <i class="fas fa-times" aria-hidden="true"></i>
-            </button>
-        </div>
-        <div class="investment-chart-modal-body investment-chart-modal__body">
-            <div
-                id="retail-store-count-chart-modal"
-                class="investment-chart investment-chart-modal-mount"
-                aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA büyük mağaza sayısı grafiği"
-            ></div>
-        </div>
-    </div>
-</div>
 
 <!-- Stage 1: UI shell only. Backend/RAG/logging will be added in later steps. -->
 <div class="investment-chatbot" data-investment-chatbot>
