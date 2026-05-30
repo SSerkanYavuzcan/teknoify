@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -151,43 +150,90 @@
 
     <section id="retail-store-performance" class="investment-section" aria-labelledby="retail-performance-title">
         <div class="container">
-            <div class="investment-section-header">
-                <span class="investment-eyebrow">Sektör Analizleri</span>
-                <h2 id="retail-performance-title">Perakende Sektörü Mağaza Performansları</h2>
-                <p>
-                    BİM, Migros, CarrefourSA ve benzeri perakende şirketlerinin mağaza başına
-                    operasyonel kâr gelişimini çeyreklik bazda izlemek için hazırlanacak
-                    analiz alanı.
-                </p>
-            </div>
+            <article class="investment-sector-block">
+                <div class="investment-section-header investment-sector-header">
+                    <div class="investment-sector-header__content">
+                        <span class="investment-eyebrow">Sektör Analizleri</span>
+                        <h2 id="retail-performance-title">Perakende Sektörü Mağaza Performansları</h2>
+                        <p>
+                            BİM, Migros, CarrefourSA ve benzeri perakende şirketlerinin mağaza başına
+                            operasyonel kâr gelişimini çeyreklik bazda izlemek için hazırlanacak
+                            analiz alanı.
+                        </p>
+                    </div>
+                    <div class="investment-sector-header__action">
+                        <a class="investment-sector-detail-button" href="investment-retail.html">
+                            Detaylı İncele
+                        </a>
+                    </div>
+                </div>
 
-            <div class="investment-dashboard-grid investment-dashboard-grid-single">
-                <article class="investment-chart-card investment-chart-card-wide investment-operating-profit-card">
-                    <div class="investment-chart-card-header">
-                        <div>
-                            <h3>Mağaza Başına Operasyonel Kâr ($)</h3>
-                            <p>Çeyreklik mağaza başı operasyonel kâr</p>
+                <div class="investment-dashboard-grid investment-dashboard-grid-single">
+                    <article class="investment-chart-card investment-chart-card-wide investment-operating-profit-card">
+                        <div class="investment-chart-card-header">
+                            <div>
+                                <h3>Mağaza Başına Operasyonel Kâr ($)</h3>
+                                <p>Çeyreklik mağaza başı operasyonel kâr</p>
+                            </div>
+                        </div>
+
+                        <div
+                            id="retail-operating-profit-per-store-chart"
+                            class="investment-chart investment-chart-operating-profit-per-store"
+                            aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başına operasyonel kâr çizgi grafiği"
+                        ></div>
+
+                        <p class="investment-chart-note">
+                            Değerler yaklaşık USD bazında çeyreklik mağaza başı operasyonel kârı göstermektedir.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="investment-note-card">
+                    <i class="fas fa-circle-info" aria-hidden="true"></i>
+                    <p>
+                        Mağaza başına operasyonel kâr grafiği repo içindeki JSON veri dosyasından oluşturulur.
+                    </p>
+                </div>
+            </article>
+
+            <article id="airline-sector-performance" class="investment-sector-block" aria-labelledby="airline-performance-title">
+                <div class="investment-section-header investment-sector-header">
+                    <div class="investment-sector-header__content">
+                        <span class="investment-eyebrow">Sektör Analizleri</span>
+                        <h2 id="airline-performance-title">Havayolu Sektörü Performans Analizleri</h2>
+                        <p>
+                            Türk Hava Yolları, Pegasus ve benzeri havayolu şirketlerinin yolcu trafiği,
+                            doluluk oranı, filo büyüklüğü ve kârlılık metriklerini izlemek için hazırlanacak
+                            analiz alanı.
+                        </p>
+                    </div>
+                    <div class="investment-sector-header__action">
+                        <a class="investment-sector-detail-button" href="investment-airlines.html">
+                            Detaylı İncele
+                        </a>
+                    </div>
+                </div>
+
+                <div class="investment-sector-placeholder">
+                    <div class="investment-sector-placeholder__icon" aria-hidden="true">
+                        <i class="fas fa-plane-departure"></i>
+                    </div>
+                    <div>
+                        <h3>Havayolu metrikleri yakında eklenecek</h3>
+                        <p>
+                            Yolcu sayısı, doluluk oranı, filo büyüklüğü ve faaliyet kârlılığı gibi metrikler
+                            kaynaklı veri setleriyle hazırlanacak.
+                        </p>
+                        <div class="investment-sector-placeholder__tags" aria-label="Planlanan havayolu metrikleri">
+                            <span class="investment-sector-tag">Yolcu Trafiği</span>
+                            <span class="investment-sector-tag">Doluluk Oranı</span>
+                            <span class="investment-sector-tag">Filo</span>
+                            <span class="investment-sector-tag">FAVÖK</span>
                         </div>
                     </div>
-
-                    <div
-                        id="retail-operating-profit-per-store-chart"
-                        class="investment-chart investment-chart-operating-profit-per-store"
-                        aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başına operasyonel kâr çizgi grafiği"
-                    ></div>
-
-                    <p class="investment-chart-note">
-                        Değerler yaklaşık USD bazında çeyreklik mağaza başı operasyonel kârı göstermektedir.
-                    </p>
-                </article>
-            </div>
-
-            <div class="investment-note-card">
-                <i class="fas fa-circle-info" aria-hidden="true"></i>
-                <p>
-                    Mağaza başına operasyonel kâr grafiği repo içindeki JSON veri dosyasından oluşturulur.
-                </p>
-            </div>
+                </div>
+            </article>
         </div>
     </section>
 </main>
@@ -347,4 +393,3 @@
 <script src="../js/investment-analytics.js" defer></script>
 </body>
 </html>
-```
