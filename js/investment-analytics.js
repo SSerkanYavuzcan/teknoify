@@ -1,11 +1,7 @@
 (function () {
     const supermarketDatasetUrl = "../data/investment-analytics/supermarket_dataset.json";
     const usdTryRatesUrl = "../data/currency/usd_try_rates.json";
-    const storeCountChartMountId = "retail-store-count-chart";
-    const revenuePerStoreChartMountId = "retail-revenue-per-store-chart";
     const operatingProfitPerStoreChartMountId = "retail-operating-profit-per-store-chart";
-    const modalChartMountId = "retail-store-count-chart-modal";
-    const modalId = "retail-store-count-modal";
     const svgNamespace = "http://www.w3.org/2000/svg";
     let supermarketDataset = null;
     let usdTryRatesPromise = null;
@@ -652,27 +648,6 @@
         });
     }
 
-    function renderRetailStoreCountChart(mountId, mode = "default") {
-        renderMetricChart(mountId, "storeCounts", {
-            title: "BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza sayısı çizgi grafiği",
-            axisStep: 1000,
-            mode,
-            formatAxisValue: formatNumber,
-            formatEndpointValue: formatNumber,
-            formatTooltipValue: (value) => `${formatNumber(value)} mağaza`
-        });
-    }
-
-    function renderRevenuePerStoreChart() {
-        renderMetricChart(revenuePerStoreChartMountId, "revenuePerStoreUsd", {
-            title: "BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başı ortalama ciro çizgi grafiği",
-            axisStep: 100000,
-            formatAxisValue: formatUsdCompact,
-            formatEndpointValue: formatUsdCompact,
-            formatTooltipValue: (value) => `${formatUsdCompact(value)} mağaza başı ciro`
-        });
-    }
-
     function renderOperatingProfitPerStoreChart() {
         renderMetricChart(operatingProfitPerStoreChartMountId, "operatingProfitPerStoreUsd", {
             title: "BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başına operasyonel kâr çizgi grafiği",
@@ -682,47 +657,6 @@
             formatAxisValue: formatUsdCompact,
             formatEndpointValue: formatUsdCompact,
             formatTooltipValue: (value) => `${formatUsdCompact(value)} mağaza başı operasyonel kâr`
-        });
-    }
-
-    function setupRetailStoreCountModal() {
-        const modal = document.getElementById(modalId);
-        const openButtons = document.querySelectorAll("[data-retail-store-modal-open]");
-        const closeButtons = document.querySelectorAll("[data-retail-store-modal-close]");
-        let lastFocusedElement = null;
-
-        if (!modal || !openButtons.length) return;
-
-        function openModal() {
-            lastFocusedElement = document.activeElement;
-            modal.classList.add("is-open");
-            modal.setAttribute("aria-hidden", "false");
-            document.body.classList.add("investment-modal-open");
-            renderRetailStoreCountChart(modalChartMountId, "modal");
-            modal.querySelector(".investment-chart-modal__close")?.focus();
-        }
-
-        function closeModal() {
-            modal.classList.remove("is-open");
-            modal.setAttribute("aria-hidden", "true");
-            document.body.classList.remove("investment-modal-open");
-            if (lastFocusedElement) {
-                lastFocusedElement.focus();
-            }
-        }
-
-        openButtons.forEach((button) => {
-            button.addEventListener("click", openModal);
-        });
-
-        closeButtons.forEach((button) => {
-            button.addEventListener("click", closeModal);
-        });
-
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape" && modal.classList.contains("is-open")) {
-                closeModal();
-            }
         });
     }
 
@@ -737,20 +671,14 @@
             supermarketDataset = await response.json();
             await applyDerivedPerStoreUsdValues();
 
-            renderRetailStoreCountChart(storeCountChartMountId);
-            renderRevenuePerStoreChart();
             renderOperatingProfitPerStoreChart();
         } catch (error) {
             console.error(error);
-            showErrorState(storeCountChartMountId, "Grafik verisi yüklenemedi. Lütfen daha sonra tekrar deneyin.");
-            showErrorState(revenuePerStoreChartMountId, "Ciro grafiği verisi yüklenemedi. Lütfen daha sonra tekrar deneyin.");
             showErrorState(operatingProfitPerStoreChartMountId, "Operasyonel kâr grafiği verisi yüklenemedi. Lütfen daha sonra tekrar deneyin.");
-            showErrorState(modalChartMountId, "Detay grafiği verisi yüklenemedi.");
         }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        setupRetailStoreCountModal();
         loadSupermarketDataset();
     });
 })();
