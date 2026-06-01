@@ -1237,6 +1237,516 @@
         });
     }
 
+    const defaultCalculatorKey = "compound";
+    let activeCalculatorKey = defaultCalculatorKey;
+
+    function formatPercent(value) {
+        const safeValue = Number.isFinite(value) ? value : 0;
+
+        return `${(safeValue * 100).toLocaleString("tr-TR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}%`;
+    }
+
+    function formatDurationYears(totalYears) {
+        if (!Number.isFinite(totalYears) || totalYears < 0) return "-";
+
+        const years = Math.floor(totalYears);
+        const months = Math.round((totalYears - years) * 12);
+        const normalizedYears = years + Math.floor(months / 12);
+        const normalizedMonths = months % 12;
+
+        if (normalizedYears === 0 && normalizedMonths === 0) return "0 ay";
+        if (normalizedMonths === 0) return `${normalizedYears} yıl`;
+        if (normalizedYears === 0) return `${normalizedMonths} ay`;
+
+        return `${normalizedYears} yıl ${normalizedMonths} ay`;
+    }
+
+    function getCagrFieldNumber(id) {
+        return parseLocalizedNumber(document.getElementById(id)?.value);
+    }
+
+    function updateCalculatorSelectorState(calculatorKey) {
+        document.querySelectorAll("[data-calculator-key]").forEach((button) => {
+            const isActive = button.dataset.calculatorKey === calculatorKey;
+            const label = button.querySelector("small");
+
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-pressed", String(isActive));
+
+            if (label && !button.disabled) {
+                label.textContent = isActive
+                    ? "Aktif hesaplayıcı"
+                    : button.dataset.calculatorKey === "cagr"
+                        ? "Yıllık bileşik büyüme"
+                        : "Bileşik getiri senaryosu";
+            }
+        });
+    }
+
+    function renderCompoundCalculatorPanel() {
+        const panel = document.getElementById("calculator-panel");
+        const template = document.getElementById("compound-calculator-template");
+
+        if (!panel || !template) return;
+
+        panel.innerHTML = template.innerHTML;
+        initCompoundInterestCalculator();
+    }
+
+    function renderCagrCalculatorPanel() {
+        const panel = document.getElementById("calculator-panel");
+
+        if (!panel) return;
+
+        panel.innerHTML = `
+            <article id="cagr-calculator" class="cagr-calculator" aria-labelledby="cagr-calculator-title">
+                <div class="cagr-calculator__input-panel">
+                    <div class="compound-calculator__panel-header">
+                        <span class="investment-eyebrow">Aktif Araç</span>
+                        <h3 id="cagr-calculator-title">CAGR Hesaplayıcı</h3>
+                        <p>Başlangıç ve bitiş değerleri arasındaki yıllık bileşik büyüme oranını hesaplayın.</p>
+                    </div>
+
+                    <div class="compound-calculator__fields">
+                        <div class="compound-field">
+                            <label for="cagr-beginning-value">Başlangıç Tutarı / Değeri</label>
+                            <input id="cagr-beginning-value" class="cagr-calculator-input" type="number" min="0" step="100" value="10000" inputmode="decimal">
+                        </div>
+                        <div class="compound-field cagr-ending-field" data-cagr-ending-field>
+                            <label for="cagr-ending-value">Bitiş Tutarı / Değeri</label>
+                            <input id="cagr-ending-value" class="cagr-calculator-input" type="number" min="0" step="100" value="25000" inputmode="decimal">
+                        </div>
+                    </div>
+
+                    <fieldset class="cagr-duration-mode" aria-label="Süre seçimi">
+                        <legend>Süre Seçimi</legend>
+                        <div class="cagr-mode-toggle">
+                            <button type="button" class="is-active" data-cagr-duration-mode="duration" aria-pressed="true">Süre Bazlı</button>
+                            <button type="button" data-cagr-duration-mode="dates" aria-pressed="false">Tarih Bazlı</button>
+                        </div>
+                    </fieldset>
+
+                    <div class="compound-calculator__fields cagr-duration-fields" data-cagr-duration-fields>
+                        <div class="compound-field">
+                            <label for="cagr-years">Yıl</label>
+                            <input id="cagr-years" class="cagr-calculator-input" type="number" min="0" step="1" value="5" inputmode="decimal">
+                        </div>
+                        <div class="compound-field">
+                            <label for="cagr-months">Ay</label>
+                            <input id="cagr-months" class="cagr-calculator-input" type="number" min="0" max="11" step="1" value="0" inputmode="decimal">
+                        </div>
+                    </div>
+
+                    <div class="compound-calculator__fields cagr-date-fields" data-cagr-date-fields hidden>
+                        <div class="compound-field">
+                            <label for="cagr-start-date">Başlangıç Tarihi</label>
+                            <input id="cagr-start-date" class="cagr-calculator-input" type="date" value="2021-01-01">
+                        </div>
+                        <div class="compound-field">
+                            <label for="cagr-end-date">Bitiş Tarihi</label>
+                            <input id="cagr-end-date" class="cagr-calculator-input" type="date" value="2026-01-01">
+                        </div>
+                    </div>
+
+                    <details class="cagr-advanced-settings compound-advanced-settings">
+                        <summary><span>Gelişmiş Seçenekler</span><i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+                        <div class="compound-calculator__fields compound-calculator__fields--advanced">
+                            <div class="compound-field">
+                                <label for="cagr-inflation-rate">Enflasyon Oranı (%)</label>
+                                <input id="cagr-inflation-rate" class="cagr-calculator-input" type="number" step="0.1" value="0" inputmode="decimal">
+                            </div>
+                            <div class="compound-field">
+                                <label for="cagr-target-rate">Hedef CAGR (%)</label>
+                                <input id="cagr-target-rate" class="cagr-calculator-input" type="number" step="0.1" value="12" inputmode="decimal">
+                            </div>
+                            <div class="compound-field">
+                                <label for="cagr-calculation-mode">Hesaplama Modu</label>
+                                <select id="cagr-calculation-mode" class="cagr-calculator-input">
+                                    <option value="cagr" selected>CAGR Hesapla</option>
+                                    <option value="ending">Bitiş Değeri Hesapla</option>
+                                    <option value="duration">Gereken Süreyi Hesapla</option>
+                                </select>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="cagr-calculator__result-panel compound-calculator__result-panel">
+                    <div class="cagr-validation-message" data-cagr-validation role="status" aria-live="polite"></div>
+                    <div class="cagr-results-grid" data-cagr-results aria-live="polite"></div>
+
+                    <div class="cagr-growth-chart compound-chart-card">
+                        <div class="compound-chart-card__header">
+                            <div>
+                                <h3>Pürüzsüz Büyüme Eğrisi</h3>
+                                <p data-cagr-chart-summary>Tutarlı CAGR varsayımıyla büyüme eğrisi.</p>
+                            </div>
+                        </div>
+                        <div id="cagr-growth-chart" class="compound-growth-chart" role="img" aria-label="CAGR ile pürüzsüz yatırım büyüme eğrisi"></div>
+                    </div>
+
+                    <div class="cagr-projection-table compound-breakdown-card">
+                        <div class="compound-breakdown-card__header">
+                            <div>
+                                <h3>Yıllık İzdüşüm Tablosu</h3>
+                                <p data-cagr-table-note>Yıllık dönemlere göre değer değişimi.</p>
+                            </div>
+                        </div>
+                        <div class="compound-breakdown-table-wrap">
+                            <table class="compound-breakdown-table">
+                                <thead>
+                                    <tr>
+                                        <th>Dönem</th>
+                                        <th>Dönem Başı Değer</th>
+                                        <th>Yıllık Değer Değişimi</th>
+                                        <th>Dönem Sonu Değer</th>
+                                        <th>Toplam Getiri %</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-cagr-projection-body></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        `;
+
+        initCagrCalculator();
+    }
+
+    function renderCalculatorPanel(calculatorKey = defaultCalculatorKey) {
+        activeCalculatorKey = calculatorKey === "cagr" ? "cagr" : "compound";
+        updateCalculatorSelectorState(activeCalculatorKey);
+
+        if (activeCalculatorKey === "cagr") {
+            renderCagrCalculatorPanel();
+            return;
+        }
+
+        renderCompoundCalculatorPanel();
+    }
+
+    function parseCagrInputs() {
+        const mode = document.getElementById("cagr-calculation-mode")?.value ?? "cagr";
+        const durationMode = document.querySelector("[data-cagr-duration-mode].is-active")?.dataset.cagrDurationMode ?? "duration";
+        const beginningValue = getCagrFieldNumber("cagr-beginning-value");
+        const endingValue = getCagrFieldNumber("cagr-ending-value");
+        const inflationRate = getCagrFieldNumber("cagr-inflation-rate") / 100;
+        const targetCagr = getCagrFieldNumber("cagr-target-rate") / 100;
+        let durationYears = 0;
+        let validationMessage = "";
+
+        if (durationMode === "dates") {
+            const start = new Date(document.getElementById("cagr-start-date")?.value ?? "");
+            const end = new Date(document.getElementById("cagr-end-date")?.value ?? "");
+            const dayDifference = (end.getTime() - start.getTime()) / 86400000;
+
+            if (!Number.isFinite(dayDifference) || dayDifference <= 0) {
+                validationMessage = "Bitiş tarihi, başlangıç tarihinden sonra olmalıdır.";
+            } else {
+                durationYears = dayDifference / 365;
+            }
+        } else {
+            const years = Math.max(getCagrFieldNumber("cagr-years"), 0);
+            const months = Math.max(getCagrFieldNumber("cagr-months"), 0);
+            durationYears = years + (months / 12);
+        }
+
+        return { mode, durationMode, beginningValue, endingValue, durationYears, inflationRate, targetCagr, validationMessage };
+    }
+
+    function getCagrBaseResult(inputs, cagr, endingValue, durationYears, titleValue = "CAGR") {
+        const totalReturn = (endingValue / inputs.beginningValue) - 1;
+        const absoluteGain = endingValue - inputs.beginningValue;
+        const realCagr = ((1 + cagr) / (1 + inputs.inflationRate)) - 1;
+
+        return {
+            valid: true,
+            titleValue,
+            beginningValue: inputs.beginningValue,
+            endingValue,
+            cagr,
+            totalReturn,
+            absoluteGain,
+            realCagr,
+            durationYears
+        };
+    }
+
+    function calculateCagr(inputs) {
+        if (inputs.validationMessage) return { valid: false, message: inputs.validationMessage };
+        if (inputs.beginningValue <= 0) return { valid: false, message: "Başlangıç değeri 0'dan büyük olmalıdır." };
+        if (inputs.endingValue <= 0) return { valid: false, message: "Bitiş değeri 0'dan büyük olmalıdır." };
+        if (inputs.durationYears <= 0) return { valid: false, message: "Süre 0'dan büyük olmalıdır." };
+
+        const cagr = (inputs.endingValue / inputs.beginningValue) ** (1 / inputs.durationYears) - 1;
+
+        if (!Number.isFinite(cagr)) return { valid: false, message: "Bu değerlerle CAGR hesaplanamadı." };
+
+        return getCagrBaseResult(inputs, cagr, inputs.endingValue, inputs.durationYears);
+    }
+
+    function calculateCagrEndingValue(inputs) {
+        if (inputs.validationMessage) return { valid: false, message: inputs.validationMessage };
+        if (inputs.beginningValue <= 0) return { valid: false, message: "Başlangıç değeri 0'dan büyük olmalıdır." };
+        if (inputs.targetCagr <= -1) return { valid: false, message: "Hedef CAGR -100%'den büyük olmalıdır." };
+        if (inputs.durationYears <= 0) return { valid: false, message: "Süre 0'dan büyük olmalıdır." };
+
+        const endingValue = inputs.beginningValue * ((1 + inputs.targetCagr) ** inputs.durationYears);
+
+        if (!Number.isFinite(endingValue) || endingValue <= 0) return { valid: false, message: "Bu hedef CAGR ile bitiş değeri hesaplanamadı." };
+
+        return getCagrBaseResult(inputs, inputs.targetCagr, endingValue, inputs.durationYears, "Hesaplanan Bitiş Değeri");
+    }
+
+    function calculateCagrRequiredDuration(inputs) {
+        if (inputs.beginningValue <= 0) return { valid: false, message: "Başlangıç değeri 0'dan büyük olmalıdır." };
+        if (inputs.endingValue <= 0) return { valid: false, message: "Bitiş değeri 0'dan büyük olmalıdır." };
+        if (inputs.targetCagr <= -1) return { valid: false, message: "Hedef CAGR -100%'den büyük olmalıdır." };
+
+        if (inputs.targetCagr === 0) {
+            if (inputs.endingValue === inputs.beginningValue) {
+                return getCagrBaseResult(inputs, 0, inputs.endingValue, 0);
+            }
+            return { valid: false, message: "Bu hedef CAGR ile hedef değere ulaşılamaz." };
+        }
+
+        const durationYears = Math.log(inputs.endingValue / inputs.beginningValue) / Math.log(1 + inputs.targetCagr);
+
+        if (!Number.isFinite(durationYears) || durationYears < 0) {
+            return { valid: false, message: "Bu hedef CAGR ile hedef değere ulaşılamaz." };
+        }
+
+        return getCagrBaseResult(inputs, inputs.targetCagr, inputs.endingValue, durationYears);
+    }
+
+    function buildCagrGrowthSeries(result) {
+        const totalYears = Math.max(result.durationYears, 0);
+        const pointCount = Math.min(Math.max(Math.ceil(totalYears * 4), 8), 80);
+        const points = [];
+
+        for (let index = 0; index <= pointCount; index += 1) {
+            const elapsedYears = pointCount === 0 ? 0 : (index / pointCount) * totalYears;
+            const value = result.beginningValue * ((1 + result.cagr) ** elapsedYears);
+
+            points.push({ elapsedYears, value: Number.isFinite(value) ? value : result.beginningValue });
+        }
+
+        return points;
+    }
+
+    function buildCagrProjectionRows(result) {
+        const rows = [];
+        const maxRows = 120;
+        const wholeYears = Math.floor(result.durationYears);
+        const hasPartial = result.durationYears - wholeYears > 1e-6;
+        const totalRows = wholeYears + (hasPartial ? 1 : 0);
+        const visibleRows = Math.min(totalRows, maxRows);
+
+        for (let index = 1; index <= visibleRows; index += 1) {
+            const periodStart = index - 1;
+            const periodEnd = index === totalRows ? result.durationYears : index;
+            const startingValue = result.beginningValue * ((1 + result.cagr) ** periodStart);
+            const endingValue = result.beginningValue * ((1 + result.cagr) ** periodEnd);
+
+            rows.push({
+                period: hasPartial && index === totalRows ? "Son Dönem" : `${index}. Yıl`,
+                startingValue,
+                change: endingValue - startingValue,
+                endingValue,
+                totalReturn: (endingValue / result.beginningValue) - 1,
+                capped: totalRows > maxRows
+            });
+        }
+
+        return rows;
+    }
+
+    function renderCagrResults(result) {
+        const container = document.querySelector("[data-cagr-results]");
+        const validation = document.querySelector("[data-cagr-validation]");
+
+        if (!container) return;
+
+        if (!result.valid) {
+            if (validation) validation.textContent = result.message;
+            container.innerHTML = "";
+            renderCagrGrowthChart([]);
+            renderCagrProjectionTable([]);
+            return;
+        }
+
+        if (validation) validation.textContent = "";
+
+        const cards = [
+            [result.titleValue, result.titleValue === "Hesaplanan Bitiş Değeri" ? formatTryCurrency(result.endingValue) : formatPercent(result.cagr), "Yıllık Bileşik Büyüme Oranı"],
+            ["Toplam Getiri", formatPercent(result.totalReturn), "Başlangıçtan bitişe toplam değişim"],
+            ["Mutlak Kazanç", formatTryCurrency(result.absoluteGain), "Bitiş değeri - başlangıç değeri"],
+            ["Reel CAGR", formatPercent(result.realCagr), "Enflasyon etkisi düşülmüş büyüme"],
+            ["Süre", formatDurationYears(result.durationYears), `${result.durationYears.toLocaleString("tr-TR", { maximumFractionDigits: 2 })} yıl`]
+        ];
+
+        container.innerHTML = cards.map(([label, value, description]) => `
+            <article class="cagr-result-card compound-result-card">
+                <span>${escapeHtml(label)}</span>
+                <strong>${escapeHtml(value)}</strong>
+                <small>${escapeHtml(description)}</small>
+            </article>
+        `).join("");
+    }
+
+    function renderCagrGrowthChart(points) {
+        const mount = document.getElementById("cagr-growth-chart");
+        const summary = document.querySelector("[data-cagr-chart-summary]");
+
+        if (!mount) return;
+        if (!points.length) {
+            mount.innerHTML = '<div class="investment-chart-error">Geçerli değer girildiğinde grafik güncellenecek.</div>';
+            if (summary) summary.textContent = "Geçerli değer girildiğinde grafik güncellenecek.";
+            return;
+        }
+
+        const width = 760;
+        const height = 330;
+        const values = points.map((point) => point.value);
+        const minValue = Math.min(...values);
+        const maxValue = Math.max(...values);
+        const range = Math.max(maxValue - minValue, Math.abs(maxValue) * 0.08, 1);
+        const chartConfig = { left: 68, top: 28, width: 650, height: 238, minValue: minValue - range * 0.08, maxValue: maxValue + range * 0.08 };
+        const getPoint = (point, index) => {
+            const divisor = Math.max(points.length - 1, 1);
+            const x = chartConfig.left + (index / divisor) * chartConfig.width;
+            const y = chartConfig.top + chartConfig.height - ((point.value - chartConfig.minValue) / (chartConfig.maxValue - chartConfig.minValue)) * chartConfig.height;
+
+            return { x, y };
+        };
+        const path = points.map((point, index) => {
+            const coordinates = getPoint(point, index);
+
+            return `${index === 0 ? "M" : "L"}${coordinates.x.toFixed(2)} ${coordinates.y.toFixed(2)}`;
+        }).join(" ");
+        const areaPath = `${path} L${chartConfig.left + chartConfig.width} ${chartConfig.top + chartConfig.height} L${chartConfig.left} ${chartConfig.top + chartConfig.height} Z`;
+        const svg = createSvgElement("svg", { viewBox: `0 0 ${width} ${height}`, role: "presentation", focusable: "false" });
+
+        for (let step = 0; step <= 4; step += 1) {
+            const y = chartConfig.top + (step / 4) * chartConfig.height;
+            const value = chartConfig.maxValue - (step / 4) * (chartConfig.maxValue - chartConfig.minValue);
+
+            svg.appendChild(createSvgElement("line", { class: "compound-chart-grid-line", x1: chartConfig.left, x2: chartConfig.left + chartConfig.width, y1: y, y2: y }));
+            const label = createSvgElement("text", { class: "compound-chart-axis-label", x: chartConfig.left - 10, y: y + 4, "text-anchor": "end" });
+            label.textContent = formatTryCurrency(value).replace(",00", "");
+            svg.appendChild(label);
+        }
+
+        svg.appendChild(createSvgElement("path", { class: "compound-chart-area cagr-chart-area", d: areaPath, fill: "#818cf8" }));
+        svg.appendChild(createSvgElement("path", { class: "compound-chart-line cagr-chart-line", d: path, stroke: "#a78bfa" }));
+
+        [points[0], points[points.length - 1]].forEach((point, pointIndex) => {
+            const coordinates = getPoint(point, pointIndex === 0 ? 0 : points.length - 1);
+            const label = createSvgElement("text", { class: "compound-chart-axis-label", x: coordinates.x, y: chartConfig.top + chartConfig.height + 32, "text-anchor": pointIndex === 0 ? "start" : "end" });
+            label.textContent = pointIndex === 0 ? "Başlangıç" : `${point.elapsedYears.toLocaleString("tr-TR", { maximumFractionDigits: 1 })}. yıl`;
+            svg.appendChild(label);
+        });
+
+        mount.textContent = "";
+        mount.appendChild(svg);
+
+        if (summary) {
+            const lastPoint = points[points.length - 1];
+            summary.textContent = `Son değer ${formatTryCurrency(lastPoint.value)}; eğri ${points[0].value > lastPoint.value ? "aşağı" : "yukarı"} yönlü.`;
+        }
+    }
+
+    function renderCagrProjectionTable(rows) {
+        const body = document.querySelector("[data-cagr-projection-body]");
+        const note = document.querySelector("[data-cagr-table-note]");
+
+        if (!body) return;
+
+        body.innerHTML = rows.map((row) => `
+            <tr>
+                <td>${escapeHtml(row.period)}</td>
+                <td>${escapeHtml(formatTryCurrency(row.startingValue))}</td>
+                <td>${escapeHtml(formatTryCurrency(row.change))}</td>
+                <td>${escapeHtml(formatTryCurrency(row.endingValue))}</td>
+                <td>${escapeHtml(formatPercent(row.totalReturn))}</td>
+            </tr>
+        `).join("");
+
+        if (note) {
+            note.textContent = rows.some((row) => row.capped)
+                ? "Performans için ilk 120 dönem gösteriliyor; hesaplama tam süreye göre yapıldı."
+                : `${rows.length} yıllık/ara dönem gösteriliyor.`;
+        }
+    }
+
+    function updateCagrCalculator() {
+        const inputs = parseCagrInputs();
+        const result = inputs.mode === "ending"
+            ? calculateCagrEndingValue(inputs)
+            : inputs.mode === "duration"
+                ? calculateCagrRequiredDuration(inputs)
+                : calculateCagr(inputs);
+
+        const endingField = document.querySelector("[data-cagr-ending-field]");
+        if (endingField) {
+            endingField.classList.toggle("is-calculated", inputs.mode === "ending");
+            endingField.querySelector("input")?.toggleAttribute("disabled", inputs.mode === "ending");
+        }
+
+        renderCagrResults(result);
+
+        if (result.valid) {
+            renderCagrGrowthChart(buildCagrGrowthSeries(result));
+            renderCagrProjectionTable(buildCagrProjectionRows(result));
+        }
+    }
+
+    function initCagrCalculator() {
+        const calculator = document.getElementById("cagr-calculator");
+
+        if (!calculator) return;
+
+        calculator.querySelectorAll(".cagr-calculator-input").forEach((input) => {
+            input.addEventListener("input", updateCagrCalculator);
+            input.addEventListener("change", updateCagrCalculator);
+        });
+
+        calculator.querySelectorAll("[data-cagr-duration-mode]").forEach((button) => {
+            button.addEventListener("click", () => {
+                calculator.querySelectorAll("[data-cagr-duration-mode]").forEach((modeButton) => {
+                    const isActive = modeButton === button;
+                    modeButton.classList.toggle("is-active", isActive);
+                    modeButton.setAttribute("aria-pressed", String(isActive));
+                });
+
+                const isDateMode = button.dataset.cagrDurationMode === "dates";
+                calculator.querySelector("[data-cagr-duration-fields]").hidden = isDateMode;
+                calculator.querySelector("[data-cagr-date-fields]").hidden = !isDateMode;
+                updateCagrCalculator();
+            });
+        });
+
+        updateCagrCalculator();
+    }
+
+    function initCalculatorSelector() {
+        const buttons = document.querySelectorAll("[data-calculator-key]");
+
+        if (!buttons.length) return;
+
+        buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+                renderCalculatorPanel(button.dataset.calculatorKey);
+            });
+        });
+
+        renderCalculatorPanel(defaultCalculatorKey);
+    }
+
     function initCompoundInterestCalculator() {
         const calculator = document.getElementById("compound-calculator");
 
@@ -1299,7 +1809,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         initInvestmentSmoothScroll();
         initSectorSelector();
-        initCompoundInterestCalculator();
+        initCalculatorSelector();
     });
 })();
 

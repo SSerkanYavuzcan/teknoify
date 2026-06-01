@@ -253,7 +253,7 @@
             </div>
 
             <div class="calculator-selector-grid" aria-label="Yatırım hesaplayıcı seçenekleri">
-                <button class="calculator-selector-card is-active" type="button" aria-pressed="true">
+                <button class="calculator-selector-card is-active" type="button" data-calculator-key="compound" aria-pressed="true">
                     <span class="calculator-selector-card__icon" aria-hidden="true"><i class="fas fa-percent"></i></span>
                     <span>
                         <strong>Bileşik Faiz Hesaplayıcı</strong>
@@ -261,23 +261,34 @@
                     </span>
                 </button>
 
-                <button class="calculator-selector-card" type="button" disabled aria-disabled="true">
+                <button class="calculator-selector-card" type="button" data-calculator-key="cagr" aria-pressed="false">
                     <span class="calculator-selector-card__icon" aria-hidden="true"><i class="fas fa-chart-line"></i></span>
                     <span>
                         <strong>CAGR Hesaplayıcı</strong>
-                        <small>Yakında</small>
+                        <small>Yıllık bileşik büyüme</small>
                     </span>
                 </button>
 
-                <button class="calculator-selector-card" type="button" disabled aria-disabled="true">
+                <button class="calculator-selector-card" type="button" disabled aria-disabled="true" aria-pressed="false">
                     <span class="calculator-selector-card__icon" aria-hidden="true"><i class="fas fa-person-cane"></i></span>
                     <span>
                         <strong>Emeklilik Hesaplayıcı</strong>
                         <small>Yakında</small>
                     </span>
                 </button>
+
+                <a class="calculator-selector-card calculator-selector-card--link" href="subscription.html">
+                    <span class="calculator-selector-card__icon" aria-hidden="true"><i class="fas fa-compass"></i></span>
+                    <span>
+                        <strong>Daha fazlasını keşfet</strong>
+                        <small>Yeni araçlar ve gelişmiş analizler</small>
+                    </span>
+                </a>
             </div>
 
+            <div id="calculator-panel" class="calculator-panel" aria-live="polite"></div>
+
+            <template id="compound-calculator-template">
             <article id="compound-calculator" class="compound-calculator" aria-labelledby="compound-calculator-title">
                 <div class="compound-calculator__input-panel">
                     <div class="compound-calculator__panel-header">
@@ -399,6 +410,8 @@
                     </div>
                 </div>
             </article>
+
+            </template>
         </div>
     </section>
 
