@@ -660,6 +660,401 @@
         });
     }
 
+
+    function parseLocalizedNumber(value) {
+        const normalizedValue = String(value ?? "")
+            .replace(/\s/g, "")
+            .replace(",", ".");
+        const numberValue = Number.parseFloat(normalizedValue);
+
+        return Number.isFinite(numberValue) ? numberValue : 0;
+    }
+
+    function getCompoundFrequencyPerYear(frequency) {
+        return {
+            yearly: 1,
+            monthly: 12,
+            daily: 365
+        }[frequency] ?? 12;
+    }
+
+    function getContributionFrequencyPerYear(frequency) {
+        return frequency === "yearly" ? 1 : 12;
+    }
+
+    function formatTryCurrency(value) {
+        const safeValue = Number.isFinite(value) ? value : 0;
+
+        return safeValue.toLocaleString("tr-TR", {
+            style: "currency",
+            currency: "TRY",
+            maximumFractionDigits: 0
+        });
+    }
+
+    function formatCalculatorPeriod(index, contributionFrequency) {
+        if (contributionFrequency === "yearly") {
+            return `${index}. Yıl`;
+        }
+
+        const year = Math.floor((index - 1) / 12) + 1;
+        const month = ((index - 1) % 12) + 1;
+
+        return `${year}. Yıl / ${month}. Ay`;
+    }
+
+    function growCompoundValue(value, years, annualRate, compoundingPeriodsPerYear) {
+        if (!Number.isFinite(value) || value <= 0 || years <= 0) {
+            return Number.isFinite(value) ? Math.max(value, 0) : 0;
+        }
+
+        const periodRate = annualRate / compoundingPeriodsPerYear;
+        const growthBase = 1 + periodRate;
+
+        if (growthBase <= 0) return 0;
+
+        const grownValue = value * (growthBase ** (compoundingPeriodsPerYear * years));
+
+        return Number.isFinite(grownValue) ? Math.max(grownValue, 0) : 0;
+    }
+
+    function parseCalculatorInputs() {
+        const getValue = (id) => document.getElementById(id)?.value;
+        const principal = clampNumber(parseLocalizedNumber(getValue("compound-principal")), 0, 1000000000000);
+        const regularContribution = clampNumber(parseLocalizedNumber(getValue("compound-contribution")), 0, 1000000000000);
+        const annualRate = clampNumber(parseLocalizedNumber(getValue("compound-annual-rate")), -99, 1000) / 100;
+        const totalYears = clampNumber(parseLocalizedNumber(getValue("compound-duration")), 0, 100);
+        const inflationRate = clampNumber(parseLocalizedNumber(getValue("compound-inflation-rate")), 0, 1000) / 100;
+        const taxRate = clampNumber(parseLocalizedNumber(getValue("compound-tax-rate")), 0, 100) / 100;
+        const contributionFrequency = getValue("compound-contribution-frequency") === "yearly" ? "yearly" : "monthly";
+        const compoundingFrequency = getValue("compound-compounding-frequency") || "monthly";
+        const contributionTiming = getValue("compound-contribution-timing") === "end" ? "end" : "start";
+
+        return {
+            principal,
+            regularContribution,
+            annualRate,
+            totalYears,
+            inflationRate,
+            taxRate,
+            contributionFrequency,
+            contributionFrequencyPerYear: getContributionFrequencyPerYear(contributionFrequency),
+            compoundingFrequency,
+            compoundingPeriodsPerYear: getCompoundFrequencyPerYear(compoundingFrequency),
+            contributionTiming
+        };
+    }
+
+    function getContributionTimes(inputs, elapsedYears = inputs.totalYears) {
+        const contributionTimes = [];
+        const periodLength = 1 / inputs.contributionFrequencyPerYear;
+        const totalPeriods = Math.floor(elapsedYears * inputs.contributionFrequencyPerYear + 1e-8);
+        const timingOffset = inputs.contributionTiming === "start" ? 0 : 1;
+
+        for (let periodIndex = 0; periodIndex < totalPeriods; periodIndex += 1) {
+            const contributionTime = (periodIndex + timingOffset) * periodLength;
+
+            if (contributionTime <= elapsedYears + 1e-8) {
+                contributionTimes.push(contributionTime);
+            }
+        }
+
+        return contributionTimes;
+    }
+
+    function calculateCompoundInterest(inputs, elapsedYears = inputs.totalYears) {
+        const finalPrincipal = growCompoundValue(
+            inputs.principal,
+            elapsedYears,
+            inputs.annualRate,
+            inputs.compoundingPeriodsPerYear
+        );
+        const contributionTimes = getContributionTimes(inputs, elapsedYears);
+        const contributionFutureValue = contributionTimes.reduce((sum, contributionTime) => (
+            sum + growCompoundValue(
+                inputs.regularContribution,
+                Math.max(elapsedYears - contributionTime, 0),
+                inputs.annualRate,
+                inputs.compoundingPeriodsPerYear
+            )
+        ), 0);
+        const totalContributions = contributionTimes.length * inputs.regularContribution;
+        const totalInvested = inputs.principal + totalContributions;
+        const grossFinalAmount = finalPrincipal + contributionFutureValue;
+        const grossProfit = grossFinalAmount - totalInvested;
+        const tax = Math.max(grossProfit, 0) * inputs.taxRate;
+        const netProfit = grossProfit - tax;
+        const netFinalAmount = totalInvested + netProfit;
+        const inflationBase = 1 + inputs.inflationRate;
+        const realValue = inflationBase > 0
+            ? netFinalAmount / (inflationBase ** elapsedYears)
+            : netFinalAmount;
+
+        return {
+            grossFinalAmount: Number.isFinite(grossFinalAmount) ? grossFinalAmount : 0,
+            totalInvested: Number.isFinite(totalInvested) ? totalInvested : 0,
+            grossProfit: Number.isFinite(grossProfit) ? grossProfit : 0,
+            tax: Number.isFinite(tax) ? tax : 0,
+            netProfit: Number.isFinite(netProfit) ? netProfit : 0,
+            netFinalAmount: Number.isFinite(netFinalAmount) ? netFinalAmount : 0,
+            realValue: Number.isFinite(realValue) ? realValue : 0,
+            totalContributions
+        };
+    }
+
+    function buildBreakdownRows(inputs) {
+        const rows = [];
+        const periodLength = 1 / inputs.contributionFrequencyPerYear;
+        const totalPeriods = Math.floor(inputs.totalYears * inputs.contributionFrequencyPerYear + 1e-8);
+        let balance = inputs.principal;
+        let totalInvested = inputs.principal;
+
+        for (let index = 1; index <= totalPeriods; index += 1) {
+            const startingBalance = balance;
+            let contribution = 0;
+
+            if (inputs.contributionTiming === "start") {
+                contribution = inputs.regularContribution;
+                totalInvested += contribution;
+                balance += contribution;
+            }
+
+            const balanceBeforeGrowth = balance;
+            balance = growCompoundValue(balance, periodLength, inputs.annualRate, inputs.compoundingPeriodsPerYear);
+
+            if (inputs.contributionTiming === "end") {
+                contribution = inputs.regularContribution;
+                balance += contribution;
+                totalInvested += contribution;
+            }
+
+            const periodReturn = balance - startingBalance - contribution;
+
+            rows.push({
+                period: formatCalculatorPeriod(index, inputs.contributionFrequency),
+                startingBalance,
+                contribution,
+                periodReturn: Number.isFinite(periodReturn) ? periodReturn : 0,
+                totalInvested,
+                endingBalance: Number.isFinite(balance) ? balance : balanceBeforeGrowth
+            });
+        }
+
+        return rows;
+    }
+
+    function buildGrowthSeries(inputs) {
+        const yearCount = Math.ceil(inputs.totalYears);
+        const points = [];
+
+        for (let year = 0; year <= yearCount; year += 1) {
+            const elapsedYears = Math.min(year, inputs.totalYears);
+            const result = calculateCompoundInterest(inputs, elapsedYears);
+
+            points.push({
+                label: year === 0 ? "Başlangıç" : `${elapsedYears}. Yıl`,
+                elapsedYears,
+                invested: result.totalInvested,
+                gain: Math.max(result.grossProfit, 0)
+            });
+        }
+
+        if (!points.length || points[points.length - 1].elapsedYears !== inputs.totalYears) {
+            const result = calculateCompoundInterest(inputs, inputs.totalYears);
+            points.push({
+                label: `${inputs.totalYears}. Yıl`,
+                elapsedYears: inputs.totalYears,
+                invested: result.totalInvested,
+                gain: Math.max(result.grossProfit, 0)
+            });
+        }
+
+        return points;
+    }
+
+    function renderCalculatorResults(results) {
+        const container = document.querySelector("[data-compound-results]");
+
+        if (!container) return;
+
+        const cards = [
+            ["Toplam Tutar", results.grossFinalAmount],
+            ["Net Toplam Tutar", results.netFinalAmount],
+            ["Toplam Yatırılan", results.totalInvested],
+            ["Brüt Faiz Kazancı", results.grossProfit],
+            ["Net Faiz Kazancı", results.netProfit],
+            ["Enflasyona Göre Düzeltilmiş Tutar (Bugünkü Alım Gücü)", results.realValue]
+        ];
+
+        container.innerHTML = cards.map(([label, value]) => `
+            <article class="compound-result-card">
+                <span>${escapeHtml(label)}</span>
+                <strong>${escapeHtml(formatTryCurrency(value))}</strong>
+            </article>
+        `).join("");
+    }
+
+    function getCompoundChartPoint(index, value, points, chartConfig) {
+        const { left, top, width, height, maxValue } = chartConfig;
+        const divisor = Math.max(points.length - 1, 1);
+        const x = left + (index / divisor) * width;
+        const y = top + height - (value / maxValue) * height;
+
+        return { x, y };
+    }
+
+    function buildChartPath(points, key, chartConfig) {
+        return points.map((point, index) => {
+            const coordinates = getCompoundChartPoint(index, point[key], points, chartConfig);
+
+            return `${index === 0 ? "M" : "L"}${coordinates.x.toFixed(2)} ${coordinates.y.toFixed(2)}`;
+        }).join(" ");
+    }
+
+    function renderGrowthChart(points) {
+        const mount = document.getElementById("compound-growth-chart");
+        const summary = document.querySelector("[data-compound-chart-summary]");
+
+        if (!mount) return;
+
+        const width = 760;
+        const height = 330;
+        const chartConfig = {
+            left: 68,
+            top: 28,
+            width: 650,
+            height: 238,
+            maxValue: Math.max(...points.flatMap((point) => [point.invested, point.gain]), 1)
+        };
+        const svg = createSvgElement("svg", {
+            viewBox: `0 0 ${width} ${height}`,
+            role: "presentation",
+            focusable: "false"
+        });
+
+        for (let step = 0; step <= 4; step += 1) {
+            const y = chartConfig.top + (step / 4) * chartConfig.height;
+            const value = chartConfig.maxValue - (step / 4) * chartConfig.maxValue;
+
+            svg.appendChild(createSvgElement("line", {
+                class: "compound-chart-grid-line",
+                x1: chartConfig.left,
+                x2: chartConfig.left + chartConfig.width,
+                y1: y,
+                y2: y
+            }));
+            const label = createSvgElement("text", {
+                class: "compound-chart-axis-label",
+                x: chartConfig.left - 10,
+                y: y + 4,
+                "text-anchor": "end"
+            });
+            label.textContent = formatTryCurrency(value).replace(",00", "");
+            svg.appendChild(label);
+        }
+
+        const investedPath = buildChartPath(points, "invested", chartConfig);
+        const gainPath = buildChartPath(points, "gain", chartConfig);
+
+        svg.appendChild(createSvgElement("path", {
+            class: "compound-chart-line",
+            d: investedPath,
+            stroke: "#67e8f9"
+        }));
+        svg.appendChild(createSvgElement("path", {
+            class: "compound-chart-line",
+            d: gainPath,
+            stroke: "#a78bfa"
+        }));
+
+        points.forEach((point, index) => {
+            if (index !== 0 && index !== points.length - 1 && index % Math.ceil(points.length / 4) !== 0) return;
+
+            const x = getCompoundChartPoint(index, 0, points, chartConfig).x;
+            const label = createSvgElement("text", {
+                class: "compound-chart-axis-label",
+                x,
+                y: chartConfig.top + chartConfig.height + 32,
+                "text-anchor": "middle"
+            });
+            label.textContent = point.label;
+            svg.appendChild(label);
+        });
+
+        mount.textContent = "";
+        mount.appendChild(svg);
+
+        if (summary && points.length) {
+            const lastPoint = points[points.length - 1];
+            summary.textContent = `${lastPoint.label} sonunda yatırılan para ${formatTryCurrency(lastPoint.invested)}, bileşik getiri ${formatTryCurrency(lastPoint.gain)}.`;
+        }
+    }
+
+    function renderBreakdownTable(rows) {
+        const body = document.querySelector("[data-compound-breakdown-body]");
+        const note = document.querySelector("[data-compound-breakdown-note]");
+
+        if (!body) return;
+
+        const maxVisibleRows = 360;
+        const visibleRows = rows.slice(0, maxVisibleRows);
+
+        body.innerHTML = visibleRows.map((row) => `
+            <tr>
+                <td>${escapeHtml(row.period)}</td>
+                <td>${escapeHtml(formatTryCurrency(row.startingBalance))}</td>
+                <td>${escapeHtml(formatTryCurrency(row.contribution))}</td>
+                <td>${escapeHtml(formatTryCurrency(row.periodReturn))}</td>
+                <td>${escapeHtml(formatTryCurrency(row.totalInvested))}</td>
+                <td>${escapeHtml(formatTryCurrency(row.endingBalance))}</td>
+            </tr>
+        `).join("");
+
+        if (note) {
+            note.textContent = rows.length > maxVisibleRows
+                ? `Performans için ilk ${maxVisibleRows} dönem gösteriliyor; hesaplama tüm ${rows.length} dönem üzerinden yapıldı.`
+                : `Seçilen katkı sıklığına göre ${rows.length} dönem gösteriliyor.`;
+        }
+    }
+
+    function updateCompoundCalculator() {
+        const inputs = parseCalculatorInputs();
+        const results = calculateCompoundInterest(inputs);
+        const growthSeries = buildGrowthSeries(inputs);
+        const breakdownRows = buildBreakdownRows(inputs);
+
+        renderCalculatorResults(results);
+        renderGrowthChart(growthSeries);
+        renderBreakdownTable(breakdownRows);
+    }
+
+    function initCalculatorSmoothScroll() {
+        document.querySelectorAll('a[href="#investment-calculators"]').forEach((link) => {
+            link.addEventListener("click", (event) => {
+                const target = document.getElementById("investment-calculators");
+
+                if (!target) return;
+
+                event.preventDefault();
+                target.scrollIntoView({ behavior: "smooth", block: "start" });
+                window.history.pushState(null, "", "#investment-calculators");
+            });
+        });
+    }
+
+    function initCompoundInterestCalculator() {
+        const calculator = document.getElementById("compound-calculator");
+
+        if (!calculator) return;
+
+        calculator.querySelectorAll(".compound-calculator-input").forEach((input) => {
+            input.addEventListener("input", updateCompoundCalculator);
+            input.addEventListener("change", updateCompoundCalculator);
+        });
+
+        updateCompoundCalculator();
+    }
+
     async function loadSupermarketDataset() {
         try {
             const response = await fetch(supermarketDatasetUrl);
@@ -679,6 +1074,8 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+        initCalculatorSmoothScroll();
+        initCompoundInterestCalculator();
         loadSupermarketDataset();
     });
 })();
