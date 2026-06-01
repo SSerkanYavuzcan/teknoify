@@ -205,3 +205,46 @@
         transition: none;
     }
 }
+
+@media (max-width: 860px) {
+    .retail-kpi-grid,
+    .retail-preview-grid,
+    .subscription-value-list {
+        grid-template-columns: 1fr;
+    }
+
+    .premium-lock-overlay {
+        position: relative;
+        min-height: 420px;
+    }
+
+    .premium-content-shell.is-locked [data-premium-blur] {
+        margin-bottom: -220px;
+    }
+}
+
+@media (max-width: 560px) {
+    .premium-lock-actions,
+    .subscription-actions {
+        flex-direction: column;
+    }
+
+    .premium-lock-actions .btn,
+    .subscription-actions .btn {
+        width: 100%;
+    }
+
+    .retail-preview-card {
+        min-height: 260px;
+        padding: 1rem;
+    }
+
+    .retail-preview-chart {
+        gap: 0.5rem;
+        min-height: 190px;
+    }
+
+    .retail-preview-table div {
+        grid-template-columns: 1fr;
+    }
+}
