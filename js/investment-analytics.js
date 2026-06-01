@@ -912,83 +912,98 @@
     }
 
     function renderGrowthChart(points) {
-        const mount = document.getElementById("compound-growth-chart");
-        const summary = document.querySelector("[data-compound-chart-summary]");
+    const mount = document.getElementById("compound-growth-chart");
+    const summary = document.querySelector("[data-compound-chart-summary]");
 
-        if (!mount) return;
+    if (!mount) return;
 
-        const width = 760;
-        const height = 330;
-        const chartConfig = {
-            left: 68,
-            top: 28,
-            width: 650,
-            height: 238,
-            maxValue: Math.max(...points.flatMap((point) => [point.invested, point.gain]), 1)
-        };
-        const svg = createSvgElement("svg", {
-            viewBox: `0 0 ${width} ${height}`,
-            role: "presentation",
-            focusable: "false"
-        });
+    const width = 760;
+    const height = 330;
+    const chartConfig = {
+        left: 68,
+        top: 28,
+        width: 650,
+        height: 238,
+        maxValue: Math.max(...points.flatMap((point) => [point.invested, point.gain]), 1)
+    };
 
-        for (let step = 0; step <= 4; step += 1) {
-            const y = chartConfig.top + (step / 4) * chartConfig.height;
-            const value = chartConfig.maxValue - (step / 4) * chartConfig.maxValue;
+    const svg = createSvgElement("svg", {
+        viewBox: `0 0 ${width} ${height}`,
+        role: "presentation",
+        focusable: "false"
+    });
 
-            svg.appendChild(createSvgElement("line", {
-                class: "compound-chart-grid-line",
-                x1: chartConfig.left,
-                x2: chartConfig.left + chartConfig.width,
-                y1: y,
-                y2: y
-            }));
-            const label = createSvgElement("text", {
-                class: "compound-chart-axis-label",
-                x: chartConfig.left - 10,
-                y: y + 4,
-                "text-anchor": "end"
-            });
-            label.textContent = formatTryCurrency(value).replace(",00", "");
-            svg.appendChild(label);
-        }
+    for (let step = 0; step <= 4; step += 1) {
+        const y = chartConfig.top + (step / 4) * chartConfig.height;
+        const value = chartConfig.maxValue - (step / 4) * chartConfig.maxValue;
 
-        const investedPath = buildChartPath(points, "invested", chartConfig);
-        const gainPath = buildChartPath(points, "gain", chartConfig);
-
-        svg.appendChild(createSvgElement("path", {
-            class: "compound-chart-line",
-            d: investedPath,
-            stroke: "#818cf8"
-        }));
-        svg.appendChild(createSvgElement("path", {
-            class: "compound-chart-line",
-            d: gainPath,
-            stroke: "#c4b5fd"
+        svg.appendChild(createSvgElement("line", {
+            class: "compound-chart-grid-line",
+            x1: chartConfig.left,
+            x2: chartConfig.left + chartConfig.width,
+            y1: y,
+            y2: y
         }));
 
-        points.forEach((point, index) => {
-            if (index !== 0 && index !== points.length - 1 && index % Math.ceil(points.length / 4) !== 0) return;
-
-            const x = getCompoundChartPoint(index, 0, points, chartConfig).x;
-            const label = createSvgElement("text", {
-                class: "compound-chart-axis-label",
-                x,
-                y: chartConfig.top + chartConfig.height + 32,
-                "text-anchor": "middle"
-            });
-            label.textContent = point.label;
-            svg.appendChild(label);
+        const label = createSvgElement("text", {
+            class: "compound-chart-axis-label",
+            x: chartConfig.left - 10,
+            y: y + 4,
+            "text-anchor": "end"
         });
 
-        mount.textContent = "";
-        mount.appendChild(svg);
-
-        if (summary && points.length) {
-            const lastPoint = points[points.length - 1];
-            summary.textContent = `${lastPoint.label} sonunda yatırılan para ${formatTryCurrency(lastPoint.invested)}, bileşik getiri ${formatTryCurrency(lastPoint.gain)}.`;
-        }
+        label.textContent = formatTryCurrency(value).replace(",00", "");
+        svg.appendChild(label);
     }
+
+    const investedPath = buildChartPath(points, "invested", chartConfig);
+    const gainPath = buildChartPath(points, "gain", chartConfig);
+
+    svg.appendChild(createSvgElement("path", {
+        class: "compound-chart-line",
+        d: investedPath,
+        stroke: "#818cf8"
+    }));
+
+    svg.appendChild(createSvgElement("path", {
+        class: "compound-chart-line",
+        d: gainPath,
+        stroke: "#c4b5fd"
+    }));
+
+    points.forEach((point, index) => {
+        if (
+            index !== 0 &&
+            index !== points.length - 1 &&
+            index % Math.ceil(points.length / 4) !== 0
+        ) {
+            return;
+        }
+
+        const x = getCompoundChartPoint(index, 0, points, chartConfig).x;
+
+        const label = createSvgElement("text", {
+            class: "compound-chart-axis-label",
+            x,
+            y: chartConfig.top + chartConfig.height + 32,
+            "text-anchor": "middle"
+        });
+
+        label.textContent = point.label;
+        svg.appendChild(label);
+    });
+
+    mount.textContent = "";
+    mount.appendChild(svg);
+
+    if (summary && points.length) {
+        const lastPoint = points[points.length - 1];
+
+        summary.textContent = `${lastPoint.label} sonunda yatırılan para ${formatTryCurrency(
+            lastPoint.invested
+        )}, bileşik getiri ${formatTryCurrency(lastPoint.gain)}.`;
+    }
+}
 
     function renderBreakdownTable(rows) {
         const body = document.querySelector("[data-compound-breakdown-body]");
