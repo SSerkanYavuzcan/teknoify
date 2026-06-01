@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teknoify Yatırım Analizleri Aboneliği | Teknoify</title>
+    <title>Yatırım Analizleri İçin Size Uygun Planı Seçin | Teknoify</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,31 +58,96 @@
     </nav>
 </header>
 
-<main class="page-frame subscription-page">
-    <section class="hero subscription-hero" aria-labelledby="subscription-title">
+<main class="page-frame subscription-pricing-page">
+    <section class="subscription-pricing-hero" aria-labelledby="subscription-title">
         <div class="hero-surface"></div>
 
         <div class="container">
-            <div class="subscription-card">
-                <span class="subscription-badge"><i class="fas fa-gem"></i> Premium Yakında</span>
-                <h1 id="subscription-title" class="hero-title">Teknoify Yatırım Analizleri Aboneliği</h1>
-                <p class="hero-subtitle">Premium yatırım analizleri aboneliği yakında aktif olacak.</p>
-
-                <ul class="subscription-value-list">
-                    <li><i class="fas fa-check"></i> Perakende şirket karşılaştırmaları</li>
-                    <li><i class="fas fa-check"></i> Mağaza başı operasyonel kâr analizleri</li>
-                    <li><i class="fas fa-check"></i> Şirket bazlı finansal veri panelleri</li>
-                    <li><i class="fas fa-check"></i> Gelecekte özel hesaplayıcılar ve raporlar</li>
-                </ul>
-
-                <div class="subscription-actions">
-                    <button type="button" class="btn btn-primary btn-lg trigger-login">Giriş Yap</button>
-                    <a href="../index.html#contact" class="btn btn-secondary btn-lg">İletişime Geç</a>
-                </div>
-
-                <p class="subscription-note">
-                    Bu sayfa ödeme altyapısı kurulana kadar bilgilendirme ve talep toplama amaçlıdır; Stripe, Iyzico veya benzeri bir ödeme entegrasyonu henüz eklenmemiştir.
+            <div class="subscription-pricing-header">
+                <span class="subscription-pricing-kicker"><i class="fas fa-gem"></i> Premium Yatırım Analizleri</span>
+                <h1 id="subscription-title">Yatırım Analizleri İçin Size Uygun Planı Seçin</h1>
+                <p>
+                    Perakende şirket analizleri, mağaza performansı metrikleri ve yatırım kararlarını destekleyen veri
+                    panellerine erişin.
                 </p>
+
+                <div class="subscription-billing-toggle" role="group" aria-label="Faturalandırma dönemi seçimi">
+                    <button type="button" class="is-active" data-billing-option="monthly" aria-pressed="true">Aylık</button>
+                    <button type="button" data-billing-option="yearly" aria-pressed="false">Yıllık</button>
+                </div>
+            </div>
+
+            <div class="subscription-plan-grid" aria-label="Abonelik planları">
+                <article class="subscription-plan-card">
+                    <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-chart-line"></i></div>
+                    <div class="subscription-plan-content">
+                        <h2>Başlangıç</h2>
+                        <p class="subscription-plan-description">Temel yatırım araçlarını keşfetmek isteyenler için.</p>
+                        <div class="subscription-plan-price" aria-label="Başlangıç planı fiyatı">
+                            <span>₺0</span>
+                        </div>
+                    </div>
+                    <a href="investment-analytics.html" class="btn btn-secondary subscription-plan-cta">Ücretsiz Başla</a>
+                    <ul class="subscription-plan-features">
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Bileşik faiz hesaplayıcı</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Temel yatırım hesaplayıcıları</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Sınırlı önizleme panelleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Yatırım analizleri sayfasına erişim</li>
+                    </ul>
+                </article>
+
+                <article class="subscription-plan-card subscription-plan-card--featured" aria-labelledby="premium-plan-title">
+                    <div class="subscription-plan-topline">
+                        <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-chart-pie"></i></div>
+                        <span class="subscription-plan-badge">En Popüler</span>
+                    </div>
+                    <div class="subscription-plan-content">
+                        <h2 id="premium-plan-title">Premium</h2>
+                        <p class="subscription-plan-description">Detaylı perakende analizleri ve şirket karşılaştırmaları için.</p>
+                        <div class="subscription-plan-price" aria-label="Premium planı fiyatı">
+                            <span data-premium-price>₺199</span>
+                            <small data-premium-period>/ ay</small>
+                        </div>
+                        <span class="subscription-plan-savings" data-premium-savings hidden>2 ay avantajlı</span>
+                    </div>
+                    <a
+                        href="../index.html#contact"
+                        class="btn btn-primary subscription-plan-cta"
+                        data-plan-interest="premium"
+                    >Premium Talebi Bırak</a>
+                    <ul class="subscription-plan-features">
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Perakende şirket karşılaştırmaları</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Mağaza başına operasyonel kâr analizleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Şirket bazlı veri panelleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Detaylı grafik ve tablo görünümleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Yeni analizlere erken erişim</li>
+                    </ul>
+                </article>
+
+                <article class="subscription-plan-card">
+                    <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-briefcase"></i></div>
+                    <div class="subscription-plan-content">
+                        <h2>Profesyonel</h2>
+                        <p class="subscription-plan-description">
+                            Daha kapsamlı analiz, özel rapor ve gelişmiş takip ihtiyaçları için.
+                        </p>
+                        <div class="subscription-plan-price subscription-plan-price--quote" aria-label="Profesyonel planı fiyatı">
+                            <span>Teklif Al</span>
+                        </div>
+                    </div>
+                    <a
+                        href="../index.html#contact"
+                        class="btn btn-secondary subscription-plan-cta"
+                        data-plan-interest="professional"
+                    >İletişime Geç</a>
+                    <ul class="subscription-plan-features">
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Premium plandaki her şey</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Özel şirket / sektör takip listeleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Gelişmiş raporlama talepleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Kurumsal kullanım senaryoları</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Öncelikli geliştirme talepleri</li>
+                    </ul>
+                </article>
             </div>
         </div>
     </section>
@@ -130,5 +195,39 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="../js/session-manager.js"></script>
 <script src="../js/script.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const billingButtons = document.querySelectorAll("[data-billing-option]");
+        const premiumPrice = document.querySelector("[data-premium-price]");
+        const premiumPeriod = document.querySelector("[data-premium-period]");
+        const premiumSavings = document.querySelector("[data-premium-savings]");
+
+        billingButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const isYearly = button.dataset.billingOption === "yearly";
+
+                billingButtons.forEach((option) => {
+                    const isActive = option === button;
+                    option.classList.toggle("is-active", isActive);
+                    option.setAttribute("aria-pressed", String(isActive));
+                });
+
+                if (premiumPrice) premiumPrice.textContent = isYearly ? "₺1.990" : "₺199";
+                if (premiumPeriod) premiumPeriod.textContent = isYearly ? "/ yıl" : "/ ay";
+                if (premiumSavings) premiumSavings.hidden = !isYearly;
+            });
+        });
+
+        document.querySelectorAll("[data-plan-interest]").forEach((link) => {
+            link.addEventListener("click", () => {
+                try {
+                    sessionStorage.setItem("tk_subscription_interest", link.dataset.planInterest);
+                } catch {
+                    // sessionStorage may be unavailable in strict privacy contexts; navigation should still continue.
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
