@@ -28,8 +28,35 @@ if (typeof firebase !== 'undefined' && firebase.appCheck) {
 }
 
 // 3. Modülleri Yükle
-const auth = typeof firebase !== 'undefined' ? firebase.auth() : null;
-const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
+const auth = (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') ? firebase.auth() : null;
+const db = (typeof firebase !== 'undefined' && typeof firebase.firestore === 'function') ? firebase.firestore() : null;
+
+function consumePostLoginRedirect() {
+    let redirectPath = null;
+
+    try {
+        redirectPath = sessionStorage.getItem('tk_post_login_redirect');
+        if (redirectPath) sessionStorage.removeItem('tk_post_login_redirect');
+    } catch (error) {
+        console.warn('Post-login yönlendirmesi okunamadı.', error.message);
+    }
+
+    return redirectPath && redirectPath.startsWith('/') ? redirectPath : null;
+}
+
+function redirectAfterLogin(isAdmin, isPremium) {
+    const postLoginRedirect = consumePostLoginRedirect();
+
+    if (postLoginRedirect) {
+        window.location.href = postLoginRedirect;
+    } else if (isAdmin) {
+        window.location.href = '/dashboard/admin.html';
+    } else if (isPremium) {
+        window.location.href = '/dashboard/premium.html';
+    } else {
+        window.location.href = '/dashboard/member.html';
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('loginModal')) {
@@ -50,6 +77,7 @@ class AuthSystem {
         this.modal = document.getElementById('loginModal');
         this.form = document.getElementById('loginForm');
         this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login');
+        window.teknoifyAuthSystem = this;
         this.bindEvents();
         this.checkCurrentUser();
     }
@@ -67,7 +95,7 @@ class AuthSystem {
                         let isPremium = !!idTokenResult.claims.premium;
 
                         // 2. Token'da yoksa Veritabanına bak (Esnek yapı)
-                        if (!isAdmin) {
+                        if (!isAdmin && db) {
                             const userDoc = await db.collection('users').doc(user.uid).get();
                             if (userDoc.exists) {
                                 const data = userDoc.data();
@@ -76,13 +104,7 @@ class AuthSystem {
                             }
                         }
 
-                        if (isAdmin) {
-                            window.location.href = '/dashboard/admin.html';
-                        } else if (isPremium) {
-                            window.location.href = '/dashboard/premium.html';
-                        } else {
-                            window.location.href = '/dashboard/member.html';
-                        }
+                        redirectAfterLogin(isAdmin, isPremium);
                     } catch (error) {
                         console.warn("Kullanıcı rolü kontrol edilemedi, standart üyeye yönlendiriliyor.", error.message);
                         window.location.href = '/dashboard/member.html';
@@ -127,7 +149,7 @@ class AuthSystem {
         const btn = this.form.querySelector('button[type="submit"]');
         const emailInput = document.getElementById('email').value.trim();
         const passInput = document.getElementById('password').value.trim();
-        if (!auth || !db) return;
+        if (!auth) return;
         
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
@@ -147,7 +169,7 @@ class AuthSystem {
                     let isPremium = !!idTokenResult.claims.premium;
 
                     // 2. Token'da yoksa Veritabanına bak
-                    if (!isAdmin) {
+                    if (!isAdmin && db) {
                         const userDoc = await db.collection('users').doc(user.uid).get();
                         if (userDoc.exists) {
                             const data = userDoc.data();
@@ -164,19 +186,13 @@ class AuthSystem {
                     btn.style.backgroundColor = '#10b981';
                     
                     setTimeout(() => {
-                        if (isAdmin) {
-                            window.location.href = '/dashboard/admin.html';
-                        } else if (isPremium) {
-                            window.location.href = '/dashboard/premium.html';
-                        } else {
-                            window.location.href = '/dashboard/member.html';
-                        }
+                        redirectAfterLogin(isAdmin, isPremium);
                     }, 500);
                 } catch (dbError) {
                     console.warn("--- YETKİ KONTROL UYARISI ---", dbError.message);
                     btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
                     btn.style.backgroundColor = '#10b981';
-                    setTimeout(() => { window.location.href = '/dashboard/member.html'; }, 1000);
+                    setTimeout(() => { redirectAfterLogin(false, false); }, 1000);
                 }
             })
             .catch((error) => {

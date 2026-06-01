@@ -58,28 +58,112 @@
     </nav>
 </header>
 
-<main class="page-frame">
+<main class="page-frame investment-detail-page">
     <section class="hero" aria-labelledby="investment-detail-title">
         <div class="hero-surface"></div>
 
         <div class="container">
             <div class="investment-detail-hero">
                 <div class="hero-badge">
-                    <i class="fas fa-store"></i> Perakende Sektörü
+                    <i class="fas fa-store"></i> Premium Perakende Sektörü
                 </div>
 
                 <h1 id="investment-detail-title" class="hero-title">Perakende Sektörü Analizleri</h1>
 
                 <p class="hero-subtitle">
-                    BİM, Migros, ŞOK Marketler ve CarrefourSA gibi perakende şirketlerinin operasyonel performanslarını kaynaklı verilerle izlemek için hazırlanacak detay sayfası.
+                    BİM, Migros, ŞOK Marketler ve CarrefourSA gibi perakende şirketlerinin mağaza performansı,
+                    operasyonel verimlilik ve şirket karşılaştırması görünümlerini tek bir premium analiz alanında izleyin.
                 </p>
 
                 <div class="hero-ctas">
                     <a href="investment-analytics.html#retail-store-performance" class="btn btn-primary btn-lg">Yatırım Analizlerine Dön</a>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="investment-detail-placeholder">
-                    Detaylı analiz bileşenleri ve kaynaklı veri görünümleri ilerleyen adımlarda eklenecek.
+    <section class="investment-section investment-retail-detail" aria-labelledby="retail-premium-content-title">
+        <div class="container">
+            <div class="premium-content-shell is-auth-checking is-locked" data-premium-content aria-busy="true">
+                <div class="premium-content-preview" data-premium-blur>
+                    <div class="investment-section-header">
+                        <span class="investment-eyebrow">Önizleme</span>
+                        <h2 id="retail-premium-content-title">Premium Perakende Veri Paneli</h2>
+                        <p>
+                            Bu alan gerçek yatırım tavsiyesi sunmaz; aşağıdaki kartlar premium deneyimin nasıl görüneceğini
+                            göstermek için önizleme olarak hazırlanmıştır.
+                        </p>
+                    </div>
+
+                    <div class="retail-kpi-grid">
+                        <article class="retail-kpi-card">
+                            <span>Mağaza Başına Operasyonel Kâr</span>
+                            <strong>Önizleme</strong>
+                            <small>Şirket bazlı dönemsel marj ve verimlilik karşılaştırmaları.</small>
+                        </article>
+
+                        <article class="retail-kpi-card">
+                            <span>Mağaza Sayısı Gelişimi</span>
+                            <strong>Önizleme</strong>
+                            <small>Yeni mağaza açılışları, kapanışlar ve büyüme temposu.</small>
+                        </article>
+
+                        <article class="retail-kpi-card">
+                            <span>Şirket Karşılaştırması</span>
+                            <strong>Önizleme</strong>
+                            <small>BİM, Migros, ŞOK Marketler ve CarrefourSA metrik setleri.</small>
+                        </article>
+                    </div>
+
+                    <div class="retail-preview-grid">
+                        <article class="retail-preview-card retail-preview-card--chart">
+                            <div class="retail-preview-card__header">
+                                <span>Önizleme Grafik</span>
+                                <i class="fas fa-chart-column"></i>
+                            </div>
+                            <div class="retail-preview-chart" role="img" aria-label="Premium perakende analizi önizleme grafiği">
+                                <span style="height: 42%;"></span>
+                                <span style="height: 64%;"></span>
+                                <span style="height: 52%;"></span>
+                                <span style="height: 76%;"></span>
+                                <span style="height: 58%;"></span>
+                                <span style="height: 70%;"></span>
+                            </div>
+                        </article>
+
+                        <article class="retail-preview-card">
+                            <div class="retail-preview-card__header">
+                                <span>Önizleme Tablo</span>
+                                <i class="fas fa-table"></i>
+                            </div>
+                            <div class="retail-preview-table" aria-label="Premium perakende analizi önizleme tablosu">
+                                <div><span>Şirket</span><span>Mağaza</span><span>Verimlilik</span></div>
+                                <div><span>BİM</span><span>Önizleme</span><span>Önizleme</span></div>
+                                <div><span>Migros</span><span>Önizleme</span><span>Önizleme</span></div>
+                                <div><span>ŞOK</span><span>Önizleme</span><span>Önizleme</span></div>
+                                <div><span>CarrefourSA</span><span>Önizleme</span><span>Önizleme</span></div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="premium-lock-overlay" data-premium-lock-overlay role="region" aria-labelledby="premium-lock-title">
+                    <div class="premium-lock-card">
+                        <span class="premium-lock-icon" aria-hidden="true"><i class="fas fa-lock"></i></span>
+                        <span class="premium-lock-kicker">Teknoify Premium</span>
+                        <h2 id="premium-lock-title" data-premium-lock-title>Premium Perakende Analizi</h2>
+                        <p data-premium-lock-description>
+                            Mağaza performansı, şirket karşılaştırmaları ve detaylı finansal veri görünümleri yalnızca giriş yapan premium kullanıcılar tarafından görüntülenebilir.
+                        </p>
+                        <div class="premium-lock-actions">
+                            <button type="button" class="btn btn-primary" data-premium-login-action>Giriş Yap</button>
+                            <a href="subscription.html" class="btn btn-secondary">Abonelik Al</a>
+                            <a href="investment-analytics.html#retail-store-performance" class="btn btn-outline" data-premium-back-action hidden>Yatırım Analizlerine Dön</a>
+                        </div>
+                        <small>
+                            Bu ekran şu anda ön yüz premium kapısıdır; gerçekten hassas gelecekteki veriler korumalı backend endpoint'i, Firebase Cloud Function veya Firestore güvenlik kuralları arkasına taşınmalıdır.
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,10 +178,43 @@
     </div>
 </footer>
 
+<div class="modal-overlay" id="loginModal" aria-hidden="true">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <button type="button" class="modal-close" aria-label="Kapat"><i class="fas fa-times"></i></button>
+        <div class="modal-header">
+            <h3 id="login-modal-title">Giriş Yap</h3>
+            <p>Teknoify hesabınıza erişin</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" required placeholder="ornek@sirket.com" autocomplete="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+            </div>
+            <div class="form-footer">
+                <a href="../index.html#home" class="link-sm">Şifremi Unuttum</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="../js/session-manager.js"></script>
 <script src="../js/script.js" defer></script>
+<script src="../js/premium-content-gate.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teknoify Yatırım Analizleri Aboneliği | Teknoify</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/investment-analytics.css">
+</head>
+<body>
+
+<header id="header" class="header scrolled">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html#home" aria-label="Ana Sayfa">
+                    <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                    <span class="logo-text">Teknoify</span>
+                </a>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item dropdown">
+                    <a href="../index.html#services" class="nav-link">
+                        Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="investment-analytics.html"><i class="fas fa-chart-pie"></i> Yatırım Analizleri</a></li>
+                        <li><a href="rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+                        <li><a href="ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+                        <li><a href="api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="training-consulting.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-login-btn">
+                    <button id="openLoginBtn" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user"></i> Giriş Yap
+                    </button>
+                </li>
+            </ul>
+
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="page-frame subscription-page">
+    <section class="hero subscription-hero" aria-labelledby="subscription-title">
+        <div class="hero-surface"></div>
+
+        <div class="container">
+            <div class="subscription-card">
+                <span class="subscription-badge"><i class="fas fa-gem"></i> Premium Yakında</span>
+                <h1 id="subscription-title" class="hero-title">Teknoify Yatırım Analizleri Aboneliği</h1>
+                <p class="hero-subtitle">Premium yatırım analizleri aboneliği yakında aktif olacak.</p>
+
+                <ul class="subscription-value-list">
+                    <li><i class="fas fa-check"></i> Perakende şirket karşılaştırmaları</li>
+                    <li><i class="fas fa-check"></i> Mağaza başı operasyonel kâr analizleri</li>
+                    <li><i class="fas fa-check"></i> Şirket bazlı finansal veri panelleri</li>
+                    <li><i class="fas fa-check"></i> Gelecekte özel hesaplayıcılar ve raporlar</li>
+                </ul>
+
+                <div class="subscription-actions">
+                    <button type="button" class="btn btn-primary btn-lg trigger-login">Giriş Yap</button>
+                    <a href="../index.html#contact" class="btn btn-secondary btn-lg">İletişime Geç</a>
+                </div>
+
+                <p class="subscription-note">
+                    Bu sayfa ödeme altyapısı kurulana kadar bilgilendirme ve talep toplama amaçlıdır; Stripe, Iyzico veya benzeri bir ödeme entegrasyonu henüz eklenmemiştir.
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Teknoify. Tüm hakları saklıdır.</p>
+        </div>
+    </div>
+</footer>
+
+<div class="modal-overlay" id="loginModal" aria-hidden="true">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <button type="button" class="modal-close" aria-label="Kapat"><i class="fas fa-times"></i></button>
+        <div class="modal-header">
+            <h3 id="login-modal-title">Giriş Yap</h3>
+            <p>Teknoify hesabınıza erişin</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" required placeholder="ornek@sirket.com" autocomplete="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="../js/session-manager.js"></script>
+<script src="../js/script.js" defer></script>
+</body>
+</html>
