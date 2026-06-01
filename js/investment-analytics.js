@@ -3,9 +3,10 @@
     const usdTryRatesUrl = "../data/currency/usd_try_rates.json";
     const operatingProfitPerStoreChartMountId = "retail-operating-profit-per-store-chart";
     const svgNamespace = "http://www.w3.org/2000/svg";
+    const defaultSectorKey = "retail";
     let supermarketDataset = null;
     let supermarketDatasetPromise = null;
-    let activeSectorKey = null;
+    let activeSectorKey = defaultSectorKey;
     let usdTryRatesPromise = null;
 
     function createSvgElement(tagName, attributes = {}) {
@@ -1054,26 +1055,6 @@
         });
     }
 
-    function renderSectorEmptyState() {
-        const panel = document.getElementById("sector-analysis-panel");
-
-        if (!panel) return;
-
-        activeSectorKey = null;
-        updateSectorSelectorState(null);
-        panel.innerHTML = `
-            <div class="investment-sector-empty-state">
-                <div class="investment-sector-placeholder__icon" aria-hidden="true">
-                    <i class="fas fa-layer-group"></i>
-                </div>
-                <div>
-                    <h3>Bir sektör seçin</h3>
-                    <p>Analiz panelini görüntülemek için yukarıdan bir sektör seçin.</p>
-                </div>
-            </div>
-        `;
-    }
-
     function renderRetailSectorPanel() {
         const panel = document.getElementById("sector-analysis-panel");
 
@@ -1122,47 +1103,80 @@
         ensureSupermarketDatasetLoaded();
     }
 
-    function renderAirlineSectorPanel() {
+    const placeholderSectorPanels = {
+        airline: {
+            titleId: "airline-performance-title",
+            title: "Havayolu Sektörü Performans Analizleri",
+            headerCopy:
+                "Türk Hava Yolları, Pegasus ve benzeri havayolu şirketlerinin yolcu trafiği, doluluk oranı, filo büyüklüğü ve kârlılık metriklerini izlemek için hazırlanacak analiz alanı.",
+            icon: "fa-plane-departure",
+            placeholderTitle: "Havayolu metrikleri yakında eklenecek",
+            placeholderCopy:
+                "Yolcu trafiği, doluluk oranı, filo büyüklüğü ve faaliyet kârlılığı gibi metrikler kaynaklı veri setleriyle hazırlanacak.",
+            tags: ["Yolcu Trafiği", "Doluluk Oranı", "Filo", "FAVÖK"],
+            detailHref: "investment-airlines.html",
+            tagsLabel: "Planlanan havayolu metrikleri"
+        },
+        automotive: {
+            titleId: "automotive-performance-title",
+            title: "Otomotiv Sektörü Performans Analizleri",
+            headerCopy:
+                "Otomotiv şirketlerini araç satışları, ihracat performansı, üretim kapasitesi ve kârlılık metrikleriyle izlemek için hazırlanacak analiz alanı.",
+            icon: "fa-car-side",
+            placeholderTitle: "Otomotiv analizleri yakında eklenecek",
+            placeholderCopy:
+                "Araç satış adetleri, ihracat performansı, üretim kapasitesi ve kârlılık metrikleriyle otomotiv şirketlerini izlemek için hazırlanacak analiz alanı.",
+            tags: ["Satış Adedi", "İhracat", "Üretim", "Marjlar"],
+            tagsLabel: "Planlanan otomotiv metrikleri"
+        },
+        steel: {
+            titleId: "steel-performance-title",
+            title: "Demir Çelik Sektörü Performans Analizleri",
+            headerCopy:
+                "Demir çelik şirketlerini üretim hacmi, kapasite kullanımı, emtia fiyatları ve faaliyet kârlılığı metrikleriyle izlemek için hazırlanacak analiz alanı.",
+            icon: "fa-industry",
+            placeholderTitle: "Demir çelik analizleri yakında eklenecek",
+            placeholderCopy:
+                "Üretim hacmi, kapasite kullanımı, emtia fiyatları ve faaliyet kârlılığı gibi metriklerle sektör performansını izlemek için hazırlanacak analiz alanı.",
+            tags: ["Üretim Hacmi", "Kapasite", "Emtia Fiyatları", "FAVÖK"],
+            tagsLabel: "Planlanan demir çelik metrikleri"
+        }
+    };
+
+    function renderPlaceholderSectorPanel(sectorKey) {
         const panel = document.getElementById("sector-analysis-panel");
+        const sector = placeholderSectorPanels[sectorKey];
 
-        if (!panel) return;
+        if (!panel || !sector) return;
 
-        activeSectorKey = "airline";
+        activeSectorKey = sectorKey;
         updateSectorSelectorState(activeSectorKey);
         panel.innerHTML = `
             <div class="investment-sector-block">
                 <div class="investment-section-header investment-sector-header">
                     <div class="investment-sector-header__content">
                         <span class="investment-eyebrow">Sektör Analizleri</span>
-                        <h2 id="airline-performance-title">Havayolu Sektörü Performans Analizleri</h2>
-                        <p>
-                            Türk Hava Yolları, Pegasus ve benzeri havayolu şirketlerinin yolcu trafiği,
-                            doluluk oranı, filo büyüklüğü ve kârlılık metriklerini izlemek için hazırlanacak
-                            analiz alanı.
-                        </p>
+                        <h2 id="${sector.titleId}">${sector.title}</h2>
+                        <p>${sector.headerCopy}</p>
                     </div>
                     <div class="investment-sector-header__action">
-                        <a class="investment-sector-detail-button" href="investment-airlines.html">
-                            Detaylı İncele
-                        </a>
+                        ${
+                            sector.detailHref
+                                ? `<a class="investment-sector-detail-button" href="${sector.detailHref}">Detaylı İncele</a>`
+                                : `<span class="investment-sector-detail-button investment-sector-detail-button--disabled" aria-disabled="true">Yakında</span>`
+                        }
                     </div>
                 </div>
 
                 <div class="investment-sector-placeholder">
                     <div class="investment-sector-placeholder__icon" aria-hidden="true">
-                        <i class="fas fa-plane-departure"></i>
+                        <i class="fas ${sector.icon}"></i>
                     </div>
                     <div>
-                        <h3>Havayolu metrikleri yakında eklenecek</h3>
-                        <p>
-                            Yolcu sayısı, doluluk oranı, filo büyüklüğü ve faaliyet kârlılığı gibi metrikler
-                            kaynaklı veri setleriyle hazırlanacak.
-                        </p>
-                        <div class="investment-sector-placeholder__tags" aria-label="Planlanan havayolu metrikleri">
-                            <span class="investment-sector-tag">Yolcu Trafiği</span>
-                            <span class="investment-sector-tag">Doluluk Oranı</span>
-                            <span class="investment-sector-tag">Filo</span>
-                            <span class="investment-sector-tag">FAVÖK</span>
+                        <h3>${sector.placeholderTitle}</h3>
+                        <p>${sector.placeholderCopy}</p>
+                        <div class="investment-sector-placeholder__tags" aria-label="${sector.tagsLabel}">
+                            ${sector.tags.map((tag) => `<span class="investment-sector-tag">${tag}</span>`).join("")}
                         </div>
                     </div>
                 </div>
@@ -1170,18 +1184,18 @@
         `;
     }
 
-    function renderSectorPanel(sectorKey) {
+    function renderSectorPanel(sectorKey = defaultSectorKey) {
         if (sectorKey === "retail") {
             renderRetailSectorPanel();
             return;
         }
 
-        if (sectorKey === "airline") {
-            renderAirlineSectorPanel();
+        if (placeholderSectorPanels[sectorKey]) {
+            renderPlaceholderSectorPanel(sectorKey);
             return;
         }
 
-        renderSectorEmptyState();
+        renderRetailSectorPanel();
     }
 
     function initSectorSelector() {
@@ -1195,7 +1209,7 @@
             });
         });
 
-        renderSectorEmptyState();
+        renderSectorPanel(defaultSectorKey);
     }
 
     function initInvestmentSmoothScroll() {
