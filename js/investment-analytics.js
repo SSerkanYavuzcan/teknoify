@@ -1277,11 +1277,13 @@
             button.setAttribute("aria-pressed", String(isActive));
 
             if (label && !button.disabled) {
-                label.textContent = isActive
-                    ? "Aktif hesaplayıcı"
-                    : button.dataset.calculatorKey === "cagr"
-                        ? "Yıllık bileşik büyüme"
-                        : "Bileşik getiri senaryosu";
+                const inactiveLabels = {
+                    cagr: "Yıllık bileşik büyüme",
+                    retirement: "Finansal yol haritası",
+                    compound: "Bileşik getiri senaryosu"
+                };
+
+                label.textContent = isActive ? "Aktif hesaplayıcı" : inactiveLabels[button.dataset.calculatorKey] ?? "Bileşik getiri senaryosu";
             }
         });
     }
@@ -1417,12 +1419,496 @@
         initCagrCalculator();
     }
 
+    function safeMoney(value) {
+        return Number.isFinite(value) ? Math.max(value, 0) : 0;
+    }
+
+    function getMonthlyRate(annualRate) {
+        if (!Number.isFinite(annualRate)) return 0;
+        return Math.max((Math.max(1 + annualRate, 0) ** (1 / 12)) - 1, -1);
+    }
+
+    function discountToToday(value, inflationRate, years) {
+        const discountBase = Math.max(1 + inflationRate, 0.01) ** Math.max(years, 0);
+        const discounted = value / discountBase;
+
+        return Number.isFinite(discounted) ? discounted : 0;
+    }
+
+    function getRetirementFieldNumber(id) {
+        return parseLocalizedNumber(document.getElementById(id)?.value);
+    }
+
+    function renderRetirementCalculatorPanel() {
+        const panel = document.getElementById("calculator-panel");
+
+        if (!panel) return;
+
+        panel.innerHTML = `
+            <article id="retirement-calculator" class="retirement-calculator" aria-labelledby="retirement-calculator-title">
+                <div class="retirement-calculator__input-panel">
+                    <div class="compound-calculator__panel-header">
+                        <span class="investment-eyebrow">Aktif Araç</span>
+                        <h3 id="retirement-calculator-title">Emeklilik Hesaplayıcı</h3>
+                        <p>Mevcut yaşınız, birikiminiz, aylık katkınız ve emeklilikte hedeflediğiniz gelir üzerinden finansal yol haritanızı hesaplayın.</p>
+                    </div>
+
+                    <div class="compound-calculator__fields">
+                        <div class="compound-field">
+                            <label for="retirement-current-age">Mevcut Yaş</label>
+                            <input id="retirement-current-age" class="retirement-calculator-input" type="number" min="18" max="100" step="1" value="30" inputmode="decimal">
+                        </div>
+                        <div class="compound-field">
+                            <label for="retirement-target-age">Hedeflenen Emeklilik Yaşı</label>
+                            <input id="retirement-target-age" class="retirement-calculator-input" type="number" min="19" max="120" step="1" value="60" inputmode="decimal">
+                        </div>
+                        <div class="compound-field">
+                            <label for="retirement-life-expectancy">Yaşam Beklentisi</label>
+                            <small>Kaç yaşına kadar finansal planlama yapılacağı</small>
+                            <input id="retirement-life-expectancy" class="retirement-calculator-input" type="number" min="20" max="130" step="1" value="85" inputmode="decimal">
+                        </div>
+                        <div class="compound-field">
+                            <label for="retirement-current-savings">Mevcut Emeklilik Birikimi</label>
+                            <input id="retirement-current-savings" class="retirement-calculator-input" type="number" min="0" step="1000" value="100000" inputmode="decimal">
+                        </div>
+                        <div class="compound-field">
+                            <label for="retirement-monthly-contribution">Aylık Katkı Payı</label>
+                            <small>Emekli olana kadar her ay kenara ayrılacak tutar</small>
+                            <input id="retirement-monthly-contribution" class="retirement-calculator-input" type="number" min="0" step="500" value="5000" inputmode="decimal">
+                        </div>
+                    </div>
+
+                    <details class="retirement-advanced-settings compound-advanced-settings">
+                        <summary><span>Gelişmiş Seçenekler</span><i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+                        <div class="compound-calculator__fields compound-calculator__fields--advanced">
+                            <div class="compound-field">
+                                <label for="retirement-pre-return">Emeklilik Öncesi Yıllık Getiri Oranı (%)</label>
+                                <input id="retirement-pre-return" class="retirement-calculator-input" type="number" step="0.1" value="10" inputmode="decimal">
+                            </div>
+                            <div class="compound-field">
+                                <label for="retirement-post-return">Emeklilik Sonrası Yıllık Getiri Oranı (%)</label>
+                                <input id="retirement-post-return" class="retirement-calculator-input" type="number" step="0.1" value="5" inputmode="decimal">
+                            </div>
+                            <div class="compound-field">
+                                <label for="retirement-inflation-rate">Yıllık Enflasyon Oranı (%)</label>
+                                <input id="retirement-inflation-rate" class="retirement-calculator-input" type="number" min="-99" step="0.1" value="3" inputmode="decimal">
+                            </div>
+                            <div class="compound-field">
+                                <label for="retirement-desired-income">Emeklilikte İstenen Aylık Gelir (Bugünün Parasıyla)</label>
+                                <input id="retirement-desired-income" class="retirement-calculator-input" type="number" min="0" step="1000" value="40000" inputmode="decimal">
+                            </div>
+                            <div class="compound-field">
+                                <label for="retirement-contribution-growth">Maaş / Katkı Artış Oranı (%)</label>
+                                <input id="retirement-contribution-growth" class="retirement-calculator-input" type="number" step="0.1" value="5" inputmode="decimal">
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="retirement-calculator__result-panel compound-calculator__result-panel">
+                    <div class="retirement-validation-message" data-retirement-validation role="status" aria-live="polite"></div>
+                    <div class="retirement-results-grid" data-retirement-results aria-live="polite"></div>
+
+                    <div class="retirement-growth-chart compound-chart-card">
+                        <div class="compound-chart-card__header">
+                            <div>
+                                <h3>Birikim ve Harcama Eğrisi</h3>
+                                <p data-retirement-chart-summary>Yaşa göre emeklilik fonu yaşam döngüsü.</p>
+                            </div>
+                        </div>
+                        <div id="retirement-growth-chart" class="compound-growth-chart retirement-growth-chart__mount" role="img" aria-label="Mevcut yaştan yaşam beklentisine kadar birikim ve harcama eğrisi"></div>
+                    </div>
+
+                    <div class="retirement-breakdown-table compound-breakdown-card">
+                        <div class="compound-breakdown-card__header">
+                            <div>
+                                <h3>Yaş Bazlı Döküm Tablosu</h3>
+                                <p data-retirement-table-note>Her yaş için eklenen/çekilen tutar ve getiri özeti.</p>
+                            </div>
+                        </div>
+                        <div class="compound-breakdown-table-wrap">
+                            <table class="compound-breakdown-table retirement-breakdown-table__table">
+                                <thead>
+                                    <tr>
+                                        <th>Yaş</th>
+                                        <th>Yıl Başı Bakiyesi</th>
+                                        <th>O Yıl Eklenen / Çekilen Tutar</th>
+                                        <th>Kazanılan Faiz</th>
+                                        <th>Yıl Sonu Bakiyesi</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-retirement-breakdown-body></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        `;
+
+        initRetirementCalculator();
+    }
+
+    function parseRetirementInputs() {
+        return {
+            currentAge: getRetirementFieldNumber("retirement-current-age"),
+            retirementAge: getRetirementFieldNumber("retirement-target-age"),
+            lifeExpectancy: getRetirementFieldNumber("retirement-life-expectancy"),
+            currentSavings: getRetirementFieldNumber("retirement-current-savings"),
+            monthlyContribution: getRetirementFieldNumber("retirement-monthly-contribution"),
+            preRetirementReturn: getRetirementFieldNumber("retirement-pre-return") / 100,
+            postRetirementReturn: getRetirementFieldNumber("retirement-post-return") / 100,
+            inflationRate: getRetirementFieldNumber("retirement-inflation-rate") / 100,
+            desiredMonthlyIncome: getRetirementFieldNumber("retirement-desired-income"),
+            contributionGrowthRate: getRetirementFieldNumber("retirement-contribution-growth") / 100
+        };
+    }
+
+    function validateRetirementInputs(inputs) {
+        if (inputs.currentAge < 18 || inputs.currentAge > 100) return "Mevcut yaş 18 ile 100 arasında olmalıdır.";
+        if (inputs.retirementAge <= inputs.currentAge) return "Hedeflenen emeklilik yaşı mevcut yaştan büyük olmalıdır.";
+        if (inputs.lifeExpectancy <= inputs.retirementAge) return "Yaşam beklentisi emeklilik yaşından büyük olmalıdır.";
+        if (inputs.currentSavings < 0) return "Mevcut emeklilik birikimi negatif olamaz.";
+        if (inputs.monthlyContribution < 0) return "Aylık katkı payı negatif olamaz.";
+        if (inputs.desiredMonthlyIncome < 0) return "Emeklilikte istenen aylık gelir negatif olamaz.";
+        if (inputs.inflationRate < -0.99) return "Enflasyon oranı -99%'dan düşük olmamalıdır.";
+        if (!Object.values(inputs).every(Number.isFinite)) return "Lütfen tüm alanlara geçerli sayısal değerler girin.";
+
+        return "";
+    }
+
+    function simulateRetirementAccumulation(inputs, extraMonthlyContribution = 0) {
+        const rows = [];
+        const monthlyReturn = getMonthlyRate(inputs.preRetirementReturn);
+        let balance = Math.max(inputs.currentSavings, 0);
+        let monthlyContribution = Math.max(inputs.monthlyContribution + extraMonthlyContribution, 0);
+        const years = Math.max(Math.round(inputs.retirementAge - inputs.currentAge), 0);
+
+        for (let yearIndex = 0; yearIndex < years; yearIndex += 1) {
+            const startingBalance = balance;
+            let contribution = 0;
+            let interest = 0;
+
+            for (let month = 0; month < 12; month += 1) {
+                const beforeReturn = balance;
+                balance = safeMoney(balance * (1 + monthlyReturn));
+                interest += balance - beforeReturn;
+                balance = safeMoney(balance + monthlyContribution);
+                contribution += monthlyContribution;
+            }
+
+            rows.push({
+                age: inputs.currentAge + yearIndex,
+                phase: "accumulation",
+                startingBalance,
+                cashFlow: contribution,
+                interest,
+                endingBalance: balance
+            });
+
+            monthlyContribution = Math.max(monthlyContribution * (1 + inputs.contributionGrowthRate), 0);
+        }
+
+        return { fundAtRetirement: balance, rows };
+    }
+
+    function simulateRetirementDrawdown(inputs, initialFund, options = {}) {
+        const rows = [];
+        const monthlyReturn = getMonthlyRate(inputs.postRetirementReturn);
+        const yearsToRetirement = Math.max(inputs.retirementAge - inputs.currentAge, 0);
+        const retirementYears = Math.max(Math.round(inputs.lifeExpectancy - inputs.retirementAge), 0);
+        let balance = Math.max(initialFund, 0);
+        let monthlyWithdrawal = Math.max(inputs.desiredMonthlyIncome, 0) * (Math.max(1 + inputs.inflationRate, 0.01) ** yearsToRetirement);
+        let depletionAge = null;
+
+        for (let yearIndex = 0; yearIndex < retirementYears; yearIndex += 1) {
+            const startingBalance = balance;
+            let withdrawals = 0;
+            let interest = 0;
+
+            for (let month = 0; month < 12; month += 1) {
+                if (balance <= 0) {
+                    balance = 0;
+                    continue;
+                }
+
+                const beforeReturn = balance;
+                balance = safeMoney(balance * (1 + monthlyReturn));
+                interest += balance - beforeReturn;
+                const withdrawal = Math.min(balance, monthlyWithdrawal);
+                balance = safeMoney(balance - withdrawal);
+                withdrawals += withdrawal;
+
+                if (balance <= 0 && depletionAge === null) {
+                    depletionAge = inputs.retirementAge + yearIndex + ((month + 1) / 12);
+                }
+            }
+
+            rows.push({
+                age: inputs.retirementAge + yearIndex,
+                phase: "drawdown",
+                startingBalance,
+                cashFlow: -withdrawals,
+                interest,
+                endingBalance: balance
+            });
+
+            monthlyWithdrawal = Math.max(monthlyWithdrawal * (1 + inputs.inflationRate), 0);
+        }
+
+        return {
+            rows,
+            endingBalance: balance,
+            depletionAge,
+            supportsPlan: depletionAge === null || options.allowZeroAtEnd === true
+        };
+    }
+
+    function calculateProjectedRetirementFund(inputs, extraMonthlyContribution = 0) {
+        return simulateRetirementAccumulation(inputs, extraMonthlyContribution).fundAtRetirement;
+    }
+
+    function calculateRetirementTargetFund(inputs) {
+        if (inputs.desiredMonthlyIncome === 0) return 0;
+
+        let lower = 0;
+        let upper = Math.max(inputs.desiredMonthlyIncome * 12 * Math.max(inputs.lifeExpectancy - inputs.retirementAge, 1), 1);
+        let guard = 0;
+
+        while (!simulateRetirementDrawdown(inputs, upper).supportsPlan && guard < 80) {
+            upper *= 2;
+            guard += 1;
+        }
+
+        if (!Number.isFinite(upper)) return 0;
+
+        for (let index = 0; index < 70; index += 1) {
+            const middle = (lower + upper) / 2;
+            if (simulateRetirementDrawdown(inputs, middle).supportsPlan) {
+                upper = middle;
+            } else {
+                lower = middle;
+            }
+        }
+
+        return upper;
+    }
+
+    function calculateRequiredAdditionalMonthlyContribution(inputs, targetFund, projectedFund) {
+        if (projectedFund >= targetFund) return 0;
+
+        let lower = 0;
+        let upper = Math.max(inputs.monthlyContribution || 1000, 1000);
+        let guard = 0;
+
+        while (calculateProjectedRetirementFund(inputs, upper) < targetFund && guard < 60) {
+            upper *= 2;
+            guard += 1;
+        }
+
+        if (guard >= 60 || !Number.isFinite(upper)) return null;
+
+        for (let index = 0; index < 60; index += 1) {
+            const middle = (lower + upper) / 2;
+            if (calculateProjectedRetirementFund(inputs, middle) >= targetFund) {
+                upper = middle;
+            } else {
+                lower = middle;
+            }
+        }
+
+        return upper;
+    }
+
+    function buildRetirementLifecycleRows(inputs) {
+        const accumulation = simulateRetirementAccumulation(inputs);
+        const drawdown = simulateRetirementDrawdown(inputs, accumulation.fundAtRetirement);
+
+        return {
+            rows: [...accumulation.rows, ...drawdown.rows],
+            projectedFund: accumulation.fundAtRetirement,
+            depletionAge: drawdown.depletionAge,
+            endingBalance: drawdown.endingBalance
+        };
+    }
+
+    function buildRetirementChartPoints(inputs, rows) {
+        const points = [{ age: inputs.currentAge, value: inputs.currentSavings }];
+
+        rows.forEach((row) => {
+            points.push({ age: row.age + 1, value: row.endingBalance });
+        });
+
+        return points;
+    }
+
+    function calculateRetirementPlan(inputs) {
+        const targetFund = calculateRetirementTargetFund(inputs);
+        const lifecycle = buildRetirementLifecycleRows(inputs);
+        const fundingGap = lifecycle.projectedFund - targetFund;
+        const yearsToRetirement = Math.max(inputs.retirementAge - inputs.currentAge, 0);
+        const realProjectedFund = discountToToday(lifecycle.projectedFund, inputs.inflationRate, yearsToRetirement);
+        const realTargetFund = discountToToday(targetFund, inputs.inflationRate, yearsToRetirement);
+        const realPreRetirementReturn = ((1 + inputs.preRetirementReturn) / Math.max(1 + inputs.inflationRate, 0.01)) - 1;
+        const realPostRetirementReturn = ((1 + inputs.postRetirementReturn) / Math.max(1 + inputs.inflationRate, 0.01)) - 1;
+        const additionalMonthlyContribution = fundingGap < 0
+            ? calculateRequiredAdditionalMonthlyContribution(inputs, targetFund, lifecycle.projectedFund)
+            : 0;
+
+        return {
+            ...lifecycle,
+            targetFund,
+            fundingGap,
+            realProjectedFund,
+            realTargetFund,
+            realPreRetirementReturn,
+            realPostRetirementReturn,
+            additionalMonthlyContribution,
+            chartPoints: buildRetirementChartPoints(inputs, lifecycle.rows)
+        };
+    }
+
+    function renderRetirementResults(results) {
+        const container = document.querySelector("[data-retirement-results]");
+        if (!container) return;
+
+        const gapDescription = results.fundingGap < 0
+            ? `Hedefinize ulaşmak için yaklaşık ${formatTryCurrency(Math.abs(results.fundingGap))} ek fona ihtiyacınız var.${results.additionalMonthlyContribution === null ? "" : ` Aylık katkınızı yaklaşık ${formatTryCurrency(results.additionalMonthlyContribution)} artırmanız gerekebilir.`}`
+            : `Tahmini birikiminiz hedefinizi yaklaşık ${formatTryCurrency(results.fundingGap)} aşıyor.`;
+        const depletionText = results.depletionAge === null
+            ? "Planlanan yaşa kadar yeterli"
+            : `${results.depletionAge.toLocaleString("tr-TR", { maximumFractionDigits: 1 })} yaş`;
+        const cards = [
+            ["Hedeflenen Emeklilik Fonu Büyüklüğü", formatTryCurrency(results.targetFund), `Nominal • Bugünkü alım gücüyle ${formatTryCurrency(results.realTargetFund)}`],
+            ["Tahmini Birikecek Toplam Fon", formatTryCurrency(results.projectedFund), `Nominal • Bugünkü alım gücüyle ${formatTryCurrency(results.realProjectedFund)}`],
+            ["Durum Özeti / Fark", formatTryCurrency(results.fundingGap), gapDescription],
+            ["Fonun Tükeneceği Yaş", depletionText, results.depletionAge === null ? "Fon yaşam beklentisine kadar tükenmiyor." : "Projeksiyona göre fon bu yaşta sıfırlanır."],
+            ["Reel Emeklilik Fonu", formatTryCurrency(results.realProjectedFund), `Reel getiri: emeklilik öncesi ${formatPercent(results.realPreRetirementReturn)}, sonrası ${formatPercent(results.realPostRetirementReturn)}`]
+        ];
+
+        container.innerHTML = cards.map(([label, value, description]) => `
+            <div class="retirement-result-card compound-result-card">
+                <span>${escapeHtml(label)}</span>
+                <strong>${escapeHtml(value)}</strong>
+                <small>${escapeHtml(description)}</small>
+            </div>
+        `).join("");
+    }
+
+    function renderRetirementGrowthChart(points) {
+        const mount = document.getElementById("retirement-growth-chart");
+        const summary = document.querySelector("[data-retirement-chart-summary]");
+
+        if (!mount || points.length < 2) return;
+
+        const width = 780;
+        const height = 330;
+        const maxValue = Math.max(...points.map((point) => point.value), 1);
+        const chartConfig = { left: 68, top: 28, width: 650, height: 238, maxValue: maxValue * 1.08 };
+        const divisor = Math.max(points.length - 1, 1);
+        const getPoint = (point, index) => ({
+            x: chartConfig.left + (index / divisor) * chartConfig.width,
+            y: chartConfig.top + chartConfig.height - ((point.value / chartConfig.maxValue) * chartConfig.height)
+        });
+        const path = points.map((point, index) => {
+            const coordinates = getPoint(point, index);
+            return `${index === 0 ? "M" : "L"}${coordinates.x.toFixed(2)} ${coordinates.y.toFixed(2)}`;
+        }).join(" ");
+        const areaPath = `${path} L${chartConfig.left + chartConfig.width} ${chartConfig.top + chartConfig.height} L${chartConfig.left} ${chartConfig.top + chartConfig.height} Z`;
+        const svg = createSvgElement("svg", { viewBox: `0 0 ${width} ${height}`, role: "presentation", focusable: "false" });
+
+        for (let step = 0; step <= 4; step += 1) {
+            const y = chartConfig.top + (step / 4) * chartConfig.height;
+            const value = chartConfig.maxValue - (step / 4) * chartConfig.maxValue;
+            svg.appendChild(createSvgElement("line", { class: "compound-chart-grid-line", x1: chartConfig.left, x2: chartConfig.left + chartConfig.width, y1: y, y2: y }));
+            const label = createSvgElement("text", { class: "compound-chart-axis-label", x: chartConfig.left - 10, y: y + 4, "text-anchor": "end" });
+            label.textContent = formatTryCurrency(value).replace(",00", "");
+            svg.appendChild(label);
+        }
+
+        svg.appendChild(createSvgElement("path", { class: "compound-chart-area retirement-chart-area", d: areaPath, fill: "#8b5cf6" }));
+        svg.appendChild(createSvgElement("path", { class: "compound-chart-line retirement-chart-line", d: path, stroke: "#c4b5fd" }));
+
+        [points[0], points[points.length - 1]].forEach((point, pointIndex) => {
+            const coordinates = getPoint(point, pointIndex === 0 ? 0 : points.length - 1);
+            const label = createSvgElement("text", { class: "compound-chart-axis-label", x: coordinates.x, y: chartConfig.top + chartConfig.height + 32, "text-anchor": pointIndex === 0 ? "start" : "end" });
+            label.textContent = `${point.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş`;
+            svg.appendChild(label);
+        });
+
+        mount.textContent = "";
+        mount.appendChild(svg);
+
+        if (summary) {
+            const peak = points.reduce((highest, point) => point.value > highest.value ? point : highest, points[0]);
+            summary.textContent = `Eğri ${peak.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş civarında ${formatTryCurrency(peak.value)} nominal tepe fonu gösteriyor.`;
+        }
+    }
+
+    function renderRetirementBreakdownTable(rows) {
+        const body = document.querySelector("[data-retirement-breakdown-body]");
+        const note = document.querySelector("[data-retirement-table-note]");
+
+        if (!body) return;
+
+        body.innerHTML = rows.map((row) => `
+            <tr>
+                <td>${escapeHtml(`${row.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş`)}</td>
+                <td>${escapeHtml(formatTryCurrency(row.startingBalance))}</td>
+                <td class="${row.cashFlow < 0 ? "is-negative" : "is-positive"}">${escapeHtml(formatTryCurrency(row.cashFlow))}</td>
+                <td>${escapeHtml(formatTryCurrency(row.interest))}</td>
+                <td>${escapeHtml(formatTryCurrency(row.endingBalance))}</td>
+            </tr>
+        `).join("");
+
+        if (note) {
+            note.textContent = `${rows.length} yaş/yıl satırı gösteriliyor; negatif değerler emeklilik dönemi çekişlerini ifade eder.`;
+        }
+    }
+
+    function updateRetirementCalculator() {
+        const inputs = parseRetirementInputs();
+        const validationMessage = validateRetirementInputs(inputs);
+        const validation = document.querySelector("[data-retirement-validation]");
+
+        if (validation) validation.textContent = validationMessage;
+
+        if (validationMessage) {
+            document.querySelector("[data-retirement-results]").innerHTML = "";
+            document.getElementById("retirement-growth-chart").textContent = "";
+            document.querySelector("[data-retirement-breakdown-body]").innerHTML = "";
+            return;
+        }
+
+        const results = calculateRetirementPlan(inputs);
+        renderRetirementResults(results);
+        renderRetirementGrowthChart(results.chartPoints);
+        renderRetirementBreakdownTable(results.rows);
+    }
+
+    function initRetirementCalculator() {
+        const calculator = document.getElementById("retirement-calculator");
+
+        if (!calculator) return;
+
+        calculator.querySelectorAll(".retirement-calculator-input").forEach((input) => {
+            input.addEventListener("input", updateRetirementCalculator);
+            input.addEventListener("change", updateRetirementCalculator);
+        });
+
+        updateRetirementCalculator();
+    }
+
     function renderCalculatorPanel(calculatorKey = defaultCalculatorKey) {
-        activeCalculatorKey = calculatorKey === "cagr" ? "cagr" : "compound";
+        activeCalculatorKey = ["cagr", "retirement"].includes(calculatorKey) ? calculatorKey : "compound";
         updateCalculatorSelectorState(activeCalculatorKey);
 
         if (activeCalculatorKey === "cagr") {
             renderCagrCalculatorPanel();
+            return;
+        }
+
+        if (activeCalculatorKey === "retirement") {
+            renderRetirementCalculatorPanel();
             return;
         }
 

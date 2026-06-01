@@ -539,3 +539,95 @@
         grid-template-columns: 1fr;
     }
 }
+
+.retirement-calculator {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.86fr) minmax(0, 1.44fr);
+    gap: 1.1rem;
+    padding: clamp(1rem, 2.5vw, 1.35rem);
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: var(--radius-lg);
+    background:
+        radial-gradient(circle at 18% 0%, rgba(124, 58, 237, 0.12), transparent 34%),
+        linear-gradient(145deg, rgba(15, 16, 20, 0.6), rgba(8, 9, 13, 0.36));
+    box-shadow: 0 24px 72px rgba(0, 0, 0, 0.22);
+}
+
+.retirement-calculator__input-panel,
+.retirement-calculator__result-panel {
+    padding: clamp(1rem, 2.2vw, 1.2rem);
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.026);
+}
+
+.retirement-calculator__result-panel {
+    display: grid;
+    gap: 0.95rem;
+}
+
+.retirement-calculator-input {
+    width: 100%;
+}
+
+.retirement-results-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.72rem;
+}
+
+.retirement-result-card small {
+    display: block;
+    margin-top: 0.35rem;
+    color: rgba(148, 163, 184, 0.72);
+    font-size: 0.68rem;
+    line-height: 1.35;
+}
+
+.retirement-validation-message:not(:empty) {
+    padding: 0.82rem 0.9rem;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 16px;
+    background: rgba(251, 191, 36, 0.08);
+    color: rgba(254, 243, 199, 0.94);
+    font-size: 0.84rem;
+    font-weight: 750;
+}
+
+.retirement-chart-line {
+    filter: drop-shadow(0 0 12px rgba(196, 181, 253, 0.28));
+}
+
+.retirement-chart-area {
+    opacity: 0.12;
+}
+
+.retirement-breakdown-table__table .is-positive {
+    color: rgba(134, 239, 172, 0.9);
+}
+
+.retirement-breakdown-table__table .is-negative {
+    color: rgba(252, 165, 165, 0.92);
+}
+
+@media (max-width: 1080px) {
+    .retirement-calculator {
+        grid-template-columns: 1fr;
+    }
+
+    .retirement-results-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .retirement-results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .retirement-growth-chart__mount,
+    .retirement-growth-chart__mount svg {
+        min-height: 290px;
+        height: 290px;
+    }
+}
