@@ -79,6 +79,7 @@
                 <div class="hero-ctas">
                     <a href="#" class="btn btn-primary btn-lg">Hisse İncele</a>
                     <a href="#retail-store-performance" class="btn btn-primary btn-lg">Sektör İncele</a>
+                    <a href="#investment-calculators" class="btn btn-primary btn-lg">Hesaplayıcılar</a>
                 </div>
             </div>
 
@@ -145,6 +146,167 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section id="investment-calculators" class="investment-section investment-calculators" aria-labelledby="investment-calculators-title">
+        <div class="container">
+            <div class="investment-section-header">
+                <span class="investment-eyebrow">Hesaplayıcılar</span>
+                <h2 id="investment-calculators-title">Yatırım Hesaplayıcıları</h2>
+                <p>
+                    Bileşik faiz, CAGR ve emeklilik hedefleri gibi uzun vadeli yatırım
+                    senaryolarını hesaplamak için interaktif araçlar.
+                </p>
+            </div>
+
+            <div class="calculator-selector-grid" aria-label="Yatırım hesaplayıcı seçenekleri">
+                <button class="calculator-selector-card is-active" type="button" aria-pressed="true">
+                    <span class="calculator-selector-card__icon" aria-hidden="true"><i class="fas fa-percent"></i></span>
+                    <span>
+                        <strong>Bileşik Faiz Hesaplayıcı</strong>
+                        <small>Aktif hesaplayıcı</small>
+                    </span>
+                </button>
+
+                <button class="calculator-selector-card" type="button" disabled aria-disabled="true">
+                    <span class="calculator-selector-card__icon" aria-hidden="true"><i class="fas fa-chart-line"></i></span>
+                    <span>
+                        <strong>CAGR Hesaplayıcı</strong>
+                        <small>Yakında</small>
+                    </span>
+                </button>
+
+                <button class="calculator-selector-card" type="button" disabled aria-disabled="true">
+                    <span class="calculator-selector-card__icon" aria-hidden="true"><i class="fas fa-person-cane"></i></span>
+                    <span>
+                        <strong>Emeklilik Hesaplayıcı</strong>
+                        <small>Yakında</small>
+                    </span>
+                </button>
+            </div>
+
+            <article id="compound-calculator" class="compound-calculator" aria-labelledby="compound-calculator-title">
+                <div class="compound-calculator__input-panel">
+                    <div class="compound-calculator__panel-header">
+                        <span class="investment-eyebrow">Aktif Araç</span>
+                        <h3 id="compound-calculator-title">Bileşik Faiz Hesaplayıcı</h3>
+                        <p>
+                            Ana para, düzenli katkı, bileşiklenme, vergi ve enflasyon varsayımlarını
+                            değiştirerek sonucu anında görün.
+                        </p>
+                    </div>
+
+                    <div class="compound-calculator__fields" data-compound-calculator-inputs>
+                        <div class="compound-field">
+                            <label for="compound-principal">Başlangıç Tutarı (Ana Para)</label>
+                            <input id="compound-principal" class="compound-calculator-input" type="number" min="0" step="100" value="10000" inputmode="decimal">
+                        </div>
+
+                        <div class="compound-field">
+                            <label for="compound-contribution">Düzenli Katkı Payı Tutarı</label>
+                            <input id="compound-contribution" class="compound-calculator-input" type="number" min="0" step="100" value="1000" inputmode="decimal">
+                        </div>
+
+                        <div class="compound-field">
+                            <label for="compound-contribution-frequency">Düzenli Katkı Sıklığı</label>
+                            <select id="compound-contribution-frequency" class="compound-calculator-input">
+                                <option value="monthly" selected>Aylık</option>
+                                <option value="yearly">Yıllık</option>
+                            </select>
+                        </div>
+
+                        <div class="compound-field">
+                            <label for="compound-annual-rate">Yıllık Faiz / Getiri Oranı (%)</label>
+                            <input id="compound-annual-rate" class="compound-calculator-input" type="number" min="-99" max="1000" step="0.1" value="10" inputmode="decimal">
+                        </div>
+
+                        <div class="compound-field">
+                            <label for="compound-duration">Yatırım Süresi (Yıl)</label>
+                            <input id="compound-duration" class="compound-calculator-input" type="number" min="0" max="100" step="1" value="20" inputmode="decimal">
+                        </div>
+                    </div>
+
+                    <details class="compound-advanced-settings">
+                        <summary>
+                            <span>Gelişmiş Seçenekler</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </summary>
+
+                        <div class="compound-calculator__fields compound-calculator__fields--advanced">
+                            <div class="compound-field">
+                                <label for="compound-compounding-frequency">Bileşiklenme Sıklığı</label>
+                                <select id="compound-compounding-frequency" class="compound-calculator-input">
+                                    <option value="yearly">Yıllık</option>
+                                    <option value="monthly" selected>Aylık</option>
+                                    <option value="daily">Günlük</option>
+                                </select>
+                            </div>
+
+                            <div class="compound-field">
+                                <label for="compound-inflation-rate">Enflasyon Oranı (%)</label>
+                                <input id="compound-inflation-rate" class="compound-calculator-input" type="number" min="0" max="1000" step="0.1" value="0" inputmode="decimal">
+                            </div>
+
+                            <div class="compound-field">
+                                <label for="compound-tax-rate">Vergi / Stopaj Oranı (%)</label>
+                                <input id="compound-tax-rate" class="compound-calculator-input" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal">
+                            </div>
+
+                            <div class="compound-field">
+                                <label for="compound-contribution-timing">Katkı Zamanlaması</label>
+                                <select id="compound-contribution-timing" class="compound-calculator-input">
+                                    <option value="start" selected>Dönem Başı</option>
+                                    <option value="end">Dönem Sonu</option>
+                                </select>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="compound-calculator__result-panel compound-calculator-result">
+                    <div class="compound-results-grid" data-compound-results aria-live="polite"></div>
+
+                    <div class="compound-chart-card">
+                        <div class="compound-chart-card__header">
+                            <div>
+                                <h3>Büyüme Grafiği</h3>
+                                <p data-compound-chart-summary>Toplam yatırılan para ve bileşik getiri grafiği.</p>
+                            </div>
+                        </div>
+                        <div id="compound-growth-chart" class="compound-growth-chart" role="img" aria-label="Toplam yatırılan para ve bileşik getiri büyüme grafiği"></div>
+                        <div class="compound-chart-legend" aria-hidden="true">
+                            <span><i class="compound-legend-line compound-legend-line--invested"></i>Toplam Yatırılan Para</span>
+                            <span><i class="compound-legend-line compound-legend-line--gain"></i>Bileşik Getiri / Kazanç</span>
+                        </div>
+                    </div>
+
+                    <div class="compound-breakdown-card">
+                        <div class="compound-breakdown-card__header">
+                            <div>
+                                <h3>Dönemsel Döküm</h3>
+                                <p data-compound-breakdown-note>Seçilen katkı sıklığına göre dönemsel bakiyeler.</p>
+                            </div>
+                        </div>
+
+                        <div class="compound-breakdown-table-wrap">
+                            <table id="compound-breakdown-table" class="compound-breakdown-table">
+                                <thead>
+                                    <tr>
+                                        <th>Dönem</th>
+                                        <th>Dönem Başı Bakiye</th>
+                                        <th>Katkı</th>
+                                        <th>Dönem Getirisi</th>
+                                        <th>Toplam Yatırılan</th>
+                                        <th>Dönem Sonu Bakiye</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-compound-breakdown-body></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
         </div>
     </section>
 
