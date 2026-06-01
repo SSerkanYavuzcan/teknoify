@@ -4,6 +4,8 @@
     const operatingProfitPerStoreChartMountId = "retail-operating-profit-per-store-chart";
     const svgNamespace = "http://www.w3.org/2000/svg";
     let supermarketDataset = null;
+    let supermarketDatasetPromise = null;
+    let activeSectorKey = null;
     let usdTryRatesPromise = null;
 
     function createSvgElement(tagName, attributes = {}) {
@@ -1043,16 +1045,180 @@
         renderBreakdownTable(breakdownRows);
     }
 
-    function initCalculatorSmoothScroll() {
-        document.querySelectorAll('a[href="#investment-calculators"]').forEach((link) => {
+    function updateSectorSelectorState(sectorKey) {
+        document.querySelectorAll("[data-sector-key]").forEach((button) => {
+            const isActive = button.dataset.sectorKey === sectorKey;
+
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-pressed", String(isActive));
+        });
+    }
+
+    function renderSectorEmptyState() {
+        const panel = document.getElementById("sector-analysis-panel");
+
+        if (!panel) return;
+
+        activeSectorKey = null;
+        updateSectorSelectorState(null);
+        panel.innerHTML = `
+            <div class="investment-sector-empty-state">
+                <div class="investment-sector-placeholder__icon" aria-hidden="true">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div>
+                    <h3>Bir sektör seçin</h3>
+                    <p>Analiz panelini görüntülemek için yukarıdan bir sektör seçin.</p>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderRetailSectorPanel() {
+        const panel = document.getElementById("sector-analysis-panel");
+
+        if (!panel) return;
+
+        activeSectorKey = "retail";
+        updateSectorSelectorState(activeSectorKey);
+        panel.innerHTML = `
+            <div class="investment-sector-block">
+                <div class="investment-section-header investment-sector-header">
+                    <div class="investment-sector-header__content">
+                        <span class="investment-eyebrow">Sektör Analizleri</span>
+                        <h2 id="retail-performance-title">Perakende Sektörü Mağaza Performansları</h2>
+                        <p>
+                            BİM, Migros, CarrefourSA ve benzeri perakende şirketlerinin mağaza başına
+                            operasyonel kâr gelişimini çeyreklik bazda izlemek için hazırlanacak
+                            analiz alanı.
+                        </p>
+                    </div>
+                    <div class="investment-sector-header__action">
+                        <a class="investment-sector-detail-button" href="investment-retail.html">
+                            Detaylı İncele
+                        </a>
+                    </div>
+                </div>
+
+                <div class="investment-dashboard-grid investment-dashboard-grid-single">
+                    <article class="investment-chart-card investment-chart-card-wide investment-operating-profit-card">
+                        <div class="investment-chart-card-header">
+                            <div>
+                                <h3>Mağaza Başına Operasyonel Kâr ($)</h3>
+                                <p>Çeyreklik mağaza başı operasyonel kâr</p>
+                            </div>
+                        </div>
+
+                        <div
+                            id="retail-operating-profit-per-store-chart"
+                            class="investment-chart investment-chart-operating-profit-per-store"
+                            aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başına operasyonel kâr çizgi grafiği"
+                        ></div>
+                    </article>
+                </div>
+            </div>
+        `;
+
+        ensureSupermarketDatasetLoaded();
+    }
+
+    function renderAirlineSectorPanel() {
+        const panel = document.getElementById("sector-analysis-panel");
+
+        if (!panel) return;
+
+        activeSectorKey = "airline";
+        updateSectorSelectorState(activeSectorKey);
+        panel.innerHTML = `
+            <div class="investment-sector-block">
+                <div class="investment-section-header investment-sector-header">
+                    <div class="investment-sector-header__content">
+                        <span class="investment-eyebrow">Sektör Analizleri</span>
+                        <h2 id="airline-performance-title">Havayolu Sektörü Performans Analizleri</h2>
+                        <p>
+                            Türk Hava Yolları, Pegasus ve benzeri havayolu şirketlerinin yolcu trafiği,
+                            doluluk oranı, filo büyüklüğü ve kârlılık metriklerini izlemek için hazırlanacak
+                            analiz alanı.
+                        </p>
+                    </div>
+                    <div class="investment-sector-header__action">
+                        <a class="investment-sector-detail-button" href="investment-airlines.html">
+                            Detaylı İncele
+                        </a>
+                    </div>
+                </div>
+
+                <div class="investment-sector-placeholder">
+                    <div class="investment-sector-placeholder__icon" aria-hidden="true">
+                        <i class="fas fa-plane-departure"></i>
+                    </div>
+                    <div>
+                        <h3>Havayolu metrikleri yakında eklenecek</h3>
+                        <p>
+                            Yolcu sayısı, doluluk oranı, filo büyüklüğü ve faaliyet kârlılığı gibi metrikler
+                            kaynaklı veri setleriyle hazırlanacak.
+                        </p>
+                        <div class="investment-sector-placeholder__tags" aria-label="Planlanan havayolu metrikleri">
+                            <span class="investment-sector-tag">Yolcu Trafiği</span>
+                            <span class="investment-sector-tag">Doluluk Oranı</span>
+                            <span class="investment-sector-tag">Filo</span>
+                            <span class="investment-sector-tag">FAVÖK</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderSectorPanel(sectorKey) {
+        if (sectorKey === "retail") {
+            renderRetailSectorPanel();
+            return;
+        }
+
+        if (sectorKey === "airline") {
+            renderAirlineSectorPanel();
+            return;
+        }
+
+        renderSectorEmptyState();
+    }
+
+    function initSectorSelector() {
+        const selectorButtons = document.querySelectorAll("[data-sector-key]");
+
+        if (!selectorButtons.length) return;
+
+        selectorButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                renderSectorPanel(button.dataset.sectorKey);
+            });
+        });
+
+        renderSectorEmptyState();
+    }
+
+    function initInvestmentSmoothScroll() {
+        const supportedHashes = new Set([
+            "#retail-store-performance",
+            "#sector-analysis",
+            "#stock-analysis",
+            "#investment-calculators"
+        ]);
+
+        document.querySelectorAll('a[href^="#"]').forEach((link) => {
             link.addEventListener("click", (event) => {
-                const target = document.getElementById("investment-calculators");
+                const hash = link.getAttribute("href");
+
+                if (!supportedHashes.has(hash)) return;
+
+                const target = document.querySelector(hash);
 
                 if (!target) return;
 
                 event.preventDefault();
                 target.scrollIntoView({ behavior: "smooth", block: "start" });
-                window.history.pushState(null, "", "#investment-calculators");
+                window.history.pushState(null, "", hash);
             });
         });
     }
@@ -1071,27 +1237,55 @@
     }
 
     async function loadSupermarketDataset() {
-        try {
-            const response = await fetch(supermarketDatasetUrl);
+        const response = await fetch(supermarketDatasetUrl);
 
-            if (!response.ok) {
-                throw new Error(`Supermarket dataset request failed: ${response.status}`);
-            }
-
-            supermarketDataset = await response.json();
-            await applyDerivedPerStoreUsdValues();
-
-            renderOperatingProfitPerStoreChart();
-        } catch (error) {
-            console.error(error);
-            showErrorState(operatingProfitPerStoreChartMountId, "Operasyonel kâr grafiği verisi yüklenemedi. Lütfen daha sonra tekrar deneyin.");
+        if (!response.ok) {
+            throw new Error(`Supermarket dataset request failed: ${response.status}`);
         }
+
+        supermarketDataset = await response.json();
+        await applyDerivedPerStoreUsdValues();
+
+        return supermarketDataset;
+    }
+
+    function ensureSupermarketDatasetLoaded() {
+        const mount = document.getElementById(operatingProfitPerStoreChartMountId);
+
+        if (supermarketDataset) {
+            renderOperatingProfitPerStoreChart();
+            return supermarketDatasetPromise ?? Promise.resolve(supermarketDataset);
+        }
+
+        if (mount) {
+            mount.innerHTML = '<div class="investment-chart-loading">Perakende verileri yükleniyor...</div>';
+        }
+
+        if (!supermarketDatasetPromise) {
+            supermarketDatasetPromise = loadSupermarketDataset().catch((error) => {
+                supermarketDatasetPromise = null;
+                console.error(error);
+                showErrorState(
+                    operatingProfitPerStoreChartMountId,
+                    "Operasyonel kâr grafiği verisi yüklenemedi. Lütfen daha sonra tekrar deneyin."
+                );
+                return null;
+            });
+        }
+
+        supermarketDatasetPromise.then(() => {
+            if (activeSectorKey === "retail") {
+                renderOperatingProfitPerStoreChart();
+            }
+        });
+
+        return supermarketDatasetPromise;
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        initCalculatorSmoothScroll();
+        initInvestmentSmoothScroll();
+        initSectorSelector();
         initCompoundInterestCalculator();
-        loadSupermarketDataset();
     });
 })();
 

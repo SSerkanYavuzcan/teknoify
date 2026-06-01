@@ -77,8 +77,8 @@
                 </p>
 
                 <div class="hero-ctas">
-                    <a href="#" class="btn btn-primary btn-lg">Hisse İncele</a>
                     <a href="#retail-store-performance" class="btn btn-primary btn-lg">Sektör İncele</a>
+                    <a href="#stock-analysis" class="btn btn-primary btn-lg">Hisse İncele</a>
                     <a href="#investment-calculators" class="btn btn-primary btn-lg">Hesaplayıcılar</a>
                 </div>
             </div>
@@ -146,6 +146,74 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section id="retail-store-performance" class="investment-section investment-sector-selection-section" aria-labelledby="sector-analysis-title">
+        <span id="sector-analysis" class="investment-anchor-alias" aria-hidden="true"></span>
+        <div class="container">
+            <div class="investment-section-header investment-sector-selection-header">
+                <span class="investment-eyebrow">Sektör İncele</span>
+                <h2 id="sector-analysis-title">Sektör Seç</h2>
+                <p>
+                    Tek panel üzerinden perakende ve havayolu sektör analizlerini seçin;
+                    ilgili metrikleri, detay bağlantılarını ve hazırlanacak veri alanlarını görüntüleyin.
+                </p>
+            </div>
+
+            <div class="investment-sector-selector-grid" aria-label="Sektör seçenekleri">
+                <button class="investment-sector-selector-card" type="button" data-sector-key="retail" aria-pressed="false">
+                    <span class="investment-sector-selector-card__icon" aria-hidden="true"><i class="fas fa-store"></i></span>
+                    <span>
+                        <strong>Perakende</strong>
+                        <small>Mağaza başı operasyonel kâr</small>
+                    </span>
+                </button>
+
+                <button class="investment-sector-selector-card" type="button" data-sector-key="airline" aria-pressed="false">
+                    <span class="investment-sector-selector-card__icon" aria-hidden="true"><i class="fas fa-plane-departure"></i></span>
+                    <span>
+                        <strong>Havayolu</strong>
+                        <small>Yolcu, doluluk ve filo metrikleri</small>
+                    </span>
+                </button>
+            </div>
+
+            <article id="sector-analysis-panel" class="investment-sector-panel" aria-live="polite"></article>
+        </div>
+    </section>
+
+    <section id="stock-analysis" class="investment-section investment-stock-analysis-section" aria-labelledby="stock-analysis-title">
+        <div class="container">
+            <article class="investment-stock-placeholder-card">
+                <div class="investment-section-header investment-stock-placeholder-header">
+                    <span class="investment-eyebrow">Hisse İncele</span>
+                    <h2 id="stock-analysis-title">Hisse İncele</h2>
+                    <p>
+                        Şirket bazlı finansal metrikler, raporlar ve yatırım göstergeleri için
+                        hazırlanacak analiz alanı.
+                    </p>
+                </div>
+
+                <div class="investment-sector-placeholder investment-stock-placeholder">
+                    <div class="investment-sector-placeholder__icon" aria-hidden="true">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h3>Hisse analizleri yakında eklenecek</h3>
+                        <p>
+                            Finansal raporlar, değerleme göstergeleri, teknik indikatörler ve şirket
+                            karşılaştırmaları tek bir analiz alanında toplanacak.
+                        </p>
+                        <div class="investment-sector-placeholder__tags" aria-label="Planlanan hisse analiz alanları">
+                            <span class="investment-sector-tag">Finansal Raporlar</span>
+                            <span class="investment-sector-tag">Değerleme</span>
+                            <span class="investment-sector-tag">İndikatörler</span>
+                            <span class="investment-sector-tag">Karşılaştırma</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
         </div>
     </section>
 
@@ -310,83 +378,6 @@
         </div>
     </section>
 
-    <section id="retail-store-performance" class="investment-section" aria-labelledby="retail-performance-title">
-        <div class="container">
-            <article class="investment-sector-block">
-                <div class="investment-section-header investment-sector-header">
-                    <div class="investment-sector-header__content">
-                        <span class="investment-eyebrow">Sektör Analizleri</span>
-                        <h2 id="retail-performance-title">Perakende Sektörü Mağaza Performansları</h2>
-                        <p>
-                            BİM, Migros, CarrefourSA ve benzeri perakende şirketlerinin mağaza başına
-                            operasyonel kâr gelişimini çeyreklik bazda izlemek için hazırlanacak
-                            analiz alanı.
-                        </p>
-                    </div>
-                    <div class="investment-sector-header__action">
-                        <a class="investment-sector-detail-button" href="investment-retail.html">
-                            Detaylı İncele
-                        </a>
-                    </div>
-                </div>
-
-                <div class="investment-dashboard-grid investment-dashboard-grid-single">
-                    <article class="investment-chart-card investment-chart-card-wide investment-operating-profit-card">
-                        <div class="investment-chart-card-header">
-                            <div>
-                                <h3>Mağaza Başına Operasyonel Kâr ($)</h3>
-                                <p>Çeyreklik mağaza başı operasyonel kâr</p>
-                            </div>
-                        </div>
-
-                        <div
-                            id="retail-operating-profit-per-store-chart"
-                            class="investment-chart investment-chart-operating-profit-per-store"
-                            aria-label="BİM, ŞOK Marketler, Migros ve CarrefourSA mağaza başına operasyonel kâr çizgi grafiği"
-                        ></div>
-                    </article>
-                </div>
-            </article>
-
-            <article id="airline-sector-performance" class="investment-sector-block" aria-labelledby="airline-performance-title">
-                <div class="investment-section-header investment-sector-header">
-                    <div class="investment-sector-header__content">
-                        <span class="investment-eyebrow">Sektör Analizleri</span>
-                        <h2 id="airline-performance-title">Havayolu Sektörü Performans Analizleri</h2>
-                        <p>
-                            Türk Hava Yolları, Pegasus ve benzeri havayolu şirketlerinin yolcu trafiği,
-                            doluluk oranı, filo büyüklüğü ve kârlılık metriklerini izlemek için hazırlanacak
-                            analiz alanı.
-                        </p>
-                    </div>
-                    <div class="investment-sector-header__action">
-                        <a class="investment-sector-detail-button" href="investment-airlines.html">
-                            Detaylı İncele
-                        </a>
-                    </div>
-                </div>
-
-                <div class="investment-sector-placeholder">
-                    <div class="investment-sector-placeholder__icon" aria-hidden="true">
-                        <i class="fas fa-plane-departure"></i>
-                    </div>
-                    <div>
-                        <h3>Havayolu metrikleri yakında eklenecek</h3>
-                        <p>
-                            Yolcu sayısı, doluluk oranı, filo büyüklüğü ve faaliyet kârlılığı gibi metrikler
-                            kaynaklı veri setleriyle hazırlanacak.
-                        </p>
-                        <div class="investment-sector-placeholder__tags" aria-label="Planlanan havayolu metrikleri">
-                            <span class="investment-sector-tag">Yolcu Trafiği</span>
-                            <span class="investment-sector-tag">Doluluk Oranı</span>
-                            <span class="investment-sector-tag">Filo</span>
-                            <span class="investment-sector-tag">FAVÖK</span>
-                        </div>
-                    </div>
-                </div>
-            </article>
-        </div>
-    </section>
 </main>
 
 <footer class="footer">

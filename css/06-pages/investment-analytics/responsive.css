@@ -277,3 +277,21 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 768px) {
+    .investment-sector-selector-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .investment-sector-selector-card,
+    .investment-sector-empty-state {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 560px) {
+    .investment-sector-selector-card,
+    .investment-sector-empty-state {
+        flex-direction: column;
+    }
+}
