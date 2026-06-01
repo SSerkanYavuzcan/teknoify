@@ -685,12 +685,12 @@
         return frequency === "yearly" ? 1 : 12;
     }
 
-    function formatTryCurrency(value) {
+    function formatUsdCurrency(value) {
         const safeValue = Number.isFinite(value) ? value : 0;
 
-        return safeValue.toLocaleString("tr-TR", {
+        return safeValue.toLocaleString("en-US", {
             style: "currency",
-            currency: "TRY",
+            currency: "USD",
             maximumFractionDigits: 0
         });
     }
@@ -892,7 +892,7 @@
         container.innerHTML = cards.map(([label, value]) => `
             <article class="compound-result-card">
                 <span>${escapeHtml(label)}</span>
-                <strong>${escapeHtml(formatTryCurrency(value))}</strong>
+                <strong>${escapeHtml(formatUsdCurrency(value))}</strong>
             </article>
         `).join("");
     }
@@ -955,7 +955,7 @@
             "text-anchor": "end"
         });
 
-        label.textContent = formatTryCurrency(value).replace(",00", "");
+        label.textContent = formatUsdCurrency(value).replace(",00", "");
         svg.appendChild(label);
     }
 
@@ -1002,9 +1002,9 @@
     if (summary && points.length) {
         const lastPoint = points[points.length - 1];
 
-        summary.textContent = `${lastPoint.label} sonunda yatırılan para ${formatTryCurrency(
+        summary.textContent = `${lastPoint.label} sonunda USD olarak yatırılan para ${formatUsdCurrency(
             lastPoint.invested
-        )}, bileşik getiri ${formatTryCurrency(lastPoint.gain)}.`;
+        )}, bileşik getiri ${formatUsdCurrency(lastPoint.gain)}.`;
     }
 }
 
@@ -1020,11 +1020,11 @@
         body.innerHTML = visibleRows.map((row) => `
             <tr>
                 <td>${escapeHtml(row.period)}</td>
-                <td>${escapeHtml(formatTryCurrency(row.startingBalance))}</td>
-                <td>${escapeHtml(formatTryCurrency(row.contribution))}</td>
-                <td>${escapeHtml(formatTryCurrency(row.periodReturn))}</td>
-                <td>${escapeHtml(formatTryCurrency(row.totalInvested))}</td>
-                <td>${escapeHtml(formatTryCurrency(row.endingBalance))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.startingBalance))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.contribution))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.periodReturn))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.totalInvested))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.endingBalance))}</td>
             </tr>
         `).join("");
 
@@ -1309,16 +1309,16 @@
                     <div class="compound-calculator__panel-header">
                         <span class="investment-eyebrow">Aktif Araç</span>
                         <h3 id="cagr-calculator-title">CAGR Hesaplayıcı</h3>
-                        <p>Başlangıç ve bitiş değerleri arasındaki yıllık bileşik büyüme oranını hesaplayın.</p>
+                        <p>Başlangıç ve bitiş USD değerleri arasındaki yıllık bileşik büyüme oranını hesaplayın.</p>
                     </div>
 
                     <div class="compound-calculator__fields">
                         <div class="compound-field">
-                            <label for="cagr-beginning-value">Başlangıç Tutarı / Değeri</label>
+                            <label for="cagr-beginning-value">Başlangıç Tutarı / Değeri (USD)</label>
                             <input id="cagr-beginning-value" class="cagr-calculator-input" type="number" min="0" step="100" value="10000" inputmode="decimal">
                         </div>
                         <div class="compound-field cagr-ending-field" data-cagr-ending-field>
-                            <label for="cagr-ending-value">Bitiş Tutarı / Değeri</label>
+                            <label for="cagr-ending-value">Bitiş Tutarı / Değeri (USD)</label>
                             <input id="cagr-ending-value" class="cagr-calculator-input" type="number" min="0" step="100" value="25000" inputmode="decimal">
                         </div>
                     </div>
@@ -1384,10 +1384,10 @@
                         <div class="compound-chart-card__header">
                             <div>
                                 <h3>Pürüzsüz Büyüme Eğrisi</h3>
-                                <p data-cagr-chart-summary>Tutarlı CAGR varsayımıyla büyüme eğrisi.</p>
+                                <p data-cagr-chart-summary>USD bazında tutarlı CAGR varsayımıyla büyüme eğrisi.</p>
                             </div>
                         </div>
-                        <div id="cagr-growth-chart" class="compound-growth-chart" role="img" aria-label="CAGR ile pürüzsüz yatırım büyüme eğrisi"></div>
+                        <div id="cagr-growth-chart" class="compound-growth-chart" role="img" aria-label="USD bazında CAGR ile pürüzsüz yatırım büyüme eğrisi"></div>
                     </div>
 
                     <div class="cagr-projection-table compound-breakdown-card">
@@ -1450,7 +1450,7 @@
                     <div class="compound-calculator__panel-header">
                         <span class="investment-eyebrow">Aktif Araç</span>
                         <h3 id="retirement-calculator-title">Emeklilik Hesaplayıcı</h3>
-                        <p>Mevcut yaşınız, birikiminiz, aylık katkınız ve emeklilikte hedeflediğiniz gelir üzerinden finansal yol haritanızı hesaplayın.</p>
+                        <p>Mevcut yaşınız, USD birikiminiz, aylık katkınız ve emeklilikte hedeflediğiniz gelir üzerinden finansal yol haritanızı hesaplayın.</p>
                     </div>
 
                     <div class="compound-calculator__fields">
@@ -1468,13 +1468,13 @@
                             <input id="retirement-life-expectancy" class="retirement-calculator-input" type="number" min="20" max="130" step="1" value="85" inputmode="decimal">
                         </div>
                         <div class="compound-field">
-                            <label for="retirement-current-savings">Mevcut Emeklilik Birikimi</label>
-                            <input id="retirement-current-savings" class="retirement-calculator-input" type="number" min="0" step="1000" value="100000" inputmode="decimal">
+                            <label for="retirement-current-savings">Mevcut Emeklilik Birikimi (USD)</label>
+                            <input id="retirement-current-savings" class="retirement-calculator-input" type="number" min="0" step="1000" value="25000" inputmode="decimal">
                         </div>
                         <div class="compound-field">
-                            <label for="retirement-monthly-contribution">Aylık Katkı Payı</label>
+                            <label for="retirement-monthly-contribution">Aylık Katkı Payı (USD)</label>
                             <small>Emekli olana kadar her ay kenara ayrılacak tutar</small>
-                            <input id="retirement-monthly-contribution" class="retirement-calculator-input" type="number" min="0" step="500" value="5000" inputmode="decimal">
+                            <input id="retirement-monthly-contribution" class="retirement-calculator-input" type="number" min="0" step="500" value="500" inputmode="decimal">
                         </div>
                     </div>
 
@@ -1494,8 +1494,8 @@
                                 <input id="retirement-inflation-rate" class="retirement-calculator-input" type="number" min="-99" step="0.1" value="3" inputmode="decimal">
                             </div>
                             <div class="compound-field">
-                                <label for="retirement-desired-income">Emeklilikte İstenen Aylık Gelir (Bugünün Parasıyla)</label>
-                                <input id="retirement-desired-income" class="retirement-calculator-input" type="number" min="0" step="1000" value="40000" inputmode="decimal">
+                                <label for="retirement-desired-income">Emeklilikte İstenen Aylık Gelir (USD, Bugünün Alım Gücüyle)</label>
+                                <input id="retirement-desired-income" class="retirement-calculator-input" type="number" min="0" step="1000" value="3000" inputmode="decimal">
                             </div>
                             <div class="compound-field">
                                 <label for="retirement-contribution-growth">Maaş / Katkı Artış Oranı (%)</label>
@@ -1513,10 +1513,10 @@
                         <div class="compound-chart-card__header">
                             <div>
                                 <h3>Birikim ve Harcama Eğrisi</h3>
-                                <p data-retirement-chart-summary>Yaşa göre emeklilik fonu yaşam döngüsü.</p>
+                                <p data-retirement-chart-summary>Yaşa göre USD emeklilik fonu yaşam döngüsü.</p>
                             </div>
                         </div>
-                        <div id="retirement-growth-chart" class="compound-growth-chart retirement-growth-chart__mount" role="img" aria-label="Mevcut yaştan yaşam beklentisine kadar birikim ve harcama eğrisi"></div>
+                        <div id="retirement-growth-chart" class="compound-growth-chart retirement-growth-chart__mount" role="img" aria-label="Mevcut yaştan yaşam beklentisine kadar USD birikim ve harcama eğrisi"></div>
                     </div>
 
                     <div class="retirement-breakdown-table compound-breakdown-card">
@@ -1772,17 +1772,17 @@
         if (!container) return;
 
         const gapDescription = results.fundingGap < 0
-            ? `Hedefinize ulaşmak için yaklaşık ${formatTryCurrency(Math.abs(results.fundingGap))} ek fona ihtiyacınız var.${results.additionalMonthlyContribution === null ? "" : ` Aylık katkınızı yaklaşık ${formatTryCurrency(results.additionalMonthlyContribution)} artırmanız gerekebilir.`}`
-            : `Tahmini birikiminiz hedefinizi yaklaşık ${formatTryCurrency(results.fundingGap)} aşıyor.`;
+            ? `Hedefinize ulaşmak için yaklaşık ${formatUsdCurrency(Math.abs(results.fundingGap))} ek fona ihtiyacınız var.${results.additionalMonthlyContribution === null ? "" : ` Aylık katkınızı yaklaşık ${formatUsdCurrency(results.additionalMonthlyContribution)} artırmanız gerekebilir.`}`
+            : `Tahmini birikiminiz hedefinizi yaklaşık ${formatUsdCurrency(results.fundingGap)} aşıyor.`;
         const depletionText = results.depletionAge === null
             ? "Planlanan yaşa kadar yeterli"
             : `${results.depletionAge.toLocaleString("tr-TR", { maximumFractionDigits: 1 })} yaş`;
         const cards = [
-            ["Hedeflenen Emeklilik Fonu Büyüklüğü", formatTryCurrency(results.targetFund), `Nominal • Bugünkü alım gücüyle ${formatTryCurrency(results.realTargetFund)}`],
-            ["Tahmini Birikecek Toplam Fon", formatTryCurrency(results.projectedFund), `Nominal • Bugünkü alım gücüyle ${formatTryCurrency(results.realProjectedFund)}`],
-            ["Durum Özeti / Fark", formatTryCurrency(results.fundingGap), gapDescription],
+            ["Hedeflenen Emeklilik Fonu Büyüklüğü", formatUsdCurrency(results.targetFund), `Nominal • Bugünkü alım gücüyle ${formatUsdCurrency(results.realTargetFund)}`],
+            ["Tahmini Birikecek Toplam Fon", formatUsdCurrency(results.projectedFund), `Nominal • Bugünkü alım gücüyle ${formatUsdCurrency(results.realProjectedFund)}`],
+            ["Durum Özeti / Fark", formatUsdCurrency(results.fundingGap), gapDescription],
             ["Fonun Tükeneceği Yaş", depletionText, results.depletionAge === null ? "Fon yaşam beklentisine kadar tükenmiyor." : "Projeksiyona göre fon bu yaşta sıfırlanır."],
-            ["Reel Emeklilik Fonu", formatTryCurrency(results.realProjectedFund), `Reel getiri: emeklilik öncesi ${formatPercent(results.realPreRetirementReturn)}, sonrası ${formatPercent(results.realPostRetirementReturn)}`]
+            ["Reel Emeklilik Fonu", formatUsdCurrency(results.realProjectedFund), `Reel getiri: emeklilik öncesi ${formatPercent(results.realPreRetirementReturn)}, sonrası ${formatPercent(results.realPostRetirementReturn)}`]
         ];
 
         container.innerHTML = cards.map(([label, value, description]) => `
@@ -1821,7 +1821,7 @@
             const value = chartConfig.maxValue - (step / 4) * chartConfig.maxValue;
             svg.appendChild(createSvgElement("line", { class: "compound-chart-grid-line", x1: chartConfig.left, x2: chartConfig.left + chartConfig.width, y1: y, y2: y }));
             const label = createSvgElement("text", { class: "compound-chart-axis-label", x: chartConfig.left - 10, y: y + 4, "text-anchor": "end" });
-            label.textContent = formatTryCurrency(value).replace(",00", "");
+            label.textContent = formatUsdCurrency(value).replace(",00", "");
             svg.appendChild(label);
         }
 
@@ -1840,7 +1840,7 @@
 
         if (summary) {
             const peak = points.reduce((highest, point) => point.value > highest.value ? point : highest, points[0]);
-            summary.textContent = `Eğri ${peak.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş civarında ${formatTryCurrency(peak.value)} nominal tepe fonu gösteriyor.`;
+            summary.textContent = `Eğri ${peak.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş civarında ${formatUsdCurrency(peak.value)} nominal USD tepe fonu gösteriyor.`;
         }
     }
 
@@ -1853,10 +1853,10 @@
         body.innerHTML = rows.map((row) => `
             <tr>
                 <td>${escapeHtml(`${row.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş`)}</td>
-                <td>${escapeHtml(formatTryCurrency(row.startingBalance))}</td>
-                <td class="${row.cashFlow < 0 ? "is-negative" : "is-positive"}">${escapeHtml(formatTryCurrency(row.cashFlow))}</td>
-                <td>${escapeHtml(formatTryCurrency(row.interest))}</td>
-                <td>${escapeHtml(formatTryCurrency(row.endingBalance))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.startingBalance))}</td>
+                <td class="${row.cashFlow < 0 ? "is-negative" : "is-positive"}">${escapeHtml(formatUsdCurrency(row.cashFlow))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.interest))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.endingBalance))}</td>
             </tr>
         `).join("");
 
@@ -2068,9 +2068,9 @@
         if (validation) validation.textContent = "";
 
         const cards = [
-            [result.titleValue, result.titleValue === "Hesaplanan Bitiş Değeri" ? formatTryCurrency(result.endingValue) : formatPercent(result.cagr), "Yıllık Bileşik Büyüme Oranı"],
+            [result.titleValue, result.titleValue === "Hesaplanan Bitiş Değeri" ? formatUsdCurrency(result.endingValue) : formatPercent(result.cagr), "Yıllık Bileşik Büyüme Oranı"],
             ["Toplam Getiri", formatPercent(result.totalReturn), "Başlangıçtan bitişe toplam değişim"],
-            ["Mutlak Kazanç", formatTryCurrency(result.absoluteGain), "Bitiş değeri - başlangıç değeri"],
+            ["Mutlak Kazanç", formatUsdCurrency(result.absoluteGain), "Bitiş değeri - başlangıç değeri"],
             ["Reel CAGR", formatPercent(result.realCagr), "Enflasyon etkisi düşülmüş büyüme"],
             ["Süre", formatDurationYears(result.durationYears), `${result.durationYears.toLocaleString("tr-TR", { maximumFractionDigits: 2 })} yıl`]
         ];
@@ -2123,7 +2123,7 @@
 
             svg.appendChild(createSvgElement("line", { class: "compound-chart-grid-line", x1: chartConfig.left, x2: chartConfig.left + chartConfig.width, y1: y, y2: y }));
             const label = createSvgElement("text", { class: "compound-chart-axis-label", x: chartConfig.left - 10, y: y + 4, "text-anchor": "end" });
-            label.textContent = formatTryCurrency(value).replace(",00", "");
+            label.textContent = formatUsdCurrency(value).replace(",00", "");
             svg.appendChild(label);
         }
 
@@ -2142,7 +2142,7 @@
 
         if (summary) {
             const lastPoint = points[points.length - 1];
-            summary.textContent = `Son değer ${formatTryCurrency(lastPoint.value)}; eğri ${points[0].value > lastPoint.value ? "aşağı" : "yukarı"} yönlü.`;
+            summary.textContent = `Son USD değeri ${formatUsdCurrency(lastPoint.value)}; eğri ${points[0].value > lastPoint.value ? "aşağı" : "yukarı"} yönlü.`;
         }
     }
 
@@ -2155,9 +2155,9 @@
         body.innerHTML = rows.map((row) => `
             <tr>
                 <td>${escapeHtml(row.period)}</td>
-                <td>${escapeHtml(formatTryCurrency(row.startingValue))}</td>
-                <td>${escapeHtml(formatTryCurrency(row.change))}</td>
-                <td>${escapeHtml(formatTryCurrency(row.endingValue))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.startingValue))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.change))}</td>
+                <td>${escapeHtml(formatUsdCurrency(row.endingValue))}</td>
                 <td>${escapeHtml(formatPercent(row.totalReturn))}</td>
             </tr>
         `).join("");
