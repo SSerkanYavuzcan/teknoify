@@ -156,13 +156,13 @@
                 <span class="investment-eyebrow">Sektör İncele</span>
                 <h2 id="sector-analysis-title">Sektör Seç</h2>
                 <p>
-                    Tek panel üzerinden perakende ve havayolu sektör analizlerini seçin;
+                    Tek panel üzerinden perakende, havayolu, otomotiv ve demir çelik sektör analizlerini seçin;
                     ilgili metrikleri, detay bağlantılarını ve hazırlanacak veri alanlarını görüntüleyin.
                 </p>
             </div>
 
             <div class="investment-sector-selector-grid" aria-label="Sektör seçenekleri">
-                <button class="investment-sector-selector-card" type="button" data-sector-key="retail" aria-pressed="false">
+                <button class="investment-sector-selector-card is-active" type="button" data-sector-key="retail" aria-pressed="true">
                     <span class="investment-sector-selector-card__icon" aria-hidden="true"><i class="fas fa-store"></i></span>
                     <span>
                         <strong>Perakende</strong>
@@ -177,6 +177,30 @@
                         <small>Yolcu, doluluk ve filo metrikleri</small>
                     </span>
                 </button>
+
+                <button class="investment-sector-selector-card" type="button" data-sector-key="automotive" aria-pressed="false">
+                    <span class="investment-sector-selector-card__icon" aria-hidden="true"><i class="fas fa-car-side"></i></span>
+                    <span>
+                        <strong>Otomotiv</strong>
+                        <small>Satış, ihracat ve üretim takibi</small>
+                    </span>
+                </button>
+
+                <button class="investment-sector-selector-card" type="button" data-sector-key="steel" aria-pressed="false">
+                    <span class="investment-sector-selector-card__icon" aria-hidden="true"><i class="fas fa-industry"></i></span>
+                    <span>
+                        <strong>Demir Çelik</strong>
+                        <small>Üretim, kapasite ve emtia etkisi</small>
+                    </span>
+                </button>
+
+                <a class="investment-sector-selector-card investment-sector-selector-card--cta" href="subscription.html">
+                    <span class="investment-sector-selector-card__icon" aria-hidden="true"><i class="fas fa-compass"></i></span>
+                    <span>
+                        <strong>Daha fazlasını keşfet</strong>
+                        <small>Yeni analiz alanlarına erişin</small>
+                    </span>
+                </a>
             </div>
 
             <article id="sector-analysis-panel" class="investment-sector-panel" aria-live="polite"></article>
