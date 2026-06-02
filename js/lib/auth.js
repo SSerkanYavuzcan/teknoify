@@ -1,4 +1,12 @@
 import { auth, db, app } from "/js/lib/firebase.js";
+import { getDashboardRouteForRole, PUBLIC_ROUTES } from "/packages/config/routes.js";
+import {
+  DEFAULT_ROLE_STATUS,
+  DEFAULT_ROLE_TYPE,
+  getRoleTypeFromRole,
+  isAdminRole,
+  isRoleAllowed,
+} from "/packages/auth/roles.js";
 import {
   onAuthStateChanged,
   signOut
@@ -41,12 +49,11 @@ function checkSecurityBan() {
 
 // GÜNCELLEME: Ayrı bir login sayfası olmadığı için ana sayfaya yönlendiriyoruz
 function getLoginPath() {
-  return "/"; 
+  return PUBLIC_ROUTES.home;
 }
 
-function getDashboardPath(roleType = "member") {
-  const page = roleType === "admin" ? "admin.html" : `${roleType}.html`;
-  return `/dashboard/${page}`;
+function getDashboardPath(roleType = DEFAULT_ROLE_TYPE) {
+  return getDashboardRouteForRole(getRoleTypeFromRole(roleType));
 }
 
 async function waitForAuthUser() {
@@ -73,7 +80,10 @@ async function readUserDocument(uid) {
 // ================================================================
 async function buildRealSession(user) {
   const userDoc = await readUserDocument(user.uid);
-  const roleData = userDoc?.role || { type: "member", status: "active" };
+  const roleData = userDoc?.role || {
+    type: DEFAULT_ROLE_TYPE,
+    status: DEFAULT_ROLE_STATUS
+  };
   const profileData = userDoc?.profile || {};
 
   return {
@@ -81,7 +91,7 @@ async function buildRealSession(user) {
     email: user.email,
     name: profileData.fullName || user.email.split("@")[0],
     role: roleData,
-    isAdmin: roleData.type === "admin"
+    isAdmin: isAdminRole(roleData)
   };
 }
 
@@ -98,7 +108,10 @@ async function getEffectiveSession(realSession) {
   return {
     ...realSession,
     uid: targetUid,
-    role: targetDoc.role || { type: "member", status: "active" },
+    role: targetDoc.role || {
+      type: DEFAULT_ROLE_TYPE,
+      status: DEFAULT_ROLE_STATUS
+    },
     impersonating: true,
     realIsAdmin: true,
     isAdmin: false
@@ -108,7 +121,7 @@ async function getEffectiveSession(realSession) {
 export async function logout() {
   window.localStorage.removeItem(IMPERSONATE_UID_KEY);
   await signOut(auth);
-  window.location.replace("/");
+  window.location.replace(getLoginPath());
 }
 
 /**
@@ -130,12 +143,14 @@ export async function requireAuth({ allowedRoles = [] } = {}) {
   const effective = await getEffectiveSession(real);
 
   // Rol kontrolü
-  if (allowedRoles.length > 0 && !allowedRoles.includes(effective.role.type)) {
+  const roleType = getRoleTypeFromRole(effective.role);
+
+  if (!isRoleAllowed(effective.role, allowedRoles)) {
     console.warn("Yetkisiz rol erişimi, dashboard köküne yönlendiriliyor.");
-    window.location.href = getDashboardPath(effective.role.type);
+    window.location.href = getDashboardPath(roleType);
     return null;
   }
 
-  console.log("✅ Oturum başarıyla doğrulandı:", effective.role.type);
+  console.log("✅ Oturum başarıyla doğrulandı:", roleType);
   return effective;
 }

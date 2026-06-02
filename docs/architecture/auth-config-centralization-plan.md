@@ -186,12 +186,11 @@ Future work should proceed in small PRs that preserve behavior and make only one
 - Use the checklist to prepare the next runtime PR that migrates only `js/lib/auth.js` to equivalent route and role/access constants.
 - Do not change runtime consumers, Firebase setup, App Check setup, imports, redirects, dashboard pages, package scripts, or data files in Phase 4E.
 
-### Phase 4F: centralize Firebase modular client usage
+### Phase 4F: migrate first auth consumer to route/role constants
 
-- Identify all global Firebase and modular Firebase consumers.
-- Prefer modular client exports for new code.
-- Migrate consumers gradually while preserving initialization order and Firebase config values.
-- Keep legacy global Firebase code until all consumers are verified.
+- Migrate only `js/lib/auth.js` as the first runtime consumer of route and role constants.
+- Preserve login, dashboard redirect, role defaulting, allowed-role, logout, and impersonation behavior.
+- Phase 4F migrated `js/lib/auth.js` to route and role constants without changing Firebase, App Check, Firestore, or auth behavior.
 
 ### Phase 4G: centralize App Check initialization
 
@@ -349,6 +348,8 @@ Phase 4B expands the package README files for `packages/auth`, `packages/config`
 Phase 4D introduces role/access constants and pure helper modules in `packages/auth` without migrating existing consumers yet.
 
 Phase 4E adds `docs/architecture/first-auth-consumer-migration-checklist.md` as a documentation-only checkpoint before runtime consumer changes. The checklist recommends that the next runtime PR migrate only `js/lib/auth.js` to route and role/access constants after verifying current redirects, role assumptions, impersonation, Firebase, and App Check behavior.
+
+Phase 4F completes that first runtime consumer migration for `js/lib/auth.js`, using centralized route and role constants while preserving Firebase, App Check, Firestore, auth, impersonation, redirect, and exported session behavior.
 
 1. Add package-level README files for `packages/auth`, `packages/config`, and `packages/data-access`.
 2. Add route constants in a non-invasive way with no URL changes.

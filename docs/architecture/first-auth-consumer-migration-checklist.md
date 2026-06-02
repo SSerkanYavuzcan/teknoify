@@ -2,13 +2,13 @@
 
 ## 1. Title and purpose
 
-This document is the **Phase 4E** planning/checklist document for the first future runtime consumer migration to the new route and role/access constants.
+This document started as the **Phase 4E** planning/checklist document for the first runtime consumer migration to the new route and role/access constants.
 
-Phase 4E is documentation-only. It records the current `js/lib/auth.js` behavior, related dependencies, preservation requirements, and a safe staged plan for a later PR. This checklist must not migrate runtime consumers, add imports, change Firebase setup, change App Check setup, change redirects, change dashboard pages, or change data files.
+Phase 4E was documentation-only. Phase 4F completed the first runtime consumer migration by updating only `js/lib/auth.js` to use the centralized route and role helpers while preserving Firebase setup, App Check setup, redirects, impersonation behavior, dashboard pages, and data files.
 
 ## 2. Candidate first consumer
 
-`js/lib/auth.js` is the likely first runtime consumer to migrate because it already contains:
+`js/lib/auth.js` was selected as the first runtime consumer to migrate because it already contained:
 
 - dashboard route helper behavior through `getDashboardPath`;
 - role defaulting and role-type assumptions through `buildRealSession`, `getEffectiveSession`, and `requireAuth`;
@@ -17,7 +17,7 @@ Phase 4E is documentation-only. It records the current `js/lib/auth.js` behavior
 - unauthorized and unauthenticated redirect behavior; and
 - the impersonation localStorage key shared with admin/sidebar flows.
 
-The next runtime PR should focus only on swapping equivalent route and role logic inside `js/lib/auth.js` after this checklist is reviewed.
+The Phase 4F runtime PR focused only on swapping equivalent route and role logic inside `js/lib/auth.js` after this checklist was reviewed.
 
 ## 3. Current behavior snapshot
 
@@ -26,6 +26,8 @@ The next runtime PR should focus only on swapping equivalent route and role logi
 Current imports are:
 
 - `auth`, `db`, and `app` from `/js/lib/firebase.js`.
+- `getDashboardRouteForRole` and `PUBLIC_ROUTES` from `/packages/config/routes.js`.
+- `DEFAULT_ROLE_STATUS`, `DEFAULT_ROLE_TYPE`, `getRoleTypeFromRole`, `isAdminRole`, and `isRoleAllowed` from `/packages/auth/roles.js`.
 - `onAuthStateChanged` and `signOut` from Firebase Auth v9.23.0 CDN.
 - `doc` and `getDoc` from Firebase Firestore v9.23.0 CDN.
 - `initializeAppCheck` and `ReCaptchaV3Provider` from Firebase App Check v9.23.0 CDN.
@@ -36,7 +38,7 @@ Firestore usage is limited to reading `users/{uid}` documents through `getDoc(do
 
 If `app` is truthy, `js/lib/auth.js` initializes App Check immediately at module evaluation time. Before initialization, it sets `window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = true` only when the hostname is `localhost` or `127.0.0.1`. It then calls `initializeAppCheck(app, { provider: new ReCaptchaV3Provider("6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk"), isTokenAutoRefreshEnabled: true })`.
 
-The future migration must not reorder this setup, change the site key, change the local debug-token condition, or change token auto-refresh behavior.
+The Phase 4F migration did not reorder this setup, change the site key, change the local debug-token condition, or change token auto-refresh behavior.
 
 ### Security-ban behavior
 
@@ -58,7 +60,7 @@ When impersonation succeeds, the effective session keeps the real session fields
 
 `getLoginPath` currently returns `"/"`. The comment notes that there is no separate login page for this guard path and unauthenticated users are sent to the main page where the login modal exists.
 
-This differs from the route constants file, where `PUBLIC_ROUTES.login` currently points to `/pages/login.html`. A future migration must preserve the current `js/lib/auth.js` behavior by continuing to redirect unauthenticated guarded-dashboard users to `/`, either by using the home/root route constant or by documenting why the login route constant is not equivalent for this consumer.
+This differs from the route constants file, where `PUBLIC_ROUTES.login` currently points to `/pages/login.html`. Phase 4F preserved the current `js/lib/auth.js` behavior by continuing to redirect unauthenticated guarded-dashboard users to `/` through the home/root route constant instead of the non-equivalent login route constant.
 
 ### Dashboard path helper behavior
 
@@ -166,21 +168,22 @@ The following files were inspected for dependencies and compatibility constraint
 - `packages/auth/roles.js`: defines role constants, default role type/status, role normalization, and `isRoleAllowed`.
 - `packages/auth/premium-access.js`: defines access-level constants and pure premium/authenticated/admin access helpers.
 
-## 4. Proposed future imports for the next runtime PR
+## 4. Phase 4F runtime imports
 
-A later runtime PR might add imports similar to the following inside `js/lib/auth.js`:
+Phase 4F added root-relative browser ES module imports inside `js/lib/auth.js` similar to the following:
 
 ```js
 import { getDashboardRouteForRole, PUBLIC_ROUTES } from '/packages/config/routes.js';
 import {
+    DEFAULT_ROLE_STATUS,
     DEFAULT_ROLE_TYPE,
-    ROLE_TYPES,
     getRoleTypeFromRole,
+    isAdminRole,
     isRoleAllowed
 } from '/packages/auth/roles.js';
 ```
 
-Do **not** add these imports in Phase 4E. This document only records candidate imports for the next PR. The future PR must verify browser/static-hosting path compatibility before choosing absolute `/packages/...` paths or relative paths from `js/lib/auth.js`.
+Only the helpers actually used by `js/lib/auth.js` were imported. `ROLE_TYPES` was not imported because the migrated consumer does not need it directly.
 
 ## 5. Exact behavior preservation requirements
 
@@ -199,27 +202,15 @@ Do **not** add these imports in Phase 4E. This document only records candidate i
 - Current console warnings/errors/logs should remain unless a dedicated logging change is approved.
 - The exported `requireAuth` and `logout` function signatures must remain unchanged.
 
-## 6. Proposed code-change plan for the next PR
+## 6. Phase 4F code-change completion notes
 
-1. Add imports from `packages/config/routes.js` and `packages/auth/roles.js` only after confirming browser import path compatibility.
-2. Replace only internal route string construction helpers first:
-    - keep `getLoginPath()` returning `/`;
-    - have `getDashboardPath` delegate to an equivalent dashboard route helper; and
-    - verify admin/member/premium redirect outputs before touching role logic.
-3. Replace only role extraction/defaulting helpers second:
-    - introduce a small internal helper that derives the effective role type;
-    - preserve the default member role object shape where callers expect `session.role`;
-    - carefully decide whether string roles should remain as-is or be normalized through `getRoleTypeFromRole`; and
-    - keep `role.status` values unchanged when present.
-4. Keep the exported `requireAuth` signature unchanged.
-5. Keep the exported `logout` signature unchanged.
-6. Do not touch Firebase imports.
-7. Do not touch App Check setup.
-8. Do not touch Firestore reads.
-9. Do not touch the impersonation storage key.
-10. Run targeted ESLint for changed runtime files if the next PR changes JavaScript.
-11. Run the full `npm run check`.
-12. Manually smoke-test dashboard routes before and after the change.
+1. `getLoginPath()` now returns `PUBLIC_ROUTES.home`, preserving `/`.
+2. `getDashboardPath()` now delegates to `getDashboardRouteForRole(getRoleTypeFromRole(roleType))`, preserving the known admin, premium, and member dashboard routes.
+3. Missing role objects now use `DEFAULT_ROLE_TYPE` and `DEFAULT_ROLE_STATUS`, preserving the member/active default object shape.
+4. Admin detection now uses `isAdminRole(roleData)`.
+5. `requireAuth` now derives the effective role type with `getRoleTypeFromRole(effective.role)` and checks access with `isRoleAllowed(effective.role, allowedRoles)`, preserving empty-array access for authenticated users.
+6. The exported `requireAuth` and `logout` signatures remain unchanged.
+7. Firebase imports, App Check setup, Firestore reads, and the impersonation storage key were not changed.
 
 ## 7. Do-not-change list
 
@@ -238,7 +229,7 @@ Do **not** add these imports in Phase 4E. This document only records candidate i
 
 ## 8. Smoke test checklist
 
-After the future `js/lib/auth.js` migration, manually verify each item:
+After the `js/lib/auth.js` migration, manually verify each item:
 
 - [ ] Anonymous user visits `/dashboard/member.html`: user is redirected to `/` and sees the existing public login entry point.
 - [ ] Anonymous user visits `/dashboard/premium.html`: user is redirected to `/` and does not see premium dashboard content.
@@ -267,6 +258,6 @@ After the future `js/lib/auth.js` migration, manually verify each item:
 - Route constants currently include `/pages/login.html`, while `js/lib/auth.js` unauthenticated redirects currently use `/`; the future PR must avoid substituting a non-equivalent login route by accident.
 - `getDashboardRouteForRole` normalizes unknown role types to member, while the current string-construction helper can produce unknown dashboard filenames; treat this as a reviewed safety improvement if adopted.
 
-## 10. Next PR recommendation
+## 10. Phase 4F completion note
 
-The next runtime PR should only migrate `js/lib/auth.js` to use equivalent route and role constants. It should not touch `js/script.js`, dashboard pages, Firebase setup, App Check setup, dashboard shared scripts, package scripts, or data files.
+Phase 4F migrated only `js/lib/auth.js` to use equivalent route and role constants. It did not touch `js/script.js`, dashboard pages, Firebase setup, App Check setup, dashboard shared scripts, package scripts, or data files.
