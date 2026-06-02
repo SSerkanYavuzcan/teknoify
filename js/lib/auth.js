@@ -12,8 +12,8 @@ import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com
 // APP CHECK BAŞLATMA
 // ================================================================
 if (app) {
-    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        window.self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     }
     initializeAppCheck(app, {
         provider: new ReCaptchaV3Provider('6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk'),

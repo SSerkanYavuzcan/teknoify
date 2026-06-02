@@ -1,6 +1,5 @@
 // js/pages/admin.js
 import { logout, requireAuth } from "../lib/auth.js";
-import { getProjects } from "../lib/data.js";
 import { createEl, qs } from "../utils/dom.js";
 import { auth, db } from "../lib/firebase.js";
 
@@ -256,7 +255,7 @@ function openUserSettingsModal(user, allProjects) {
           await updateDoc(doc(db, "users", user.id), updates);
           closeModal();
           window.location.reload();
-      } catch (error) {
+      } catch {
           alert("Ayarlar kaydedilirken hata oluştu!");
           btn.disabled = false;
           btn.innerText = "Ayarları Kaydet";
@@ -342,7 +341,7 @@ function openProjectSettingsModal(project) {
           await updateDoc(doc(db, "projects", project.id), updates);
           closeModal();
           window.location.reload();
-      } catch (error) {
+      } catch {
           alert("Ayarlar kaydedilirken hata oluştu!");
           btn.disabled = false;
           btn.innerText = "Ayarları Kaydet";
@@ -424,12 +423,12 @@ function createUserRow({ user, projects, session }) {
   deleteBtn.onmouseover = () => deleteBtn.style.background = "#dc2626 !important";
   deleteBtn.onmouseout = () => deleteBtn.style.background = "#ef4444 !important";
   deleteBtn.addEventListener("click", async () => {
-    if (confirm(`DİKKAT: ${email} kullanıcısını silmek istediğinize emin misiniz?`)) {
+    if (window.confirm(`DİKKAT: ${email} kullanıcısını silmek istediğinize emin misiniz?`)) {
         try {
             await deleteDoc(doc(db, "users", user.id));
             tr.remove(); 
             window.location.reload(); 
-        } catch (error) {
+        } catch {
             alert("Kullanıcı silinirken hata oluştu!");
         }
     }
@@ -490,12 +489,12 @@ function createProjectRow(project) {
   deleteBtn.onmouseover = () => deleteBtn.style.background = "#dc2626 !important";
   deleteBtn.onmouseout = () => deleteBtn.style.background = "#ef4444 !important";
   deleteBtn.addEventListener("click", async () => {
-    if (confirm(`DİKKAT: "${pName}" projesini kalıcı olarak silmek istediğinize emin misiniz?`)) {
+    if (window.confirm(`DİKKAT: "${pName}" projesini kalıcı olarak silmek istediğinize emin misiniz?`)) {
         try {
             await deleteDoc(doc(db, "projects", project.id));
             tr.remove(); 
             window.location.reload(); 
-        } catch (error) {
+        } catch {
             alert("Proje silinirken hata oluştu!");
         }
     }
