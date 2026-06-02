@@ -18,17 +18,17 @@ The central catalog stores repository-wide document metadata for future RAG stag
 
 ```json
 {
-  "meta": {
-    "generatedAt": "ISO_TIMESTAMP",
-    "sourceRoot": "data/stock/turkey",
-    "documentCount": 0,
-    "companyCount": 0,
-    "notes": [
-      "Generated from company manifest.json files.",
-      "This catalog stores document metadata only. It does not contain extracted PDF text or embeddings."
-    ]
-  },
-  "documents": []
+    "meta": {
+        "generatedAt": "ISO_TIMESTAMP",
+        "sourceRoot": "data/stock/turkey",
+        "documentCount": 0,
+        "companyCount": 0,
+        "notes": [
+            "Generated from company manifest.json files.",
+            "This catalog stores document metadata only. It does not contain extracted PDF text or embeddings."
+        ]
+    },
+    "documents": []
 }
 ```
 
@@ -58,25 +58,25 @@ Each item in `documents` should follow this shape:
 
 ```json
 {
-  "documentId": "mgros-2026-q1-activity-report",
-  "companyKey": "mgros",
-  "companyName": "Migros Ticaret A.Ş.",
-  "ticker": "MGROS",
-  "market": "BIST",
-  "country": "TR",
-  "period": "2026 1Ç",
-  "fiscalYear": 2026,
-  "quarter": 1,
-  "documentType": "activity_report",
-  "title": "2026 1. Çeyrek Faaliyet Raporu",
-  "localPath": "data/stock/turkey/mgros/reports/mgros-2026-q1-activity-report.pdf",
-  "sourceUrl": null,
-  "language": "tr",
-  "uploadedAt": null,
-  "notes": "",
-  "indexStatus": "metadata_only",
-  "textExtractionStatus": "not_started",
-  "embeddingStatus": "not_started"
+    "documentId": "mgros-2026-q1-activity-report",
+    "companyKey": "mgros",
+    "companyName": "Migros Ticaret A.Ş.",
+    "ticker": "MGROS",
+    "market": "BIST",
+    "country": "TR",
+    "period": "2026 1Ç",
+    "fiscalYear": 2026,
+    "quarter": 1,
+    "documentType": "activity_report",
+    "title": "2026 1. Çeyrek Faaliyet Raporu",
+    "localPath": "data/stock/turkey/mgros/reports/mgros-2026-q1-activity-report.pdf",
+    "sourceUrl": null,
+    "language": "tr",
+    "uploadedAt": null,
+    "notes": "",
+    "indexStatus": "metadata_only",
+    "textExtractionStatus": "not_started",
+    "embeddingStatus": "not_started"
 }
 ```
 
