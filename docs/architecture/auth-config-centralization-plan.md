@@ -171,6 +171,7 @@ Future work should proceed in small PRs that preserve behavior and make only one
 - Keep route string values identical to current URLs.
 - Update no consumers at first, or update a very small, low-risk consumer with exact before/after checks.
 - Preserve public route availability and dashboard URL compatibility.
+- Phase 4C introduces `packages/config/routes.js` without migrating existing consumers yet.
 
 ### Phase 4D: extract role constants and access helpers without behavior changes
 
