@@ -4,7 +4,7 @@
 
 `packages/auth` will become the single shared home for authentication, authorization helpers, Firebase client bootstrapping, App Check initialization, role access helpers, premium access helpers, session handling, redirects, and impersonation utilities.
 
-This package is documentation-only during Phase 4B. Future PRs may add runtime modules here, but this PR must not create auth JavaScript modules, update imports, or change any runtime behavior.
+Phase 4D adds the first future-facing role/access helper modules in a non-invasive way. Existing runtime consumers have not been migrated yet, imports remain unchanged, and current auth, redirect, dashboard access, Firebase, and App Check behavior is preserved.
 
 ## Current source candidates
 
@@ -21,16 +21,27 @@ These files remain in place until each consumer is migrated safely.
 
 ## Future module map
 
-The following modules describe the intended future boundaries only. Do not create these files until a dedicated runtime migration PR is approved.
+The following modules describe the intended future boundaries. Phase 4D creates only the role/access constants and pure premium-access helpers listed below; other files remain future candidates until a dedicated runtime migration PR is approved.
 
 - `firebase-client.js`: Own Firebase client bootstrapping, exported Firebase app/service access, and compatibility with the current Firebase project configuration.
 - `app-check.js`: Initialize and expose App Check behavior while preserving the current site key and runtime expectations.
-- `roles.js`: Define role constants and pure role-check helpers for member, premium, admin, and other access decisions.
+- `roles.js`: Defines role constants and pure role-check helpers for member, premium, admin, and other access decisions. Added in Phase 4D as `packages/auth/roles.js`.
 - `session.js`: Normalize current-user/session state, compatibility globals, and session lifecycle helpers.
 - `require-auth.js`: Provide route guard helpers that preserve existing dashboard authentication requirements.
 - `redirects.js`: Centralize login, logout, dashboard, and safe redirect helpers without changing redirect outcomes.
 - `impersonation.js`: Wrap current impersonation utilities and preserve existing behavior during admin workflows.
-- `premium-access.js`: Centralize premium/member entitlement helpers without changing dashboard access behavior.
+- `premium-access.js`: Centralizes premium/member access-level helpers without changing dashboard access behavior. Added in Phase 4D as `packages/auth/premium-access.js`.
+
+## Phase 4D role/access helpers
+
+Phase 4D introduces two browser-compatible ES modules for future migrations:
+
+- `packages/auth/roles.js` mirrors the current role strings: `admin`, `premium`, and `member`. It also defines the current role status strings: `active`, `inactive`, and `suspended`.
+- `packages/auth/premium-access.js` defines pure access-level helpers for `public`, `authenticated`, `premium`, and `admin` access checks. Admin and premium roles count as premium-level access; member and unknown roles default to member-level behavior.
+
+These modules are dependency-free or only depend on `roles.js`, read no browser globals, perform no redirects, and do not initialize Firebase, Firestore, App Check, or dashboard code. They are intended as stable constants and pure helpers for future PRs.
+
+Existing consumers have not been migrated yet. Future PRs should migrate one consumer at a time and verify behavior after each migration. Frontend helpers improve consistency for UX and route gating, but they do not replace server-side authorization for protected data, premium content, admin actions, or impersonation.
 
 ## Behavior preservation rules
 
@@ -58,4 +69,4 @@ Use a small, reversible migration sequence so behavior remains easy to review:
 
 ## Migration status
 
-Phase 4B expands package-level documentation only. No runtime auth files have been moved or created here yet.
+Phase 4D adds `packages/auth/roles.js` and `packages/auth/premium-access.js` as pure, side-effect-free future helpers. No existing runtime consumers have been migrated, and no auth files have been moved.
