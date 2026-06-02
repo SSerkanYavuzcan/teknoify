@@ -110,20 +110,20 @@ Allowed `eventType` values:
 The frontend derives lightweight metadata locally without AI, backend inference, external libraries, or retrieval:
 
 - `detectedCompany`
-  - `mgros` or `migros` -> `mgros`
-  - `bim` or `bimas` -> `bimas`
-  - `şok`, `sok`, or `sokm` -> `sokm`
-  - `carrefour`, `carrefoursa`, or `crfsa` -> `crfsa`
-  - `tüpraş`, `tupras`, or `tuprs` -> `tuprs`
+    - `mgros` or `migros` -> `mgros`
+    - `bim` or `bimas` -> `bimas`
+    - `şok`, `sok`, or `sokm` -> `sokm`
+    - `carrefour`, `carrefoursa`, or `crfsa` -> `crfsa`
+    - `tüpraş`, `tupras`, or `tuprs` -> `tuprs`
 - `detectedPeriod`
-  - Simple quarter phrases such as `2026 1Ç`, `2026 1Çeyrek`, or `2026 q1`.
-  - `null` when no simple period is found.
+    - Simple quarter phrases such as `2026 1Ç`, `2026 1Çeyrek`, or `2026 q1`.
+    - `null` when no simple period is found.
 - `normalizedIntent`
-  - `store_count` for store count / mağaza sayısı questions.
-  - `profit_per_store` for mağaza başı kâr / operasyonel kâr questions.
-  - `revenue_per_store` for mağaza başı ciro / hasılat questions.
-  - `report_summary` for rapor / faaliyet raporu / öne çıkanlar questions.
-  - `unknown` otherwise.
+    - `store_count` for store count / mağaza sayısı questions.
+    - `profit_per_store` for mağaza başı kâr / operasyonel kâr questions.
+    - `revenue_per_store` for mağaza başı ciro / hasılat questions.
+    - `report_summary` for rapor / faaliyet raporu / öne çıkanlar questions.
+    - `unknown` otherwise.
 
 ## Example: Message Sent
 

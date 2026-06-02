@@ -114,7 +114,10 @@ function getValidationError(payload) {
         return 'query.normalizedIntent must be a string.';
     }
 
-    if (payload.query.detectedCompany !== null && typeof payload.query.detectedCompany !== 'string') {
+    if (
+        payload.query.detectedCompany !== null &&
+        typeof payload.query.detectedCompany !== 'string'
+    ) {
         return 'query.detectedCompany must be null or a string.';
     }
 
