@@ -2,7 +2,11 @@
 
 ## Purpose
 
-Future home for deployment, hosting, CI/CD, and operations documentation.
+Home for deployment, hosting, CI/CD, and operations documentation.
+
+## Documents
+
+- [`local-development.md`](local-development.md): Requirements, installation, local development, code quality commands, deployment notes, and maintenance rules.
 
 ## What belongs here
 
@@ -10,8 +14,8 @@ Deployment runbooks, environment notes, release procedures, and CI/CD documentat
 
 ## What does not belong here yet
 
-Workflow changes, package script edits, runtime deployment rewrites, or broad formatting updates yet.
+Workflow changes, package script edits, runtime deployment rewrites, or broad formatting updates.
 
 ## Migration status
 
-Phase 2 skeleton only; no runtime files have been moved here yet.
+Local development documentation has been moved here; no runtime files have been moved.
