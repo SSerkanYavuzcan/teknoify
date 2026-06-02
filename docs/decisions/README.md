@@ -2,7 +2,11 @@
 
 ## Purpose
 
-Future home for ADRs that capture accepted technical and product architecture decisions.
+Home for ADRs that capture accepted technical and product architecture decisions.
+
+## Documents
+
+- [`ADR-0001-domain-based-structure.md`](ADR-0001-domain-based-structure.md): Decision record for the domain-based repository structure.
 
 ## What belongs here
 
@@ -14,4 +18,4 @@ Runtime code, implementation changes, or unrelated project documentation.
 
 ## Migration status
 
-Phase 2 skeleton only; no runtime files have been moved here yet.
+ADR documentation lives here; no runtime files have been moved.
