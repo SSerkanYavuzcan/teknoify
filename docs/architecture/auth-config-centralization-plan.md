@@ -179,38 +179,45 @@ Future work should proceed in small PRs that preserve behavior and make only one
 - Keep existing custom claim names, Firestore fallback fields, and role-string semantics.
 - Add helpers alongside current code before replacing existing logic.
 
-### Phase 4E: centralize Firebase modular client usage
+### Phase 4E: first auth consumer migration checklist before runtime changes
+
+- Add a planning checklist for the first future consumer migration before changing runtime imports.
+- Document the current `js/lib/auth.js` behavior, related dependencies, route expectations, role assumptions, impersonation key, App Check setup, and smoke tests.
+- Use the checklist to prepare the next runtime PR that migrates only `js/lib/auth.js` to equivalent route and role/access constants.
+- Do not change runtime consumers, Firebase setup, App Check setup, imports, redirects, dashboard pages, package scripts, or data files in Phase 4E.
+
+### Phase 4F: centralize Firebase modular client usage
 
 - Identify all global Firebase and modular Firebase consumers.
 - Prefer modular client exports for new code.
 - Migrate consumers gradually while preserving initialization order and Firebase config values.
 - Keep legacy global Firebase code until all consumers are verified.
 
-### Phase 4F: centralize App Check initialization
+### Phase 4G: centralize App Check initialization
 
 - Move App Check activation behind one initialization owner only after duplicate initialization paths are mapped.
 - Preserve the existing App Check site key, auto-refresh behavior, and localhost/debug behavior.
 - Verify public pages and protected dashboard pages before removing duplicate setup.
 
-### Phase 4G: split login modal behavior from `js/script.js`
+### Phase 4H: split login modal behavior from `js/script.js`
 
 - Extract login modal UI behavior after route constants, redirect helpers, and Firebase access are stable.
 - Keep modal triggers, form handling, close behavior, body scroll behavior, and error display unchanged.
 - Verify `/`, `/pages/login.html`, and dashboard redirects before and after extraction.
 
-### Phase 4H: migrate dashboard access guard gradually
+### Phase 4I: migrate dashboard access guard gradually
 
 - Introduce a dashboard access guard wrapper that delegates to stable auth/session/role helpers.
 - Migrate one dashboard route or route family at a time.
 - Preserve `window.USER_SESSION`, sidebar assumptions, project access, admin access, premium access, and unauthorized redirects.
 
-### Phase 4I: add smoke tests/manual route checklist
+### Phase 4J: add smoke tests/manual route checklist
 
 - Add a documented manual route checklist and, where feasible, lightweight automated checks.
 - Cover anonymous, member, premium, admin, unauthorized, redirect, and sidebar behavior.
 - Require before/after verification for every future auth/config runtime migration PR.
 
-### Phase 4J: remove legacy duplication only after all pages are verified
+### Phase 4K: remove legacy duplication only after all pages are verified
 
 - Remove duplicate Firebase, App Check, role, redirect, or access logic only after all known consumers have migrated.
 - Confirm every route in the route and access checklist.
@@ -340,6 +347,8 @@ After this design PR, suggested follow-up PRs are:
 Phase 4B expands the package README files for `packages/auth`, `packages/config`, and `packages/data-access` before any runtime modules are created. This documentation step clarifies module boundaries before future auth, config, or data-access code is moved.
 
 Phase 4D introduces role/access constants and pure helper modules in `packages/auth` without migrating existing consumers yet.
+
+Phase 4E adds `docs/architecture/first-auth-consumer-migration-checklist.md` as a documentation-only checkpoint before runtime consumer changes. The checklist recommends that the next runtime PR migrate only `js/lib/auth.js` to route and role/access constants after verifying current redirects, role assumptions, impersonation, Firebase, and App Check behavior.
 
 1. Add package-level README files for `packages/auth`, `packages/config`, and `packages/data-access`.
 2. Add route constants in a non-invasive way with no URL changes.
