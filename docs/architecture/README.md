@@ -11,7 +11,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`auth-config-centralization-plan.md`](auth-config-centralization-plan.md): Phase 4A design plan for future auth, Firebase, role access, dashboard config, and shared app configuration centralization. Phase 4B package README updates in `packages/auth`, `packages/config`, and `packages/data-access` support this plan by documenting future module boundaries before runtime files are created.
 - [`route-constants-migration.md`](route-constants-migration.md): Phase 4C route constants migration plan, route inventory summary, migration safety rules, and future consumer migration order.
 - [`role-access-migration.md`](role-access-migration.md): Phase 4D role/access constants and pure helper migration plan, current inventory summary, preservation rules, and future consumer migration order.
-- [`first-auth-consumer-migration-checklist.md`](first-auth-consumer-migration-checklist.md): Phase 4E planning checklist for the first future `js/lib/auth.js` consumer migration to route and role/access constants, with current behavior notes and smoke-test requirements.
+- [`first-auth-consumer-migration-checklist.md`](first-auth-consumer-migration-checklist.md): Phase 4E planning checklist and Phase 4F completion notes for the first `js/lib/auth.js` consumer migration to route and role/access constants, with current behavior notes and smoke-test requirements.
 
 ## What belongs here
 
@@ -23,4 +23,4 @@ Runtime files, imports, public route changes, or broad formatting updates.
 
 ## Migration status
 
-Architecture documentation lives here; runtime files have not been moved.
+Architecture documentation lives here; Phase 4F migrated only `js/lib/auth.js` to consume centralized route and role constants without moving runtime files.
