@@ -16,7 +16,7 @@ async function fetchSystemConfigs() {
             emailConfig = configSnap.data();
             // EmailJS kütüphanesini anahtarla başlat
             if (window.emailjs) {
-                emailjs.init(emailConfig.publicKey);
+                window.emailjs.init(emailConfig.publicKey);
             }
         } else {
             console.warn("E-posta yapılandırması Firestore'da bulunamadı!");
@@ -57,7 +57,7 @@ function renderImpersonationBanner() {
     };
 }
 
-function updateSupportStatus(session) {
+function updateSupportStatus(_session) {
     const statusEl = qs("#dashboard-stats .stat-box:nth-child(3) .stat-value");
     const boxEl = qs("#dashboard-stats .stat-box:nth-child(3)");
     if (!statusEl || !boxEl) return;
@@ -175,7 +175,7 @@ window.sendChatMessage = (msg, session) => {
 
                 try {
                     // 1. MAİL: ADMİNE (SANA) GİDEN
-                    await emailjs.send(emailConfig.serviceId, emailConfig.supportTemplateId, {
+                    await window.emailjs.send(emailConfig.serviceId, emailConfig.supportTemplateId, {
                         subject: sub,
                         message: con,
                         from_name: session.profile?.fullName || session.name,
@@ -183,7 +183,7 @@ window.sendChatMessage = (msg, session) => {
                     });
 
                     // 2. MAİL: KULLANICIYA GİDEN OTOMATİK YANIT
-                    await emailjs.send(emailConfig.serviceId, emailConfig.autoReplyTemplateId, {
+                    await window.emailjs.send(emailConfig.serviceId, emailConfig.autoReplyTemplateId, {
                         from_name: session.profile?.fullName || session.name,
                         message: con,
                         reply_to: session.profile?.email || session.email
