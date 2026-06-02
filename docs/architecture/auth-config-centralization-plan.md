@@ -336,6 +336,8 @@ For Phase 4A and future auth-only refactor PRs:
 
 After this design PR, suggested follow-up PRs are:
 
+Phase 4B expands the package README files for `packages/auth`, `packages/config`, and `packages/data-access` before any runtime modules are created. This documentation step clarifies module boundaries before future auth, config, or data-access code is moved.
+
 1. Add package-level README files for `packages/auth`, `packages/config`, and `packages/data-access`.
 2. Add route constants in a non-invasive way with no URL changes.
 3. Add role constants and pure access helpers in a non-invasive way.
