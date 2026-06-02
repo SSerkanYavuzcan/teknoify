@@ -8,6 +8,7 @@ Home for architecture inventories, target structure docs, and migration architec
 
 - [`current-inventory.md`](current-inventory.md): Current repository inventory and migration candidates.
 - [`folder-structure.md`](folder-structure.md): Target domain-based folder structure.
+- [`auth-config-centralization-plan.md`](auth-config-centralization-plan.md): Phase 4A design plan for future auth, Firebase, role access, dashboard config, and shared app configuration centralization.
 
 ## What belongs here
 
