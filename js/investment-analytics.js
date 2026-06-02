@@ -914,99 +914,199 @@
         }).join(" ");
     }
 
-    function renderGrowthChart(points) {
-    const mount = document.getElementById("compound-growth-chart");
-    const summary = document.querySelector("[data-compound-chart-summary]");
+    function shouldShowChartValueLabel(index, totalPoints) {
+        if (totalPoints <= 14) return true;
+        if (index === 0 || index === totalPoints - 1) return true;
 
-    if (!mount) return;
+        return index % Math.ceil(totalPoints / 6) === 0;
+    }
 
-    const width = 760;
-    const height = 330;
-    const chartConfig = {
-        left: 68,
-        top: 28,
-        width: 650,
-        height: 238,
-        maxValue: Math.max(...points.flatMap((point) => [point.invested, point.gain]), 1)
-    };
+    function appendSvgTitle(element, text) {
+        const title = createSvgElement("title");
+        title.textContent = text;
+        element.appendChild(title);
+    }
 
-    const svg = createSvgElement("svg", {
-        viewBox: `0 0 ${width} ${height}`,
-        role: "presentation",
-        focusable: "false"
-    });
+    function appendChartPointMarker(svg, options) {
+        const group = createSvgElement("g", {
+            class: "compound-chart-point-group",
+            tabindex: "0",
+            role: "img",
+            "aria-label": options.ariaLabel
+        });
+        const marker = createSvgElement("circle", {
+            class: options.className,
+            cx: options.x,
+            cy: options.y,
+            r: options.radius ?? 4.4
+        });
+        const tooltipLines = options.tooltip.split("\n");
+        const tooltipWidth = 196;
+        const tooltipHeight = 46;
+        const tooltipX = options.x > 560 ? options.x - tooltipWidth - 12 : options.x + 12;
+        const tooltipY = Math.max(8, options.y - tooltipHeight - 12);
+        const tooltip = createSvgElement("g", {
+            class: "compound-chart-tooltip",
+            transform: `translate(${tooltipX.toFixed(2)} ${tooltipY.toFixed(2)})`,
+            "aria-hidden": "true"
+        });
+        const tooltipText = createSvgElement("text", { x: 12, y: 18 });
 
-    for (let step = 0; step <= 4; step += 1) {
-        const y = chartConfig.top + (step / 4) * chartConfig.height;
-        const value = chartConfig.maxValue - (step / 4) * chartConfig.maxValue;
-
-        svg.appendChild(createSvgElement("line", {
-            class: "compound-chart-grid-line",
-            x1: chartConfig.left,
-            x2: chartConfig.left + chartConfig.width,
-            y1: y,
-            y2: y
+        appendSvgTitle(group, options.tooltip);
+        tooltip.appendChild(createSvgElement("rect", {
+            width: tooltipWidth,
+            height: tooltipHeight,
+            rx: 12,
+            ry: 12
         }));
+        tooltipLines.slice(0, 2).forEach((line, index) => {
+            const tspan = createSvgElement("tspan", { x: 12, dy: index === 0 ? 0 : 17 });
+            tspan.textContent = line;
+            tooltipText.appendChild(tspan);
+        });
+        tooltip.appendChild(tooltipText);
+        group.appendChild(marker);
+        group.appendChild(tooltip);
+        svg.appendChild(group);
 
+        return marker;
+    }
+
+    function appendChartValueLabel(svg, options) {
         const label = createSvgElement("text", {
-            class: "compound-chart-axis-label",
-            x: chartConfig.left - 10,
-            y: y + 4,
-            "text-anchor": "end"
+            class: options.className ?? "compound-chart-value-label",
+            x: options.x,
+            y: options.y,
+            "text-anchor": options.textAnchor ?? "middle"
         });
 
-        label.textContent = formatUsdCurrency(value).replace(",00", "");
+        label.textContent = options.text;
         svg.appendChild(label);
     }
 
-    const investedPath = buildChartPath(points, "invested", chartConfig);
-    const gainPath = buildChartPath(points, "gain", chartConfig);
+    function renderGrowthChart(points) {
+        const mount = document.getElementById("compound-growth-chart");
+        const summary = document.querySelector("[data-compound-chart-summary]");
 
-    svg.appendChild(createSvgElement("path", {
-        class: "compound-chart-line",
-        d: investedPath,
-        stroke: "#818cf8"
-    }));
+        if (!mount) return;
 
-    svg.appendChild(createSvgElement("path", {
-        class: "compound-chart-line",
-        d: gainPath,
-        stroke: "#c4b5fd"
-    }));
+        const width = 760;
+        const height = 330;
+        const chartConfig = {
+            left: 68,
+            top: 34,
+            width: 650,
+            height: 226,
+            maxValue: Math.max(...points.flatMap((point) => [point.invested, point.gain]), 1)
+        };
 
-    points.forEach((point, index) => {
-        if (
-            index !== 0 &&
-            index !== points.length - 1 &&
-            index % Math.ceil(points.length / 4) !== 0
-        ) {
-            return;
+        const svg = createSvgElement("svg", {
+            viewBox: `0 0 ${width} ${height}`,
+            role: "presentation",
+            focusable: "false"
+        });
+
+        for (let step = 0; step <= 4; step += 1) {
+            const y = chartConfig.top + (step / 4) * chartConfig.height;
+            const value = chartConfig.maxValue - (step / 4) * chartConfig.maxValue;
+
+            svg.appendChild(createSvgElement("line", {
+                class: "compound-chart-grid-line",
+                x1: chartConfig.left,
+                x2: chartConfig.left + chartConfig.width,
+                y1: y,
+                y2: y
+            }));
+
+            const label = createSvgElement("text", {
+                class: "compound-chart-axis-label",
+                x: chartConfig.left - 10,
+                y: y + 4,
+                "text-anchor": "end"
+            });
+
+            label.textContent = formatUsdCurrency(value).replace(",00", "");
+            svg.appendChild(label);
         }
 
-        const x = getCompoundChartPoint(index, 0, points, chartConfig).x;
+        const investedPath = buildChartPath(points, "invested", chartConfig);
+        const gainPath = buildChartPath(points, "gain", chartConfig);
 
-        const label = createSvgElement("text", {
-            class: "compound-chart-axis-label",
-            x,
-            y: chartConfig.top + chartConfig.height + 32,
-            "text-anchor": "middle"
+        svg.appendChild(createSvgElement("path", {
+            class: "compound-chart-line",
+            d: investedPath,
+            stroke: "#818cf8"
+        }));
+
+        svg.appendChild(createSvgElement("path", {
+            class: "compound-chart-line",
+            d: gainPath,
+            stroke: "#c4b5fd"
+        }));
+
+        points.forEach((point, index) => {
+            const investedCoordinates = getCompoundChartPoint(index, point.invested, points, chartConfig);
+            const gainCoordinates = getCompoundChartPoint(index, point.gain, points, chartConfig);
+            const showValueLabel = shouldShowChartValueLabel(index, points.length);
+
+            appendChartPointMarker(svg, {
+                className: "compound-chart-point compound-chart-point--invested",
+                x: investedCoordinates.x,
+                y: investedCoordinates.y,
+                ariaLabel: `${point.label}: Toplam yatırılan para ${formatUsdCurrency(point.invested)}`,
+                tooltip: `${point.label}\nToplam Yatırılan Para: ${formatUsdCurrency(point.invested)}`
+            });
+            appendChartPointMarker(svg, {
+                className: "compound-chart-point compound-chart-point--gain",
+                x: gainCoordinates.x,
+                y: gainCoordinates.y,
+                ariaLabel: `${point.label}: Bileşik getiri ${formatUsdCurrency(point.gain)}`,
+                tooltip: `${point.label}\nBileşik Getiri / Kazanç: ${formatUsdCurrency(point.gain)}`
+            });
+
+            if (showValueLabel) {
+                appendChartValueLabel(svg, {
+                    x: investedCoordinates.x,
+                    y: Math.max(chartConfig.top + 12, investedCoordinates.y - 10),
+                    text: formatUsdCompact(point.invested),
+                    className: "compound-chart-value-label compound-chart-value-label--invested"
+                });
+                appendChartValueLabel(svg, {
+                    x: gainCoordinates.x,
+                    y: Math.min(chartConfig.top + chartConfig.height - 8, gainCoordinates.y + 18),
+                    text: formatUsdCompact(point.gain),
+                    className: "compound-chart-value-label compound-chart-value-label--gain"
+                });
+            }
         });
 
-        label.textContent = point.label;
-        svg.appendChild(label);
-    });
+        points.forEach((point, index) => {
+            if (!shouldShowChartValueLabel(index, points.length)) return;
 
-    mount.textContent = "";
-    mount.appendChild(svg);
+            const x = getCompoundChartPoint(index, 0, points, chartConfig).x;
 
-    if (summary && points.length) {
-        const lastPoint = points[points.length - 1];
+            const label = createSvgElement("text", {
+                class: "compound-chart-axis-label",
+                x,
+                y: chartConfig.top + chartConfig.height + 32,
+                "text-anchor": "middle"
+            });
 
-        summary.textContent = `${lastPoint.label} sonunda USD olarak yatırılan para ${formatUsdCurrency(
-            lastPoint.invested
-        )}, bileşik getiri ${formatUsdCurrency(lastPoint.gain)}.`;
+            label.textContent = point.label;
+            svg.appendChild(label);
+        });
+
+        mount.textContent = "";
+        mount.appendChild(svg);
+
+        if (summary && points.length) {
+            const lastPoint = points[points.length - 1];
+
+            summary.textContent = `${lastPoint.label} sonunda USD olarak yatırılan para ${formatUsdCurrency(
+                lastPoint.invested
+            )}, bileşik getiri ${formatUsdCurrency(lastPoint.gain)}. Her yıllık noktanın üzerine gelerek veya odağa alarak değerleri inceleyebilirsiniz.`;
+        }
     }
-}
 
     function renderBreakdownTable(rows) {
         const body = document.querySelector("[data-compound-breakdown-body]");
@@ -1307,7 +1407,6 @@
             <article id="cagr-calculator" class="cagr-calculator" aria-labelledby="cagr-calculator-title">
                 <div class="cagr-calculator__input-panel">
                     <div class="compound-calculator__panel-header">
-                        <span class="investment-eyebrow">Aktif Araç</span>
                         <h3 id="cagr-calculator-title">CAGR Hesaplayıcı</h3>
                         <p>Başlangıç ve bitiş USD değerleri arasındaki yıllık bileşik büyüme oranını hesaplayın.</p>
                     </div>
@@ -1448,7 +1547,6 @@
             <article id="retirement-calculator" class="retirement-calculator" aria-labelledby="retirement-calculator-title">
                 <div class="retirement-calculator__input-panel">
                     <div class="compound-calculator__panel-header">
-                        <span class="investment-eyebrow">Aktif Araç</span>
                         <h3 id="retirement-calculator-title">Emeklilik Hesaplayıcı</h3>
                         <p>Mevcut yaşınız, USD birikiminiz, aylık katkınız ve emeklilikte hedeflediğiniz gelir üzerinden finansal yol haritanızı hesaplayın.</p>
                     </div>
@@ -1803,7 +1901,7 @@
         const width = 780;
         const height = 330;
         const maxValue = Math.max(...points.map((point) => point.value), 1);
-        const chartConfig = { left: 68, top: 28, width: 650, height: 238, maxValue: maxValue * 1.08 };
+        const chartConfig = { left: 68, top: 34, width: 650, height: 226, maxValue: maxValue * 1.1 };
         const divisor = Math.max(points.length - 1, 1);
         const getPoint = (point, index) => ({
             x: chartConfig.left + (index / divisor) * chartConfig.width,
@@ -1828,9 +1926,33 @@
         svg.appendChild(createSvgElement("path", { class: "compound-chart-area retirement-chart-area", d: areaPath, fill: "#8b5cf6" }));
         svg.appendChild(createSvgElement("path", { class: "compound-chart-line retirement-chart-line", d: path, stroke: "#c4b5fd" }));
 
-        [points[0], points[points.length - 1]].forEach((point, pointIndex) => {
-            const coordinates = getPoint(point, pointIndex === 0 ? 0 : points.length - 1);
-            const label = createSvgElement("text", { class: "compound-chart-axis-label", x: coordinates.x, y: chartConfig.top + chartConfig.height + 32, "text-anchor": pointIndex === 0 ? "start" : "end" });
+        points.forEach((point, index) => {
+            const coordinates = getPoint(point, index);
+            const ageLabel = `${point.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş`;
+            const phaseLabel = index > 0 && points[index - 1]?.age < point.age && point.age > points[0].age ? "Yıl sonu bakiye" : "Başlangıç bakiye";
+
+            appendChartPointMarker(svg, {
+                className: "compound-chart-point retirement-chart-point",
+                x: coordinates.x,
+                y: coordinates.y,
+                ariaLabel: `${ageLabel}: ${formatUsdCurrency(point.value)}`,
+                tooltip: `${ageLabel}\n${phaseLabel}: ${formatUsdCurrency(point.value)}`
+            });
+
+            if (shouldShowChartValueLabel(index, points.length)) {
+                appendChartValueLabel(svg, {
+                    x: coordinates.x,
+                    y: Math.max(chartConfig.top + 12, coordinates.y - 10),
+                    text: formatUsdCompact(point.value)
+                });
+            }
+        });
+
+        points.forEach((point, index) => {
+            if (!shouldShowChartValueLabel(index, points.length)) return;
+
+            const coordinates = getPoint(point, index);
+            const label = createSvgElement("text", { class: "compound-chart-axis-label", x: coordinates.x, y: chartConfig.top + chartConfig.height + 32, "text-anchor": index === 0 ? "start" : index === points.length - 1 ? "end" : "middle" });
             label.textContent = `${point.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş`;
             svg.appendChild(label);
         });
@@ -1840,7 +1962,7 @@
 
         if (summary) {
             const peak = points.reduce((highest, point) => point.value > highest.value ? point : highest, points[0]);
-            summary.textContent = `Eğri ${peak.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş civarında ${formatUsdCurrency(peak.value)} nominal USD tepe fonu gösteriyor.`;
+            summary.textContent = `Eğri ${peak.age.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} yaş civarında ${formatUsdCurrency(peak.value)} nominal USD tepe fonu gösteriyor. Her yaş/yıl noktası odaklanabilir ve değer etiketi veya ipucu sunar.`;
         }
     }
 
@@ -2011,14 +2133,20 @@
 
     function buildCagrGrowthSeries(result) {
         const totalYears = Math.max(result.durationYears, 0);
-        const pointCount = Math.min(Math.max(Math.ceil(totalYears * 4), 8), 80);
+        const wholeYears = Math.floor(totalYears);
+        const hasPartialYear = totalYears - wholeYears > 1e-6;
         const points = [];
 
-        for (let index = 0; index <= pointCount; index += 1) {
-            const elapsedYears = pointCount === 0 ? 0 : (index / pointCount) * totalYears;
-            const value = result.beginningValue * ((1 + result.cagr) ** elapsedYears);
+        for (let year = 0; year <= wholeYears; year += 1) {
+            const value = result.beginningValue * ((1 + result.cagr) ** year);
 
-            points.push({ elapsedYears, value: Number.isFinite(value) ? value : result.beginningValue });
+            points.push({ elapsedYears: year, value: Number.isFinite(value) ? value : result.beginningValue });
+        }
+
+        if (hasPartialYear || points.length < 2) {
+            const value = result.beginningValue * ((1 + result.cagr) ** totalYears);
+
+            points.push({ elapsedYears: totalYears, value: Number.isFinite(value) ? value : result.beginningValue });
         }
 
         return points;
@@ -2101,7 +2229,7 @@
         const minValue = Math.min(...values);
         const maxValue = Math.max(...values);
         const range = Math.max(maxValue - minValue, Math.abs(maxValue) * 0.08, 1);
-        const chartConfig = { left: 68, top: 28, width: 650, height: 238, minValue: minValue - range * 0.08, maxValue: maxValue + range * 0.08 };
+        const chartConfig = { left: 68, top: 34, width: 650, height: 226, minValue: minValue - range * 0.08, maxValue: maxValue + range * 0.08 };
         const getPoint = (point, index) => {
             const divisor = Math.max(points.length - 1, 1);
             const x = chartConfig.left + (index / divisor) * chartConfig.width;
@@ -2130,10 +2258,33 @@
         svg.appendChild(createSvgElement("path", { class: "compound-chart-area cagr-chart-area", d: areaPath, fill: "#818cf8" }));
         svg.appendChild(createSvgElement("path", { class: "compound-chart-line cagr-chart-line", d: path, stroke: "#a78bfa" }));
 
-        [points[0], points[points.length - 1]].forEach((point, pointIndex) => {
-            const coordinates = getPoint(point, pointIndex === 0 ? 0 : points.length - 1);
-            const label = createSvgElement("text", { class: "compound-chart-axis-label", x: coordinates.x, y: chartConfig.top + chartConfig.height + 32, "text-anchor": pointIndex === 0 ? "start" : "end" });
-            label.textContent = pointIndex === 0 ? "Başlangıç" : `${point.elapsedYears.toLocaleString("tr-TR", { maximumFractionDigits: 1 })}. yıl`;
+        points.forEach((point, index) => {
+            const coordinates = getPoint(point, index);
+            const periodLabel = index === 0 ? "Başlangıç" : `${point.elapsedYears.toLocaleString("tr-TR", { maximumFractionDigits: 2 })}. yıl`;
+
+            appendChartPointMarker(svg, {
+                className: "compound-chart-point cagr-chart-point",
+                x: coordinates.x,
+                y: coordinates.y,
+                ariaLabel: `${periodLabel}: ${formatUsdCurrency(point.value)}`,
+                tooltip: `${periodLabel}\nDeğer: ${formatUsdCurrency(point.value)}`
+            });
+
+            if (shouldShowChartValueLabel(index, points.length)) {
+                appendChartValueLabel(svg, {
+                    x: coordinates.x,
+                    y: Math.max(chartConfig.top + 12, coordinates.y - 10),
+                    text: formatUsdCompact(point.value)
+                });
+            }
+        });
+
+        points.forEach((point, index) => {
+            if (!shouldShowChartValueLabel(index, points.length)) return;
+
+            const coordinates = getPoint(point, index);
+            const label = createSvgElement("text", { class: "compound-chart-axis-label", x: coordinates.x, y: chartConfig.top + chartConfig.height + 32, "text-anchor": index === 0 ? "start" : index === points.length - 1 ? "end" : "middle" });
+            label.textContent = index === 0 ? "Başlangıç" : `${point.elapsedYears.toLocaleString("tr-TR", { maximumFractionDigits: 1 })}. yıl`;
             svg.appendChild(label);
         });
 
@@ -2142,7 +2293,7 @@
 
         if (summary) {
             const lastPoint = points[points.length - 1];
-            summary.textContent = `Son USD değeri ${formatUsdCurrency(lastPoint.value)}; eğri ${points[0].value > lastPoint.value ? "aşağı" : "yukarı"} yönlü.`;
+            summary.textContent = `Son USD değeri ${formatUsdCurrency(lastPoint.value)}; eğri ${points[0].value > lastPoint.value ? "aşağı" : "yukarı"} yönlü. Her yıllık nokta işaretlenir ve odak/hover ile değeri gösterir.`;
         }
     }
 

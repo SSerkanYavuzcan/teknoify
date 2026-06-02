@@ -114,10 +114,6 @@
     margin-bottom: 1rem;
 }
 
-.compound-calculator__panel-header .investment-eyebrow {
-    margin-bottom: 0.7rem;
-}
-
 .compound-calculator__panel-header h3,
 .compound-chart-card h3,
 .compound-breakdown-card h3 {
@@ -220,12 +216,16 @@
 
 .compound-results-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(10.8rem, 1fr));
     gap: 0.72rem;
 }
 
 .compound-result-card {
-    min-height: 5.35rem;
+    display: flex;
+    min-width: 0;
+    min-height: 5.8rem;
+    flex-direction: column;
+    justify-content: flex-start;
     padding: 0.78rem 0.82rem;
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 16px;
@@ -246,10 +246,13 @@
     display: block;
     margin-top: 0.45rem;
     color: rgba(248, 250, 252, 0.96);
-    font-size: clamp(0.98rem, 1.7vw, 1.18rem);
+    max-width: 100%;
+    font-size: clamp(0.9rem, 1.32vw, 1.08rem);
     font-weight: 750;
     letter-spacing: -0.025em;
+    line-height: 1.16;
     overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .compound-chart-card,
@@ -297,6 +300,86 @@
 
 .compound-chart-area {
     opacity: 0.06;
+}
+
+.compound-chart-point-group {
+    cursor: pointer;
+    outline: none;
+}
+
+.compound-chart-point {
+    fill: rgba(248, 250, 252, 0.95);
+    stroke-width: 2.2;
+    transition:
+        fill var(--ease-fast),
+        stroke-width var(--ease-fast);
+}
+
+.compound-chart-point--invested {
+    stroke: #818cf8;
+}
+
+.compound-chart-point--gain,
+.cagr-chart-point,
+.retirement-chart-point {
+    stroke: #c4b5fd;
+}
+
+.cagr-chart-point {
+    stroke: #a78bfa;
+}
+
+.compound-chart-point-group:hover .compound-chart-point,
+.compound-chart-point-group:focus-visible .compound-chart-point {
+    fill: #ffffff;
+    stroke-width: 3.4;
+}
+
+.compound-chart-tooltip {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--ease-fast);
+}
+
+.compound-chart-point-group:hover .compound-chart-tooltip,
+.compound-chart-point-group:focus-visible .compound-chart-tooltip {
+    opacity: 1;
+}
+
+.compound-chart-tooltip rect {
+    fill: rgba(15, 16, 24, 0.94);
+    stroke: rgba(167, 139, 250, 0.38);
+    stroke-width: 1;
+}
+
+.compound-chart-tooltip text {
+    fill: rgba(248, 250, 252, 0.94);
+    font-size: 0.68rem;
+    font-weight: 760;
+}
+
+.compound-chart-tooltip tspan:first-child {
+    fill: #c7d2fe;
+    font-weight: 850;
+}
+
+.compound-chart-value-label {
+    fill: rgba(248, 250, 252, 0.92);
+    paint-order: stroke;
+    stroke: rgba(15, 16, 20, 0.86);
+    stroke-linejoin: round;
+    stroke-width: 4px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    pointer-events: none;
+}
+
+.compound-chart-value-label--invested {
+    fill: #c7d2fe;
+}
+
+.compound-chart-value-label--gain {
+    fill: #ddd6fe;
 }
 
 .compound-chart-legend {
@@ -499,7 +582,7 @@
 
 .cagr-results-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(9.8rem, 1fr));
     gap: 0.72rem;
 }
 
@@ -509,6 +592,7 @@
     color: rgba(148, 163, 184, 0.72);
     font-size: 0.68rem;
     line-height: 1.35;
+    overflow-wrap: anywhere;
 }
 
 .cagr-ending-field.is-calculated {
@@ -572,7 +656,7 @@
 
 .retirement-results-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(10.6rem, 1fr));
     gap: 0.72rem;
 }
 
@@ -582,6 +666,7 @@
     color: rgba(148, 163, 184, 0.72);
     font-size: 0.68rem;
     line-height: 1.35;
+    overflow-wrap: anywhere;
 }
 
 .retirement-validation-message:not(:empty) {
