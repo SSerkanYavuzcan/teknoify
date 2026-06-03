@@ -1,9 +1,7 @@
-/* global window, document */
 
 (() => {
   const IMP_EMAIL_KEY = "impersonated_user_key";
   const IMP_ID_KEY = "impersonated_user_id"; 
-  // const USERS_KEY = "teknoify_users"; // Güvenlik sebebiyle iptal edildi
   const SESSION_KEY = "teknoify_session";
 
   const $ = (id) => document.getElementById(id);
@@ -21,8 +19,6 @@
     }
   }
 
-  // DİKKAT: İlerleyen aşamalarda bu local storage session kontrolünü de 
-  // Firebase Auth (Custom Claims) ile değiştirmemiz güvenliği arşa çıkaracaktır.
   function requireAdminSessionOrRedirect() {
     const sessionRaw = window.localStorage.getItem(SESSION_KEY);
     const session = safeJSONParse(sessionRaw, null);
@@ -35,15 +31,8 @@
   }
 
   async function ensureUsersLoaded() {
-    // GÜVENLİK GÜNCELLEMESİ: users.json dosyası silindiği için veriler artık 
-    // Firebase Firestore'dan (veya backend API'nizden) çekilmelidir.
-    
+      
     try {
-      // TODO: Firebase veritabanı bağlantınızı buraya yapın.
-      // Örnek Firestore kullanımı:
-      // const snapshot = await firebase.firestore().collection('users').get();
-      // const users = snapshot.docs.map(doc => doc.data());
-      // return users;
 
       console.warn("Kullanıcı listesi artık Firebase'den çekilmeli! Şimdilik boş liste dönüyor.");
       return []; 
