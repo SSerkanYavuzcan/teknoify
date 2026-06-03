@@ -69,12 +69,19 @@ The first consumer is now `js/script.js` redirect target selection. It reads the
 bridge only through safe fallback access so the legacy dashboard strings still
 protect pages where `window.TEKNOIFY_ROUTES` is unavailable or malformed.
 
+## Phase 4M note
+
+The bridge is now loaded across public pages that use `js/script.js`, with the
+module tag placed before the existing classic script tag. This remains safe
+because `js/script.js` still preserves fallback dashboard route strings when
+`window.TEKNOIFY_ROUTES` is unavailable or malformed.
+
 ## Future migration plan
 
-1. Add bridge module only — this PR.
-2. In a later PR, add `<script type="module" src="/packages/config/routes-global.js"></script>` before `/js/script.js` on one low-risk page or all pages that load `js/script.js`, depending on audit findings.
+1. Add bridge module only — completed in Phase 4I.
+2. Add `<script type="module" src="/packages/config/routes-global.js"></script>` before `/js/script.js` on public pages that load `js/script.js` — completed for `index.html` in Phase 4K and remaining public pages in Phase 4M.
 3. Verify `window.TEKNOIFY_ROUTES` exists before `js/script.js` uses it.
-4. Update `redirectAfterLogin()` to read from `window.TEKNOIFY_ROUTES`.
+4. Update `redirectAfterLogin()` to read from `window.TEKNOIFY_ROUTES` — completed in Phase 4L.
 5. Keep fallback route strings inside `js/script.js` during first migration for safety.
 6. Remove fallback strings only after smoke tests.
 

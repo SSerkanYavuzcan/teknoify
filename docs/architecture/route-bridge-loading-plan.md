@@ -16,11 +16,11 @@ This phase does not change runtime files, HTML script tags, Firebase setup, rout
 
 Phase 4I created `packages/config/routes-global.js` as a separate ES module bridge. A later PR can load that bridge independently, expose centralized route constants as `window.TEKNOIFY_ROUTES`, and keep `js/script.js` as the existing deferred plain script during the first runtime migration.
 
-No HTML page currently loads `packages/config/routes-global.js`.
+`index.html` currently loads `packages/config/routes-global.js` from Phase 4K. Phase 4M expands that bridge loading to the remaining public `pages/*.html` files that load `js/script.js`.
 
 ## Target loading order
 
-Future pages that load `js/script.js` should use this order when they opt into the bridge:
+Pages that load `js/script.js` should use this order when they opt into the bridge:
 
 1. Firebase compat SDK scripts, if the page needs Firebase.
 2. `packages/config/routes-global.js` as a module script.
@@ -92,7 +92,7 @@ Although every inspected `js/script.js` tag is a deferred classic script and eve
 - App Check/Firebase compat presence; and
 - a root-level `js/script.js` path that pairs naturally with the root bridge path `/packages/config/routes-global.js`.
 
-After `index.html` passes smoke testing, a follow-up PR can expand the bridge tag to the remaining low-risk `pages/*.html` files that load `../js/script.js`.
+Phase 4M expands the bridge tag to the remaining low-risk `pages/*.html` files that load `../js/script.js`.
 
 ## Smoke test checklist for future bridge-loading PR
 
@@ -119,12 +119,20 @@ Phase 4L migrated only the `redirectAfterLogin()` redirect target selection in
 `js/script.js` to read `window.TEKNOIFY_ROUTES` when available. Pages without
 the bridge still use the preserved fallback dashboard routes.
 
+## Phase 4M note
+
+Phase 4M expands bridge loading from `index.html` to the remaining public
+`pages/*.html` files that load `js/script.js`. The bridge must continue to
+appear before the existing classic `js/script.js` tag, and the fallback route
+strings in `js/script.js` remain in place so redirect behavior is preserved if
+the bridge is unavailable.
+
 ## Future runtime sequence
 
-1. Phase 4J: bridge loading plan only — this PR.
-2. Phase 4K: add the bridge script tag to `index.html` first, unless reviewers choose the full low-risk page set after reviewing this audit.
+1. Phase 4J: bridge loading plan only.
+2. Phase 4K: add the bridge script tag to `index.html` first.
 3. Phase 4L: migrate `redirectAfterLogin()` in `js/script.js` to read from `window.TEKNOIFY_ROUTES` with fallback strings.
-4. Phase 4M: expand bridge loading or migration to remaining pages if needed.
+4. Phase 4M: expand bridge loading to the remaining public pages that load `js/script.js`.
 5. Later: remove fallback strings only after smoke tests.
 
 ## Risk notes
