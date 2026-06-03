@@ -20,6 +20,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`investment-frontend-split-plan.md`](investment-frontend-split-plan.md): Phase 5C documentation-only split plan for Investment Intelligence frontend JavaScript and CSS, including current responsibility maps, proposed module/style boundaries, compatibility strategy, risks, and smoke tests. Phase 5D added README-only skeletons for future analytics scripts/styles folders without moving runtime JS/CSS files.
 - [`investment-utility-extraction-checklist.md`](investment-utility-extraction-checklist.md): Phase 5E documentation-only checklist for extracting pure utilities from `js/investment-analytics.js`, including candidate helper inventory, strict purity rules, loading compatibility notes, future target files, and smoke tests.
 - [`investment-module-loading-strategy.md`](investment-module-loading-strategy.md): Phase 5F documentation-only strategy for safely consuming future Investment Analytics utility modules from the current classic deferred `js/investment-analytics.js` entrypoint through a legacy bridge plan before runtime extraction.
+- [`investment-formatter-bridge-smoke-test.md`](investment-formatter-bridge-smoke-test.md): Phase 5J manual smoke test checklist and result template for validating the Investment Analytics formatter bridge rollout before fallback cleanup or higher-risk extraction.
 
 ## What belongs here
 

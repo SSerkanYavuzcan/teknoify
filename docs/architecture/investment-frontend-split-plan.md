@@ -27,6 +27,8 @@ unchanged.
 
 **Phase 5H update:** `pages/investment-analytics.html` now loads the formatter bridge before the existing classic deferred Investment Analytics entrypoint. Formatter consumers have not been migrated yet, so local formatter functions still preserve current runtime behavior.
 
+**Phase 5J smoke-test note:** `investment-formatter-bridge-smoke-test.md` now documents the manual checks and result template for validating formatter bridge behavior after the first consumer migration. Treat this as a decision gate before chart/SVG helper extraction, calculator extraction planning, or local formatter fallback removal.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:
