@@ -8,6 +8,8 @@ The goal is to plan a safe future extraction of investment calculator logic from
 
 Calculator extraction is intentionally planned after the formatter bridge and chart math bridge work because calculator behavior combines pure financial math with DOM input reads, validation/defaulting, localized parsing, result formatting, SVG/chart rendering, table rendering, tab/selector coordination, and event listeners.
 
+**Phase 5Q note:** The first compound calculator pure module, `domains/investment-intelligence/analytics/scripts/calculators/compound-interest.js`, and legacy-safe bridge, `domains/investment-intelligence/analytics/scripts/calculators/compound-interest-global.js`, now exist. They are not loaded by any HTML page yet, and `js/investment-analytics.js` has not been migrated to consume them, so existing calculator runtime behavior remains unchanged.
+
 ## 2. Why calculator extraction matters
 
 Calculator extraction matters because the calculators are not just page widgets; they are productizable individual tools:

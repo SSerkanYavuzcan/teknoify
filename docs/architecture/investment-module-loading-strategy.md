@@ -14,6 +14,8 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5N note:** `js/investment-analytics.js` now reads selected chart math bridge helpers only through guarded wrappers with local fallbacks, so missing, malformed, incomplete, or throwing bridge entries continue to use the classic script's local chart math logic.
 
+**Phase 5Q note:** The compound interest calculator bridge follows the chart math bridge's compatibility approach: it adds `window.TEKNOIFY_INVESTMENT_UTILS.calculators.compoundInterest` only when the existing investment utils object can be safely extended; otherwise it uses `window.TEKNOIFY_INVESTMENT_COMPOUND_INTEREST` so the frozen formatter namespace remains untouched. The bridge is not loaded by `pages/investment-analytics.html` yet.
+
 ## 2. Current loading facts
 
 Phase 5F inspected `pages/investment-analytics.html`, `js/investment-analytics.js`, and the script tags around the Investment Analytics page without editing them.

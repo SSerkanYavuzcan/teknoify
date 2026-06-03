@@ -35,6 +35,8 @@ unchanged.
 
 **Phase 5P update:** `investment-calculator-extraction-plan.md` now documents the safe calculator extraction plan, current calculator inventory, staged migration order, and risk controls. No runtime calculator logic was moved.
 
+**Phase 5Q update:** The first pure compound interest calculator module and bridge now exist under `domains/investment-intelligence/analytics/scripts/calculators/`, but no HTML page loads the bridge and no Investment Analytics calculator consumer has been migrated yet.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:

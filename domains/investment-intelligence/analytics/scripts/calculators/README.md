@@ -22,7 +22,13 @@ Calculator runtime code should not be moved here yet. This folder should not con
 
 Migration status: Phase 5D README-only skeleton; no investment analytics JS/CSS files have been moved here yet.
 
-Phase 5P documents calculator extraction planning in `docs/architecture/investment-calculator-extraction-plan.md`; no calculator JavaScript modules have been created yet.
+Phase 5P documents calculator extraction planning in `docs/architecture/investment-calculator-extraction-plan.md`.
+
+Phase 5Q created the first pure calculator module, `compound-interest.js`, and its legacy-safe browser bridge, `compound-interest-global.js`. Existing calculator consumers have not been migrated yet, so `js/investment-analytics.js` still contains the original local `growCompoundValue` helper.
+
+The compound interest bridge tries to expose `window.TEKNOIFY_INVESTMENT_UTILS.calculators.compoundInterest` only when the existing investment utils global can be extended safely. If the formatter bridge has already provided the frozen, non-extensible investment utils namespace, the compound interest bridge instead exposes `window.TEKNOIFY_INVESTMENT_COMPOUND_INTEREST` as a separate fallback namespace.
+
+Load `compound-interest-global.js` in a later PR before migrating any calculator consumer.
 
 ## Candidate current source files
 
