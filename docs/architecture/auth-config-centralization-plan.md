@@ -192,31 +192,38 @@ Future work should proceed in small PRs that preserve behavior and make only one
 - Preserve login, dashboard redirect, role defaulting, allowed-role, logout, and impersonation behavior.
 - Phase 4F migrated `js/lib/auth.js` to route and role constants without changing Firebase, App Check, Firestore, or auth behavior.
 
-### Phase 4G: centralize App Check initialization
+### Phase 4G: add `js/script.js` login redirect migration checklist
+
+- Add a documentation-only checklist before touching the legacy `js/script.js` runtime.
+- Document current login redirect behavior, post-login redirect priority, legacy/global Firebase setup, App Check behavior, auth UI handling, Firestore role fallback, unrelated UI systems, risks, and smoke tests.
+- Use the checklist to prepare a future runtime PR that migrates only `redirectAfterLogin()` route target selection if `js/script.js` can safely import ES modules.
+- Do not change runtime consumers, Firebase setup, App Check setup, imports, script tags, redirects, dashboard pages, package scripts, or data files in Phase 4G.
+
+### Phase 4H: centralize App Check initialization
 
 - Move App Check activation behind one initialization owner only after duplicate initialization paths are mapped.
 - Preserve the existing App Check site key, auto-refresh behavior, and localhost/debug behavior.
 - Verify public pages and protected dashboard pages before removing duplicate setup.
 
-### Phase 4H: split login modal behavior from `js/script.js`
+### Phase 4I: split login modal behavior from `js/script.js`
 
 - Extract login modal UI behavior after route constants, redirect helpers, and Firebase access are stable.
 - Keep modal triggers, form handling, close behavior, body scroll behavior, and error display unchanged.
 - Verify `/`, `/pages/login.html`, and dashboard redirects before and after extraction.
 
-### Phase 4I: migrate dashboard access guard gradually
+### Phase 4J: migrate dashboard access guard gradually
 
 - Introduce a dashboard access guard wrapper that delegates to stable auth/session/role helpers.
 - Migrate one dashboard route or route family at a time.
 - Preserve `window.USER_SESSION`, sidebar assumptions, project access, admin access, premium access, and unauthorized redirects.
 
-### Phase 4J: add smoke tests/manual route checklist
+### Phase 4K: add smoke tests/manual route checklist
 
 - Add a documented manual route checklist and, where feasible, lightweight automated checks.
 - Cover anonymous, member, premium, admin, unauthorized, redirect, and sidebar behavior.
 - Require before/after verification for every future auth/config runtime migration PR.
 
-### Phase 4K: remove legacy duplication only after all pages are verified
+### Phase 4L: remove legacy duplication only after all pages are verified
 
 - Remove duplicate Firebase, App Check, role, redirect, or access logic only after all known consumers have migrated.
 - Confirm every route in the route and access checklist.
