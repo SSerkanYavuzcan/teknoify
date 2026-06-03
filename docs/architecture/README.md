@@ -17,6 +17,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`route-bridge-loading-plan.md`](route-bridge-loading-plan.md): Phase 4J documentation-only loading plan for adding the route global bridge to public HTML pages in a later PR.
 - [`public-route-bridge-smoke-test.md`](public-route-bridge-smoke-test.md): Phase 4N manual smoke test checklist and result template for validating the public route bridge rollout before fallback cleanup or larger script refactors.
 - [`investment-intelligence-migration-plan.md`](investment-intelligence-migration-plan.md): Phase 5A documentation-only migration plan for the Investment Intelligence domain, including inventory, target structure, risks, smoke tests, staged migration order, and Phase 5B README-only skeleton status.
+- [`investment-frontend-split-plan.md`](investment-frontend-split-plan.md): Phase 5C documentation-only split plan for Investment Intelligence frontend JavaScript and CSS, including current responsibility maps, proposed module/style boundaries, compatibility strategy, risks, and smoke tests.
 
 ## What belongs here
 
