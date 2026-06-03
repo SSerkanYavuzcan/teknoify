@@ -20,6 +20,8 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5S note:** `js/investment-analytics.js` now reads the compound interest bridge only through guarded wrappers with local fallback, so missing, malformed, incomplete, or throwing bridge entries continue to use the classic script's local compound growth math.
 
+**Phase 5T note:** `investment-compound-bridge-smoke-test.md` now documents smoke testing as the decision gate before removing local compound fallbacks or extracting higher-risk calculator render, input, or event logic.
+
 ## 2. Current loading facts
 
 Phase 5F inspected `pages/investment-analytics.html`, `js/investment-analytics.js`, and the script tags around the Investment Analytics page without editing them.
