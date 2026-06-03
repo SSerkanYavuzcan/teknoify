@@ -2,8 +2,6 @@
     const PREMIUM_REDIRECT_KEY = 'tk_post_login_redirect';
     const PREMIUM_ROLES = new Set(['admin', 'premium']);
 
-    // Front-end UX gate only: move truly sensitive future data behind a protected backend endpoint, Firebase Cloud Function, or Firestore security rules.
-
     function normalizeRoleType(role) {
         if (!role) return null;
         return typeof role === 'object' ? role.type : role;
