@@ -319,3 +319,7 @@ Phase 5H loads the formatter bridge on `pages/investment-analytics.html` before 
 ## 14. Phase 5I status
 
 Phase 5I keeps `js/investment-analytics.js` as a classic deferred script and reads the formatter bridge only through safe wrappers with local fallbacks. Selected formatter helpers now try `window.TEKNOIFY_INVESTMENT_UTILS.formatters` first when a matching function exists, then preserve the local formatter behavior when the bridge is unavailable, malformed, incomplete, or throws.
+
+## 15. Phase 5J status
+
+Phase 5J adds `investment-formatter-bridge-smoke-test.md`, a manual smoke test checklist and result document for the formatter bridge after the first `js/investment-analytics.js` consumer migration. The checklist must be completed before local formatter fallbacks are removed or larger extraction work starts.

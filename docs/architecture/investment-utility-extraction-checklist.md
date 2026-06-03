@@ -314,3 +314,7 @@ work can find the pure utility criteria, inventory, loading compatibility notes,
 `docs/architecture/investment-frontend-split-plan.md` should also record a short Phase 5E note
 stating that this pure utility extraction checklist was created and that no runtime JavaScript or
 CSS files were moved.
+
+## 15. Phase 5J note
+
+Phase 5J adds the formatter bridge smoke test checklist/result document. Smoke testing must pass before local formatter fallbacks are removed from `js/investment-analytics.js` or before higher-risk extraction work begins for calculators, charts, chatbot behavior, premium gate behavior, data/RAG migration, or CSS splitting.
