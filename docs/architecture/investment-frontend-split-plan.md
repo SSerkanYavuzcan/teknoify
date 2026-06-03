@@ -422,6 +422,7 @@ Recommended mapping from existing partials:
 - **Phase 5J:** Extract premium gate logic only after coordination with the existing premium gate
   runtime.
 - **Phase 5K:** A chart/SVG helper extraction checklist was created before runtime chart extraction; no runtime JS/CSS files were moved.
+- **Phase 5L:** The first pure chart math module and legacy-safe bridge were created, but no HTML page loads the bridge yet and no `js/investment-analytics.js` chart consumers were migrated.
 - **Future orchestrator phase:** Turn `js/investment-analytics.js` into a thin orchestrator after pure utilities, chart math, calculators, sectors, chatbot, premium coordination, and CSS split work are validated.
 - **Phase 5L:** Split CSS behind the existing linked stylesheet.
 - **Phase 5M:** Update public pages only after compatibility is verified.

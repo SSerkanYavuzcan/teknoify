@@ -8,6 +8,8 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5G note:** The pure formatter module `domains/investment-intelligence/analytics/scripts/utils/formatters.js` and legacy-safe bridge module `domains/investment-intelligence/analytics/scripts/utils/formatters-global.js` now exist. The bridge has not been loaded into `pages/investment-analytics.html` yet, and `js/investment-analytics.js` has not been migrated to consume it.
 
+**Phase 5L note:** The pure chart math module `domains/investment-intelligence/analytics/scripts/utils/chart-math.js` and chart math bridge `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js` now exist. Because the formatter bridge defines `window.TEKNOIFY_INVESTMENT_UTILS` as a frozen, non-writable object, the chart math bridge preserves the formatter namespace and uses `window.TEKNOIFY_INVESTMENT_CHART_MATH` as the legacy-safe fallback unless an existing investment utils object can be extended safely. The chart math bridge is not loaded by any HTML page yet.
+
 ## 2. Current loading facts
 
 Phase 5F inspected `pages/investment-analytics.html`, `js/investment-analytics.js`, and the script tags around the Investment Analytics page without editing them.
@@ -323,3 +325,7 @@ Phase 5I keeps `js/investment-analytics.js` as a classic deferred script and rea
 ## 15. Phase 5J status
 
 Phase 5J adds `investment-formatter-bridge-smoke-test.md`, a manual smoke test checklist and result document for the formatter bridge after the first `js/investment-analytics.js` consumer migration. The checklist must be completed before local formatter fallbacks are removed or larger extraction work starts.
+
+## 16. Phase 5L status
+
+Phase 5L creates the pure chart math module and legacy-safe chart math bridge only. `js/investment-analytics.js` keeps its local chart math/path helpers, `pages/investment-analytics.html` does not load the chart math bridge yet, and no chart consumer reads from the bridge yet.
