@@ -279,7 +279,11 @@ A later runtime extraction PR should verify:
 - Premium gate behavior unchanged.
 - No new module loading errors.
 
-## 11. Risk notes
+## 11. Phase 5H note
+
+Phase 5H adds the formatter bridge to `pages/investment-analytics.html`, but formatter call sites are not migrated yet. The local formatter fallback/functions inside `js/investment-analytics.js` still preserve existing behavior until a future PR selectively reads from `window.TEKNOIFY_INVESTMENT_UTILS.formatters` with fallback safety.
+
+## 12. Risk notes
 
 - Utility functions may close over global constants.
 - Formatting changes can visually alter charts and tables.
@@ -289,7 +293,7 @@ A later runtime extraction PR should verify:
 - Hidden dependencies on Turkish locale and `Intl` formatting can cause visible output changes.
 - Existing tests may not cover browser behavior, script ordering, or manual chart/calculator flows.
 
-## 12. Relationship to existing docs
+## 13. Relationship to existing docs
 
 This checklist builds on these prior Phase 5 docs and skeletons:
 
@@ -298,7 +302,7 @@ This checklist builds on these prior Phase 5 docs and skeletons:
 - [`../../domains/investment-intelligence/analytics/scripts/utils/README.md`](../../domains/investment-intelligence/analytics/scripts/utils/README.md)
 - [`../../domains/investment-intelligence/analytics/scripts/README.md`](../../domains/investment-intelligence/analytics/scripts/README.md)
 
-## 13. Docs index update
+## 14. Docs index update
 
 `docs/architecture/README.md` should link to this checklist so future Phase 5 runtime extraction
 work can find the pure utility criteria, inventory, loading compatibility notes, and smoke tests.
