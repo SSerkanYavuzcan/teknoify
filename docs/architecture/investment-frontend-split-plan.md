@@ -33,6 +33,8 @@ unchanged.
 
 **Phase 5O smoke-test note:** `investment-chart-math-bridge-smoke-test.md` now documents the manual decision gate for validating chart math bridge behavior before local chart math fallback removal, SVG utility extraction, or chart renderer extraction planning.
 
+**Phase 5P update:** `investment-calculator-extraction-plan.md` now documents the safe calculator extraction plan, current calculator inventory, staged migration order, and risk controls. No runtime calculator logic was moved.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:

@@ -22,6 +22,8 @@ Calculator runtime code should not be moved here yet. This folder should not con
 
 Migration status: Phase 5D README-only skeleton; no investment analytics JS/CSS files have been moved here yet.
 
+Phase 5P documents calculator extraction planning in `docs/architecture/investment-calculator-extraction-plan.md`; no calculator JavaScript modules have been created yet.
+
 ## Candidate current source files
 
 - Calculator sections currently inside `js/investment-analytics.js`.

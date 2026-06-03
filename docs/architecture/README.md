@@ -23,6 +23,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`investment-formatter-bridge-smoke-test.md`](investment-formatter-bridge-smoke-test.md): Phase 5J manual smoke test checklist and result template for validating the Investment Analytics formatter bridge rollout before fallback cleanup or higher-risk extraction.
 - [`investment-chart-svg-extraction-checklist.md`](investment-chart-svg-extraction-checklist.md): Phase 5K documentation-only checklist for inventorying and classifying chart/SVG helpers before any higher-risk extraction from `js/investment-analytics.js`.
 - [`investment-chart-math-bridge-smoke-test.md`](investment-chart-math-bridge-smoke-test.md): Phase 5O manual smoke test checklist and result template for validating the Investment Analytics chart math bridge rollout before local fallback cleanup or higher-risk renderer extraction.
+- [`investment-calculator-extraction-plan.md`](investment-calculator-extraction-plan.md): Phase 5P documentation-only plan for safely extracting Investment Analytics calculator logic from `js/investment-analytics.js`, including current calculator inventory, boundaries, staged migration order, bridge cautions, smoke tests, and risks.
 
 ## What belongs here
 
