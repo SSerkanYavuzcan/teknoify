@@ -18,6 +18,11 @@ and style boundaries, compatibility rules, staged migration order, risks, and sm
 utility extraction checklist for `js/investment-analytics.js`. Phase 5E did not move runtime
 JavaScript or CSS files.
 
+**Phase 5F update:** `investment-module-loading-strategy.md` now documents the module
+loading and legacy bridge strategy for future Investment Analytics utility modules. Phase 5F
+keeps runtime HTML, JavaScript, CSS, data files, scripts, workflows, and package configuration
+unchanged.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:

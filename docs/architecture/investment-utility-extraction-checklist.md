@@ -249,6 +249,8 @@ is loaded as a classic deferred script. A later runtime PR should either:
 
 No such bridge, module conversion, or script tag change should be part of Phase 5E.
 
+**Phase 5F note:** [`investment-module-loading-strategy.md`](investment-module-loading-strategy.md) now documents the module loading and legacy bridge strategy before pure utilities are extracted. The recommended path is to keep `js/investment-analytics.js` classic initially, introduce a small formatter global bridge, and preserve local fallback functions until smoke tests pass.
+
 ## 9. Future target files
 
 Candidate future utility files are:
