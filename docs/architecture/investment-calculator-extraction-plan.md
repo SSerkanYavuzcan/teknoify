@@ -184,8 +184,8 @@ Because `js/investment-analytics.js` is still a classic deferred script, calcula
 - **Phase 5P:** Create this calculator extraction plan only. Do not move runtime calculator logic.
 - **Phase 5Q:** Create or update calculator README/skeleton documentation if needed. Do not create runtime calculator modules unless that phase explicitly scopes them.
 - **Phase 5R:** Extract pure calculator math for one calculator only, likely the least coupled function group.
-- **Phase 5S:** Load a calculator math bridge if classic script compatibility requires it.
-- **Phase 5T:** Migrate one calculator math consumer with a local fallback and unchanged DOM/render/chart/event behavior.
+- **Phase 5S:** Migrate `growCompoundValue` to bridge-first/local-fallback behavior while keeping calculator render, input, validation, chart, and event logic untouched.
+- **Phase 5T:** Migrate the next calculator math consumer with a local fallback and unchanged DOM/render/chart/event behavior.
 - **Phase 5U:** Add a calculator bridge/runtime smoke test document with sample input/output checks and manual page checks.
 - **Later:** Extract chart data preparation, rendering, and event binding only after math extraction is stable and smoke-tested.
 
@@ -202,6 +202,8 @@ The first actual calculator runtime PR should:
 Recommended first runtime extraction target: **compound interest pure math helper `growCompoundValue` plus its minimal helper group only if needed**.
 
 Reason: `growCompoundValue` is identifiable from inspection as the least coupled calculator math function. It does not read or write the DOM, does not format output, does not add events, and does not directly render charts. The broader compound calculation (`calculateCompoundInterest` and `getContributionTimes`) is also pure, but it is more output-sensitive and should follow only after `growCompoundValue` bridge/fallback behavior is proven.
+
+Phase 5S confirms `growCompoundValue` now uses bridge-first/local-fallback behavior, while calculator render, input, validation, chart, and event logic remains untouched.
 
 ## 11. Smoke test checklist
 
