@@ -244,7 +244,7 @@ On `DOMContentLoaded`, the script currently initializes systems in this order:
 
 ## 4. Proposed future imports for the next runtime PR
 
-These imports are **future-only**. Do not add them in Phase 4G.
+These imports are **future-only**. Do not add them in Phase 4G. After Phase 4I, a future `js/script.js` migration should prefer reading route constants from the `window.TEKNOIFY_ROUTES` bridge instead of adding direct ES imports, unless `js/script.js` is later converted to `type="module"` in a dedicated compatibility PR.
 
 - `getDashboardRouteForRole` from `/packages/config/routes.js`
 - `DASHBOARD_ROUTES` from `/packages/config/routes.js`, only if direct route
@@ -282,8 +282,7 @@ adding any ES module import.
 ## 6. Proposed code-change plan for the next PR
 
 1. Verify whether `js/script.js` is loaded as a classic script or an ES module.
-2. Add imports from route/role constants only if the loading mode supports them
-   safely.
+2. Prefer `window.TEKNOIFY_ROUTES` bridge access for dashboard routes while `js/script.js` remains a plain script; add direct route/role imports only if the loading mode supports them safely or the script is converted to `type="module"`.
 3. Update only `redirectAfterLogin()` first.
 4. Keep the function signature `redirectAfterLogin(isAdmin, isPremium)`
    unchanged.
@@ -373,8 +372,10 @@ After the future runtime PR, manually verify the following cases:
 - Importing ES modules into a legacy script may require changing script tags
   later, so the next PR must inspect how `js/script.js` is loaded before adding
   imports.
+- Phase 4I adds `packages/config/routes-global.js` as the preferred bridge for
+  legacy access to route constants while `js/script.js` remains a plain script.
 - If `js/script.js` is loaded as a normal script, direct ES imports will break
-  unless converted to `type="module"` or constants are exposed another way.
+  unless converted to `type="module"` or constants are exposed through the bridge.
 - Therefore, the future runtime PR must first verify script loading mode before
   adding imports.
 - UI behavior is mixed with auth behavior, so avoid broad refactors.
@@ -383,5 +384,7 @@ After the future runtime PR, manually verify the following cases:
 ## 10. Recommended next runtime PR
 
 The next runtime PR should migrate only `redirectAfterLogin()` route target
-selection if `js/script.js` can safely import ES modules. If not, create a bridge
-strategy first rather than converting the whole script to a module.
+selection. While `js/script.js` remains a plain script, prefer loading the Phase
+4I route global bridge first and reading from `window.TEKNOIFY_ROUTES` with
+fallback route strings. Direct imports should be reserved for a later
+`type="module"` conversion PR.

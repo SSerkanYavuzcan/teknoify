@@ -4,7 +4,7 @@
 
 `packages/config` centralizes shared application configuration, route constants, dashboard config, project config, and environment helpers.
 
-Phase 4C introduces `packages/config/routes.js` as a non-invasive, dependency-free route constants module. Existing runtime consumers have **not** been migrated yet, so this package now contains a future-facing module without changing current route, auth, dashboard, Firebase, or App Check behavior.
+Phase 4C introduces `packages/config/routes.js` as a non-invasive, dependency-free route constants module. Phase 4I adds `packages/config/routes-global.js` as a browser ES module bridge for legacy plain scripts. Existing runtime consumers have **not** been migrated yet, so this package now contains future-facing modules without changing current route, auth, dashboard, Firebase, or App Check behavior.
 
 ## Current source candidates
 
@@ -24,6 +24,14 @@ These sources remain stable until a dedicated migration updates consumers safely
 
 Existing public route behavior must remain unchanged. Future PRs should replace hardcoded strings gradually and verify each consumer before removing duplicate route literals.
 
+## Legacy route global bridge
+
+Phase 4I added `packages/config/routes-global.js` to expose centralized route constants through `window.TEKNOIFY_ROUTES` for legacy plain scripts that cannot safely use direct ES module imports yet.
+
+The bridge imports only from `/packages/config/routes.js`, freezes a route bridge object, and defines a read-only `window.TEKNOIFY_ROUTES` property when it is not already present. Existing consumers have not been migrated to this global yet.
+
+No HTML pages load `routes-global.js` in Phase 4I, and no script tags were changed. Future PRs may load this bridge before `/js/script.js` on pages that need legacy access to centralized route constants, then update legacy redirect code to read from the global with route-string fallbacks during the first migration.
+
 ## Future module map
 
 The following modules describe the intended future boundaries only. Do not create additional files until a dedicated runtime migration PR is approved.
@@ -32,6 +40,7 @@ The following modules describe the intended future boundaries only. Do not creat
 - `dashboard-config.js`: Centralize dashboard defaults, dashboard app settings, and adapters for existing dashboard configuration globals.
 - `project-config.js`: Normalize project-level configuration currently assembled from page globals and static data inputs.
 - `routes.js`: Define route constants for public, page, dashboard, login, and redirect paths while initially mirroring existing strings exactly. Phase 4C added this module without migrating consumers.
+- `routes-global.js`: Expose a frozen `window.TEKNOIFY_ROUTES` compatibility bridge for legacy plain scripts. Phase 4I added this module without loading it in HTML or migrating consumers.
 - `environment.js`: Provide environment detection and non-secret environment helpers without introducing new runtime assumptions.
 
 ## Route preservation rules
@@ -55,4 +64,4 @@ Use a gradual migration sequence so configuration behavior remains observable an
 
 ## Migration status
 
-Phase 4C adds the initial route constants module and supporting documentation. Runtime consumers still use their existing route strings, so public routes, dashboard routing, auth redirects, Firebase configuration, and App Check behavior are unchanged.
+Phase 4C adds the initial route constants module and supporting documentation. Phase 4I adds the route global bridge module and bridge documentation. Runtime consumers still use their existing route strings, and no HTML page loads the bridge yet, so public routes, dashboard routing, auth redirects, Firebase configuration, and App Check behavior are unchanged.
