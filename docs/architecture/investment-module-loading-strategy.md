@@ -339,4 +339,8 @@ Phase 5J adds `investment-formatter-bridge-smoke-test.md`, a manual smoke test c
 
 ## 16. Phase 5L status
 
-Phase 5L creates the pure chart math module and legacy-safe chart math bridge only. `js/investment-analytics.js` keeps its local chart math/path helpers, `pages/investment-analytics.html` does not load the chart math bridge yet, and no chart consumer reads from the bridge yet.
+Phase 5L creates the pure chart math module and legacy-safe chart math bridge only. At Phase 5L completion, `js/investment-analytics.js` kept its local chart math/path helpers, `pages/investment-analytics.html` did not load the chart math bridge yet, and no chart consumer read from the bridge yet.
+
+## 17. Phase 5M status
+
+Phase 5M loads `chart-math-global.js` on `pages/investment-analytics.html` after the formatter bridge and before the existing classic deferred `js/investment-analytics.js` entrypoint. `js/investment-analytics.js` has not been migrated to read the chart math bridge yet, local chart math/path helper functions remain in place, and no chart math consumers were migrated in this phase.
