@@ -14,6 +14,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`first-auth-consumer-migration-checklist.md`](first-auth-consumer-migration-checklist.md): Phase 4E planning checklist and Phase 4F completion notes for the first `js/lib/auth.js` consumer migration to route and role/access constants, with current behavior notes and smoke-test requirements.
 - [`script-login-redirect-migration-checklist.md`](script-login-redirect-migration-checklist.md): Phase 4G documentation-only checklist for a future `js/script.js` login redirect migration, including legacy Firebase/App Check, auth UI, redirect behavior, UI-system risks, and smoke-test requirements.
 - [`route-global-bridge.md`](route-global-bridge.md): Phase 4I bridge plan and runtime contract for exposing centralized route constants as `window.TEKNOIFY_ROUTES` to legacy plain scripts before migrating `js/script.js`.
+- [`route-bridge-loading-plan.md`](route-bridge-loading-plan.md): Phase 4J documentation-only loading plan for adding the route global bridge to public HTML pages in a later PR.
 
 ## What belongs here
 
