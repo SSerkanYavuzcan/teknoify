@@ -19,6 +19,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`investment-intelligence-migration-plan.md`](investment-intelligence-migration-plan.md): Phase 5A documentation-only migration plan for the Investment Intelligence domain, including inventory, target structure, risks, smoke tests, staged migration order, and Phase 5B README-only skeleton status.
 - [`investment-frontend-split-plan.md`](investment-frontend-split-plan.md): Phase 5C documentation-only split plan for Investment Intelligence frontend JavaScript and CSS, including current responsibility maps, proposed module/style boundaries, compatibility strategy, risks, and smoke tests. Phase 5D added README-only skeletons for future analytics scripts/styles folders without moving runtime JS/CSS files.
 - [`investment-utility-extraction-checklist.md`](investment-utility-extraction-checklist.md): Phase 5E documentation-only checklist for extracting pure utilities from `js/investment-analytics.js`, including candidate helper inventory, strict purity rules, loading compatibility notes, future target files, and smoke tests.
+- [`investment-module-loading-strategy.md`](investment-module-loading-strategy.md): Phase 5F documentation-only strategy for safely consuming future Investment Analytics utility modules from the current classic deferred `js/investment-analytics.js` entrypoint through a legacy bridge plan before runtime extraction.
 
 ## What belongs here
 
