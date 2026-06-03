@@ -23,6 +23,8 @@ loading and legacy bridge strategy for future Investment Analytics utility modul
 keeps runtime HTML, JavaScript, CSS, data files, scripts, workflows, and package configuration
 unchanged.
 
+**Phase 5G update:** The first Investment Analytics formatter module and legacy-safe formatter bridge now exist under `domains/investment-intelligence/analytics/scripts/utils/`. No page loads the bridge yet, and `js/investment-analytics.js` remains unchanged for the future consumer migration step.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:

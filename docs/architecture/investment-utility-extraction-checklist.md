@@ -251,6 +251,8 @@ No such bridge, module conversion, or script tag change should be part of Phase 
 
 **Phase 5F note:** [`investment-module-loading-strategy.md`](investment-module-loading-strategy.md) now documents the module loading and legacy bridge strategy before pure utilities are extracted. The recommended path is to keep `js/investment-analytics.js` classic initially, introduce a small formatter global bridge, and preserve local fallback functions until smoke tests pass.
 
+**Phase 5G note:** The first formatter runtime module and bridge now exist at `domains/investment-intelligence/analytics/scripts/utils/formatters.js` and `domains/investment-intelligence/analytics/scripts/utils/formatters-global.js`. `js/investment-analytics.js` has not been changed, so its local formatter functions remain the active fallback/current consumer implementation until a later bridge-loading and migration PR.
+
 ## 9. Future target files
 
 Candidate future utility files are:
@@ -261,7 +263,7 @@ Candidate future utility files are:
 - `domains/investment-intelligence/analytics/scripts/utils/data-normalization.js`
 - `domains/investment-intelligence/analytics/scripts/utils/dom.js`
 
-These files are future runtime targets only. Phase 5E intentionally does not create them.
+Phase 5G created `formatters.js` and `formatters-global.js` only. The other utility files remain future runtime targets, and the existing consumer has not been migrated yet.
 
 ## 10. Smoke test checklist for future utility extraction
 

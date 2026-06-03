@@ -6,6 +6,8 @@ This document is the **Phase 5F Investment Analytics module loading and legacy b
 
 The goal is to decide how future Investment Analytics utility modules can be consumed safely by the current classic script entrypoint, `js/investment-analytics.js`, before any pure utility extraction starts changing public runtime behavior.
 
+**Phase 5G note:** The pure formatter module `domains/investment-intelligence/analytics/scripts/utils/formatters.js` and legacy-safe bridge module `domains/investment-intelligence/analytics/scripts/utils/formatters-global.js` now exist. The bridge has not been loaded into `pages/investment-analytics.html` yet, and `js/investment-analytics.js` has not been migrated to consume it.
+
 ## 2. Current loading facts
 
 Phase 5F inspected `pages/investment-analytics.html`, `js/investment-analytics.js`, and the script tags around the Investment Analytics page without editing them.
@@ -235,7 +237,7 @@ if (!window.TEKNOIFY_INVESTMENT_UTILS) {
 }
 ```
 
-This is an illustrative future shape only; Phase 5F does not create formatter modules or bridge runtime files.
+This was an illustrative future shape in Phase 5F. Phase 5G created the formatter module and bridge runtime files, but does not load the bridge from any HTML page or migrate any consumer yet.
 
 ## 7. Loading order plan
 
