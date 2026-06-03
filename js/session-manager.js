@@ -1,8 +1,3 @@
-/**
- * ================================================================
- * [MODULE] SESSION MANAGER (FIREBASE AUTH GUARD) - ULTIMATE SECURE VERSION
- * ================================================================
- */
 
 const firebaseConfigSession = {
     apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8",
@@ -36,12 +31,10 @@ class SessionManager {
                 
                 if (user) {
                     try {
-                        // GÜVENLİK GÜNCELLEMESİ 5: 3 Saatlik Oturum Kontrolü (10.800.000 ms)
                         const now = Date.now();
                         let sessionStartTime = localStorage.getItem('session_start_time');
 
                         if (!sessionStartTime) {
-                            // Eğer zaman damgası yoksa (yeni giriş yapıldıysa), şu anı kaydet
                             sessionStartTime = now;
                             localStorage.setItem('session_start_time', sessionStartTime);
                         }
@@ -51,25 +44,20 @@ class SessionManager {
 
                         if (elapsedTime > maxSessionDuration) {
                             console.warn("⏳ Oturum süresi doldu (3 saati geçti). Otomatik çıkış yapılıyor...");
-                            this.destroySession(); // Çıkış yap ve storage'ları temizle
+                            this.destroySession(); 
                             reject('Session Expired');
                             return;
                         }
 
-                        // GÜVENLİK GÜNCELLEMESİ 1: Sadece Custom Claims'e güveniyoruz.
                         const idTokenResult = await user.getIdTokenResult();
                         
-                        // Tek gerçek yetki kaynağı:
                         const isAdmin = !!idTokenResult.claims.admin;
-                        
-                        // GÜVENLİK GÜNCELLEMESİ 2: Hardcoded e-posta kontrolü tamamen kaldırıldı.
-                        
+                                                
                         const impersonatedKey = localStorage.getItem('impersonated_user_key');
                         
                         let activeEmail = user.email;
                         let isImpersonating = false;
 
-                        // GÜVENLİK GÜNCELLEMESİ 3: Taklit modu SADECE gerçek Admin Claims varsa çalışır.
                         if (isAdmin && impersonatedKey) {
                             console.log("🕵️ Admin Gözetim Modu Aktif");
                             activeEmail = impersonatedKey;
@@ -100,25 +88,16 @@ class SessionManager {
         });
     }
 
-    /**
-     * Oturumu manuel başlatırken çağrılabilir (Örn: script.js içindeki signIn metodunda)
-     * Kullanıcı şifresini yazıp girdiği an süreyi milisaniyesi milisaniyesine sıfırlamak için eklendi.
-     */
     startSessionTimer() {
         localStorage.setItem('session_start_time', Date.now());
     }
 
-    /**
-     * GÜVENLİK GÜNCELLEMESİ 4: DOM-XSS Koruması
-     * innerHTML tamamen kaldırıldı. textContent ve createElement kullanılıyor.
-     */
     showImpersonateBar(targetEmail) {
         if (document.getElementById('impersonate-notice-bar')) return;
         
         const bar = document.createElement('div');
         bar.id = 'impersonate-notice-bar';
         
-        // Stil atamaları
         Object.assign(bar.style, {
             background: "#ea5455",
             color: "white",
@@ -139,15 +118,13 @@ class SessionManager {
             fontFamily: "'Inter Tight', sans-serif"
         });
 
-        // Metin kısmı (Güvenli textContent)
         const infoSpan = document.createElement('span');
         infoSpan.textContent = `🕵️ Şu an `;
         const strongEmail = document.createElement('strong');
-        strongEmail.textContent = targetEmail; // XSS engelleme noktası
+        strongEmail.textContent = targetEmail; 
         infoSpan.appendChild(strongEmail);
         infoSpan.appendChild(document.createTextNode(' kullanıcısının panelindesiniz.'));
 
-        // Geri dönüş butonu
         const backBtn = document.createElement('button');
         backBtn.textContent = 'Admin Paneline Dön';
         Object.assign(backBtn.style, {
@@ -178,7 +155,6 @@ class SessionManager {
         const nameDisplay = document.getElementById('user-name-display');
         const avatarDisplay = document.getElementById('user-avatar');
         
-        // textContent kullanımı XSS'i engeller
         if (nameDisplay) nameDisplay.textContent = displayName;
         if (avatarDisplay) avatarDisplay.textContent = displayName.charAt(0).toUpperCase();
     }
@@ -186,13 +162,11 @@ class SessionManager {
     destroySession() {
         if (!this.auth) return;
         
-        // Çıkış yapıldığında oturum süresi damgasını ve taklit verilerini temizle
         localStorage.removeItem('session_start_time');
         localStorage.removeItem('impersonated_user_key');
         localStorage.removeItem('impersonated_user_id');
 
         this.auth.signOut().then(() => {
-            // Sitenizde ayrı bir login sayfası olmadığı için ana sayfaya yönlendiriyoruz
             window.location.href = '/'; 
         }).catch((error) => {
             console.error("Çıkış hatası:", error);
