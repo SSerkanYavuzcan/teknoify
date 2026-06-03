@@ -358,6 +358,8 @@ Phase 4E adds `docs/architecture/first-auth-consumer-migration-checklist.md` as 
 
 Phase 4F completes that first runtime consumer migration for `js/lib/auth.js`, using centralized route and role constants while preserving Firebase, App Check, Firestore, auth, impersonation, redirect, and exported session behavior.
 
+Phase 4J adds the route bridge loading plan before any HTML script tag changes, keeping the bridge rollout documentation-only until a later PR loads `packages/config/routes-global.js` on selected public pages.
+
 1. Add package-level README files for `packages/auth`, `packages/config`, and `packages/data-access`.
 2. Add route constants in a non-invasive way with no URL changes.
 3. Add role constants and pure access helpers in a non-invasive way.

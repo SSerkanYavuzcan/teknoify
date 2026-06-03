@@ -47,6 +47,8 @@ The bridge must remain side-effect-limited and must not:
 
 No HTML pages load this bridge in Phase 4I.
 
+Phase 4J created [the route bridge loading plan](route-bridge-loading-plan.md) before adding the bridge script tag to any HTML page.
+
 In a future PR that opts into the bridge, load it before `/js/script.js` on the selected pages:
 
 ```html
