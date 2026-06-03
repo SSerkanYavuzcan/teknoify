@@ -19,18 +19,57 @@
         return element;
     }
 
+    function getInvestmentFormatter(formatterName) {
+        try {
+            const formatter = window.TEKNOIFY_INVESTMENT_UTILS?.formatters?.[formatterName];
+
+            return typeof formatter === "function" ? formatter : null;
+        } catch (error) {
+            console.warn(`Investment formatter bridge lookup failed for ${formatterName}; using local fallback.`, error);
+
+            return null;
+        }
+    }
+
+    function callInvestmentFormatter(formatterName, fallback, args) {
+        const formatter = getInvestmentFormatter(formatterName);
+
+        if (formatter) {
+            try {
+                return formatter(...args);
+            } catch (error) {
+                console.warn(`Investment formatter bridge failed for ${formatterName}; using local fallback.`, error);
+            }
+        }
+
+        return fallback(...args);
+    }
+
     function formatNumber(value) {
-        return Math.round(value).toLocaleString("tr-TR");
+        return callInvestmentFormatter(
+            "formatNumber",
+            (fallbackValue) => Math.round(fallbackValue).toLocaleString("tr-TR"),
+            [value]
+        );
     }
 
     function formatUsdCompact(value) {
-        return `$${Math.round(value / 1000).toLocaleString("tr-TR")}K`;
+        return callInvestmentFormatter(
+            "formatUsdCompact",
+            (fallbackValue) => `$${Math.round(fallbackValue / 1000).toLocaleString("tr-TR")}K`,
+            [value]
+        );
     }
 
     function formatTlMillion(value) {
-        return Number(value).toLocaleString("tr-TR", {
-            maximumFractionDigits: 3
-        });
+        return callInvestmentFormatter(
+            "formatTlMillion",
+            (fallbackValue) =>
+                Number(fallbackValue).toLocaleString("tr-TR", {
+                    maximumFractionDigits: 3
+                }),
+            [value]
+        );
     }
 
     function getCompanies() {
@@ -665,12 +704,18 @@
 
 
     function parseLocalizedNumber(value) {
-        const normalizedValue = String(value ?? "")
-            .replace(/\s/g, "")
-            .replace(",", ".");
-        const numberValue = Number.parseFloat(normalizedValue);
+        return callInvestmentFormatter(
+            "parseLocalizedNumber",
+            (fallbackValue) => {
+                const normalizedValue = String(fallbackValue ?? "")
+                    .replace(/\s/g, "")
+                    .replace(",", ".");
+                const numberValue = Number.parseFloat(normalizedValue);
 
-        return Number.isFinite(numberValue) ? numberValue : 0;
+                return Number.isFinite(numberValue) ? numberValue : 0;
+            },
+            [value]
+        );
     }
 
     function getCompoundFrequencyPerYear(frequency) {
@@ -686,13 +731,19 @@
     }
 
     function formatUsdCurrency(value) {
-        const safeValue = Number.isFinite(value) ? value : 0;
+        return callInvestmentFormatter(
+            "formatUsdCurrency",
+            (fallbackValue) => {
+                const safeValue = Number.isFinite(fallbackValue) ? fallbackValue : 0;
 
-        return safeValue.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-            maximumFractionDigits: 0
-        });
+                return safeValue.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                    maximumFractionDigits: 0
+                });
+            },
+            [value]
+        );
     }
 
     function formatCalculatorPeriod(index, contributionFrequency) {

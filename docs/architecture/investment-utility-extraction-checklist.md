@@ -283,7 +283,11 @@ A later runtime extraction PR should verify:
 
 Phase 5H adds the formatter bridge to `pages/investment-analytics.html`, but formatter call sites are not migrated yet. The local formatter fallback/functions inside `js/investment-analytics.js` still preserve existing behavior until a future PR selectively reads from `window.TEKNOIFY_INVESTMENT_UTILS.formatters` with fallback safety.
 
-## 12. Risk notes
+## 12. Phase 5I note
+
+Phase 5I performs the first consumer migration by wrapping selected local formatter functions in `js/investment-analytics.js` with bridge-first/local-fallback behavior. The local formatter definitions remain in place so missing, malformed, or throwing bridge formatters continue to use the current fallback logic.
+
+## 13. Risk notes
 
 - Utility functions may close over global constants.
 - Formatting changes can visually alter charts and tables.
@@ -293,7 +297,7 @@ Phase 5H adds the formatter bridge to `pages/investment-analytics.html`, but for
 - Hidden dependencies on Turkish locale and `Intl` formatting can cause visible output changes.
 - Existing tests may not cover browser behavior, script ordering, or manual chart/calculator flows.
 
-## 13. Relationship to existing docs
+## 14. Relationship to existing docs
 
 This checklist builds on these prior Phase 5 docs and skeletons:
 

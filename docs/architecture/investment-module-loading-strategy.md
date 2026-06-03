@@ -262,7 +262,7 @@ Recommended staged runtime sequence:
 
 - **Phase 5G:** Create the pure formatter module plus formatter global bridge only. Do not change `js/investment-analytics.js`.
 - **Phase 5H:** Load the formatter bridge on `pages/investment-analytics.html` while preserving existing dependency order and without changing formatter call sites.
-- **Phase 5I:** Update only one or two formatter call paths in `js/investment-analytics.js` to read from `window.TEKNOIFY_INVESTMENT_UTILS.formatters` with local fallback functions.
+- **Phase 5I:** Update only selected safe formatter helper definitions in `js/investment-analytics.js` to read from `window.TEKNOIFY_INVESTMENT_UTILS.formatters` with local fallback functions.
 
 Do not extract calculators, chart rendering, chart math coupled to rendering, sector orchestration, chatbot behavior, premium gate behavior, Firebase/data fetching, or page boot logic in these first runtime PRs.
 
@@ -315,3 +315,7 @@ Phase 5F adds this module loading and legacy bridge strategy before extracting p
 ## 13. Phase 5H status
 
 Phase 5H loads the formatter bridge on `pages/investment-analytics.html` before the existing classic deferred `js/investment-analytics.js` entrypoint. `js/investment-analytics.js` has not been migrated to read `window.TEKNOIFY_INVESTMENT_UTILS.formatters` yet, so its local formatter functions remain in place and preserve current behavior.
+
+## 14. Phase 5I status
+
+Phase 5I keeps `js/investment-analytics.js` as a classic deferred script and reads the formatter bridge only through safe wrappers with local fallbacks. Selected formatter helpers now try `window.TEKNOIFY_INVESTMENT_UTILS.formatters` first when a matching function exists, then preserve the local formatter behavior when the bridge is unavailable, malformed, incomplete, or throws.
