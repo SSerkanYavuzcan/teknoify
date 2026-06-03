@@ -1,5 +1,5 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8", // Belirttiğin güncel anahtar ile eşitlendi
+    apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8", 
     authDomain: "teknoify-9449c.firebaseapp.com",
     projectId: "teknoify-9449c",
     storageBucket: "teknoify-9449c.firebasestorage.app",
@@ -8,26 +8,22 @@ const firebaseConfig = {
     measurementId: "G-1DZKJE7BXE"
 };
 
-// 1. Firebase'i Başlat
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-// 2. Firebase App Check'i Başlat (Güvenlik Katmanı)
 if (typeof firebase !== 'undefined' && firebase.appCheck) {
-    // Localhost testlerinde engellenmemek için debug modunu aç
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
         self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     }
     
     const appCheck = firebase.appCheck();
     appCheck.activate(
-        '6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', // index.html'deki reCAPTCHA v3 Site Key'in
-        true // Token otomatik yenilemesi aktif
+        '6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', 
+        true 
     );
 }
 
-// 3. Modülleri Yükle
 const auth = (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') ? firebase.auth() : null;
 const db = (typeof firebase !== 'undefined' && typeof firebase.firestore === 'function') ? firebase.firestore() : null;
 
@@ -131,12 +127,10 @@ class AuthSystem {
                 const user = auth ? auth.currentUser : null;
                 if (user) {
                     try {
-                        // 1. Önce Token (Custom Claims) üzerinden kontrol et (session-manager ile uyumlu)
                         const idTokenResult = await user.getIdTokenResult();
                         let isAdmin = !!idTokenResult.claims.admin;
                         let isPremium = !!idTokenResult.claims.premium;
 
-                        // 2. Token'da yoksa Veritabanına bak (Esnek yapı)
                         if (!isAdmin && db) {
                             const userDoc = await db.collection('users').doc(user.uid).get();
                             if (userDoc.exists) {
@@ -201,21 +195,17 @@ class AuthSystem {
             .then(async (userCredential) => {
                 const user = userCredential.user;
                 try {
-                    // YARIŞ DURUMU (RACE CONDITION) ÇÖZÜMÜ: 
-                    // Veritabanına sormadan önce Firebase Auth'un oturumu senkronize etmesi için 600ms süre tanıyoruz.
+
                     await new Promise(resolve => setTimeout(resolve, 600));
 
-                    // 1. Önce Token (Custom Claims) üzerinden kontrol et (Güncel veriyi zorla çekmek için "true" ekledik)
                     const idTokenResult = await user.getIdTokenResult(true);
                     let isAdmin = !!idTokenResult.claims.admin;
                     let isPremium = !!idTokenResult.claims.premium;
 
-                    // 2. Token'da yoksa Veritabanına bak
                     if (!isAdmin && db) {
                         const userDoc = await db.collection('users').doc(user.uid).get();
                         if (userDoc.exists) {
                             const data = userDoc.data();
-                            // Hem role: "admin" hem de role: { type: "admin" } formatını hatasız destekler
                             const roleType = (typeof data.role === 'object' && data.role !== null) ? data.role.type : data.role;
                             isAdmin = roleType === 'admin';
                             isPremium = roleType === 'premium';
