@@ -185,8 +185,8 @@ Because `js/investment-analytics.js` is still a classic deferred script, calcula
 - **Phase 5Q:** Create or update calculator README/skeleton documentation if needed. Do not create runtime calculator modules unless that phase explicitly scopes them.
 - **Phase 5R:** Extract pure calculator math for one calculator only, likely the least coupled function group.
 - **Phase 5S:** Migrate `growCompoundValue` to bridge-first/local-fallback behavior while keeping calculator render, input, validation, chart, and event logic untouched.
-- **Phase 5T:** Migrate the next calculator math consumer with a local fallback and unchanged DOM/render/chart/event behavior.
-- **Phase 5U:** Add a calculator bridge/runtime smoke test document with sample input/output checks and manual page checks.
+- **Phase 5T:** Add a calculator bridge/runtime smoke test document with sample input/output checks and manual page checks after the first compound calculator consumer migration.
+- **Phase 5U:** Migrate the next calculator math consumer only after compound bridge smoke testing passes, with a local fallback and unchanged DOM/render/chart/event behavior.
 - **Later:** Extract chart data preparation, rendering, and event binding only after math extraction is stable and smoke-tested.
 
 ## 10. First runtime PR recommendation
@@ -204,6 +204,8 @@ Recommended first runtime extraction target: **compound interest pure math helpe
 Reason: `growCompoundValue` is identifiable from inspection as the least coupled calculator math function. It does not read or write the DOM, does not format output, does not add events, and does not directly render charts. The broader compound calculation (`calculateCompoundInterest` and `getContributionTimes`) is also pure, but it is more output-sensitive and should follow only after `growCompoundValue` bridge/fallback behavior is proven.
 
 Phase 5S confirms `growCompoundValue` now uses bridge-first/local-fallback behavior, while calculator render, input, validation, chart, and event logic remains untouched.
+
+Phase 5T adds `investment-compound-bridge-smoke-test.md`, a manual checklist and result document for validating the compound interest bridge after the first compound calculator consumer migration.
 
 ## 11. Smoke test checklist
 

@@ -37,6 +37,8 @@ unchanged.
 
 **Phase 5Q update:** The first pure compound interest calculator module and bridge now exist under `domains/investment-intelligence/analytics/scripts/calculators/`, but no HTML page loads the bridge and no Investment Analytics calculator consumer has been migrated yet.
 
+**Phase 5T smoke-test note:** `investment-compound-bridge-smoke-test.md` now documents the manual decision gate for validating `growCompoundValue` bridge behavior before local compound fallback removal or higher-risk compound calculator DOM/input/render extraction.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:
