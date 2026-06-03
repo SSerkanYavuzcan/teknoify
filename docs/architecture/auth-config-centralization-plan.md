@@ -378,6 +378,12 @@ route bridge when available. Hardcoded dashboard fallbacks remain in place so
 auth redirect behavior is unchanged on pages without the bridge or with malformed
 bridge data.
 
+## Phase 4M note
+
+Phase 4M loads the route bridge on the remaining public pages that already load
+`js/script.js`, keeping the bridge before `js/script.js` while preserving the
+existing fallback route strings and auth redirect behavior.
+
 ## 13. Relationship to existing architecture docs
 
 This plan should be read with the existing architecture and decision documents:
