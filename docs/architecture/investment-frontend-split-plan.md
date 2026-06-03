@@ -14,6 +14,10 @@ This plan should make future review smaller and safer by documenting the current
 inventory, the responsibilities inside the large investment files, the proposed future module
 and style boundaries, compatibility rules, staged migration order, risks, and smoke tests.
 
+**Phase 5E update:** `investment-utility-extraction-checklist.md` now documents the pure
+utility extraction checklist for `js/investment-analytics.js`. Phase 5E did not move runtime
+JavaScript or CSS files.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:
