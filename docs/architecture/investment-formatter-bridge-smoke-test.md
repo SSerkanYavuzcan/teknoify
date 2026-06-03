@@ -1,4 +1,4 @@
-# Investment Formatter Bridge Smoke Test
+# Investment Analytics Formatter Bridge Smoke Test
 
 ## 1. Title and purpose
 
@@ -46,9 +46,15 @@ Run these checks manually in a browser:
 - Confirm `window.TEKNOIFY_INVESTMENT_UTILS` exists.
 - Confirm `window.TEKNOIFY_INVESTMENT_UTILS.formatters` exists.
 - Confirm each formatter export is a function.
-- Confirm sample outputs match the expected values for the current formatter contract.
+- Confirm sample outputs match the expected values for the current formatter contract and the local wrapper fallback behavior.
 
 Example console checks:
+
+- `window.TEKNOIFY_INVESTMENT_UTILS.formatters.formatNumber(1234567)`
+- `window.TEKNOIFY_INVESTMENT_UTILS.formatters.formatUsdCompact(1500000)`
+- `window.TEKNOIFY_INVESTMENT_UTILS.formatters.formatTlMillion(250000000)`
+- `window.TEKNOIFY_INVESTMENT_UTILS.formatters.parseLocalizedNumber("1.234,56")`
+- `window.TEKNOIFY_INVESTMENT_UTILS.formatters.formatUsdCurrency(1234.56)`
 
 ```js
 window.TEKNOIFY_INVESTMENT_UTILS;
