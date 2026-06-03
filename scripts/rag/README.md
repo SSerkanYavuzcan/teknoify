@@ -2,16 +2,16 @@
 
 ## Purpose
 
-Future home for RAG indexing, search, extraction, and local retrieval scripts.
+Future home for CLI and helper scripts related to RAG workflows.
 
 ## What belongs here
 
-RAG utility scripts, local retrieval helpers, and document-processing script docs after migration.
+RAG workflow utilities, local indexing helpers, retrieval preparation commands, validation helpers, and script documentation after package scripts and compatibility wrappers are ready.
 
 ## What does not belong here yet
 
-Current extraction/search scripts, stock document paths, generated outputs, or workflow changes yet.
+Existing scripts should not move here until compatibility wrappers or package scripts are updated. Do not break current npm scripts, workflow references, stock-document paths, or generated-output locations.
 
-## Migration status
+## Current migration status
 
-Phase 2 skeleton only; no runtime files have been moved here yet.
+Migration status: Phase 5B README-only skeleton; no runtime investment files have been moved here yet.

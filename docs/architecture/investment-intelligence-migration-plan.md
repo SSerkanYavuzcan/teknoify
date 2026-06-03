@@ -240,7 +240,9 @@ or wrapping them.
 
 - **Phase 5A:** Create this migration plan only.
 - **Phase 5B:** Create README files under `domains/investment-intelligence` and
-  `data/investment` without moving runtime files.
+  `data/investment` without moving runtime files. Phase 5B README-only skeletons are now
+  in place across the future domain, data, RAG worker, and RAG script folders; no runtime
+  investment files were moved.
 - **Phase 5C:** Move only investment documentation references if needed.
 - **Phase 5D:** Extract investment analytics JS into internal sections without changing the
   public `js/investment-analytics.js` path.
