@@ -285,14 +285,42 @@
         container.appendChild(legend);
     }
 
-    function getPoint(index, value, periods, chartConfig) {
-        const { left, top, width, height, maxValue, minValue } = chartConfig;
-        const divisor = Math.max(periods.length - 1, 1);
-        const valueRange = Math.max(maxValue - minValue, 1);
-        const x = left + (index / divisor) * width;
-        const y = top + height - ((value - minValue) / valueRange) * height;
+    function getInvestmentChartMathHelper(helperName) {
+        const utilsChartMath = window.TEKNOIFY_INVESTMENT_UTILS?.chartMath;
+        const standaloneChartMath = window.TEKNOIFY_INVESTMENT_CHART_MATH;
+        const helper = utilsChartMath?.[helperName] || standaloneChartMath?.[helperName];
 
-        return { x, y };
+        return typeof helper === "function" ? helper : null;
+    }
+
+    function callInvestmentChartMathHelper(helperName, fallback, args) {
+        const helper = getInvestmentChartMathHelper(helperName);
+
+        if (helper) {
+            try {
+                return helper(...args);
+            } catch (error) {
+                console.warn(`Investment chart math bridge failed for ${helperName}; using local fallback.`, error);
+            }
+        }
+
+        return fallback(...args);
+    }
+
+    function getPoint(index, value, periods, chartConfig) {
+        return callInvestmentChartMathHelper(
+            "getPoint",
+            (fallbackIndex, fallbackValue, fallbackPeriods, fallbackChartConfig) => {
+                const { left, top, width, height, maxValue, minValue } = fallbackChartConfig;
+                const divisor = Math.max(fallbackPeriods.length - 1, 1);
+                const valueRange = Math.max(maxValue - minValue, 1);
+                const x = left + (fallbackIndex / divisor) * width;
+                const y = top + height - ((fallbackValue - minValue) / valueRange) * height;
+
+                return { x, y };
+            },
+            [index, value, periods, chartConfig]
+        );
     }
 
     function renderLineGrid(svg, chartConfig, formatAxisValue) {
@@ -582,45 +610,51 @@
     }
 
     function getLineChartConfig(options, series) {
-        const rawMax = Math.max(...series.flatMap((item) => item.values), 1);
-        const rawMin = Math.min(...series.flatMap((item) => item.values), 0);
-        const roundedMax = Math.ceil(rawMax / options.axisStep) * options.axisStep;
-        const lowerPadding = (roundedMax - rawMin) * 0.04;
-        const roundedMin = Math.max(0, Math.floor((rawMin - lowerPadding) / options.axisStep) * options.axisStep);
+        return callInvestmentChartMathHelper(
+            "getLineChartConfig",
+            (fallbackOptions, fallbackSeries) => {
+                const rawMax = Math.max(...fallbackSeries.flatMap((item) => item.values), 1);
+                const rawMin = Math.min(...fallbackSeries.flatMap((item) => item.values), 0);
+                const roundedMax = Math.ceil(rawMax / fallbackOptions.axisStep) * fallbackOptions.axisStep;
+                const lowerPadding = (roundedMax - rawMin) * 0.04;
+                const roundedMin = Math.max(0, Math.floor((rawMin - lowerPadding) / fallbackOptions.axisStep) * fallbackOptions.axisStep);
 
-        if (options.mode === "modal") {
-            return {
-                left: 84,
-                top: 34,
-                width: 940,
-                height: 430,
-                minValue: roundedMin,
-                maxValue: roundedMax,
-                viewBox: "0 0 1100 540"
-            };
-        }
+                if (fallbackOptions.mode === "modal") {
+                    return {
+                        left: 84,
+                        top: 34,
+                        width: 940,
+                        height: 430,
+                        minValue: roundedMin,
+                        maxValue: roundedMax,
+                        viewBox: "0 0 1100 540"
+                    };
+                }
 
-        if (options.variant === "wide") {
-            return {
-                left: 86,
-                top: 32,
-                width: 900,
-                height: 330,
-                minValue: roundedMin,
-                maxValue: roundedMax,
-                viewBox: "0 0 1080 430"
-            };
-        }
+                if (fallbackOptions.variant === "wide") {
+                    return {
+                        left: 86,
+                        top: 32,
+                        width: 900,
+                        height: 330,
+                        minValue: roundedMin,
+                        maxValue: roundedMax,
+                        viewBox: "0 0 1080 430"
+                    };
+                }
 
-        return {
-            left: 78,
-            top: 30,
-            width: 800,
-            height: 320,
-            minValue: roundedMin,
-            maxValue: roundedMax,
-            viewBox: "0 0 980 420"
-        };
+                return {
+                    left: 78,
+                    top: 30,
+                    width: 800,
+                    height: 320,
+                    minValue: roundedMin,
+                    maxValue: roundedMax,
+                    viewBox: "0 0 980 420"
+                };
+            },
+            [options, series]
+        );
     }
 
     function renderLineChart(container, series, options) {
@@ -949,27 +983,43 @@
     }
 
     function getCompoundChartPoint(index, value, points, chartConfig) {
-        const { left, top, width, height, maxValue } = chartConfig;
-        const divisor = Math.max(points.length - 1, 1);
-        const x = left + (index / divisor) * width;
-        const y = top + height - (value / maxValue) * height;
+        return callInvestmentChartMathHelper(
+            "getCompoundChartPoint",
+            (fallbackIndex, fallbackValue, fallbackPoints, fallbackChartConfig) => {
+                const { left, top, width, height, maxValue } = fallbackChartConfig;
+                const divisor = Math.max(fallbackPoints.length - 1, 1);
+                const x = left + (fallbackIndex / divisor) * width;
+                const y = top + height - (fallbackValue / maxValue) * height;
 
-        return { x, y };
+                return { x, y };
+            },
+            [index, value, points, chartConfig]
+        );
     }
 
     function buildChartPath(points, key, chartConfig) {
-        return points.map((point, index) => {
-            const coordinates = getCompoundChartPoint(index, point[key], points, chartConfig);
+        return callInvestmentChartMathHelper(
+            "buildChartPath",
+            (fallbackPoints, fallbackKey, fallbackChartConfig) => fallbackPoints.map((point, index) => {
+                const coordinates = getCompoundChartPoint(index, point[fallbackKey], fallbackPoints, fallbackChartConfig);
 
-            return `${index === 0 ? "M" : "L"}${coordinates.x.toFixed(2)} ${coordinates.y.toFixed(2)}`;
-        }).join(" ");
+                return `${index === 0 ? "M" : "L"}${coordinates.x.toFixed(2)} ${coordinates.y.toFixed(2)}`;
+            }).join(" "),
+            [points, key, chartConfig]
+        );
     }
 
     function shouldShowChartValueLabel(index, totalPoints) {
-        if (totalPoints <= 14) return true;
-        if (index === 0 || index === totalPoints - 1) return true;
+        return callInvestmentChartMathHelper(
+            "shouldShowChartValueLabel",
+            (fallbackIndex, fallbackTotalPoints) => {
+                if (fallbackTotalPoints <= 14) return true;
+                if (fallbackIndex === 0 || fallbackIndex === fallbackTotalPoints - 1) return true;
 
-        return index % Math.ceil(totalPoints / 6) === 0;
+                return fallbackIndex % Math.ceil(fallbackTotalPoints / 6) === 0;
+            },
+            [index, totalPoints]
+        );
     }
 
     function appendSvgTitle(element, text) {

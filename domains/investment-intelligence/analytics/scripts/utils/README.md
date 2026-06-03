@@ -38,7 +38,9 @@ Phase 5L creates the first pure chart math module and bridge without migrating c
 - The existing formatter bridge currently defines `window.TEKNOIFY_INVESTMENT_UTILS` as a frozen, non-writable object, so the chart math bridge must preserve formatter behavior and use the separate chart math namespace when loaded after formatters.
 - Existing consumers have not been migrated yet. `js/investment-analytics.js` still contains its original chart math/path helper functions.
 
-Phase 5M loads `chart-math-global.js` on `pages/investment-analytics.html` after the formatter bridge and before the classic deferred analytics entrypoint. Existing chart math consumers are still not migrated. A future PR should migrate selected chart math helpers with fallback safety so local helpers continue to protect runtime behavior if the bridge is missing, incomplete, or throws.
+Phase 5M loads `chart-math-global.js` on `pages/investment-analytics.html` after the formatter bridge and before the classic deferred analytics entrypoint. Local chart math helpers continue to protect runtime behavior if the bridge is missing, incomplete, or throws.
+
+Phase 5N migrates selected chart math consumers in `js/investment-analytics.js` to read from the bridge when available while retaining local fallback definitions. Missing bridge utilities, malformed bridge values, incomplete chart math sets, or throwing bridged functions still fall back to the local helper logic.
 
 ## Candidate current source files
 

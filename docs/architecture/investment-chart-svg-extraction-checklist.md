@@ -138,7 +138,9 @@ Future extraction targets may include:
 
 Phase 5L created `chart-math.js` and `chart-math-global.js`; the remaining targets should wait for later, focused runtime PRs.
 
-Phase 5M loads the chart math bridge on `pages/investment-analytics.html`. `js/investment-analytics.js` has not been migrated to read it yet, so local chart math and path helper functions remain in place.
+Phase 5M loads the chart math bridge on `pages/investment-analytics.html`, while local chart math and path helper functions remain in place.
+
+Phase 5N updates selected chart math helper definitions in `js/investment-analytics.js` to use guarded bridge-first/local-fallback wrappers when bridge helpers are available. Chart renderers and DOM/SVG mounting remain untouched, and the local chart math/path fallback definitions remain in place.
 
 ## 10. Smoke test checklist for future chart/SVG extraction
 
