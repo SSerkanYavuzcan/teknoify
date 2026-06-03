@@ -20,6 +20,9 @@ module.exports = [
                 IntersectionObserver: 'readonly',
                 URLSearchParams: 'readonly',
                 alert: 'readonly',
+                location: 'readonly',
+                self: 'readonly',
+                showToast: 'readonly',
                 firebase: 'readonly'
             }
         },
@@ -50,6 +53,9 @@ module.exports = [
                 IntersectionObserver: 'readonly',
                 URLSearchParams: 'readonly',
                 alert: 'readonly',
+                location: 'readonly',
+                self: 'readonly',
+                showToast: 'readonly',
                 firebase: 'readonly'
             }
         },
@@ -80,6 +86,9 @@ module.exports = [
                 IntersectionObserver: 'readonly',
                 URLSearchParams: 'readonly',
                 alert: 'readonly',
+                location: 'readonly',
+                self: 'readonly',
+                showToast: 'readonly',
                 firebase: 'readonly'
             }
         },

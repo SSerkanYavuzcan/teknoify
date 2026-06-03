@@ -44,17 +44,59 @@ function consumePostLoginRedirect() {
     return redirectPath && redirectPath.startsWith('/') ? redirectPath : null;
 }
 
+function getLegacyDashboardRouteFallback(roleType) {
+    if (roleType === 'admin') {
+        return '/dashboard/admin.html';
+    }
+    if (roleType === 'premium') {
+        return '/dashboard/premium.html';
+    }
+    return '/dashboard/member.html';
+}
+
+function isLegacyDashboardRouteForRole(route, roleType) {
+    return typeof route === 'string' && route === getLegacyDashboardRouteFallback(roleType);
+}
+
+function getLegacyDashboardRoute(roleType) {
+    const fallbackRoute = getLegacyDashboardRouteFallback(roleType);
+    const routeKey = roleType === 'admin' || roleType === 'premium' ? roleType : 'member';
+
+    try {
+        const routes = window.TEKNOIFY_ROUTES;
+
+        if (routes && typeof routes.getDashboardRouteForRole === 'function') {
+            const resolvedRoute = routes.getDashboardRouteForRole(roleType);
+            if (isLegacyDashboardRouteForRole(resolvedRoute, roleType)) {
+                return resolvedRoute;
+            }
+        }
+
+        const dashboardRoutes = routes && routes.dashboard;
+        if (dashboardRoutes && typeof dashboardRoutes === 'object') {
+            const dashboardRoute = dashboardRoutes[routeKey];
+            if (isLegacyDashboardRouteForRole(dashboardRoute, roleType)) {
+                return dashboardRoute;
+            }
+        }
+    } catch {
+        return fallbackRoute;
+    }
+
+    return fallbackRoute;
+}
+
 function redirectAfterLogin(isAdmin, isPremium) {
     const postLoginRedirect = consumePostLoginRedirect();
 
     if (postLoginRedirect) {
         window.location.href = postLoginRedirect;
     } else if (isAdmin) {
-        window.location.href = '/dashboard/admin.html';
+        window.location.href = getLegacyDashboardRoute('admin');
     } else if (isPremium) {
-        window.location.href = '/dashboard/premium.html';
+        window.location.href = getLegacyDashboardRoute('premium');
     } else {
-        window.location.href = '/dashboard/member.html';
+        window.location.href = getLegacyDashboardRoute('member');
     }
 }
 

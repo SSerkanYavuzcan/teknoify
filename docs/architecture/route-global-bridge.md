@@ -63,6 +63,12 @@ Before `js/script.js` reads the bridge, the future PR must verify that `window.T
 - `index.html` is the first page loading the bridge.
 - The bridge remains non-invasive because no existing consumer reads it yet.
 
+## Phase 4L note
+
+The first consumer is now `js/script.js` redirect target selection. It reads the
+bridge only through safe fallback access so the legacy dashboard strings still
+protect pages where `window.TEKNOIFY_ROUTES` is unavailable or malformed.
+
 ## Future migration plan
 
 1. Add bridge module only — this PR.
