@@ -243,7 +243,7 @@ or wrapping them.
   `data/investment` without moving runtime files. Phase 5B README-only skeletons are now
   in place across the future domain, data, RAG worker, and RAG script folders; no runtime
   investment files were moved.
-- **Phase 5C:** Move only investment documentation references if needed.
+- **Phase 5C:** Add `docs/architecture/investment-frontend-split-plan.md` as the documentation-only investment frontend JavaScript/CSS split plan; no runtime frontend files are moved.
 - **Phase 5D:** Extract investment analytics JS into internal sections without changing the
   public `js/investment-analytics.js` path.
 - **Phase 5E:** Split investment analytics CSS into domain/component structure while
@@ -318,3 +318,8 @@ Phase 5B should create only README files under the future Investment Intelligenc
 - `scripts/rag/`
 
 No runtime moves should happen in Phase 5B.
+
+Phase 5C has now added the investment frontend JS/CSS split plan in
+`docs/architecture/investment-frontend-split-plan.md`. This was documentation-only; no
+runtime frontend pages, JavaScript files, CSS files, data files, scripts, workflows, or package
+files were moved.
