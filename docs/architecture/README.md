@@ -15,6 +15,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`script-login-redirect-migration-checklist.md`](script-login-redirect-migration-checklist.md): Phase 4G documentation-only checklist for a future `js/script.js` login redirect migration, including legacy Firebase/App Check, auth UI, redirect behavior, UI-system risks, and smoke-test requirements.
 - [`route-global-bridge.md`](route-global-bridge.md): Phase 4I bridge plan and runtime contract for exposing centralized route constants as `window.TEKNOIFY_ROUTES` to legacy plain scripts before migrating `js/script.js`.
 - [`route-bridge-loading-plan.md`](route-bridge-loading-plan.md): Phase 4J documentation-only loading plan for adding the route global bridge to public HTML pages in a later PR.
+- [`public-route-bridge-smoke-test.md`](public-route-bridge-smoke-test.md): Phase 4N manual smoke test checklist and result template for validating the public route bridge rollout before fallback cleanup or larger script refactors.
 
 ## What belongs here
 
