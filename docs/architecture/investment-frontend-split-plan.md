@@ -25,6 +25,8 @@ unchanged.
 
 **Phase 5G update:** The first Investment Analytics formatter module and legacy-safe formatter bridge now exist under `domains/investment-intelligence/analytics/scripts/utils/`. No page loads the bridge yet, and `js/investment-analytics.js` remains unchanged for the future consumer migration step.
 
+**Phase 5H update:** `pages/investment-analytics.html` now loads the formatter bridge before the existing classic deferred Investment Analytics entrypoint. Formatter consumers have not been migrated yet, so local formatter functions still preserve current runtime behavior.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:

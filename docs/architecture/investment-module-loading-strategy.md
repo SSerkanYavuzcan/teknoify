@@ -311,3 +311,7 @@ Phase 5F adds this module loading and legacy bridge strategy before extracting p
 - Change CSS.
 - Change data files.
 - Change scripts, workflows, or package configuration.
+
+## 13. Phase 5H status
+
+Phase 5H loads the formatter bridge on `pages/investment-analytics.html` before the existing classic deferred `js/investment-analytics.js` entrypoint. `js/investment-analytics.js` has not been migrated to read `window.TEKNOIFY_INVESTMENT_UTILS.formatters` yet, so its local formatter functions remain in place and preserve current behavior.

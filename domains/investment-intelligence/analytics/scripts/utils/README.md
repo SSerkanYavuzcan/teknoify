@@ -25,7 +25,7 @@ Migration status: Phase 5G created the first pure formatter module and legacy-sa
 - `formatters.js` exports pure formatter and number parsing helpers mirrored from `js/investment-analytics.js`.
 - `formatters-global.js` imports those helpers and exposes them under `window.TEKNOIFY_INVESTMENT_UTILS.formatters` when the bridge module is loaded.
 
-Existing consumers have not been migrated yet. `js/investment-analytics.js` still contains its original formatter functions, and no Investment Analytics HTML page loads the formatter bridge yet. A later PR should load the bridge before migrating any consumer reads to the shared formatter namespace.
+Phase 5H loads `formatters-global.js` on `pages/investment-analytics.html` before the existing classic deferred analytics entrypoint. Existing consumers have still not been migrated yet, and `js/investment-analytics.js` still contains its original formatter functions. A future PR should migrate only selected formatter call paths to read from the shared formatter namespace with local fallback safety.
 
 ## Candidate current source files
 
