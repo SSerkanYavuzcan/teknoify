@@ -8,6 +8,8 @@ This checklist does not move runtime files and does not create chart modules yet
 
 **Phase 5L note:** The first pure chart math module, `domains/investment-intelligence/analytics/scripts/utils/chart-math.js`, and legacy-safe bridge, `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js`, now exist. They are not loaded by any HTML page yet, and `js/investment-analytics.js` has not been migrated to consume them, so current chart runtime behavior remains unchanged.
 
+**Phase 5O note:** `investment-chart-math-bridge-smoke-test.md` now documents the manual smoke test checklist and result template for the chart math bridge after the first `js/investment-analytics.js` chart math consumer migration.
+
 ## 2. Why chart/SVG extraction is higher risk
 
 Chart and SVG extraction is higher risk than formatter extraction because:

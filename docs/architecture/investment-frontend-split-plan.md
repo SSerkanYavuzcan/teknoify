@@ -31,6 +31,8 @@ unchanged.
 
 **Phase 5M update:** `pages/investment-analytics.html` now loads the chart math bridge after the formatter bridge while `js/investment-analytics.js` remains a classic deferred script with its local chart math consumers unchanged.
 
+**Phase 5O smoke-test note:** `investment-chart-math-bridge-smoke-test.md` now documents the manual decision gate for validating chart math bridge behavior before local chart math fallback removal, SVG utility extraction, or chart renderer extraction planning.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:
@@ -425,6 +427,7 @@ Recommended mapping from existing partials:
   runtime.
 - **Phase 5K:** A chart/SVG helper extraction checklist was created before runtime chart extraction; no runtime JS/CSS files were moved.
 - **Phase 5L:** The first pure chart math module and legacy-safe bridge were created, but no HTML page loads the bridge yet and no `js/investment-analytics.js` chart consumers were migrated.
+- **Phase 5O:** The chart math bridge smoke test checklist/result document was added as the decision gate before local chart math fallback cleanup or higher-risk chart renderer extraction.
 - **Future orchestrator phase:** Turn `js/investment-analytics.js` into a thin orchestrator after pure utilities, chart math, calculators, sectors, chatbot, premium coordination, and CSS split work are validated.
 - **Phase 5L:** Split CSS behind the existing linked stylesheet.
 - **Phase 5M:** Update public pages only after compatibility is verified.
