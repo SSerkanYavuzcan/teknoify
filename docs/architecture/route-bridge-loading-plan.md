@@ -107,6 +107,12 @@ When Phase 4K adds the bridge script tag to the chosen page or page set, manuall
 - [ ] No duplicate App Check/Firebase initialization warning is introduced by the bridge.
 - [ ] No route values change.
 
+## Phase 4K note
+
+- The bridge script tag has been added only to `index.html`.
+- Other pages that load `js/script.js` remain unchanged.
+- `js/script.js` has not been migrated to read `window.TEKNOIFY_ROUTES` yet.
+
 ## Future runtime sequence
 
 1. Phase 4J: bridge loading plan only — this PR.

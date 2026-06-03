@@ -367,6 +367,10 @@ Phase 4J adds the route bridge loading plan before any HTML script tag changes, 
 5. Extract login modal behavior only after route, role, redirect, and Firebase access constants are stable.
 6. Plan one dashboard access-guard migration PR for a single route family before migrating all dashboard pages.
 
+## Phase 4K note
+
+The route bridge is now loaded on `index.html` only, before any `js/script.js` redirect migration.
+
 ## 13. Relationship to existing architecture docs
 
 This plan should be read with the existing architecture and decision documents:

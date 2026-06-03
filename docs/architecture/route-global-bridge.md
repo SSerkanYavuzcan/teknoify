@@ -58,6 +58,11 @@ In a future PR that opts into the bridge, load it before `/js/script.js` on the 
 
 Before `js/script.js` reads the bridge, the future PR must verify that `window.TEKNOIFY_ROUTES` exists at the time the legacy redirect code runs. If there is any uncertainty about module/classic-script execution ordering on a page, keep hardcoded fallback route strings in `js/script.js` until browser smoke tests confirm safe ordering.
 
+## Phase 4K note
+
+- `index.html` is the first page loading the bridge.
+- The bridge remains non-invasive because no existing consumer reads it yet.
+
 ## Future migration plan
 
 1. Add bridge module only — this PR.

@@ -257,6 +257,10 @@ These imports are **future-only**. Do not add them in Phase 4G. After Phase 4I, 
 The future runtime PR must first verify how `js/script.js` is loaded before
 adding any ES module import.
 
+## Phase 4K note
+
+Future `redirectAfterLogin()` migration can first be tested on `index.html`, where the bridge is now loaded.
+
 ## 5. Exact behavior preservation requirements
 
 - Existing Firebase config must not change.
