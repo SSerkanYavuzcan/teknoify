@@ -12,6 +12,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`route-constants-migration.md`](route-constants-migration.md): Phase 4C route constants migration plan, route inventory summary, migration safety rules, and future consumer migration order.
 - [`role-access-migration.md`](role-access-migration.md): Phase 4D role/access constants and pure helper migration plan, current inventory summary, preservation rules, and future consumer migration order.
 - [`first-auth-consumer-migration-checklist.md`](first-auth-consumer-migration-checklist.md): Phase 4E planning checklist and Phase 4F completion notes for the first `js/lib/auth.js` consumer migration to route and role/access constants, with current behavior notes and smoke-test requirements.
+- [`script-login-redirect-migration-checklist.md`](script-login-redirect-migration-checklist.md): Phase 4G documentation-only checklist for a future `js/script.js` login redirect migration, including legacy Firebase/App Check, auth UI, redirect behavior, UI-system risks, and smoke-test requirements.
 
 ## What belongs here
 
