@@ -12,6 +12,8 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5M note:** `pages/investment-analytics.html` now loads the chart math bridge directly after the formatter bridge and before the existing classic deferred `js/investment-analytics.js` entrypoint.
 
+**Phase 5N note:** `js/investment-analytics.js` now reads selected chart math bridge helpers only through guarded wrappers with local fallbacks, so missing, malformed, incomplete, or throwing bridge entries continue to use the classic script's local chart math logic.
+
 ## 2. Current loading facts
 
 Phase 5F inspected `pages/investment-analytics.html`, `js/investment-analytics.js`, and the script tags around the Investment Analytics page without editing them.
