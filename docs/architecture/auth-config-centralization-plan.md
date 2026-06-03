@@ -371,6 +371,13 @@ Phase 4J adds the route bridge loading plan before any HTML script tag changes, 
 
 The route bridge is now loaded on `index.html` only, before any `js/script.js` redirect migration.
 
+## Phase 4L note
+
+Phase 4L migrated only `js/script.js` redirect target selection to read the
+route bridge when available. Hardcoded dashboard fallbacks remain in place so
+auth redirect behavior is unchanged on pages without the bridge or with malformed
+bridge data.
+
 ## 13. Relationship to existing architecture docs
 
 This plan should be read with the existing architecture and decision documents:

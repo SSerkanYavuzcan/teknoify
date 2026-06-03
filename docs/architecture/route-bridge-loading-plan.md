@@ -113,6 +113,12 @@ When Phase 4K adds the bridge script tag to the chosen page or page set, manuall
 - Other pages that load `js/script.js` remain unchanged.
 - `js/script.js` has not been migrated to read `window.TEKNOIFY_ROUTES` yet.
 
+## Phase 4L note
+
+Phase 4L migrated only the `redirectAfterLogin()` redirect target selection in
+`js/script.js` to read `window.TEKNOIFY_ROUTES` when available. Pages without
+the bridge still use the preserved fallback dashboard routes.
+
 ## Future runtime sequence
 
 1. Phase 4J: bridge loading plan only — this PR.

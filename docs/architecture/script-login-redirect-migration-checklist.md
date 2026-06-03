@@ -385,10 +385,17 @@ After the future runtime PR, manually verify the following cases:
 - UI behavior is mixed with auth behavior, so avoid broad refactors.
 - Redirect migration should be isolated from Firebase/App Check centralization.
 
-## 10. Recommended next runtime PR
+## 10. Phase 4L note
 
-The next runtime PR should migrate only `redirectAfterLogin()` route target
-selection. While `js/script.js` remains a plain script, prefer loading the Phase
-4I route global bridge first and reading from `window.TEKNOIFY_ROUTES` with
-fallback route strings. Direct imports should be reserved for a later
-`type="module"` conversion PR.
+Phase 4L migrated only `redirectAfterLogin()` route target selection in
+`js/script.js`. The function now reads `window.TEKNOIFY_ROUTES` when available,
+while preserving the hardcoded `/dashboard/admin.html`,
+`/dashboard/premium.html`, and `/dashboard/member.html` fallback strings for
+pages without the bridge or malformed bridge data.
+
+## 11. Recommended next runtime PR
+
+Phase 4L completed the first runtime redirect target migration. Future runtime
+PRs should keep any broader `js/script.js` auth, Firebase, App Check, login
+modal, or UI migration separate and behavior-preserving. Direct imports should
+still be reserved for a later `type="module"` conversion PR.
