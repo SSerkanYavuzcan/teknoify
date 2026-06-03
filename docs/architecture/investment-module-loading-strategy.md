@@ -14,7 +14,9 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5N note:** `js/investment-analytics.js` now reads selected chart math bridge helpers only through guarded wrappers with local fallbacks, so missing, malformed, incomplete, or throwing bridge entries continue to use the classic script's local chart math logic.
 
-**Phase 5Q note:** The compound interest calculator bridge follows the chart math bridge's compatibility approach: it adds `window.TEKNOIFY_INVESTMENT_UTILS.calculators.compoundInterest` only when the existing investment utils object can be safely extended; otherwise it uses `window.TEKNOIFY_INVESTMENT_COMPOUND_INTEREST` so the frozen formatter namespace remains untouched. The bridge is not loaded by `pages/investment-analytics.html` yet.
+**Phase 5Q note:** The compound interest calculator bridge follows the chart math bridge's compatibility approach: it adds `window.TEKNOIFY_INVESTMENT_UTILS.calculators.compoundInterest` only when the existing investment utils object can be safely extended; otherwise it uses `window.TEKNOIFY_INVESTMENT_COMPOUND_INTEREST` so the frozen formatter namespace remains untouched.
+
+**Phase 5R note:** The compound interest bridge now follows the chart math bridge in the analytics page loading order.
 
 ## 2. Current loading facts
 
@@ -36,6 +38,10 @@ Observed `pages/investment-analytics.html` script order:
     type="module"
     src="/domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js"
 ></script>
+<script
+    type="module"
+    src="/domains/investment-intelligence/analytics/scripts/calculators/compound-interest-global.js"
+></script>
 <script src="../js/script.js" defer></script>
 <script src="../js/investment-analytics.js" defer></script>
 ```
@@ -48,6 +54,7 @@ Current facts:
 - The page loads module bridge scripts for routes, formatters, and chart math before `../js/investment-analytics.js`.
 - The route bridge script remains present before the formatter bridge, shared `../js/script.js`, and `../js/investment-analytics.js`.
 - The chart math bridge now follows the formatter bridge in the analytics page loading order.
+- The compound interest bridge now follows the chart math bridge in the analytics page loading order.
 - Repository search shows `pages/investment-analytics.html` is the only public page that loads `js/investment-analytics.js` directly.
 - Related investment pages such as `pages/investment-retail.html`, `pages/investment-airlines.html`, and `pages/financial-indicators.html` do not load `js/investment-analytics.js`.
 

@@ -10,6 +10,8 @@ Calculator extraction is intentionally planned after the formatter bridge and ch
 
 **Phase 5Q note:** The first compound calculator pure module, `domains/investment-intelligence/analytics/scripts/calculators/compound-interest.js`, and legacy-safe bridge, `domains/investment-intelligence/analytics/scripts/calculators/compound-interest-global.js`, now exist. They are not loaded by any HTML page yet, and `js/investment-analytics.js` has not been migrated to consume them, so existing calculator runtime behavior remains unchanged.
 
+**Phase 5R note:** The compound interest bridge is now loaded on `pages/investment-analytics.html`. `js/investment-analytics.js` has not been migrated to read it yet, and the local compound calculator logic remains in place.
+
 ## 2. Why calculator extraction matters
 
 Calculator extraction matters because the calculators are not just page widgets; they are productizable individual tools:
