@@ -18,6 +18,8 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5R note:** The compound interest bridge now follows the chart math bridge in the analytics page loading order.
 
+**Phase 5S note:** `js/investment-analytics.js` now reads the compound interest bridge only through guarded wrappers with local fallback, so missing, malformed, incomplete, or throwing bridge entries continue to use the classic script's local compound growth math.
+
 ## 2. Current loading facts
 
 Phase 5F inspected `pages/investment-analytics.html`, `js/investment-analytics.js`, and the script tags around the Investment Analytics page without editing them.

@@ -30,7 +30,7 @@ The compound interest bridge tries to expose `window.TEKNOIFY_INVESTMENT_UTILS.c
 
 Phase 5R loads `compound-interest-global.js` on `pages/investment-analytics.html` after the chart math bridge and before the classic deferred `js/investment-analytics.js` entrypoint. Existing compound calculator consumers are still not migrated, and local compound calculator behavior remains active.
 
-A future PR should migrate `growCompoundValue` to read the compound interest bridge with fallback safety before any local cleanup.
+Phase 5S migrates the first compound calculator consumer: `growCompoundValue` in `js/investment-analytics.js` now reads from the compound interest bridge when available while retaining the local fallback definition for missing, malformed, incomplete, or throwing bridge entries.
 
 ## Candidate current source files
 

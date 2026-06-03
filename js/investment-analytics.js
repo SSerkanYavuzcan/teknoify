@@ -791,19 +791,59 @@
         return `${year}. Yıl / ${month}. Ay`;
     }
 
-    function growCompoundValue(value, years, annualRate, compoundingPeriodsPerYear) {
-        if (!Number.isFinite(value) || value <= 0 || years <= 0) {
-            return Number.isFinite(value) ? Math.max(value, 0) : 0;
+    function getCompoundInterestHelper(helperName) {
+        try {
+            const compoundFromUtils = window.TEKNOIFY_INVESTMENT_UTILS?.calculators?.compoundInterest;
+            const helperFromUtils = compoundFromUtils?.[helperName];
+
+            if (typeof helperFromUtils === "function") {
+                return helperFromUtils;
+            }
+
+            const standaloneCompound = window.TEKNOIFY_INVESTMENT_COMPOUND_INTEREST;
+            const standaloneHelper = standaloneCompound?.[helperName];
+
+            return typeof standaloneHelper === "function" ? standaloneHelper : null;
+        } catch (error) {
+            console.warn(`Investment compound bridge lookup failed for ${helperName}; using local fallback.`, error);
+
+            return null;
+        }
+    }
+
+    function callCompoundInterestHelper(helperName, fallback, args) {
+        const helper = getCompoundInterestHelper(helperName);
+
+        if (helper) {
+            try {
+                return helper(...args);
+            } catch (error) {
+                console.warn(`Investment compound bridge failed for ${helperName}; using local fallback.`, error);
+            }
         }
 
-        const periodRate = annualRate / compoundingPeriodsPerYear;
-        const growthBase = 1 + periodRate;
+        return fallback(...args);
+    }
 
-        if (growthBase <= 0) return 0;
+    function growCompoundValue(value, years, annualRate, compoundingPeriodsPerYear) {
+        return callCompoundInterestHelper(
+            "growCompoundValue",
+            (value, years, annualRate, compoundingPeriodsPerYear) => {
+                if (!Number.isFinite(value) || value <= 0 || years <= 0) {
+                    return Number.isFinite(value) ? Math.max(value, 0) : 0;
+                }
 
-        const grownValue = value * (growthBase ** (compoundingPeriodsPerYear * years));
+                const periodRate = annualRate / compoundingPeriodsPerYear;
+                const growthBase = 1 + periodRate;
 
-        return Number.isFinite(grownValue) ? Math.max(grownValue, 0) : 0;
+                if (growthBase <= 0) return 0;
+
+                const grownValue = value * (growthBase ** (compoundingPeriodsPerYear * years));
+
+                return Number.isFinite(grownValue) ? Math.max(grownValue, 0) : 0;
+            },
+            [value, years, annualRate, compoundingPeriodsPerYear]
+        );
     }
 
     function parseCalculatorInputs() {
