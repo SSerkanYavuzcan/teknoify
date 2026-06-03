@@ -29,6 +29,8 @@ unchanged.
 
 **Phase 5J smoke-test note:** `investment-formatter-bridge-smoke-test.md` now documents the manual checks and result template for validating formatter bridge behavior after the first consumer migration. Treat this as a decision gate before chart/SVG helper extraction, calculator extraction planning, or local formatter fallback removal.
 
+**Phase 5M update:** `pages/investment-analytics.html` now loads the chart math bridge after the formatter bridge while `js/investment-analytics.js` remains a classic deferred script with its local chart math consumers unchanged.
+
 ## 2. Current investment frontend files to inspect
 
 Phase 5C inspected these frontend files and areas without editing runtime frontend files:

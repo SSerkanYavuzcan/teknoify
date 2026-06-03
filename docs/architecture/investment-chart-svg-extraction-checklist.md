@@ -122,7 +122,7 @@ Because `js/investment-analytics.js` is still a classic script, future chart mat
 Future bridge shape:
 
 - Use the new `domains/investment-intelligence/analytics/scripts/utils/chart-math.js` module for pure chart math helpers.
-- Load the new `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js` module in a later PR before migrating classic-script consumers.
+- Phase 5M loads `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js` on `pages/investment-analytics.html` before migrating classic-script consumers.
 - Prefer `window.TEKNOIFY_INVESTMENT_UTILS.chartMath` when the existing investment utils global can be safely extended; otherwise use the bridge's `window.TEKNOIFY_INVESTMENT_CHART_MATH` fallback namespace.
 - Keep local fallback functions in `js/investment-analytics.js` during the first migration, matching the formatter bridge pattern.
 - Do not expose renderer globals yet; renderer extraction should wait until pure helpers and the bridge are validated.
@@ -137,6 +137,8 @@ Future extraction targets may include:
 - `domains/investment-intelligence/analytics/scripts/calculators/chart-helpers.js`
 
 Phase 5L created `chart-math.js` and `chart-math-global.js`; the remaining targets should wait for later, focused runtime PRs.
+
+Phase 5M loads the chart math bridge on `pages/investment-analytics.html`. `js/investment-analytics.js` has not been migrated to read it yet, so local chart math and path helper functions remain in place.
 
 ## 10. Smoke test checklist for future chart/SVG extraction
 

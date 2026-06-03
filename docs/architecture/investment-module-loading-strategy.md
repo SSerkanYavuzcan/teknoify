@@ -8,7 +8,9 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5G note:** The pure formatter module `domains/investment-intelligence/analytics/scripts/utils/formatters.js` and legacy-safe bridge module `domains/investment-intelligence/analytics/scripts/utils/formatters-global.js` now exist. The bridge has not been loaded into `pages/investment-analytics.html` yet, and `js/investment-analytics.js` has not been migrated to consume it.
 
-**Phase 5L note:** The pure chart math module `domains/investment-intelligence/analytics/scripts/utils/chart-math.js` and chart math bridge `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js` now exist. Because the formatter bridge defines `window.TEKNOIFY_INVESTMENT_UTILS` as a frozen, non-writable object, the chart math bridge preserves the formatter namespace and uses `window.TEKNOIFY_INVESTMENT_CHART_MATH` as the legacy-safe fallback unless an existing investment utils object can be extended safely. The chart math bridge is not loaded by any HTML page yet.
+**Phase 5L note:** The pure chart math module `domains/investment-intelligence/analytics/scripts/utils/chart-math.js` and chart math bridge `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js` now exist. Because the formatter bridge defines `window.TEKNOIFY_INVESTMENT_UTILS` as a frozen, non-writable object, the chart math bridge preserves the formatter namespace and uses `window.TEKNOIFY_INVESTMENT_CHART_MATH` as the legacy-safe fallback unless an existing investment utils object can be extended safely.
+
+**Phase 5M note:** `pages/investment-analytics.html` now loads the chart math bridge directly after the formatter bridge and before the existing classic deferred `js/investment-analytics.js` entrypoint.
 
 ## 2. Current loading facts
 
@@ -22,6 +24,14 @@ Observed `pages/investment-analytics.html` script order:
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="../js/session-manager.js"></script>
 <script type="module" src="/packages/config/routes-global.js"></script>
+<script
+    type="module"
+    src="/domains/investment-intelligence/analytics/scripts/utils/formatters-global.js"
+></script>
+<script
+    type="module"
+    src="/domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js"
+></script>
 <script src="../js/script.js" defer></script>
 <script src="../js/investment-analytics.js" defer></script>
 ```
@@ -31,8 +41,9 @@ Current facts:
 - `js/investment-analytics.js` is loaded from `pages/investment-analytics.html` as `../js/investment-analytics.js`.
 - The investment analytics script tag uses `defer`.
 - The investment analytics script tag does **not** use `type="module"`; it is a classic deferred script.
-- The page already loads one module script: `/packages/config/routes-global.js`.
-- The route bridge script is present before the shared `../js/script.js` and before `../js/investment-analytics.js`.
+- The page loads module bridge scripts for routes, formatters, and chart math before `../js/investment-analytics.js`.
+- The route bridge script remains present before the formatter bridge, shared `../js/script.js`, and `../js/investment-analytics.js`.
+- The chart math bridge now follows the formatter bridge in the analytics page loading order.
 - Repository search shows `pages/investment-analytics.html` is the only public page that loads `js/investment-analytics.js` directly.
 - Related investment pages such as `pages/investment-retail.html`, `pages/investment-airlines.html`, and `pages/financial-indicators.html` do not load `js/investment-analytics.js`.
 
