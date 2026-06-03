@@ -346,3 +346,7 @@ Phase 5L creates the pure chart math module and legacy-safe chart math bridge on
 ## 17. Phase 5M status
 
 Phase 5M loads `chart-math-global.js` on `pages/investment-analytics.html` after the formatter bridge and before the existing classic deferred `js/investment-analytics.js` entrypoint. `js/investment-analytics.js` has not been migrated to read the chart math bridge yet, local chart math/path helper functions remain in place, and no chart math consumers were migrated in this phase.
+
+## 18. Phase 5O status
+
+Phase 5O adds `investment-chart-math-bridge-smoke-test.md`, a manual smoke test checklist and result document for the chart math bridge after the first `js/investment-analytics.js` chart math consumer migration. Treat this smoke testing as the decision gate before removing local chart math fallbacks or extracting higher-risk chart renderers.
