@@ -9,13 +9,10 @@ let currentEditingMonth = null;
 
 // Global State
 let globalHistory = {};
-let globalTargetRate = 35; // Default Hedef
-let currentChartRange = '12'; // Default Filtre (12A)
-let currentCurrency = 'TL'; // Default Para Birimi
+let globalTargetRate = 35; 
+let currentChartRange = '12'; 
+let currentCurrency = 'TL'; 
 
-// ==========================================
-// YARDIMCI FONKSİYONLAR
-// ==========================================
 const getCurrentMonth = () => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -32,9 +29,6 @@ const parseTurkishFloat = (val) => {
     return parseFloat(str) || 0;
 };
 
-// ==========================================
-// ARAYÜZ (UI) GÜNCELLEMELERİ
-// ==========================================
 function updateCardUI(history, month) {
     const data = history[month] || { savings: 0, income: 0 };
     if (document.getElementById('display-savings')) document.getElementById('display-savings').innerText = `₺${data.savings.toLocaleString('tr-TR')}`;
@@ -82,7 +76,7 @@ function getFilteredMonths(range) {
     if (range === '3') count = 3;
     else if (range === '6') count = 6;
     else if (range === '12') count = 12;
-    else if (range === 'all') count = 60; // 5 yıl
+    else if (range === 'all') count = 60; 
     else if (range === 'ytd') count = d.getMonth() + 1;
 
     for(let i = count - 1; i >= 0; i--) {
@@ -93,9 +87,6 @@ function getFilteredMonths(range) {
     return months;
 }
 
-// ==========================================
-// ALT GRAFİKLER (DONUT VE BAR)
-// ==========================================
 function renderModalBottomCharts() {
     if(document.querySelector("#modal-donut-currency")) {
         document.querySelector("#modal-donut-currency").innerHTML = "";
@@ -133,9 +124,6 @@ function renderModalBottomCharts() {
     }
 }
 
-// ==========================================
-// ANA KARMA (MIXED) GRAFİK ÇİZİMİ
-// ==========================================
 function renderLargeChart(history, range) {
     const months = getFilteredMonths(range);
     const incomeData = [];
@@ -183,7 +171,7 @@ function renderLargeChart(history, range) {
                     }
                     
                     const monthIdx = config.dataPointIndex;
-                    if(monthIdx === undefined || monthIdx < 0) return; // Boş tıklamaları engelle
+                    if(monthIdx === undefined || monthIdx < 0) return;
                     
                     const selectedMonth = months[monthIdx];
                     openMiniPopup(event, selectedMonth, history[selectedMonth]);
@@ -239,9 +227,6 @@ function renderLargeChart(history, range) {
     }
 }
 
-// ==========================================
-// MINI POPUP MANTIĞI (DÜZELTİLMİŞ)
-// ==========================================
 function openMiniPopup(event, monthStr, data) {
     const popup = document.getElementById('mini-edit-popup');
     if (!popup) return;
@@ -256,10 +241,8 @@ function openMiniPopup(event, monthStr, data) {
 
     popup.style.display = 'block';
     
-    // Z-INDEX DÜZELTMESİ: Dev modalın önüne geçmesi için zorla
     popup.style.zIndex = '99999999';
     
-    // HİZALAMA DÜZELTMESİ: Ekranın tam ortasına sabitle (Arka planda kalma ihtimaline karşı en güvenli yol)
     popup.style.position = 'fixed';
     popup.style.top = '50%';
     popup.style.left = '50%';
@@ -285,9 +268,6 @@ if (miniInc) miniInc.oninput = calculateMiniRate;
 if (miniSav) miniSav.oninput = calculateMiniRate;
 if (miniClose) miniClose.onclick = () => document.getElementById('mini-edit-popup').style.display = 'none';
 
-// ==========================================
-// ANA OTURUM VE OLAY DİNLEYİCİLERİ
-// ==========================================
 onAuthStateChanged(auth, async (user) => {
     if (!user) return window.location.href = "/login.html";
 
@@ -313,7 +293,6 @@ onAuthStateChanged(auth, async (user) => {
 
     updateCardUI(globalHistory, getCurrentMonth());
 
-    // --- MODALLAR ---
     const mainModal = document.getElementById('savings-modal');
     const uploadModal = document.getElementById('upload-modal');
     
@@ -327,7 +306,6 @@ onAuthStateChanged(auth, async (user) => {
         };
     }
 
-    // --- DÜZENLE BUTONU VE İMLEÇ KONTROLÜ ---
     const manualBtn = document.getElementById('btn-manual-mode');
     if (manualBtn) {
         manualBtn.onclick = () => {
@@ -368,7 +346,6 @@ onAuthStateChanged(auth, async (user) => {
         }
     });
 
-    // --- FİLTRE BUTONLARI ---
     document.querySelectorAll('.time-filter-btn').forEach(btn => {
         btn.onclick = (e) => {
             document.querySelectorAll('.time-filter-btn').forEach(b => b.classList.remove('active'));
@@ -386,7 +363,6 @@ onAuthStateChanged(auth, async (user) => {
         };
     });
 
-    // --- MİNİ POPUP GÜNCELLE BUTONU (FIREBASE) ---
     if (document.getElementById('btn-save-mini')) {
         document.getElementById('btn-save-mini').onclick = async () => {
             const inc = parseTurkishFloat(document.getElementById('mini-input-income')?.value);
@@ -419,7 +395,6 @@ onAuthStateChanged(auth, async (user) => {
         };
     }
 
-    // --- DOSYA YÜKLEME ---
     if (document.getElementById('btn-download-template')) {
         document.getElementById('btn-download-template').onclick = () => {
             const format = document.getElementById('template-format')?.value || 'xlsx';
