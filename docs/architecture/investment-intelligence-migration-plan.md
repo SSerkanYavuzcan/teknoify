@@ -323,3 +323,8 @@ Phase 5C has now added the investment frontend JS/CSS split plan in
 `docs/architecture/investment-frontend-split-plan.md`. This was documentation-only; no
 runtime frontend pages, JavaScript files, CSS files, data files, scripts, workflows, or package
 files were moved.
+
+Phase 5D has now added README-only skeletons for future Investment Analytics frontend
+`scripts/` and `styles/` folders under `domains/investment-intelligence/analytics/`. This was
+documentation-only; no runtime frontend pages, JavaScript files, CSS files, data files,
+scripts, workflows, package files, route files, or public loading paths were moved.

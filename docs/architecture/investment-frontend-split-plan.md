@@ -398,7 +398,7 @@ Recommended mapping from existing partials:
 ## 9. Proposed staged migration order
 
 - **Phase 5C:** Split plan only. No runtime frontend files moved.
-- **Phase 5D:** Add README files under future `analytics/scripts` and `analytics/styles` folders.
+- **Phase 5D:** README-only skeletons for future analytics `scripts/` and `styles/` folders were created under `domains/investment-intelligence/analytics/`; no runtime JS/CSS files were moved.
 - **Phase 5E:** Extract pure utility functions from `js/investment-analytics.js`.
 - **Phase 5F:** Extract chart/SVG helpers.
 - **Phase 5G:** Extract calculator logic one calculator at a time.
