@@ -29,6 +29,8 @@ Phase 5H loads `formatters-global.js` on `pages/investment-analytics.html` befor
 
 Phase 5I migrates selected formatter consumers in `js/investment-analytics.js` to read from the bridge when available while retaining local fallback definitions. Missing bridge utilities, malformed bridge values, incomplete formatter sets, or throwing bridged functions still fall back to the local helper logic.
 
+Phase 5K adds a documentation-only chart/SVG helper extraction checklist for future pure chart math extraction. No runtime JS/CSS files were moved, and no chart utility modules were created in this phase.
+
 ## Candidate current source files
 
 - Pure helper candidates currently inside `js/investment-analytics.js`.
