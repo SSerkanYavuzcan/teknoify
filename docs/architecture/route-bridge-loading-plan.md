@@ -127,6 +127,10 @@ appear before the existing classic `js/script.js` tag, and the fallback route
 strings in `js/script.js` remain in place so redirect behavior is preserved if
 the bridge is unavailable.
 
+## Phase 4N note
+
+Phase 4N adds the public route bridge smoke test checklist/result document after the Phase 4M bridge rollout. Use that checklist to validate every public bridge page before removing fallback route strings or starting broader script refactors.
+
 ## Future runtime sequence
 
 1. Phase 4J: bridge loading plan only.

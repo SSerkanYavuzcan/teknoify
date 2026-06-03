@@ -384,6 +384,10 @@ Phase 4M loads the route bridge on the remaining public pages that already load
 `js/script.js`, keeping the bridge before `js/script.js` while preserving the
 existing fallback route strings and auth redirect behavior.
 
+## Phase 4N note
+
+Phase 4N adds the public route bridge smoke test checklist/result document after the bridge rollout. Keep `js/script.js` fallback dashboard route strings and defer larger auth/script refactors until the public bridge smoke tests are completed and validated.
+
 ## 13. Relationship to existing architecture docs
 
 This plan should be read with the existing architecture and decision documents:

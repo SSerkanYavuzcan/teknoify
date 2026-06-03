@@ -76,6 +76,10 @@ module tag placed before the existing classic script tag. This remains safe
 because `js/script.js` still preserves fallback dashboard route strings when
 `window.TEKNOIFY_ROUTES` is unavailable or malformed.
 
+## Phase 4N note
+
+Phase 4N adds the public route bridge smoke test checklist/result document. Smoke testing must pass before fallback route strings are removed from `js/script.js`; if smoke tests fail, keep the fallbacks and fix bridge loading/order issues first.
+
 ## Future migration plan
 
 1. Add bridge module only — completed in Phase 4I.
