@@ -6,6 +6,8 @@ Phase 5K is a documentation-only checkpoint before any chart or SVG helper is ex
 
 This checklist does not move runtime files and does not create chart modules yet. It is intended to guide a later, focused runtime PR after the formatter bridge rollout is validated.
 
+**Phase 5L note:** The first pure chart math module, `domains/investment-intelligence/analytics/scripts/utils/chart-math.js`, and legacy-safe bridge, `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js`, now exist. They are not loaded by any HTML page yet, and `js/investment-analytics.js` has not been migrated to consume them, so current chart runtime behavior remains unchanged.
+
 ## 2. Why chart/SVG extraction is higher risk
 
 Chart and SVG extraction is higher risk than formatter extraction because:
@@ -119,9 +121,9 @@ Because `js/investment-analytics.js` is still a classic script, future chart mat
 
 Future bridge shape:
 
-- Create a future `domains/investment-intelligence/analytics/scripts/utils/chart-math.js` module for pure chart math helpers.
-- Create a future `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js` module to import pure helpers and expose them to the classic script.
-- Expose pure helpers under a possible `window.TEKNOIFY_INVESTMENT_UTILS.chartMath` namespace.
+- Use the new `domains/investment-intelligence/analytics/scripts/utils/chart-math.js` module for pure chart math helpers.
+- Load the new `domains/investment-intelligence/analytics/scripts/utils/chart-math-global.js` module in a later PR before migrating classic-script consumers.
+- Prefer `window.TEKNOIFY_INVESTMENT_UTILS.chartMath` when the existing investment utils global can be safely extended; otherwise use the bridge's `window.TEKNOIFY_INVESTMENT_CHART_MATH` fallback namespace.
 - Keep local fallback functions in `js/investment-analytics.js` during the first migration, matching the formatter bridge pattern.
 - Do not expose renderer globals yet; renderer extraction should wait until pure helpers and the bridge are validated.
 
@@ -134,7 +136,7 @@ Future extraction targets may include:
 - `domains/investment-intelligence/analytics/scripts/chart-renderer.js`
 - `domains/investment-intelligence/analytics/scripts/calculators/chart-helpers.js`
 
-These files should not be created by Phase 5K.
+Phase 5L created `chart-math.js` and `chart-math-global.js`; the remaining targets should wait for later, focused runtime PRs.
 
 ## 10. Smoke test checklist for future chart/SVG extraction
 

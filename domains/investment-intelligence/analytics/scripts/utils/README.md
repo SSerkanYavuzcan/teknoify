@@ -31,10 +31,17 @@ Phase 5I migrates selected formatter consumers in `js/investment-analytics.js` t
 
 Phase 5K adds a documentation-only chart/SVG helper extraction checklist for future pure chart math extraction. No runtime JS/CSS files were moved, and no chart utility modules were created in this phase.
 
+Phase 5L creates the first pure chart math module and bridge without migrating consumers:
+
+- `chart-math.js` exports pure chart coordinate, path, config, and label cadence helpers mirrored from the current local functions in `js/investment-analytics.js`.
+- `chart-math-global.js` imports those helpers and safely exposes the frozen chart math bridge as `window.TEKNOIFY_INVESTMENT_CHART_MATH`. It also adds `window.TEKNOIFY_INVESTMENT_UTILS.chartMath` only when an existing investment utils object is extensible and can be extended without replacing `window.TEKNOIFY_INVESTMENT_UTILS.formatters`.
+- The existing formatter bridge currently defines `window.TEKNOIFY_INVESTMENT_UTILS` as a frozen, non-writable object, so the chart math bridge must preserve formatter behavior and use the separate chart math namespace when loaded after formatters.
+- Existing consumers have not been migrated yet. `js/investment-analytics.js` still contains its original chart math/path helper functions, and `chart-math-global.js` should be loaded in a later PR before any chart math consumer migration.
+
 ## Candidate current source files
 
 - Pure helper candidates currently inside `js/investment-analytics.js`.
 
 ## First safe migration idea
 
-The first runtime extraction target is the formatter set created in Phase 5G. Consumer migrations should keep local fallbacks in `js/investment-analytics.js` until the bridge load order and Investment Analytics smoke tests are proven.
+The first runtime extraction target was the formatter set created in Phase 5G. Phase 5L now provides pure chart math helpers, but consumer migrations should keep local fallbacks in `js/investment-analytics.js` until the bridge load order and Investment Analytics smoke tests are proven.
