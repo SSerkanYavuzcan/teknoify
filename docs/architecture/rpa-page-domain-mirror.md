@@ -99,3 +99,9 @@ Phase 13A identifies RPA as the first public wrapper candidate because it is low
 ## Phase 13B source policy note
 
 The RPA mirror remains parity-owned under `domains/corporate-automation/rpa/page.html`, but public `pages/rpa.html` stays the served source until a wrapper or build/deploy generation strategy exists and passes the required parity, smoke, and rollback gates.
+
+## Phase 15A dry-run sync workflow note
+
+Phase 15A adds a dedicated RPA dry-run sync workflow for comparing `pages/rpa.html` with `domains/corporate-automation/rpa/page.html` and previewing either sync direction before files are changed.
+
+The public route remains unchanged and continues to be served from `pages/rpa.html`. Write mode is available in `scripts/architecture/sync-rpa-page-mirror.js` for future/manual use, but it was not used in Phase 15A.

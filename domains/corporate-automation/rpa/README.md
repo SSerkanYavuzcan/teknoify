@@ -33,3 +33,9 @@ Run `node scripts/architecture/check-rpa-page-mirror-parity.js` and require it t
 ## Phase 12C corporate service page mirror note
 
 The RPA mirror at `page.html` remains a domain-owned ownership mirror and is now included in the combined corporate service parity checker. It is not a live route; the public source remains `pages/rpa.html`, and `node scripts/architecture/check-corporate-service-page-mirrors.js` must pass before any wrapper, route, or navigation changes.
+
+## Phase 15A sync workflow note
+
+Phase 15A adds `scripts/architecture/sync-rpa-page-mirror.js` as a dry-run-first workflow for checking parity and previewing copy direction between `pages/rpa.html` and this domain mirror.
+
+The mirror remains non-live. Any future write-mode use must be gated by parity checks, visual smoke testing, navigation/CTA smoke, console review, and rollback readiness.

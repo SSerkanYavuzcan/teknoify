@@ -91,3 +91,9 @@ High-risk pages, including Subscription and AI Assistant, remain blocked by page
 - [`../../apps/web/README.md`](../../apps/web/README.md)
 - [`../../domains/corporate-automation/README.md`](../../domains/corporate-automation/README.md)
 - [`../../domains/products/README.md`](../../domains/products/README.md)
+
+## Phase 15A RPA sync workflow note
+
+Phase 15A adds a dedicated dry-run sync workflow for the RPA public page and domain mirror. The workflow supports status-only checks plus explicit dry-run direction previews before any future write is considered.
+
+The served public route remains `pages/rpa.html`; the domain mirror remains ownership preparation and is not live.
