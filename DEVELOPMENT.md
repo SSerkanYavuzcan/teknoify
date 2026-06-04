@@ -27,6 +27,7 @@ Run these developer-facing architecture checks when working on migration readine
 npm run check:architecture
 npm run check:public-mirrors
 npm run check:dashboard-routes
+npm run check:readiness-seal
 ```
 
-The final migration runbook and Phase 15B scorecard define the architecture migration gates for future runtime, wrapper, data/RAG, and archive cleanup PRs. Review [`docs/architecture/final-migration-runbook.md`](docs/architecture/final-migration-runbook.md) and [`docs/architecture/final-architecture-scorecard.md`](docs/architecture/final-architecture-scorecard.md) before architecture-governed migration work.
+The final migration runbook and Phase 15B scorecard define the architecture migration gates for future runtime, wrapper, data/RAG, and archive cleanup PRs. Review [`docs/architecture/final-migration-runbook.md`](docs/architecture/final-migration-runbook.md) and [`docs/architecture/final-architecture-scorecard.md`](docs/architecture/final-architecture-scorecard.md) before architecture-governed migration work. Run `npm run check:readiness-seal` for the final Phase 16A readiness gate before targeted runtime candidate PRs.

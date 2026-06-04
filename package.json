@@ -16,7 +16,8 @@
         "update:usdtry": "node scripts/update-usd-try-rates.mjs",
         "build:stock-doc-catalog": "node scripts/build-stock-document-catalog.mjs",
         "extract:stock-doc-text": "python scripts/extract-stock-document-text.py",
-        "search:stock-doc-text": "node scripts/search-stock-document-text.mjs"
+        "search:stock-doc-text": "node scripts/search-stock-document-text.mjs",
+        "check:readiness-seal": "node scripts/architecture/check-enterprise-readiness-seal.js"
     },
     "devDependencies": {
         "stylelint": "file:tools/stylelint",

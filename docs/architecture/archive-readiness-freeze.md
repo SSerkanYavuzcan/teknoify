@@ -1,5 +1,9 @@
 # Archive Readiness Freeze
 
+## Phase 16A note
+
+- Phase 16A adds the final enterprise readiness seal, and the archive freeze remains active after that seal. No archive/delete work is allowed until smoke, consumers, compatibility, and rollback paths are verified in a dedicated PR.
+
 ## 1. Title and purpose
 
 Phase 15B freezes the current archive/delete readiness state for the enterprise architecture migration effort. This is not an archive/delete PR, does not remove files, and does not move runtime, data, workflow, API, package, page, mirror, JS, or CSS behavior.

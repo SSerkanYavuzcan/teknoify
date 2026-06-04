@@ -1,5 +1,9 @@
 # Final Migration Readiness Report
 
+## Phase 16A note
+
+- Phase 16A seals the architecture preparation phase; runtime migrations are now separate gated PRs with focused checkers, smoke evidence, rollback notes, and no unrelated files.
+
 ## 1. Title and purpose
 
 This Phase 14A final migration readiness report summarizes the current enterprise migration readiness state after the architecture, Investment, Data/RAG, Dashboard, Corporate Automation, public service mirror, product/funnel mirror, public wrapper readiness, and public mirror source-of-truth policy phases.
