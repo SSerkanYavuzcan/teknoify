@@ -163,3 +163,7 @@ Phase 13A adds the public page wrapper readiness checker at `scripts/architectur
 ## Phase 13B public page mirror source policy note
 
 Phase 13B added the public page mirror source policy and a read-only checker for parity, required public/mirror file existence, and navigation-to-mirror violations. Live public routes remain in `pages/` while domain mirrors prepare future ownership.
+
+## Phase 15B architecture preparation closeout note
+
+Phase 15B closes architecture preparation for the current phase with a final scorecard and archive readiness freeze. Runtime moves remain intentionally gated by smoke tests, compatibility wrappers, consumer verification, rollback proof, and the documented check commands.
