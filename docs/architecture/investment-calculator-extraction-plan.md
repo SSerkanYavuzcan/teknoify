@@ -14,6 +14,8 @@ Calculator extraction is intentionally planned after the formatter bridge and ch
 
 **Phase 5W note:** The CAGR bridge is now loaded on `pages/investment-analytics.html` after the compound interest bridge. `js/investment-analytics.js` has not been migrated to read it yet, and the local CAGR calculator logic remains in place.
 
+**Phase 5AA note:** The first retirement calculator helper extraction creates `domains/investment-intelligence/analytics/scripts/calculators/retirement.js` and `domains/investment-intelligence/analytics/scripts/calculators/retirement-global.js` for `safeMoney` only. The bridge is not loaded yet, `js/investment-analytics.js` still keeps its local helper, and no retirement consumers have migrated.
+
 ## 2. Why calculator extraction matters
 
 Calculator extraction matters because the calculators are not just page widgets; they are productizable individual tools:

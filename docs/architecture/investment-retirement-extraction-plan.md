@@ -6,6 +6,8 @@ Phase 5Z is a documentation-only planning phase for the Investment Analytics ret
 
 This phase does **not** create retirement JavaScript modules, does **not** load new retirement bridges, and does **not** change any runtime HTML, CSS, JS, data, scripts, workflows, or package files. Retirement extraction should remain blocked until the boundaries, risks, bridge strategy, and smoke test coverage below are reviewed.
 
+**Phase 5AA note:** The first pure retirement calculator module, `domains/investment-intelligence/analytics/scripts/calculators/retirement.js`, and its legacy-safe bridge, `domains/investment-intelligence/analytics/scripts/calculators/retirement-global.js`, now exist. They are not loaded by `pages/investment-analytics.html`, are not consumed by `js/investment-analytics.js`, and do not change existing retirement runtime behavior yet.
+
 ## 2. Why retirement extraction matters
 
 Retirement is a reusable and productizable investment calculator. Unlike smaller helper calculators, it combines long-range accumulation, contribution growth, drawdown, inflation, target fund, shortfall, lifecycle table, and chart projections into outputs that users may treat as financial planning guidance.
