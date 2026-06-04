@@ -400,3 +400,5 @@ Phase 5AC keeps `js/investment-analytics.js` as a classic deferred script and re
 ## 24. Phase 5AD status
 
 Phase 5AD documents retirement bridge smoke testing and requires it to pass before local retirement fallback cleanup or broader retirement extraction continues.
+
+**Phase 7A note:** The runtime map audit script `scripts/architecture/check-investment-runtime-map.js` now verifies the Investment Analytics bridge and classic script ordering for `pages/investment-analytics.html`, including the route bridge, formatter bridge, chart math bridge, compound bridge, CAGR bridge, retirement bridge, shared `../js/script.js`, and classic deferred `../js/investment-analytics.js`. `js/investment-analytics.js` remains a classic script; no runtime JavaScript moved in Phase 7A.

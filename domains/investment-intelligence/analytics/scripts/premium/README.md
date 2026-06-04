@@ -2,29 +2,24 @@
 
 ## Purpose
 
-This folder will contain premium gate and access UI coordination for Investment Analytics pages.
+This folder documents future ownership for Investment Analytics premium and access gate UI behavior.
+It exists so premium/access runtime boundaries can be reviewed before any premium UI code moves out of the active classic orchestrator.
 
 ## What belongs here
 
 Future premium modules may coordinate:
 
-- Premium overlay behavior
-- Upgrade/login CTA coordination
-- Post-login redirect support if applicable
+- Investment page premium gate UI behavior.
+- Upgrade/login CTA coordination scoped to Investment Analytics experiences.
+- Access-state UI wiring after auth and route contracts are stable.
+- Premium README notes, smoke-test expectations, and auth/access documentation references.
 
 ## What does not belong here yet
 
-Premium runtime code should not be moved here yet. Auth primitives belong under `packages/auth/`, route constants belong under `packages/config/`, and this folder should only coordinate investment-page UI behavior.
+Do not move premium gate runtime code here yet.
+Current runtime code still lives in `js/investment-analytics.js`, with related shared behavior remaining in existing shared gate scripts until ownership is reviewed.
+Premium gate extraction should be coordinated with auth/access docs and must not alter current access behavior in a documentation-only phase.
 
 ## Current migration status
 
-Migration status: Phase 5D README-only skeleton; no investment analytics JS/CSS files have been moved here yet.
-
-## Candidate current source files
-
-- Premium gate coordination currently inside investment analytics scripts, if present.
-- Related current behavior in `js/premium-content-gate.js` should remain in place until ownership and compatibility are documented.
-
-## First safe migration idea
-
-Do not change access behavior until current premium gate behavior has a smoke checklist.
+Current migration status: Phase 7A ownership documentation only; no runtime code moved here yet.

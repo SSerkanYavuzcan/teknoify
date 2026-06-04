@@ -34,6 +34,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`investment-cagr-bridge-smoke-test.md`](investment-cagr-bridge-smoke-test.md): Phase 5Y manual smoke test checklist and result template for validating the Investment Analytics CAGR bridge rollout before local fallback cleanup or higher-risk calculator extraction.
 - [`investment-retirement-extraction-plan.md`](investment-retirement-extraction-plan.md): Phase 5Z documentation-only plan for safely extracting retirement calculator logic from `js/investment-analytics.js`, including current retirement inventory, boundaries, staged migration order, first runtime target guidance, smoke tests, and risks.
 - [`investment-retirement-bridge-smoke-test.md`](investment-retirement-bridge-smoke-test.md): Phase 5AD manual smoke test checklist and result template for validating the Investment Analytics retirement bridge rollout before local fallback cleanup or broader retirement extraction.
+- [`investment-js-orchestrator-cleanup-plan.md`](investment-js-orchestrator-cleanup-plan.md): Phase 7A non-runtime Investment Analytics JS orchestrator cleanup plan, runtime map audit command, responsibility map, ownership docs, and staged classic-to-module migration strategy.
 
 ## What belongs here
 

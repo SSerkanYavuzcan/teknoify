@@ -518,3 +518,7 @@ Related documentation:
 - [`../../domains/investment-intelligence/rag/README.md`](../../domains/investment-intelligence/rag/README.md)
 - [`current-inventory.md`](current-inventory.md)
 - [`folder-structure.md`](folder-structure.md)
+
+## Phase 7A JS orchestrator cleanup note
+
+Phase 7A created [`investment-js-orchestrator-cleanup-plan.md`](investment-js-orchestrator-cleanup-plan.md) and the runtime map audit script `scripts/architecture/check-investment-runtime-map.js`. The audit documents current Investment Analytics script consumers, CSS manifest consumers, route/bridge consumers, and the expected `pages/investment-analytics.html` bridge-to-classic script order. No runtime JavaScript moved in Phase 7A; `js/investment-analytics.js` remains the active classic deferred orchestrator.
