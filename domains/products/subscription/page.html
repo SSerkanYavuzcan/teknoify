@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teknoify Ailesine Katılın | Teknoify</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link
+        rel="stylesheet"
+        href="/domains/investment-intelligence/analytics/styles/index.css"
+    />
+</head>
+<body>
+
+<header id="header" class="header scrolled">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="../index.html#home" aria-label="Ana Sayfa">
+                    <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                    <span class="logo-text">Teknoify</span>
+                </a>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item dropdown">
+                    <a href="../index.html#services" class="nav-link">
+                        Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="investment-analytics.html"><i class="fas fa-chart-pie"></i> Yatırım Analizleri</a></li>
+                        <li><a href="rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
+                        <li><a href="ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
+                        <li><a href="api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="training-consulting.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-login-btn">
+                    <button id="openLoginBtn" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user"></i> Giriş Yap
+                    </button>
+                </li>
+            </ul>
+
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="page-frame subscription-pricing-page">
+    <section class="subscription-pricing-hero" aria-labelledby="subscription-title">
+        <div class="hero-surface"></div>
+
+        <div class="container">
+            <div class="subscription-pricing-header">
+                <h1 id="subscription-title">Teknoify Ailesine Katılın</h1>
+                <p>
+                    Hayal ettiğiniz projeleri oluşturmak ve hayatınızdaki pek çok kararı destekleyen veri panellerine erişin.
+                </p>
+
+                <div class="subscription-billing-toggle" role="group" aria-label="Faturalandırma dönemi seçimi">
+                    <button type="button" class="is-active" data-billing-option="monthly" aria-pressed="true">Aylık</button>
+                    <button type="button" data-billing-option="yearly" aria-pressed="false">Yıllık</button>
+                </div>
+            </div>
+
+            <div class="subscription-plan-grid" aria-label="Abonelik planları">
+                <article class="subscription-plan-card">
+                    <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-chart-line"></i></div>
+                    <div class="subscription-plan-content">
+                        <h2>Başlangıç</h2>
+                        <p class="subscription-plan-description">Temel seviyede otomasyonlar ve yatırım araçlarını keşfetmek isteyenler için.</p>
+                        <div class="subscription-plan-price" aria-label="Başlangıç planı fiyatı">
+                            <span>₺29,99</span>
+                            <small>/ ay</small>
+                        </div>
+                    </div>
+                    <a href="investment-analytics.html" class="btn btn-secondary subscription-plan-cta">Başlangıç Planını İncele</a>
+                    <ul class="subscription-plan-features">
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Bileşik faiz hesaplayıcı</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Temel yatırım hesaplayıcıları</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Sınırlı önizleme panelleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Yatırım analizleri sayfasına erişim</li>
+                    </ul>
+                </article>
+
+                <article class="subscription-plan-card subscription-plan-card--featured" aria-labelledby="premium-plan-title">
+                    <div class="subscription-plan-topline">
+                        <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-chart-pie"></i></div>
+                        <span class="subscription-plan-badge">En Popüler</span>
+                    </div>
+                    <div class="subscription-plan-content">
+                        <h2 id="premium-plan-title">Premium</h2>
+                        <p class="subscription-plan-description">Kendi projelerinizi geliştirin, yatırıma dair detaylı analizler ve indikatörlerle çalışmak isteyenler için.</p>
+                        <div class="subscription-plan-price" aria-label="Premium planı fiyatı">
+                            <span data-premium-price>₺199</span>
+                            <small data-premium-period>/ ay</small>
+                        </div>
+                        <span class="subscription-plan-savings" data-premium-savings hidden>2 ay avantajlı</span>
+                    </div>
+                    <a
+                        href="../index.html#contact"
+                        class="btn btn-primary subscription-plan-cta"
+                        data-plan-interest="premium"
+                    >Premium Talebi Bırak</a>
+                    <ul class="subscription-plan-features">
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Perakende şirket karşılaştırmaları</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Mağaza başına operasyonel kâr analizleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Şirket bazlı veri panelleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Detaylı grafik ve tablo görünümleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Yeni analizlere erken erişim</li>
+                    </ul>
+                </article>
+
+                <article class="subscription-plan-card">
+                    <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-briefcase"></i></div>
+                    <div class="subscription-plan-content">
+                        <h2>Profesyonel</h2>
+                        <p class="subscription-plan-description">
+                            Daha kapsamlı analiz, özel rapor ve gelişmiş takip ihtiyaçları için.
+                        </p>
+                        <div class="subscription-plan-price subscription-plan-price--quote" aria-label="Profesyonel planı fiyatı">
+                            <span>Teklif Al</span>
+                        </div>
+                    </div>
+                    <a
+                        href="../index.html#contact"
+                        class="btn btn-secondary subscription-plan-cta"
+                        data-plan-interest="professional"
+                    >İletişime Geç</a>
+                    <ul class="subscription-plan-features">
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Premium plandaki her şey</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Özel şirket / sektör takip listeleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Gelişmiş raporlama talepleri</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Kurumsal kullanım senaryoları</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Öncelikli geliştirme talepleri</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Teknoify. Tüm hakları saklıdır.</p>
+        </div>
+    </div>
+</footer>
+
+<div class="modal-overlay" id="loginModal" aria-hidden="true">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <button type="button" class="modal-close" aria-label="Kapat"><i class="fas fa-times"></i></button>
+        <div class="modal-header">
+            <h3 id="login-modal-title">Giriş Yap</h3>
+            <p>Teknoify hesabınıza erişin</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" required placeholder="ornek@sirket.com" autocomplete="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="../js/session-manager.js"></script>
+<script type="module" src="/packages/config/routes-global.js"></script>
+<script src="../js/script.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const billingButtons = document.querySelectorAll("[data-billing-option]");
+        const premiumPrice = document.querySelector("[data-premium-price]");
+        const premiumPeriod = document.querySelector("[data-premium-period]");
+        const premiumSavings = document.querySelector("[data-premium-savings]");
+
+        billingButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const isYearly = button.dataset.billingOption === "yearly";
+
+                billingButtons.forEach((option) => {
+                    const isActive = option === button;
+                    option.classList.toggle("is-active", isActive);
+                    option.setAttribute("aria-pressed", String(isActive));
+                });
+
+                if (premiumPrice) premiumPrice.textContent = isYearly ? "₺1.990" : "₺199";
+                if (premiumPeriod) premiumPeriod.textContent = isYearly ? "/ yıl" : "/ ay";
+                if (premiumSavings) premiumSavings.hidden = !isYearly;
+            });
+        });
+
+        document.querySelectorAll("[data-plan-interest]").forEach((link) => {
+            link.addEventListener("click", () => {
+                try {
+                    sessionStorage.setItem("tk_subscription_interest", link.dataset.planInterest);
+                } catch {
+                    // sessionStorage may be unavailable in strict privacy contexts; navigation should still continue.
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -99,3 +99,7 @@ Both pages need separate mirrors and migration plans before any public route or 
 - [`../../domains/corporate-automation/training-consulting/README.md`](../../domains/corporate-automation/training-consulting/README.md)
 - [`../../domains/corporate-automation/README.md`](../../domains/corporate-automation/README.md)
 - [`../../apps/web/README.md`](../../apps/web/README.md)
+
+## Phase 12D product/funnel separation note
+
+Subscription and AI Assistant are handled in the separate product/funnel mirror document, not in the Corporate Automation service mirror scope. Their mirrors live under `domains/products/`, public routes remain in `pages/`, and their high-risk auth/payment/product-tool migration gates are tracked by `docs/architecture/product-funnel-page-mirrors.md`.

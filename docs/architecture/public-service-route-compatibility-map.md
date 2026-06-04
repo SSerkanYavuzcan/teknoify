@@ -156,3 +156,13 @@ node scripts/architecture/check-public-service-route-map.js
 ## Phase 12C corporate service mirror group note
 
 Phase 12C mirrors the lower-risk web scraping, API automation, and training/consulting public service pages under their Corporate Automation domain folders. Public routes remain unchanged in `pages/`, the combined parity checker `scripts/architecture/check-corporate-service-page-mirrors.js` was added, and subscription plus AI assistant pages remain deferred for separate planning.
+
+## Phase 12D product/funnel mirror note
+
+Subscription and AI Assistant now have high-risk mirrors under product ownership:
+
+- `pages/subscription.html` is mirrored at `domains/products/subscription/page.html`.
+- `pages/ai-assistant.html` is mirrored at `domains/products/ai-assistant/page.html`.
+- Public routes remain unchanged and continue to be served from `pages/`.
+- The product/funnel parity checker was added at `scripts/architecture/check-product-funnel-page-mirrors.js`.
+- Future wrapper, route, navigation, or static-hosting changes remain blocked by parity and manual smoke tests.
