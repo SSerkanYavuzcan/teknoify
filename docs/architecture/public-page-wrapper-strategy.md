@@ -131,3 +131,7 @@ If a future wrapper fails:
 ## Phase 13B source-of-truth policy note
 
 Phase 13B adds the public page mirror source-of-truth policy. The policy now favors public routes in `pages/` as the served source, with domain mirrors as parity ownership preparation until a build/deploy copy mechanism or safe wrapper strategy exists.
+
+## Phase 15A RPA sync workflow note
+
+Phase 15A adds the RPA page mirror sync workflow before any wrapper implementation. This keeps the first post-readiness step focused on dry-run parity/status reporting and direction review, not runtime wrapper changes.

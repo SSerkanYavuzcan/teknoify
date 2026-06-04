@@ -98,3 +98,9 @@ A future runtime migration is a **no-go** when any applicable checker fails, man
 - [`investment-css-consumer-audit.md`](investment-css-consumer-audit.md)
 - [`investment-js-orchestrator-cleanup-plan.md`](investment-js-orchestrator-cleanup-plan.md)
 - [`investment-data-rag-migration-audit.md`](investment-data-rag-migration-audit.md)
+
+## Phase 15A first post-readiness action note
+
+The recommended first post-readiness action is the RPA sync dry-run workflow. Run `node scripts/architecture/sync-rpa-page-mirror.js` and inspect the dry-run output before considering any future RPA wrapper, static-hosting, or write-mode work.
+
+Write mode should remain a future/manual action in a dedicated PR with parity checks, visual smoke testing, navigation/CTA smoke, console review, and rollback readiness.
