@@ -65,3 +65,7 @@ Use a gradual migration sequence so configuration behavior remains observable an
 ## Migration status
 
 Phase 4C adds the initial route constants module and supporting documentation. Phase 4I adds the route global bridge module and bridge documentation. Runtime consumers still use their existing route strings, and no HTML page loads the bridge yet, so public routes, dashboard routing, auth redirects, Firebase configuration, and App Check behavior are unchanged.
+
+## Phase 9A route ownership note
+
+Phase 9A maps future Dashboard + Corporate Automation route ownership without moving routes. Future dashboard/public route moves should use centralized route constants, keep current route strings compatible, and pass route smoke tests before static hosting paths or runtime files change.

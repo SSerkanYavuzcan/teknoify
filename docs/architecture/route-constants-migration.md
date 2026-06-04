@@ -143,3 +143,7 @@ Future PRs that consume route constants must follow these rules:
 6. Replace `data/projects.json` route-like values only in a dedicated data/config PR if needed.
 7. Add route smoke test checklist.
 8. Remove duplicate route strings only after all consumers are verified.
+
+## Phase 9A dashboard/public route move note
+
+Phase 9A identifies protected dashboard routes and public corporate automation/product routes as future migration candidates only. Any future dashboard or public route move should use centralized route constants, keep legacy route strings stable until compatibility is proven, and add route smoke tests before changing static hosting paths or moving runtime HTML/JS/CSS files.

@@ -48,3 +48,5 @@ Runtime files, imports, public route changes, or broad formatting updates.
 ## Migration status
 
 Architecture documentation lives here; Phase 4F migrated only `js/lib/auth.js` to consume centralized route and role constants without moving runtime files.
+
+- [`dashboard-corporate-automation-migration-audit.md`](dashboard-corporate-automation-migration-audit.md): Phase 9A non-runtime Dashboard + Corporate Automation migration audit, including protected dashboard route inventory, public service/product page ownership, automation worker boundaries, risk matrix, and validation command.

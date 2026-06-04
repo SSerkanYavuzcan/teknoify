@@ -2,16 +2,22 @@
 
 ## Purpose
 
-Future home for authenticated member and product dashboard surfaces.
+Future owner of the protected dashboard app, including admin, member, premium, and dashboard-specific route shells after compatibility gates are complete.
 
 ## What belongs here
 
-Dashboard route shells, dashboard-specific composition, access-gated page wiring, and dashboard-local documentation after a migration PR.
+- Protected dashboard route documentation and future route shells.
+- Dashboard-specific layout composition and access-gated page wiring.
+- Dashboard app ownership notes for admin, member, premium, and shared dashboard areas.
+- Future dashboard smoke-test and route/access compatibility notes.
 
 ## What does not belong here yet
 
-Existing `dashboard/` runtime files, dashboard access-control changes, Firebase config changes, or product-domain logic yet.
+- Existing `dashboard/` runtime files.
+- Dashboard public hosting path changes.
+- Auth redirects, role/access behavior changes, or Firebase/App Check initialization changes.
+- Product-domain logic that should live under `domains/`.
 
-## Migration status
+## Current migration status
 
-Phase 2 skeleton only; no runtime files have been moved here yet.
+Phase 9A ownership documentation only; no runtime code moved here yet. Protected dashboard migration must preserve auth/access/Firebase behavior before any dashboard runtime route is copied, moved, or deleted.

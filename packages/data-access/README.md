@@ -48,3 +48,7 @@ Use a compatibility-first migration sequence so data consumers can move safely:
 ## Migration status
 
 Phase 4B expands package-level documentation only. No runtime data-access files have been moved or created here yet.
+
+## Phase 9A dashboard/corporate automation data note
+
+Phase 9A identifies dashboard, corporate automation, project, entitlement, API, and data touchpoints as future migration candidates only. Dashboard and corporate automation data moves require data-access wrappers before source paths, JSON shapes, Firestore access patterns, or API contracts change.
