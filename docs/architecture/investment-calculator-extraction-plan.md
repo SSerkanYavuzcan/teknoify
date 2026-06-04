@@ -222,6 +222,8 @@ Phase 5Y documents CAGR bridge smoke testing as the decision gate before removin
 
 Phase 5Z adds `investment-retirement-extraction-plan.md`, a documentation-only retirement extraction plan. No runtime retirement logic was moved, no retirement JavaScript modules were created, and the current retirement page implementation remains in `js/investment-analytics.js`.
 
+Phase 5AB loads the retirement bridge on `pages/investment-analytics.html` after the CAGR bridge and before the classic deferred `js/investment-analytics.js` entrypoint. No retirement consumers are migrated in this phase, so local retirement logic remains active.
+
 ## 11. Smoke test checklist
 
 Future calculator extraction PRs should include a smoke test document or completed checklist covering:

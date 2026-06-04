@@ -388,3 +388,7 @@ Phase 5W loads `cagr-global.js` on `pages/investment-analytics.html` after the c
 ## 21. Phase 5X status
 
 Phase 5X keeps `js/investment-analytics.js` as a classic deferred script and reads the CAGR bridge only through guarded `calculateCagr` and `getCagrBaseResult` wrappers. Each wrapper retains its local fallback logic so missing bridges, malformed helper entries, absent helper functions, or throwing bridged helpers cannot break the existing CAGR calculator behavior.
+
+## 22. Phase 5AB status
+
+Phase 5AB loads `retirement-global.js` on `pages/investment-analytics.html` after the CAGR bridge and before the existing classic deferred `js/investment-analytics.js` entrypoint. The retirement bridge now follows the CAGR bridge in the analytics page loading order, while local retirement consumers remain unmigrated.
