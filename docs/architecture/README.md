@@ -6,6 +6,7 @@ Home for architecture inventories, target structure docs, and migration architec
 
 ## Documents
 
+- [`final-migration-readiness-report.md`](final-migration-readiness-report.md): Phase 14A final all-checkers migration readiness report, completion status, current safe next actions, no-go list, final smoke checklist, risk register, and runtime move go/no-go criteria.
 - [`public-page-mirror-source-policy.md`](public-page-mirror-source-policy.md): Phase 13B source-of-truth policy for keeping live public `pages/*.html` routes aligned with domain-owned mirrors until build/deploy sync or safe wrappers exist.
 - [`current-inventory.md`](current-inventory.md): Current repository inventory and migration candidates.
 - [`folder-structure.md`](folder-structure.md): Target domain-based folder structure.

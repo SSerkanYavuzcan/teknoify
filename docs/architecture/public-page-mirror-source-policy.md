@@ -6,6 +6,10 @@ Phase 13B formalizes the source-of-truth policy for public page mirrors. It defi
 
 This policy is non-runtime. It does not replace public pages with wrappers, does not change page content, and does not change public routes.
 
+## Phase 14A enterprise readiness note
+
+Phase 14A includes this public page mirror source policy in the enterprise readiness checker, so mirror source-of-truth drift is now part of the all-checkers migration gate.
+
 ## 2. Core policy
 
 - `pages/*.html` remains the live served public route.

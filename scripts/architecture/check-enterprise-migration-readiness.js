@@ -6,22 +6,70 @@ const path = require('node:path');
 
 const repoRoot = process.cwd();
 
-const requiredChecks = [
+const requiredCheckGroups = [
     {
-        label: 'CSS manifest parity',
-        command: ['node', 'scripts/architecture/check-investment-css-manifest-parity.js']
+        label: 'Investment readiness',
+        checks: [
+            {
+                label: 'CSS manifest parity',
+                command: ['node', 'scripts/architecture/check-investment-css-manifest-parity.js']
+            },
+            {
+                label: 'Investment runtime map',
+                command: ['node', 'scripts/architecture/check-investment-runtime-map.js']
+            },
+            {
+                label: 'Investment Data/RAG map',
+                command: ['node', 'scripts/architecture/check-investment-data-rag-map.js']
+            }
+        ]
     },
     {
-        label: 'Investment runtime map',
-        command: ['node', 'scripts/architecture/check-investment-runtime-map.js']
+        label: 'Dashboard and automation readiness',
+        checks: [
+            {
+                label: 'Dashboard/Corporate Automation map',
+                command: ['node', 'scripts/architecture/check-dashboard-automation-map.js']
+            }
+        ]
     },
     {
-        label: 'Investment Data/RAG map',
-        command: ['node', 'scripts/architecture/check-investment-data-rag-map.js']
+        label: 'Dashboard route/access readiness',
+        checks: [
+            {
+                label: 'Dashboard route readiness',
+                command: ['node', 'scripts/architecture/check-dashboard-route-readiness.js']
+            },
+            {
+                label: 'Dashboard route compatibility',
+                command: ['node', 'scripts/architecture/check-dashboard-route-compatibility.js']
+            }
+        ]
     },
     {
-        label: 'Dashboard/Corporate Automation map',
-        command: ['node', 'scripts/architecture/check-dashboard-automation-map.js']
+        label: 'Public service/product page readiness',
+        checks: [
+            {
+                label: 'Public service route map',
+                command: ['node', 'scripts/architecture/check-public-service-route-map.js']
+            },
+            {
+                label: 'Corporate service page mirrors',
+                command: ['node', 'scripts/architecture/check-corporate-service-page-mirrors.js']
+            },
+            {
+                label: 'Product/funnel page mirrors',
+                command: ['node', 'scripts/architecture/check-product-funnel-page-mirrors.js']
+            },
+            {
+                label: 'Public page wrapper readiness',
+                command: ['node', 'scripts/architecture/check-public-page-wrapper-readiness.js']
+            },
+            {
+                label: 'Public page mirror source policy',
+                command: ['node', 'scripts/architecture/check-public-page-mirror-source-policy.js']
+            }
+        ]
     }
 ];
 
@@ -263,17 +311,36 @@ function runStaticChecks() {
     return { passed: true, warnings };
 }
 
+function runRequiredCheckGroups() {
+    const results = [];
+
+    requiredCheckGroups.forEach((group) => {
+        printGroup(group.label);
+        group.checks.forEach((check) => {
+            results.push({
+                group: group.label,
+                label: check.label,
+                passed: runRequiredCheck(check)
+            });
+        });
+    });
+
+    return results;
+}
+
 function main() {
-    const results = requiredChecks.map((check) => ({
-        label: check.label,
-        passed: runRequiredCheck(check)
-    }));
+    const results = runRequiredCheckGroups();
     const staticResult = runStaticChecks();
     const allRequiredChecksPassed = results.every((result) => result.passed) && staticResult.passed;
 
     printGroup('Enterprise migration readiness summary');
-    results.forEach((result) => {
-        console.log(`${result.passed ? 'PASS' : 'FAIL'} - ${result.label}`);
+    requiredCheckGroups.forEach((group) => {
+        console.log(group.label);
+        results
+            .filter((result) => result.group === group.label)
+            .forEach((result) => {
+                console.log(`  ${result.passed ? 'PASS' : 'FAIL'} - ${result.label}`);
+            });
     });
     console.log(`${staticResult.passed ? 'PASS' : 'FAIL'} - Lightweight static readiness checks`);
     console.log(`WARN - Conflict marker review warnings: ${staticResult.warnings.length}`);

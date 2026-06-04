@@ -6,6 +6,10 @@ Phase 11B defines the Dashboard route compatibility requirements, static hosting
 
 The purpose is to make the current `/dashboard/*.html` and nested Dashboard route contracts explicit so a future `apps/dashboard/` ownership migration can preserve direct links, role dashboard redirects, shared script initialization, and static hosting behavior.
 
+## Phase 14A enterprise readiness note
+
+Phase 14A makes dashboard route compatibility part of the enterprise readiness checker, so compatibility wrapper and static-hosting path risks are now included in the all-checkers migration gate.
+
 ## 2. Scope
 
 In scope for Phase 11B:
