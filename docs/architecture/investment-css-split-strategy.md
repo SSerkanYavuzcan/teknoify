@@ -152,9 +152,9 @@ Recommended manifest strategy:
 - **Phase 6B:** Create README/style ownership notes under the analytics styles folder if needed.
 - **Phase 6C:** Create a domain-owned CSS manifest that mirrors current import order, but do not load it.
 - **Phase 6D:** Compare the current manifest and domain manifest for import-order parity and path correctness.
-- **Phase 6E:** Move or copy one low-risk partial behind the manifest, preserving import order.
-- **Phase 6F:** Add a visual smoke test checklist and result template for runtime CSS PRs.
-- **Phase 6G:** Update page links only after manifest parity is proven.
+- **Phase 6E:** Relink `pages/investment-analytics.html` only to the domain-owned manifest after parity is proven.
+- **Phase 6F:** Continue controlled page relinks or one low-risk partial migration only after smoke-test review.
+- **Phase 6G:** Remove old public-manifest dependency only after all dependent pages have migrated and rollback remains documented.
 - **Later:** Remove old CSS paths only after redirects/import compatibility is no longer needed.
 
 ## 11. First runtime CSS PR recommendation
@@ -219,6 +219,10 @@ Phase 6C creates the domain-owned CSS manifest skeleton at `domains/investment-i
 ## Phase 6D note
 
 Phase 6D adds `scripts/architecture/check-investment-css-manifest-parity.js` as a manifest parity checker and creates `docs/architecture/investment-css-manifest-parity-audit.md` to document the audit gate. No page links or existing CSS partials changed.
+
+## Phase 6E note
+
+Phase 6E performs the first controlled runtime CSS-link migration by updating only `pages/investment-analytics.html` to load the domain-owned manifest at `/domains/investment-intelligence/analytics/styles/index.css`. Retail and airlines pages still use the public `../css/investment-analytics.css` manifest. No CSS partials were moved, copied, or edited. Rollback is to restore the old `../css/investment-analytics.css` link on the analytics page.
 
 ## 14. Relationship to existing docs
 

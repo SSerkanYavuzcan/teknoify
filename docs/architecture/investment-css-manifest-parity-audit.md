@@ -76,6 +76,10 @@ Future CSS work should use this audit as a gate before any runtime loading chang
 - Do not remove the old public manifest until the domain manifest has been loaded and verified.
 - If the parity check passes, a future Phase 6E may create a controlled relink plan or continue with one low-risk partial migration plan.
 
+## Phase 6E note
+
+Phase 6E parity checks passed before and after the controlled one-page relink. The domain manifest is now loaded by `pages/investment-analytics.html` only, while the public `css/investment-analytics.css` manifest remains available for retail and airlines pages and for rollback.
+
 ## 9. Relationship to existing docs
 
 Related documents:
