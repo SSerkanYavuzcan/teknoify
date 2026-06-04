@@ -328,3 +328,7 @@ Phase 5D has now added README-only skeletons for future Investment Analytics fro
 `scripts/` and `styles/` folders under `domains/investment-intelligence/analytics/`. This was
 documentation-only; no runtime frontend pages, JavaScript files, CSS files, data files,
 scripts, workflows, package files, route files, or public loading paths were moved.
+
+## Phase 8A Data/RAG audit note
+
+Phase 8A created `scripts/architecture/check-investment-data-rag-map.js` and `docs/architecture/investment-data-rag-migration-audit.md` to consolidate the Investment Data + RAG migration inventory before any physical moves. This phase did not move or change data files, RAG scripts, workflows, API files, public runtime files, frontend runtime data paths, package scripts, or generated payload formats.

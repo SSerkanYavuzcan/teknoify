@@ -522,3 +522,7 @@ Related documentation:
 ## Phase 7A JS orchestrator cleanup note
 
 Phase 7A created [`investment-js-orchestrator-cleanup-plan.md`](investment-js-orchestrator-cleanup-plan.md) and the runtime map audit script `scripts/architecture/check-investment-runtime-map.js`. The audit documents current Investment Analytics script consumers, CSS manifest consumers, route/bridge consumers, and the expected `pages/investment-analytics.html` bridge-to-classic script order. No runtime JavaScript moved in Phase 7A; `js/investment-analytics.js` remains the active classic deferred orchestrator.
+
+## Phase 8A Data/RAG separation note
+
+Phase 8A keeps the frontend split separate from the Investment Data + RAG migration. The Data/RAG audit documents current data, RAG docs, API contracts, scripts, workers, and workflows only; no frontend runtime data paths, public pages, CSS, or `js/investment-analytics.js` behavior changed.

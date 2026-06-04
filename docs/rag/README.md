@@ -22,3 +22,7 @@ RAG worker runtime code, current extraction scripts, or generated document index
 ## Migration status
 
 Documentation files have been moved here; no runtime files have been moved.
+
+## Phase 8A audit note
+
+Phase 8A includes RAG documentation in the Investment Data + RAG migration audit. No RAG contracts, retrieval behavior, extraction behavior, worker scripts, generated outputs, or runtime files changed in this phase.
