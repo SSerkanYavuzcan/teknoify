@@ -194,3 +194,7 @@ This document is the Phase 2 target map. Future migration PRs should use both do
 ## Phase 9A dashboard/corporate automation ownership note
 
 Phase 9A adds a non-runtime Dashboard + Corporate Automation ownership audit and README-only skeletons for future dashboard routes/shared areas, corporate automation domains, and automation workers. No dashboard runtime files, public pages, JavaScript, CSS, API files, data files, workflows, package scripts, or static hosting routes were moved or changed in this phase. Future moves remain gated by route, auth/access, Firebase/App Check, and static hosting compatibility checks.
+
+## Phase 10A enterprise readiness note
+
+Phase 10A adds the final enterprise migration readiness checker plus closure and archive candidate documentation. No runtime files, public pages, JavaScript, CSS behavior, data/API files, workflows, package scripts, or static hosting routes were moved or changed in this phase.

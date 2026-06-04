@@ -81,3 +81,7 @@ Related documentation:
 - [`investment-css-relink-smoke-test.md`](investment-css-relink-smoke-test.md)
 - [`investment-frontend-split-plan.md`](investment-frontend-split-plan.md)
 - [`../../domains/investment-intelligence/analytics/styles/README.md`](../../domains/investment-intelligence/analytics/styles/README.md)
+
+## Phase 10A enterprise readiness note
+
+Phase 10A adds `node scripts/architecture/check-enterprise-migration-readiness.js`, which validates that root `index.html` and `pages/*.html` no longer contain legacy Investment Analytics CSS HTML consumers for `../css/investment-analytics.css`, `/css/investment-analytics.css`, or `css/investment-analytics.css`.

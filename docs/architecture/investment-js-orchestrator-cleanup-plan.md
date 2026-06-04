@@ -154,3 +154,7 @@ The audit inspects `index.html` and all `pages/*.html` files for Investment Anal
 - [`../../domains/investment-intelligence/analytics/scripts/README.md`](../../domains/investment-intelligence/analytics/scripts/README.md)
 - [`../../domains/investment-intelligence/analytics/scripts/utils/README.md`](../../domains/investment-intelligence/analytics/scripts/utils/README.md)
 - [`../../domains/investment-intelligence/analytics/scripts/calculators/README.md`](../../domains/investment-intelligence/analytics/scripts/calculators/README.md)
+
+## Phase 10A enterprise readiness note
+
+Phase 10A adds `node scripts/architecture/check-enterprise-migration-readiness.js`, which runs the Investment runtime map audit to validate the current `js/investment-analytics.js` consumer and bridge-loading assumptions before any future orchestrator cleanup or module-boot migration.
