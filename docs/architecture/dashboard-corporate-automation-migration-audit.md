@@ -292,3 +292,7 @@ node scripts/architecture/check-dashboard-automation-map.js
 - [`../../packages/auth/README.md`](../../packages/auth/README.md)
 - [`../../packages/config/README.md`](../../packages/config/README.md)
 - [`../../packages/data-access/README.md`](../../packages/data-access/README.md)
+
+## Phase 10A enterprise readiness note
+
+Phase 10A adds the final enterprise migration readiness gate and runs this Dashboard + Corporate Automation map audit from `node scripts/architecture/check-enterprise-migration-readiness.js`. The Phase 9A audit remains the source of truth; no dashboard or corporate automation runtime files were moved or rewritten.

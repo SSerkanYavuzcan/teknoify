@@ -199,3 +199,7 @@ The script prints matched files, category counts, suggested owner counts, and hi
 - [`../../services/rag-workers/stock-documents/README.md`](../../services/rag-workers/stock-documents/README.md)
 - [`../../scripts/rag/README.md`](../../scripts/rag/README.md)
 - [`../../domains/investment-intelligence/rag/README.md`](../../domains/investment-intelligence/rag/README.md)
+
+## Phase 10A enterprise readiness note
+
+Phase 10A adds `node scripts/architecture/check-enterprise-migration-readiness.js`, which runs the Investment Data/RAG map audit as part of the final enterprise migration readiness gate. Data and RAG assets remain audited but unmoved.

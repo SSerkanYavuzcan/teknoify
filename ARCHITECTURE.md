@@ -17,3 +17,4 @@ Older static MPA notes remain useful historical context for understanding the ex
 ## Migration status
 
 Runtime files have not been moved yet. The current phase only reorganizes documentation into the `docs/` subfolder structure created during the domain-based architecture refactor.
+Phase 10A closes the current enterprise migration preparation cycle with the governance-only [`docs/architecture/enterprise-migration-closure-audit.md`](docs/architecture/enterprise-migration-closure-audit.md), which defines the readiness checker, final smoke-test gate, archive gate, and next runtime migration sequence.
