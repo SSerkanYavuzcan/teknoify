@@ -494,6 +494,10 @@ Recommended first extraction candidates, once safe:
 - Pure compounding frequency helpers.
 - HTML escaping only if all call sites can import it safely and tests cover tooltip/source markup.
 
+## Phase 6A CSS split strategy note
+
+Phase 6A created [`investment-css-split-strategy.md`](investment-css-split-strategy.md) as a documentation-only Investment Analytics CSS split and manifest strategy. No runtime CSS, HTML, JavaScript, formatter/chart/calculator modules, data files, scripts, workflows, package files, or public route files were moved, relinked, or refactored in Phase 6A.
+
 ## 13. Relationship to existing docs
 
 Related documentation:
