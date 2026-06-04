@@ -33,6 +33,8 @@ Phase 6B documents CSS ownership and visual smoke testing in `docs/architecture/
 
 Phase 6C created `index.css` as a domain-owned manifest skeleton. It mirrors the current `css/investment-analytics.css` import order, imports the existing CSS partials from their current `css/06-pages/investment-analytics/` paths, is not loaded by any HTML page yet, and does not move or copy any CSS partials.
 
+Phase 6D adds `scripts/architecture/check-investment-css-manifest-parity.js` so `index.css` parity can be checked against the public manifest. The domain manifest is still not loaded by HTML.
+
 ## Candidate current source files
 
 - `css/investment-analytics.css`

@@ -216,10 +216,15 @@ Phase 6B documents Investment Analytics style ownership and visual smoke testing
 
 Phase 6C creates the domain-owned CSS manifest skeleton at `domains/investment-intelligence/analytics/styles/index.css`. The skeleton mirrors the current `css/investment-analytics.css` import order exactly, imports the existing partials from their current paths, is not loaded yet, and does not change any public page stylesheet links.
 
+## Phase 6D note
+
+Phase 6D adds `scripts/architecture/check-investment-css-manifest-parity.js` as a manifest parity checker and creates `docs/architecture/investment-css-manifest-parity-audit.md` to document the audit gate. No page links or existing CSS partials changed.
+
 ## 14. Relationship to existing docs
 
 Related documents and ownership notes:
 
+- [`investment-css-manifest-parity-audit.md`](investment-css-manifest-parity-audit.md)
 - [`investment-frontend-split-plan.md`](investment-frontend-split-plan.md)
 - [`investment-calculator-extraction-plan.md`](investment-calculator-extraction-plan.md)
 - [`investment-module-loading-strategy.md`](investment-module-loading-strategy.md)
