@@ -504,6 +504,10 @@ Phase 6A created [`investment-css-split-strategy.md`](investment-css-split-strat
 
 Phase 6F completes the controlled CSS manifest relink for analytics, retail, and airlines investment pages by loading the domain-owned Investment Analytics manifest while leaving financial indicators on its separate stylesheet. The public `css/investment-analytics.css` manifest and existing CSS partial locations remain available until visual smoke testing proves the relinked pages.
 
+## Phase 6G CSS consumer audit note
+
+Phase 6G completes the final Investment Analytics CSS manifest consumer audit and relinks `pages/subscription.html` to the domain-owned manifest. Analytics, retail, airlines, and subscription now consume `/domains/investment-intelligence/analytics/styles/index.css`; financial indicators remains on its separate stylesheet, and the public manifest remains available for rollback.
+
 ## 13. Relationship to existing docs
 
 Related documentation:

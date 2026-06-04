@@ -2,7 +2,7 @@
 
 ## 1. Title and purpose
 
-This Phase 6F document records the controlled Investment Analytics CSS relink from the public manifest to the domain-owned manifest for investment pages. It consolidates relink status, parity requirements, visual smoke-test expectations, rollback steps, and decision gates for the runtime stylesheet link change.
+This Phase 6F document records the controlled Investment Analytics CSS relink from the public manifest to the domain-owned manifest for investment pages, with Phase 6G adding the final subscription consumer closure. It consolidates relink status, parity requirements, visual smoke-test expectations, rollback steps, and decision gates for the runtime stylesheet link change.
 
 Phase 6F completes the controlled relink for investment pages that use the Investment Analytics manifest while preserving the public manifest as the rollback source. It does not move CSS partials, edit selectors or rules, change JavaScript, or change data/RAG/dashboard behavior.
 
@@ -13,6 +13,7 @@ In scope:
 - `pages/investment-analytics.html`
 - `pages/investment-retail.html`
 - `pages/investment-airlines.html`
+- `pages/subscription.html`
 - `domains/investment-intelligence/analytics/styles/index.css`
 - `css/investment-analytics.css`
 - `scripts/architecture/check-investment-css-manifest-parity.js`
@@ -34,6 +35,7 @@ Out of scope:
 | `pages/investment-analytics.html` | `../css/investment-analytics.css` | `/domains/investment-intelligence/analytics/styles/index.css` | Relinked to the domain-owned manifest.                      | Restore `../css/investment-analytics.css`.     |
 | `pages/investment-retail.html`    | `../css/investment-analytics.css` | `/domains/investment-intelligence/analytics/styles/index.css` | Relinked to the domain-owned manifest in Phase 6F.          | Restore `../css/investment-analytics.css`.     |
 | `pages/investment-airlines.html`  | `../css/investment-analytics.css` | `/domains/investment-intelligence/analytics/styles/index.css` | Relinked to the domain-owned manifest in Phase 6F.          | Restore `../css/investment-analytics.css`.     |
+| `pages/subscription.html`         | `../css/investment-analytics.css` | `/domains/investment-intelligence/analytics/styles/index.css` | Relinked to the domain-owned manifest in Phase 6G.          | Restore `../css/investment-analytics.css`.     |
 | `pages/financial-indicators.html` | `../css/financial-indicators.css` | `../css/financial-indicators.css`                             | Intentionally unchanged; uses its separate page stylesheet. | Keep `../css/financial-indicators.css` linked. |
 
 ## 4. Manifest parity requirement
@@ -46,11 +48,12 @@ Passing parity does not replace visual smoke testing. Layout, responsive behavio
 
 ## 5. Visual smoke checklist
 
-| Page                              | Desktop Layout | Mobile Layout | Header/Hero | Cards/Panels | Charts  | Calculators | Chatbot/Premium UI | Result  | Notes   |
-| --------------------------------- | -------------- | ------------- | ----------- | ------------ | ------- | ----------- | ------------------ | ------- | ------- |
-| `pages/investment-analytics.html` | Not run        | Not run       | Not run     | Not run      | Not run | Not run     | Not run            | Not run | Not run |
-| `pages/investment-retail.html`    | Not run        | Not run       | Not run     | Not run      | Not run | Not run     | Not run            | Not run | Not run |
-| `pages/investment-airlines.html`  | Not run        | Not run       | Not run     | Not run      | Not run | Not run     | Not run            | Not run | Not run |
+| Page                              | Desktop Layout | Mobile Layout | Header/Hero | Cards/Panels | Charts  | Calculators | Chatbot/Premium UI | Result  | Notes                                  |
+| --------------------------------- | -------------- | ------------- | ----------- | ------------ | ------- | ----------- | ------------------ | ------- | -------------------------------------- |
+| `pages/investment-analytics.html` | Not run        | Not run       | Not run     | Not run      | Not run | Not run     | Not run            | Not run | Not run                                |
+| `pages/investment-retail.html`    | Not run        | Not run       | Not run     | Not run      | Not run | Not run     | Not run            | Not run | Not run                                |
+| `pages/investment-airlines.html`  | Not run        | Not run       | Not run     | Not run      | Not run | Not run     | Not run            | Not run | Not run                                |
+| `pages/subscription.html`         | Not run        | Not run       | Not run     | Not run      | N/A     | N/A         | Not run            | Not run | Phase 6G relink requires visual smoke. |
 
 ## 6. Rollback plan
 
@@ -64,6 +67,10 @@ Keep `css/investment-analytics.css` available until domain manifest loading is p
 - Do not move CSS partials yet.
 - Do not relink `pages/financial-indicators.html` because it uses a separate stylesheet.
 - Do not start CSS partial moves until the relinked investment pages pass visual smoke testing.
+
+## Phase 6G note
+
+Phase 6G relinked `pages/subscription.html` to the domain-owned Investment Analytics manifest after the final consumer audit found it was the remaining HTML page using `../css/investment-analytics.css`. No HTML page should now link the public Investment Analytics manifest; `css/investment-analytics.css` remains available for rollback and legacy support.
 
 ## 8. Relationship to existing docs
 

@@ -84,6 +84,10 @@ Phase 6E parity checks passed before and after the controlled one-page relink. T
 
 Phase 6F parity checks passed after relinking `pages/investment-analytics.html`, `pages/investment-retail.html`, and `pages/investment-airlines.html` to the domain-owned manifest. Manifest parity remains required before any future CSS partial movement because import order and resolved partial targets must stay equivalent until visual smoke testing and follow-up migration gates are satisfied.
 
+## Phase 6G note
+
+Phase 6G parity checks passed after the final consumer audit and `pages/subscription.html` relink to `/domains/investment-intelligence/analytics/styles/index.css`. Manifest parity remains required before any future CSS partial movement because the public rollback manifest and domain-owned manifest must continue resolving the same partials in the same order until a reviewed migration changes that contract.
+
 ## 9. Relationship to existing docs
 
 Related documents:
