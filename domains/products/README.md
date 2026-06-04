@@ -20,3 +20,7 @@ node scripts/architecture/check-product-funnel-page-mirrors.js
 ```
 
 Do not serve these mirrors directly or reduce the corresponding `pages/*.html` files until parity and page-specific smoke tests pass.
+
+## Phase 13A public wrapper strategy note
+
+Product/funnel mirrors remain high-risk in Phase 13A. Subscription and AI Assistant are covered by the wrapper readiness strategy, but they are not first wrapper candidates and are not live routes.

@@ -147,3 +147,7 @@ Phase 12C establishes a Corporate Automation public service mirror group for RPA
 ## Phase 12D high-risk product/funnel mirror note
 
 High-risk product/funnel page mirrors now exist for Subscription and AI Assistant under `domains/products/`. Public routes remain unchanged in `pages/`, and auth, payment, subscription, premium, Firebase/session, and product tool behavior remains unchanged. These mirrors are source ownership preparation only and must stay gated by the product/funnel parity checker plus page-specific smoke tests before any wrapper or static-hosting change.
+
+## Phase 13A public wrapper readiness note
+
+Phase 13A adds the public page wrapper readiness checker at `scripts/architecture/check-public-page-wrapper-readiness.js`. Public wrappers remain gated by parity, static-hosting path review, smoke coverage, and rollback planning; no public pages or domain mirrors become live wrappers in this phase.
