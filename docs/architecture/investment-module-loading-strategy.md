@@ -363,3 +363,7 @@ Phase 5M loads `chart-math-global.js` on `pages/investment-analytics.html` after
 ## 18. Phase 5O status
 
 Phase 5O adds `investment-chart-math-bridge-smoke-test.md`, a manual smoke test checklist and result document for the chart math bridge after the first `js/investment-analytics.js` chart math consumer migration. Treat this smoke testing as the decision gate before removing local chart math fallbacks or extracting higher-risk chart renderers.
+
+## 19. Phase 5X status
+
+Phase 5X keeps `js/investment-analytics.js` as a classic deferred script and reads the CAGR bridge only through guarded `calculateCagr` and `getCagrBaseResult` wrappers. Each wrapper retains its local fallback logic so missing bridges, malformed helper entries, absent helper functions, or throwing bridged helpers cannot break the existing CAGR calculator behavior.

@@ -32,7 +32,9 @@ Phase 5R loads `compound-interest-global.js` on `pages/investment-analytics.html
 
 Phase 5S migrates the first compound calculator consumer: `growCompoundValue` in `js/investment-analytics.js` now reads from the compound interest bridge when available while retaining the local fallback definition for missing, malformed, incomplete, or throwing bridge entries.
 
-Phase 5U documents CAGR extraction planning in `docs/architecture/investment-cagr-extraction-plan.md`. No CAGR JavaScript modules have been created yet, and existing CAGR logic remains in `js/investment-analytics.js`.
+Phase 5U documents CAGR extraction planning in `docs/architecture/investment-cagr-extraction-plan.md`; later CAGR migration work adds pure CAGR calculator bridge files while existing page fallback logic remains in `js/investment-analytics.js`.
+
+Phase 5X migrates selected CAGR consumers in `js/investment-analytics.js`: `calculateCagr` and `getCagrBaseResult` now read from the CAGR bridge when available while retaining local fallback definitions for missing, malformed, or throwing bridge helpers.
 
 ## Candidate current source files
 

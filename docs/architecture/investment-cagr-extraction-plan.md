@@ -147,6 +147,8 @@ domains/investment-intelligence/calculators/cagr/
 - **Phase 5Y:** Add CAGR bridge smoke test checklist/result documentation.
 - **Later:** Extract rendering, event, input, table, and chart logic only after smoke tests pass and only with narrowly scoped follow-up plans.
 
+Phase 5X now bridge-wraps `calculateCagr` and `getCagrBaseResult` in `js/investment-analytics.js`: each helper reads the CAGR bridge first when a valid helper function is available, then keeps the exact local fallback math/result logic for missing, malformed, incomplete, or throwing bridge entries. CAGR render, input parsing, validation/defaulting, event, table, and chart logic remains untouched.
+
 ## 10. First runtime PR recommendation
 
 The first actual CAGR runtime PR should:
