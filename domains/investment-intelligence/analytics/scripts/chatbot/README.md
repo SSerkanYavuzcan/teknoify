@@ -2,29 +2,25 @@
 
 ## Purpose
 
-This folder will contain product-facing investment chatbot UI and coordination logic for the Investment Analytics frontend.
+This folder documents future ownership for investment chatbot and mock assistant UI behavior.
+It exists so chatbot runtime boundaries can be reviewed before any chatbot code moves out of the active classic orchestrator.
 
 ## What belongs here
 
 Future chatbot modules may coordinate:
 
-- Chatbot widget behavior
-- Mock client integration
-- Query logging client coordination if applicable
-- Source/citation display logic in the future
+- Investment chatbot widget open/close behavior.
+- Mock assistant UI behavior.
+- Message rendering and source/citation display behavior after contracts are stable.
+- Query logging client coordination if the frontend API contract requires it.
+- Chatbot README notes, smoke-test expectations, and data/API contract references.
 
 ## What does not belong here yet
 
-Current chatbot or mock assistant runtime code should not be moved here yet. RAG architecture docs stay under `docs/rag/`, API contracts stay under `docs/api-contracts/`, and backend/API code does not belong here.
+Do not move chatbot runtime code here yet.
+Current runtime code still lives in `js/investment-analytics.js`.
+No chatbot extraction should happen before data/API contracts are reviewed, including response normalization, source display, logging best-effort behavior, and fallback/error handling.
 
 ## Current migration status
 
-Migration status: Phase 5D README-only skeleton; no investment analytics JS/CSS files have been moved here yet.
-
-## Candidate current source files
-
-- Chatbot and mock assistant sections currently inside `js/investment-analytics.js`, if present.
-
-## First safe migration idea
-
-Keep current chatbot/mock assistant logic in place until it can be isolated from the main investment script.
+Current migration status: Phase 7A ownership documentation only; no runtime code moved here yet.

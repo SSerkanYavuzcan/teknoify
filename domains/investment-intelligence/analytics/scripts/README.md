@@ -10,6 +10,12 @@ It is intended to hold browser-facing modules that coordinate the analytics page
 Future candidate modules may include:
 
 - `boot.js`
+- `charts/`
+- `sectors/`
+- `calculators/`
+- `chatbot/`
+- `premium/`
+- `utils/`
 - `sector-selector.js`
 - `sector-panels.js`
 - `retail-analysis.js`
@@ -25,7 +31,7 @@ Runtime JavaScript should not be moved here yet. Public page entrypoints, script
 
 ## Current migration status
 
-Migration status: Phase 5D README-only skeleton; no investment analytics JS/CSS files have been moved here yet.
+Migration status: Phase 7A ownership documentation; charts/sectors/chatbot/premium ownership README docs now exist, no runtime code moved yet, and `js/investment-analytics.js` remains the active classic orchestrator.
 
 ## Candidate current source files
 
@@ -35,3 +41,7 @@ Migration status: Phase 5D README-only skeleton; no investment analytics JS/CSS 
 
 Extract only pure utility functions first, or add wrappers without changing the public entrypoint.
 Keep `js/investment-analytics.js` as the public entrypoint until static import/loading compatibility is verified.
+
+## Phase 7A ownership note
+
+Phase 7A adds documentation-only ownership boundaries for future chart, sector, chatbot, and premium script folders. No runtime code moved here yet. `js/investment-analytics.js` remains the active classic deferred orchestrator while bridge-first/local-fallback helper extraction continues.
