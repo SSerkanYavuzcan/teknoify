@@ -115,6 +115,10 @@ Recommended next phase:
 
 Phase 6C creates a domain-owned manifest skeleton only. Visual smoke testing remains the gate before loading or relinking the new manifest from any HTML page.
 
+## Phase 6D note
+
+Phase 6D requires the automated Investment Analytics CSS manifest parity check before any visual-smoke-based relinking plan. Visual checks remain required even if automated parity passes because rendered layout, interactions, and responsive states are outside manifest-level validation.
+
 ## 10. Relationship to existing docs
 
 Related documents:
