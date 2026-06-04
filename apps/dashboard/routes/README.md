@@ -23,3 +23,7 @@ Phase 9A ownership documentation only; no runtime code moved here yet. Dashboard
 ## Phase 11A route move gate
 
 The Phase 11A readiness script and Dashboard route/access smoke-test document now define move gates for protected route work. Future route moves must run the readiness audit, complete manual smoke testing, preserve centralized route constants, and avoid moving admin, premium, and member runtime routes together in the first protected Dashboard move.
+
+## Phase 11B public URL compatibility note
+
+Phase 11B confirms that public Dashboard URLs remain `/dashboard/*.html` and nested `/dashboard/**/index.html` paths during migration. `apps/dashboard` is future source ownership, not an immediate public route path, unless a dedicated route-change PR documents and verifies static hosting support.

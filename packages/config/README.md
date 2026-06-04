@@ -73,3 +73,7 @@ Phase 9A maps future Dashboard + Corporate Automation route ownership without mo
 ## Phase 11A Dashboard route constants note
 
 Phase 11A requires protected Dashboard route moves to continue using centralized route constants and to preserve current admin, premium, member, and shared Dashboard route values. Route constants and redirect behavior must be verified by the Dashboard route/access smoke gate before any protected Dashboard HTML or runtime script path changes.
+
+## Phase 11B Dashboard route compatibility note
+
+Phase 11B requires route constants to continue representing public route URLs during Dashboard migration. Admin, premium, and member dashboard constants must keep returning `/dashboard/admin.html`, `/dashboard/premium.html`, and `/dashboard/member.html` through `getDashboardRouteForRole()` until a dedicated route-change PR updates static hosting and compatibility wrappers.

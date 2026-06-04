@@ -300,3 +300,7 @@ Phase 10A adds the final enterprise migration readiness gate and runs this Dashb
 ## Phase 11A dashboard route/access smoke gate note
 
 Phase 11A creates the Dashboard route/access smoke-test gate and `scripts/architecture/check-dashboard-route-readiness.js` readiness script before any protected Dashboard runtime move. No Dashboard runtime files were moved, no Dashboard routes changed, and no auth, Firebase, App Check, public page, API, CSS, or package behavior changed in Phase 11A.
+
+## Phase 11B protected route compatibility note
+
+Phase 11B adds a Dashboard route compatibility map that blocks direct protected route moves until compatibility wrappers or static hosting strategy are verified. Dashboard and Corporate Automation ownership work should continue to preserve existing `/dashboard/*` public URLs, shared script paths, auth behavior, and rollback paths until the wrapper/static-hosting gate is complete.
