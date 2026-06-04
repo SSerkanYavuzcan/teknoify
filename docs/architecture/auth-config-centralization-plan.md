@@ -397,3 +397,7 @@ This plan should be read with the existing architecture and decision documents:
 - [ADR-0001: Adopt a Domain-Based Repository Structure](../decisions/ADR-0001-domain-based-structure.md)
 
 The inventory explains where the repository stands today. The folder-structure document defines the target domain-based ownership model. ADR-0001 records the accepted decision to move toward that model. This Phase 4A plan narrows the next step to auth/config centralization and makes clear that runtime behavior is not changing in this PR.
+
+## Phase 9A dashboard migration gate
+
+Phase 9A documents Dashboard + Corporate Automation ownership without changing runtime auth/config behavior. Protected dashboard migration remains gated by auth/access preservation: login/logout redirects, role semantics, premium/member/admin access checks, impersonation behavior, Firebase initialization, and App Check initialization must be proven by route/access smoke tests before dashboard runtime files move.

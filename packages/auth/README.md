@@ -70,3 +70,7 @@ Use a small, reversible migration sequence so behavior remains easy to review:
 ## Migration status
 
 Phase 4D adds `packages/auth/roles.js` and `packages/auth/premium-access.js` as pure, side-effect-free future helpers. No existing runtime consumers have been migrated, and no auth files have been moved.
+
+## Phase 9A dashboard preservation note
+
+Phase 9A documents Dashboard + Corporate Automation ownership only. Protected dashboard migration must preserve existing auth, role, premium/member/admin access, redirect, impersonation, Firebase, and App Check semantics before any dashboard runtime route or page controller moves.

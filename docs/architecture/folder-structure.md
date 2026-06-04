@@ -190,3 +190,7 @@ This document is the Phase 2 target map. Future migration PRs should use both do
 - use `current-inventory.md` to understand where files live today and what risks were identified;
 - use this document to choose the intended destination and ownership boundary; and
 - update both migration documentation and folder READMEs when a future PR changes the target architecture.
+
+## Phase 9A dashboard/corporate automation ownership note
+
+Phase 9A adds a non-runtime Dashboard + Corporate Automation ownership audit and README-only skeletons for future dashboard routes/shared areas, corporate automation domains, and automation workers. No dashboard runtime files, public pages, JavaScript, CSS, API files, data files, workflows, package scripts, or static hosting routes were moved or changed in this phase. Future moves remain gated by route, auth/access, Firebase/App Check, and static hosting compatibility checks.
