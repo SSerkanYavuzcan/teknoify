@@ -52,6 +52,8 @@ The retirement bridge tries to expose `window.TEKNOIFY_INVESTMENT_UTILS.calculat
 
 Phase 5AB loads `retirement-global.js` on `pages/investment-analytics.html` after the CAGR bridge and before the classic deferred `js/investment-analytics.js` entrypoint. Existing retirement consumers are still not migrated, so local retirement behavior remains active. A future PR should migrate `safeMoney` with fallback safety before broader retirement extraction continues.
 
+Phase 5AC migrates the first retirement consumer: `safeMoney` in `js/investment-analytics.js` now reads from the retirement bridge when available while retaining the local fallback definition for missing, malformed, incomplete, or throwing bridge entries. Broader retirement rendering, inputs, validation, charts, tables, and events remain local.
+
 ## Candidate current source files
 
 - Calculator sections currently inside `js/investment-analytics.js`.
