@@ -304,3 +304,7 @@ Phase 11A creates the Dashboard route/access smoke-test gate and `scripts/archit
 ## Phase 11B protected route compatibility note
 
 Phase 11B adds a Dashboard route compatibility map that blocks direct protected route moves until compatibility wrappers or static hosting strategy are verified. Dashboard and Corporate Automation ownership work should continue to preserve existing `/dashboard/*` public URLs, shared script paths, auth behavior, and rollback paths until the wrapper/static-hosting gate is complete.
+
+## Phase 12A public service route compatibility note
+
+Phase 12A adds the Public Service + Corporate Automation route compatibility map and the `scripts/architecture/check-public-service-route-map.js` audit script. Public service page runtime moves remain blocked until the route map, wrapper or mirror strategy, and page-level smoke tests prove current public URLs, links, styles, shared scripts, and contact/subscription behavior remain stable.

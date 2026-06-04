@@ -19,3 +19,7 @@ Future owner of web scraping service content, product rules, and domain-specific
 ## Current migration status
 
 Phase 9A ownership documentation only; no runtime code moved here yet.
+
+## Phase 12A public route ownership note
+
+Phase 12A identifies `pages/webscraping.html` as the web scraping public service route and maps this folder as its future domain owner. The current runtime HTML page remains in `pages/`, and any future mirror or wrapper must preserve `/pages/webscraping.html` until smoke tests pass.

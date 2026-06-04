@@ -19,3 +19,7 @@ Future owner of corporate automation domain knowledge, service/product content, 
 ## Current migration status
 
 Phase 9A ownership documentation only; no runtime code moved here yet. Corporate automation pages and dashboard automation tools remain in their current paths.
+
+## Phase 12A public route ownership note
+
+Phase 12A maps public service route ownership for Corporate Automation pages before runtime migration. Current public pages remain in `pages/`; no public runtime page, URL, link, stylesheet, script, or deployment behavior has moved yet.
