@@ -141,7 +141,7 @@ domains/investment-intelligence/calculators/cagr/
 ## 9. Proposed staged migration order
 
 - **Phase 5U:** CAGR extraction plan only. Inspect and document current behavior; move no runtime CAGR logic.
-- **Phase 5V:** Create pure CAGR math module plus global bridge only.
+- **Phase 5V:** Create pure CAGR math module plus global bridge only. `cagr.js` and `cagr-global.js` now exist, but the bridge is not loaded by `pages/investment-analytics.html` and no CAGR consumers read from it yet.
 - **Phase 5W:** Load the CAGR bridge on `pages/investment-analytics.html` without migrating consumers.
 - **Phase 5X:** Migrate one pure CAGR math helper with local fallback, keeping DOM/render/chart/event behavior unchanged.
 - **Phase 5Y:** Add CAGR bridge smoke test checklist/result documentation.
@@ -160,6 +160,8 @@ The first actual CAGR runtime PR should:
 Recommended first CAGR runtime extraction target: **`calculateCagr` with `getCagrBaseResult` as its required pure local/module helper**.
 
 Reason: inspection shows `calculateCagr` does not read or write the DOM, does not add events, does not call formatter helpers, and does not render charts. It only consumes an already-parsed input object and returns the existing result object shape or existing validation messages. Its risk remains high because formula, invalid input messages, and downstream formatting must remain unchanged, so it should be migrated with a local fallback and smoke-tested before extracting `calculateCagrEndingValue`, `calculateCagrRequiredDuration`, `buildCagrGrowthSeries`, or `buildCagrProjectionRows`.
+
+Phase 5V status: the first pure CAGR module and bridge were created for `calculateCagr` and `getCagrBaseResult` only. They are not loaded by any HTML page, are not consumed by `js/investment-analytics.js`, and do not change current runtime behavior.
 
 ## 11. Smoke test checklist
 
