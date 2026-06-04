@@ -203,12 +203,12 @@
 
 .custom-select-trigger {
   width: 100%;
-  min-height: 48px;
-  display: flex;
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.85rem 1rem 0.85rem 2.5rem;
+  padding: 0.85rem 1rem;
   background: var(--bg-input);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-sm);
@@ -238,8 +238,10 @@
 }
 
 .custom-select-value {
+  min-width: 0;
   overflow: hidden;
   color: #fff;
+  line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -248,12 +250,31 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
+.custom-select .custom-select-leading-icon,
+.custom-select .custom-select-option-icon,
 .custom-select .custom-select-chevron {
   position: static;
-  flex: 0 0 auto;
+  top: auto;
+  right: auto;
+  left: auto;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  line-height: 1;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  transform: none;
   pointer-events: none;
+}
+
+.custom-select .custom-select-leading-icon {
+  font-size: 0.9rem;
+}
+
+.custom-select .custom-select-chevron {
+  justify-self: end;
+  font-size: 0.8rem;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
@@ -303,14 +324,10 @@
   transition: background 0.18s ease, color 0.18s ease;
 }
 
-.custom-select-option i {
-  position: static;
-  width: 1rem;
+.custom-select .custom-select-option-icon {
   color: var(--primary);
   font-size: 0.9rem;
   opacity: 0.82;
-  pointer-events: none;
-  text-align: center;
 }
 
 .custom-select-option:hover,
