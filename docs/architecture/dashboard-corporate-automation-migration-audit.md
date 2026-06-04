@@ -308,3 +308,7 @@ Phase 11B adds a Dashboard route compatibility map that blocks direct protected 
 ## Phase 12A public service route compatibility note
 
 Phase 12A adds the Public Service + Corporate Automation route compatibility map and the `scripts/architecture/check-public-service-route-map.js` audit script. Public service page runtime moves remain blocked until the route map, wrapper or mirror strategy, and page-level smoke tests prove current public URLs, links, styles, shared scripts, and contact/subscription behavior remain stable.
+
+## Phase 12B RPA public page mirror note
+
+Phase 12B creates the RPA page domain mirror as the first public service ownership mirror under Corporate Automation. The protected Dashboard runtime did not change, no Dashboard route moved, and existing protected route smoke/compatibility gates remain required before any Dashboard runtime migration.

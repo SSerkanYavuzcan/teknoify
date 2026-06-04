@@ -23,3 +23,7 @@ Phase 9A ownership documentation only; no runtime code moved here yet. Corporate
 ## Phase 12A public route ownership note
 
 Phase 12A maps public service route ownership for Corporate Automation pages before runtime migration. Current public pages remain in `pages/`; no public runtime page, URL, link, stylesheet, script, or deployment behavior has moved yet.
+
+## Phase 12B RPA page mirror note
+
+RPA is the first mirrored public service page under the Corporate Automation domain. The mirror prepares source ownership only; the public route remains in `pages/rpa.html` until a later wrapper/static-hosting strategy is proven.

@@ -145,3 +145,10 @@ Run the route map audit directly when preparing a future public service migratio
 ```bash
 node scripts/architecture/check-public-service-route-map.js
 ```
+
+## Phase 12B RPA page mirror note
+
+- `pages/rpa.html` was mirrored to `domains/corporate-automation/rpa/page.html` for source ownership preparation.
+- The public route remains unchanged and continues to be served from `pages/rpa.html`.
+- `scripts/architecture/check-rpa-page-mirror-parity.js` was added as the conservative parity checker for the public page and domain mirror.
+- No live route move happened, and the mirror is not listed as a live public URL.
