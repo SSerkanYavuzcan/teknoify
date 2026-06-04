@@ -25,6 +25,7 @@ Home for architecture inventories, target structure docs, and migration architec
 - [`investment-chart-math-bridge-smoke-test.md`](investment-chart-math-bridge-smoke-test.md): Phase 5O manual smoke test checklist and result template for validating the Investment Analytics chart math bridge rollout before local fallback cleanup or higher-risk renderer extraction.
 - [`investment-calculator-extraction-plan.md`](investment-calculator-extraction-plan.md): Phase 5P documentation-only plan for safely extracting Investment Analytics calculator logic from `js/investment-analytics.js`, including current calculator inventory, boundaries, staged migration order, bridge cautions, smoke tests, and risks.
 - [`investment-compound-bridge-smoke-test.md`](investment-compound-bridge-smoke-test.md): Phase 5T manual smoke test checklist and result template for validating the Investment Analytics compound interest bridge rollout before local fallback cleanup or higher-risk calculator extraction.
+- [`investment-cagr-extraction-plan.md`](investment-cagr-extraction-plan.md): Phase 5U documentation-only plan for safely extracting CAGR calculator logic from `js/investment-analytics.js`, including current CAGR inventory, first math-only target guidance, bridge strategy, staged migration order, smoke tests, and risks.
 
 ## What belongs here
 
