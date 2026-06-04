@@ -438,6 +438,7 @@ Recommended mapping from existing partials:
 - **Future orchestrator phase:** Turn `js/investment-analytics.js` into a thin orchestrator after pure utilities, chart math, calculators, sectors, chatbot, premium coordination, and CSS split work are validated.
 - **Phase 5L:** Split CSS behind the existing linked stylesheet.
 - **Phase 5M:** Update public pages only after compatibility is verified.
+- **Phase 6C:** A domain-owned Investment Analytics CSS manifest skeleton now exists at `domains/investment-intelligence/analytics/styles/index.css`; it mirrors the current public import order but is not loaded by any page yet.
 
 ## 10. Risk matrix
 

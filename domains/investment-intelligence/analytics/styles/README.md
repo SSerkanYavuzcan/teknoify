@@ -31,6 +31,8 @@ Phase 6A documents CSS split planning in `docs/architecture/investment-css-split
 
 Phase 6B documents CSS ownership and visual smoke testing in `docs/architecture/investment-css-visual-smoke-test.md`; CSS files remain in their current paths.
 
+Phase 6C created `index.css` as a domain-owned manifest skeleton. It mirrors the current `css/investment-analytics.css` import order, imports the existing CSS partials from their current `css/06-pages/investment-analytics/` paths, is not loaded by any HTML page yet, and does not move or copy any CSS partials.
+
 ## Candidate current source files
 
 - `css/investment-analytics.css`

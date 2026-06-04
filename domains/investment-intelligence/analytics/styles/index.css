@@ -1,0 +1,17 @@
+/*
+ * Phase 6C domain-owned Investment Analytics CSS manifest skeleton.
+ * This file mirrors the existing public manifest import order from
+ * css/investment-analytics.css, is not loaded by any HTML page yet,
+ * and leaves existing public CSS links unchanged.
+ */
+
+@import url('../../../../css/06-pages/investment-analytics/base.css');
+@import url('../../../../css/06-pages/investment-analytics/hero.css');
+@import url('../../../../css/06-pages/investment-analytics/orbit-visual.css');
+@import url('../../../../css/06-pages/investment-analytics/calculators.css');
+@import url('../../../../css/06-pages/investment-analytics/sections.css');
+@import url('../../../../css/06-pages/investment-analytics/charts.css');
+@import url('../../../../css/06-pages/investment-analytics/chart-modal.css');
+@import url('../../../../css/06-pages/investment-analytics/chart-tooltip.css');
+@import url('../../../../css/06-pages/investment-analytics/chatbot.css');
+@import url('../../../../css/06-pages/investment-analytics/responsive.css');
