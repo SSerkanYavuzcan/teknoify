@@ -6,6 +6,8 @@ Home for architecture inventories, target structure docs, and migration architec
 
 ## Documents
 
+- [`enterprise-migration-closure-audit.md`](enterprise-migration-closure-audit.md): Phase 10A final enterprise migration closure audit, readiness state, final smoke-test gate, risk matrix, and runtime migration sequence.
+- [`archive-cleanup-candidates.md`](archive-cleanup-candidates.md): Phase 10A archive/cleanup candidate policy for future dedicated archive PRs after consumer, smoke, and rollback gates.
 - [`current-inventory.md`](current-inventory.md): Current repository inventory and migration candidates.
 - [`folder-structure.md`](folder-structure.md): Target domain-based folder structure.
 - [`auth-config-centralization-plan.md`](auth-config-centralization-plan.md): Phase 4A design plan for future auth, Firebase, role access, dashboard config, and shared app configuration centralization. Phase 4B package README updates in `packages/auth`, `packages/config`, and `packages/data-access` support this plan by documenting future module boundaries before runtime files are created.

@@ -17,3 +17,7 @@ Older static MPA notes remain useful historical context for understanding the ex
 ## Migration status
 
 Runtime files have not been moved yet. The current phase only reorganizes documentation into the `docs/` subfolder structure created during the domain-based architecture refactor.
+
+## Phase 10A enterprise migration closure
+
+The Phase 10A closure audit and final readiness gate are documented in [`docs/architecture/enterprise-migration-closure-audit.md`](docs/architecture/enterprise-migration-closure-audit.md). This root file remains an entrypoint; runtime migration details should stay in the architecture docs.

@@ -190,3 +190,12 @@ This document is the Phase 2 target map. Future migration PRs should use both do
 - use `current-inventory.md` to understand where files live today and what risks were identified;
 - use this document to choose the intended destination and ownership boundary; and
 - update both migration documentation and folder READMEs when a future PR changes the target architecture.
+
+## 9. Phase 10A readiness closure note
+
+Phase 10A added the final enterprise migration readiness audit and archive candidate documentation:
+
+- [`enterprise-migration-closure-audit.md`](enterprise-migration-closure-audit.md)
+- [`archive-cleanup-candidates.md`](archive-cleanup-candidates.md)
+
+No runtime files were moved, deleted, or rewired in Phase 10A. The target folder structure remains a migration destination map; future runtime moves still require targeted PRs with smoke tests and compatibility gates.

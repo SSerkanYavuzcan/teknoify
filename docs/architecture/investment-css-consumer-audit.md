@@ -81,3 +81,17 @@ Related documentation:
 - [`investment-css-relink-smoke-test.md`](investment-css-relink-smoke-test.md)
 - [`investment-frontend-split-plan.md`](investment-frontend-split-plan.md)
 - [`../../domains/investment-intelligence/analytics/styles/README.md`](../../domains/investment-intelligence/analytics/styles/README.md)
+
+## 9. Phase 10A enterprise readiness note
+
+The enterprise readiness checker now validates that no root or `pages/*.html` file links the legacy Investment Analytics CSS manifest paths:
+
+- `../css/investment-analytics.css`
+- `/css/investment-analytics.css`
+- `css/investment-analytics.css`
+
+Run the consolidated checker with:
+
+```bash
+node scripts/architecture/check-enterprise-migration-readiness.js
+```
