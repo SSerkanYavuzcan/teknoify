@@ -211,6 +211,8 @@ Phase 5T adds `investment-compound-bridge-smoke-test.md`, a manual checklist and
 
 Phase 5U adds `investment-cagr-extraction-plan.md`, a documentation-only CAGR extraction plan. No runtime CAGR logic was moved, no CAGR JavaScript modules were created, and the current page implementation remains in `js/investment-analytics.js`.
 
+Phase 5V creates `domains/investment-intelligence/analytics/scripts/calculators/cagr.js` and `cagr-global.js` for the first pure CAGR helpers only. The bridge is not loaded yet, existing CAGR consumers are not migrated, and the current page implementation remains in `js/investment-analytics.js`.
+
 ## 11. Smoke test checklist
 
 Future calculator extraction PRs should include a smoke test document or completed checklist covering:
