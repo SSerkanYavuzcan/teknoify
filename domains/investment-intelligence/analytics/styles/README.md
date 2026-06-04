@@ -35,6 +35,8 @@ Phase 6C created `index.css` as a domain-owned manifest skeleton. It mirrors the
 
 Phase 6D adds `scripts/architecture/check-investment-css-manifest-parity.js` so `index.css` parity can be checked against the public manifest. The domain manifest is still not loaded by HTML.
 
+Phase 6E updates `pages/investment-analytics.html` to load this domain manifest. Other pages remain on the public `css/investment-analytics.css` manifest, and existing CSS partials still live in their current `css/06-pages/investment-analytics/` paths.
+
 ## Candidate current source files
 
 - `css/investment-analytics.css`

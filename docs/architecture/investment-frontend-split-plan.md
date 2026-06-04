@@ -439,6 +439,7 @@ Recommended mapping from existing partials:
 - **Phase 5L:** Split CSS behind the existing linked stylesheet.
 - **Phase 5M:** Update public pages only after compatibility is verified.
 - **Phase 6C:** A domain-owned Investment Analytics CSS manifest skeleton now exists at `domains/investment-intelligence/analytics/styles/index.css`; it mirrors the current public import order but is not loaded by any page yet.
+- **Phase 6E:** `pages/investment-analytics.html` now loads the domain-owned CSS manifest only; retail and airlines pages remain on the public manifest while CSS partials stay in their current paths.
 
 ## 10. Risk matrix
 
