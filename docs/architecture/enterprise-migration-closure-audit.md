@@ -151,3 +151,7 @@ High-risk product/funnel page mirrors now exist for Subscription and AI Assistan
 ## Phase 13A public wrapper readiness note
 
 Phase 13A adds the public page wrapper readiness checker at `scripts/architecture/check-public-page-wrapper-readiness.js`. Public wrappers remain gated by parity, static-hosting path review, smoke coverage, and rollback planning; no public pages or domain mirrors become live wrappers in this phase.
+
+## Phase 13B public page mirror source policy note
+
+Phase 13B added the public page mirror source policy and a read-only checker for parity, required public/mirror file existence, and navigation-to-mirror violations. Live public routes remain in `pages/` while domain mirrors prepare future ownership.

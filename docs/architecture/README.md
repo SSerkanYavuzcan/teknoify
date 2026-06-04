@@ -6,6 +6,7 @@ Home for architecture inventories, target structure docs, and migration architec
 
 ## Documents
 
+- [`public-page-mirror-source-policy.md`](public-page-mirror-source-policy.md): Phase 13B source-of-truth policy for keeping live public `pages/*.html` routes aligned with domain-owned mirrors until build/deploy sync or safe wrappers exist.
 - [`current-inventory.md`](current-inventory.md): Current repository inventory and migration candidates.
 - [`folder-structure.md`](folder-structure.md): Target domain-based folder structure.
 - [`auth-config-centralization-plan.md`](auth-config-centralization-plan.md): Phase 4A design plan for future auth, Firebase, role access, dashboard config, and shared app configuration centralization. Phase 4B package README updates in `packages/auth`, `packages/config`, and `packages/data-access` support this plan by documenting future module boundaries before runtime files are created.

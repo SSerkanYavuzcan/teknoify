@@ -107,3 +107,7 @@ Do not delete public pages yet. Do not change payment, auth, subscription, premi
 ## Phase 13A wrapper readiness strategy note
 
 Phase 13A keeps Subscription and AI Assistant classified as high-risk product/funnel pages. They remain covered by wrapper readiness planning, but they should not be first wrapper candidates and no live route or product behavior changes in this phase.
+
+## Phase 13B source policy note
+
+Product/funnel mirrors are governed by the public page mirror source policy. Subscription and AI Assistant mirrors remain high-risk, non-live ownership preparation files until parity, static-hosting strategy, smoke tests, and rollback gates are proven.

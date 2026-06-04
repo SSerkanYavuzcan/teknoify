@@ -24,3 +24,7 @@ Do not serve these mirrors directly or reduce the corresponding `pages/*.html` f
 ## Phase 13A public wrapper strategy note
 
 Product/funnel mirrors remain high-risk in Phase 13A. Subscription and AI Assistant are covered by the wrapper readiness strategy, but they are not first wrapper candidates and are not live routes.
+
+## Phase 13B source policy note
+
+Product/funnel mirrors follow the public page mirror source policy and remain non-live ownership preparation files. Subscription and AI Assistant stay high-risk and require parity, product-specific smoke tests, and rollback gates before any public route change.
