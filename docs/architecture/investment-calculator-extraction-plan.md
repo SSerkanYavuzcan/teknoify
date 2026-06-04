@@ -216,6 +216,7 @@ Phase 5W loads `cagr-global.js` on `pages/investment-analytics.html` after the c
 
 Phase 5X migrates the selected CAGR consumer helpers, `calculateCagr` and `getCagrBaseResult`, to bridge-first/local-fallback wrappers in `js/investment-analytics.js` while leaving CAGR rendering, inputs, validation, events, charting, compound, and retirement logic untouched.
 
+Phase 5Y documents CAGR bridge smoke testing as the decision gate before removing local CAGR fallbacks or extracting higher-risk CAGR render, input, event, chart, or table logic.
 
 ## 11. Smoke test checklist
 
