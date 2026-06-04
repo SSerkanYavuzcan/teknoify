@@ -219,3 +219,5 @@ Phase 5Z also adds a short note to `docs/architecture/investment-calculator-extr
 Phase 5Z also adds a short note to `domains/investment-intelligence/analytics/scripts/calculators/README.md` confirming that retirement extraction planning is documented and no retirement JavaScript modules have been created yet.
 
 Phase 5AB loads `retirement-global.js` on `pages/investment-analytics.html`. `js/investment-analytics.js` has not been migrated to read the retirement bridge yet, and the existing local retirement logic remains active.
+
+Phase 5AD adds `investment-retirement-bridge-smoke-test.md`, the retirement bridge smoke test checklist/result document created after the first retirement consumer migration.

@@ -396,3 +396,7 @@ Phase 5AB loads `retirement-global.js` on `pages/investment-analytics.html` afte
 ## 23. Phase 5AC status
 
 Phase 5AC keeps `js/investment-analytics.js` as a classic deferred script and reads the retirement bridge only through guarded wrappers with local fallback. Only `safeMoney` is bridge-wrapped in this phase, so missing bridges, malformed helper entries, absent helper functions, or throwing bridged helpers continue to use the classic script's local money-clamping logic.
+
+## 24. Phase 5AD status
+
+Phase 5AD documents retirement bridge smoke testing and requires it to pass before local retirement fallback cleanup or broader retirement extraction continues.

@@ -54,6 +54,8 @@ Phase 5AB loads `retirement-global.js` on `pages/investment-analytics.html` afte
 
 Phase 5AC migrates the first retirement consumer: `safeMoney` in `js/investment-analytics.js` now reads from the retirement bridge when available while retaining the local fallback definition for missing, malformed, incomplete, or throwing bridge entries. Broader retirement rendering, inputs, validation, charts, tables, and events remain local.
 
+Phase 5AD documents retirement smoke testing in `docs/architecture/investment-retirement-bridge-smoke-test.md`. The smoke test must pass before retirement fallback cleanup or additional retirement extraction continues.
+
 ## Candidate current source files
 
 - Calculator sections currently inside `js/investment-analytics.js`.

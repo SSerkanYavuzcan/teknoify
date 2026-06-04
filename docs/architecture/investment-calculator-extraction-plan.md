@@ -226,6 +226,8 @@ Phase 5AB loads the retirement bridge on `pages/investment-analytics.html` after
 
 Phase 5AC migrates only the `safeMoney` retirement consumer in `js/investment-analytics.js` to a guarded bridge-first/local-fallback wrapper. The local fallback remains authoritative when the retirement bridge is unavailable, malformed, missing `safeMoney`, or throws, and no retirement render/input/validation/chart/table/event logic is moved.
 
+Phase 5AD documents retirement bridge smoke testing as the decision gate before removing local retirement fallbacks or extracting higher-risk retirement render, input, or event logic.
+
 ## 11. Smoke test checklist
 
 Future calculator extraction PRs should include a smoke test document or completed checklist covering:
