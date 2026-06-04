@@ -8,11 +8,11 @@ This folder will contain calculator-specific modules for the Investment Analytic
 
 Future calculator modules may cover:
 
-- Compound interest calculators
-- CAGR calculators
-- Retirement calculators
-- Future portfolio calculators
-- Shared calculator helpers
+* Compound interest calculators
+* CAGR calculators
+* Retirement calculators
+* Future portfolio calculators
+* Shared calculator helpers
 
 ## What does not belong here yet
 
@@ -32,13 +32,19 @@ Phase 5R loads `compound-interest-global.js` on `pages/investment-analytics.html
 
 Phase 5S migrates the first compound calculator consumer: `growCompoundValue` in `js/investment-analytics.js` now reads from the compound interest bridge when available while retaining the local fallback definition for missing, malformed, incomplete, or throwing bridge entries.
 
-Phase 5U documents CAGR extraction planning in `docs/architecture/investment-cagr-extraction-plan.md`; later CAGR migration work adds pure CAGR calculator bridge files while existing page fallback logic remains in `js/investment-analytics.js`.
+Phase 5U documents CAGR extraction planning in `docs/architecture/investment-cagr-extraction-plan.md`. No CAGR JavaScript modules were created in that phase, and existing CAGR logic remained in `js/investment-analytics.js`.
 
-Phase 5X migrates selected CAGR consumers in `js/investment-analytics.js`: `calculateCagr` and `getCagrBaseResult` now read from the CAGR bridge when available while retaining local fallback definitions for missing, malformed, or throwing bridge helpers.
+Phase 5V creates the first pure CAGR calculator module, `cagr.js`, and its legacy-safe browser bridge, `cagr-global.js`. Existing CAGR consumers are not migrated in that phase, so `js/investment-analytics.js` still contains the original local `calculateCagr` and `getCagrBaseResult` helpers.
+
+The CAGR bridge tries to expose `window.TEKNOIFY_INVESTMENT_UTILS.calculators.cagr` only when the existing investment utils global and nested calculator namespace can be extended safely. If the formatter bridge has already provided a frozen, non-extensible investment utils namespace, or a nested calculator namespace cannot be safely extended, the CAGR bridge instead exposes `window.TEKNOIFY_INVESTMENT_CAGR` as a separate fallback namespace.
+
+Phase 5W loads `cagr-global.js` on `pages/investment-analytics.html` after the compound interest bridge and before the classic deferred `js/investment-analytics.js` entrypoint. Local CAGR behavior remains active in that phase because `js/investment-analytics.js` has not been migrated to read the bridge yet.
+
+Phase 5X migrates selected CAGR consumers in `js/investment-analytics.js`: `calculateCagr` and `getCagrBaseResult` now read from the CAGR bridge when available while retaining local fallback definitions for missing, malformed, incomplete, or throwing bridge helpers. CAGR rendering, inputs, validation, events, charting, compound, and retirement logic remain untouched.
 
 ## Candidate current source files
 
-- Calculator sections currently inside `js/investment-analytics.js`.
+* Calculator sections currently inside `js/investment-analytics.js`.
 
 ## First safe migration idea
 

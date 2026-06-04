@@ -12,6 +12,8 @@ Calculator extraction is intentionally planned after the formatter bridge and ch
 
 **Phase 5R note:** The compound interest bridge is now loaded on `pages/investment-analytics.html`. `js/investment-analytics.js` has not been migrated to read it yet, and the local compound calculator logic remains in place.
 
+**Phase 5W note:** The CAGR bridge is now loaded on `pages/investment-analytics.html` after the compound interest bridge. `js/investment-analytics.js` has not been migrated to read it yet, and the local CAGR calculator logic remains in place.
+
 ## 2. Why calculator extraction matters
 
 Calculator extraction matters because the calculators are not just page widgets; they are productizable individual tools:
@@ -202,14 +204,18 @@ The first actual calculator runtime PR should:
 Recommended first runtime extraction target: **compound interest pure math helper `growCompoundValue` plus its minimal helper group only if needed**.
 
 Reason: `growCompoundValue` is identifiable from inspection as the least coupled calculator math function. It does not read or write the DOM, does not format output, does not add events, and does not directly render charts. The broader compound calculation (`calculateCompoundInterest` and `getContributionTimes`) is also pure, but it is more output-sensitive and should follow only after `growCompoundValue` bridge/fallback behavior is proven.
-
 Phase 5S confirms `growCompoundValue` now uses bridge-first/local-fallback behavior, while calculator render, input, validation, chart, and event logic remains untouched.
 
 Phase 5T adds `investment-compound-bridge-smoke-test.md`, a manual checklist and result document for validating the compound interest bridge after the first compound calculator consumer migration.
 
 Phase 5U adds `investment-cagr-extraction-plan.md`, a documentation-only CAGR extraction plan. No runtime CAGR logic was moved, no CAGR JavaScript modules were created, and the current page implementation remains in `js/investment-analytics.js`.
 
+Phase 5V creates `domains/investment-intelligence/analytics/scripts/calculators/cagr.js` and `cagr-global.js` for the first pure CAGR helpers only. Existing CAGR consumers are not migrated in that phase, and the current page implementation remains in `js/investment-analytics.js`.
+
+Phase 5W loads `cagr-global.js` on `pages/investment-analytics.html` after the compound interest bridge and before the classic deferred `js/investment-analytics.js` entrypoint. Local CAGR behavior remains active because `js/investment-analytics.js` has not been migrated to read the bridge yet.
+
 Phase 5X migrates the selected CAGR consumer helpers, `calculateCagr` and `getCagrBaseResult`, to bridge-first/local-fallback wrappers in `js/investment-analytics.js` while leaving CAGR rendering, inputs, validation, events, charting, compound, and retirement logic untouched.
+
 
 ## 11. Smoke test checklist
 
