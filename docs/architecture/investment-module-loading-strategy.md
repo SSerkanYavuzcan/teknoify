@@ -363,3 +363,7 @@ Phase 5M loads `chart-math-global.js` on `pages/investment-analytics.html` after
 ## 18. Phase 5O status
 
 Phase 5O adds `investment-chart-math-bridge-smoke-test.md`, a manual smoke test checklist and result document for the chart math bridge after the first `js/investment-analytics.js` chart math consumer migration. Treat this smoke testing as the decision gate before removing local chart math fallbacks or extracting higher-risk chart renderers.
+
+## 19. Phase 5V status
+
+Phase 5V creates the pure CAGR calculator module and legacy-safe CAGR bridge only. Because the formatter bridge can freeze `window.TEKNOIFY_INVESTMENT_UTILS`, the CAGR bridge follows the calculator bridge strategy: expose `window.TEKNOIFY_INVESTMENT_UTILS.calculators.cagr` only when the existing utils/calculators objects can be extended safely, otherwise expose the frozen fallback namespace `window.TEKNOIFY_INVESTMENT_CAGR`. The bridge is not loaded by `pages/investment-analytics.html` yet, and no `js/investment-analytics.js` CAGR consumers read from it yet.
