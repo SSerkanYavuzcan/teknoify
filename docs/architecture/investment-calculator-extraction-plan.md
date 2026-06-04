@@ -224,6 +224,8 @@ Phase 5Z adds `investment-retirement-extraction-plan.md`, a documentation-only r
 
 Phase 5AB loads the retirement bridge on `pages/investment-analytics.html` after the CAGR bridge and before the classic deferred `js/investment-analytics.js` entrypoint. No retirement consumers are migrated in this phase, so local retirement logic remains active.
 
+Phase 5AC migrates only the `safeMoney` retirement consumer in `js/investment-analytics.js` to a guarded bridge-first/local-fallback wrapper. The local fallback remains authoritative when the retirement bridge is unavailable, malformed, missing `safeMoney`, or throws, and no retirement render/input/validation/chart/table/event logic is moved.
+
 ## 11. Smoke test checklist
 
 Future calculator extraction PRs should include a smoke test document or completed checklist covering:

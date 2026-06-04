@@ -392,3 +392,7 @@ Phase 5X keeps `js/investment-analytics.js` as a classic deferred script and rea
 ## 22. Phase 5AB status
 
 Phase 5AB loads `retirement-global.js` on `pages/investment-analytics.html` after the CAGR bridge and before the existing classic deferred `js/investment-analytics.js` entrypoint. The retirement bridge now follows the CAGR bridge in the analytics page loading order, while local retirement consumers remain unmigrated.
+
+## 23. Phase 5AC status
+
+Phase 5AC keeps `js/investment-analytics.js` as a classic deferred script and reads the retirement bridge only through guarded wrappers with local fallback. Only `safeMoney` is bridge-wrapped in this phase, so missing bridges, malformed helper entries, absent helper functions, or throwing bridged helpers continue to use the classic script's local money-clamping logic.

@@ -8,6 +8,8 @@ This phase does **not** create retirement JavaScript modules, does **not** load 
 
 **Phase 5AA note:** The first pure retirement calculator module, `domains/investment-intelligence/analytics/scripts/calculators/retirement.js`, and its legacy-safe bridge, `domains/investment-intelligence/analytics/scripts/calculators/retirement-global.js`, now exist. They are not loaded by `pages/investment-analytics.html`, are not consumed by `js/investment-analytics.js`, and do not change existing retirement runtime behavior yet.
 
+**Phase 5AC note:** `safeMoney` in `js/investment-analytics.js` now uses bridge-first/local-fallback behavior against the retirement bridge when available. The local money-clamping fallback remains in place, and retirement render, input parsing, validation/defaulting, chart rendering, table rendering, and event logic remain untouched.
+
 ## 2. Why retirement extraction matters
 
 Retirement is a reusable and productizable investment calculator. Unlike smaller helper calculators, it combines long-range accumulation, contribution growth, drawdown, inflation, target fund, shortfall, lifecycle table, and chart projections into outputs that users may treat as financial planning guidance.

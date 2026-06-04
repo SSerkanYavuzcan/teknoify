@@ -1659,8 +1659,40 @@
         initCagrCalculator();
     }
 
+    function getRetirementHelper(helperName) {
+        try {
+            const retirementFromUtils = window.TEKNOIFY_INVESTMENT_UTILS?.calculators?.retirement;
+            const standaloneRetirement = window.TEKNOIFY_INVESTMENT_RETIREMENT;
+            const helper = retirementFromUtils?.[helperName] || standaloneRetirement?.[helperName];
+
+            return typeof helper === "function" ? helper : null;
+        } catch (error) {
+            console.warn(`Investment retirement bridge lookup failed for ${helperName}; using local fallback.`, error);
+
+            return null;
+        }
+    }
+
+    function callRetirementHelper(helperName, fallback, args) {
+        const helper = getRetirementHelper(helperName);
+
+        if (helper) {
+            try {
+                return helper(...args);
+            } catch (error) {
+                console.warn(`Investment retirement bridge failed for ${helperName}; using local fallback.`, error);
+            }
+        }
+
+        return fallback(...args);
+    }
+
     function safeMoney(value) {
-        return Number.isFinite(value) ? Math.max(value, 0) : 0;
+        return callRetirementHelper(
+            "safeMoney",
+            (fallbackValue) => Number.isFinite(fallbackValue) ? Math.max(fallbackValue, 0) : 0,
+            [value]
+        );
     }
 
     function getMonthlyRate(annualRate) {
