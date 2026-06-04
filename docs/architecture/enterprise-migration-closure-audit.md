@@ -123,3 +123,7 @@ Before runtime moves, archive/deletion work, or broad ownership rewiring, comple
 - [`investment-css-consumer-audit.md`](investment-css-consumer-audit.md)
 - [`investment-data-rag-migration-audit.md`](investment-data-rag-migration-audit.md)
 - [`dashboard-corporate-automation-migration-audit.md`](dashboard-corporate-automation-migration-audit.md)
+
+## Phase 11A protected Dashboard route smoke gate note
+
+Phase 11A documents the protected Dashboard route/access smoke gate as the next pre-runtime requirement. Protected admin, premium, member, shared Dashboard, Firebase/App Check, impersonation, and unauthorized redirect behavior must be manually smoke-tested before any protected Dashboard runtime file is moved.

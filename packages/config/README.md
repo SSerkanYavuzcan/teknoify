@@ -69,3 +69,7 @@ Phase 4C adds the initial route constants module and supporting documentation. P
 ## Phase 9A route ownership note
 
 Phase 9A maps future Dashboard + Corporate Automation route ownership without moving routes. Future dashboard/public route moves should use centralized route constants, keep current route strings compatible, and pass route smoke tests before static hosting paths or runtime files change.
+
+## Phase 11A Dashboard route constants note
+
+Phase 11A requires protected Dashboard route moves to continue using centralized route constants and to preserve current admin, premium, member, and shared Dashboard route values. Route constants and redirect behavior must be verified by the Dashboard route/access smoke gate before any protected Dashboard HTML or runtime script path changes.
