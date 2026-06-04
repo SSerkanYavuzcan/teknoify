@@ -10,6 +10,10 @@ Phase 10A is governance-only. It records readiness, remaining risk, and sequenci
 
 Phase 14A expands `scripts/architecture/check-enterprise-migration-readiness.js` so the enterprise readiness checker now includes dashboard route readiness, route compatibility, public service route map, corporate mirrors, product/funnel mirrors, wrapper readiness, and mirror source policy checks.
 
+## Phase 14B package script note
+
+Phase 14B makes architecture readiness checks runnable through package scripts, including `npm run check:architecture` for the full enterprise readiness set. The package entrypoints are developer convenience wrappers only and do not change runtime behavior or the existing `npm run check` gate.
+
 ## 2. Current migration status summary
 
 | Area                                   | Current Status                                                                                         | Readiness                                              | Remaining Work                                                                                                 | Risk                                                 |
