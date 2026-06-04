@@ -136,13 +136,13 @@ domains/investment-intelligence/calculators/cagr/
 - Local fallback functions should remain in `js/investment-analytics.js` during the first migration so missing, malformed, incomplete, or throwing bridge helpers cannot break the calculator.
 - The formatter bridge is already available and should preserve percentage/number/currency formatting. CAGR extraction should avoid changing formatter contracts in the same PR.
 - CAGR extraction should not proceed beyond pure math until compound bridge smoke testing is considered and any shared bridge/fallback risks are understood.
-- A future `cagr-global.js` should expose only a small, immutable pure-helper surface, for example under a calculator namespace, and should avoid page DOM, selectors, chart rendering, or event handlers.
+- `cagr-global.js` exposes only a small, immutable pure-helper surface under calculator namespaces and avoids page DOM, selectors, chart rendering, or event handlers.
 
 ## 9. Proposed staged migration order
 
 - **Phase 5U:** CAGR extraction plan only. Inspect and document current behavior; move no runtime CAGR logic.
 - **Phase 5V:** Create pure CAGR math module plus global bridge only.
-- **Phase 5W:** Load the CAGR bridge on `pages/investment-analytics.html` without migrating consumers.
+- **Phase 5W:** Load the CAGR bridge on `pages/investment-analytics.html` without migrating consumers. The page now loads `cagr-global.js`, but `js/investment-analytics.js` has not been migrated to read it yet and local CAGR logic remains in place.
 - **Phase 5X:** Migrate one pure CAGR math helper with local fallback, keeping DOM/render/chart/event behavior unchanged.
 - **Phase 5Y:** Add CAGR bridge smoke test checklist/result documentation.
 - **Later:** Extract rendering, event, input, table, and chart logic only after smoke tests pass and only with narrowly scoped follow-up plans.

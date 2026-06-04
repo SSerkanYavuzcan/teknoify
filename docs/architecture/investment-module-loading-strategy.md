@@ -22,6 +22,8 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5T note:** `investment-compound-bridge-smoke-test.md` now documents smoke testing as the decision gate before removing local compound fallbacks or extracting higher-risk calculator render, input, or event logic.
 
+**Phase 5W note:** The CAGR bridge now follows the compound interest bridge in the analytics page loading order.
+
 ## 2. Current loading facts
 
 Phase 5F inspected `pages/investment-analytics.html`, `js/investment-analytics.js`, and the script tags around the Investment Analytics page without editing them.
@@ -46,6 +48,10 @@ Observed `pages/investment-analytics.html` script order:
     type="module"
     src="/domains/investment-intelligence/analytics/scripts/calculators/compound-interest-global.js"
 ></script>
+<script
+    type="module"
+    src="/domains/investment-intelligence/analytics/scripts/calculators/cagr-global.js"
+></script>
 <script src="../js/script.js" defer></script>
 <script src="../js/investment-analytics.js" defer></script>
 ```
@@ -55,10 +61,11 @@ Current facts:
 - `js/investment-analytics.js` is loaded from `pages/investment-analytics.html` as `../js/investment-analytics.js`.
 - The investment analytics script tag uses `defer`.
 - The investment analytics script tag does **not** use `type="module"`; it is a classic deferred script.
-- The page loads module bridge scripts for routes, formatters, and chart math before `../js/investment-analytics.js`.
+- The page loads module bridge scripts for routes, formatters, chart math, compound interest, and CAGR before `../js/investment-analytics.js`.
 - The route bridge script remains present before the formatter bridge, shared `../js/script.js`, and `../js/investment-analytics.js`.
 - The chart math bridge now follows the formatter bridge in the analytics page loading order.
 - The compound interest bridge now follows the chart math bridge in the analytics page loading order.
+- The CAGR bridge now follows the compound interest bridge in the analytics page loading order.
 - Repository search shows `pages/investment-analytics.html` is the only public page that loads `js/investment-analytics.js` directly.
 - Related investment pages such as `pages/investment-retail.html`, `pages/investment-airlines.html`, and `pages/financial-indicators.html` do not load `js/investment-analytics.js`.
 
