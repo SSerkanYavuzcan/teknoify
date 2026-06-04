@@ -104,3 +104,7 @@ A future runtime migration is a **no-go** when any applicable checker fails, man
 The recommended first post-readiness action is the RPA sync dry-run workflow. Run `node scripts/architecture/sync-rpa-page-mirror.js` and inspect the dry-run output before considering any future RPA wrapper, static-hosting, or write-mode work.
 
 Write mode should remain a future/manual action in a dedicated PR with parity checks, visual smoke testing, navigation/CTA smoke, console review, and rollback readiness.
+
+## Phase 15B final scorecard/archive freeze note
+
+Phase 15B adds the final architecture scorecard and archive readiness freeze docs. Together with this runbook, they define the current closeout state for architecture migration gates, safe next runtime candidates, and no-go archive/delete conditions.

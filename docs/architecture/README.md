@@ -6,6 +6,8 @@ Home for architecture inventories, target structure docs, and migration architec
 
 ## Documents
 
+- [`final-architecture-scorecard.md`](final-architecture-scorecard.md): Phase 15B final enterprise architecture preparation scorecard, including completed readiness work, remaining gates, do-not-move areas, and go/no-go guidance.
+- [`archive-readiness-freeze.md`](archive-readiness-freeze.md): Phase 15B archive/delete readiness freeze that separates do-not-archive-yet areas from future cleanup candidates after smoke and compatibility gates.
 - [`final-migration-readiness-report.md`](final-migration-readiness-report.md): Phase 14A final all-checkers migration readiness report, completion status, current safe next actions, no-go list, final smoke checklist, risk register, and runtime move go/no-go criteria.
 - [`final-migration-runbook.md`](final-migration-runbook.md): Phase 14B developer runbook for package-script architecture checks, runtime migration go/no-go decisions, area-specific smoke gates, and the recommended next PR sequence.
 - [`rpa-page-mirror-sync-workflow.md`](rpa-page-mirror-sync-workflow.md): Phase 15A safe dry-run-first sync workflow for the RPA public page and its domain ownership mirror.

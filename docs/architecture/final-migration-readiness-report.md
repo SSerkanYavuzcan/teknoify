@@ -149,3 +149,7 @@ A runtime move must not proceed when any of these are true:
 - [`investment-data-rag-migration-audit.md`](investment-data-rag-migration-audit.md)
 - [`investment-css-consumer-audit.md`](investment-css-consumer-audit.md)
 - [`investment-js-orchestrator-cleanup-plan.md`](investment-js-orchestrator-cleanup-plan.md)
+
+## Phase 15B final scorecard and archive freeze note
+
+Phase 15B adds the final architecture scorecard and archive readiness freeze docs. These governance-only docs record the current readiness closeout state, keep runtime moves gated, and confirm that archive/delete work remains blocked until consumer, smoke, compatibility, and rollback gates are met.

@@ -50,3 +50,7 @@ The purpose is to make cleanup reviewable by separating candidate identification
 - [ ] PR includes before/after notes.
 - [ ] No generated/source data accidentally deleted.
 - [ ] No protected route removed before replacement.
+
+## Phase 15B archive readiness freeze note
+
+Phase 15B freezes archive readiness. No archive/delete work should happen before the documented consumer, smoke, compatibility, rollback, and package-script gates pass in a dedicated cleanup PR.
