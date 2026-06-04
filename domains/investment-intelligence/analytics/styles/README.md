@@ -27,6 +27,8 @@ Runtime CSS should not be moved here yet. Public page links, the currently linke
 
 Migration status: Phase 5D README-only skeleton; no investment analytics JS/CSS files have been moved here yet.
 
+Phase 6A documents CSS split planning in `docs/architecture/investment-css-split-strategy.md`; no CSS files have been moved or relinked yet.
+
 ## Candidate current source files
 
 - `css/investment-analytics.css`
