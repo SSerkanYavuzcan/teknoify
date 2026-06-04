@@ -8,27 +8,33 @@ This phase does not move, refactor, rename, or create runtime JavaScript, CSS, H
 
 ## 2. Why CAGR extraction matters
 
-- CAGR is a reusable investment calculator: the same annualized return formula can support analytics pages, standalone tools, comparison widgets, and educational content.
-- CAGR may become a standalone public or premium product calculator later, so the current implementation should be understood before page-specific behavior is separated from reusable math.
-- CAGR is output-sensitive because the current page combines financial percentages, invalid input messages, zero and empty values, date/duration modes, Turkish percentage formatting, USD formatting, chart labels, and projection rows.
-- Extraction must preserve current UI behavior. The calculator selector, input mode toggles, disabled calculated-ending field state, validation text, result cards, chart, projection table, formatter bridge behavior, and existing compound calculator behavior must remain unchanged.
+* CAGR is a reusable investment calculator: the same annualized return formula can support analytics pages, standalone tools, comparison widgets, and educational content.
+* CAGR may become a standalone public or premium product calculator later, so the current implementation should be understood before page-specific behavior is separated from reusable math.
+* CAGR is output-sensitive because the current page combines financial percentages, invalid input messages, zero and empty values, date/duration modes, Turkish percentage formatting, USD formatting, chart labels, and projection rows.
+* Extraction must preserve current UI behavior. The calculator selector, input mode toggles, disabled calculated-ending field state, validation text, result cards, chart, projection table, formatter bridge behavior, and existing compound calculator behavior must remain unchanged.
 
 ## 3. Current files inspected
 
 The following files were inspected for this plan and were not edited except where explicitly listed in the Phase 5U documentation updates:
 
-- `js/investment-analytics.js`
-    - CAGR panel rendering, input parsing, validation/defaulting, math, result rendering, chart rendering, table rendering, event binding, and calculator selector coordination were inspected.
-- `pages/investment-analytics.html`
-    - The calculator selector cards and existing bridge loading order were inspected. The page was not changed.
-- `domains/investment-intelligence/analytics/scripts/calculators/README.md`
-    - Existing calculator module status and compound bridge notes were inspected.
-- `domains/investment-intelligence/calculators/README.md`
-    - Future product calculator folder guidance was inspected.
-- `css/investment-analytics.css`
-    - The page stylesheet import graph was inspected.
-- `css/06-pages/investment-analytics/calculators.css`
-    - CAGR calculator selectors, result grid, validation message, and chart classes were inspected. CSS was not changed.
+* `js/investment-analytics.js`
+
+  * CAGR panel rendering, input parsing, validation/defaulting, math, result rendering, chart rendering, table rendering, event binding, and calculator selector coordination were inspected.
+* `pages/investment-analytics.html`
+
+  * The calculator selector cards and existing bridge loading order were inspected. The page was not changed.
+* `domains/investment-intelligence/analytics/scripts/calculators/README.md`
+
+  * Existing calculator module status and compound bridge notes were inspected.
+* `domains/investment-intelligence/calculators/README.md`
+
+  * Future product calculator folder guidance was inspected.
+* `css/investment-analytics.css`
+
+  * The page stylesheet import graph was inspected.
+* `css/06-pages/investment-analytics/calculators.css`
+
+  * CAGR calculator selectors, result grid, validation message, and chart classes were inspected. CSS was not changed.
 
 ## 4. Current CAGR inventory
 
@@ -67,41 +73,51 @@ The following files were inspected for this plan and were not edited except wher
 CAGR should be treated as separate layers, even though several layers currently live together in `js/investment-analytics.js`:
 
 1. **Pure CAGR math**
-    - `calculateCagr`, `getCagrBaseResult`, and possibly the mode-specific helpers compute result objects from already-parsed inputs.
-    - This is the only safe first extraction target if the helper is clearly isolated and migrated through a bridge-first/local-fallback wrapper.
+
+   * `calculateCagr`, `getCagrBaseResult`, and possibly the mode-specific helpers compute result objects from already-parsed inputs.
+   * This is the only safe first extraction target if the helper is clearly isolated and migrated through a bridge-first/local-fallback wrapper.
 2. **Input parsing**
-    - `parseCagrInputs` and `getCagrFieldNumber` convert DOM field values, selected modes, dates, and localized numbers into the input object.
+
+   * `parseCagrInputs` and `getCagrFieldNumber` convert DOM field values, selected modes, dates, and localized numbers into the input object.
 3. **Validation/defaulting**
-    - Date-mode validation, positive beginning/ending value checks, duration checks, `targetCagr <= -1` checks, zero-CAGR duration behavior, and invalid calculation messages must remain unchanged.
+
+   * Date-mode validation, positive beginning/ending value checks, duration checks, `targetCagr <= -1` checks, zero-CAGR duration behavior, and invalid calculation messages must remain unchanged.
 4. **DOM input reading**
-    - Field ids such as `cagr-beginning-value`, `cagr-ending-value`, `cagr-years`, `cagr-months`, `cagr-start-date`, `cagr-end-date`, and `cagr-target-rate` are page-specific and should stay local until a broader panel strategy exists.
+
+   * Field ids such as `cagr-beginning-value`, `cagr-ending-value`, `cagr-years`, `cagr-months`, `cagr-start-date`, `cagr-end-date`, and `cagr-target-rate` are page-specific and should stay local until a broader panel strategy exists.
 5. **Result formatting**
-    - `formatPercent`, `formatUsdCurrency`, `formatUsdCompact`, and `formatDurationYears` determine visible output and must preserve exact locale/rounding behavior.
+
+   * `formatPercent`, `formatUsdCurrency`, `formatUsdCompact`, and `formatDurationYears` determine visible output and must preserve exact locale/rounding behavior.
 6. **Result rendering**
-    - `renderCagrResults` writes result cards, validation text, and invalid-state clears.
+
+   * `renderCagrResults` writes result cards, validation text, and invalid-state clears.
 7. **Chart data preparation**
-    - `buildCagrGrowthSeries` prepares CAGR value points and handles partial-year behavior.
+
+   * `buildCagrGrowthSeries` prepares CAGR value points and handles partial-year behavior.
 8. **Chart rendering**
-    - `renderCagrGrowthChart` creates SVG, labels, markers, tooltip metadata, and accessible summary text.
+
+   * `renderCagrGrowthChart` creates SVG, labels, markers, tooltip metadata, and accessible summary text.
 9. **Event binding**
-    - `initCagrCalculator` attaches input/change and duration-mode click handlers.
+
+   * `initCagrCalculator` attaches input/change and duration-mode click handlers.
 10. **Tab/selector coordination**
-    - `renderCalculatorPanel`, `updateCalculatorSelectorState`, `initCalculatorSelector`, `defaultCalculatorKey`, and `activeCalculatorKey` coordinate all calculators and are not safe first extraction targets.
+
+    * `renderCalculatorPanel`, `updateCalculatorSelectorState`, `initCalculatorSelector`, `defaultCalculatorKey`, and `activeCalculatorKey` coordinate all calculators and are not safe first extraction targets.
 
 ## 6. Do not extract first
 
 Do not extract these CAGR-adjacent areas in the first runtime CAGR PR:
 
-- Event binding.
-- Tab switching.
-- DOM render functions.
-- Chart render functions.
-- Premium gate interactions.
-- Chatbot interactions.
-- Functions coupled to current page state.
-- Functions whose output cannot be easily verified.
-- Selector labels or `aria-pressed` behavior.
-- Shared formatter, chart, and parser helpers used by compound or retirement calculators.
+* Event binding.
+* Tab switching.
+* DOM render functions.
+* Chart render functions.
+* Premium gate interactions.
+* Chatbot interactions.
+* Functions coupled to current page state.
+* Functions whose output cannot be easily verified.
+* Selector labels or `aria-pressed` behavior.
+* Shared formatter, chart, and parser helpers used by compound or retirement calculators.
 
 ## 7. Proposed future module structure
 
@@ -131,52 +147,54 @@ domains/investment-intelligence/calculators/cagr/
 
 `js/investment-analytics.js` is still a classic deferred script, so CAGR runtime extraction must follow the existing bridge-compatible migration style:
 
-- A pure CAGR math module may need a global bridge pattern if consumed before the full Investment Analytics entrypoint is converted to modules.
-- Do not expose DOM renderers globally.
-- Local fallback functions should remain in `js/investment-analytics.js` during the first migration so missing, malformed, incomplete, or throwing bridge helpers cannot break the calculator.
-- The formatter bridge is already available and should preserve percentage/number/currency formatting. CAGR extraction should avoid changing formatter contracts in the same PR.
-- CAGR extraction should not proceed beyond pure math until compound bridge smoke testing is considered and any shared bridge/fallback risks are understood.
-- A future `cagr-global.js` should expose only a small, immutable pure-helper surface, for example under a calculator namespace, and should avoid page DOM, selectors, chart rendering, or event handlers.
+* A pure CAGR math module may need a global bridge pattern if consumed before the full Investment Analytics entrypoint is converted to modules.
+* Do not expose DOM renderers globally.
+* Local fallback functions should remain in `js/investment-analytics.js` during the first migration so missing, malformed, incomplete, or throwing bridge helpers cannot break the calculator.
+* The formatter bridge is already available and should preserve percentage/number/currency formatting. CAGR extraction should avoid changing formatter contracts in the same PR.
+* CAGR extraction should not proceed beyond pure math until compound bridge smoke testing is considered and any shared bridge/fallback risks are understood.
+* `cagr-global.js` exposes only a small, immutable pure-helper surface under calculator namespaces and avoids page DOM, selectors, chart rendering, or event handlers.
 
 ## 9. Proposed staged migration order
 
-- **Phase 5U:** CAGR extraction plan only. Inspect and document current behavior; move no runtime CAGR logic.
-- **Phase 5V:** Create pure CAGR math module plus global bridge only. `cagr.js` and `cagr-global.js` now exist, but the bridge is not loaded by `pages/investment-analytics.html` and no CAGR consumers read from it yet.
-- **Phase 5W:** Load the CAGR bridge on `pages/investment-analytics.html` without migrating consumers.
-- **Phase 5X:** Migrate one pure CAGR math helper with local fallback, keeping DOM/render/chart/event behavior unchanged.
-- **Phase 5Y:** Add CAGR bridge smoke test checklist/result documentation.
-- **Later:** Extract rendering, event, input, table, and chart logic only after smoke tests pass and only with narrowly scoped follow-up plans.
+* **Phase 5U:** CAGR extraction plan only. Inspect and document current behavior; move no runtime CAGR logic.
+* **Phase 5V:** Create pure CAGR math module plus global bridge only. `cagr.js` and `cagr-global.js` now exist, but the bridge is not consumed by `js/investment-analytics.js` yet.
+* **Phase 5W:** Load the CAGR bridge on `pages/investment-analytics.html` without migrating consumers. The page now loads `cagr-global.js`, but `js/investment-analytics.js` has not been migrated to read it yet and local CAGR logic remains in place.
+* **Phase 5X:** Migrate one pure CAGR math helper with local fallback, keeping DOM/render/chart/event behavior unchanged.
+* **Phase 5Y:** Add CAGR bridge smoke test checklist/result documentation.
+* **Later:** Extract rendering, event, input, table, and chart logic only after smoke tests pass and only with narrowly scoped follow-up plans.
 
 ## 10. First runtime PR recommendation
 
 The first actual CAGR runtime PR should:
 
-- Extract only the pure CAGR math helper if clearly identified.
-- Do not change DOM, event, render, chart, selector, or table logic.
-- Do not rename call sites beyond the minimum bridge/fallback wrapper needed.
-- Keep the local fallback in `js/investment-analytics.js`.
-- Add a smoke test checklist before extracting more.
+* Extract only the pure CAGR math helper if clearly identified.
+* Do not change DOM, event, render, chart, selector, or table logic.
+* Do not rename call sites beyond the minimum bridge/fallback wrapper needed.
+* Keep the local fallback in `js/investment-analytics.js`.
+* Add a smoke test checklist before extracting more.
 
 Recommended first CAGR runtime extraction target: **`calculateCagr` with `getCagrBaseResult` as its required pure local/module helper**.
 
 Reason: inspection shows `calculateCagr` does not read or write the DOM, does not add events, does not call formatter helpers, and does not render charts. It only consumes an already-parsed input object and returns the existing result object shape or existing validation messages. Its risk remains high because formula, invalid input messages, and downstream formatting must remain unchanged, so it should be migrated with a local fallback and smoke-tested before extracting `calculateCagrEndingValue`, `calculateCagrRequiredDuration`, `buildCagrGrowthSeries`, or `buildCagrProjectionRows`.
 
-Phase 5V status: the first pure CAGR module and bridge were created for `calculateCagr` and `getCagrBaseResult` only. They are not loaded by any HTML page, are not consumed by `js/investment-analytics.js`, and do not change current runtime behavior.
+Phase 5V status: the first pure CAGR module and bridge were created for `calculateCagr` and `getCagrBaseResult` only. They are not consumed by `js/investment-analytics.js` and do not change current runtime behavior.
+
+Phase 5W status: `pages/investment-analytics.html` now loads `cagr-global.js` after the compound interest bridge and before the classic deferred `js/investment-analytics.js` entrypoint. Local CAGR behavior remains active until a future consumer migration.
 
 ## 11. Smoke test checklist
 
 Future CAGR runtime extraction PRs should include or complete a smoke test checklist covering:
 
-- CAGR calculator UI still renders.
-- CAGR output unchanged for sample positive inputs.
-- CAGR output unchanged for zero, invalid, and empty inputs.
-- CAGR formatting unchanged.
-- Calculator tab/selector still works.
-- No console errors.
-- No duplicate event listeners.
-- Formatter bridge fallback still works.
-- Compound calculator still works.
-- Chart math bridge fallback still works if shared.
+* CAGR calculator UI still renders.
+* CAGR output unchanged for sample positive inputs.
+* CAGR output unchanged for zero, invalid, and empty inputs.
+* CAGR formatting unchanged.
+* Calculator tab/selector still works.
+* No console errors.
+* No duplicate event listeners.
+* Formatter bridge fallback still works.
+* Compound calculator still works.
+* Chart math bridge fallback still works if shared.
 
 ## 12. Risk matrix
 
@@ -194,9 +212,9 @@ Future CAGR runtime extraction PRs should include or complete a smoke test check
 
 ## 13. Relationship to existing docs
 
-- [`investment-calculator-extraction-plan.md`](investment-calculator-extraction-plan.md): Parent calculator extraction plan and global calculator migration rules.
-- [`investment-compound-bridge-smoke-test.md`](investment-compound-bridge-smoke-test.md): Existing compound bridge smoke test checklist that should be considered before extracting more calculator logic.
-- [`investment-formatter-bridge-smoke-test.md`](investment-formatter-bridge-smoke-test.md): Formatter bridge smoke test checklist relevant to CAGR currency and percentage output preservation.
-- [`investment-module-loading-strategy.md`](investment-module-loading-strategy.md): Module/classic-script loading strategy that a future CAGR bridge should follow.
-- [`../../domains/investment-intelligence/analytics/scripts/calculators/README.md`](../../domains/investment-intelligence/analytics/scripts/calculators/README.md): Current analytics calculator scripts migration status.
-- [`../../domains/investment-intelligence/calculators/README.md`](../../domains/investment-intelligence/calculators/README.md): Future product calculator folder guidance.
+* [`investment-calculator-extraction-plan.md`](investment-calculator-extraction-plan.md): Parent calculator extraction plan and global calculator migration rules.
+* [`investment-compound-bridge-smoke-test.md`](investment-compound-bridge-smoke-test.md): Existing compound bridge smoke test checklist that should be considered before extracting more calculator logic.
+* [`investment-formatter-bridge-smoke-test.md`](investment-formatter-bridge-smoke-test.md): Formatter bridge smoke test checklist relevant to CAGR currency and percentage output preservation.
+* [`investment-module-loading-strategy.md`](investment-module-loading-strategy.md): Module/classic-script loading strategy that a future CAGR bridge should follow.
+* [`../../domains/investment-intelligence/analytics/scripts/calculators/README.md`](../../domains/investment-intelligence/analytics/scripts/calculators/README.md): Current analytics calculator scripts migration status.
+* [`../../domains/investment-intelligence/calculators/README.md`](../../domains/investment-intelligence/calculators/README.md): Future product calculator folder guidance.

@@ -12,6 +12,8 @@ Calculator extraction is intentionally planned after the formatter bridge and ch
 
 **Phase 5R note:** The compound interest bridge is now loaded on `pages/investment-analytics.html`. `js/investment-analytics.js` has not been migrated to read it yet, and the local compound calculator logic remains in place.
 
+**Phase 5W note:** The CAGR bridge is now loaded on `pages/investment-analytics.html` after the compound interest bridge. `js/investment-analytics.js` has not been migrated to read it yet, and the local CAGR calculator logic remains in place.
+
 ## 2. Why calculator extraction matters
 
 Calculator extraction matters because the calculators are not just page widgets; they are productizable individual tools:
