@@ -207,6 +207,8 @@ Phase 5S confirms `growCompoundValue` now uses bridge-first/local-fallback behav
 
 Phase 5T adds `investment-compound-bridge-smoke-test.md`, a manual checklist and result document for validating the compound interest bridge after the first compound calculator consumer migration.
 
+Phase 5U adds `investment-cagr-extraction-plan.md`, a documentation-only CAGR extraction plan. No runtime CAGR logic was moved, no CAGR JavaScript modules were created, and the current page implementation remains in `js/investment-analytics.js`.
+
 ## 11. Smoke test checklist
 
 Future calculator extraction PRs should include a smoke test document or completed checklist covering:
