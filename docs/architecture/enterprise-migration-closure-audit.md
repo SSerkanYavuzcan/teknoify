@@ -127,3 +127,7 @@ Before runtime moves, archive/deletion work, or broad ownership rewiring, comple
 ## Phase 11A protected Dashboard route smoke gate note
 
 Phase 11A documents the protected Dashboard route/access smoke gate as the next pre-runtime requirement. Protected admin, premium, member, shared Dashboard, Firebase/App Check, impersonation, and unauthorized redirect behavior must be manually smoke-tested before any protected Dashboard runtime file is moved.
+
+## Phase 11B Dashboard route compatibility gate
+
+Phase 11B makes Dashboard route compatibility a pre-runtime migration gate. Protected Dashboard route moves now require the compatibility map, static hosting path strategy, and wrapper/rollback plan in addition to the existing closure readiness and manual smoke-test requirements.

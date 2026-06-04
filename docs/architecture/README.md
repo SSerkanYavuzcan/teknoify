@@ -49,6 +49,7 @@ Runtime files, imports, public route changes, or broad formatting updates.
 
 Architecture documentation lives here; Phase 4F migrated only `js/lib/auth.js` to consume centralized route and role constants without moving runtime files.
 
+- [`dashboard-route-compatibility-map.md`](dashboard-route-compatibility-map.md): Phase 11B Dashboard route compatibility map, static hosting path strategy, compatibility wrapper guidance, and move-readiness gate before protected Dashboard runtime route moves.
 - [`dashboard-corporate-automation-migration-audit.md`](dashboard-corporate-automation-migration-audit.md): Phase 9A non-runtime Dashboard + Corporate Automation migration audit, including protected dashboard route inventory, public service/product page ownership, automation worker boundaries, risk matrix, and validation command.
 - [`dashboard-route-access-smoke-test.md`](dashboard-route-access-smoke-test.md): Phase 11A protected Dashboard route/access smoke-test gate and readiness audit plan before any admin, premium, member, shared Dashboard, Firebase/App Check, or auth-sensitive runtime files move.
 - [`enterprise-migration-closure-audit.md`](enterprise-migration-closure-audit.md): Phase 10A final enterprise migration closure audit, readiness command, final smoke-test gate, archive gate, and recommended runtime migration sequence.

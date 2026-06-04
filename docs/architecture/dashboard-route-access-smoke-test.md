@@ -141,3 +141,7 @@ The readiness scan discovered protected route files, mixed module and legacy sha
 - [Dashboard shared README](../../apps/dashboard/shared/README.md)
 - [Auth package README](../../packages/auth/README.md)
 - [Config package README](../../packages/config/README.md)
+
+## Phase 11B route compatibility and static hosting note
+
+Phase 11B adds the Dashboard route compatibility map and static hosting path strategy before any protected Dashboard runtime route move. The route/access smoke tests in this document remain required before route moves, and the compatibility map now clarifies that public `/dashboard/*.html` URLs must remain stable unless a dedicated route-change PR proves wrapper or hosting support.
