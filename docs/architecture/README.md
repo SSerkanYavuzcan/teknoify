@@ -6,6 +6,7 @@ Home for architecture inventories, target structure docs, and migration architec
 
 ## Documents
 
+- [`enterprise-readiness-seal.md`](enterprise-readiness-seal.md): Phase 16A final enterprise readiness seal for architecture preparation closure, targeted runtime PR gates, and the first RPA runtime candidate go/no-go command set.
 - [`final-architecture-scorecard.md`](final-architecture-scorecard.md): Phase 15B final enterprise architecture preparation scorecard, including completed readiness work, remaining gates, do-not-move areas, and go/no-go guidance.
 - [`archive-readiness-freeze.md`](archive-readiness-freeze.md): Phase 15B archive/delete readiness freeze that separates do-not-archive-yet areas from future cleanup candidates after smoke and compatibility gates.
 - [`final-migration-readiness-report.md`](final-migration-readiness-report.md): Phase 14A final all-checkers migration readiness report, completion status, current safe next actions, no-go list, final smoke checklist, risk register, and runtime move go/no-go criteria.

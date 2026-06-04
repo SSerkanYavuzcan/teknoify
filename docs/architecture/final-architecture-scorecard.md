@@ -1,5 +1,9 @@
 # Final Architecture Scorecard
 
+## Phase 16A note
+
+- Phase 16A added the final enterprise readiness seal in [`enterprise-readiness-seal.md`](enterprise-readiness-seal.md), closing architecture preparation and keeping future runtime migrations gated through targeted PRs.
+
 ## 1. Title and purpose
 
 Phase 15B freezes the enterprise architecture preparation scorecard after the migration readiness, public mirror, parity, sync workflow, route/access, and archive planning work completed in earlier phases. This document is a governance-only closeout artifact: it summarizes what is ready, what remains gated, and which future runtime or archive actions require separate PRs.

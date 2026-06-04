@@ -1,5 +1,9 @@
 # RPA Page Mirror Sync Workflow
 
+## Phase 16A note
+
+- Phase 16A identifies RPA as the first runtime migration candidate because parity, source policy, and dry-run sync gates exist; write mode remains gated and must not be used outside a dedicated, reviewed runtime-impacting PR.
+
 ## 1. Title and purpose
 
 Phase 15A defines a safe, dry-run-first sync workflow for the RPA public page and its domain ownership mirror.

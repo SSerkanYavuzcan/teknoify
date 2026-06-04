@@ -22,3 +22,5 @@ Phase 14A adds the final all-checkers migration readiness entrypoint in [`docs/a
 Phase 14B adds the final developer migration runbook at [`docs/architecture/final-migration-runbook.md`](docs/architecture/final-migration-runbook.md). Run `npm run check:architecture` before future architecture-governed runtime migration, wrapper, data/RAG, or cleanup work.
 
 Phase 15B adds the final architecture preparation scorecard at [`docs/architecture/final-architecture-scorecard.md`](docs/architecture/final-architecture-scorecard.md) and the archive/delete readiness freeze at [`docs/architecture/archive-readiness-freeze.md`](docs/architecture/archive-readiness-freeze.md). These docs define the current governance closeout state while keeping runtime moves and archive cleanup gated.
+Phase 16A adds the final enterprise readiness seal at [`docs/architecture/enterprise-readiness-seal.md`](docs/architecture/enterprise-readiness-seal.md). Run `npm run check:readiness-seal` before the first targeted runtime migration candidate PR.
+

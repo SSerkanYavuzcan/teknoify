@@ -1,5 +1,9 @@
 # Final Migration Runbook
 
+## Phase 16A note
+
+- Phase 16A adds the final readiness seal command: `npm run check:readiness-seal`. Use it before the first targeted runtime migration candidate PR.
+
 ## 1. Title and purpose
 
 Phase 14B provides the developer-facing runbook for running architecture readiness checks and deciding go/no-go for future runtime migrations. It turns the Phase 14A final readiness layer into repeatable package-script entrypoints while keeping this phase governance-only: no runtime pages, mirrored HTML, JavaScript behavior, CSS behavior, data, API behavior, workflow behavior, or deployment behavior changes are introduced here.
