@@ -143,3 +143,7 @@ Phase 12B creates the first public service page ownership mirror by copying the 
 ## Phase 12C corporate service mirror group note
 
 Phase 12C establishes a Corporate Automation public service mirror group for RPA, web scraping, API automation, and training/consulting. Public routes remain unchanged in `pages/`, and future wrapper/static-hosting work is gated by mirror parity and smoke tests before any route or navigation change proceeds.
+
+## Phase 12D high-risk product/funnel mirror note
+
+High-risk product/funnel page mirrors now exist for Subscription and AI Assistant under `domains/products/`. Public routes remain unchanged in `pages/`, and auth, payment, subscription, premium, Firebase/session, and product tool behavior remains unchanged. These mirrors are source ownership preparation only and must stay gated by the product/funnel parity checker plus page-specific smoke tests before any wrapper or static-hosting change.

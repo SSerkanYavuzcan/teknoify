@@ -31,3 +31,7 @@ The RPA public route remains in `pages/rpa.html`. The domain mirror at `domains/
 ## Phase 12C corporate service page mirror note
 
 Corporate Automation public service mirrors now exist where applicable for RPA, web scraping, API automation, and training/consulting. These mirrors are not live routes; the public sources remain in `pages/`, and `node scripts/architecture/check-corporate-service-page-mirrors.js` must pass before any public wrapper, route, navigation, CSS/JS path, or hosting change.
+
+## Phase 12D product/funnel page mirror note
+
+Product/funnel public routes for Subscription and AI Assistant remain under `pages/`. The domain mirrors in `domains/products/subscription/page.html` and `domains/products/ai-assistant/page.html` are ownership preparation only; they do not change live routes, navigation, CSS/JS loading, auth/payment/subscription/premium behavior, or AI Assistant product tool behavior.
