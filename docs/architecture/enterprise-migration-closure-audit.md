@@ -135,3 +135,7 @@ Phase 11B makes Dashboard route compatibility a pre-runtime migration gate. Prot
 ## Phase 12A public service pre-runtime gate
 
 Phase 12A makes public service and Corporate Automation route compatibility a pre-runtime migration gate. Future public service ownership work must preserve current `pages/*.html` URLs and pass route mapping plus smoke-test readiness before any runtime page move, wrapper reduction, public navigation change, or deployment mapping change.
+
+## Phase 12B public service ownership mirror note
+
+Phase 12B creates the first public service page ownership mirror by copying the RPA public page into the Corporate Automation domain. The public route remains `pages/rpa.html`, and mirror parity is now a gate before future wrapper or static-hosting changes.

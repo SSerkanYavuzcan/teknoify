@@ -23,3 +23,9 @@ Phase 9A ownership documentation only; no runtime code moved here yet.
 ## Phase 12A public route ownership note
 
 Phase 12A identifies `pages/rpa.html` as the RPA public service route and maps this folder as its future domain owner. The current runtime HTML page remains in `pages/`, and any future mirror or wrapper must preserve `/pages/rpa.html` until smoke tests pass.
+
+## Phase 12B RPA page mirror note
+
+`page.html` mirrors `pages/rpa.html` for domain ownership preparation. It is not a live route yet, and `pages/rpa.html` remains the current public source of truth.
+
+Run `node scripts/architecture/check-rpa-page-mirror-parity.js` and require it to pass before any future wrapper, route, or static-hosting changes.

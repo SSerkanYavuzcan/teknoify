@@ -23,3 +23,7 @@ Phase 9A ownership documentation only; no runtime code moved here yet. No public
 ## Phase 12A public route compatibility note
 
 Phase 12A keeps the public page shell in its current root and `pages/` routes while mapping future public service ownership. Future app-shell ownership work must preserve current public URLs, navigation links, CSS links, shared script loading, and static hosting behavior until wrapper/mirror parity and smoke tests pass.
+
+## Phase 12B RPA page mirror note
+
+The RPA public route remains in `pages/rpa.html`. The domain mirror at `domains/corporate-automation/rpa/page.html` is ownership preparation only and does not change public routing, navigation, CSS, shared JavaScript, or deployment behavior.
