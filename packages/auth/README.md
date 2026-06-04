@@ -74,3 +74,7 @@ Phase 4D adds `packages/auth/roles.js` and `packages/auth/premium-access.js` as 
 ## Phase 9A dashboard preservation note
 
 Phase 9A documents Dashboard + Corporate Automation ownership only. Protected dashboard migration must preserve existing auth, role, premium/member/admin access, redirect, impersonation, Firebase, and App Check semantics before any dashboard runtime route or page controller moves.
+
+## Phase 11A Dashboard route migration note
+
+Phase 11A keeps Dashboard route migration blocked on manual route/access smoke testing. Any later Dashboard route move must preserve current role/auth semantics, including `requireAuth`, `allowedRoles`, role normalization/defaults, session shape, unauthorized redirects, logout behavior, impersonation behavior, Firebase initialization, and App Check initialization.
