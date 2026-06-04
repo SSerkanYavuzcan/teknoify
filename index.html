@@ -356,11 +356,11 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="service_type">İlgilendiğiniz Hizmet</label>
-                        <div class="input-wrapper">
+                    <div class="form-group service-select-group">
+                        <label id="service-type-label" for="service_type">İlgilendiğiniz Hizmet</label>
+                        <div class="input-wrapper service-select-wrapper">
                             <i class="fas fa-tag"></i>
-                          <select id="service_type" name="service_type" required>
+                            <select id="service_type" class="native-select-hidden" name="service_type" required>
                                 <option value="" disabled selected hidden>Lütfen bir hizmet seçin</option>
                                 <option value="rpa">Robotik Süreç Otomasyonu</option>
                                 <option value="scraping">Web Scraping</option>
@@ -369,8 +369,51 @@
                                 <option value="finans">Finansal İndikatör & Botlar</option>
                                 <option value="yatirim-analizleri">Yatırım Analizleri</option>
                                 <option value="egitim">Eğitim & Danışmanlık</option>
-                          </select>
-                            <i class="fas fa-chevron-down select-arrow"></i>
+                            </select>
+
+                            <div class="custom-select" data-custom-select>
+                                <button
+                                    type="button"
+                                    class="custom-select-trigger"
+                                    aria-haspopup="listbox"
+                                    aria-expanded="false"
+                                    aria-labelledby="service-type-label"
+                                >
+                                    <span class="custom-select-value">Lütfen bir hizmet seçin</span>
+                                    <i class="fas fa-chevron-down custom-select-chevron"></i>
+                                </button>
+
+                                <ul class="custom-select-menu" role="listbox" aria-label="İlgilendiğiniz Hizmet">
+                                    <li class="custom-select-option" role="option" data-value="rpa" aria-selected="false">
+                                        <i class="fas fa-robot"></i>
+                                        <span>Robotik Süreç Otomasyonu</span>
+                                    </li>
+                                    <li class="custom-select-option" role="option" data-value="scraping" aria-selected="false">
+                                        <i class="fas fa-spider"></i>
+                                        <span>Web Scraping</span>
+                                    </li>
+                                    <li class="custom-select-option" role="option" data-value="ai" aria-selected="false">
+                                        <i class="fas fa-brain"></i>
+                                        <span>AI Asistan</span>
+                                    </li>
+                                    <li class="custom-select-option" role="option" data-value="api" aria-selected="false">
+                                        <i class="fas fa-plug"></i>
+                                        <span>API Entegrasyon Hizmetleri</span>
+                                    </li>
+                                    <li class="custom-select-option" role="option" data-value="finans" aria-selected="false">
+                                        <i class="fas fa-chart-line"></i>
+                                        <span>Finansal İndikatör & Botlar</span>
+                                    </li>
+                                    <li class="custom-select-option" role="option" data-value="yatirim-analizleri" aria-selected="false">
+                                        <i class="fas fa-chart-pie"></i>
+                                        <span>Yatırım Analizleri</span>
+                                    </li>
+                                    <li class="custom-select-option" role="option" data-value="egitim" aria-selected="false">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <span>Eğitim & Danışmanlık</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 

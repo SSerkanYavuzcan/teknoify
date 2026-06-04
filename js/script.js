@@ -101,6 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
         new AuthSystem();
     }
     new UISystem();
+    if (document.querySelector('[data-custom-select]')) {
+        new CustomSelectSystem();
+    }
     if (document.querySelector('.contact-form')) {
         new ContactSystem();
     }
@@ -255,6 +258,152 @@ class AuthSystem {
     }
 }
 
+
+class CustomSelectSystem {
+    constructor() {
+        this.selects = document.querySelectorAll('[data-custom-select]');
+        this.selects.forEach((select) => this.initSelect(select));
+    }
+
+    initSelect(select) {
+        const wrapper = select.closest('.input-wrapper');
+        const nativeSelect = wrapper ? wrapper.querySelector('select') : null;
+        const trigger = select.querySelector('.custom-select-trigger');
+        const valueLabel = select.querySelector('.custom-select-value');
+        const menu = select.querySelector('.custom-select-menu');
+        const options = Array.from(select.querySelectorAll('[role="option"]'));
+
+        if (!nativeSelect || !trigger || !valueLabel || !menu || !options.length) return;
+
+        const state = {
+            focusedIndex: Math.max(options.findIndex((option) => option.dataset.value === nativeSelect.value), 0),
+            menu,
+            nativeSelect,
+            options,
+            select,
+            trigger,
+            valueLabel,
+            placeholder: valueLabel.textContent.trim()
+        };
+
+        this.syncFromNative(state);
+
+        trigger.addEventListener('click', () => this.toggleSelect(state));
+        trigger.addEventListener('keydown', (event) => this.handleTriggerKeydown(event, state));
+
+        options.forEach((option, index) => {
+            option.id = option.id || `${nativeSelect.id}-option-${index}`;
+            option.addEventListener('click', () => this.selectOption(state, option));
+            option.addEventListener('mouseenter', () => this.setFocusedOption(state, index));
+        });
+
+        nativeSelect.addEventListener('change', () => {
+            this.syncFromNative(state);
+            select.classList.remove('has-error');
+        });
+
+        if (nativeSelect.form) {
+            nativeSelect.form.addEventListener('reset', () => {
+                window.setTimeout(() => this.syncFromNative(state), 0);
+            });
+        }
+
+        document.addEventListener('click', (event) => {
+            if (!select.contains(event.target)) this.closeSelect(state);
+        });
+    }
+
+    toggleSelect(state) {
+        if (state.select.classList.contains('is-open')) {
+            this.closeSelect(state);
+        } else {
+            this.openSelect(state);
+        }
+    }
+
+    openSelect(state) {
+        state.select.classList.add('is-open');
+        state.trigger.setAttribute('aria-expanded', 'true');
+        const selectedIndex = state.options.findIndex((option) => option.getAttribute('aria-selected') === 'true');
+        this.setFocusedOption(state, selectedIndex >= 0 ? selectedIndex : state.focusedIndex);
+    }
+
+    closeSelect(state) {
+        state.select.classList.remove('is-open');
+        state.trigger.setAttribute('aria-expanded', 'false');
+        state.trigger.removeAttribute('aria-activedescendant');
+    }
+
+    handleTriggerKeydown(event, state) {
+        const isOpen = state.select.classList.contains('is-open');
+
+        if (event.key === 'Escape') {
+            this.closeSelect(state);
+            return;
+        }
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (!isOpen) this.openSelect(state);
+            const direction = event.key === 'ArrowDown' ? 1 : -1;
+            this.moveFocus(state, direction);
+            return;
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            if (!isOpen) {
+                this.openSelect(state);
+                return;
+            }
+            this.selectOption(state, state.options[state.focusedIndex]);
+        }
+    }
+
+    moveFocus(state, direction) {
+        const nextIndex = (state.focusedIndex + direction + state.options.length) % state.options.length;
+        this.setFocusedOption(state, nextIndex);
+    }
+
+    setFocusedOption(state, index) {
+        state.options.forEach((option) => option.classList.remove('is-focused'));
+        state.focusedIndex = Math.max(0, Math.min(index, state.options.length - 1));
+        const focusedOption = state.options[state.focusedIndex];
+        focusedOption.classList.add('is-focused');
+        state.trigger.setAttribute('aria-activedescendant', focusedOption.id);
+        if (state.select.classList.contains('is-open')) {
+            focusedOption.scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    selectOption(state, option) {
+        if (!option) return;
+
+        state.nativeSelect.value = option.dataset.value;
+        state.nativeSelect.dispatchEvent(new window.Event('change', { bubbles: true }));
+        this.closeSelect(state);
+        state.trigger.focus();
+    }
+
+    syncFromNative(state) {
+        const selectedOption = state.options.find((option) => option.dataset.value === state.nativeSelect.value);
+
+        state.options.forEach((option) => {
+            option.setAttribute('aria-selected', selectedOption === option ? 'true' : 'false');
+        });
+
+        if (selectedOption) {
+            state.valueLabel.textContent = selectedOption.textContent.trim();
+            state.select.classList.add('has-value');
+            this.setFocusedOption(state, state.options.indexOf(selectedOption));
+        } else {
+            state.valueLabel.textContent = state.placeholder;
+            state.select.classList.remove('has-value');
+            this.setFocusedOption(state, 0);
+        }
+    }
+}
+
 class ContactSystem {
     constructor() {
         this.form = document.querySelector('.contact-form');
@@ -284,12 +433,23 @@ class ContactSystem {
 
     validateInput() {
         const contactVal = document.getElementById('contact_info').value.trim();
+        const serviceSelect = document.getElementById('service_type');
+        const customSelect = document.querySelector('[data-custom-select]');
         const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactVal);
         const isPhone = contactVal.replace(/\D/g, '').length >= 10;
+
         if (!isEmail && !isPhone) {
             if (typeof showToast === "function") showToast("Hata", "Geçerli bir E-posta veya Telefon giriniz.", "error");
             return false;
         }
+
+        if (!serviceSelect || !serviceSelect.value) {
+            if (customSelect) customSelect.classList.add('has-error');
+            if (typeof showToast === "function") showToast("Eksik Bilgi", "Lütfen ilgilendiğiniz hizmeti seçin.", "error");
+            return false;
+        }
+
+        if (customSelect) customSelect.classList.remove('has-error');
         return true;
     }
 
