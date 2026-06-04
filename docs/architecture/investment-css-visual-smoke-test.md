@@ -123,6 +123,10 @@ Phase 6D requires the automated Investment Analytics CSS manifest parity check b
 
 Phase 6E makes visual smoke testing specifically required for `pages/investment-analytics.html` after its controlled relink to the domain-owned manifest. Retail and airlines pages are not relinked yet and should remain unchanged while they continue to load the public manifest.
 
+## Phase 6F note
+
+Phase 6F relinks all investment pages that use the Investment Analytics manifest to the domain-owned manifest: `pages/investment-analytics.html`, `pages/investment-retail.html`, and `pages/investment-airlines.html`. Visual smoke testing must cover analytics, retail, and airlines before deleting the public manifest or moving old CSS partials.
+
 ## 10. Relationship to existing docs
 
 Related documents:

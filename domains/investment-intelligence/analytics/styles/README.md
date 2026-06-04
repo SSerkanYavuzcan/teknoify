@@ -37,6 +37,8 @@ Phase 6D adds `scripts/architecture/check-investment-css-manifest-parity.js` so 
 
 Phase 6E updates `pages/investment-analytics.html` to load this domain manifest. Other pages remain on the public `css/investment-analytics.css` manifest, and existing CSS partials still live in their current `css/06-pages/investment-analytics/` paths.
 
+Phase 6F updates `pages/investment-retail.html` and `pages/investment-airlines.html` so the domain manifest is now loaded by analytics, retail, and airlines pages. Existing CSS partials still live under `css/06-pages/investment-analytics/`, and `css/investment-analytics.css` remains available for rollback.
+
 ## Candidate current source files
 
 - `css/investment-analytics.css`

@@ -500,6 +500,10 @@ Recommended first extraction candidates, once safe:
 
 Phase 6A created [`investment-css-split-strategy.md`](investment-css-split-strategy.md) as a documentation-only Investment Analytics CSS split and manifest strategy. No runtime CSS, HTML, JavaScript, formatter/chart/calculator modules, data files, scripts, workflows, package files, or public route files were moved, relinked, or refactored in Phase 6A.
 
+## Phase 6F CSS relink note
+
+Phase 6F completes the controlled CSS manifest relink for analytics, retail, and airlines investment pages by loading the domain-owned Investment Analytics manifest while leaving financial indicators on its separate stylesheet. The public `css/investment-analytics.css` manifest and existing CSS partial locations remain available until visual smoke testing proves the relinked pages.
+
 ## 13. Relationship to existing docs
 
 Related documentation:
