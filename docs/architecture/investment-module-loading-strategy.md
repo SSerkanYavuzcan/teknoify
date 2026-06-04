@@ -28,6 +28,8 @@ The goal is to decide how future Investment Analytics utility modules can be con
 
 **Phase 5Y note:** CAGR bridge smoke testing must pass before local CAGR fallback cleanup or broader calculator extraction continues.
 
+**Phase 5AA note:** The retirement calculator bridge follows the compound/CAGR bridge compatibility approach: it adds `window.TEKNOIFY_INVESTMENT_UTILS.calculators.retirement` only when the existing investment utils object and nested calculator namespace can be safely extended; otherwise it uses `window.TEKNOIFY_INVESTMENT_RETIREMENT` so frozen formatter/chart/compound/CAGR bridge namespaces remain untouched. The bridge is not loaded by the analytics page yet.
+
 ## 2. Current loading facts
 
 Phase 5F inspected `pages/investment-analytics.html`, `js/investment-analytics.js`, and the script tags around the Investment Analytics page without editing them.

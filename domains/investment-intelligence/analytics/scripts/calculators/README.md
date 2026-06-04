@@ -44,7 +44,13 @@ Phase 5X migrates selected CAGR consumers in `js/investment-analytics.js`: `calc
 
 Phase 5Y documents CAGR smoke testing in `docs/architecture/investment-cagr-bridge-smoke-test.md`. The smoke test must pass before local CAGR fallback cleanup or additional CAGR extraction continues.
 
-Phase 5Z documents retirement extraction planning in `docs/architecture/investment-retirement-extraction-plan.md`. No retirement JavaScript modules have been created yet, and the current retirement logic remains in `js/investment-analytics.js`.
+Phase 5Z documents retirement extraction planning in `docs/architecture/investment-retirement-extraction-plan.md`. No retirement JavaScript modules were created in that phase, and the current retirement logic remained in `js/investment-analytics.js`.
+
+Phase 5AA creates the first pure retirement calculator module, `retirement.js`, and its legacy-safe browser bridge, `retirement-global.js`. Existing retirement consumers are not migrated in this phase, so `js/investment-analytics.js` still contains the original local `safeMoney` helper.
+
+The retirement bridge tries to expose `window.TEKNOIFY_INVESTMENT_UTILS.calculators.retirement` only when the existing investment utils global and nested calculator namespace can be extended safely. If the formatter bridge has already provided a frozen, non-extensible investment utils namespace, or a nested calculator namespace cannot be safely extended, the retirement bridge instead exposes `window.TEKNOIFY_INVESTMENT_RETIREMENT` as a separate fallback namespace.
+
+The retirement bridge should be loaded in a later PR before migrating any retirement consumer. Until then, no retirement consumer reads from the module or bridge.
 
 ## Candidate current source files
 
