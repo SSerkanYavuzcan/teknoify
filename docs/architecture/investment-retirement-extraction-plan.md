@@ -135,7 +135,7 @@ domains/investment-intelligence/calculators/retirement/
 
 - **Phase 5Z**: Create this retirement extraction plan only. Do not move retirement runtime logic.
 - **Phase 5AA**: Create a pure retirement math module and global bridge only. Do not migrate consumers.
-- **Phase 5AB**: Load the retirement bridge on `pages/investment-analytics.html` before `js/investment-analytics.js` while preserving local behavior.
+- **Phase 5AB**: Load the retirement bridge on `pages/investment-analytics.html` after the CAGR bridge and before `js/investment-analytics.js` while preserving local behavior. `js/investment-analytics.js` has not been migrated to read it yet, so local retirement logic remains.
 - **Phase 5AC**: Migrate one low-risk pure retirement helper with a local fallback.
 - **Phase 5AD**: Add a retirement bridge smoke test checklist/result document.
 - **Later**: Extract broader retirement calculation groups, chart data, table data, rendering, and event binding only after bridge smoke tests pass.
@@ -215,3 +215,5 @@ Phase 5Z adds this document to `docs/architecture/README.md` so the retirement e
 Phase 5Z also adds a short note to `docs/architecture/investment-calculator-extraction-plan.md` confirming that retirement extraction planning was created and no runtime retirement logic was moved.
 
 Phase 5Z also adds a short note to `domains/investment-intelligence/analytics/scripts/calculators/README.md` confirming that retirement extraction planning is documented and no retirement JavaScript modules have been created yet.
+
+Phase 5AB loads `retirement-global.js` on `pages/investment-analytics.html`. `js/investment-analytics.js` has not been migrated to read the retirement bridge yet, and the existing local retirement logic remains active.

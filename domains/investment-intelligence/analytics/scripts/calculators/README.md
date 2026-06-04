@@ -50,7 +50,7 @@ Phase 5AA creates the first pure retirement calculator module, `retirement.js`, 
 
 The retirement bridge tries to expose `window.TEKNOIFY_INVESTMENT_UTILS.calculators.retirement` only when the existing investment utils global and nested calculator namespace can be extended safely. If the formatter bridge has already provided a frozen, non-extensible investment utils namespace, or a nested calculator namespace cannot be safely extended, the retirement bridge instead exposes `window.TEKNOIFY_INVESTMENT_RETIREMENT` as a separate fallback namespace.
 
-The retirement bridge should be loaded in a later PR before migrating any retirement consumer. Until then, no retirement consumer reads from the module or bridge.
+Phase 5AB loads `retirement-global.js` on `pages/investment-analytics.html` after the CAGR bridge and before the classic deferred `js/investment-analytics.js` entrypoint. Existing retirement consumers are still not migrated, so local retirement behavior remains active. A future PR should migrate `safeMoney` with fallback safety before broader retirement extraction continues.
 
 ## Candidate current source files
 
