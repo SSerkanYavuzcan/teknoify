@@ -29,6 +29,8 @@ Migration status: Phase 5D README-only skeleton; no investment analytics JS/CSS 
 
 Phase 6A documents CSS split planning in `docs/architecture/investment-css-split-strategy.md`; no CSS files have been moved or relinked yet.
 
+Phase 6B documents CSS ownership and visual smoke testing in `docs/architecture/investment-css-visual-smoke-test.md`; CSS files remain in their current paths.
+
 ## Candidate current source files
 
 - `css/investment-analytics.css`

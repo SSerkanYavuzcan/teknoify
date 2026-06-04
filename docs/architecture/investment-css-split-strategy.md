@@ -208,6 +208,10 @@ Future runtime CSS PRs should verify:
 - No horizontal overflow.
 - No missing CSS in production-like static path.
 
+## Phase 6B note
+
+Phase 6B documents Investment Analytics style ownership and visual smoke testing in [`investment-css-visual-smoke-test.md`](investment-css-visual-smoke-test.md). No runtime CSS, HTML, or JavaScript files were moved, copied, relinked, or refactored in Phase 6B.
+
 ## 14. Relationship to existing docs
 
 Related documents and ownership notes:
