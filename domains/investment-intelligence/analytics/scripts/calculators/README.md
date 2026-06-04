@@ -44,6 +44,8 @@ Phase 5X migrates selected CAGR consumers in `js/investment-analytics.js`: `calc
 
 Phase 5Y documents CAGR smoke testing in `docs/architecture/investment-cagr-bridge-smoke-test.md`. The smoke test must pass before local CAGR fallback cleanup or additional CAGR extraction continues.
 
+Phase 5Z documents retirement extraction planning in `docs/architecture/investment-retirement-extraction-plan.md`. No retirement JavaScript modules have been created yet, and the current retirement logic remains in `js/investment-analytics.js`.
+
 ## Candidate current source files
 
 - Calculator sections currently inside `js/investment-analytics.js`.

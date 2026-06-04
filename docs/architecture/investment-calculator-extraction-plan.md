@@ -218,6 +218,8 @@ Phase 5X migrates the selected CAGR consumer helpers, `calculateCagr` and `getCa
 
 Phase 5Y documents CAGR bridge smoke testing as the decision gate before removing local CAGR fallbacks or extracting higher-risk CAGR render, input, event, chart, or table logic.
 
+Phase 5Z adds `investment-retirement-extraction-plan.md`, a documentation-only retirement extraction plan. No runtime retirement logic was moved, no retirement JavaScript modules were created, and the current retirement page implementation remains in `js/investment-analytics.js`.
+
 ## 11. Smoke test checklist
 
 Future calculator extraction PRs should include a smoke test document or completed checklist covering:
