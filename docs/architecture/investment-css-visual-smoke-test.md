@@ -111,6 +111,10 @@ Recommended next phase:
 - Do not move current CSS partials yet.
 - Document path compatibility risks, especially relative `@import` resolution and static hosting behavior from `pages/` URLs.
 
+## Phase 6C note
+
+Phase 6C creates a domain-owned manifest skeleton only. Visual smoke testing remains the gate before loading or relinking the new manifest from any HTML page.
+
 ## 10. Relationship to existing docs
 
 Related documents:

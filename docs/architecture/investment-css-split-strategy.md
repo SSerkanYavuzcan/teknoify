@@ -212,6 +212,10 @@ Future runtime CSS PRs should verify:
 
 Phase 6B documents Investment Analytics style ownership and visual smoke testing in [`investment-css-visual-smoke-test.md`](investment-css-visual-smoke-test.md). No runtime CSS, HTML, or JavaScript files were moved, copied, relinked, or refactored in Phase 6B.
 
+## Phase 6C note
+
+Phase 6C creates the domain-owned CSS manifest skeleton at `domains/investment-intelligence/analytics/styles/index.css`. The skeleton mirrors the current `css/investment-analytics.css` import order exactly, imports the existing partials from their current paths, is not loaded yet, and does not change any public page stylesheet links.
+
 ## 14. Relationship to existing docs
 
 Related documents and ownership notes:
