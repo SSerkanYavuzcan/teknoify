@@ -90,7 +90,9 @@ Küçük yapı taşları
 
 
 /* Input/Textarea/Select Genel Stilleri */
-input, textarea, select {
+input,
+textarea,
+select {
   width: 100%;
   padding: 0.85rem 1rem 0.85rem 2.5rem; /* İkon payı */
   background: var(--bg-input);
@@ -98,7 +100,10 @@ input, textarea, select {
   border-radius: var(--radius-sm);
   color: #fff;
   font-family: inherit;
-  transition: var(--ease-fast);
+  transition:
+    border-color var(--ease-fast),
+    background-color var(--ease-fast),
+    box-shadow var(--ease-fast);
 }
 
 
@@ -118,7 +123,20 @@ input:focus, textarea:focus, select:focus {
 /* Textarea ve Select Özel Ayarlar */
 .textarea-wrapper { align-items: flex-start; }
 .textarea-wrapper i { top: 1rem; }
-textarea { resize: vertical; min-height: 120px; }
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  max-height: 320px;
+  overflow: auto;
+  transition:
+    border-color var(--ease-fast),
+    background-color var(--ease-fast),
+    box-shadow var(--ease-fast);
+}
+
+textarea#message {
+  scrollbar-gutter: stable;
+}
 
 
 
