@@ -8,11 +8,11 @@ This folder will contain calculator-specific modules for the Investment Analytic
 
 Future calculator modules may cover:
 
-* Compound interest calculators
-* CAGR calculators
-* Retirement calculators
-* Future portfolio calculators
-* Shared calculator helpers
+- Compound interest calculators
+- CAGR calculators
+- Retirement calculators
+- Future portfolio calculators
+- Shared calculator helpers
 
 ## What does not belong here yet
 
@@ -42,9 +42,11 @@ Phase 5W loads `cagr-global.js` on `pages/investment-analytics.html` after the c
 
 Phase 5X migrates selected CAGR consumers in `js/investment-analytics.js`: `calculateCagr` and `getCagrBaseResult` now read from the CAGR bridge when available while retaining local fallback definitions for missing, malformed, incomplete, or throwing bridge helpers. CAGR rendering, inputs, validation, events, charting, compound, and retirement logic remain untouched.
 
+Phase 5Y documents CAGR smoke testing in `docs/architecture/investment-cagr-bridge-smoke-test.md`. The smoke test must pass before local CAGR fallback cleanup or additional CAGR extraction continues.
+
 ## Candidate current source files
 
-* Calculator sections currently inside `js/investment-analytics.js`.
+- Calculator sections currently inside `js/investment-analytics.js`.
 
 ## First safe migration idea
 
