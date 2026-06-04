@@ -166,3 +166,7 @@ Subscription and AI Assistant now have high-risk mirrors under product ownership
 - Public routes remain unchanged and continue to be served from `pages/`.
 - The product/funnel parity checker was added at `scripts/architecture/check-product-funnel-page-mirrors.js`.
 - Future wrapper, route, navigation, or static-hosting changes remain blocked by parity and manual smoke tests.
+
+## Phase 13A public wrapper strategy note
+
+Phase 13A documents the public page wrapper strategy and keeps runtime wrappers blocked until a safe static-hosting path strategy is verified. Public URLs, navigation links, CSS/JS behavior, and source `pages/*.html` routes remain unchanged.

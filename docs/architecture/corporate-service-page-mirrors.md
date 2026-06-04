@@ -103,3 +103,7 @@ Both pages need separate mirrors and migration plans before any public route or 
 ## Phase 12D product/funnel separation note
 
 Subscription and AI Assistant are handled in the separate product/funnel mirror document, not in the Corporate Automation service mirror scope. Their mirrors live under `domains/products/`, public routes remain in `pages/`, and their high-risk auth/payment/product-tool migration gates are tracked by `docs/architecture/product-funnel-page-mirrors.md`.
+
+## Phase 13A wrapper readiness strategy note
+
+Phase 13A covers this mirror group with the public page wrapper readiness strategy and the combined readiness checker at `scripts/architecture/check-public-page-wrapper-readiness.js`. The mirrors remain source ownership preparation only; no public route, navigation, CSS/JS path, or runtime behavior changes in this phase.

@@ -31,3 +31,7 @@ RPA is the first mirrored public service page under the Corporate Automation dom
 ## Phase 12C corporate service page mirror note
 
 Phase 12C adds domain-owned mirrors for lower-risk Corporate Automation public service pages where applicable: RPA, web scraping, API automation, and training/consulting. These mirrors are not live routes; the public sources remain in `pages/`, and `node scripts/architecture/check-corporate-service-page-mirrors.js` must pass before any wrapper, route, or navigation changes.
+
+## Phase 13A public wrapper strategy note
+
+Corporate service mirrors are candidates for the public wrapper strategy, with RPA remaining the first recommended candidate. They are not live routes in Phase 13A; public sources remain in `pages/` until static-hosting strategy, smoke tests, and rollback gates are proven.
