@@ -23,3 +23,7 @@ Phase 9A ownership documentation only; no runtime code moved here yet.
 ## Phase 12A public route ownership note
 
 Phase 12A identifies `pages/webscraping.html` as the web scraping public service route and maps this folder as its future domain owner. The current runtime HTML page remains in `pages/`, and any future mirror or wrapper must preserve `/pages/webscraping.html` until smoke tests pass.
+
+## Phase 12C corporate service page mirror note
+
+The web scraping mirror at `page.html` exists for domain ownership preparation. It is not a live route; the public source remains `pages/webscraping.html`, and `node scripts/architecture/check-corporate-service-page-mirrors.js` must pass before any wrapper, route, or navigation changes.

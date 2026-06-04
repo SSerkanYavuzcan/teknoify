@@ -312,3 +312,7 @@ Phase 12A adds the Public Service + Corporate Automation route compatibility map
 ## Phase 12B RPA public page mirror note
 
 Phase 12B creates the RPA page domain mirror as the first public service ownership mirror under Corporate Automation. The protected Dashboard runtime did not change, no Dashboard route moved, and existing protected route smoke/compatibility gates remain required before any Dashboard runtime migration.
+
+## Phase 12C lower-risk public service mirror note
+
+Phase 12C creates lower-risk Corporate Automation public service page mirrors for web scraping, API automation, and training/consulting while keeping the existing RPA mirror. No protected Dashboard runtime, access behavior, dashboard navigation, shared JavaScript, CSS, API, data, or workflow behavior changed.
