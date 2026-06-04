@@ -27,3 +27,7 @@ Phase 12A keeps the public page shell in its current root and `pages/` routes wh
 ## Phase 12B RPA page mirror note
 
 The RPA public route remains in `pages/rpa.html`. The domain mirror at `domains/corporate-automation/rpa/page.html` is ownership preparation only and does not change public routing, navigation, CSS, shared JavaScript, or deployment behavior.
+
+## Phase 12C corporate service page mirror note
+
+Corporate Automation public service mirrors now exist where applicable for RPA, web scraping, API automation, and training/consulting. These mirrors are not live routes; the public sources remain in `pages/`, and `node scripts/architecture/check-corporate-service-page-mirrors.js` must pass before any public wrapper, route, navigation, CSS/JS path, or hosting change.

@@ -87,3 +87,7 @@ Do not delete the public page yet. The existing `pages/rpa.html` route remains t
 - [`../../domains/corporate-automation/rpa/README.md`](../../domains/corporate-automation/rpa/README.md)
 - [`../../domains/corporate-automation/README.md`](../../domains/corporate-automation/README.md)
 - [`../../apps/web/README.md`](../../apps/web/README.md)
+
+## Phase 12C combined mirror checker note
+
+Phase 12C includes the RPA mirror in the combined Corporate Automation service mirror parity checker at `scripts/architecture/check-corporate-service-page-mirrors.js`. The dedicated RPA parity checker remains available, and `pages/rpa.html` remains the public source of truth until a later wrapper/static-hosting strategy is proven.

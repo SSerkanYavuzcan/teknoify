@@ -139,3 +139,7 @@ Phase 12A makes public service and Corporate Automation route compatibility a pr
 ## Phase 12B public service ownership mirror note
 
 Phase 12B creates the first public service page ownership mirror by copying the RPA public page into the Corporate Automation domain. The public route remains `pages/rpa.html`, and mirror parity is now a gate before future wrapper or static-hosting changes.
+
+## Phase 12C corporate service mirror group note
+
+Phase 12C establishes a Corporate Automation public service mirror group for RPA, web scraping, API automation, and training/consulting. Public routes remain unchanged in `pages/`, and future wrapper/static-hosting work is gated by mirror parity and smoke tests before any route or navigation change proceeds.

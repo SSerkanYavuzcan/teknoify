@@ -27,3 +27,7 @@ Phase 12A maps public service route ownership for Corporate Automation pages bef
 ## Phase 12B RPA page mirror note
 
 RPA is the first mirrored public service page under the Corporate Automation domain. The mirror prepares source ownership only; the public route remains in `pages/rpa.html` until a later wrapper/static-hosting strategy is proven.
+
+## Phase 12C corporate service page mirror note
+
+Phase 12C adds domain-owned mirrors for lower-risk Corporate Automation public service pages where applicable: RPA, web scraping, API automation, and training/consulting. These mirrors are not live routes; the public sources remain in `pages/`, and `node scripts/architecture/check-corporate-service-page-mirrors.js` must pass before any wrapper, route, or navigation changes.

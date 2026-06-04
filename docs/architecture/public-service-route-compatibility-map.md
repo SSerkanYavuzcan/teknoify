@@ -152,3 +152,7 @@ node scripts/architecture/check-public-service-route-map.js
 - The public route remains unchanged and continues to be served from `pages/rpa.html`.
 - `scripts/architecture/check-rpa-page-mirror-parity.js` was added as the conservative parity checker for the public page and domain mirror.
 - No live route move happened, and the mirror is not listed as a live public URL.
+
+## Phase 12C corporate service mirror group note
+
+Phase 12C mirrors the lower-risk web scraping, API automation, and training/consulting public service pages under their Corporate Automation domain folders. Public routes remain unchanged in `pages/`, the combined parity checker `scripts/architecture/check-corporate-service-page-mirrors.js` was added, and subscription plus AI assistant pages remain deferred for separate planning.
