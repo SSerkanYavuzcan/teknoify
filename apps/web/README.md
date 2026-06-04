@@ -39,3 +39,7 @@ Product/funnel public routes for Subscription and AI Assistant remain under `pag
 ## Phase 13A public wrapper strategy note
 
 Public page wrappers remain future work in Phase 13A. Current live public routes remain in `pages/`, and no app-shell route, navigation, CSS/JS loading, deployment, auth, payment, subscription, premium, or product behavior changes.
+
+## Phase 13B public page mirror source policy note
+
+Public routes remain in `pages/` while domain mirrors prepare future ownership. Do not route navigation to domain mirrors or replace public pages with wrappers until a safe build/deploy sync or wrapper strategy is proven.

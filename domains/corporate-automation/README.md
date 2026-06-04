@@ -35,3 +35,7 @@ Phase 12C adds domain-owned mirrors for lower-risk Corporate Automation public s
 ## Phase 13A public wrapper strategy note
 
 Corporate service mirrors are candidates for the public wrapper strategy, with RPA remaining the first recommended candidate. They are not live routes in Phase 13A; public sources remain in `pages/` until static-hosting strategy, smoke tests, and rollback gates are proven.
+
+## Phase 13B source policy note
+
+Corporate automation mirrors follow the public page mirror source policy. The mirrors remain non-live parity ownership preparation files, and current public routes stay in `pages/` until build/deploy sync or wrapper strategy is proven.

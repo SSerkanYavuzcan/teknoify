@@ -107,3 +107,7 @@ Subscription and AI Assistant are handled in the separate product/funnel mirror 
 ## Phase 13A wrapper readiness strategy note
 
 Phase 13A covers this mirror group with the public page wrapper readiness strategy and the combined readiness checker at `scripts/architecture/check-public-page-wrapper-readiness.js`. The mirrors remain source ownership preparation only; no public route, navigation, CSS/JS path, or runtime behavior changes in this phase.
+
+## Phase 13B source policy note
+
+Corporate service mirrors are governed by the public page mirror source policy. Public service routes remain served from `pages/`, and domain mirrors stay parity ownership preparation until a proven build/deploy sync or wrapper strategy exists.

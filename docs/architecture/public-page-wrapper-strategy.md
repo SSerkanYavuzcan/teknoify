@@ -123,3 +123,7 @@ If a future wrapper fails:
 - [`../../apps/web/README.md`](../../apps/web/README.md)
 - [`../../domains/corporate-automation/README.md`](../../domains/corporate-automation/README.md)
 - [`../../domains/products/README.md`](../../domains/products/README.md)
+
+## Phase 13B source-of-truth policy note
+
+Phase 13B adds the public page mirror source-of-truth policy. The policy now favors public routes in `pages/` as the served source, with domain mirrors as parity ownership preparation until a build/deploy copy mechanism or safe wrapper strategy exists.
