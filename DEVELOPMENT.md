@@ -18,3 +18,14 @@ npm run check
 - The project currently runs as a static multi-page application.
 - Use a local static server, such as VS Code Live Server, during development.
 - Run `npm run check` before opening a PR.
+
+## Architecture checks
+
+Run these developer-facing architecture checks when working on migration readiness, public mirrors, or Dashboard route compatibility:
+
+```bash
+npm run check:architecture
+npm run check:public-mirrors
+npm run check:dashboard-routes
+```
+

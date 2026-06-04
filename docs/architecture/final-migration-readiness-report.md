@@ -14,6 +14,10 @@ This report is governance-only. It does not move files, change public routes, mo
 - Public mirrors exist as ownership/parity preparation, but live public routes remain in `pages/`.
 - Protected dashboard runtime remains unmoved until manual route/access smoke passes.
 
+## Phase 14B runbook and package script note
+
+Phase 14B adds developer-facing package script entrypoints for architecture readiness checks and introduces the final migration runbook at [`final-migration-runbook.md`](final-migration-runbook.md). These additions make the completed readiness layer easier to run locally without changing runtime behavior or adding the architecture checks to the existing `npm run check` script.
+
 ## 3. Completion status table
 
 | Area                                 | Completion Status                    | Current State                                                                                                           | Remaining Gate                                                                            | Next Runtime Candidate                                                     |
