@@ -6,6 +6,10 @@ Phase 13A defines the public page wrapper strategy for mirrored public pages. It
 
 The strategy is intentionally non-runtime. It does not replace any public source page with a wrapper, does not make domain mirrors live routes, and does not change navigation, CSS, JavaScript, auth, payment, subscription, premium, product, deployment, or build behavior.
 
+## Phase 14A enterprise readiness note
+
+Phase 14A includes public page wrapper readiness in the enterprise readiness checker, so any wrapper/runtime candidate remains gated by the all-checkers migration readiness flow plus manual smoke.
+
 ## 2. Scope
 
 In scope for this strategy:

@@ -6,6 +6,10 @@ Phase 11A defines the manual smoke-test gate for protected Dashboard routes befo
 
 This is a non-runtime planning artifact. It does not move Dashboard files, change route paths, change auth behavior, change Firebase/App Check initialization, or change public pages.
 
+## Phase 14A enterprise readiness note
+
+Phase 14A makes dashboard route readiness part of the enterprise readiness checker, but this document's manual route/access smoke remains required before protected dashboard runtime moves.
+
 ## 2. Scope
 
 In scope for Phase 11A review:

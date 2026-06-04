@@ -6,6 +6,10 @@ This Phase 10A audit closes the current enterprise architecture migration prepar
 
 Phase 10A is governance-only. It records readiness, remaining risk, and sequencing rules so later PRs can move one bounded area at a time without changing routes, access behavior, data contracts, generated data, CSS behavior, or package scripts by accident.
 
+## Phase 14A readiness expansion note
+
+Phase 14A expands `scripts/architecture/check-enterprise-migration-readiness.js` so the enterprise readiness checker now includes dashboard route readiness, route compatibility, public service route map, corporate mirrors, product/funnel mirrors, wrapper readiness, and mirror source policy checks.
+
 ## 2. Current migration status summary
 
 | Area                                   | Current Status                                                                                         | Readiness                                              | Remaining Work                                                                                                 | Risk                                                 |
