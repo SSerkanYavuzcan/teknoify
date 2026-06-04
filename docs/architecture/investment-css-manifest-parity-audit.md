@@ -80,6 +80,10 @@ Future CSS work should use this audit as a gate before any runtime loading chang
 
 Phase 6E parity checks passed before and after the controlled one-page relink. The domain manifest is now loaded by `pages/investment-analytics.html` only, while the public `css/investment-analytics.css` manifest remains available for retail and airlines pages and for rollback.
 
+## Phase 6F note
+
+Phase 6F parity checks passed after relinking `pages/investment-analytics.html`, `pages/investment-retail.html`, and `pages/investment-airlines.html` to the domain-owned manifest. Manifest parity remains required before any future CSS partial movement because import order and resolved partial targets must stay equivalent until visual smoke testing and follow-up migration gates are satisfied.
+
 ## 9. Relationship to existing docs
 
 Related documents:
