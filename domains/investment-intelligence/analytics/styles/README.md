@@ -39,6 +39,8 @@ Phase 6E updates `pages/investment-analytics.html` to load this domain manifest.
 
 Phase 6F updates `pages/investment-retail.html` and `pages/investment-airlines.html` so the domain manifest is now loaded by analytics, retail, and airlines pages. Existing CSS partials still live under `css/06-pages/investment-analytics/`, and `css/investment-analytics.css` remains available for rollback.
 
+Phase 6G relinks `pages/subscription.html` and records the final consumer audit in `docs/architecture/investment-css-consumer-audit.md`. Current HTML consumers of this domain manifest are `pages/investment-analytics.html`, `pages/investment-retail.html`, `pages/investment-airlines.html`, and `pages/subscription.html`. No HTML page currently links the legacy public `../css/investment-analytics.css` manifest, but `css/investment-analytics.css` remains available for rollback and legacy support. Existing CSS partials still live under `css/06-pages/investment-analytics/`.
+
 ## Candidate current source files
 
 - `css/investment-analytics.css`

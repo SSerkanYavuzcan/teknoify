@@ -127,6 +127,10 @@ Phase 6E makes visual smoke testing specifically required for `pages/investment-
 
 Phase 6F relinks all investment pages that use the Investment Analytics manifest to the domain-owned manifest: `pages/investment-analytics.html`, `pages/investment-retail.html`, and `pages/investment-airlines.html`. Visual smoke testing must cover analytics, retail, and airlines before deleting the public manifest or moving old CSS partials.
 
+## Phase 6G note
+
+Phase 6G expands visual smoke coverage to all relinked Investment Analytics manifest consumers. Visual review should include `pages/investment-analytics.html`, `pages/investment-retail.html`, `pages/investment-airlines.html`, and `pages/subscription.html` after the subscription page relink. `pages/financial-indicators.html` remains separate on `../css/financial-indicators.css`.
+
 ## 10. Relationship to existing docs
 
 Related documents:

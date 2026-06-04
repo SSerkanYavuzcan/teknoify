@@ -228,6 +228,10 @@ Phase 6E performs the first controlled runtime CSS-link migration by updating on
 
 Phase 6F completes the controlled Investment Analytics manifest relink for `pages/investment-analytics.html`, `pages/investment-retail.html`, and `pages/investment-airlines.html`; all three pages now load the domain-owned manifest at `/domains/investment-intelligence/analytics/styles/index.css`. `pages/financial-indicators.html` remains on its separate `../css/financial-indicators.css` stylesheet. The public `css/investment-analytics.css` manifest remains available as rollback, and no CSS partials were moved, copied, or edited in this phase.
 
+## Phase 6G note
+
+Phase 6G creates [`investment-css-consumer-audit.md`](investment-css-consumer-audit.md) as the final Investment Analytics CSS manifest consumer audit. `pages/subscription.html` was relinked from `../css/investment-analytics.css` to `/domains/investment-intelligence/analytics/styles/index.css` because it already used the same page-specific manifest and the domain manifest is parity-equivalent. The public `css/investment-analytics.css` manifest remains available for rollback, and no CSS partials were moved, copied, or edited.
+
 ## 14. Relationship to existing docs
 
 Related documents and ownership notes:
