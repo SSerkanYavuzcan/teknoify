@@ -19,3 +19,7 @@ Future owner of corporate automation training and consulting service content, pr
 ## Current migration status
 
 Phase 9A ownership documentation only; no runtime code moved here yet.
+
+## Phase 12A public route ownership note
+
+Phase 12A identifies `pages/training-consulting.html` as the training/consulting public service route and maps this folder as its future domain owner. The current runtime HTML page remains in `pages/`, and any future mirror or wrapper must preserve `/pages/training-consulting.html` until smoke tests pass.

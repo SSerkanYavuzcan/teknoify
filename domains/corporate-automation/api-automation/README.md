@@ -19,3 +19,7 @@ Future owner of API and integration automation service content, product rules, a
 ## Current migration status
 
 Phase 9A ownership documentation only; no runtime code moved here yet.
+
+## Phase 12A public route ownership note
+
+Phase 12A identifies `pages/api.html` as the API/integration automation public service route and maps this folder as its future domain owner. The current runtime HTML page remains in `pages/`, and any future mirror or wrapper must preserve `/pages/api.html` until smoke tests pass.

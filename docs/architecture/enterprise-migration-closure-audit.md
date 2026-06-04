@@ -131,3 +131,7 @@ Phase 11A documents the protected Dashboard route/access smoke gate as the next 
 ## Phase 11B Dashboard route compatibility gate
 
 Phase 11B makes Dashboard route compatibility a pre-runtime migration gate. Protected Dashboard route moves now require the compatibility map, static hosting path strategy, and wrapper/rollback plan in addition to the existing closure readiness and manual smoke-test requirements.
+
+## Phase 12A public service pre-runtime gate
+
+Phase 12A makes public service and Corporate Automation route compatibility a pre-runtime migration gate. Future public service ownership work must preserve current `pages/*.html` URLs and pass route mapping plus smoke-test readiness before any runtime page move, wrapper reduction, public navigation change, or deployment mapping change.
