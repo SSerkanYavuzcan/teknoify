@@ -61,15 +61,32 @@
         );
     }
 
-    function formatTlMillion(value) {
-        return callInvestmentFormatter(
-            "formatTlMillion",
-            (fallbackValue) =>
-                Number(fallbackValue).toLocaleString("tr-TR", {
-                    maximumFractionDigits: 3
-                }),
-            [value]
-        );
+    function formatTlMillionCompactForTooltip(value) {
+        const numericValue = Number(value);
+
+        if (!Number.isFinite(numericValue)) {
+            return "-";
+        }
+
+        const absoluteValue = Math.abs(numericValue);
+        const formatCompactNumber = (displayValue, maximumFractionDigits = 1) => displayValue.toLocaleString("tr-TR", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits
+        });
+
+        if (absoluteValue >= 1000) {
+            return `${formatCompactNumber(numericValue / 1000)} mlr TL`;
+        }
+
+        if (absoluteValue >= 100) {
+            return `${formatCompactNumber(numericValue, 0)} mn TL`;
+        }
+
+        if (absoluteValue >= 1) {
+            return `${formatCompactNumber(numericValue)} mn TL`;
+        }
+
+        return `${formatCompactNumber(numericValue * 1000, 0)} bin TL`;
     }
 
     function getCompanies() {
@@ -426,15 +443,11 @@
         const metricConfig = {
             revenuePerStoreUsd: {
                 label: "Hasılat",
-                value: financials?.revenueTlMillion,
-                perStoreLabel: "Mağaza başı ciro",
-                formula: "Hasılat / mağaza sayısı / çeyrek ort. USDTRY"
+                value: financials?.revenueTlMillion
             },
             operatingProfitPerStoreUsd: {
                 label: "FAVÖK",
-                value: financials?.ebitdaTlMillion,
-                perStoreLabel: "Mağaza başı kâr",
-                formula: "FAVÖK / mağaza sayısı / çeyrek ort. USDTRY"
+                value: financials?.ebitdaTlMillion
             }
         }[options.metricKey];
 
@@ -452,22 +465,15 @@
                 <strong class="investment-chart-tooltip__company">${escapeHtml(item.name)}</strong>
                 <span class="investment-chart-tooltip__period">${escapeHtml(pointData.period)}</span>
             </div>
-            <div class="investment-chart-tooltip__body">
+            <span class="investment-chart-tooltip__divider" aria-hidden="true"></span>
+            <div class="investment-chart-tooltip__body investment-chart-tooltip__rows">
                 <div class="investment-chart-tooltip__row">
                     <span class="investment-chart-tooltip__label">Mağaza</span>
                     <span class="investment-chart-tooltip__metric">${escapeHtml(formatNumber(financials.totalStoreCount))}</span>
                 </div>
                 <div class="investment-chart-tooltip__row">
                     <span class="investment-chart-tooltip__label">${escapeHtml(metricConfig.label)}</span>
-                    <span class="investment-chart-tooltip__metric">${escapeHtml(formatTlMillion(metricConfig.value))} mn TL</span>
-                </div>
-                <div class="investment-chart-tooltip__row investment-chart-tooltip__row--stacked">
-                    <span class="investment-chart-tooltip__label">${escapeHtml(metricConfig.perStoreLabel)}</span>
-                    <b class="investment-chart-tooltip__value">${escapeHtml(formatUsdCompact(pointData.value))}</b>
-                </div>
-                <div class="investment-chart-tooltip__row investment-chart-tooltip__row--stacked">
-                    <span class="investment-chart-tooltip__label">Formül</span>
-                    <span class="investment-chart-tooltip__metric">${escapeHtml(metricConfig.formula)}</span>
+                    <span class="investment-chart-tooltip__metric">${escapeHtml(formatTlMillionCompactForTooltip(metricConfig.value))}</span>
                 </div>
             </div>
             ${createSourceMarkup(source, false)}
@@ -498,7 +504,8 @@
                 <strong class="investment-chart-tooltip__company">${safeName}</strong>
                 <span class="investment-chart-tooltip__period">${safePeriod}</span>
             </div>
-            <div class="investment-chart-tooltip__body">
+            <span class="investment-chart-tooltip__divider" aria-hidden="true"></span>
+            <div class="investment-chart-tooltip__body investment-chart-tooltip__rows">
                 <div class="investment-chart-tooltip__row investment-chart-tooltip__row--stacked">
                     <span class="investment-chart-tooltip__label">Değer</span>
                     <b class="investment-chart-tooltip__value">${safeValue}</b>
