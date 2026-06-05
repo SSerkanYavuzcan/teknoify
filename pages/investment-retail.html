@@ -61,33 +61,17 @@
     </nav>
 </header>
 
-<main class="page-frame investment-detail-page">
-    <section class="hero" aria-labelledby="investment-detail-title">
-        <div class="hero-surface"></div>
-
+<main class="page-frame investment-detail-page investment-detail-page--premium-gate">
+    <section class="investment-section investment-retail-detail investment-detail-premium-section" aria-labelledby="retail-premium-content-title">
         <div class="container">
-            <div class="investment-detail-hero">
-                <div class="hero-badge">
-                    <i class="fas fa-store"></i> Premium Perakende Sektörü
-                </div>
-
-                <h1 id="investment-detail-title" class="hero-title">Perakende Sektörü Analizleri</h1>
-
-                <p class="hero-subtitle">
-                    BİM, Migros, ŞOK Marketler ve CarrefourSA gibi perakende şirketlerinin mağaza performansı,
-                    operasyonel verimlilik ve şirket karşılaştırması görünümlerini tek bir premium analiz alanında izleyin.
-                </p>
-
-                <div class="hero-ctas">
-                    <a href="investment-analytics.html#retail-store-performance" class="btn btn-primary btn-lg">Yatırım Analizlerine Dön</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="investment-section investment-retail-detail" aria-labelledby="retail-premium-content-title">
-        <div class="container">
-            <div class="premium-content-shell is-auth-checking is-locked" data-premium-content aria-busy="true">
+            <div
+                class="premium-content-shell premium-content-shell--standalone is-auth-checking is-locked"
+                data-premium-content
+                data-premium-anonymous-title="Premium Perakende Analizi"
+                data-premium-anonymous-description="Mağaza performansı, şirket karşılaştırmaları ve detaylı finansal veri görünümleri yalnızca giriş yapan premium kullanıcılar tarafından görüntülenebilir."
+                data-premium-member-description="Bu detaylı perakende analiz alanını görüntülemek için yatırım analizleri aboneliğine ihtiyacınız var."
+                aria-busy="true"
+            >
                 <div class="premium-content-preview" data-premium-blur>
                     <div class="investment-section-header">
                         <span class="investment-eyebrow">Önizleme</span>
@@ -163,9 +147,6 @@
                             <a href="subscription.html" class="btn btn-secondary">Abonelik Al</a>
                             <a href="investment-analytics.html#retail-store-performance" class="btn btn-outline" data-premium-back-action hidden>Yatırım Analizlerine Dön</a>
                         </div>
-                        <small>
-                            Bu ekran şu anda ön yüz premium kapısıdır; gerçekten hassas gelecekteki veriler korumalı backend endpoint'i, Firebase Cloud Function veya Firestore güvenlik kuralları arkasına taşınmalıdır.
-                        </small>
                     </div>
                 </div>
             </div>

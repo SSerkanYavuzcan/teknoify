@@ -58,25 +58,38 @@
         }
     }
 
+    function getPremiumCopy(shell, key, fallback) {
+        const value = shell.dataset[key];
+        return value || fallback;
+    }
+
     function updateOverlayCopy(shell, reason) {
         const title = shell.querySelector('[data-premium-lock-title]');
         const description = shell.querySelector('[data-premium-lock-description]');
         const loginAction = shell.querySelector('[data-premium-login-action]');
         const backAction = shell.querySelector('[data-premium-back-action]');
+        const defaultTitle = title ? title.textContent : 'Premium Analiz';
+        const defaultDescription = description ? description.textContent.trim() : '';
 
         if (reason === 'member') {
-            if (title) title.textContent = 'Abonelik Gerekli';
+            if (title) {
+                title.textContent = getPremiumCopy(shell, 'premiumMemberTitle', 'Abonelik Gerekli');
+            }
             if (description) {
-                description.textContent =
-                    'Bu detaylı analiz alanını görüntülemek için yatırım analizleri aboneliğine ihtiyacınız var.';
+                description.textContent = getPremiumCopy(
+                    shell,
+                    'premiumMemberDescription',
+                    'Bu detaylı analiz alanını görüntülemek için yatırım analizleri aboneliğine ihtiyacınız var.'
+                );
             }
             if (loginAction) loginAction.hidden = true;
             if (backAction) backAction.hidden = false;
         } else {
-            if (title) title.textContent = 'Premium Perakende Analizi';
+            if (title) {
+                title.textContent = getPremiumCopy(shell, 'premiumAnonymousTitle', defaultTitle);
+            }
             if (description) {
-                description.textContent =
-                    'Mağaza performansı, şirket karşılaştırmaları ve detaylı finansal veri görünümleri yalnızca giriş yapan premium kullanıcılar tarafından görüntülenebilir.';
+                description.textContent = getPremiumCopy(shell, 'premiumAnonymousDescription', defaultDescription);
             }
             if (loginAction) loginAction.hidden = false;
             if (backAction) backAction.hidden = true;
