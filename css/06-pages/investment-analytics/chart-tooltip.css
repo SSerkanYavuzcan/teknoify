@@ -116,15 +116,15 @@
 .investment-chart-tooltip__source {
     display: flex;
     justify-content: center;
-    margin-top: 0.08rem;
-    padding-top: 0.4rem;
-    border-top: 1px solid rgba(148, 163, 184, 0.16);
+    margin-top: 0.42rem;
+    padding-top: 0.45rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.18);
 }
 
 .investment-chart-tooltip__source-link {
-    color: rgba(125, 211, 252, 0.9);
-    font-size: 0.72rem;
-    font-weight: 800;
+    color: rgba(125, 211, 252, 0.94);
+    font-size: 0.74rem;
+    font-weight: 850;
     line-height: 1.25;
     text-align: center;
     text-decoration: none;

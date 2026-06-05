@@ -730,6 +730,8 @@
 
         tooltip.className = `investment-chart-tooltip${options.mode === "modal" ? " investment-chart-tooltip-large" : ""}`;
         legend.className = "investment-chart-legend";
+        legend.setAttribute("role", "group");
+        legend.setAttribute("aria-label", "Grafik serileri");
 
         function getVisibleSeries() {
             return visibleSeriesKeys
