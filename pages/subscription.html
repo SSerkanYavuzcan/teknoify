@@ -79,15 +79,18 @@
             </div>
 
             <div class="subscription-plan-grid" aria-label="Abonelik planları">
-                <article class="subscription-plan-card">
-                    <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-chart-line"></i></div>
+                <article class="subscription-plan-card" aria-labelledby="starter-plan-title">
+                    <div class="subscription-plan-topline">
+                        <span class="subscription-plan-badge">En Popüler</span>
+                    </div>
                     <div class="subscription-plan-content">
-                        <h2>Başlangıç</h2>
+                        <h2 id="starter-plan-title">Başlangıç</h2>
                         <p class="subscription-plan-description">Temel seviyede otomasyonlar ve yatırım araçlarını keşfetmek isteyenler için.</p>
                         <div class="subscription-plan-price" aria-label="Başlangıç planı fiyatı">
-                            <span>₺29,99</span>
-                            <small>/ ay</small>
+                            <span data-starter-price>₺29,99</span>
+                            <small data-starter-period>/ ay</small>
                         </div>
+                        <span class="subscription-plan-savings" data-starter-savings hidden>2 ay avantajlı</span>
                     </div>
                     <a href="investment-analytics.html" class="btn btn-secondary subscription-plan-cta">Başlangıç Planını İncele</a>
                     <ul class="subscription-plan-features">
@@ -100,7 +103,6 @@
 
                 <article class="subscription-plan-card subscription-plan-card--featured" aria-labelledby="premium-plan-title">
                     <div class="subscription-plan-topline">
-                        <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-chart-pie"></i></div>
                         <span class="subscription-plan-badge">En Popüler</span>
                     </div>
                     <div class="subscription-plan-content">
@@ -127,7 +129,6 @@
                 </article>
 
                 <article class="subscription-plan-card">
-                    <div class="subscription-plan-icon" aria-hidden="true"><i class="fas fa-briefcase"></i></div>
                     <div class="subscription-plan-content">
                         <h2>Profesyonel</h2>
                         <p class="subscription-plan-description">
@@ -157,8 +158,45 @@
 
 <footer class="footer">
     <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <a href="../index.html#home" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
+                        <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                        <span class="logo-text">Teknoify</span>
+                    </a>
+                </div>
+                <p class="footer-desc">
+                    Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Yasal</h4>
+                <ul>
+                    <li><a href="kvkk.html">KVKK Aydınlatma Metni</a></li>
+                    <li><a href="gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                    <li><a href="kullanim-sartlari.html">Kullanım Şartları</a></li>
+                    <li><a href="hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Bize Ulaşın</h4>
+                <ul class="contact-list">
+                    <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="footer-bottom">
-            <p>&copy; 2026 Teknoify. Tüm hakları saklıdır.</p>
+            <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
         </div>
     </div>
 </footer>
@@ -201,6 +239,9 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const billingButtons = document.querySelectorAll("[data-billing-option]");
+        const starterPrice = document.querySelector("[data-starter-price]");
+        const starterPeriod = document.querySelector("[data-starter-period]");
+        const starterSavings = document.querySelector("[data-starter-savings]");
         const premiumPrice = document.querySelector("[data-premium-price]");
         const premiumPeriod = document.querySelector("[data-premium-period]");
         const premiumSavings = document.querySelector("[data-premium-savings]");
@@ -215,6 +256,9 @@
                     option.setAttribute("aria-pressed", String(isActive));
                 });
 
+                if (starterPrice) starterPrice.textContent = isYearly ? "₺299,90" : "₺29,99";
+                if (starterPeriod) starterPeriod.textContent = isYearly ? "/ yıl" : "/ ay";
+                if (starterSavings) starterSavings.hidden = !isYearly;
                 if (premiumPrice) premiumPrice.textContent = isYearly ? "₺1.990" : "₺199";
                 if (premiumPeriod) premiumPeriod.textContent = isYearly ? "/ yıl" : "/ ay";
                 if (premiumSavings) premiumSavings.hidden = !isYearly;
