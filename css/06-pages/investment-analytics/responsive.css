@@ -234,6 +234,16 @@
     .premium-content-shell.is-locked [data-premium-blur] {
         margin-bottom: -220px;
     }
+
+    .premium-content-shell--standalone .premium-lock-overlay {
+        position: absolute;
+        min-height: 0;
+    }
+
+    .premium-content-shell--standalone.is-locked [data-premium-blur],
+    .premium-content-shell--standalone.is-auth-checking [data-premium-blur] {
+        margin-bottom: 0;
+    }
 }
 
 @media (max-width: 560px) {

@@ -61,28 +61,41 @@
     </nav>
 </header>
 
-<main class="page-frame">
-    <section class="hero" aria-labelledby="investment-detail-title">
-        <div class="hero-surface"></div>
-
+<main class="page-frame investment-detail-page investment-detail-page--premium-gate">
+    <section class="investment-section investment-airlines-detail investment-detail-premium-section" aria-labelledby="airlines-premium-content-title">
         <div class="container">
-            <div class="investment-detail-hero">
-                <div class="hero-badge">
-                    <i class="fas fa-plane-departure"></i> Havayolu Sektörü
+            <div
+                class="premium-content-shell premium-content-shell--standalone is-auth-checking is-locked"
+                data-premium-content
+                data-premium-anonymous-title="Premium Havayolu Analizi"
+                data-premium-anonymous-description="Yolcu trafiği, doluluk oranı, filo gelişimi ve havayolu şirket karşılaştırmaları yalnızca giriş yapan premium kullanıcılar tarafından görüntülenebilir."
+                data-premium-member-description="Bu detaylı havayolu analiz alanını görüntülemek için yatırım analizleri aboneliğine ihtiyacınız var."
+                aria-busy="true"
+            >
+                <div class="premium-content-preview premium-content-preview--empty" data-premium-blur>
+                    <div class="investment-section-header">
+                        <span class="investment-eyebrow">Premium</span>
+                        <h2 id="airlines-premium-content-title">Premium Havayolu Veri Paneli</h2>
+                        <p>
+                            Yolcu trafiği, doluluk oranı, filo gelişimi ve havayolu şirket karşılaştırmaları için premium analiz görünümü ilerleyen adımlarda eklenecek.
+                        </p>
+                    </div>
                 </div>
 
-                <h1 id="investment-detail-title" class="hero-title">Havayolu Sektörü Analizleri</h1>
-
-                <p class="hero-subtitle">
-                    Türk Hava Yolları, Pegasus ve benzeri havayolu şirketlerinin yolcu trafiği, doluluk, filo ve kârlılık metrikleri için hazırlanacak detay sayfası.
-                </p>
-
-                <div class="hero-ctas">
-                    <a href="investment-analytics.html#airline-sector-performance" class="btn btn-primary btn-lg">Yatırım Analizlerine Dön</a>
-                </div>
-
-                <div class="investment-detail-placeholder">
-                    Detaylı analiz bileşenleri ve kaynaklı veri görünümleri ilerleyen adımlarda eklenecek.
+                <div class="premium-lock-overlay" data-premium-lock-overlay role="region" aria-labelledby="premium-lock-title">
+                    <div class="premium-lock-card">
+                        <span class="premium-lock-icon" aria-hidden="true"><i class="fas fa-lock"></i></span>
+                        <span class="premium-lock-kicker">Teknoify Premium</span>
+                        <h2 id="premium-lock-title" data-premium-lock-title>Premium Havayolu Analizi</h2>
+                        <p data-premium-lock-description>
+                            Yolcu trafiği, doluluk oranı, filo gelişimi ve havayolu şirket karşılaştırmaları yalnızca giriş yapan premium kullanıcılar tarafından görüntülenebilir.
+                        </p>
+                        <div class="premium-lock-actions">
+                            <button type="button" class="btn btn-primary" data-premium-login-action>Giriş Yap</button>
+                            <a href="subscription.html" class="btn btn-secondary">Abonelik Al</a>
+                            <a href="investment-analytics.html#airline-sector-performance" class="btn btn-outline" data-premium-back-action hidden>Yatırım Analizlerine Dön</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,11 +110,44 @@
     </div>
 </footer>
 
+<div class="modal-overlay" id="loginModal" aria-hidden="true">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <button type="button" class="modal-close" aria-label="Kapat"><i class="fas fa-times"></i></button>
+        <div class="modal-header">
+            <h3 id="login-modal-title">Giriş Yap</h3>
+            <p>Teknoify hesabınıza erişin</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" required placeholder="ornek@sirket.com" autocomplete="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+            </div>
+            <div class="form-footer">
+                <a href="../index.html#home" class="link-sm">Şifremi Unuttum</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="../js/session-manager.js"></script>
 <script type="module" src="/packages/config/routes-global.js"></script>
 <script src="../js/script.js" defer></script>
+<script src="../js/premium-content-gate.js" defer></script>
 </body>
 </html>
