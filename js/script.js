@@ -107,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.contact-form')) {
         new ContactSystem();
     }
+    if (document.querySelector('#teknoifyOrbit')) {
+        new OrbitVisualSystem('#teknoifyOrbit');
+    }
     setTimeout(() => {
         if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
         if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
@@ -594,6 +597,143 @@ class TerminalEffect {
             const lineEl = document.createElement('div');
             lineEl.classList.add('blink-cursor'); lineEl.textContent = lineData.text; lineEl.style.color = '#fff';
             this.container.appendChild(lineEl); this.scrollToBottom(); setTimeout(resolve, 2000);
+        });
+    }
+}
+
+class OrbitVisualSystem {
+    constructor(selector) {
+        this.orbit = document.querySelector(selector);
+        if (!this.orbit) return;
+
+        this.items = Array.from(this.orbit.querySelectorAll('[data-orbit-item]')).map((item) => ({
+            element: item,
+            angle: Number.parseFloat(item.dataset.angle || '0'),
+            radius: Number.parseFloat(item.dataset.radius || '45')
+        }));
+        this.rotation = 0;
+        this.isDragging = false;
+        this.startX = 0;
+        this.startRotation = 0;
+        this.preventClick = false;
+        this.dragDistance = 0;
+        this.dragSensitivity = 0.32;
+        this.autoSpeed = 0.035;
+        this.bounds = { width: 0, height: 0 };
+        this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        this.prefersReducedMotion = this.reducedMotionQuery.matches;
+
+        this.bindEvents();
+        this.measure();
+        this.update();
+        this.animate();
+    }
+
+    bindEvents() {
+        this.orbit.addEventListener('pointerdown', (event) => this.handlePointerDown(event));
+        this.orbit.addEventListener('pointermove', (event) => this.handlePointerMove(event));
+        this.orbit.addEventListener('pointerup', (event) => this.handlePointerEnd(event));
+        this.orbit.addEventListener('pointercancel', (event) => this.handlePointerEnd(event));
+        this.orbit.addEventListener('click', (event) => this.handleClick(event), true);
+        window.addEventListener('resize', () => this.measure());
+
+        if (typeof this.reducedMotionQuery.addEventListener === 'function') {
+            this.reducedMotionQuery.addEventListener('change', (event) => {
+                this.prefersReducedMotion = event.matches;
+            });
+        }
+    }
+
+    measure() {
+        const rect = this.orbit.getBoundingClientRect();
+        this.bounds = {
+            width: rect.width,
+            height: rect.height
+        };
+        this.update();
+    }
+
+    handlePointerDown(event) {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+        this.isDragging = true;
+        this.preventClick = false;
+        this.dragDistance = 0;
+        this.startX = event.clientX;
+        this.startRotation = this.rotation;
+        this.orbit.classList.add('is-dragging');
+
+        if (typeof this.orbit.setPointerCapture === 'function') {
+            this.orbit.setPointerCapture(event.pointerId);
+        }
+    }
+
+    handlePointerMove(event) {
+        if (!this.isDragging) return;
+
+        const deltaX = event.clientX - this.startX;
+        this.dragDistance = Math.max(this.dragDistance, Math.abs(deltaX));
+        this.preventClick = this.dragDistance > 6;
+        this.rotation = this.startRotation + deltaX * this.dragSensitivity;
+        this.update();
+    }
+
+    handlePointerEnd(event) {
+        if (!this.isDragging) return;
+
+        this.isDragging = false;
+        this.orbit.classList.remove('is-dragging');
+
+        if (typeof this.orbit.releasePointerCapture === 'function') {
+            this.orbit.releasePointerCapture(event.pointerId);
+        }
+
+        if (this.preventClick) {
+            setTimeout(() => {
+                this.preventClick = false;
+            }, 0);
+        }
+    }
+
+    handleClick(event) {
+        if (!this.preventClick) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        this.preventClick = false;
+    }
+
+    animate() {
+        if (!this.isDragging && !this.prefersReducedMotion) {
+            this.rotation += this.autoSpeed;
+            this.update();
+        }
+
+        requestAnimationFrame(() => this.animate());
+    }
+
+    update() {
+        if (!this.bounds.width || !this.bounds.height) return;
+
+        this.orbit.style.setProperty('--orbit-rotation', `${this.rotation}deg`);
+
+        const maxRadiusX = Math.min(this.bounds.width * 0.39, 250);
+        const maxRadiusY = Math.min(this.bounds.height * 0.25, 118);
+
+        this.items.forEach((item) => {
+            const depth = item.radius / 52;
+            const angle = ((item.angle + this.rotation) * Math.PI) / 180;
+            const x = Math.cos(angle) * maxRadiusX * depth;
+            const y = Math.sin(angle) * maxRadiusY * depth;
+            const frontness = (Math.sin(angle) + 1) / 2;
+            const scale = 0.88 + frontness * 0.16;
+            const opacity = 0.72 + frontness * 0.28;
+
+            item.element.style.setProperty('--orbit-x', `${x.toFixed(2)}px`);
+            item.element.style.setProperty('--orbit-y', `${y.toFixed(2)}px`);
+            item.element.style.setProperty('--orbit-scale', scale.toFixed(3));
+            item.element.style.opacity = opacity.toFixed(3);
+            item.element.style.zIndex = String(20 + Math.round(frontness * 20));
         });
     }
 }
