@@ -410,14 +410,14 @@
 
     function createSourceMarkup(source, showTitle = true) {
         const sourceTitleMarkup = showTitle && source.title
-            ? `<span class="investment-chart-tooltip__source-title">Kaynak: ${escapeHtml(source.title)}</span>`
+            ? `<span class="investment-chart-tooltip__source-title">${escapeHtml(source.title)}</span>`
             : "";
         const sourceLinkMarkup = source.url
             ? `<a class="investment-chart-tooltip__source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">Kaynağı Aç</a>`
             : "";
 
         return sourceTitleMarkup || sourceLinkMarkup
-            ? `<div class="investment-chart-tooltip__source">${sourceTitleMarkup}${sourceLinkMarkup}</div>`
+            ? `<div class="investment-chart-tooltip__source"><span class="investment-chart-tooltip__source-label">Kaynak</span>${sourceTitleMarkup}${sourceLinkMarkup}</div>`
             : "";
     }
 
@@ -448,11 +448,28 @@
 
         return `
             <span class="investment-chart-tooltip__accent" style="background:${escapeHtml(item.color)}"></span>
-            <strong class="investment-chart-tooltip__header">${escapeHtml(item.name)} — ${escapeHtml(pointData.period)}</strong>
-            <span>Mağaza sayısı: ${escapeHtml(formatNumber(financials.totalStoreCount))}</span>
-            <span>${escapeHtml(metricConfig.label)}: ${escapeHtml(formatTlMillion(metricConfig.value))} mn TL</span>
-            <b class="investment-chart-tooltip__value">${escapeHtml(metricConfig.perStoreLabel)}: ${escapeHtml(formatUsdCompact(pointData.value))}</b>
-            <span>Formül: ${escapeHtml(metricConfig.formula)}</span>
+            <div class="investment-chart-tooltip__header">
+                <strong class="investment-chart-tooltip__company">${escapeHtml(item.name)}</strong>
+                <span class="investment-chart-tooltip__period">${escapeHtml(pointData.period)}</span>
+            </div>
+            <div class="investment-chart-tooltip__body">
+                <div class="investment-chart-tooltip__row">
+                    <span class="investment-chart-tooltip__label">Mağaza</span>
+                    <span class="investment-chart-tooltip__metric">${escapeHtml(formatNumber(financials.totalStoreCount))}</span>
+                </div>
+                <div class="investment-chart-tooltip__row">
+                    <span class="investment-chart-tooltip__label">${escapeHtml(metricConfig.label)}</span>
+                    <span class="investment-chart-tooltip__metric">${escapeHtml(formatTlMillion(metricConfig.value))} mn TL</span>
+                </div>
+                <div class="investment-chart-tooltip__row investment-chart-tooltip__row--stacked">
+                    <span class="investment-chart-tooltip__label">${escapeHtml(metricConfig.perStoreLabel)}</span>
+                    <b class="investment-chart-tooltip__value">${escapeHtml(formatUsdCompact(pointData.value))}</b>
+                </div>
+                <div class="investment-chart-tooltip__row investment-chart-tooltip__row--stacked">
+                    <span class="investment-chart-tooltip__label">Formül</span>
+                    <span class="investment-chart-tooltip__metric">${escapeHtml(metricConfig.formula)}</span>
+                </div>
+            </div>
             ${createSourceMarkup(source, false)}
         `;
     }
@@ -477,10 +494,17 @@
 
         return `
             <span class="investment-chart-tooltip__accent" style="background:${safeColor}"></span>
-            <strong class="investment-chart-tooltip__header">${safeName}</strong>
-            <span class="investment-chart-tooltip__period">${safePeriod}</span>
-            <b class="investment-chart-tooltip__value">${safeValue}</b>
-            ${noteMarkup}
+            <div class="investment-chart-tooltip__header">
+                <strong class="investment-chart-tooltip__company">${safeName}</strong>
+                <span class="investment-chart-tooltip__period">${safePeriod}</span>
+            </div>
+            <div class="investment-chart-tooltip__body">
+                <div class="investment-chart-tooltip__row investment-chart-tooltip__row--stacked">
+                    <span class="investment-chart-tooltip__label">Değer</span>
+                    <b class="investment-chart-tooltip__value">${safeValue}</b>
+                </div>
+                ${noteMarkup}
+            </div>
             ${sourceMarkup}
         `;
     }

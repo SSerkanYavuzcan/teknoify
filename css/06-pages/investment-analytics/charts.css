@@ -54,18 +54,16 @@
 }
 
 .investment-chart-line-glint {
-    stroke: color-mix(in srgb, var(--series-color) 72%, #fff);
-    stroke-width: 4.8;
+    stroke: color-mix(in srgb, var(--series-color) 58%, #fff);
+    stroke-width: 3.2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-dasharray: 46 760;
+    stroke-dasharray: 26 780;
     stroke-dashoffset: 0;
-    opacity: 0.72;
-    filter:
-        drop-shadow(0 0 8px color-mix(in srgb, var(--series-color) 80%, transparent))
-        drop-shadow(0 0 14px color-mix(in srgb, var(--series-color) 54%, transparent));
+    opacity: 0.38;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--series-color) 42%, transparent));
     pointer-events: none;
-    animation: investmentLineGlint 4.8s linear infinite;
+    animation: investmentLineGlint 5.8s linear infinite;
     animation-delay: var(--line-glint-delay, 0s);
 }
 
