@@ -134,6 +134,7 @@
     cursor: pointer;
     transition:
         border-color var(--ease-fast),
+        box-shadow var(--ease-fast),
         color var(--ease-fast),
         opacity var(--ease-fast);
 }
@@ -141,6 +142,7 @@
 .investment-chart-legend-button:hover,
 .investment-chart-legend-button:focus-visible {
     border-color: rgba(148, 163, 184, 0.22);
+    box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.08);
     color: #fff;
     outline: none;
 }
