@@ -2,18 +2,18 @@
     position: absolute;
     z-index: 2;
     display: grid;
-    gap: 0.16rem;
-    min-width: 132px;
-    max-width: min(190px, calc(100% - 1rem));
-    padding: 0.45rem 0.55rem 0.48rem 0.72rem;
-    border: 1px solid rgba(148, 163, 184, 0.22);
-    border-radius: 12px;
-    background: linear-gradient(145deg, rgba(9, 15, 28, 0.96), rgba(2, 6, 23, 0.9));
+    gap: 0.34rem;
+    min-width: 154px;
+    max-width: min(220px, calc(100% - 1rem));
+    padding: 0.52rem 0.62rem 0.56rem;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 8px;
+    background: rgba(3, 7, 18, 0.94);
     box-shadow:
-        0 12px 28px rgba(0, 0, 0, 0.36),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    color: #fff;
-    font-size: 0.7rem;
+        0 10px 22px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    color: #f8fafc;
+    font-size: 0.68rem;
     line-height: 1.35;
     opacity: 0;
     overflow-wrap: anywhere;
@@ -33,54 +33,107 @@
 }
 
 .investment-chart-tooltip__header {
-    color: #fff;
-    font-size: 0.75rem;
-    letter-spacing: -0.01em;
+    display: grid;
+    gap: 0.12rem;
+    padding-left: 0.54rem;
+}
+
+.investment-chart-tooltip__company {
+    color: #f8fafc;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
 }
 
 .investment-chart-tooltip__period {
-    color: rgba(226, 232, 240, 0.72);
-    font-size: 0.66rem;
-    font-weight: 700;
+    color: rgba(203, 213, 225, 0.66);
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.investment-chart-tooltip__body {
+    display: grid;
+    gap: 0.22rem;
+}
+
+.investment-chart-tooltip__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.55rem;
+    align-items: baseline;
+}
+
+.investment-chart-tooltip__row--stacked {
+    grid-template-columns: 1fr;
+    gap: 0.08rem;
+}
+
+.investment-chart-tooltip__label {
+    color: rgba(203, 213, 225, 0.62);
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+}
+
+.investment-chart-tooltip__metric,
+.investment-chart-tooltip__value {
+    color: #f8fafc;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-align: right;
+}
+
+.investment-chart-tooltip__row--stacked .investment-chart-tooltip__metric,
+.investment-chart-tooltip__row--stacked .investment-chart-tooltip__value {
+    text-align: left;
 }
 
 .investment-chart-tooltip__value {
-    color: #f8fafc;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
+    letter-spacing: -0.01em;
 }
 
 .investment-chart-tooltip__note {
-    margin: 0.18rem 0 0;
-    color: rgba(226, 232, 240, 0.74);
-    font-size: 0.66rem;
+    margin: 0.06rem 0 0;
+    color: rgba(226, 232, 240, 0.72);
+    font-size: 0.63rem;
     line-height: 1.35;
 }
 
 .investment-chart-tooltip__source {
     display: grid;
     gap: 0.16rem;
-    margin-top: 0.2rem;
-    padding-top: 0.28rem;
+    margin-top: 0.04rem;
+    padding-top: 0.34rem;
     border-top: 1px solid rgba(148, 163, 184, 0.16);
 }
 
+.investment-chart-tooltip__source-label {
+    color: rgba(148, 163, 184, 0.68);
+    font-size: 0.55rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
 .investment-chart-tooltip__source-title {
-    color: rgba(226, 232, 240, 0.76);
-    font-size: 0.62rem;
+    color: rgba(226, 232, 240, 0.74);
+    font-size: 0.6rem;
     font-weight: 700;
     line-height: 1.3;
 }
 
 .investment-chart-tooltip__source-link {
     justify-self: start;
-    padding: 0.12rem 0.34rem;
-    border: 1px solid rgba(103, 232, 249, 0.28);
-    border-radius: 999px;
-    color: #67e8f9;
-    font-size: 0.64rem;
+    color: rgba(125, 211, 252, 0.88);
+    font-size: 0.6rem;
     font-weight: 800;
     line-height: 1.25;
     text-decoration: none;
+    text-underline-offset: 0.16em;
 }
 
 .investment-chart-tooltip__source-link:hover,
@@ -92,15 +145,16 @@
 .investment-chart-tooltip__accent {
     position: absolute;
     inset: 0 auto 0 0;
-    width: 3px;
-    border-radius: 12px 0 0 12px;
+    width: 2px;
+    border-radius: 8px 0 0 8px;
+    opacity: 0.82;
 }
 
 .investment-chart-tooltip-large {
-    min-width: 150px;
-    max-width: min(205px, calc(100% - 1rem));
-    padding: 0.5rem 0.6rem 0.52rem 0.78rem;
-    font-size: 0.72rem;
+    min-width: 168px;
+    max-width: min(236px, calc(100% - 1rem));
+    padding: 0.58rem 0.68rem 0.62rem;
+    font-size: 0.7rem;
 }
 
 .investment-chart-tooltip.is-visible {
