@@ -602,7 +602,7 @@ class BackgroundFX {
     constructor(selector) {
         this.container = document.querySelector(selector);
         if (!this.container) return;
-        this.starCount = window.innerWidth < 768 ? 20 : 50;
+        this.starCount = window.innerWidth < 768 ? 28 : 72;
         this.init();
     }
 
@@ -614,7 +614,7 @@ class BackgroundFX {
             const size = Math.random() * 2 + 1;
             star.style.cssText = `
                 position: absolute; width: ${size}px; height: ${size}px;
-                background: rgba(255,255,255, ${Math.random() * 0.4 + 0.1});
+                background: rgba(255,255,255, ${Math.random() * 0.24 + 0.08});
                 left: ${Math.random() * 100}%; top: ${Math.random() * 100}%;
                 border-radius: 50%; pointer-events: none;
                 animation: floatParticle ${10 + Math.random() * 20}s linear infinite;

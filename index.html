@@ -192,112 +192,115 @@
 
 <main class="page-frame">
 
-    <section id="home" class="hero">
-        <div id="stars-container" class="hero-surface"></div>
+    <div class="home-background-stage">
+        <div id="stars-container" class="hero-surface home-background-surface" aria-hidden="true"></div>
 
-        <div class="hero-container">
-            <div class="hero-left">
-                <h1 class="hero-title">Geleceğin İş Gücünü <br> <span class="gradient-text">Bugün İnşa Edin</span></h1>
-                <p class="hero-subtitle">Yapay zeka tabanlı otomasyon sistemleri ile işletmenizin verimliliğini maksimum seviyeye çıkarın.</p>
-                
-                <div class="hero-ctas">
-                    <button class="btn btn-primary trigger-login">Hemen Başla</button>
-                    <a href="#services" class="btn btn-secondary">Hizmetlerimiz</a>
+        <section id="home" class="hero">
+            <div class="hero-container">
+                <div class="hero-left">
+                    <h1 class="hero-title">Geleceğin İş Gücünü <br> <span class="gradient-text">Bugün İnşa Edin</span></h1>
+                    <p class="hero-subtitle">Yapay zeka tabanlı otomasyon sistemleri ile işletmenizin verimliliğini maksimum seviyeye çıkarın.</p>
+
+                    <div class="hero-ctas">
+                        <button class="btn btn-primary trigger-login">Hemen Başla</button>
+                        <a href="#services" class="btn btn-secondary">Hizmetlerimiz</a>
+                    </div>
+                </div>
+
+                <div class="hero-right">
+                    <div class="hero-terminal" id="terminalWrapper">
+                        <div class="term-header">
+                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                            <span class="term-title">ai_core.py</span>
+                        </div>
+                        <div class="term-body" id="heroTerminal"></div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="hero-right">
-                <div class="hero-terminal" id="terminalWrapper">
-                    <div class="term-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <span class="term-title">ai_core.py</span>
-                    </div>
-                    <div class="term-body" id="heroTerminal"></div>
+        <section id="services" class="services">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Hizmetlerimiz</h2>
+                    <p>Uçtan uca dijital dönüşüm araçları.</p>
+                </div>
+
+                <div class="services-grid">
+                    <article class="service-card">
+                        <div class="icon-box"><i class="fas fa-chart-pie"></i></div>
+                        <h3>Yatırım Analizleri</h3>
+                        <p>Finansal özgürlük hedefinizi, şirket bazlı yatırım metriklerini ve perakende sektörü verilerini tek ekranda analiz edebileceğiniz kişisel yatırım merkezi.</p>
+                        <div class="card-ctas">
+                            <a href="pages/investment-analytics.html" class="btn btn-sm btn-secondary">Analizleri İncele</a>
+                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        </div>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="icon-box"><i class="fas fa-robot"></i></div>
+                        <h3>Robotik Süreç Otomasyonu</h3>
+                        <p>Tekrarlayan görevleri yazılımlara devrederek hızınızı artırın, hataları azaltın ve maliyetlerinizi düşürün. RPA ile ekibiniz stratejik işlere daha fazla odaklanabilir.</p>
+                        <div class="card-ctas">
+                            <a href="pages/rpa.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        </div>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="icon-box"><i class="fas fa-spider"></i></div>
+                        <h3>Web Scraping</h3>
+                        <p>İnternetteki verileri otomatik toplayıp düzenleyin; rakip fiyatlarını, pazar trendlerini ve ürün verilerini anlık olarak izleyerek güçlü kararlar alın ve rekabette öne geçin.</p>
+                        <div class="card-ctas">
+                            <a href="pages/webscraping.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        </div>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="icon-box"><i class="fas fa-brain"></i></div>
+                        <h3>AI Asistan</h3>
+                        <p>7/24 çalışan yapay zekâ destekli asistanlarla süreçlerinizi otomatikleştirin. Müşteri taleplerini yöneten, bilgi sağlayan ve iş akışlarını hızlandıran akıllı sistemlerle verimliği artırın.</p>
+                        <div class="card-ctas">
+                            <a href="pages/ai-assistant.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        </div>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="icon-box"><i class="fas fa-plug"></i></div>
+                        <h3>API Entegrasyon Hizmetleri</h3>
+                        <p>Tüm sistemleriniz arasında sorunsuz veri akışı kurarak süreçlerinizi hızlandırın. API entegrasyonlarıyla manuel hataları azaltın ve operasyonlarınızı tek bir akış haline getirin.</p>
+                        <div class="card-ctas">
+                            <a href="pages/api.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        </div>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="icon-box"><i class="fas fa-chart-line"></i></div>
+                        <h3>Finansal İndikatör & Botlar</h3>
+                        <p>Gerçek zamanlı piyasa verilerini analiz eden ve otomatik işlem stratejileri uygulayan trading botlarıyla daha kontrollü, veri odaklı ve hızlı yatırım kararları alın.</p>
+                        <div class="card-ctas">
+                            <a href="pages/financial-indicators.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        </div>
+                    </article>
+
+                    <article class="service-card">
+                        <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <h3>Eğitim & Danışmanlık</h3>
+                        <p>Ekibinizin otomasyon ve veri becerilerini güçlendirin. Doğru teknolojileri doğru stratejiyle uygulayarak projelerinizi daha verimli ve sürdürülebilir hale getirin.</p>
+                        <div class="card-ctas">
+                            <a href="pages/training-consulting.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
+                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        </div>
+                    </article>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="services" class="services">
-        <div class="container">
-            <div class="section-header">
-                <h2>Hizmetlerimiz</h2>
-                <p>Uçtan uca dijital dönüşüm araçları.</p>
-            </div>
-
-            <div class="services-grid">
-                <article class="service-card">
-                    <div class="icon-box"><i class="fas fa-chart-pie"></i></div>
-                    <h3>Yatırım Analizleri</h3>
-                    <p>Finansal özgürlük hedefinizi, şirket bazlı yatırım metriklerini ve perakende sektörü verilerini tek ekranda analiz edebileceğiniz kişisel yatırım merkezi.</p>
-                    <div class="card-ctas">
-                        <a href="pages/investment-analytics.html" class="btn btn-sm btn-secondary">Analizleri İncele</a>
-                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                    </div>
-                </article>
-
-                <article class="service-card">
-                    <div class="icon-box"><i class="fas fa-robot"></i></div>
-                    <h3>Robotik Süreç Otomasyonu</h3>
-                    <p>Tekrarlayan görevleri yazılımlara devrederek hızınızı artırın, hataları azaltın ve maliyetlerinizi düşürün. RPA ile ekibiniz stratejik işlere daha fazla odaklanabilir.</p>
-                    <div class="card-ctas">
-                        <a href="pages/rpa.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                    </div>
-                </article>
-
-                <article class="service-card">
-                    <div class="icon-box"><i class="fas fa-spider"></i></div>
-                    <h3>Web Scraping</h3>
-                    <p>İnternetteki verileri otomatik toplayıp düzenleyin; rakip fiyatlarını, pazar trendlerini ve ürün verilerini anlık olarak izleyerek güçlü kararlar alın ve rekabette öne geçin.</p>
-                    <div class="card-ctas">
-                        <a href="pages/webscraping.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                    </div>
-                </article>
-                
-                <article class="service-card">
-                    <div class="icon-box"><i class="fas fa-brain"></i></div>
-                    <h3>AI Asistan</h3>
-                    <p>7/24 çalışan yapay zekâ destekli asistanlarla süreçlerinizi otomatikleştirin. Müşteri taleplerini yöneten, bilgi sağlayan ve iş akışlarını hızlandıran akıllı sistemlerle verimliği artırın.</p>
-                    <div class="card-ctas">
-                        <a href="pages/ai-assistant.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                    </div>
-                </article>
-
-                <article class="service-card">
-                    <div class="icon-box"><i class="fas fa-plug"></i></div>
-                    <h3>API Entegrasyon Hizmetleri</h3>
-                    <p>Tüm sistemleriniz arasında sorunsuz veri akışı kurarak süreçlerinizi hızlandırın. API entegrasyonlarıyla manuel hataları azaltın ve operasyonlarınızı tek bir akış haline getirin.</p>
-                    <div class="card-ctas">
-                        <a href="pages/api.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                    </div>
-                </article>
-                
-                <article class="service-card">
-                    <div class="icon-box"><i class="fas fa-chart-line"></i></div>
-                    <h3>Finansal İndikatör & Botlar</h3>
-                    <p>Gerçek zamanlı piyasa verilerini analiz eden ve otomatik işlem stratejileri uygulayan trading botlarıyla daha kontrollü, veri odaklı ve hızlı yatırım kararları alın.</p>
-                    <div class="card-ctas">
-                        <a href="pages/financial-indicators.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                    </div>
-                </article>
-
-                <article class="service-card">
-                    <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
-                    <h3>Eğitim & Danışmanlık</h3>
-                    <p>Ekibinizin otomasyon ve veri becerilerini güçlendirin. Doğru teknolojileri doğru stratejiyle uygulayarak projelerinizi daha verimli ve sürdürülebilir hale getirin.</p>
-                    <div class="card-ctas">
-                        <a href="pages/training-consulting.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                        <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
+    </div>
 
     <section id="contact" class="contact-section">
         <div class="container">
