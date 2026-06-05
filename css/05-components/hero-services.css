@@ -5,6 +5,18 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
   overflow: hidden;
+  background: #050507;
+}
+
+.home-background-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(5, 5, 7, 0) 0%, rgba(5, 5, 7, 0.22) 78%, #050507 100%),
+    radial-gradient(circle at 50% 18%, rgba(99, 102, 241, 0.035), transparent 42%);
 }
 
 .home-background-surface {
@@ -16,13 +28,11 @@
   overflow: hidden;
   background-color: transparent;
   background-image:
-    radial-gradient(circle at 22% 18%, rgba(99, 102, 241, 0.16), transparent 28%),
-    radial-gradient(circle at 78% 34%, rgba(14, 165, 233, 0.08), transparent 30%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.038) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.038) 1px, transparent 1px);
-  background-size: auto, auto, 40px 40px, 40px 40px;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+    linear-gradient(to right, rgba(255, 255, 255, 0.034) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.034) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 86%, transparent 100%);
 }
 
 .hero {
