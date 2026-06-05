@@ -623,10 +623,53 @@ class OrbitVisualSystem {
         this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         this.prefersReducedMotion = this.reducedMotionQuery.matches;
 
+        this.createParticleBands();
         this.bindEvents();
         this.measure();
         this.update();
         this.animate();
+    }
+
+    seededRandom(seed) {
+        const x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+    }
+
+    createParticleBands() {
+        const ringConfigs = [
+            { selector: '.teknoify-orbit__ring--outer', count: 86, seed: 11, spread: 4.2 },
+            { selector: '.teknoify-orbit__ring--middle', count: 68, seed: 29, spread: 3.6 },
+            { selector: '.teknoify-orbit__ring--inner', count: 52, seed: 47, spread: 3.0 }
+        ];
+
+        ringConfigs.forEach((config) => {
+            const ring = this.orbit.querySelector(config.selector);
+            if (!ring || ring.dataset.particlesReady === 'true') return;
+
+            const fragment = document.createDocumentFragment();
+            for (let i = 0; i < config.count; i++) {
+                const angleJitter = (this.seededRandom(config.seed + i * 7) - 0.5) * 2.8;
+                const radiusJitter = (this.seededRandom(config.seed + i * 13) - 0.5) * config.spread;
+                const angle = ((i / config.count) * 360 + angleJitter) * Math.PI / 180;
+                const radius = 49.5 + radiusJitter;
+                const x = 50 + Math.cos(angle) * radius;
+                const y = 50 + Math.sin(angle) * radius;
+                const size = 1.15 + this.seededRandom(config.seed + i * 17) * 2.15;
+                const alpha = 0.34 + this.seededRandom(config.seed + i * 19) * 0.52;
+
+                const particle = document.createElement('span');
+                particle.className = 'teknoify-orbit__particle';
+                particle.setAttribute('aria-hidden', 'true');
+                particle.style.setProperty('--particle-x', `${x.toFixed(2)}%`);
+                particle.style.setProperty('--particle-y', `${y.toFixed(2)}%`);
+                particle.style.setProperty('--particle-size', `${size.toFixed(2)}px`);
+                particle.style.setProperty('--particle-alpha', alpha.toFixed(2));
+                fragment.appendChild(particle);
+            }
+
+            ring.appendChild(fragment);
+            ring.dataset.particlesReady = 'true';
+        });
     }
 
     bindEvents() {
