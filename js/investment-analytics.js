@@ -285,21 +285,33 @@
     }
 
 
-    function renderLegend(container, series) {
-        const legend = document.createElement("div");
-        legend.className = "investment-chart-legend";
+    function getSeriesKey(item) {
+        return item.key || item.name;
+    }
+
+    function renderLegend(legend, series, visibleSeriesKeys, onToggleSeries) {
+        legend.textContent = "";
 
         series.forEach((item) => {
-            const legendItem = document.createElement("span");
+            const seriesKey = getSeriesKey(item);
+            const isAllVisible = !visibleSeriesKeys;
+            const isActive = isAllVisible || visibleSeriesKeys.has(seriesKey);
+            const legendItem = document.createElement("button");
             const marker = document.createElement("span");
+
+            legendItem.type = "button";
+            legendItem.className = `investment-chart-legend-button${isActive ? " is-active" : " is-muted"}`;
+            legendItem.setAttribute("aria-pressed", String(isActive));
+            legendItem.setAttribute("aria-label", `${item.name} serisini göster/gizle`);
+            legendItem.addEventListener("click", () => onToggleSeries(seriesKey));
+
+            marker.className = "investment-chart-legend-marker";
             marker.style.backgroundColor = item.color;
             marker.style.color = item.color;
 
             legendItem.append(marker, item.name);
             legend.appendChild(legendItem);
         });
-
-        container.appendChild(legend);
     }
 
     function getInvestmentChartMathHelper(helperName) {
@@ -425,16 +437,15 @@
         return label;
     }
 
-    function createSourceMarkup(source, showTitle = true) {
-        const sourceTitleMarkup = showTitle && source.title
-            ? `<span class="investment-chart-tooltip__source-title">${escapeHtml(source.title)}</span>`
-            : "";
-        const sourceLinkMarkup = source.url
-            ? `<a class="investment-chart-tooltip__source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">Kaynağı Aç</a>`
-            : "";
+    function getSourceUrl(source) {
+        return String(source?.url ?? "").trim();
+    }
 
-        return sourceTitleMarkup || sourceLinkMarkup
-            ? `<div class="investment-chart-tooltip__source"><span class="investment-chart-tooltip__source-label">Kaynak</span>${sourceTitleMarkup}${sourceLinkMarkup}</div>`
+    function createSourceMarkup(source) {
+        const sourceUrl = getSourceUrl(source);
+
+        return sourceUrl
+            ? `<div class="investment-chart-tooltip__source"><a class="investment-chart-tooltip__source-link" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">Kaynağı Aç</a></div>`
             : "";
     }
 
@@ -476,12 +487,15 @@
                     <span class="investment-chart-tooltip__metric">${escapeHtml(formatTlMillionCompactForTooltip(metricConfig.value))}</span>
                 </div>
             </div>
-            ${createSourceMarkup(source, false)}
+            ${createSourceMarkup(source)}
         `;
     }
 
     function createTooltipContent(item, pointData, options) {
         const source = resolvePointSource(pointData);
+
+        if (!getSourceUrl(source)) return null;
+
         const financialTooltip = pointData.quarterlyFinancials
             ? createFinancialTooltipContent(item, pointData, options, source)
             : null;
@@ -517,6 +531,8 @@
     }
 
     function showTooltip(tooltip, content, point, chartConfig) {
+        if (!content) return;
+
         const [viewBoxWidth, viewBoxHeight] = chartConfig.viewBox.split(" ").slice(2).map(Number);
         const svg = tooltip.previousElementSibling;
         const chartWidth = svg?.clientWidth || tooltip.parentElement?.clientWidth || viewBoxWidth;
@@ -567,6 +583,8 @@
     }
 
     function bindTooltipTrigger(trigger, tooltip, tooltipController, tooltipContent, point, chartConfig) {
+        if (!tooltipContent) return;
+
         trigger.addEventListener("mouseenter", () => {
             tooltipController.cancelHide();
             showTooltip(tooltip, tooltipContent, point, chartConfig);
@@ -579,9 +597,7 @@
         trigger.addEventListener("blur", tooltipController.scheduleHide);
     }
 
-    function renderLineSeries(svg, chartConfig, tooltip, periods, series, options) {
-        const tooltipController = createTooltipController(tooltip);
-
+    function renderLineSeries(svg, chartConfig, tooltip, tooltipController, periods, series, options) {
         series.forEach((item, seriesIndex) => {
             const points = item.points.flatMap((pointData, index) => {
                 if (!isValidMetricValue(pointData.value)) return [];
@@ -708,16 +724,54 @@
             "aria-label": options.title
         });
         const tooltip = document.createElement("div");
+        const legend = document.createElement("div");
+        const tooltipController = createTooltipController(tooltip);
+        let visibleSeriesKeys = null;
 
         tooltip.className = `investment-chart-tooltip${options.mode === "modal" ? " investment-chart-tooltip-large" : ""}`;
+        legend.className = "investment-chart-legend";
 
-        renderLineGrid(svg, chartConfig, options.formatAxisValue);
-        renderLineXAxis(svg, chartConfig, periods, options.mode);
-        renderLineSeries(svg, chartConfig, tooltip, periods, series, options);
+        function getVisibleSeries() {
+            return visibleSeriesKeys
+                ? series.filter((item) => visibleSeriesKeys.has(getSeriesKey(item)))
+                : series;
+        }
+
+        function drawChart() {
+            const visibleSeries = getVisibleSeries();
+
+            hideTooltip(tooltip);
+            tooltip.innerHTML = "";
+            svg.textContent = "";
+            renderLineGrid(svg, chartConfig, options.formatAxisValue);
+            renderLineXAxis(svg, chartConfig, periods, options.mode);
+            renderLineSeries(svg, chartConfig, tooltip, tooltipController, periods, visibleSeries, options);
+            renderLegend(legend, series, visibleSeriesKeys, toggleSeries);
+        }
+
+        function toggleSeries(seriesKey) {
+            if (!visibleSeriesKeys) {
+                visibleSeriesKeys = new Set([seriesKey]);
+            } else if (visibleSeriesKeys.has(seriesKey)) {
+                visibleSeriesKeys.delete(seriesKey);
+
+                if (!visibleSeriesKeys.size) {
+                    visibleSeriesKeys = null;
+                }
+            } else {
+                visibleSeriesKeys.add(seriesKey);
+
+                if (visibleSeriesKeys.size === series.length) {
+                    visibleSeriesKeys = null;
+                }
+            }
+
+            drawChart();
+        }
 
         container.textContent = "";
-        container.append(svg, tooltip);
-        renderLegend(container, series);
+        container.append(svg, tooltip, legend);
+        drawChart();
     }
 
     function buildSeries(metricKey, periods) {
