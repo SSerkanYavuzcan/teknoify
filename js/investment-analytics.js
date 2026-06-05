@@ -7,6 +7,8 @@
     let supermarketDataset = null;
     let supermarketDatasetPromise = null;
     let activeSectorKey = defaultSectorKey;
+    let sectorPanelHasRendered = false;
+    let calculatorPanelHasRendered = false;
     let usdTryRatesPromise = null;
 
     function createSvgElement(tagName, attributes = {}) {
@@ -153,6 +155,68 @@
 
     function clampNumber(value, min, max) {
         return Math.min(Math.max(value, min), max);
+    }
+
+    function doesHashTargetElement(target) {
+        const hash = window.location.hash;
+
+        if (!hash || hash === "#") return false;
+
+        const targetId = hash.slice(1);
+
+        if (!targetId) return false;
+
+        try {
+            const hashTarget = document.getElementById(decodeURIComponent(targetId));
+
+            return hashTarget === target || Boolean(hashTarget && target.contains(hashTarget));
+        } catch {
+            return false;
+        }
+    }
+
+    function runWhenNearViewport(target, callback, options = {}) {
+        if (!target || typeof callback !== "function") return;
+
+        let didRun = false;
+        let observer = null;
+
+        const run = () => {
+            if (didRun) return;
+
+            didRun = true;
+            observer?.disconnect();
+            window.removeEventListener("hashchange", handleHashChange);
+            callback();
+        };
+
+        function handleHashChange() {
+            if (doesHashTargetElement(target)) {
+                run();
+            }
+        }
+
+        if (doesHashTargetElement(target)) {
+            run();
+            return;
+        }
+
+        if (!("IntersectionObserver" in window)) {
+            run();
+            return;
+        }
+
+        observer = new IntersectionObserver((entries) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+                run();
+            }
+        }, {
+            rootMargin: options.rootMargin || "600px 0px",
+            threshold: options.threshold ?? 0.01
+        });
+
+        window.addEventListener("hashchange", handleHashChange, { passive: true });
+        observer.observe(target);
     }
 
     function getCompactTooltipNote(note, maxLength = 110) {
@@ -1395,6 +1459,7 @@
 
         if (!panel) return;
 
+        sectorPanelHasRendered = true;
         activeSectorKey = "retail";
         updateSectorSelectorState(activeSectorKey);
         panel.innerHTML = `
@@ -1484,6 +1549,7 @@
 
         if (!panel || !sector) return;
 
+        sectorPanelHasRendered = true;
         activeSectorKey = sectorKey;
         updateSectorSelectorState(activeSectorKey);
         panel.innerHTML = `
@@ -1535,6 +1601,7 @@
 
     function initSectorSelector() {
         const selectorButtons = document.querySelectorAll("[data-sector-key]");
+        const sectorSection = document.getElementById("retail-store-performance");
 
         if (!selectorButtons.length) return;
 
@@ -1544,7 +1611,11 @@
             });
         });
 
-        renderSectorPanel(defaultSectorKey);
+        runWhenNearViewport(sectorSection, () => {
+            if (!sectorPanelHasRendered) {
+                renderSectorPanel(defaultSectorKey);
+            }
+        });
     }
 
     function initInvestmentSmoothScroll() {
@@ -1566,6 +1637,15 @@
                 if (!target) return;
 
                 event.preventDefault();
+
+                if ((hash === "#retail-store-performance" || hash === "#sector-analysis") && !sectorPanelHasRendered) {
+                    renderSectorPanel(defaultSectorKey);
+                }
+
+                if (hash === "#investment-calculators" && !calculatorPanelHasRendered) {
+                    renderCalculatorPanel(defaultCalculatorKey);
+                }
+
                 target.scrollIntoView({ behavior: "smooth", block: "start" });
                 window.history.pushState(null, "", hash);
             });
@@ -2288,6 +2368,7 @@
     }
 
     function renderCalculatorPanel(calculatorKey = defaultCalculatorKey) {
+        calculatorPanelHasRendered = true;
         activeCalculatorKey = ["cagr", "retirement"].includes(calculatorKey) ? calculatorKey : "compound";
         updateCalculatorSelectorState(activeCalculatorKey);
 
@@ -2679,6 +2760,7 @@
 
     function initCalculatorSelector() {
         const buttons = document.querySelectorAll("[data-calculator-key]");
+        const calculatorSection = document.getElementById("investment-calculators");
 
         if (!buttons.length) return;
 
@@ -2688,7 +2770,11 @@
             });
         });
 
-        renderCalculatorPanel(defaultCalculatorKey);
+        runWhenNearViewport(calculatorSection, () => {
+            if (!calculatorPanelHasRendered) {
+                renderCalculatorPanel(defaultCalculatorKey);
+            }
+        });
     }
 
     function initCompoundInterestCalculator() {
