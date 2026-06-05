@@ -551,7 +551,7 @@
     function renderLineSeries(svg, chartConfig, tooltip, periods, series, options) {
         const tooltipController = createTooltipController(tooltip);
 
-        series.forEach((item) => {
+        series.forEach((item, seriesIndex) => {
             const points = item.points.flatMap((pointData, index) => {
                 if (!isValidMetricValue(pointData.value)) return [];
 
@@ -568,6 +568,17 @@
                 "stroke-linejoin": "round",
                 class: "investment-chart-line",
                 style: `--series-color: ${item.color}`
+            }));
+
+            svg.appendChild(createSvgElement("polyline", {
+                points: points.join(" "),
+                fill: "none",
+                stroke: item.color,
+                "stroke-width": options.mode === "modal" ? "5.2" : "4.8",
+                "stroke-linecap": "round",
+                "stroke-linejoin": "round",
+                class: "investment-chart-line-glint",
+                style: `--series-color: ${item.color}; --line-glint-delay: ${seriesIndex * 0.55}s`
             }));
 
             item.points.forEach((pointData, index) => {
@@ -660,19 +671,15 @@
     function renderLineChart(container, series, options) {
         const periods = options.periods;
         const chartConfig = getLineChartConfig(options, series);
-        const titleId = `${options.mountId}-title`;
         const svg = createSvgElement("svg", {
             viewBox: chartConfig.viewBox,
             role: "img",
-            "aria-labelledby": titleId
+            "aria-label": options.title
         });
-        const title = createSvgElement("title", { id: titleId });
         const tooltip = document.createElement("div");
 
-        title.textContent = options.title;
         tooltip.className = `investment-chart-tooltip${options.mode === "modal" ? " investment-chart-tooltip-large" : ""}`;
 
-        svg.appendChild(title);
         renderLineGrid(svg, chartConfig, options.formatAxisValue);
         renderLineXAxis(svg, chartConfig, periods, options.mode);
         renderLineSeries(svg, chartConfig, tooltip, periods, series, options);

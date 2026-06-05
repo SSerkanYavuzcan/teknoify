@@ -53,6 +53,22 @@
     filter: drop-shadow(0 0 8px color-mix(in srgb, var(--series-color) 42%, transparent));
 }
 
+.investment-chart-line-glint {
+    stroke: color-mix(in srgb, var(--series-color) 72%, #fff);
+    stroke-width: 4.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 46 760;
+    stroke-dashoffset: 0;
+    opacity: 0.72;
+    filter:
+        drop-shadow(0 0 8px color-mix(in srgb, var(--series-color) 80%, transparent))
+        drop-shadow(0 0 14px color-mix(in srgb, var(--series-color) 54%, transparent));
+    pointer-events: none;
+    animation: investmentLineGlint 4.8s linear infinite;
+    animation-delay: var(--line-glint-delay, 0s);
+}
+
 .investment-chart-point {
     cursor: pointer;
     outline: none;
@@ -162,4 +178,21 @@
     font-weight: 800;
     line-height: 1.5;
     text-align: center;
+}
+
+@keyframes investmentLineGlint {
+    from {
+        stroke-dashoffset: 0;
+    }
+
+    to {
+        stroke-dashoffset: -806;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .investment-chart-line-glint {
+        animation: none;
+        opacity: 0;
+    }
 }
