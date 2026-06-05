@@ -119,20 +119,51 @@
     padding: 0 1rem 1rem;
 }
 
-.investment-chart-legend span {
+.investment-chart-legend-button {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
+    padding: 0.16rem 0.2rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
     color: rgba(243, 244, 246, 0.82);
+    font: inherit;
     font-size: 0.82rem;
     font-weight: 700;
+    cursor: pointer;
+    transition:
+        border-color var(--ease-fast),
+        color var(--ease-fast),
+        opacity var(--ease-fast);
 }
 
-.investment-chart-legend span span {
+.investment-chart-legend-button:hover,
+.investment-chart-legend-button:focus-visible {
+    border-color: rgba(148, 163, 184, 0.22);
+    color: #fff;
+    outline: none;
+}
+
+.investment-chart-legend-button.is-muted {
+    color: rgba(148, 163, 184, 0.56);
+    opacity: 0.56;
+}
+
+.investment-chart-legend-button.is-muted:hover,
+.investment-chart-legend-button.is-muted:focus-visible {
+    opacity: 0.82;
+}
+
+.investment-chart-legend-marker {
     width: 0.7rem;
     height: 0.7rem;
     border-radius: 999px;
     box-shadow: 0 0 14px currentcolor;
+}
+
+.investment-chart-legend-button.is-muted .investment-chart-legend-marker {
+    box-shadow: 0 0 6px currentcolor;
 }
 
 .investment-chart-note {
