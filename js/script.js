@@ -609,7 +609,7 @@ class ServicesOrbitSystem {
         this.visual = this.showcase.querySelector('.services-orbit-visual');
         this.nodes = Array.from(this.showcase.querySelectorAll('[data-services-node]'));
         this.rotation = 0;
-        this.autoSpeed = 0.014;
+        this.autoSpeed = 0.009;
         this.bounds = { width: 0, height: 0 };
         this.rafId = null;
         this.isVisible = true;
@@ -761,10 +761,11 @@ class ServicesOrbitSystem {
         this.visual.style.setProperty('--services-orbit-rotation', `${this.rotation}deg`);
 
         const isCompact = this.bounds.width < 600;
+        const isTablet = this.bounds.width < 980;
         const maxRadiusX = isCompact ? Math.min(this.bounds.width * 0.43, 225) : Math.min(this.bounds.width * 0.58, 750);
         const maxRadiusY = isCompact ? Math.min(this.bounds.height * 0.37, 235) : Math.min(this.bounds.height * 0.38, 405);
-        const lineLength = isCompact ? 44 : 72;
-        const labelDistance = isCompact ? 72 : 116;
+        const lineLength = isCompact ? 62 : isTablet ? 140 : 190;
+        const labelDistance = lineLength + (isCompact ? 18 : 26);
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
@@ -778,7 +779,7 @@ class ServicesOrbitSystem {
             const scale = 0.9 + frontness * 0.12;
             const opacity = 0.76 + frontness * 0.24;
             const labelX = unitX * labelDistance;
-            const labelY = unitY * labelDistance * 0.62;
+            const labelY = unitY * (isCompact ? 42 : 70);
 
             node.style.setProperty('--services-node-x', `${x.toFixed(2)}px`);
             node.style.setProperty('--services-node-y', `${y.toFixed(2)}px`);

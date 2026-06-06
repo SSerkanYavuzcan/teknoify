@@ -224,3 +224,236 @@
 .home-page-shell ~ .footer {
     margin-top: 0;
 }
+
+/* Orbit annotation redesign: replaces floating chips with editorial system labels. */
+.services--ecosystem .services-orbit-visual {
+    min-height: clamp(900px, 76vw, 1160px);
+}
+
+.services--ecosystem .services-orbit-node {
+    --services-node-line-length: 190px;
+    --services-node-label-x: 230px;
+    --services-node-label-y: 0px;
+    --services-node-spur-angle: -11deg;
+    --services-node-spur-origin: 100% 50%;
+    --services-node-line-gradient: linear-gradient(
+        90deg,
+        transparent,
+        rgba(125, 211, 252, 0.16) 18%,
+        rgba(216, 180, 254, 0.62) 100%
+    );
+
+    width: 520px;
+    height: 172px;
+}
+
+.services--ecosystem .services-orbit-node::before {
+    content: none;
+}
+
+.services--ecosystem .services-orbit-node__dot {
+    width: 9px;
+    height: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    background:
+        radial-gradient(circle at 36% 32%, #fff 0 18%, rgba(255, 255, 255, 0.72) 19% 34%, transparent 35%),
+        radial-gradient(circle, rgba(216, 180, 254, 0.98), rgba(139, 92, 246, 0.82) 48%, rgba(37, 99, 235, 0.48));
+    box-shadow:
+        0 0 0 5px rgba(168, 85, 247, 0.08),
+        0 0 20px rgba(255, 255, 255, 0.42),
+        0 0 38px rgba(168, 85, 247, 0.44),
+        0 0 62px rgba(37, 99, 235, 0.24);
+}
+
+.services--ecosystem .services-orbit-node__dot::after {
+    inset: -11px;
+    border-color: rgba(216, 180, 254, 0.16);
+}
+
+.services--ecosystem .services-orbit-node__label {
+    position: absolute;
+    width: 230px;
+    max-width: none;
+    min-height: 92px;
+    gap: 0.18rem;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.94);
+    text-align: left;
+    text-shadow: 0 0 26px rgba(99, 102, 241, 0.22);
+    transform: translate3d(var(--services-node-label-x), calc(-50% + var(--services-node-label-y)), 0);
+}
+
+.services--ecosystem .services-orbit-node__label::before,
+.services--ecosystem .services-orbit-node__label::after {
+    content: "";
+    position: absolute;
+    top: 4.85rem;
+    right: calc(100% + 13px);
+    pointer-events: none;
+}
+
+.services--ecosystem .services-orbit-node__label::before {
+    width: var(--services-node-line-length);
+    height: 1px;
+    background: var(--services-node-line-gradient);
+    opacity: 0.7;
+}
+
+.services--ecosystem .services-orbit-node__label::after {
+    width: 34px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(216, 180, 254, 0.58), rgba(255, 255, 255, 0.22));
+    opacity: 0.58;
+    transform: translateX(calc(var(--services-node-line-length) * -1 + 1px)) rotate(var(--services-node-spur-angle));
+    transform-origin: var(--services-node-spur-origin);
+}
+
+.services--ecosystem .services-orbit-node__index {
+    display: block;
+    color: rgba(165, 180, 252, 0.68);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    line-height: 1;
+}
+
+.services--ecosystem .services-orbit-node__title {
+    display: block;
+    margin-top: 0.38rem;
+    color: rgba(255, 255, 255, 0.98);
+    font-size: clamp(0.92rem, 1.1vw, 1.08rem);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.services--ecosystem .services-orbit-node__copy {
+    display: block;
+    margin-top: 0.38rem;
+    color: rgba(203, 213, 225, 0.76);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.018em;
+    line-height: 1.25;
+    white-space: nowrap;
+}
+
+.services--ecosystem .services-orbit-node.is-left {
+    --services-node-spur-angle: 11deg;
+    --services-node-spur-origin: 0 50%;
+    --services-node-line-gradient: linear-gradient(
+        90deg,
+        rgba(216, 180, 254, 0.62),
+        rgba(125, 211, 252, 0.16) 82%,
+        transparent
+    );
+}
+
+.services--ecosystem .services-orbit-node.is-left .services-orbit-node__label {
+    text-align: right;
+    transform: translate3d(calc(-100% + var(--services-node-label-x)), calc(-50% + var(--services-node-label-y)), 0);
+}
+
+.services--ecosystem .services-orbit-node.is-left .services-orbit-node__label::before,
+.services--ecosystem .services-orbit-node.is-left .services-orbit-node__label::after {
+    right: auto;
+    left: calc(100% + 13px);
+}
+
+.services--ecosystem .services-orbit-node.is-left .services-orbit-node__label::after {
+    transform: translateX(calc(var(--services-node-line-length) - 1px)) rotate(var(--services-node-spur-angle));
+}
+
+.services--ecosystem .services-orbit-node:hover .services-orbit-node__label::before,
+.services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__label::before,
+.services--ecosystem .services-orbit-node.is-active .services-orbit-node__label::before {
+    opacity: 0.92;
+}
+
+.services--ecosystem .services-orbit-node:hover .services-orbit-node__label::after,
+.services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__label::after,
+.services--ecosystem .services-orbit-node.is-active .services-orbit-node__label::after {
+    opacity: 0.76;
+}
+
+.services--ecosystem .services-orbit-node:hover .services-orbit-node__dot,
+.services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__dot,
+.services--ecosystem .services-orbit-node.is-active .services-orbit-node__dot {
+    box-shadow:
+        0 0 0 6px rgba(168, 85, 247, 0.12),
+        0 0 24px rgba(255, 255, 255, 0.5),
+        0 0 48px rgba(216, 180, 254, 0.52),
+        0 0 72px rgba(37, 99, 235, 0.32);
+}
+
+@media (max-width: 980px) {
+    .services--ecosystem .services-orbit-visual {
+        min-height: clamp(760px, 100vw, 980px);
+    }
+
+    .services--ecosystem .services-orbit-node {
+        --services-node-line-length: 140px;
+
+        width: 410px;
+        height: 142px;
+    }
+
+    .services--ecosystem .services-orbit-node__label {
+        width: 188px;
+    }
+
+    .services--ecosystem .services-orbit-node__copy {
+        font-size: 0.66rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .services--ecosystem .services-orbit-visual {
+        min-height: 620px;
+    }
+
+    .services--ecosystem .services-orbit-node {
+        --services-node-line-length: 62px;
+        --services-node-spur-angle: -8deg;
+
+        width: 250px;
+        height: 104px;
+    }
+
+    .services--ecosystem .services-orbit-node__label {
+        width: 112px;
+        min-height: 76px;
+    }
+
+    .services--ecosystem .services-orbit-node__label::before,
+    .services--ecosystem .services-orbit-node__label::after {
+        top: 4.1rem;
+    }
+
+    .services--ecosystem .services-orbit-node__label::after {
+        width: 18px;
+    }
+
+    .services--ecosystem .services-orbit-node__index {
+        font-size: 0.48rem;
+        letter-spacing: 0.16em;
+    }
+
+    .services--ecosystem .services-orbit-node__title {
+        margin-top: 0.26rem;
+        font-size: 0.64rem;
+        letter-spacing: 0.04em;
+    }
+
+    .services--ecosystem .services-orbit-node__copy {
+        margin-top: 0.25rem;
+        font-size: 0.52rem;
+        line-height: 1.16;
+        white-space: normal;
+    }
+
+    .services--ecosystem .services-orbit-node.is-left {
+        --services-node-spur-angle: 8deg;
+    }
+}
