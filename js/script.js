@@ -631,10 +631,11 @@ class ServicesOrbitSystem {
 
     createParticleBands() {
         const isCompact = window.innerWidth < 768;
+        const densityScale = isCompact ? 0.72 : 1;
         const ringConfigs = [
-            { name: 'outer', count: isCompact ? 92 : 180, seed: 11, spread: 4.6 },
-            { name: 'middle', count: isCompact ? 74 : 140, seed: 29, spread: 4.0 },
-            { name: 'inner', count: isCompact ? 58 : 108, seed: 47, spread: 3.4 }
+            { name: 'outer', count: Math.round(204 * densityScale), seed: 11, spread: 4.6 },
+            { name: 'middle', count: Math.round(156 * densityScale), seed: 29, spread: 4.0 },
+            { name: 'inner', count: Math.round(120 * densityScale), seed: 47, spread: 3.4 }
         ];
 
         ringConfigs.forEach((config) => {
