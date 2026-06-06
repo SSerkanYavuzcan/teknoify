@@ -40,9 +40,11 @@
             user-select: none;
             transition: transform 0.2s ease-in-out;
         }
+
         .password-toggle-icon:hover {
             transform: translateY(-50%) scale(1.1);
         }
+
         .input-wrapper input[type="password"], 
         .input-wrapper input.password-visible {
             padding-right: 40px !important;
@@ -72,6 +74,7 @@
         .custom-toast.success {
             border-left: 6px solid #10b981;
         }
+
         .custom-toast.success .toast-icon {
             color: #10b981;
             font-size: 28px;
@@ -81,6 +84,7 @@
         .custom-toast.error {
             border-left: 6px solid #ff4b4b;
         }
+
         .custom-toast.error .toast-icon {
             color: #ff4b4b;
             font-size: 28px;
@@ -113,6 +117,7 @@
             padding-left: 10px;
             transition: color 0.2s;
         }
+
         .custom-toast .toast-close:hover {
             color: #fff;
         }
@@ -124,7 +129,9 @@
         .tk-hp-container {
             display: none !important;
             visibility: hidden !important;
-            height: 0; width: 0; overflow: hidden;
+            height: 0;
+            width: 0;
+            overflow: hidden;
         }
     </style>
 
@@ -166,7 +173,7 @@
                         <li><a href="pages/rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
                         <li><a href="pages/webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
                         <li><a href="pages/ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
-                        <li><a href= "pages/api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="pages/api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
                         <li><a href="pages/financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
                         <li><a href="pages/training-consulting.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
                     </ul>
@@ -335,139 +342,139 @@
         </section>
 
         <section id="contact" class="contact-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Projelerinizi Hayata Geçirelim</h2>
-                <p>Aklınızdaki fikri veya ihtiyacınız olan otomasyon çözümünü bize anlatın.</p>
-            </div>
-
-            <div class="contact-wrapper">
-                <div class="contact-info">
-                    <div class="info-card">
-                        <h3>Neden Teknoify?</h3>
-                        <p>İş süreçlerinizi analiz ediyor, size özel botlar ve yapay zeka çözümleri geliştiriyoruz. 7/24 çalışan dijital iş gücünüzü kurmaya hazırız.</p>
-                    </div>
-                    
-                    <div class="contact-methods">
-                        <div class="method-item">
-                            <div class="icon-circle"><i class="fas fa-envelope"></i></div>
-                            <div>
-                                <span>Bize E-posta Gönderin</span>
-                                <a href="mailto:info@teknoify.com">info@teknoify.com</a>
-                            </div>
-                        </div>
-                        <div class="method-item">
-                            <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
-                            <div>
-                                <span>Lokasyon</span>
-                                <p>İstanbul, Türkiye</p>
-                            </div>
-                        </div>
-                    </div>
+            <div class="container">
+                <div class="section-header">
+                    <h2>Projelerinizi Hayata Geçirelim</h2>
+                    <p>Aklınızdaki fikri veya ihtiyacınız olan otomasyon çözümünü bize anlatın.</p>
                 </div>
 
-                <form id="contactForm" class="contact-form" action="#" method="POST">
-                    <div class="tk-hp-container" aria-hidden="true">
-                        <label>Do not fill this field:</label>
-                        <input type="text" name="tk_hp_field" id="tk_hp_field" tabindex="-1" autocomplete="off">
+                <div class="contact-wrapper">
+                    <div class="contact-info">
+                        <div class="info-card">
+                            <h3>Neden Teknoify?</h3>
+                            <p>İş süreçlerinizi analiz ediyor, size özel botlar ve yapay zeka çözümleri geliştiriyoruz. 7/24 çalışan dijital iş gücünüzü kurmaya hazırız.</p>
+                        </div>
+                        
+                        <div class="contact-methods">
+                            <div class="method-item">
+                                <div class="icon-circle"><i class="fas fa-envelope"></i></div>
+                                <div>
+                                    <span>Bize E-posta Gönderin</span>
+                                    <a href="mailto:info@teknoify.com">info@teknoify.com</a>
+                                </div>
+                            </div>
+                            <div class="method-item">
+                                <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
+                                <div>
+                                    <span>Lokasyon</span>
+                                    <p>İstanbul, Türkiye</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="fullname">Adınız Soyadınız</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="fullname" name="fullname" required>
+                    <form id="contactForm" class="contact-form" action="#" method="POST">
+                        <div class="tk-hp-container" aria-hidden="true">
+                            <label>Do not fill this field:</label>
+                            <input type="text" name="tk_hp_field" id="tk_hp_field" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="fullname">Adınız Soyadınız</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="fullname" name="fullname" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact_info">E-posta veya Telefon</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-address-card"></i>
+                                    <input type="text" id="contact_info" name="contact_info" required>
+                                </div>
+                                <div id="contact-error" class="form-error-msg"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group service-select-group">
+                            <label id="service-type-label" for="service_type">İlgilendiğiniz Hizmet</label>
+                            <div class="input-wrapper service-select-wrapper">
+                                <select id="service_type" class="native-select-hidden" name="service_type" required>
+                                    <option value="" disabled selected hidden>Lütfen bir hizmet seçin</option>
+                                    <option value="rpa">Robotik Süreç Otomasyonu</option>
+                                    <option value="scraping">Web Scraping</option>
+                                    <option value="ai">AI Asistan</option>
+                                    <option value="api">API Entegrasyon Hizmetleri</option>
+                                    <option value="finans">Finansal İndikatör & Botlar</option>
+                                    <option value="yatirim-analizleri">Yatırım Analizleri</option>
+                                    <option value="egitim">Eğitim & Danışmanlık</option>
+                                </select>
+
+                                <div class="custom-select" data-custom-select>
+                                    <button
+                                        type="button"
+                                        class="custom-select-trigger"
+                                        aria-haspopup="listbox"
+                                        aria-expanded="false"
+                                        aria-labelledby="service-type-label"
+                                    >
+                                        <i class="fas fa-tag custom-select-leading-icon" aria-hidden="true"></i>
+                                        <span class="custom-select-value">Lütfen bir hizmet seçin</span>
+                                        <i class="fas fa-chevron-down custom-select-chevron" aria-hidden="true"></i>
+                                    </button>
+
+                                    <ul class="custom-select-menu" role="listbox" aria-label="İlgilendiğiniz Hizmet">
+                                        <li class="custom-select-option" role="option" data-value="rpa" aria-selected="false">
+                                            <i class="fas fa-robot custom-select-option-icon" aria-hidden="true"></i>
+                                            <span>Robotik Süreç Otomasyonu</span>
+                                        </li>
+                                        <li class="custom-select-option" role="option" data-value="scraping" aria-selected="false">
+                                            <i class="fas fa-spider custom-select-option-icon" aria-hidden="true"></i>
+                                            <span>Web Scraping</span>
+                                        </li>
+                                        <li class="custom-select-option" role="option" data-value="ai" aria-selected="false">
+                                            <i class="fas fa-brain custom-select-option-icon" aria-hidden="true"></i>
+                                            <span>AI Asistan</span>
+                                        </li>
+                                        <li class="custom-select-option" role="option" data-value="api" aria-selected="false">
+                                            <i class="fas fa-plug custom-select-option-icon" aria-hidden="true"></i>
+                                            <span>API Entegrasyon Hizmetleri</span>
+                                        </li>
+                                        <li class="custom-select-option" role="option" data-value="finans" aria-selected="false">
+                                            <i class="fas fa-chart-line custom-select-option-icon" aria-hidden="true"></i>
+                                            <span>Finansal İndikatör & Botlar</span>
+                                        </li>
+                                        <li class="custom-select-option" role="option" data-value="yatirim-analizleri" aria-selected="false">
+                                            <i class="fas fa-chart-pie custom-select-option-icon" aria-hidden="true"></i>
+                                            <span>Yatırım Analizleri</span>
+                                        </li>
+                                        <li class="custom-select-option" role="option" data-value="egitim" aria-selected="false">
+                                            <i class="fas fa-chalkboard-teacher custom-select-option-icon" aria-hidden="true"></i>
+                                            <span>Eğitim & Danışmanlık</span>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="contact_info">E-posta veya Telefon</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-address-card"></i>
-                                <input type="text" id="contact_info" name="contact_info" required>
-                            </div>
-                            <div id="contact-error" class="form-error-msg"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-group service-select-group">
-                        <label id="service-type-label" for="service_type">İlgilendiğiniz Hizmet</label>
-                        <div class="input-wrapper service-select-wrapper">
-                            <select id="service_type" class="native-select-hidden" name="service_type" required>
-                                <option value="" disabled selected hidden>Lütfen bir hizmet seçin</option>
-                                <option value="rpa">Robotik Süreç Otomasyonu</option>
-                                <option value="scraping">Web Scraping</option>
-                                <option value="ai">AI Asistan</option>
-                                <option value="api">API Entegrasyon Hizmetleri</option>
-                                <option value="finans">Finansal İndikatör & Botlar</option>
-                                <option value="yatirim-analizleri">Yatırım Analizleri</option>
-                                <option value="egitim">Eğitim & Danışmanlık</option>
-                            </select>
-
-                            <div class="custom-select" data-custom-select>
-                                <button
-                                    type="button"
-                                    class="custom-select-trigger"
-                                    aria-haspopup="listbox"
-                                    aria-expanded="false"
-                                    aria-labelledby="service-type-label"
-                                >
-                                    <i class="fas fa-tag custom-select-leading-icon" aria-hidden="true"></i>
-                                    <span class="custom-select-value">Lütfen bir hizmet seçin</span>
-                                    <i class="fas fa-chevron-down custom-select-chevron" aria-hidden="true"></i>
-                                </button>
-
-                                <ul class="custom-select-menu" role="listbox" aria-label="İlgilendiğiniz Hizmet">
-                                    <li class="custom-select-option" role="option" data-value="rpa" aria-selected="false">
-                                        <i class="fas fa-robot custom-select-option-icon" aria-hidden="true"></i>
-                                        <span>Robotik Süreç Otomasyonu</span>
-                                    </li>
-                                    <li class="custom-select-option" role="option" data-value="scraping" aria-selected="false">
-                                        <i class="fas fa-spider custom-select-option-icon" aria-hidden="true"></i>
-                                        <span>Web Scraping</span>
-                                    </li>
-                                    <li class="custom-select-option" role="option" data-value="ai" aria-selected="false">
-                                        <i class="fas fa-brain custom-select-option-icon" aria-hidden="true"></i>
-                                        <span>AI Asistan</span>
-                                    </li>
-                                    <li class="custom-select-option" role="option" data-value="api" aria-selected="false">
-                                        <i class="fas fa-plug custom-select-option-icon" aria-hidden="true"></i>
-                                        <span>API Entegrasyon Hizmetleri</span>
-                                    </li>
-                                    <li class="custom-select-option" role="option" data-value="finans" aria-selected="false">
-                                        <i class="fas fa-chart-line custom-select-option-icon" aria-hidden="true"></i>
-                                        <span>Finansal İndikatör & Botlar</span>
-                                    </li>
-                                    <li class="custom-select-option" role="option" data-value="yatirim-analizleri" aria-selected="false">
-                                        <i class="fas fa-chart-pie custom-select-option-icon" aria-hidden="true"></i>
-                                        <span>Yatırım Analizleri</span>
-                                    </li>
-                                    <li class="custom-select-option" role="option" data-value="egitim" aria-selected="false">
-                                        <i class="fas fa-chalkboard-teacher custom-select-option-icon" aria-hidden="true"></i>
-                                        <span>Eğitim & Danışmanlık</span>
-                                    </li>
-                                </ul>
+                            <label for="message">Projenizden veya Fikrinizden Bahsedin</label>
+                            <div class="input-wrapper textarea-wrapper">
+                                <i class="fas fa-comment-alt"></i>
+                                <textarea id="message" name="message" rows="4"></textarea>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="message">Projenizden veya Fikrinizden Bahsedin</label>
-                        <div class="input-wrapper textarea-wrapper">
-                            <i class="fas fa-comment-alt"></i>
-                            <textarea id="message" name="message" rows="4"></textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" id="btn-contact-submit" class="btn-primary btn-block">
-                        <span>Teklif İste / Gönder</span> <i class="fas fa-paper-plane"></i>
-                    </button>
-                </form>
+                        <button type="submit" id="btn-contact-submit" class="btn-primary btn-block">
+                            <span>Teklif İste / Gönder</span> <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
-        
-        <div class="contact-glow"></div>
+            
+            <div class="contact-glow"></div>
         </section>
     </div>
 
