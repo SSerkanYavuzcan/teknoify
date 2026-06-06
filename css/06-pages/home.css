@@ -270,6 +270,27 @@
     pointer-events: none;
 }
 
+.services--ecosystem .services-orbit-node {
+    overflow: visible;
+}
+
+.services--ecosystem .services-orbit-node__connector {
+    overflow: visible;
+    will-change: transform;
+}
+
+.services--ecosystem .services-orbit-node__connector-line,
+.services--ecosystem .services-orbit-node__connector-elbow {
+    min-width: 1px;
+    backface-visibility: hidden;
+}
+
+.services--ecosystem .services-orbit-node__dot {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .services--ecosystem .services-orbit-node__connector-line,
 .services--ecosystem .services-orbit-node__connector-elbow {
     position: absolute;
