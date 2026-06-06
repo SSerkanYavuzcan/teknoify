@@ -608,13 +608,6 @@ class ServicesOrbitSystem {
 
         this.visual = this.showcase.querySelector('.services-orbit-visual');
         this.nodes = Array.from(this.showcase.querySelectorAll('[data-services-node]'));
-        this.detail = {
-            icon: this.showcase.querySelector('[data-service-detail-icon]'),
-            title: this.showcase.querySelector('[data-service-detail-title]'),
-            description: this.showcase.querySelector('[data-service-detail-description]'),
-            primary: this.showcase.querySelector('[data-service-detail-primary]'),
-            secondary: this.showcase.querySelector('[data-service-detail-secondary]')
-        };
         this.rotation = 0;
         this.autoSpeed = 0.018;
         this.bounds = { width: 0, height: 0 };
@@ -637,9 +630,9 @@ class ServicesOrbitSystem {
 
     createParticleBands() {
         const ringConfigs = [
-            { name: 'outer', count: 64, seed: 11, spread: 3.8 },
-            { name: 'middle', count: 52, seed: 29, spread: 3.2 },
-            { name: 'inner', count: 40, seed: 47, spread: 2.7 }
+            { name: 'outer', count: 192, seed: 11, spread: 4.4 },
+            { name: 'middle', count: 156, seed: 29, spread: 3.8 },
+            { name: 'inner', count: 120, seed: 47, spread: 3.2 }
         ];
 
         ringConfigs.forEach((config) => {
@@ -648,14 +641,15 @@ class ServicesOrbitSystem {
 
             const fragment = document.createDocumentFragment();
             for (let i = 0; i < config.count; i++) {
-                const angleJitter = (this.seededRandom(config.seed + i * 7) - 0.5) * 2.8;
+                const angleJitter = (this.seededRandom(config.seed + i * 7) - 0.5) * 2.35;
                 const radiusJitter = (this.seededRandom(config.seed + i * 13) - 0.5) * config.spread;
                 const angle = (((i / config.count) * 360 + angleJitter) * Math.PI) / 180;
                 const radius = 49.5 + radiusJitter;
                 const x = 50 + Math.cos(angle) * radius;
                 const y = 50 + Math.sin(angle) * radius;
-                const size = 1.05 + this.seededRandom(config.seed + i * 17) * 1.9;
-                const alpha = 0.28 + this.seededRandom(config.seed + i * 19) * 0.48;
+                const isBright = this.seededRandom(config.seed + i * 23) > 0.92;
+                const size = 0.85 + this.seededRandom(config.seed + i * 17) * (isBright ? 1.75 : 1.15);
+                const alpha = (isBright ? 0.5 : 0.2) + this.seededRandom(config.seed + i * 19) * (isBright ? 0.34 : 0.36);
 
                 const particle = document.createElement('span');
                 particle.className = 'services-orbit-particle';
@@ -713,40 +707,6 @@ class ServicesOrbitSystem {
             item.dataset.servicesActive = String(isActive);
         });
 
-        this.updateDetail(node);
-    }
-
-    updateDetail(node) {
-        if (!node || !this.detail.title || !this.detail.description) return;
-
-        const icon = node.dataset.serviceIcon || 'fa-cube';
-        const title = node.dataset.serviceTitle || node.textContent.trim();
-        const description = node.dataset.serviceDescription || '';
-        const primaryLabel = node.dataset.servicePrimaryLabel || 'Bilgi Alın';
-        const primaryHref = node.dataset.servicePrimaryHref || node.getAttribute('href') || '#services';
-        const secondaryLabel = node.dataset.serviceSecondaryLabel || 'İletişime Geçin';
-        const secondaryHref = node.dataset.serviceSecondaryHref || '#contact';
-
-        if (this.detail.icon) {
-            let iconElement = this.detail.icon.querySelector('i');
-            if (!iconElement) {
-                iconElement = document.createElement('i');
-                iconElement.setAttribute('aria-hidden', 'true');
-                this.detail.icon.appendChild(iconElement);
-            }
-            iconElement.className = `fas ${icon}`;
-        }
-        this.detail.title.textContent = title;
-        this.detail.description.textContent = description;
-
-        if (this.detail.primary) {
-            this.detail.primary.textContent = primaryLabel;
-            this.detail.primary.setAttribute('href', primaryHref);
-        }
-        if (this.detail.secondary) {
-            this.detail.secondary.textContent = secondaryLabel;
-            this.detail.secondary.setAttribute('href', secondaryHref);
-        }
     }
 
     animate() {
@@ -762,8 +722,9 @@ class ServicesOrbitSystem {
 
         this.visual.style.setProperty('--services-orbit-rotation', `${this.rotation}deg`);
 
-        const maxRadiusX = Math.min(this.bounds.width * 0.39, 250);
-        const maxRadiusY = Math.min(this.bounds.height * 0.28, 132);
+        const isCompact = this.bounds.width < 600;
+        const maxRadiusX = isCompact ? Math.min(this.bounds.width * 0.36, 150) : Math.min(this.bounds.width * 0.44, 390);
+        const maxRadiusY = isCompact ? Math.min(this.bounds.height * 0.34, 160) : Math.min(this.bounds.height * 0.32, 210);
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
@@ -772,8 +733,8 @@ class ServicesOrbitSystem {
             const x = Math.cos(angle) * maxRadiusX * radius;
             const y = Math.sin(angle) * maxRadiusY * radius;
             const frontness = (Math.sin(angle) + 1) / 2;
-            const scale = 0.92 + frontness * 0.1;
-            const opacity = 0.78 + frontness * 0.22;
+            const scale = 0.9 + frontness * 0.12;
+            const opacity = 0.76 + frontness * 0.24;
 
             node.style.setProperty('--services-node-x', `${x.toFixed(2)}px`);
             node.style.setProperty('--services-node-y', `${y.toFixed(2)}px`);
