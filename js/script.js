@@ -762,9 +762,8 @@ updatePositions() {
         const isCompact = safeWidth < 600;
         const isTablet = safeWidth < 980;
         
-        // Tam çalışan yörünge basıklık ve hizalama ayarları
-        const orbitTiltScale = 0.33; 
-        const ringOffset = 0.985;
+        const orbitTiltScale = Math.cos((64 * Math.PI) / 180);
+        const ringOffset = 0.995;
         
         const ringRadii = {
             outer: Math.min(safeWidth * 1.08, 1040) / 2,
