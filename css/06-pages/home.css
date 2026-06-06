@@ -231,18 +231,28 @@
 }
 
 .services--ecosystem .services-orbit-node {
-    --services-node-line-length: 190px;
-    --services-node-label-x: 230px;
-    --services-node-label-y: 0px;
+    --services-node-horizontal-length: 300px;
+    --services-node-elbow-x: 34px;
+    --services-node-elbow-y: -18px;
+    --services-node-elbow-length: 38.47px;
+    --services-node-elbow-angle: -27.9deg;
+    --services-node-label-x: 370px;
+    --services-node-label-y: -76px;
     --services-node-line-gradient: linear-gradient(
         90deg,
-        rgba(216, 180, 254, 0.78),
-        rgba(125, 211, 252, 0.2) 74%,
+        transparent,
+        rgba(125, 211, 252, 0.22) 16%,
+        rgba(216, 180, 254, 0.76) 100%
+    );
+    --services-node-line-gradient-left: linear-gradient(
+        90deg,
+        rgba(216, 180, 254, 0.76),
+        rgba(125, 211, 252, 0.22) 84%,
         transparent
     );
 
-    width: 520px;
-    height: 172px;
+    width: 760px;
+    height: 230px;
 }
 
 .services--ecosystem .services-orbit-node::before {
@@ -254,13 +264,38 @@
     left: 50%;
     top: 50%;
     z-index: 1;
-    width: var(--services-node-line-length);
-    height: 1px;
-    background: var(--services-node-line-gradient);
-    opacity: 0.72;
+    opacity: 0.76;
     pointer-events: none;
-    transform: translate3d(0, -50%, 0) rotate(var(--services-node-line-angle));
+}
+
+.services--ecosystem .services-orbit-node__connector-line,
+.services--ecosystem .services-orbit-node__connector-elbow {
+    position: absolute;
+    display: block;
+    height: 1px;
+    pointer-events: none;
+}
+
+.services--ecosystem .services-orbit-node__connector-line {
+    left: var(--services-node-elbow-x);
+    top: var(--services-node-elbow-y);
+    width: var(--services-node-horizontal-length);
+    background: var(--services-node-line-gradient);
+    transform: translateY(-50%);
+}
+
+.services--ecosystem .services-orbit-node__connector-elbow {
+    left: 0;
+    top: 0;
+    width: var(--services-node-elbow-length);
+    background: linear-gradient(90deg, rgba(216, 180, 254, 0.94), rgba(216, 180, 254, 0.58));
+    transform: translateY(-50%) rotate(var(--services-node-elbow-angle));
     transform-origin: 0 50%;
+}
+
+.services--ecosystem .services-orbit-node.is-left .services-orbit-node__connector-line {
+    left: calc((var(--services-node-horizontal-length) + var(--services-node-elbow-x)) * -1);
+    background: var(--services-node-line-gradient-left);
 }
 
 .services--ecosystem .services-orbit-node__dot {
@@ -338,7 +373,7 @@
 .services--ecosystem .services-orbit-node:hover .services-orbit-node__connector,
 .services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__connector,
 .services--ecosystem .services-orbit-node.is-active .services-orbit-node__connector {
-    opacity: 0.92;
+    opacity: 0.94;
 }
 
 .services--ecosystem .services-orbit-node:hover .services-orbit-node__dot,
@@ -356,10 +391,11 @@
     }
 
     .services--ecosystem .services-orbit-node {
-        --services-node-line-length: 140px;
+        --services-node-horizontal-length: 210px;
+        --services-node-elbow-x: 28px;
 
-        width: 410px;
-        height: 142px;
+        width: 570px;
+        height: 190px;
     }
 
     .services--ecosystem .services-orbit-node__label {
@@ -377,10 +413,14 @@
     }
 
     .services--ecosystem .services-orbit-node {
-        --services-node-line-length: 62px;
+        --services-node-horizontal-length: 82px;
+        --services-node-elbow-x: 18px;
+        --services-node-elbow-y: -10px;
+        --services-node-elbow-length: 20.59px;
+        --services-node-elbow-angle: -29.1deg;
 
-        width: 250px;
-        height: 104px;
+        width: 260px;
+        height: 118px;
     }
 
     .services--ecosystem .services-orbit-node__label {
