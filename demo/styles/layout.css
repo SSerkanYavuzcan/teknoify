@@ -5,7 +5,8 @@
 }
 
 .demo-hero-container {
-    grid-template-columns: minmax(0, 0.98fr) minmax(320px, 0.84fr);
+    grid-template-columns: minmax(0, 860px);
+    justify-content: center;
 }
 
 .demo-hero-copy .hero-title {
@@ -16,10 +17,6 @@
     max-width: 650px;
 }
 
-.demo-hero-panel {
-    min-width: 0;
-}
-
 .demo-section {
     position: relative;
     z-index: 1;
@@ -28,13 +25,6 @@
 
 .demo-section--alt {
     padding-top: clamp(3.5rem, 7vw, 5rem);
-}
-
-.sandbox-layout {
-    display: grid;
-    grid-template-columns: minmax(260px, 0.34fr) minmax(0, 0.66fr);
-    gap: 1.5rem;
-    align-items: stretch;
 }
 
 .final-cta {

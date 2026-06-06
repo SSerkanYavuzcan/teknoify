@@ -35,10 +35,6 @@
     function bootstrap() {
         const demos = Array.isArray(window.TEKNOIFY_DEMOS) ? window.TEKNOIFY_DEMOS : [];
 
-        if (window.TeknoifySandboxSimulator) {
-            window.TeknoifySandboxSimulator.init(demos);
-        }
-
         if (window.TeknoifyDemoCatalog) {
             window.TeknoifyDemoCatalog.init(demos);
         }

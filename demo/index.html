@@ -30,7 +30,6 @@
     <link rel="stylesheet" href="./styles/index.css" />
     <script src="./data/demos.js" defer></script>
     <script src="./scripts/demo-catalog.js" defer></script>
-    <script src="./scripts/sandbox-simulator.js" defer></script>
     <script src="./scripts/app.js" defer></script>
   </head>
   <body class="demo-page">
@@ -82,34 +81,6 @@
                 </a>
               </div>
             </div>
-
-            <aside class="demo-hero-panel" aria-label="Demo Lab durum özeti">
-              <div class="demo-orbit-card">
-                <div class="demo-orbit-card__ambient" aria-hidden="true"></div>
-                <div class="demo-orbit-card__core">
-                  <i class="fas fa-cube"></i>
-                  <strong>Demo Lab</strong>
-                  <span>Aktif</span>
-                </div>
-                <div class="demo-status-list" aria-label="Demo Lab durumları">
-                  <article>
-                    <span>01</span>
-                    <strong>İlk Demo Yayında</strong>
-                    <small>Web scraping fiyat karşılaştırması hazır.</small>
-                  </article>
-                  <article>
-                    <span>02</span>
-                    <strong>Ücretsiz Ön İzleme</strong>
-                    <small>Giriş gerektirmeyen keşif alanı.</small>
-                  </article>
-                  <article>
-                    <span>03</span>
-                    <strong>Teknoify Ekosistemi</strong>
-                    <small>Ana site tasarım sistemiyle uyumlu.</small>
-                  </article>
-                </div>
-              </div>
-            </aside>
           </div>
         </section>
 
@@ -126,44 +97,7 @@
               aria-label="Demo kategori filtreleri"
             ></div>
             <div class="demo-grid" data-demo-grid></div>
-          </div>
-        </section>
-
-        <section class="demo-section demo-section--alt" id="sandbox" aria-labelledby="sandbox-title">
-          <div class="container">
-            <div class="section-header demo-section-header">
-              <span class="demo-kicker">Sandbox</span>
-              <h2 id="sandbox-title">Demo Sandbox</h2>
-              <p>Seçili otomasyonun statik örnek çıktısını güvenli sandbox alanında inceleyin.</p>
-            </div>
-
-            <div class="sandbox-layout">
-              <aside class="demo-glass-card sandbox-selector" aria-label="Sandbox demo seçici">
-                <div class="panel-title">
-                  <span>Demo Seçici</span>
-                  <small>1 demo</small>
-                </div>
-                <div class="sandbox-list" data-sandbox-list></div>
-              </aside>
-
-              <article class="demo-glass-card sandbox-runner" aria-label="Sandbox ön izleme alanı">
-                <div class="sandbox-runner-header">
-                  <div>
-                    <span class="demo-kicker" data-sandbox-category>Hazır</span>
-                    <h3 data-sandbox-title>Demo seçin</h3>
-                  </div>
-                  <div class="runner-meta">
-                    <span data-sandbox-status>Ön izleme</span>
-                    <strong data-sandbox-metric>Bekleme listesi</strong>
-                  </div>
-                </div>
-                <button class="btn btn-secondary run-button" type="button" data-run-demo disabled>
-                  Demo akışı bekleniyor
-                </button>
-                <ol class="progress-list" data-sandbox-progress></ol>
-                <div class="sandbox-output" data-sandbox-output></div>
-              </article>
-            </div>
+            <div class="demo-preview-area" data-demo-preview></div>
           </div>
         </section>
 

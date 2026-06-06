@@ -8,7 +8,7 @@ The page reuses the main Teknoify site stylesheet as the visual baseline and add
 
 - `demo/data/demos.js` exposes one static demo in `window.TEKNOIFY_DEMOS`: **Web Scraping Fiyat Karşılaştırma**.
 - The catalog renders the Web Scraping demo card and category filters from the data array.
-- The sandbox defaults to the first demo and can render its static retail comparison table output.
+- The Web Scraping comparison table renders directly under the catalog as a static data preview.
 - Empty catalog states only appear when there is no demo data or a selected category has zero matching demos.
 - No real scraping, API calls, local storage, or authentication flow is required.
 
@@ -41,7 +41,7 @@ demo/
 <link rel="stylesheet" href="/css/style.css" /> <link rel="stylesheet" href="./styles/index.css" />
 ```
 
-Local JavaScript initializes the catalog and sandbox from `window.TEKNOIFY_DEMOS`, while every script still handles an empty dataset safely.
+Local JavaScript initializes the catalog from `window.TEKNOIFY_DEMOS`, while every script still handles an empty dataset safely. The compatibility simulator script is not loaded by the page flow.
 
 ## Validation
 
