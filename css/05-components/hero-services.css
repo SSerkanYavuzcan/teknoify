@@ -35,6 +35,7 @@
 }
 
 .home-background-surface {
+  --wormhole-top-layer-height: clamp(620px, 78vh, 820px);
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -65,26 +66,29 @@
 .home-background-surface::after {
   content: "";
   position: absolute;
-  inset: -8% -10% -4%;
+  top: 0;
+  right: -10%;
+  left: -10%;
+  height: var(--wormhole-top-layer-height);
   pointer-events: none;
 }
 
 .home-background-surface::before {
   z-index: 1;
   background:
-    radial-gradient(ellipse 54% 23% at 50% 38%, rgba(5, 5, 7, 0.18), transparent 57%),
-    repeating-radial-gradient(ellipse 83% 45% at 50% 38%, transparent 0 47px, rgba(226, 232, 240, 0.065) 48px 49px, transparent 50px 74px),
-    repeating-conic-gradient(from -88deg at 50% 38%, transparent 0deg 4.2deg, rgba(165, 180, 252, 0.056) 4.35deg 4.55deg, transparent 4.7deg 8.4deg);
-  filter: drop-shadow(0 0 22px rgba(99, 102, 241, 0.08));
-  opacity: 0.78;
-  transform: scaleX(1.18);
-  transform-origin: 50% 38%;
+    radial-gradient(ellipse 46% 20% at 50% 36%, rgba(5, 5, 7, 0.14), transparent 57%),
+    repeating-radial-gradient(ellipse 68% 39% at 50% 36%, transparent 0 52px, rgba(226, 232, 240, 0.048) 53px 54px, transparent 55px 82px),
+    repeating-conic-gradient(from -88deg at 50% 36%, transparent 0deg 4.8deg, rgba(165, 180, 252, 0.04) 4.95deg 5.12deg, transparent 5.25deg 9.4deg);
+  filter: drop-shadow(0 0 18px rgba(99, 102, 241, 0.055));
+  opacity: 0.58;
+  transform: scaleX(1.04);
+  transform-origin: 50% 36%;
   -webkit-mask-image:
-    radial-gradient(ellipse 74% 40% at 50% 38%, #000 0 46%, rgba(0, 0, 0, 0.52) 60%, transparent 78%),
-    linear-gradient(to bottom, transparent 0%, #000 8%, #000 84%, transparent 100%);
+    radial-gradient(ellipse 58% 34% at 50% 36%, #000 0 40%, rgba(0, 0, 0, 0.42) 57%, transparent 74%),
+    linear-gradient(to bottom, transparent 0%, #000 10%, #000 58%, rgba(0, 0, 0, 0.42) 73%, transparent 100%);
   mask-image:
-    radial-gradient(ellipse 74% 40% at 50% 38%, #000 0 46%, rgba(0, 0, 0, 0.52) 60%, transparent 78%),
-    linear-gradient(to bottom, transparent 0%, #000 8%, #000 84%, transparent 100%);
+    radial-gradient(ellipse 58% 34% at 50% 36%, #000 0 40%, rgba(0, 0, 0, 0.42) 57%, transparent 74%),
+    linear-gradient(to bottom, transparent 0%, #000 10%, #000 58%, rgba(0, 0, 0, 0.42) 73%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
@@ -92,19 +96,19 @@
 .home-background-surface::after {
   z-index: 2;
   background:
-    linear-gradient(103deg, transparent 0 34%, rgba(165, 180, 252, 0.032) 34.15% 34.32%, transparent 34.5% 100%),
-    linear-gradient(77deg, transparent 0 35%, rgba(165, 180, 252, 0.03) 35.18% 35.34%, transparent 35.5% 100%),
-    repeating-linear-gradient(103deg, transparent 0 63px, rgba(255, 255, 255, 0.04) 64px 65px, transparent 66px 126px),
-    repeating-linear-gradient(77deg, transparent 0 68px, rgba(255, 255, 255, 0.034) 69px 70px, transparent 71px 136px);
-  opacity: 0.48;
-  transform: perspective(1100px) rotateX(58deg) translateY(-11%) scaleX(1.72);
-  transform-origin: 50% 34%;
+    linear-gradient(103deg, transparent 0 34%, rgba(165, 180, 252, 0.024) 34.15% 34.28%, transparent 34.45% 100%),
+    linear-gradient(77deg, transparent 0 35%, rgba(165, 180, 252, 0.022) 35.18% 35.3%, transparent 35.48% 100%),
+    repeating-linear-gradient(103deg, transparent 0 70px, rgba(255, 255, 255, 0.03) 71px 72px, transparent 73px 140px),
+    repeating-linear-gradient(77deg, transparent 0 74px, rgba(255, 255, 255, 0.026) 75px 76px, transparent 77px 148px);
+  opacity: 0.34;
+  transform: perspective(1050px) rotateX(56deg) translateY(-15%) scaleX(1.34);
+  transform-origin: 50% 32%;
   -webkit-mask-image:
-    radial-gradient(ellipse 43% 76% at 50% 31%, transparent 0 8%, rgba(0, 0, 0, 0.88) 18%, #000 48%, rgba(0, 0, 0, 0.28) 67%, transparent 82%),
-    linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+    radial-gradient(ellipse 34% 64% at 50% 30%, transparent 0 10%, rgba(0, 0, 0, 0.72) 20%, #000 42%, rgba(0, 0, 0, 0.2) 60%, transparent 76%),
+    linear-gradient(to bottom, #000 0%, #000 56%, rgba(0, 0, 0, 0.46) 72%, transparent 100%);
   mask-image:
-    radial-gradient(ellipse 43% 76% at 50% 31%, transparent 0 8%, rgba(0, 0, 0, 0.88) 18%, #000 48%, rgba(0, 0, 0, 0.28) 67%, transparent 82%),
-    linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+    radial-gradient(ellipse 34% 64% at 50% 30%, transparent 0 10%, rgba(0, 0, 0, 0.72) 20%, #000 42%, rgba(0, 0, 0, 0.2) 60%, transparent 76%),
+    linear-gradient(to bottom, #000 0%, #000 56%, rgba(0, 0, 0, 0.46) 72%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
@@ -116,14 +120,18 @@
 
 
 @media (max-width: 900px) {
+  .home-background-surface {
+    --wormhole-top-layer-height: clamp(560px, 70vh, 700px);
+  }
+
   .home-background-surface::before {
-    opacity: 0.6;
-    transform: scaleX(1.04);
+    opacity: 0.42;
+    transform: scaleX(0.98);
   }
 
   .home-background-surface::after {
-    opacity: 0.34;
-    transform: perspective(900px) rotateX(54deg) translateY(-8%) scaleX(1.18);
+    opacity: 0.24;
+    transform: perspective(900px) rotateX(54deg) translateY(-13%) scaleX(1.08);
   }
 }
 
