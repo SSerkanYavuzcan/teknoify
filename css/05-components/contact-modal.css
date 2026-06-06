@@ -55,12 +55,12 @@
   50% { opacity: 0; }
 }
 
-.contact-section { 
-  padding: 4rem 0 6rem 0; 
-  position: relative; 
+.contact-section {
+  padding: 4rem 0 6rem 0;
+  position: relative;
   z-index: 1;
   isolation: isolate;
-  overflow: hidden; 
+  overflow: hidden;
   background: transparent;
 }
 
@@ -68,22 +68,32 @@
 .contact-section::after {
   content: "";
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
   pointer-events: none;
 }
 
 .contact-section::before {
+  top: -18%;
+  bottom: -22%;
   z-index: 0;
   background:
-    linear-gradient(to bottom, rgba(5, 5, 7, 0.08), rgba(5, 5, 7, 0.2)),
-    radial-gradient(circle at 50% 16%, rgba(99, 102, 241, 0.04), transparent 42%);
+    radial-gradient(ellipse 58% 42% at 50% 18%, rgba(99, 102, 241, 0.078), rgba(99, 102, 241, 0.026) 38%, transparent 72%),
+    radial-gradient(ellipse 70% 34% at 50% 50%, rgba(125, 211, 252, 0.025), transparent 76%);
+  opacity: 0.78;
 }
 
 .contact-section::after {
+  top: -8%;
+  bottom: -10%;
   z-index: 0;
-  background:
-    linear-gradient(to bottom, rgba(5, 5, 7, 0.04) 0%, rgba(5, 5, 7, 0.18) 44%, rgba(5, 5, 7, 0.34) 100%),
-    radial-gradient(circle at 50% 24%, rgba(99, 102, 241, 0.035), transparent 44%);
+  background: linear-gradient(
+    to bottom,
+    rgba(5, 5, 7, 0) 0%,
+    rgba(5, 5, 7, 0.035) 28%,
+    rgba(5, 5, 7, 0.11) 68%,
+    rgba(5, 5, 7, 0.2) 100%
+  );
 }
 
 .contact-section > .container {

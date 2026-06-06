@@ -609,9 +609,10 @@ class ServicesOrbitSystem {
         this.visual = this.showcase.querySelector('.services-orbit-visual');
         this.nodes = Array.from(this.showcase.querySelectorAll('[data-services-node]'));
         this.rotation = 0;
-        this.autoSpeed = 0.018;
+        this.autoSpeed = 0.014;
         this.bounds = { width: 0, height: 0 };
         this.rafId = null;
+        this.isVisible = true;
         this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         this.prefersReducedMotion = this.reducedMotionQuery.matches;
 
@@ -620,7 +621,7 @@ class ServicesOrbitSystem {
         this.measure();
         this.setActiveNode(this.nodes.find((node) => node.classList.contains('is-active')) || this.nodes[0]);
 
-        if (!this.prefersReducedMotion) this.animate();
+        this.startAnimation();
     }
 
     seededRandom(seed) {
@@ -629,10 +630,11 @@ class ServicesOrbitSystem {
     }
 
     createParticleBands() {
+        const isCompact = window.innerWidth < 768;
         const ringConfigs = [
-            { name: 'outer', count: 720, seed: 11, spread: 4.6 },
-            { name: 'middle', count: 576, seed: 29, spread: 4.0 },
-            { name: 'inner', count: 456, seed: 47, spread: 3.4 }
+            { name: 'outer', count: isCompact ? 92 : 180, seed: 11, spread: 4.6 },
+            { name: 'middle', count: isCompact ? 74 : 140, seed: 29, spread: 4.0 },
+            { name: 'inner', count: isCompact ? 58 : 108, seed: 47, spread: 3.4 }
         ];
 
         ringConfigs.forEach((config) => {
@@ -673,15 +675,36 @@ class ServicesOrbitSystem {
         });
 
         window.addEventListener('resize', () => this.measure(), { passive: true });
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.stopAnimation();
+            } else {
+                this.startAnimation();
+            }
+        });
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver(
+                ([entry]) => {
+                    this.isVisible = entry.isIntersecting;
+                    if (this.isVisible) {
+                        this.startAnimation();
+                    } else {
+                        this.stopAnimation();
+                    }
+                },
+                { threshold: 0.08 }
+            );
+            observer.observe(this.showcase);
+        }
 
         if (typeof this.reducedMotionQuery.addEventListener === 'function') {
             this.reducedMotionQuery.addEventListener('change', (event) => {
                 this.prefersReducedMotion = event.matches;
-                if (this.prefersReducedMotion && this.rafId) {
-                    window.cancelAnimationFrame(this.rafId);
-                    this.rafId = null;
-                } else if (!this.prefersReducedMotion && !this.rafId) {
-                    this.animate();
+                if (this.prefersReducedMotion) {
+                    this.stopAnimation();
+                } else {
+                    this.startAnimation();
                 }
             });
         }
@@ -709,12 +732,26 @@ class ServicesOrbitSystem {
 
     }
 
+    startAnimation() {
+        if (this.prefersReducedMotion || !this.isVisible || document.hidden || this.rafId) return;
+        this.rafId = window.requestAnimationFrame(() => this.animate());
+    }
+
+    stopAnimation() {
+        if (!this.rafId) return;
+        window.cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+    }
+
     animate() {
-        if (!this.prefersReducedMotion) {
-            this.rotation += this.autoSpeed;
-            this.updatePositions();
-            this.rafId = window.requestAnimationFrame(() => this.animate());
+        if (this.prefersReducedMotion || !this.isVisible || document.hidden) {
+            this.rafId = null;
+            return;
         }
+
+        this.rotation += this.autoSpeed;
+        this.updatePositions();
+        this.rafId = window.requestAnimationFrame(() => this.animate());
     }
 
     updatePositions() {
@@ -749,7 +786,8 @@ class BackgroundFX {
     constructor(selector) {
         this.container = document.querySelector(selector);
         if (!this.container) return;
-        this.starCount = window.innerWidth < 768 ? 20 : 48;
+        this.starCount = window.innerWidth < 768 ? 12 : 24;
+        this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         this.init();
     }
 
@@ -764,7 +802,7 @@ class BackgroundFX {
                 background: rgba(255,255,255, ${Math.random() * 0.12 + 0.05});
                 left: ${Math.random() * 100}%; top: ${Math.random() * 100}%;
                 border-radius: 50%; pointer-events: none;
-                animation: floatParticle ${10 + Math.random() * 20}s linear infinite;
+                animation: ${this.prefersReducedMotion ? 'none' : `floatParticle ${14 + Math.random() * 18}s linear infinite`};
                 animation-delay: -${Math.random() * 20}s;
             `;
             frag.appendChild(star);
