@@ -436,23 +436,34 @@
     }
 
     /* Masaüstü boyutları düştüğü için 980px'i ona oranla uyarladık */
-    .services--ecosystem .services-orbit-node {
-        --services-node-horizontal-length: 120px;
-        --services-node-elbow-x: 18px;
+    /* --- ORİJİNAL MATEMATİĞE DÖNÜŞ VE ORANTILI KÜÇÜLTME --- */
+.services--ecosystem .services-orbit-node {
+    /* 300px'lik aşırı uzun çizgileri 120px'e çektik */
+    --services-node-horizontal-length: 120px; 
+    
+    /* Dirsek (kırılım) açıları orijinal halinde kaldı */
+    --services-node-elbow-x: 34px;
+    --services-node-elbow-y: -18px;
+    --services-node-elbow-length: 38.47px;
+    --services-node-elbow-angle: -27.9deg;
+    
+    /* 370px olan yazı uzaklığını, kısa çizgiye uyumlu olarak 150px'e indirdik */
+    --services-node-label-x: 150px; 
+    --services-node-label-y: -76px;
+    
+    --services-node-line-gradient: linear-gradient(90deg, rgba(216, 180, 254, 0.76), rgba(125, 211, 252, 0.22) 84%, transparent);
+    --services-node-line-gradient-left: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.22) 16%, rgba(216, 180, 254, 0.76) 100%);
 
-        width: 300px;
-        height: 120px;
-    }
-
-    .services--ecosystem .services-orbit-node__label {
-        width: 168px;
-    }
-
-    .services--ecosystem .services-orbit-node__copy {
-        font-size: 0.66rem;
-    }
+    /* 620px olan devasa çerçeveyi küçülterek çizgilerin ekran dışına taşıp kesilmesini engelledik */
+    width: 300px;
+    height: 190px;
 }
 
+/* Sola hizalı elemanların orijinal matematiğini geri getirdik (Kritik Düzeltme) */
+.services--ecosystem .services-orbit-node.is-left .services-orbit-node__label {
+    text-align: right;
+    transform: translate3d(calc(-100% + var(--services-node-label-x)), calc(-50% + var(--services-node-label-y)), 0);
+}
 @media (max-width: 576px) {
     .services--ecosystem .services-orbit-visual {
         min-height: clamp(500px, 118vw, 560px);
