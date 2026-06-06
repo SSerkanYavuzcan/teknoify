@@ -630,9 +630,9 @@ class ServicesOrbitSystem {
 
     createParticleBands() {
         const ringConfigs = [
-            { name: 'outer', count: 192, seed: 11, spread: 4.4 },
-            { name: 'middle', count: 156, seed: 29, spread: 3.8 },
-            { name: 'inner', count: 120, seed: 47, spread: 3.2 }
+            { name: 'outer', count: 360, seed: 11, spread: 4.6 },
+            { name: 'middle', count: 288, seed: 29, spread: 4.0 },
+            { name: 'inner', count: 228, seed: 47, spread: 3.4 }
         ];
 
         ringConfigs.forEach((config) => {
@@ -723,8 +723,8 @@ class ServicesOrbitSystem {
         this.visual.style.setProperty('--services-orbit-rotation', `${this.rotation}deg`);
 
         const isCompact = this.bounds.width < 600;
-        const maxRadiusX = isCompact ? Math.min(this.bounds.width * 0.36, 150) : Math.min(this.bounds.width * 0.44, 390);
-        const maxRadiusY = isCompact ? Math.min(this.bounds.height * 0.34, 160) : Math.min(this.bounds.height * 0.32, 210);
+        const maxRadiusX = isCompact ? Math.min(this.bounds.width * 0.38, 165) : Math.min(this.bounds.width * 0.46, 500);
+        const maxRadiusY = isCompact ? Math.min(this.bounds.height * 0.35, 175) : Math.min(this.bounds.height * 0.34, 270);
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
