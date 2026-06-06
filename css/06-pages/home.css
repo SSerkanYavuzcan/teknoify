@@ -234,6 +234,7 @@
     --services-node-line-length: 190px;
     --services-node-label-x: 230px;
     --services-node-label-y: 0px;
+    --services-node-label-gap: 26px;
     --services-node-spur-angle: -11deg;
     --services-node-spur-origin: 100% 50%;
     --services-node-line-gradient: linear-gradient(
@@ -252,22 +253,20 @@
 }
 
 .services--ecosystem .services-orbit-node__dot {
-    width: 9px;
-    height: 9px;
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    width: 7px;
+    height: 7px;
+    border: 0;
     background:
-        radial-gradient(circle at 36% 32%, #fff 0 18%, rgba(255, 255, 255, 0.72) 19% 34%, transparent 35%),
-        radial-gradient(circle, rgba(216, 180, 254, 0.98), rgba(139, 92, 246, 0.82) 48%, rgba(37, 99, 235, 0.48));
+        radial-gradient(circle at 36% 32%, #fff 0 14%, rgba(255, 255, 255, 0.62) 15% 28%, transparent 29%),
+        radial-gradient(circle, rgba(216, 180, 254, 0.98), rgba(139, 92, 246, 0.9) 52%, rgba(37, 99, 235, 0.58));
     box-shadow:
-        0 0 0 5px rgba(168, 85, 247, 0.08),
-        0 0 20px rgba(255, 255, 255, 0.42),
-        0 0 38px rgba(168, 85, 247, 0.44),
-        0 0 62px rgba(37, 99, 235, 0.24);
+        0 0 14px rgba(255, 255, 255, 0.3),
+        0 0 24px rgba(168, 85, 247, 0.54),
+        0 0 42px rgba(37, 99, 235, 0.24);
 }
 
 .services--ecosystem .services-orbit-node__dot::after {
-    inset: -11px;
-    border-color: rgba(216, 180, 254, 0.16);
+    content: none;
 }
 
 .services--ecosystem .services-orbit-node__label {
@@ -288,7 +287,7 @@
     content: "";
     position: absolute;
     top: 4.85rem;
-    right: calc(100% + 13px);
+    right: calc(100% + var(--services-node-label-gap));
     pointer-events: none;
 }
 
@@ -358,7 +357,7 @@
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__label::before,
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__label::after {
     right: auto;
-    left: calc(100% + 13px);
+    left: calc(100% + var(--services-node-label-gap));
 }
 
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__label::after {
@@ -381,10 +380,9 @@
 .services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__dot,
 .services--ecosystem .services-orbit-node.is-active .services-orbit-node__dot {
     box-shadow:
-        0 0 0 6px rgba(168, 85, 247, 0.12),
-        0 0 24px rgba(255, 255, 255, 0.5),
-        0 0 48px rgba(216, 180, 254, 0.52),
-        0 0 72px rgba(37, 99, 235, 0.32);
+        0 0 16px rgba(255, 255, 255, 0.36),
+        0 0 32px rgba(216, 180, 254, 0.62),
+        0 0 52px rgba(37, 99, 235, 0.32);
 }
 
 @media (max-width: 980px) {
@@ -415,6 +413,7 @@
 
     .services--ecosystem .services-orbit-node {
         --services-node-line-length: 62px;
+        --services-node-label-gap: 18px;
         --services-node-spur-angle: -8deg;
 
         width: 250px;

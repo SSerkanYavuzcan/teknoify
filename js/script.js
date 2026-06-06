@@ -788,6 +788,7 @@ class ServicesOrbitSystem {
             node.style.setProperty('--services-node-line-length', `${lineLength}px`);
             node.style.setProperty('--services-node-label-x', `${labelX.toFixed(2)}px`);
             node.style.setProperty('--services-node-label-y', `${labelY.toFixed(2)}px`);
+            node.style.setProperty('--services-node-label-gap', `${(labelDistance - lineLength).toFixed(2)}px`);
             node.classList.toggle('is-left', unitX < 0);
             node.style.opacity = opacity.toFixed(3);
             node.style.zIndex = String(20 + Math.round(frontness * 16));
