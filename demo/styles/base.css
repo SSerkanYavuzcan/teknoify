@@ -61,10 +61,7 @@
 
 .demo-section-header p,
 .demo-final-card p,
-.empty-state p,
-.output-placeholder p,
-.sandbox-empty-note span,
-.demo-status-list small {
+.empty-state p {
     color: var(--text-muted);
 }
 

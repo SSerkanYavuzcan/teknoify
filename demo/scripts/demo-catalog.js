@@ -40,22 +40,67 @@
       </article>`;
     }
 
-    function scrollToSandbox() {
-        const sandbox = document.querySelector('#sandbox');
-        if (sandbox) {
-            sandbox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    function renderRetailComparisonTable(demo) {
+        const output = demo.sampleOutput || {};
+        const columns = Array.isArray(output.columns) ? output.columns : [];
+        const rows = Array.isArray(output.rows) ? output.rows : [];
+
+        if (columns.length === 0 || rows.length === 0) {
+            return `
+        <article class="demo-glass-card demo-preview-card">
+          <span class="demo-kicker">Statik Ön İzleme</span>
+          <h3>${escapeHtml(demo.title)}</h3>
+          <p class="output-note">Bu demo için ön izleme verisi hazırlanıyor.</p>
+        </article>`;
         }
+
+        return `
+      <article class="demo-glass-card demo-preview-card" aria-label="${escapeHtml(demo.title)} tablo ön izlemesi">
+        <div class="retail-output-heading output-heading">
+          <div>
+            <span class="demo-kicker">Statik Ön İzleme</span>
+            <h3>${escapeHtml(demo.title)}</h3>
+          </div>
+          <strong>${escapeHtml(demo.primaryMetric || `${rows.length} kayıt`)}</strong>
+        </div>
+        <div class="retail-table-scroll" tabindex="0" aria-label="Web Scraping fiyat karşılaştırma tablosu">
+          <table class="retail-comparison-table">
+            <thead>
+              <tr>
+                ${columns.map((column) => `<th scope="col">${escapeHtml(column)}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${rows
+                  .map(
+                      (row) => `
+                <tr>
+                  <td>${escapeHtml(row.barcode)}</td>
+                  <td>${escapeHtml(row.name)}</td>
+                  <td>${escapeHtml(row.carrefourPrice)}</td>
+                  <td>${escapeHtml(row.migrosPrice)}</td>
+                  <td>${escapeHtml(row.category)}</td>
+                </tr>`
+                  )
+                  .join('')}
+            </tbody>
+          </table>
+        </div>
+        <p class="output-note">Bu tablo gerçek zamanlı işlem yapmadan, demo verisinden oluşturulan statik bir fiyat karşılaştırma ön izlemesidir.</p>
+      </article>`;
     }
 
-    function selectDemo(id, showOutput) {
-        if (!hasDemos()) {
+    function renderPreview() {
+        const preview = document.querySelector('[data-demo-preview]');
+        if (!preview) {
             return;
         }
 
-        if (window.TeknoifySandboxSimulator) {
-            window.TeknoifySandboxSimulator.selectDemo(id, { showOutput });
-        }
-        scrollToSandbox();
+        const demos = getFilteredDemos();
+        const demo = demos.find((item) => item.outputType === 'retailComparisonTable');
+
+        preview.hidden = !demo;
+        preview.innerHTML = demo ? renderRetailComparisonTable(demo) : '';
     }
 
     function renderFilters() {
@@ -93,6 +138,7 @@
                 state.activeCategory = button.dataset.categoryFilter || 'Tümü';
                 renderFilters();
                 renderCards();
+                renderPreview();
             });
         });
     }
@@ -138,21 +184,9 @@
                 <dd>${escapeHtml(demo.status || 'Hazır')}</dd>
               </div>
             </dl>
-            <div class="demo-actions">
-              <button class="btn btn-primary btn-sm" type="button" data-open-demo="${escapeHtml(demo.id)}">Demoyu Aç</button>
-              <button class="btn btn-secondary btn-sm" type="button" data-preview-demo="${escapeHtml(demo.id)}">Örnek Çıktı</button>
-            </div>
           </article>`
             )
             .join('');
-
-        grid.querySelectorAll('[data-open-demo]').forEach((button) => {
-            button.addEventListener('click', () => selectDemo(button.dataset.openDemo, false));
-        });
-
-        grid.querySelectorAll('[data-preview-demo]').forEach((button) => {
-            button.addEventListener('click', () => selectDemo(button.dataset.previewDemo, true));
-        });
     }
 
     function init(demos) {
@@ -160,10 +194,12 @@
         state.activeCategory = 'Tümü';
         renderFilters();
         renderCards();
+        renderPreview();
     }
 
     window.TeknoifyDemoCatalog = {
         init,
-        renderCards
+        renderCards,
+        renderPreview
     };
 })();
