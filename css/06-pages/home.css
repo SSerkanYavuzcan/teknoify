@@ -309,36 +309,49 @@
     transform: translate(-50%, -50%);
 }
 
+.services--ecosystem .services-orbit-node__connector {
+    transform: translateZ(0);
+}
+
+.services--ecosystem .services-orbit-node__connector-line,
+.services--ecosystem .services-orbit-node__connector-elbow {
+    box-shadow: 0 0 6px rgba(168, 85, 247, 0.16);
+}
+
 .services--ecosystem .services-orbit-node__connector-line,
 .services--ecosystem .services-orbit-node__connector-elbow {
     position: absolute;
     display: block;
-    height: 1px;
+    height: 2px;
     pointer-events: none;
+    border-radius: 999px;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
 .services--ecosystem .services-orbit-node__connector-line {
-    left: calc(var(--services-node-elbow-x) - 1px);
+    left: calc(var(--services-node-elbow-x) - 3px);
     top: var(--services-node-elbow-y);
-    width: calc(var(--services-node-horizontal-length) + 2px);
+    width: calc(var(--services-node-horizontal-length) + 6px);
     background: var(--services-node-line-gradient);
-    transform: translateY(-50%);
+    transform: translateY(-50%) translateZ(0);
     transform-origin: 0 50%;
 }
 
 .services--ecosystem .services-orbit-node__connector-elbow {
     left: 0;
     top: 0;
-    width: calc(var(--services-node-elbow-length) + 2px);
-    background: linear-gradient(90deg, rgba(216, 180, 254, 0.94), rgba(216, 180, 254, 0.58));
-    transform: translateY(-50%) rotate(var(--services-node-elbow-angle));
+    width: calc(var(--services-node-elbow-length) + 4px);
+    background: linear-gradient(90deg, rgba(216, 180, 254, 0.96), rgba(216, 180, 254, 0.68));
+    transform: translateY(-50%) translateZ(0) rotate(var(--services-node-elbow-angle));
     transform-origin: 0 50%;
 }
 
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__connector-line {
-    left: calc(-1 * (var(--services-node-horizontal-length) + var(--services-node-elbow-x)) - 1px);
-    width: calc(var(--services-node-horizontal-length) + 2px);
+    left: calc(-1 * (var(--services-node-horizontal-length) + var(--services-node-elbow-x)) - 3px);
+    width: calc(var(--services-node-horizontal-length) + 6px);
     background: var(--services-node-line-gradient-left);
+    transform: translateY(-50%) translateZ(0);
     transform-origin: 100% 50%;
 }
 
