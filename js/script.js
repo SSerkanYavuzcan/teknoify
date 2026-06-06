@@ -762,9 +762,11 @@ class ServicesOrbitSystem {
         const isCompact = safeWidth < 600;
         const isTablet = safeWidth < 980;
         const safePadding = isCompact ? 18 : isTablet ? 28 : 44;
-        const dotRadius = isCompact ? 5 : 7;
         const maxLabelWidth = isCompact ? 104 : Math.min(184, Math.max(136, safeWidth * 0.13));
-        const orbitTiltScale = Math.cos((64 * Math.PI) / 180);
+        
+        // KÖKLÜ DÜZELTME 1: Yörüngenin dikey basıklık (tilt) oranını CSS ile tam eşleştirdik.
+        // Orijinal kodda bu cos(64) yani 0.438'di ve noktaları yukarı/aşağı taşırıyordu.
+        const orbitTiltScale = 0.38; 
         
         const ringRadii = {
             outer: Math.min(safeWidth * 1.08, 1040) / 2,
@@ -772,8 +774,6 @@ class ServicesOrbitSystem {
             inner: Math.min(safeWidth * 0.62, 600) / 2
         };
         
-        const maxOrbitRadiusX = safeWidth / 2 - safePadding - dotRadius;
-        const maxOrbitRadiusY = safeHeight / 2 - safePadding - dotRadius;
         const preferredHorizontalLength = isCompact ? 58 : isTablet ? 108 : 138;
         const minHorizontalLength = isCompact ? 34 : isTablet ? 54 : 72;
         const elbowBaseX = isCompact ? 12 : isTablet ? 18 : 22;
@@ -784,34 +784,27 @@ class ServicesOrbitSystem {
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
-            
-            // --- KUSURSUZ YÖRÜNGE MANTIĞI BURADA ---
             const ringName = node.dataset.ring || 'middle';
+            
             let ringRadiusX;
-            let ringOffset;
+            if (ringName === 'outer') ringRadiusX = ringRadii.outer;
+            else if (ringName === 'middle') ringRadiusX = ringRadii.middle;
+            else ringRadiusX = ringRadii.inner;
 
-            // Arka plandaki yıldız halkalarının CSS konumlarıyla JavaScript 
-            // elips matematiklerini mükemmel eşleştiren kesin ofset değerleri:
-            if (ringName === 'outer') {
-                ringRadiusX = ringRadii.outer;
-                ringOffset = 1.003;
-            } else if (ringName === 'middle') {
-                ringRadiusX = ringRadii.middle;
-                ringOffset = 0.985;
-            } else {
-                ringRadiusX = ringRadii.inner;
-                ringOffset = 0.976;
-            }
-            // -----------------------------------------
+            // KÖKLÜ DÜZELTME 2: Noktaları partikül merkezlerine (%49.5 = 0.99) sabitledik.
+            const ringOffset = 0.99;
 
-            const radiusX = Math.min(ringRadiusX * ringOffset, maxOrbitRadiusX);
-            const radiusY = Math.min(ringRadiusX * orbitTiltScale * ringOffset, maxOrbitRadiusY);
+            // KÖKLÜ DÜZELTME 3: Sağ ve sol kısımlardaki görünmez duvar sınırlamasını (clamp) kaldırdık.
+            // Bu sayede eliptik yapı bozulmadan noktalar yıldız çemberlerini takip edecek.
+            const radiusX = ringRadiusX * ringOffset;
+            const radiusY = ringRadiusX * orbitTiltScale * ringOffset;
             
             const angle = ((baseAngle + this.rotation) * Math.PI) / 180;
             const unitX = Math.cos(angle);
             const unitY = Math.sin(angle);
             const x = unitX * radiusX;
             const y = unitY * radiusY;
+            
             const frontness = (unitY + 1) / 2;
             const scale = 0.88 + frontness * 0.1;
             const opacity = 0.76 + frontness * 0.24;
@@ -823,13 +816,16 @@ class ServicesOrbitSystem {
             const label = node.querySelector('.services-orbit-node__label');
             const measuredLabelWidth = label ? Math.min(label.scrollWidth || maxLabelWidth, maxLabelWidth) : maxLabelWidth;
             const dotX = centerX + x;
+            
             const availableForLabel = side > 0
                 ? safeWidth - safePadding - dotX - measuredLabelWidth / 2 - elbowX - labelGap
                 : dotX - safePadding - measuredLabelWidth / 2 - elbowX - labelGap;
+                
             const horizontalLength = Math.max(
                 minHorizontalLength,
                 Math.min(preferredHorizontalLength, availableForLabel)
             );
+            
             const unclampedLabelX = side * (horizontalLength + elbowX + labelGap);
             const labelMinX = safePadding + measuredLabelWidth / 2 - dotX;
             const labelMaxX = safeWidth - safePadding - measuredLabelWidth / 2 - dotX;
@@ -851,7 +847,6 @@ class ServicesOrbitSystem {
             node.style.zIndex = String(20 + Math.round(frontness * 16));
         });
     }
-}
 
 class BackgroundFX {
     constructor(selector) {
