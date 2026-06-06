@@ -764,8 +764,6 @@ class ServicesOrbitSystem {
         const safePadding = isCompact ? 18 : isTablet ? 28 : 44;
         const maxLabelWidth = isCompact ? 104 : Math.min(184, Math.max(136, safeWidth * 0.13));
         
-        // KÖKLÜ DÜZELTME 1: Yörüngenin dikey basıklık (tilt) oranını CSS ile tam eşleştirdik.
-        // Orijinal kodda bu cos(64) yani 0.438'di ve noktaları yukarı/aşağı taşırıyordu.
         const orbitTiltScale = 0.38; 
         
         const ringRadii = {
@@ -791,11 +789,8 @@ class ServicesOrbitSystem {
             else if (ringName === 'middle') ringRadiusX = ringRadii.middle;
             else ringRadiusX = ringRadii.inner;
 
-            // KÖKLÜ DÜZELTME 2: Noktaları partikül merkezlerine (%49.5 = 0.99) sabitledik.
             const ringOffset = 0.99;
 
-            // KÖKLÜ DÜZELTME 3: Sağ ve sol kısımlardaki görünmez duvar sınırlamasını (clamp) kaldırdık.
-            // Bu sayede eliptik yapı bozulmadan noktalar yıldız çemberlerini takip edecek.
             const radiusX = ringRadiusX * ringOffset;
             const radiusY = ringRadiusX * orbitTiltScale * ringOffset;
             
@@ -847,6 +842,7 @@ class ServicesOrbitSystem {
             node.style.zIndex = String(20 + Math.round(frontness * 16));
         });
     }
+}
 
 class BackgroundFX {
     constructor(selector) {
