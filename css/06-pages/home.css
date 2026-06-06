@@ -236,13 +236,21 @@
 
 .hero-right--terminal-only {
     min-height: clamp(430px, 35vw, 520px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
 }
 
 .hero-right--terminal-only .hero-terminal.hero-terminal--primary {
     width: min(100%, 585px);
-    min-height: clamp(340px, 30vw, 390px);
+    height: clamp(340px, 30vw, 390px);
+    max-width: 585px;
+    min-width: 0;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    flex: 0 0 auto;
 }
 
 .hero-right--terminal-only .hero-terminal.hero-terminal--primary .term-header {
@@ -250,11 +258,28 @@
 }
 
 .hero-right--terminal-only .hero-terminal.hero-terminal--primary .term-body {
-    flex: 1;
+    flex: 1 1 auto;
     height: auto;
-    min-height: clamp(280px, 24vw, 330px);
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-width: 0;
+    scrollbar-width: none;
+    overscroll-behavior: contain;
 }
 
+.hero-right--terminal-only .hero-terminal.hero-terminal--primary .term-body::-webkit-scrollbar {
+    display: none;
+}
+
+.hero-right--terminal-only .hero-terminal.hero-terminal--primary .term-body > div {
+    max-width: 100%;
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 
 /* =========================================
    YÖRÜNGE (ORBIT) EKOSİSTEMİ
