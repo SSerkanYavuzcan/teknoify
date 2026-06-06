@@ -8,7 +8,7 @@ window.TEKNOIFY_DEMOS = [
         time: '2 dk',
         status: 'Free Demo',
         description:
-            'CarrefourSA ve Migros gibi farklı perakende mağazalarındaki ürünleri listeleyen ve fiyatlarını karşılaştıran örnek demo akışı.',
+            'Perakende sektöründe ortak ürünleri listeleyen şirketlerin fiyatlarını karşılaştıran örnek veri setini inceleyebilirsiniz.',
         outputType: 'retailComparisonTable',
         primaryMetric: '5 ürün',
         sampleOutput: {
