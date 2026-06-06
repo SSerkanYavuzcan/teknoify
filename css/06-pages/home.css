@@ -58,7 +58,10 @@
     text-decoration: underline;
     transition: 0.3s;
 }
-.cookie-text a:hover { color: var(--primary); }
+
+.cookie-text a:hover {
+    color: var(--primary);
+}
 
 .cookie-actions {
     display: flex;
@@ -77,6 +80,7 @@
     cursor: pointer;
     transition: 0.3s;
 }
+
 .btn-cookie-accept:hover {
     background: #5e50ee;
     transform: translateY(-2px);
@@ -93,6 +97,7 @@
     cursor: pointer;
     transition: 0.3s;
 }
+
 .btn-cookie-close:hover {
     color: #fff;
     border-color: #fff;
@@ -100,9 +105,11 @@
 
 @media (max-width: 576px) {
     .cookie-banner {
-        left: 10px; right: 10px;
+        left: 10px;
+        right: 10px;
         bottom: -300px;
     }
+
     .cookie-banner.show {
         bottom: 10px;
     }
@@ -182,8 +189,13 @@
 
 /* Dönüş Animasyonu */
 @keyframes spinLight {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .service-icon-box i, 
@@ -225,6 +237,12 @@
 .services--ecosystem .services-orbit-visual {
     width: min(100%, clamp(720px, 78vw, 1080px));
     min-height: clamp(560px, min(58vw, 78vh), 760px);
+}
+
+/* Ring ölçüsünü JS tarafındaki radius hesabıyla hizalamak için eklendi */
+.services--ecosystem .services-orbit-ring {
+    aspect-ratio: 1 / 1;
+    height: auto;
 }
 
 .services--ecosystem .services-orbit-node {
@@ -447,6 +465,7 @@
         0 0 22px rgba(168, 85, 247, 0.5),
         0 0 34px rgba(37, 99, 235, 0.2);
 }
+
 
 /* =========================================
    MEDYA SORGULARI (Responsive)
