@@ -378,7 +378,6 @@
 
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__label {
     text-align: right;
-    /* DİKKAT: '- var' yerine '+ var' yapısına geri döndük! */
     transform: translate3d(calc(-100% + var(--services-node-label-x)), calc(-50% + var(--services-node-label-y)), 0);
 }
 
