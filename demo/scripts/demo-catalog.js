@@ -88,13 +88,31 @@
         return [
             'Ürün Barkodu',
             'Ürün Adı',
-            `${selectedStore} Fiyatı`,
+            `${selectedStore} Fiyat`,
             `${selectedStore} İndirimli Fiyat`,
-            `${competitorStore} Fiyatı`,
+            `${competitorStore} Fiyat`,
             `${competitorStore} İndirimli Fiyat`,
             'Fiyat Farkı %',
             'Ürün Kategorisi'
         ];
+    }
+
+    function renderRetailTableHeader(selectedStore, competitorStore) {
+        return `
+              <tr>
+                <th scope="col" rowspan="2">Ürün Barkodu</th>
+                <th scope="col" rowspan="2">Ürün Adı</th>
+                <th scope="colgroup" colspan="2">${escapeHtml(selectedStore)}</th>
+                <th scope="colgroup" colspan="2">${escapeHtml(competitorStore)}</th>
+                <th scope="col" rowspan="2">Fiyat Farkı %</th>
+                <th scope="col" rowspan="2">Ürün Kategorisi</th>
+              </tr>
+              <tr>
+                <th scope="col">Fiyat</th>
+                <th scope="col">İndirimli Fiyat</th>
+                <th scope="col">Fiyat</th>
+                <th scope="col">İndirimli Fiyat</th>
+              </tr>`;
     }
 
     function hydrateComparisonRows(output) {
@@ -106,6 +124,12 @@
         return String(store)
             .replace(/[^a-z0-9]/gi, '')
             .replace(/^./, (letter) => letter.toLowerCase());
+    }
+
+    function getStoreClassName(store) {
+        return String(store)
+            .replace(/[^a-z0-9]/gi, '')
+            .toLowerCase();
     }
 
     function getStoreValue(row, store, field) {
@@ -142,7 +166,7 @@
                       const isPassive = store === passiveStore;
                       return `
                 <button
-                  class="retail-segment${isActive ? ' is-active' : ''}${isPassive ? ' is-passive' : ''}"
+                  class="retail-segment retail-segment--${escapeHtml(getStoreClassName(store))}${isActive ? ' is-active' : ''}${isPassive ? ' is-passive' : ''}"
                   type="button"
                   data-${name}-store="${escapeHtml(store)}"
                   aria-pressed="${isActive}"
@@ -178,7 +202,6 @@
         const output = demo.sampleOutput || {};
         const { selectedStore, competitorStore, stores } = ensureRetailSelections();
         const rows = hydrateComparisonRows(output);
-        const columns = getRetailColumns(selectedStore, competitorStore);
 
         return `
       <article class="demo-glass-card demo-preview-card" aria-label="${escapeHtml(demo.title)} gerçek zamanlı veri ön izlemesi">
@@ -207,31 +230,19 @@
         </div>
         <div class="retail-table-scroll" tabindex="0" aria-label="Web Scraping fiyat karşılaştırma tablosu">
           <table class="retail-comparison-table">
-            <thead>
-              <tr>
-                ${columns.map((column) => `<th scope="col">${escapeHtml(column)}</th>`).join('')}
-              </tr>
+            <thead>${renderRetailTableHeader(selectedStore, competitorStore)}
             </thead>
             <tbody>
-              ${
-                  rows.length > 0
-                      ? rows
-                            .map(
-                                (row) => `
+              ${rows
+                  .map(
+                      (row) => `
                 <tr>
                   ${getVisibleRowCells(row, selectedStore, competitorStore)
                       .map((cell) => `<td>${escapeHtml(cell)}</td>`)
                       .join('')}
                 </tr>`
-                            )
-                            .join('')
-                      : `
-                <tr>
-                  <td class="retail-empty-cell" colspan="${columns.length}">
-                    Veriler Google Sheets bağlantısı kurulduktan sonra burada listelenecektir.
-                  </td>
-                </tr>`
-              }
+                  )
+                  .join('')}
             </tbody>
           </table>
         </div>
