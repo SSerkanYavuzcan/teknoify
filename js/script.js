@@ -762,7 +762,9 @@ updatePositions() {
         const isCompact = safeWidth < 600;
         const isTablet = safeWidth < 980;
         
-        const orbitTiltScale = 0.38; 
+        // Tam çalışan yörünge basıklık ve hizalama ayarları
+        const orbitTiltScale = 0.33; 
+        const ringOffset = 0.985;
         
         const ringRadii = {
             outer: Math.min(safeWidth * 1.08, 1040) / 2,
@@ -770,7 +772,7 @@ updatePositions() {
             inner: Math.min(safeWidth * 0.62, 600) / 2
         };
         
-        // Çizgi uzunluklarını cihaz boyutuna göre estetik ve SABİT değerlere ayarladık
+        // Çizgi uzunlukları cihazlara göre SABİTLENDİ
         const fixedHorizontalLength = isCompact ? 50 : isTablet ? 90 : 120;
         
         const elbowBaseX = isCompact ? 12 : isTablet ? 18 : 22;
@@ -787,8 +789,7 @@ updatePositions() {
             else if (ringName === 'middle') ringRadiusX = ringRadii.middle;
             else ringRadiusX = ringRadii.inner;
 
-            const ringOffset = 0.99; // Tam yıldızların üzerine oturması için
-
+            // Noktaları yıldız kümelerine pürüzsüz oturtuyoruz
             const radiusX = ringRadiusX * ringOffset;
             const radiusY = ringRadiusX * orbitTiltScale * ringOffset;
             
@@ -807,12 +808,15 @@ updatePositions() {
             const elbowLength = Math.hypot(elbowX, elbowY);
             const elbowAngle = (Math.atan2(elbowY, side * elbowX) * 180) / Math.PI;
             
-            // --- KÖKLÜ DÜZELTME: Ekran sınırı hesaplamalarını (clamp) tamamen sildik ---
-            // Artık çizgi uzunluğu sabit ve yazı her zaman o çizginin TAM ucuna mühürlü.
+            // --- EKSİKSİZ ÇÖZÜM NOKTASI ---
+            // Çizgi boyutu tamamen sabit.
             const horizontalLength = fixedHorizontalLength;
+            
+            // Ekran sınırlarına çarpıp yazıyı ezen (Math.min) bariyerleri SİLİNDİ.
+            // Yazı, matematiksel olarak daima çizginin ucunda duracak.
             const labelX = side * (horizontalLength + elbowX + labelGap);
             const labelY = elbowY + (unitY < 0 ? -labelOffsetY : labelOffsetY);
-            // -------------------------------------------------------------------------
+            // -----------------------------
 
             node.style.setProperty('--services-node-x', `${x.toFixed(2)}px`);
             node.style.setProperty('--services-node-y', `${y.toFixed(2)}px`);
