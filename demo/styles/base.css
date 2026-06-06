@@ -1,156 +1,75 @@
-:root {
-    --bg: #050713;
-    --bg-soft: #0a1022;
-    --panel: rgba(13, 20, 42, 0.76);
-    --panel-strong: rgba(16, 26, 54, 0.92);
-    --border: rgba(148, 163, 184, 0.16);
-    --border-strong: rgba(129, 140, 248, 0.34);
-    --text: #f7f8ff;
-    --muted: #a9b4cc;
-    --muted-2: #74809a;
-    --blue: #37b7ff;
-    --purple: #9b5cff;
-    --cyan: #42f5d7;
-    --green: #2ee59d;
-    --red: #ff6b8a;
-    --radius-sm: 12px;
-    --radius: 20px;
-    --radius-lg: 30px;
-    --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
-    --font: 'Inter Tight', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --mono: 'Fira Code', 'SFMono-Regular', Consolas, monospace;
+.demo-page {
+    min-height: 100vh;
+    background: var(--bg-body);
+    color: var(--text-main);
+    font-family: var(--font-main);
 }
 
-* {
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    min-width: 320px;
-    margin: 0;
-    overflow-x: hidden;
-    color: var(--text);
-    font-family: var(--font);
-    background:
-        radial-gradient(circle at 18% 5%, rgba(80, 64, 255, 0.22), transparent 32rem),
-        radial-gradient(circle at 82% 15%, rgba(55, 183, 255, 0.16), transparent 28rem),
-        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px), var(--bg);
-    background-size:
-        auto,
-        auto,
-        44px 44px,
-        44px 44px,
-        auto;
-}
-
-body::before {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    content: '';
-    background: linear-gradient(180deg, rgba(5, 7, 19, 0.22), var(--bg) 86%);
-}
-
-a {
+.demo-page .logo a,
+.demo-page .footer .logo a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     color: inherit;
     text-decoration: none;
 }
 
-button,
-a {
-    -webkit-tap-highlight-color: transparent;
+.demo-page .nav-link.is-active {
+    color: #fff;
 }
 
-button {
-    font: inherit;
+.demo-page .hamburger {
+    border: 0;
+    color: inherit;
 }
 
-h1,
-h2,
-h3,
-h4,
-p {
-    margin-top: 0;
+.demo-shell {
+    min-height: 100vh;
+    overflow: hidden;
 }
 
-h1,
-h2,
-h3 {
-    letter-spacing: -0.04em;
+.demo-kicker {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    margin-bottom: 0.9rem;
+    padding: 0.42rem 0.78rem;
+    color: var(--primary);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(99, 102, 241, 0.09);
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    border-radius: 999px;
+    box-shadow: inset 0 0 18px rgba(99, 102, 241, 0.1);
 }
 
-h1 {
-    max-width: 740px;
-    margin-bottom: 24px;
-    font-size: clamp(3.1rem, 7vw, 6.4rem);
-    line-height: 0.9;
-}
-
-h2 {
-    margin-bottom: 14px;
-    font-size: clamp(2.15rem, 4vw, 3.7rem);
-    line-height: 0.96;
-}
-
-h3 {
-    font-size: 1.25rem;
-}
-
-p {
-    color: var(--muted);
-    line-height: 1.7;
-}
-
-pre,
-code {
-    font-family: var(--mono);
-}
-
-.container {
-    width: min(1180px, calc(100% - 40px));
-    margin: 0 auto;
-}
-
-.section {
-    padding: 105px 0;
-}
-
-.alt-section {
-    position: relative;
-    background: linear-gradient(180deg, rgba(10, 16, 34, 0.52), rgba(5, 7, 19, 0.12));
-    border-block: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.section-heading {
-    max-width: 760px;
-    margin: 0 auto 34px;
+.demo-section-header {
+    max-width: 680px;
+    margin: 0 auto 2rem;
     text-align: center;
 }
 
-.section-heading.align-left {
-    margin-right: 0;
-    margin-left: 0;
-    text-align: left;
+.demo-section-header h2,
+.demo-final-card h2 {
+    color: #fff;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
 }
 
-.section-heading.narrow {
-    max-width: 670px;
+.demo-section-header p,
+.demo-final-card p,
+.empty-state p,
+.output-placeholder p,
+.sandbox-empty-note span,
+.demo-status-list small {
+    color: var(--text-muted);
 }
 
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-    color: var(--cyan);
-    font-size: 0.76rem;
-    font-weight: 800;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+.demo-section-header p,
+.demo-final-card p {
+    margin-top: 0.85rem;
+    font-size: 1.05rem;
 }
