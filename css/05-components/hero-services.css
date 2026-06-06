@@ -592,7 +592,7 @@
   position: relative;
   display: flex;
   justify-content: center;
-  width: min(100%, 1400px);
+  width: min(100%, clamp(760px, 82vw, 1180px));
   margin: 0 auto;
   padding: clamp(0.5rem, 2vw, 1rem) 0 clamp(0.75rem, 2vw, 1.25rem);
   overflow: visible;
@@ -614,8 +614,8 @@
 .services-orbit-visual {
   --services-orbit-rotation: 0deg;
   position: relative;
-  width: min(100%, 1200px);
-  min-height: clamp(860px, 72vw, 1120px);
+  width: min(100%, clamp(720px, 78vw, 1080px));
+  min-height: clamp(560px, min(58vw, 78vh), 760px);
   overflow: visible;
   isolation: isolate;
 }
@@ -661,20 +661,20 @@
 }
 
 .services-orbit-ring--outer {
-  width: min(132%, 1560px);
-  height: min(132%, 1560px);
+  width: min(126%, 1320px);
+  height: min(126%, 1320px);
   opacity: 0.78;
 }
 
 .services-orbit-ring--middle {
-  width: min(104%, 1230px);
-  height: min(104%, 1230px);
+  width: min(99%, 1040px);
+  height: min(99%, 1040px);
   opacity: 0.7;
 }
 
 .services-orbit-ring--inner {
-  width: min(76%, 915px);
-  height: min(76%, 915px);
+  width: min(72%, 760px);
+  height: min(72%, 760px);
   opacity: 0.62;
 }
 
@@ -839,22 +839,22 @@
 
 @media (max-width: 980px) {
   .services-orbit-visual {
-    min-height: clamp(700px, 94vw, 920px);
+    min-height: clamp(600px, min(84vw, 76vh), 760px);
   }
 
   .services-orbit-ring--outer {
-    width: min(132%, 1230px);
-    height: min(132%, 1230px);
+    width: min(126%, 1040px);
+    height: min(126%, 1040px);
   }
 
   .services-orbit-ring--middle {
-    width: min(104%, 960px);
-    height: min(104%, 960px);
+    width: min(99%, 820px);
+    height: min(99%, 820px);
   }
 
   .services-orbit-ring--inner {
-    width: min(76%, 720px);
-    height: min(76%, 720px);
+    width: min(72%, 600px);
+    height: min(72%, 600px);
   }
 }
 
@@ -869,22 +869,22 @@
   }
 
   .services-orbit-visual {
-    min-height: 560px;
+    min-height: clamp(500px, 118vw, 560px);
   }
 
   .services-orbit-ring--outer {
-    width: min(132%, 600px);
-    height: min(132%, 600px);
+    width: min(126%, 540px);
+    height: min(126%, 540px);
   }
 
   .services-orbit-ring--middle {
-    width: min(104%, 470px);
-    height: min(104%, 470px);
+    width: min(99%, 420px);
+    height: min(99%, 420px);
   }
 
   .services-orbit-ring--inner {
-    width: min(76%, 350px);
-    height: min(76%, 350px);
+    width: min(72%, 310px);
+    height: min(72%, 310px);
   }
 
   .services-orbit-node {
