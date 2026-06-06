@@ -763,20 +763,31 @@ class ServicesOrbitSystem {
         const isCompact = this.bounds.width < 600;
         const maxRadiusX = isCompact ? Math.min(this.bounds.width * 0.43, 225) : Math.min(this.bounds.width * 0.58, 750);
         const maxRadiusY = isCompact ? Math.min(this.bounds.height * 0.37, 235) : Math.min(this.bounds.height * 0.38, 405);
+        const lineLength = isCompact ? 44 : 72;
+        const labelDistance = isCompact ? 72 : 116;
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
             const radius = Number.parseFloat(node.dataset.radius || '46') / 50;
             const angle = ((baseAngle + this.rotation) * Math.PI) / 180;
-            const x = Math.cos(angle) * maxRadiusX * radius;
-            const y = Math.sin(angle) * maxRadiusY * radius;
-            const frontness = (Math.sin(angle) + 1) / 2;
+            const unitX = Math.cos(angle);
+            const unitY = Math.sin(angle);
+            const x = unitX * maxRadiusX * radius;
+            const y = unitY * maxRadiusY * radius;
+            const frontness = (unitY + 1) / 2;
             const scale = 0.9 + frontness * 0.12;
             const opacity = 0.76 + frontness * 0.24;
+            const labelX = unitX * labelDistance;
+            const labelY = unitY * labelDistance * 0.62;
 
             node.style.setProperty('--services-node-x', `${x.toFixed(2)}px`);
             node.style.setProperty('--services-node-y', `${y.toFixed(2)}px`);
             node.style.setProperty('--services-node-scale', scale.toFixed(3));
+            node.style.setProperty('--services-node-line-angle', `${((angle * 180) / Math.PI).toFixed(2)}deg`);
+            node.style.setProperty('--services-node-line-length', `${lineLength}px`);
+            node.style.setProperty('--services-node-label-x', `${labelX.toFixed(2)}px`);
+            node.style.setProperty('--services-node-label-y', `${labelY.toFixed(2)}px`);
+            node.classList.toggle('is-left', unitX < 0);
             node.style.opacity = opacity.toFixed(3);
             node.style.zIndex = String(20 + Math.round(frontness * 16));
         });
