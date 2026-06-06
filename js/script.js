@@ -107,8 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.contact-form')) {
         new ContactSystem();
     }
-    if (document.querySelector('#teknoifyOrbit')) {
-        new OrbitVisualSystem('#teknoifyOrbit');
+    if (document.querySelector('[data-services-orbit]')) {
+        new ServicesOrbitSystem('[data-services-orbit]');
     }
     setTimeout(() => {
         if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
@@ -601,33 +601,33 @@ class TerminalEffect {
     }
 }
 
-class OrbitVisualSystem {
+class ServicesOrbitSystem {
     constructor(selector) {
-        this.orbit = document.querySelector(selector);
-        if (!this.orbit) return;
+        this.showcase = document.querySelector(selector);
+        if (!this.showcase) return;
 
-        this.items = Array.from(this.orbit.querySelectorAll('[data-orbit-item]')).map((item) => ({
-            element: item,
-            angle: Number.parseFloat(item.dataset.angle || '0'),
-            radius: Number.parseFloat(item.dataset.radius || '45')
-        }));
+        this.visual = this.showcase.querySelector('.services-orbit-visual');
+        this.nodes = Array.from(this.showcase.querySelectorAll('[data-services-node]'));
+        this.detail = {
+            icon: this.showcase.querySelector('[data-service-detail-icon]'),
+            title: this.showcase.querySelector('[data-service-detail-title]'),
+            description: this.showcase.querySelector('[data-service-detail-description]'),
+            primary: this.showcase.querySelector('[data-service-detail-primary]'),
+            secondary: this.showcase.querySelector('[data-service-detail-secondary]')
+        };
         this.rotation = 0;
-        this.isDragging = false;
-        this.startX = 0;
-        this.startRotation = 0;
-        this.preventClick = false;
-        this.dragDistance = 0;
-        this.dragSensitivity = 0.32;
-        this.autoSpeed = 0.035;
+        this.autoSpeed = 0.018;
         this.bounds = { width: 0, height: 0 };
+        this.rafId = null;
         this.reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         this.prefersReducedMotion = this.reducedMotionQuery.matches;
 
         this.createParticleBands();
         this.bindEvents();
         this.measure();
-        this.update();
-        this.animate();
+        this.setActiveNode(this.nodes.find((node) => node.classList.contains('is-active')) || this.nodes[0]);
+
+        if (!this.prefersReducedMotion) this.animate();
     }
 
     seededRandom(seed) {
@@ -637,28 +637,28 @@ class OrbitVisualSystem {
 
     createParticleBands() {
         const ringConfigs = [
-            { selector: '.teknoify-orbit__ring--outer', count: 86, seed: 11, spread: 4.2 },
-            { selector: '.teknoify-orbit__ring--middle', count: 68, seed: 29, spread: 3.6 },
-            { selector: '.teknoify-orbit__ring--inner', count: 52, seed: 47, spread: 3.0 }
+            { name: 'outer', count: 64, seed: 11, spread: 3.8 },
+            { name: 'middle', count: 52, seed: 29, spread: 3.2 },
+            { name: 'inner', count: 40, seed: 47, spread: 2.7 }
         ];
 
         ringConfigs.forEach((config) => {
-            const ring = this.orbit.querySelector(config.selector);
+            const ring = this.showcase.querySelector(`[data-services-ring="${config.name}"]`);
             if (!ring || ring.dataset.particlesReady === 'true') return;
 
             const fragment = document.createDocumentFragment();
             for (let i = 0; i < config.count; i++) {
                 const angleJitter = (this.seededRandom(config.seed + i * 7) - 0.5) * 2.8;
                 const radiusJitter = (this.seededRandom(config.seed + i * 13) - 0.5) * config.spread;
-                const angle = ((i / config.count) * 360 + angleJitter) * Math.PI / 180;
+                const angle = (((i / config.count) * 360 + angleJitter) * Math.PI) / 180;
                 const radius = 49.5 + radiusJitter;
                 const x = 50 + Math.cos(angle) * radius;
                 const y = 50 + Math.sin(angle) * radius;
-                const size = 1.15 + this.seededRandom(config.seed + i * 17) * 2.15;
-                const alpha = 0.34 + this.seededRandom(config.seed + i * 19) * 0.52;
+                const size = 1.05 + this.seededRandom(config.seed + i * 17) * 1.9;
+                const alpha = 0.28 + this.seededRandom(config.seed + i * 19) * 0.48;
 
                 const particle = document.createElement('span');
-                particle.className = 'teknoify-orbit__particle';
+                particle.className = 'services-orbit-particle';
                 particle.setAttribute('aria-hidden', 'true');
                 particle.style.setProperty('--particle-x', `${x.toFixed(2)}%`);
                 particle.style.setProperty('--particle-y', `${y.toFixed(2)}%`);
@@ -673,110 +673,113 @@ class OrbitVisualSystem {
     }
 
     bindEvents() {
-        this.orbit.addEventListener('pointerdown', (event) => this.handlePointerDown(event));
-        this.orbit.addEventListener('pointermove', (event) => this.handlePointerMove(event));
-        this.orbit.addEventListener('pointerup', (event) => this.handlePointerEnd(event));
-        this.orbit.addEventListener('pointercancel', (event) => this.handlePointerEnd(event));
-        this.orbit.addEventListener('click', (event) => this.handleClick(event), true);
-        window.addEventListener('resize', () => this.measure());
+        this.nodes.forEach((node) => {
+            node.addEventListener('mouseenter', () => this.setActiveNode(node));
+            node.addEventListener('focus', () => this.setActiveNode(node));
+        });
+
+        window.addEventListener('resize', () => this.measure(), { passive: true });
 
         if (typeof this.reducedMotionQuery.addEventListener === 'function') {
             this.reducedMotionQuery.addEventListener('change', (event) => {
                 this.prefersReducedMotion = event.matches;
+                if (this.prefersReducedMotion && this.rafId) {
+                    window.cancelAnimationFrame(this.rafId);
+                    this.rafId = null;
+                } else if (!this.prefersReducedMotion && !this.rafId) {
+                    this.animate();
+                }
             });
         }
     }
 
     measure() {
-        const rect = this.orbit.getBoundingClientRect();
+        if (!this.visual) return;
+
+        const rect = this.visual.getBoundingClientRect();
         this.bounds = {
             width: rect.width,
             height: rect.height
         };
-        this.update();
+        this.updatePositions();
     }
 
-    handlePointerDown(event) {
-        if (event.pointerType === 'mouse' && event.button !== 0) return;
+    setActiveNode(node) {
+        if (!node) return;
 
-        this.isDragging = true;
-        this.preventClick = false;
-        this.dragDistance = 0;
-        this.startX = event.clientX;
-        this.startRotation = this.rotation;
-        this.orbit.classList.add('is-dragging');
+        this.nodes.forEach((item) => {
+            const isActive = item === node;
+            item.classList.toggle('is-active', isActive);
+            item.dataset.servicesActive = String(isActive);
+        });
 
-        if (typeof this.orbit.setPointerCapture === 'function') {
-            this.orbit.setPointerCapture(event.pointerId);
+        this.updateDetail(node);
+    }
+
+    updateDetail(node) {
+        if (!node || !this.detail.title || !this.detail.description) return;
+
+        const icon = node.dataset.serviceIcon || 'fa-cube';
+        const title = node.dataset.serviceTitle || node.textContent.trim();
+        const description = node.dataset.serviceDescription || '';
+        const primaryLabel = node.dataset.servicePrimaryLabel || 'Bilgi Alın';
+        const primaryHref = node.dataset.servicePrimaryHref || node.getAttribute('href') || '#services';
+        const secondaryLabel = node.dataset.serviceSecondaryLabel || 'İletişime Geçin';
+        const secondaryHref = node.dataset.serviceSecondaryHref || '#contact';
+
+        if (this.detail.icon) {
+            let iconElement = this.detail.icon.querySelector('i');
+            if (!iconElement) {
+                iconElement = document.createElement('i');
+                iconElement.setAttribute('aria-hidden', 'true');
+                this.detail.icon.appendChild(iconElement);
+            }
+            iconElement.className = `fas ${icon}`;
         }
-    }
+        this.detail.title.textContent = title;
+        this.detail.description.textContent = description;
 
-    handlePointerMove(event) {
-        if (!this.isDragging) return;
-
-        const deltaX = event.clientX - this.startX;
-        this.dragDistance = Math.max(this.dragDistance, Math.abs(deltaX));
-        this.preventClick = this.dragDistance > 6;
-        this.rotation = this.startRotation + deltaX * this.dragSensitivity;
-        this.update();
-    }
-
-    handlePointerEnd(event) {
-        if (!this.isDragging) return;
-
-        this.isDragging = false;
-        this.orbit.classList.remove('is-dragging');
-
-        if (typeof this.orbit.releasePointerCapture === 'function') {
-            this.orbit.releasePointerCapture(event.pointerId);
+        if (this.detail.primary) {
+            this.detail.primary.textContent = primaryLabel;
+            this.detail.primary.setAttribute('href', primaryHref);
         }
-
-        if (this.preventClick) {
-            setTimeout(() => {
-                this.preventClick = false;
-            }, 0);
+        if (this.detail.secondary) {
+            this.detail.secondary.textContent = secondaryLabel;
+            this.detail.secondary.setAttribute('href', secondaryHref);
         }
-    }
-
-    handleClick(event) {
-        if (!this.preventClick) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        this.preventClick = false;
     }
 
     animate() {
-        if (!this.isDragging && !this.prefersReducedMotion) {
+        if (!this.prefersReducedMotion) {
             this.rotation += this.autoSpeed;
-            this.update();
+            this.updatePositions();
+            this.rafId = window.requestAnimationFrame(() => this.animate());
         }
-
-        requestAnimationFrame(() => this.animate());
     }
 
-    update() {
-        if (!this.bounds.width || !this.bounds.height) return;
+    updatePositions() {
+        if (!this.visual || !this.bounds.width || !this.bounds.height) return;
 
-        this.orbit.style.setProperty('--orbit-rotation', `${this.rotation}deg`);
+        this.visual.style.setProperty('--services-orbit-rotation', `${this.rotation}deg`);
 
         const maxRadiusX = Math.min(this.bounds.width * 0.39, 250);
-        const maxRadiusY = Math.min(this.bounds.height * 0.25, 118);
+        const maxRadiusY = Math.min(this.bounds.height * 0.28, 132);
 
-        this.items.forEach((item) => {
-            const depth = item.radius / 52;
-            const angle = ((item.angle + this.rotation) * Math.PI) / 180;
-            const x = Math.cos(angle) * maxRadiusX * depth;
-            const y = Math.sin(angle) * maxRadiusY * depth;
+        this.nodes.forEach((node) => {
+            const baseAngle = Number.parseFloat(node.dataset.angle || '0');
+            const radius = Number.parseFloat(node.dataset.radius || '46') / 50;
+            const angle = ((baseAngle + this.rotation) * Math.PI) / 180;
+            const x = Math.cos(angle) * maxRadiusX * radius;
+            const y = Math.sin(angle) * maxRadiusY * radius;
             const frontness = (Math.sin(angle) + 1) / 2;
-            const scale = 0.88 + frontness * 0.16;
-            const opacity = 0.72 + frontness * 0.28;
+            const scale = 0.92 + frontness * 0.1;
+            const opacity = 0.78 + frontness * 0.22;
 
-            item.element.style.setProperty('--orbit-x', `${x.toFixed(2)}px`);
-            item.element.style.setProperty('--orbit-y', `${y.toFixed(2)}px`);
-            item.element.style.setProperty('--orbit-scale', scale.toFixed(3));
-            item.element.style.opacity = opacity.toFixed(3);
-            item.element.style.zIndex = String(20 + Math.round(frontness * 20));
+            node.style.setProperty('--services-node-x', `${x.toFixed(2)}px`);
+            node.style.setProperty('--services-node-y', `${y.toFixed(2)}px`);
+            node.style.setProperty('--services-node-scale', scale.toFixed(3));
+            node.style.opacity = opacity.toFixed(3);
+            node.style.zIndex = String(20 + Math.round(frontness * 16));
         });
     }
 }

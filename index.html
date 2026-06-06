@@ -224,100 +224,72 @@
         </section>
 
         <section id="services" class="services services--ecosystem">
-            <div class="services-orbit-backdrop" aria-hidden="true">
-                <div class="teknoify-orbit teknoify-orbit--services" id="teknoifyOrbit">
-                    <div class="teknoify-orbit__ambient" aria-hidden="true"></div>
-
-                    <div class="teknoify-orbit__core">
-                        <span class="teknoify-orbit__core-icon">
-                            <i class="fas fa-cube" aria-hidden="true"></i>
-                        </span>
-                        <span class="teknoify-orbit__core-title">Teknoify Core</span>
-                        <small>AI • Otomasyon • Veri</small>
-                    </div>
-
-                    <div class="teknoify-orbit__ring teknoify-orbit__ring--outer" aria-hidden="true"></div>
-                    <div class="teknoify-orbit__ring teknoify-orbit__ring--middle" aria-hidden="true"></div>
-                    <div class="teknoify-orbit__ring teknoify-orbit__ring--inner" aria-hidden="true"></div>
-                </div>
-            </div>
-
             <div class="container">
                 <div class="section-header">
                     <h2>Hizmetlerimiz</h2>
                     <p>Uçtan uca dijital dönüşüm araçları.</p>
                 </div>
 
-                <div class="services-grid">
-                    <article class="service-card">
-                        <div class="icon-box"><i class="fas fa-chart-pie"></i></div>
-                        <h3>Yatırım Analizleri</h3>
-                        <p>Finansal özgürlük hedefinizi, şirket bazlı yatırım metriklerini ve perakende sektörü verilerini tek ekranda analiz edebileceğiniz kişisel yatırım merkezi.</p>
-                        <div class="card-ctas">
-                            <a href="pages/investment-analytics.html" class="btn btn-sm btn-secondary">Analizleri İncele</a>
-                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                <div class="services-orbit-showcase" data-services-orbit>
+                    <div class="services-orbit-visual" aria-label="Teknoify hizmet ekosistemi">
+                        <div class="services-orbit-core">
+                            <span class="services-orbit-core__icon">
+                                <i class="fas fa-cube" aria-hidden="true"></i>
+                            </span>
+                            <strong>Teknoify Core</strong>
+                            <small>AI • Otomasyon • Veri</small>
                         </div>
-                    </article>
 
-                    <article class="service-card">
-                        <div class="icon-box"><i class="fas fa-robot"></i></div>
-                        <h3>Robotik Süreç Otomasyonu</h3>
-                        <p>Tekrarlayan görevleri yazılımlara devrederek hızınızı artırın, hataları azaltın ve maliyetlerinizi düşürün. RPA ile ekibiniz stratejik işlere daha fazla odaklanabilir.</p>
-                        <div class="card-ctas">
-                            <a href="pages/rpa.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                        </div>
-                    </article>
+                        <div class="services-orbit-ring services-orbit-ring--outer" data-services-ring="outer" aria-hidden="true"></div>
+                        <div class="services-orbit-ring services-orbit-ring--middle" data-services-ring="middle" aria-hidden="true"></div>
+                        <div class="services-orbit-ring services-orbit-ring--inner" data-services-ring="inner" aria-hidden="true"></div>
 
-                    <article class="service-card">
-                        <div class="icon-box"><i class="fas fa-spider"></i></div>
-                        <h3>Web Scraping</h3>
-                        <p>İnternetteki verileri otomatik toplayıp düzenleyin; rakip fiyatlarını, pazar trendlerini ve ürün verilerini anlık olarak izleyerek güçlü kararlar alın ve rekabette öne geçin.</p>
-                        <div class="card-ctas">
-                            <a href="pages/webscraping.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        <div class="services-orbit-nodes" data-services-orbit-nodes>
+                            <a class="services-orbit-node is-active" href="pages/investment-analytics.html" data-services-node data-service-icon="fa-chart-pie" data-service-title="Yatırım Analizleri" data-service-description="Şirket bazlı yatırım metrikleri, perakende sektörü analizleri ve finansal karar destek ekranları." data-service-primary-label="Analizleri İncele" data-service-primary-href="pages/investment-analytics.html" data-service-secondary-label="İletişime Geçin" data-service-secondary-href="#contact" data-angle="-78" data-radius="47">
+                                <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                                <span>Yatırım</span>
+                            </a>
+                            <a class="services-orbit-node" href="pages/rpa.html" data-services-node data-service-icon="fa-robot" data-service-title="Robotik Süreç Otomasyonu" data-service-description="Tekrarlayan görevleri yazılımlara devrederek hız, kalite ve operasyonel verimlilik sağlayın." data-service-primary-label="Bilgi Alın" data-service-primary-href="pages/rpa.html" data-service-secondary-label="İletişime Geçin" data-service-secondary-href="#contact" data-angle="-26" data-radius="50">
+                                <i class="fas fa-robot" aria-hidden="true"></i>
+                                <span>RPA</span>
+                            </a>
+                            <a class="services-orbit-node" href="pages/webscraping.html" data-services-node data-service-icon="fa-spider" data-service-title="Web Scraping" data-service-description="Rakip fiyatları, pazar trendleri ve ürün verilerini otomatik toplayıp karar süreçlerinize bağlayın." data-service-primary-label="Bilgi Alın" data-service-primary-href="pages/webscraping.html" data-service-secondary-label="İletişime Geçin" data-service-secondary-href="#contact" data-angle="28" data-radius="48">
+                                <i class="fas fa-spider" aria-hidden="true"></i>
+                                <span>Scraping</span>
+                            </a>
+                            <a class="services-orbit-node" href="pages/ai-assistant.html" data-services-node data-service-icon="fa-brain" data-service-title="AI Asistan" data-service-description="7/24 çalışan yapay zekâ destekli asistanlarla müşteri taleplerini ve iş akışlarını hızlandırın." data-service-primary-label="Bilgi Alın" data-service-primary-href="pages/ai-assistant.html" data-service-secondary-label="İletişime Geçin" data-service-secondary-href="#contact" data-angle="82" data-radius="46">
+                                <i class="fas fa-brain" aria-hidden="true"></i>
+                                <span>AI Asistan</span>
+                            </a>
+                            <a class="services-orbit-node" href="pages/api.html" data-services-node data-service-icon="fa-plug" data-service-title="API Entegrasyon Hizmetleri" data-service-description="Sistemleriniz arasında güvenilir veri akışı kurarak manuel işleri azaltın ve süreçleri tek akışa bağlayın." data-service-primary-label="Bilgi Alın" data-service-primary-href="pages/api.html" data-service-secondary-label="İletişime Geçin" data-service-secondary-href="#contact" data-angle="136" data-radius="49">
+                                <i class="fas fa-plug" aria-hidden="true"></i>
+                                <span>API</span>
+                            </a>
+                            <a class="services-orbit-node" href="pages/financial-indicators.html" data-services-node data-service-icon="fa-chart-line" data-service-title="Finansal İndikatör & Botlar" data-service-description="Piyasa verilerini analiz eden indikatörler ve otomatik strateji araçlarıyla daha kontrollü kararlar alın." data-service-primary-label="Bilgi Alın" data-service-primary-href="pages/financial-indicators.html" data-service-secondary-label="İletişime Geçin" data-service-secondary-href="#contact" data-angle="194" data-radius="47">
+                                <i class="fas fa-chart-line" aria-hidden="true"></i>
+                                <span>Finans Bot</span>
+                            </a>
+                            <a class="services-orbit-node" href="pages/training-consulting.html" data-services-node data-service-icon="fa-chalkboard-teacher" data-service-title="Eğitim & Danışmanlık" data-service-description="Ekibinizin otomasyon ve veri becerilerini güçlendiren eğitim ve proje danışmanlığı alın." data-service-primary-label="Bilgi Alın" data-service-primary-href="pages/training-consulting.html" data-service-secondary-label="İletişime Geçin" data-service-secondary-href="#contact" data-angle="248" data-radius="45">
+                                <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i>
+                                <span>Eğitim</span>
+                            </a>
                         </div>
-                    </article>
+                    </div>
 
-                    <article class="service-card">
-                        <div class="icon-box"><i class="fas fa-brain"></i></div>
-                        <h3>AI Asistan</h3>
-                        <p>7/24 çalışan yapay zekâ destekli asistanlarla süreçlerinizi otomatikleştirin. Müşteri taleplerini yöneten, bilgi sağlayan ve iş akışlarını hızlandıran akıllı sistemlerle verimliği artırın.</p>
-                        <div class="card-ctas">
-                            <a href="pages/ai-assistant.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                    <aside class="services-orbit-detail" data-services-orbit-detail aria-live="polite">
+                        <span class="services-orbit-detail__eyebrow">Teknoify Ecosystem</span>
+                        <div class="services-orbit-detail__heading">
+                            <span class="services-orbit-detail__icon" data-service-detail-icon>
+                                <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                            </span>
+                            <h3 class="services-orbit-detail__title" data-service-detail-title>Yatırım Analizleri</h3>
                         </div>
-                    </article>
-
-                    <article class="service-card">
-                        <div class="icon-box"><i class="fas fa-plug"></i></div>
-                        <h3>API Entegrasyon Hizmetleri</h3>
-                        <p>Tüm sistemleriniz arasında sorunsuz veri akışı kurarak süreçlerinizi hızlandırın. API entegrasyonlarıyla manuel hataları azaltın ve operasyonlarınızı tek bir akış haline getirin.</p>
-                        <div class="card-ctas">
-                            <a href="pages/api.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
+                        <p class="services-orbit-detail__description" data-service-detail-description>Şirket bazlı yatırım metrikleri, perakende sektörü analizleri ve finansal karar destek ekranları.</p>
+                        <div class="services-orbit-actions">
+                            <a class="btn btn-sm btn-secondary" href="pages/investment-analytics.html" data-service-detail-primary>Analizleri İncele</a>
+                            <a class="btn btn-sm btn-primary" href="#contact" data-service-detail-secondary>İletişime Geçin</a>
                         </div>
-                    </article>
-
-                    <article class="service-card">
-                        <div class="icon-box"><i class="fas fa-chart-line"></i></div>
-                        <h3>Finansal İndikatör & Botlar</h3>
-                        <p>Gerçek zamanlı piyasa verilerini analiz eden ve otomatik işlem stratejileri uygulayan trading botlarıyla daha kontrollü, veri odaklı ve hızlı yatırım kararları alın.</p>
-                        <div class="card-ctas">
-                            <a href="pages/financial-indicators.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                        </div>
-                    </article>
-
-                    <article class="service-card">
-                        <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
-                        <h3>Eğitim & Danışmanlık</h3>
-                        <p>Ekibinizin otomasyon ve veri becerilerini güçlendirin. Doğru teknolojileri doğru stratejiyle uygulayarak projelerinizi daha verimli ve sürdürülebilir hale getirin.</p>
-                        <div class="card-ctas">
-                            <a href="pages/training-consulting.html" class="btn btn-sm btn-secondary">Bilgi Alın</a>
-                            <a href="#contact" class="btn btn-sm btn-primary">İletişime Geçin</a>
-                        </div>
-                    </article>
+                    </aside>
                 </div>
             </div>
         </section>
