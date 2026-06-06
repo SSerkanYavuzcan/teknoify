@@ -5,18 +5,33 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
   overflow: hidden;
-  background: #050507;
+  background:
+    radial-gradient(ellipse at 50% 22%, rgba(20, 24, 38, 0.72), transparent 54%),
+    linear-gradient(180deg, #050507 0%, #07070a 44%, #050507 100%);
 }
 
+.home-background-stage::before,
 .home-background-stage::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+}
+
+.home-background-stage::before {
   background:
-    linear-gradient(to bottom, rgba(5, 5, 7, 0) 0%, rgba(5, 5, 7, 0.12) 86%, rgba(5, 5, 7, 0.08) 100%),
-    radial-gradient(circle at 50% 18%, rgba(99, 102, 241, 0.035), transparent 42%);
+    radial-gradient(ellipse 76% 34% at 50% 37%, rgba(99, 102, 241, 0.125), transparent 62%),
+    radial-gradient(ellipse 112% 56% at 50% 10%, rgba(125, 211, 252, 0.055), transparent 60%),
+    radial-gradient(ellipse 88% 36% at 50% 78%, rgba(99, 102, 241, 0.055), transparent 62%);
+  filter: blur(12px);
+  opacity: 0.82;
+}
+
+.home-background-stage::after {
+  background:
+    linear-gradient(to bottom, rgba(5, 5, 7, 0) 0%, rgba(5, 5, 7, 0.1) 58%, rgba(5, 5, 7, 0.24) 100%),
+    radial-gradient(ellipse at 50% 38%, rgba(99, 102, 241, 0.04), transparent 48%);
 }
 
 .home-background-surface {
@@ -29,10 +44,87 @@
   background-color: transparent;
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.034) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.034) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.034) 1px, transparent 1px),
+    linear-gradient(to right, rgba(99, 102, 241, 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.018) 1px, transparent 1px);
+  background-position:
+    center top,
+    center top,
+    center top,
+    center top;
+  background-size:
+    40px 40px,
+    40px 40px,
+    160px 160px,
+    160px 160px;
   -webkit-mask-image: none;
   mask-image: none;
+}
+
+.home-background-surface::before,
+.home-background-surface::after {
+  content: "";
+  position: absolute;
+  inset: -8% -10% -4%;
+  pointer-events: none;
+}
+
+.home-background-surface::before {
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 54% 23% at 50% 38%, rgba(5, 5, 7, 0.18), transparent 57%),
+    repeating-radial-gradient(ellipse 83% 45% at 50% 38%, transparent 0 47px, rgba(226, 232, 240, 0.065) 48px 49px, transparent 50px 74px),
+    repeating-conic-gradient(from -88deg at 50% 38%, transparent 0deg 4.2deg, rgba(165, 180, 252, 0.056) 4.35deg 4.55deg, transparent 4.7deg 8.4deg);
+  filter: drop-shadow(0 0 22px rgba(99, 102, 241, 0.08));
+  opacity: 0.78;
+  transform: scaleX(1.18);
+  transform-origin: 50% 38%;
+  -webkit-mask-image:
+    radial-gradient(ellipse 74% 40% at 50% 38%, #000 0 46%, rgba(0, 0, 0, 0.52) 60%, transparent 78%),
+    linear-gradient(to bottom, transparent 0%, #000 8%, #000 84%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 74% 40% at 50% 38%, #000 0 46%, rgba(0, 0, 0, 0.52) 60%, transparent 78%),
+    linear-gradient(to bottom, transparent 0%, #000 8%, #000 84%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.home-background-surface::after {
+  z-index: 2;
+  background:
+    linear-gradient(103deg, transparent 0 34%, rgba(165, 180, 252, 0.032) 34.15% 34.32%, transparent 34.5% 100%),
+    linear-gradient(77deg, transparent 0 35%, rgba(165, 180, 252, 0.03) 35.18% 35.34%, transparent 35.5% 100%),
+    repeating-linear-gradient(103deg, transparent 0 63px, rgba(255, 255, 255, 0.04) 64px 65px, transparent 66px 126px),
+    repeating-linear-gradient(77deg, transparent 0 68px, rgba(255, 255, 255, 0.034) 69px 70px, transparent 71px 136px);
+  opacity: 0.48;
+  transform: perspective(1100px) rotateX(58deg) translateY(-11%) scaleX(1.72);
+  transform-origin: 50% 34%;
+  -webkit-mask-image:
+    radial-gradient(ellipse 43% 76% at 50% 31%, transparent 0 8%, rgba(0, 0, 0, 0.88) 18%, #000 48%, rgba(0, 0, 0, 0.28) 67%, transparent 82%),
+    linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 43% 76% at 50% 31%, transparent 0 8%, rgba(0, 0, 0, 0.88) 18%, #000 48%, rgba(0, 0, 0, 0.28) 67%, transparent 82%),
+    linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.home-background-surface > * {
+  position: relative;
+  z-index: 3;
+}
+
+
+@media (max-width: 900px) {
+  .home-background-surface::before {
+    opacity: 0.6;
+    transform: scaleX(1.04);
+  }
+
+  .home-background-surface::after {
+    opacity: 0.34;
+    transform: perspective(900px) rotateX(54deg) translateY(-8%) scaleX(1.18);
+  }
 }
 
 .hero {
