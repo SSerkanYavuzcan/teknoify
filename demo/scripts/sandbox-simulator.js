@@ -63,9 +63,61 @@
             .join('');
     }
 
+    function renderRetailComparisonTable(demo) {
+        const output = demo.sampleOutput || {};
+        const columns = Array.isArray(output.columns) ? output.columns : [];
+        const rows = Array.isArray(output.rows) ? output.rows : [];
+
+        return `
+      <div class="output-heading retail-output-heading">
+        <div>
+          <span class="demo-kicker">Statik Örnek Çıktı</span>
+          <h4>${escapeHtml(demo.title)}</h4>
+        </div>
+        <strong>${escapeHtml(demo.primaryMetric || `${rows.length} satır`)}</strong>
+      </div>
+      <div class="retail-table-scroll" role="region" aria-label="Perakende fiyat karşılaştırma tablosu" tabindex="0">
+        <table class="retail-comparison-table">
+          <thead>
+            <tr>
+              ${columns.map((column) => `<th scope="col">${escapeHtml(column)}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${rows
+                .map(
+                    (row) => `
+              <tr>
+                <td>${escapeHtml(row.barcode)}</td>
+                <td>${escapeHtml(row.name)}</td>
+                <td>${escapeHtml(row.carrefourPrice)}</td>
+                <td>${escapeHtml(row.migrosPrice)}</td>
+                <td>${escapeHtml(row.category)}</td>
+              </tr>`
+                )
+                .join('')}
+          </tbody>
+        </table>
+      </div>
+      <p class="output-note">Bu tablo yalnızca demo sayfası için hazırlanmış statik örnek veridir; gerçek scraping, API veya fiyat sorgusu çalıştırılmaz.</p>`;
+    }
+
+    function renderDemoOutput(demo) {
+        if (demo.outputType === 'retailComparisonTable') {
+            return renderRetailComparisonTable(demo);
+        }
+
+        return `
+      <div class="output-placeholder">
+        <i class="fa-solid ${escapeHtml(demo.icon || 'fa-cube')}"></i>
+        <strong>${escapeHtml(demo.title)} hazır</strong>
+        <p>Bu demo için örnek çıktı yakında yayınlanacak.</p>
+      </div>`;
+    }
+
     function renderSandboxEmptyState() {
-        setText(selectors.title, 'Sandbox yakında aktif olacak');
-        setText(selectors.category, 'Hazırlanıyor');
+        setText(selectors.title, 'Demo seçin');
+        setText(selectors.category, 'Sandbox');
         setText(selectors.status, 'Ön izleme');
         setText(selectors.metric, 'Bekleme listesi');
 
@@ -92,8 +144,8 @@
             output.innerHTML = `
         <div class="output-placeholder output-placeholder--empty">
           <i class="fa-solid fa-terminal"></i>
-          <strong>Sandbox yakında aktif olacak</strong>
-          <p>Demo akışları eklendiğinde burada seçili otomasyonun örnek çıktısını inceleyebileceksiniz.</p>
+          <strong>Demo seçin</strong>
+          <p>Yayınlanan demo akışlarından birini seçtiğinizde statik örnek çıktı burada görünecek.</p>
         </div>`;
         }
     }
@@ -115,15 +167,23 @@
             button.setAttribute('aria-pressed', String(isActive));
         });
 
+        const runButton = getElement(selectors.run);
+        if (runButton) {
+            runButton.disabled = false;
+            runButton.textContent = 'Demoyu Çalıştır';
+        }
+
         renderProgress(showOutput ? 3 : 0);
 
         const output = getElement(selectors.output);
         if (output) {
-            output.innerHTML = `
+            output.innerHTML = showOutput
+                ? renderDemoOutput(state.selectedDemo)
+                : `
         <div class="output-placeholder">
           <i class="fa-solid ${escapeHtml(state.selectedDemo.icon || 'fa-cube')}"></i>
-          <strong>${escapeHtml(state.selectedDemo.title)} hazır</strong>
-          <p>Demo içeriği yayınlandığında örnek çıktı bu alanda gösterilecek.</p>
+          <strong>${escapeHtml(state.selectedDemo.title)} seçildi</strong>
+          <p>“Demoyu Çalıştır” veya katalogdaki “Örnek Çıktı” düğmesi ile statik tablo çıktısını görüntüleyebilirsiniz.</p>
         </div>`;
         }
     }
@@ -154,7 +214,7 @@
                 (demo) => `
           <button class="sandbox-demo-button" type="button" data-sandbox-demo="${escapeHtml(demo.id)}" aria-pressed="false">
             <span><i class="fa-solid ${escapeHtml(demo.icon || 'fa-cube')}"></i>${escapeHtml(demo.title)}</span>
-            <small>${escapeHtml(demo.category || 'Demo')}</small>
+            <small>${escapeHtml(demo.category || 'Demo')} · ${escapeHtml(demo.time || 'Ön izleme')}</small>
           </button>`
             )
             .join('');
