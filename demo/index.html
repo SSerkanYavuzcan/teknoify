@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <!-- Intended production host: https://demo.teknoify.com/ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teknoify Demo Lab | Ücretsiz Otomasyon Demoları</title>
+    <meta
+      name="description"
+      content="Teknoify Demo Lab ile web scraping, yapay zeka, API entegrasyonu, finansal analiz ve operasyon otomasyonu demolarını keşfedin."
+    />
+    <link rel="icon" type="image/png" href="../images/favicon.png" />
+    <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter+Tight:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./styles/index.css" />
+    <script src="./data/demos.js" defer></script>
+    <script src="./scripts/demo-catalog.js" defer></script>
+    <script src="./scripts/sandbox-simulator.js" defer></script>
+    <script src="./scripts/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#top" aria-label="Teknoify Demo Lab ana sayfa">
+          <span class="brand-mark"><i class="fa-solid fa-flask-vial"></i></span>
+          <span class="brand-text">Teknoify Demo Lab</span>
+          <span class="brand-badge">Free Automation Sandbox</span>
+        </a>
+        <nav class="main-nav" aria-label="Demo Lab navigasyonu">
+          <a href="#demos">Demolar</a>
+          <a href="#sandbox">Sandbox</a>
+          <a href="#flows">Akışlar</a>
+          <a href="#api-preview">API Preview</a>
+          <a href="#request-demo">Demo Talep Et</a>
+        </nav>
+        <a
+          class="btn btn-primary header-cta"
+          href="mailto:info@teknoify.com?subject=Teknoify%20Demo%20Request"
+          >Demo Talep Et</a
+        >
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero section-glow">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow">Demo Platform</span>
+            <h1>Ücretsiz Otomasyon Demolarını Keşfet</h1>
+            <p>
+              Web scraping, yapay zeka, API entegrasyonu, finansal analiz ve
+              operasyon otomasyonlarını gerçek ürün deneyimine yakın demo
+              akışlarıyla inceleyin.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#demos">Demoları İncele</a>
+              <a class="btn btn-secondary" href="#sandbox">Sandbox’ı Aç</a>
+            </div>
+            <div class="status-pills" aria-label="Demo Lab özellikleri">
+              <span>Login gerekmez</span>
+              <span>Simüle demo çıktıları</span>
+              <span>Otomasyon fikirleri</span>
+              <span>API-ready mimari</span>
+            </div>
+          </div>
+          <div class="terminal-card" aria-label="Demo runner terminal ön izlemesi">
+            <div class="terminal-bar">
+              <span class="terminal-dots"><i></i><i></i><i></i></span>
+              <strong>demo_runner.sh</strong>
+            </div>
+            <pre><code>teknoify demo run price-monitor --mode sandbox</code></pre>
+            <div class="response-block">
+              <span>response.json</span>
+              <pre><code>{
+  "demo": "price-monitor",
+  "status": "completed",
+  "result": "12 price changes detected",
+  "next_action": "open report"
+}</code></pre>
+            </div>
+            <div class="terminal-status-strip">
+              <span>Runner: <strong>Sandbox</strong></span>
+              <span>Source: <strong>Demo Data</strong></span>
+              <span>Output: <strong>Preview Ready</strong></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-strip" aria-label="Demo Lab metrikleri">
+        <div class="container stats-grid">
+          <article class="stat-card"><strong>10+</strong><span>Demo Akışı</span></article>
+          <article class="stat-card"><strong>6</strong><span>Kategori</span></article>
+          <article class="stat-card"><strong>Sandbox</strong><span>Deneyimi</span></article>
+          <article class="stat-card"><strong>API</strong><span>Preview</span></article>
+          <article class="stat-card"><strong>Ücretsiz</strong><span>Keşif</span></article>
+        </div>
+      </section>
+
+      <section class="section" id="demos">
+        <div class="container">
+          <div class="section-heading">
+            <span class="eyebrow">Katalog</span>
+            <h2>Demo Kataloğu</h2>
+            <p>
+              Teknoify ile geliştirilebilecek otomasyon fikirlerini ücretsiz
+              demo akışlarıyla inceleyin.
+            </p>
+          </div>
+          <div class="category-filters" data-category-filters aria-label="Demo kategori filtreleri"></div>
+          <div class="demo-grid" data-demo-grid></div>
+        </div>
+      </section>
+
+      <section class="section alt-section" id="sandbox">
+        <div class="container">
+          <div class="section-heading narrow">
+            <span class="eyebrow">Sandbox</span>
+            <h2>Canlı Demo Sandbox</h2>
+            <p>
+              Bir demo seçin, simüle edilmiş otomasyon akışını ve örnek çıktıyı
+              görün.
+            </p>
+          </div>
+          <div class="sandbox-layout">
+            <aside class="sandbox-selector glass-panel">
+              <div class="panel-title">
+                <span>Demo Seçici</span>
+                <small>10 simüle akış</small>
+              </div>
+              <div class="sandbox-list" data-sandbox-list></div>
+            </aside>
+            <div class="sandbox-runner glass-panel">
+              <div class="sandbox-runner-header">
+                <div>
+                  <span class="demo-category" data-sandbox-category>Web Scraping</span>
+                  <h3 data-sandbox-title>Price Monitor Demo</h3>
+                </div>
+                <div class="runner-meta">
+                  <span data-sandbox-status>Free Demo</span>
+                  <strong data-sandbox-metric>12 değişim</strong>
+                </div>
+              </div>
+              <button class="btn btn-primary run-button" type="button" data-run-demo>
+                Demoyu Çalıştır
+              </button>
+              <ol class="progress-list" data-sandbox-progress></ol>
+              <div class="sandbox-output" data-sandbox-output></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="flows">
+        <div class="container">
+          <div class="section-heading">
+            <span class="eyebrow">Workflow</span>
+            <h2>Demo Akışları Nasıl Çalışır?</h2>
+          </div>
+          <div class="workflow-grid">
+            <article class="flow-card">
+              <span>01</span>
+              <h3>Veri Girişi</h3>
+              <p>Kullanıcı URL, tablo, ürün listesi veya senaryo seçer.</p>
+            </article>
+            <article class="flow-card">
+              <span>02</span>
+              <h3>Otomasyon Motoru</h3>
+              <p>Teknoify iş akışını sandbox ortamında simüle eder.</p>
+            </article>
+            <article class="flow-card">
+              <span>03</span>
+              <h3>Analiz / AI / Entegrasyon</h3>
+              <p>Veri kontrol edilir, sınıflandırılır veya örnek çıktı üretilir.</p>
+            </article>
+            <article class="flow-card">
+              <span>04</span>
+              <h3>Rapor / Bildirim</h3>
+              <p>Sonuç tablo, bildirim, JSON veya aksiyon listesi olarak gösterilir.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt-section" id="api-preview">
+        <div class="container api-grid">
+          <div>
+            <div class="section-heading align-left">
+              <span class="eyebrow">API Preview</span>
+              <h2>API Preview</h2>
+              <p>
+                Demo Lab ileride API tabanlı otomasyon çalıştırma, webhook ve
+                entegrasyon akışları için genişletilebilir.
+              </p>
+            </div>
+            <div class="endpoint-grid">
+              <article><span class="method post">POST</span><strong>/v1/demos/run</strong></article>
+              <article><span class="method get">GET</span><strong>/v1/demos/{id}/result</strong></article>
+              <article><span class="method post">POST</span><strong>/v1/webhooks/demo</strong></article>
+              <article><span class="method get">GET</span><strong>/v1/demo-catalog</strong></article>
+            </div>
+          </div>
+          <div class="code-card">
+            <div class="code-label">API Preview</div>
+            <pre><code>const response = await fetch("https://api.teknoify.com/v1/demos/run", {
+  method: "POST",
+  headers: {
+    Authorization: "Bearer tk_demo_key",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    demo: "catalog-health-check",
+    mode: "sandbox"
+  })
+});
+
+const result = await response.json();
+console.log(result);</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-heading">
+            <span class="eyebrow">Karşılaştırma</span>
+            <h2>Ücretsiz Demo ile Özel Otomasyon Arasındaki Fark</h2>
+          </div>
+          <div class="comparison-grid">
+            <article class="comparison-card">
+              <h3>Free Demo</h3>
+              <ul>
+                <li>Simüle veri</li>
+                <li>Örnek çıktı</li>
+                <li>Login gerekmez</li>
+                <li>Fikir keşfi</li>
+                <li>Hızlı ön izleme</li>
+              </ul>
+            </article>
+            <article class="comparison-card highlighted">
+              <h3>Custom Automation</h3>
+              <ul>
+                <li>Gerçek veri kaynakları</li>
+                <li>API / Sheets / Slack entegrasyonu</li>
+                <li>Zamanlanmış çalışma</li>
+                <li>Raporlama</li>
+                <li>Destek ve bakım</li>
+              </ul>
+              <a
+                class="btn btn-primary"
+                href="mailto:info@teknoify.com?subject=Custom%20Automation%20Request"
+                >Özel Otomasyon Talep Et</a
+              >
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt-section">
+        <div class="container">
+          <div class="section-heading">
+            <span class="eyebrow">Use Cases</span>
+            <h2>Demo Fikirleri</h2>
+          </div>
+          <div class="use-case-grid">
+            <article><h3>E-ticaret fiyat takip botu</h3><p><strong>Problem:</strong> Rakip fiyatları manuel izleniyor.</p><p><strong>Demo module:</strong> Price Monitor Demo</p><p><strong>Output:</strong> Değişim tablosu</p></article>
+            <article><h3>Google Sheets operasyon paneli</h3><p><strong>Problem:</strong> Kirli tablo verileri raporu geciktiriyor.</p><p><strong>Demo module:</strong> Google Sheets Automation</p><p><strong>Output:</strong> Temizlenmiş tablo</p></article>
+            <article><h3>AI müşteri destek akışı</h3><p><strong>Problem:</strong> Tekrarlı talepler yoğunluk yaratıyor.</p><p><strong>Demo module:</strong> AI Support Assistant</p><p><strong>Output:</strong> Yanıt önerisi</p></article>
+            <article><h3>Finansal sinyal izleme paneli</h3><p><strong>Problem:</strong> Metrikler farklı kaynaklarda dağılıyor.</p><p><strong>Demo module:</strong> Investment Signal Preview</p><p><strong>Output:</strong> Sinyal kartları</p></article>
+            <article><h3>Katalog sağlık kontrolü</h3><p><strong>Problem:</strong> Eksik fiyat ve stok hataları kaçıyor.</p><p><strong>Demo module:</strong> Catalog Health Check</p><p><strong>Output:</strong> Sorun listesi</p></article>
+            <article><h3>Slack uyarı sistemi</h3><p><strong>Problem:</strong> Kritik eşikler geç fark ediliyor.</p><p><strong>Demo module:</strong> Slack Alert Workflow</p><p><strong>Output:</strong> Bildirim ön izlemesi</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="final-cta" id="request-demo">
+        <div class="container final-cta-card">
+          <span class="eyebrow">Custom Demo</span>
+          <h2>Kendi otomasyon fikriniz için demo akışı oluşturalım</h2>
+          <p>
+            Tekrarlayan iş sürecinizi, veri kaynağınızı veya raporlama
+            ihtiyacınızı bize anlatın; size özel demo senaryosu hazırlayalım.
+          </p>
+          <div class="hero-actions centered">
+            <a class="btn btn-primary" href="mailto:info@teknoify.com?subject=Teknoify%20Demo%20Access">Demo Erişimi İste</a>
+            <a class="btn btn-secondary" href="/">Ana Siteye Dön</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <h3>Teknoify Demo Lab</h3>
+          <p>Otomasyon fikirlerini demo akışlarıyla keşfedin.</p>
+        </div>
+        <div>
+          <h4>Demo</h4>
+          <a href="#demos">Demolar</a>
+          <a href="#sandbox">Sandbox</a>
+          <a href="#api-preview">API Preview</a>
+        </div>
+        <div>
+          <h4>İletişim</h4>
+          <a href="mailto:info@teknoify.com">info@teknoify.com</a>
+          <a href="/">Ana siteye dön</a>
+        </div>
+        <div>
+          <h4>Yasal</h4>
+          <a href="#">KVKK Aydınlatma Metni</a>
+          <a href="#">Gizlilik Sözleşmesi</a>
+          <a href="#">Kullanım Şartları</a>
+          <a href="#">Hizmet Sözleşmesi</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
