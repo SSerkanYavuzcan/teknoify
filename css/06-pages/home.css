@@ -290,6 +290,119 @@
     min-height: clamp(560px, min(58vw, 78vh), 760px);
 }
 
+.services--ecosystem .services-orbit-demo-cta {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 18;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: clamp(146px, 15vw, 178px);
+    min-height: clamp(42px, 4.6vw, 50px);
+    padding: 0.72rem clamp(1.18rem, 2.2vw, 1.55rem);
+    overflow: hidden;
+    border: 1px solid rgba(216, 180, 254, 0.42);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.96);
+    isolation: isolate;
+    background:
+        radial-gradient(circle at 28% 16%, rgba(125, 211, 252, 0.24), transparent 44%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(49, 46, 129, 0.72));
+    box-shadow:
+        0 14px 34px rgba(15, 23, 42, 0.3),
+        0 0 0 5px rgba(99, 102, 241, 0.07),
+        0 0 20px rgba(168, 85, 247, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    font-family: var(--font-main);
+    font-size: clamp(0.78rem, 0.92vw, 0.88rem);
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0 14px rgba(125, 211, 252, 0.28);
+    transform: translate(-50%, -50%) translateZ(0);
+    transition:
+        border-color var(--ease-fast),
+        box-shadow var(--ease-fast),
+        transform var(--ease-fast),
+        background var(--ease-fast);
+}
+
+.services--ecosystem .services-orbit-demo-cta::before {
+    content: "";
+    position: absolute;
+    top: -45%;
+    left: -55%;
+    z-index: 0;
+    width: 38%;
+    height: 190%;
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0) 28%,
+        rgba(255, 255, 255, 0.28) 48%,
+        rgba(129, 140, 248, 0.18) 58%,
+        transparent 76%
+    );
+    opacity: 0;
+    transform: translateX(0) rotate(12deg);
+    animation: orbitCtaBeam 3.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.services--ecosystem .services-orbit-demo-cta span {
+    position: relative;
+    z-index: 1;
+}
+
+.services--ecosystem .services-orbit-demo-cta:hover,
+.services--ecosystem .services-orbit-demo-cta:focus-visible {
+    border-color: rgba(125, 211, 252, 0.68);
+    background:
+        radial-gradient(circle at 28% 16%, rgba(125, 211, 252, 0.3), transparent 44%),
+        linear-gradient(135deg, rgba(30, 41, 59, 0.92), rgba(67, 56, 202, 0.78));
+    box-shadow:
+        0 16px 38px rgba(15, 23, 42, 0.36),
+        0 0 0 6px rgba(125, 211, 252, 0.08),
+        0 0 27px rgba(125, 211, 252, 0.24),
+        0 0 30px rgba(168, 85, 247, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.24);
+    transform: translate(-50%, -50%) translateY(-1px) translateZ(0);
+}
+
+.services--ecosystem .services-orbit-demo-cta:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.82);
+    outline-offset: 5px;
+}
+
+@keyframes orbitCtaBeam {
+    0% {
+        opacity: 0;
+        transform: translateX(0) rotate(12deg);
+    }
+
+    18% {
+        opacity: 0.6;
+    }
+
+    54% {
+        opacity: 0.72;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(430%) rotate(12deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .services--ecosystem .services-orbit-demo-cta::before {
+        animation: none;
+    }
+}
+
 /* Ring ölçüsünü JS tarafındaki radius hesabıyla hizalamak için eklendi */
 .services--ecosystem .services-orbit-ring {
     aspect-ratio: 1 / 1;
@@ -572,6 +685,14 @@
 
     .services--ecosystem .services-orbit-visual {
         min-height: clamp(500px, 118vw, 560px);
+    }
+
+    .services--ecosystem .services-orbit-demo-cta {
+        min-width: 128px;
+        min-height: 40px;
+        padding: 0.64rem 0.92rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.015em;
     }
 
     .services--ecosystem .services-orbit-node {
