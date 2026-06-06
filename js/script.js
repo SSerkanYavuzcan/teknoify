@@ -651,7 +651,7 @@ class ServicesOrbitSystem {
                 const x = 50 + Math.cos(angle) * radius;
                 const y = 50 + Math.sin(angle) * radius;
                 const isBright = this.seededRandom(config.seed + i * 23) > 0.92;
-                const size = 0.65 + this.seededRandom(config.seed + i * 17) * (isBright ? 1.35 : 0.85);
+                const size = (0.65 + this.seededRandom(config.seed + i * 17) * (isBright ? 1.35 : 0.85)) * 2;
                 const alpha = (isBright ? 0.44 : 0.16) + this.seededRandom(config.seed + i * 19) * (isBright ? 0.3 : 0.3);
 
                 const particle = document.createElement('span');
