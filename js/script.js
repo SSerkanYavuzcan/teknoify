@@ -777,7 +777,7 @@ updatePositions() {
         const elbowBaseX = isCompact ? 14 : isTablet ? 22 : 30;
         const elbowBaseY = isCompact ? 8 : isTablet ? 13 : 16;
         const labelGap = isCompact ? 10 : isTablet ? 13 : 16;
-        const labelOffsetY = isCompact ? 30 : isTablet ? 42 : 5;
+        const labelOffsetY = isCompact ? 30 : isTablet ? 42 : 50;
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
