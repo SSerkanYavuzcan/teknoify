@@ -778,7 +778,10 @@ updatePositions() {
             inner: Math.min(safeWidth * 0.62, 600) / 2
         };
         
-        const preferredHorizontalLength = isCompact ? 58 : isTablet ? 108 : 138;
+        // --- BU BÖLÜMÜ SİLİN: preferredHorizontalLength artık kullanılmayacak ---
+        // const preferredHorizontalLength = isCompact ? 58 : isTablet ? 108 : 138;
+        // -----------------------------------------------------------------------
+
         const minHorizontalLength = isCompact ? 34 : isTablet ? 54 : 72;
         const elbowBaseX = isCompact ? 12 : isTablet ? 18 : 22;
         const elbowBaseY = isCompact ? 8 : isTablet ? 12 : 14;
@@ -788,8 +791,8 @@ updatePositions() {
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
-            
             const ringName = node.dataset.ring || 'middle';
+            
             let ringRadiusX;
             if (ringName === 'outer') ringRadiusX = ringRadii.outer;
             else if (ringName === 'middle') ringRadiusX = ringRadii.middle;
@@ -802,9 +805,6 @@ updatePositions() {
             const ringOffset = 0.985;
             // -----------------------------------------------------------
 
-            // --- KÖKLÜ DÜZELTME: Görünmez Duvarı (Clamp) Santim Santim Yıktık ---
-            // Orijinal kodda dörtten radiusunu (radiusX) sınırlayan ve noktaları sıkıştıran Math.min sınırlamasını (clamp) sildik.
-            // Artık noktalar jilet gibi eliptik yörüngeyi santim santim takip edecek.
             const radiusX = ringRadiusX * ringOffset;
             const radiusY = ringRadiusX * orbitTiltScale * ringOffset;
             
@@ -826,14 +826,20 @@ updatePositions() {
             const measuredLabelWidth = label ? Math.min(label.scrollWidth || maxLabelWidth, maxLabelWidth) : maxLabelWidth;
             const dotX = centerX + x;
             
+            // --- BU BÖLÜMÜ SİLİN:availableForLabel hesabı artık kullanılmayacak ---
+            /*
             const availableForLabel = side > 0
                 ? safeWidth - safePadding - dotX - measuredLabelWidth / 2 - elbowX - labelGap
                 : dotX - safePadding - measuredLabelWidth / 2 - elbowX - labelGap;
+            */
+            // ------------------------------------------------------------------------
                 
-            const horizontalLength = Math.max(
-                minHorizontalLength,
-                Math.min(preferredHorizontalLength, availableForLabel)
-            );
+            // --- KÖKLÜ DÜZELTME: Çizgi Boyutunu Sabitledik ---
+            // Orijinal kodda çizgi uzunluğu dinamik hesaplanıyordu. 
+            // Artık 'minHorizontalLength' değerini kullanarak hepsini sabit bir boyuta getirdik.
+            // (Mobil için 34px, Tablet için 54px, Normal için 72px'e sabitlendi).
+            const horizontalLength = minHorizontalLength; 
+            // --------------------------------------------------
             
             const unclampedLabelX = side * (horizontalLength + elbowX + labelGap);
             const labelMinX = safePadding + measuredLabelWidth / 2 - dotX;
