@@ -541,16 +541,35 @@ class TerminalEffect {
         this.container = document.querySelector(selector);
         if (!this.container) return;
         this.lines = [
-            { type: 'comment', text: '# Security: LOAD_BALANCER_ACTIVE' },
-            { type: 'code', text: 'shield.connect("api.teknoify.com")' },
+
+            { type: 'comment', text: '# intelligence is not automation alone' },
             { type: 'empty', text: '' },
-            { type: 'comment', text: '# Initializing Cloud Armor...' },
-            { type: 'output', text: '>> WAF Protocol: ENABLED' },
-            { type: 'output', text: '>> Origin IP: HIDDEN' },
-            { type: 'success', text: '>> VERIFIED: Teknoify Secure IP' },
+
+            { type: 'code', text: 'from teknoify.core import Human, Data, Skill, Agent' },
+            { type: 'code', text: 'from teknoify.memory import Context, FeedbackLoop' },
             { type: 'empty', text: '' },
-            { type: 'success', text: '>> STATUS: PROTECTED' },
+
+            { type: 'comment', text: '# Principle 01: understand before action' },
+            { type: 'code', text: 'context = Context.collect(signals=["data", "process", "goal"])' },
+            { type: 'code', text: 'intent = Agent.read(context, mode="deep_attention")' },
+            { type: 'empty', text: '' },
+
+            { type: 'comment', text: '# Principle 02: skills are the new interface' },
+            { type: 'code', text: 'skills = Skill.registry(["analyze", "automate", "predict", "explain"])' },
+            { type: 'code', text: 'agent = Agent.compose(skills, memory=True, tools=True)' },
+            { type: 'empty', text: '' },
+
+            { type: 'comment', text: '# Principle 03: every output must create leverage' },
+            { type: 'code', text: 'decision = agent.reason(goal="reduce_workload")' },
+            { type: 'code', text: 'workflow = agent.build(decision, human_in_the_loop=True)' },
+            { type: 'empty', text: '' },
+
+            { type: 'output', text: '>> attention_layer: ACTIVE' },
+            { type: 'output', text: '>> skill_graph: CONNECTED' },
+            { type: 'output', text: '>> feedback_loop: LEARNING' },
+            { type: 'success', text: '>> MANIFESTO: BUILD SYSTEMS THAT AMPLIFY HUMANS' },
             { type: 'cursor', text: '_' }
+        
         ];
         this.typeSpeed = 25; this.lineDelay = 600; this.loopDelay = 5000; this.start();
     }
