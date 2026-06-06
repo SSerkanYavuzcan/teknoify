@@ -300,9 +300,9 @@
 }
 
 .services--ecosystem .services-orbit-node__connector-line {
-    left: var(--services-node-elbow-x);
+    left: calc(var(--services-node-elbow-x) - 1px);
     top: var(--services-node-elbow-y);
-    width: var(--services-node-horizontal-length);
+    width: calc(var(--services-node-horizontal-length) + 2px);
     background: var(--services-node-line-gradient);
     transform: translateY(-50%);
     transform-origin: 0 50%;
@@ -311,14 +311,15 @@
 .services--ecosystem .services-orbit-node__connector-elbow {
     left: 0;
     top: 0;
-    width: var(--services-node-elbow-length);
+    width: calc(var(--services-node-elbow-length) + 2px);
     background: linear-gradient(90deg, rgba(216, 180, 254, 0.94), rgba(216, 180, 254, 0.58));
     transform: translateY(-50%) rotate(var(--services-node-elbow-angle));
     transform-origin: 0 50%;
 }
 
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__connector-line {
-    left: calc(-1 * (var(--services-node-horizontal-length) + var(--services-node-elbow-x)));
+    left: calc(-1 * (var(--services-node-horizontal-length) + var(--services-node-elbow-x)) - 1px);
+    width: calc(var(--services-node-horizontal-length) + 2px);
     background: var(--services-node-line-gradient-left);
     transform-origin: 100% 50%;
 }
