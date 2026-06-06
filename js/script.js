@@ -761,16 +761,8 @@ updatePositions() {
         const safeHeight = this.bounds.height;
         const isCompact = safeWidth < 600;
         const isTablet = safeWidth < 980;
-        const safePadding = isCompact ? 18 : isTablet ? 28 : 44;
-        const dotRadius = isCompact ? 5 : 7;
-        const maxLabelWidth = isCompact ? 104 : Math.min(184, Math.max(136, safeWidth * 0.13));
         
-        // --- SANTİM SANTİM AYAR BÖLÜMÜ 1: Dikey Basıklık (Tilt) ---
-        // Bu değer yörüngenin ne kadar "flat" (basık) duracağını belirler. 
-        // 1.0 tam dörtten, 0.0 tam çizgi. Dizayn partikülleri için ideal değer: 0.33 (approx cos(71 deg))
-        // Eğer noktalar yukarı/aşağı taşıyorsa bu değeri DÜŞÜRÜN. Eğer içeride kalıyorsa YÜKSELTİN.
-        const orbitTiltScale = 0.33; 
-        // -------------------------------------------------------------
+        const orbitTiltScale = 0.38; 
         
         const ringRadii = {
             outer: Math.min(safeWidth * 1.08, 1040) / 2,
@@ -778,16 +770,13 @@ updatePositions() {
             inner: Math.min(safeWidth * 0.62, 600) / 2
         };
         
-        // --- BU BÖLÜMÜ SİLİN: preferredHorizontalLength artık kullanılmayacak ---
-        // const preferredHorizontalLength = isCompact ? 58 : isTablet ? 108 : 138;
-        // -----------------------------------------------------------------------
-
-        const minHorizontalLength = isCompact ? 34 : isTablet ? 54 : 72;
+        // Çizgi uzunluklarını cihaz boyutuna göre estetik ve SABİT değerlere ayarladık
+        const fixedHorizontalLength = isCompact ? 50 : isTablet ? 90 : 120;
+        
         const elbowBaseX = isCompact ? 12 : isTablet ? 18 : 22;
         const elbowBaseY = isCompact ? 8 : isTablet ? 12 : 14;
         const labelGap = isCompact ? 9 : isTablet ? 12 : 14;
         const labelOffsetY = isCompact ? 30 : isTablet ? 42 : 48;
-        const centerX = safeWidth / 2;
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
@@ -798,12 +787,7 @@ updatePositions() {
             else if (ringName === 'middle') ringRadiusX = ringRadii.middle;
             else ringRadiusX = ringRadii.inner;
 
-            // --- SANTİM SANTİM AYAR BÖLÜMÜ 2: Radius Faktörü ---
-            // Noktaları partikül bandının tam merkezine (%49.5) veya biraz 
-            // içerisine (%48.5 = 0.98) çekmek için kullanılan santimlik santimlik santimlik ayar.
-            // Eğer noktalar yatayda (sağ/sol) taşıyorsa bu değeri DÜŞÜRÜN.
-            const ringOffset = 0.985;
-            // -----------------------------------------------------------
+            const ringOffset = 0.99; // Tam yıldızların üzerine oturması için
 
             const radiusX = ringRadiusX * ringOffset;
             const radiusY = ringRadiusX * orbitTiltScale * ringOffset;
@@ -822,30 +806,13 @@ updatePositions() {
             const elbowY = (unitY < 0 ? 1 : -1) * elbowBaseY;
             const elbowLength = Math.hypot(elbowX, elbowY);
             const elbowAngle = (Math.atan2(elbowY, side * elbowX) * 180) / Math.PI;
-            const label = node.querySelector('.services-orbit-node__label');
-            const measuredLabelWidth = label ? Math.min(label.scrollWidth || maxLabelWidth, maxLabelWidth) : maxLabelWidth;
-            const dotX = centerX + x;
             
-            // --- BU BÖLÜMÜ SİLİN:availableForLabel hesabı artık kullanılmayacak ---
-            /*
-            const availableForLabel = side > 0
-                ? safeWidth - safePadding - dotX - measuredLabelWidth / 2 - elbowX - labelGap
-                : dotX - safePadding - measuredLabelWidth / 2 - elbowX - labelGap;
-            */
-            // ------------------------------------------------------------------------
-                
-            // --- KÖKLÜ DÜZELTME: Çizgi Boyutunu Sabitledik ---
-            // Orijinal kodda çizgi uzunluğu dinamik hesaplanıyordu. 
-            // Artık 'minHorizontalLength' değerini kullanarak hepsini sabit bir boyuta getirdik.
-            // (Mobil için 34px, Tablet için 54px, Normal için 72px'e sabitlendi).
-            const horizontalLength = minHorizontalLength; 
-            // --------------------------------------------------
-            
-            const unclampedLabelX = side * (horizontalLength + elbowX + labelGap);
-            const labelMinX = safePadding + measuredLabelWidth / 2 - dotX;
-            const labelMaxX = safeWidth - safePadding - measuredLabelWidth / 2 - dotX;
-            const labelX = Math.min(labelMaxX, Math.max(labelMinX, unclampedLabelX));
+            // --- KÖKLÜ DÜZELTME: Ekran sınırı hesaplamalarını (clamp) tamamen sildik ---
+            // Artık çizgi uzunluğu sabit ve yazı her zaman o çizginin TAM ucuna mühürlü.
+            const horizontalLength = fixedHorizontalLength;
+            const labelX = side * (horizontalLength + elbowX + labelGap);
             const labelY = elbowY + (unitY < 0 ? -labelOffsetY : labelOffsetY);
+            // -------------------------------------------------------------------------
 
             node.style.setProperty('--services-node-x', `${x.toFixed(2)}px`);
             node.style.setProperty('--services-node-y', `${y.toFixed(2)}px`);
