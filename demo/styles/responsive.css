@@ -85,3 +85,29 @@
         padding: 0.78rem;
     }
 }
+
+@media (max-width: 768px) {
+    .retail-selectors {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .retail-segmented-control {
+        grid-template-columns: 1fr;
+    }
+
+    .retail-export {
+        width: 100%;
+    }
+
+    .retail-export-button {
+        width: 100%;
+    }
+
+    .retail-export-menu {
+        right: auto;
+        left: 0;
+        width: 100%;
+    }
+}

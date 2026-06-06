@@ -6,11 +6,13 @@ The page reuses the main Teknoify site stylesheet as the visual baseline and add
 
 ## Current behavior
 
-- `demo/data/demos.js` exposes one static demo in `window.TEKNOIFY_DEMOS`: **Web Scraping Fiyat Karşılaştırma**.
+- `demo/data/demos.js` exposes one demo in `window.TEKNOIFY_DEMOS`: **Web Scraping Fiyat Karşılaştırma**.
 - The catalog renders the Web Scraping demo card and category filters from the data array.
-- The Web Scraping comparison table renders directly under the catalog as a static data preview.
-- Empty catalog states only appear when there is no demo data or a selected category has zero matching demos.
-- No real scraping, API calls, local storage, or authentication flow is required.
+- The Web Scraping comparison panel renders directly under the catalog as a real-time data preview area prepared for a future Google Sheets source.
+- The comparison rows are intentionally empty until the Google Sheets integration is connected, so the table shows an empty state with dynamic headers.
+- Store and competitor segmented buttons keep the table headers and export payload aligned with the current CarrefourSA/Migros selection.
+- CSV and Excel-compatible exports download the currently visible table structure, including headers when there are no rows.
+- No real scraping, Google Sheets, API calls, local storage, or authentication flow is required.
 
 ## Architecture
 
