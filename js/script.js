@@ -774,10 +774,10 @@ updatePositions() {
         // Çizgi uzunlukları cihazlara göre SABİTLENDİ
         const fixedHorizontalLength = isCompact ? 50 : isTablet ? 90 : 120;
         
-        const elbowBaseX = isCompact ? 12 : isTablet ? 18 : 22;
-        const elbowBaseY = isCompact ? 8 : isTablet ? 12 : 14;
-        const labelGap = isCompact ? 9 : isTablet ? 12 : 14;
-        const labelOffsetY = isCompact ? 30 : isTablet ? 42 : 48;
+        const elbowBaseX = isCompact ? 14 : isTablet ? 22 : 30;
+        const elbowBaseY = isCompact ? 8 : isTablet ? 13 : 16;
+        const labelGap = isCompact ? 10 : isTablet ? 13 : 16;
+        const labelOffsetY = isCompact ? 30 : isTablet ? 42 : 5;
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
