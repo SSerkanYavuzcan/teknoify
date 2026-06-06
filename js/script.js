@@ -765,11 +765,13 @@ class ServicesOrbitSystem {
         const dotRadius = isCompact ? 5 : 7;
         const maxLabelWidth = isCompact ? 104 : Math.min(184, Math.max(136, safeWidth * 0.13));
         const orbitTiltScale = Math.cos((64 * Math.PI) / 180);
+        
         const ringRadii = {
             outer: Math.min(safeWidth * 1.08, 1040) / 2,
             middle: Math.min(safeWidth * 0.86, 830) / 2,
             inner: Math.min(safeWidth * 0.62, 600) / 2
         };
+        
         const maxOrbitRadiusX = safeWidth / 2 - safePadding - dotRadius;
         const maxOrbitRadiusY = safeHeight / 2 - safePadding - dotRadius;
         const preferredHorizontalLength = isCompact ? 58 : isTablet ? 108 : 138;
@@ -782,22 +784,25 @@ class ServicesOrbitSystem {
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
-            const radiusValue = Number.parseFloat(node.dataset.radius || '47');
             
-            // --- KÖKLÜ DÜZELTME BURADA BAŞLIYOR ---
+            // --- KUSURSUZ YÖRÜNGE MANTIĞI BURADA ---
+            const ringName = node.dataset.ring || 'middle';
             let ringRadiusX;
-            if (radiusValue >= 50) {
-                ringRadiusX = ringRadii.outer;  // Dış Halka
-            } else if (radiusValue >= 42) {
-                ringRadiusX = ringRadii.middle; // Orta Halka
-            } else {
-                ringRadiusX = ringRadii.inner;  // İç Halka
-            }
+            let ringOffset;
 
-            // Eskiden noktaları rastgele dalgalandıran "ringOffset = 0.985 + (radiusValue - 47) * 0.006" 
-            // formülünü silip, noktaları direkt yıldız çemberlerinin merkezine yapıştırdık:
-            const ringOffset = 0.985;
-            // ----------------------------------------
+            // Arka plandaki yıldız halkalarının CSS konumlarıyla JavaScript 
+            // elips matematiklerini mükemmel eşleştiren kesin ofset değerleri:
+            if (ringName === 'outer') {
+                ringRadiusX = ringRadii.outer;
+                ringOffset = 1.003;
+            } else if (ringName === 'middle') {
+                ringRadiusX = ringRadii.middle;
+                ringOffset = 0.985;
+            } else {
+                ringRadiusX = ringRadii.inner;
+                ringOffset = 0.976;
+            }
+            // -----------------------------------------
 
             const radiusX = Math.min(ringRadiusX * ringOffset, maxOrbitRadiusX);
             const radiusY = Math.min(ringRadiusX * orbitTiltScale * ringOffset, maxOrbitRadiusY);
