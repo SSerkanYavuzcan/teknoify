@@ -280,7 +280,7 @@
 }
 
 .retail-comparison-table thead tr:first-child th.retail-store-header--migros {
-    background: #f00014;
+    background: #ef6f28;
 }
 
 .retail-comparison-table thead tr:nth-child(2) th {
@@ -384,8 +384,8 @@
 }
 
 .retail-segment--migros {
-    --store-color: #f00014;
-    --store-rgb: 240, 0, 20;
+    --store-color: #ef6f28;
+    --store-rgb: 239, 111, 40;
 }
 
 .retail-segment:hover,
