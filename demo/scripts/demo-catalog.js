@@ -48,7 +48,6 @@
         if (columns.length === 0 || rows.length === 0) {
             return `
         <article class="demo-glass-card demo-preview-card">
-          <span class="demo-kicker">Statik Ön İzleme</span>
           <h3>${escapeHtml(demo.title)}</h3>
           <p class="output-note">Bu demo için ön izleme verisi hazırlanıyor.</p>
         </article>`;
@@ -58,7 +57,6 @@
       <article class="demo-glass-card demo-preview-card" aria-label="${escapeHtml(demo.title)} tablo ön izlemesi">
         <div class="retail-output-heading output-heading">
           <div>
-            <span class="demo-kicker">Statik Ön İzleme</span>
             <h3>${escapeHtml(demo.title)}</h3>
           </div>
           <strong>${escapeHtml(demo.primaryMetric || `${rows.length} kayıt`)}</strong>
@@ -170,20 +168,6 @@
             </div>
             <h3>${escapeHtml(demo.title)}</h3>
             <p>${escapeHtml(demo.description)}</p>
-            <dl class="demo-card-meta" aria-label="Demo detayları">
-              <div>
-                <dt>Seviye</dt>
-                <dd>${escapeHtml(demo.level || 'Başlangıç')}</dd>
-              </div>
-              <div>
-                <dt>Süre</dt>
-                <dd>${escapeHtml(demo.time || 'Ön izleme')}</dd>
-              </div>
-              <div>
-                <dt>Durum</dt>
-                <dd>${escapeHtml(demo.status || 'Hazır')}</dd>
-              </div>
-            </dl>
           </article>`
             )
             .join('');
