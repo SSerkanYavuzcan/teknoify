@@ -215,3 +215,12 @@
 .services--ecosystem .services-grid {
     display: none;
 }
+
+/* Keep the shared homepage grid visible through the gap before the footer. */
+.home-page-shell {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.home-page-shell + .footer {
+    margin-top: 0;
+}
