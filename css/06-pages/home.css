@@ -241,15 +241,15 @@
     --services-node-label-y: -76px;
     --services-node-line-gradient: linear-gradient(
         90deg,
-        transparent,
-        rgba(125, 211, 252, 0.22) 16%,
-        rgba(216, 180, 254, 0.76) 100%
-    );
-    --services-node-line-gradient-left: linear-gradient(
-        90deg,
         rgba(216, 180, 254, 0.76),
         rgba(125, 211, 252, 0.22) 84%,
         transparent
+    );
+    --services-node-line-gradient-left: linear-gradient(
+        90deg,
+        transparent,
+        rgba(125, 211, 252, 0.22) 16%,
+        rgba(216, 180, 254, 0.76) 100%
     );
 
     width: 620px;
@@ -283,6 +283,7 @@
     width: var(--services-node-horizontal-length);
     background: var(--services-node-line-gradient);
     transform: translateY(-50%);
+    transform-origin: 0 50%;
 }
 
 .services--ecosystem .services-orbit-node__connector-elbow {
@@ -295,8 +296,16 @@
 }
 
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__connector-line {
-    left: calc((var(--services-node-horizontal-length) + var(--services-node-elbow-x)) * -1);
+    left: calc(-1 * (var(--services-node-horizontal-length) + var(--services-node-elbow-x)));
     background: var(--services-node-line-gradient-left);
+    transform-origin: 100% 50%;
+}
+
+.services--ecosystem .services-orbit-node.is-left .services-orbit-node__connector-elbow {
+    left: 0;
+    top: 0;
+    transform: translateY(-50%) rotate(var(--services-node-elbow-angle));
+    transform-origin: 0 50%;
 }
 
 .services--ecosystem .services-orbit-node__dot {
@@ -371,19 +380,50 @@
     transform: translate3d(calc(-100% + var(--services-node-label-x)), calc(-50% + var(--services-node-label-y)), 0);
 }
 
+
+.services--ecosystem .services-orbit-node:hover,
+.services--ecosystem .services-orbit-node:focus-visible,
+.services--ecosystem .services-orbit-node.is-active {
+    filter: none;
+}
+
 .services--ecosystem .services-orbit-node:hover .services-orbit-node__connector,
 .services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__connector,
 .services--ecosystem .services-orbit-node.is-active .services-orbit-node__connector {
-    opacity: 0.94;
+    opacity: 0.76;
+}
+
+.services--ecosystem .services-orbit-node:hover .services-orbit-node__connector-line,
+.services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__connector-line,
+.services--ecosystem .services-orbit-node.is-active .services-orbit-node__connector-line {
+    background: var(--services-node-line-gradient);
+}
+
+.services--ecosystem .services-orbit-node:hover .services-orbit-node__connector-elbow,
+.services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__connector-elbow,
+.services--ecosystem .services-orbit-node.is-active .services-orbit-node__connector-elbow {
+    background: linear-gradient(90deg, rgba(216, 180, 254, 0.94), rgba(216, 180, 254, 0.58));
+}
+
+.services--ecosystem .services-orbit-node.is-left:hover .services-orbit-node__connector-line,
+.services--ecosystem .services-orbit-node.is-left:focus-visible .services-orbit-node__connector-line,
+.services--ecosystem .services-orbit-node.is-left.is-active .services-orbit-node__connector-line {
+    background: var(--services-node-line-gradient-left);
+}
+
+.services--ecosystem .services-orbit-node.is-left:hover .services-orbit-node__connector-elbow,
+.services--ecosystem .services-orbit-node.is-left:focus-visible .services-orbit-node__connector-elbow,
+.services--ecosystem .services-orbit-node.is-left.is-active .services-orbit-node__connector-elbow {
+    background: linear-gradient(90deg, rgba(216, 180, 254, 0.94), rgba(216, 180, 254, 0.58));
 }
 
 .services--ecosystem .services-orbit-node:hover .services-orbit-node__dot,
 .services--ecosystem .services-orbit-node:focus-visible .services-orbit-node__dot,
 .services--ecosystem .services-orbit-node.is-active .services-orbit-node__dot {
     box-shadow:
-        0 0 14px rgba(255, 255, 255, 0.3),
-        0 0 28px rgba(216, 180, 254, 0.58),
-        0 0 44px rgba(37, 99, 235, 0.28);
+        0 0 12px rgba(255, 255, 255, 0.22),
+        0 0 22px rgba(168, 85, 247, 0.5),
+        0 0 34px rgba(37, 99, 235, 0.2);
 }
 
 @media (max-width: 980px) {
