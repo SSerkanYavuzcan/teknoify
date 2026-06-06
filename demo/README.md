@@ -2,15 +2,15 @@
 
 Static `/demo/` landing page for the canonical route `https://teknoify.com/demo/`.
 
-The page intentionally contains no demo/project/example data for now. It reuses the main Teknoify site stylesheet as the visual baseline and adds only demo-page-specific layout refinements from `demo/styles/`.
+The page reuses the main Teknoify site stylesheet as the visual baseline and adds only demo-page-specific layout refinements from `demo/styles/`. Demo content is data-driven through `demo/data/demos.js`.
 
 ## Current behavior
 
-- `demo/data/demos.js` exposes an empty dataset with `window.TEKNOIFY_DEMOS = [];`.
-- The catalog renders a premium empty state instead of demo cards.
-- The sandbox renders a safe empty state instead of fake outputs or selected sample projects.
-- Category filters stay hidden while there is no demo data.
-- No real API calls are made and no local storage is required.
+- `demo/data/demos.js` exposes one static demo in `window.TEKNOIFY_DEMOS`: **Web Scraping Fiyat Karşılaştırma**.
+- The catalog renders the Web Scraping demo card and category filters from the data array.
+- The sandbox defaults to the first demo and can render its static retail comparison table output.
+- Empty catalog states only appear when there is no demo data or a selected category has zero matching demos.
+- No real scraping, API calls, local storage, or authentication flow is required.
 
 ## Architecture
 
@@ -41,7 +41,7 @@ demo/
 <link rel="stylesheet" href="/css/style.css" /> <link rel="stylesheet" href="./styles/index.css" />
 ```
 
-Local JavaScript is still loaded so the page remains ready for future data-driven demos, but every script handles an empty dataset safely.
+Local JavaScript initializes the catalog and sandbox from `window.TEKNOIFY_DEMOS`, while every script still handles an empty dataset safely.
 
 ## Validation
 

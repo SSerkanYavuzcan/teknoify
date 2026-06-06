@@ -91,3 +91,36 @@
         padding: 1.1rem;
     }
 }
+
+@media (max-width: 768px) {
+    .demo-card-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .demo-actions .btn {
+        width: 100%;
+    }
+
+    .retail-output-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 560px) {
+    .category-filters {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.25rem;
+    }
+
+    .category-filter {
+        flex: 0 0 auto;
+    }
+
+    .retail-comparison-table th,
+    .retail-comparison-table td {
+        padding: 0.78rem;
+    }
+}
