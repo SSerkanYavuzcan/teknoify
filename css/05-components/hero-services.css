@@ -516,7 +516,7 @@
   position: relative;
   z-index: 1;
   overflow: hidden;
-  padding: 5.5rem 0 5.25rem;
+  padding: 5.5rem 0 3.75rem;
   isolation: isolate;
 }
 
@@ -555,9 +555,9 @@
   position: relative;
   display: flex;
   justify-content: center;
-  width: min(100%, 1240px);
+  width: min(100%, 1400px);
   margin: 0 auto;
-  padding: clamp(0.5rem, 2vw, 1rem) 0 clamp(1rem, 2.5vw, 1.75rem);
+  padding: clamp(0.5rem, 2vw, 1rem) 0 clamp(0.75rem, 2vw, 1.25rem);
   overflow: visible;
 }
 
@@ -579,7 +579,7 @@
   --services-orbit-rotation: 0deg;
   position: relative;
   width: min(100%, 1200px);
-  min-height: clamp(640px, 62vw, 820px);
+  min-height: clamp(860px, 72vw, 1120px);
   overflow: visible;
   isolation: isolate;
 }
@@ -590,7 +590,7 @@
   left: 50%;
   top: 50%;
   z-index: 1;
-  width: min(78%, 860px);
+  width: min(100%, 1180px);
   aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(99, 102, 241, 0.16), transparent 62%);
@@ -612,20 +612,20 @@
 }
 
 .services-orbit-ring--outer {
-  width: min(96%, 1040px);
-  height: min(96%, 1040px);
+  width: min(132%, 1560px);
+  height: min(132%, 1560px);
   opacity: 0.78;
 }
 
 .services-orbit-ring--middle {
-  width: min(76%, 820px);
-  height: min(76%, 820px);
+  width: min(104%, 1230px);
+  height: min(104%, 1230px);
   opacity: 0.7;
 }
 
 .services-orbit-ring--inner {
-  width: min(56%, 610px);
-  height: min(56%, 610px);
+  width: min(76%, 915px);
+  height: min(76%, 915px);
   opacity: 0.62;
 }
 
@@ -716,28 +716,28 @@
 
 @media (max-width: 980px) {
   .services-orbit-visual {
-    min-height: clamp(540px, 78vw, 700px);
+    min-height: clamp(700px, 94vw, 920px);
   }
 
   .services-orbit-ring--outer {
-    width: min(98%, 820px);
-    height: min(98%, 820px);
+    width: min(132%, 1230px);
+    height: min(132%, 1230px);
   }
 
   .services-orbit-ring--middle {
-    width: min(78%, 640px);
-    height: min(78%, 640px);
+    width: min(104%, 960px);
+    height: min(104%, 960px);
   }
 
   .services-orbit-ring--inner {
-    width: min(58%, 480px);
-    height: min(58%, 480px);
+    width: min(76%, 720px);
+    height: min(76%, 720px);
   }
 }
 
 @media (max-width: 576px) {
   .services {
-    padding: 4.5rem 0 3.5rem;
+    padding: 4.5rem 0 3rem;
   }
 
   .services-orbit-showcase {
@@ -746,22 +746,22 @@
   }
 
   .services-orbit-visual {
-    min-height: 450px;
+    min-height: 560px;
   }
 
   .services-orbit-ring--outer {
-    width: min(108%, 460px);
-    height: min(108%, 460px);
+    width: min(132%, 600px);
+    height: min(132%, 600px);
   }
 
   .services-orbit-ring--middle {
-    width: min(84%, 360px);
-    height: min(84%, 360px);
+    width: min(104%, 470px);
+    height: min(104%, 470px);
   }
 
   .services-orbit-ring--inner {
-    width: min(62%, 270px);
-    height: min(62%, 270px);
+    width: min(76%, 350px);
+    height: min(76%, 350px);
   }
 
   .services-orbit-node {
