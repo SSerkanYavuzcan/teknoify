@@ -6,8 +6,9 @@
   margin-left: calc(50% - 50vw);
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 50% 22%, rgba(20, 24, 38, 0.72), transparent 54%),
-    linear-gradient(180deg, #050507 0%, #07070a 44%, #050507 100%);
+    radial-gradient(ellipse at 50% 12%, rgba(20, 24, 38, 0.58), transparent 56%),
+    radial-gradient(ellipse at 50% 78%, rgba(99, 102, 241, 0.06), transparent 52%),
+    linear-gradient(180deg, #050507 0%, #07070a 42%, #050507 100%);
 }
 
 .home-background-stage::before,
@@ -21,21 +22,17 @@
 
 .home-background-stage::before {
   background:
-    radial-gradient(ellipse 76% 34% at 50% 37%, rgba(99, 102, 241, 0.125), transparent 62%),
-    radial-gradient(ellipse 112% 56% at 50% 10%, rgba(125, 211, 252, 0.055), transparent 60%),
-    radial-gradient(ellipse 88% 36% at 50% 78%, rgba(99, 102, 241, 0.055), transparent 62%);
-  filter: blur(12px);
-  opacity: 0.82;
+    radial-gradient(ellipse 82% 30% at 50% 18%, rgba(99, 102, 241, 0.095), transparent 68%),
+    radial-gradient(ellipse 76% 28% at 50% 56%, rgba(125, 211, 252, 0.04), transparent 70%),
+    radial-gradient(ellipse 90% 38% at 50% 92%, rgba(99, 102, 241, 0.045), transparent 72%);
+  opacity: 0.86;
 }
 
 .home-background-stage::after {
-  background:
-    linear-gradient(to bottom, rgba(5, 5, 7, 0) 0%, rgba(5, 5, 7, 0.1) 58%, rgba(5, 5, 7, 0.24) 100%),
-    radial-gradient(ellipse at 50% 38%, rgba(99, 102, 241, 0.04), transparent 48%);
+  background: linear-gradient(to bottom, rgba(5, 5, 7, 0) 0%, rgba(5, 5, 7, 0.08) 72%, rgba(5, 5, 7, 0.14) 100%);
 }
 
 .home-background-surface {
-  --wormhole-top-layer-height: clamp(620px, 78vh, 820px);
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -44,95 +41,36 @@
   overflow: hidden;
   background-color: transparent;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.034) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.034) 1px, transparent 1px),
-    linear-gradient(to right, rgba(99, 102, 241, 0.022) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(99, 102, 241, 0.018) 1px, transparent 1px);
-  background-position:
-    center top,
-    center top,
-    center top,
-    center top;
-  background-size:
-    40px 40px,
-    40px 40px,
-    160px 160px,
-    160px 160px;
-  -webkit-mask-image: none;
-  mask-image: none;
-}
-
-.home-background-surface::before,
-.home-background-surface::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -10%;
-  left: -10%;
-  height: var(--wormhole-top-layer-height);
-  pointer-events: none;
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(to right, rgba(99, 102, 241, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.017) 1px, transparent 1px);
+  background-position: center top;
+  background-size: 40px 40px, 40px 40px, 160px 160px, 160px 160px;
 }
 
 .home-background-surface::before {
-  z-index: 1;
+  content: "";
+  position: absolute;
+  inset: 0;
   background:
-    radial-gradient(ellipse 46% 20% at 50% 36%, rgba(5, 5, 7, 0.14), transparent 57%),
-    repeating-radial-gradient(ellipse 68% 39% at 50% 36%, transparent 0 52px, rgba(226, 232, 240, 0.048) 53px 54px, transparent 55px 82px),
-    repeating-conic-gradient(from -88deg at 50% 36%, transparent 0deg 4.8deg, rgba(165, 180, 252, 0.04) 4.95deg 5.12deg, transparent 5.25deg 9.4deg);
-  filter: drop-shadow(0 0 18px rgba(99, 102, 241, 0.055));
-  opacity: 0.58;
-  transform: scaleX(1.04);
-  transform-origin: 50% 36%;
-  -webkit-mask-image:
-    radial-gradient(ellipse 58% 34% at 50% 36%, #000 0 40%, rgba(0, 0, 0, 0.42) 57%, transparent 74%),
-    linear-gradient(to bottom, transparent 0%, #000 10%, #000 58%, rgba(0, 0, 0, 0.42) 73%, transparent 100%);
-  mask-image:
-    radial-gradient(ellipse 58% 34% at 50% 36%, #000 0 40%, rgba(0, 0, 0, 0.42) 57%, transparent 74%),
-    linear-gradient(to bottom, transparent 0%, #000 10%, #000 58%, rgba(0, 0, 0, 0.42) 73%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
+    radial-gradient(ellipse 64% 26% at 50% 22%, rgba(99, 102, 241, 0.055), transparent 72%),
+    radial-gradient(ellipse 86% 34% at 50% 63%, rgba(125, 211, 252, 0.028), transparent 76%);
+  opacity: 0.72;
+  pointer-events: none;
 }
 
 .home-background-surface::after {
-  z-index: 2;
-  background:
-    linear-gradient(103deg, transparent 0 34%, rgba(165, 180, 252, 0.024) 34.15% 34.28%, transparent 34.45% 100%),
-    linear-gradient(77deg, transparent 0 35%, rgba(165, 180, 252, 0.022) 35.18% 35.3%, transparent 35.48% 100%),
-    repeating-linear-gradient(103deg, transparent 0 70px, rgba(255, 255, 255, 0.03) 71px 72px, transparent 73px 140px),
-    repeating-linear-gradient(77deg, transparent 0 74px, rgba(255, 255, 255, 0.026) 75px 76px, transparent 77px 148px);
-  opacity: 0.34;
-  transform: perspective(1050px) rotateX(56deg) translateY(-15%) scaleX(1.34);
-  transform-origin: 50% 32%;
-  -webkit-mask-image:
-    radial-gradient(ellipse 34% 64% at 50% 30%, transparent 0 10%, rgba(0, 0, 0, 0.72) 20%, #000 42%, rgba(0, 0, 0, 0.2) 60%, transparent 76%),
-    linear-gradient(to bottom, #000 0%, #000 56%, rgba(0, 0, 0, 0.46) 72%, transparent 100%);
-  mask-image:
-    radial-gradient(ellipse 34% 64% at 50% 30%, transparent 0 10%, rgba(0, 0, 0, 0.72) 20%, #000 42%, rgba(0, 0, 0, 0.2) 60%, transparent 76%),
-    linear-gradient(to bottom, #000 0%, #000 56%, rgba(0, 0, 0, 0.46) 72%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(5, 5, 7, 0.02), rgba(5, 5, 7, 0.12));
+  pointer-events: none;
 }
 
 .home-background-surface > * {
   position: relative;
-  z-index: 3;
-}
-
-
-@media (max-width: 900px) {
-  .home-background-surface {
-    --wormhole-top-layer-height: clamp(560px, 70vh, 700px);
-  }
-
-  .home-background-surface::before {
-    opacity: 0.42;
-    transform: scaleX(0.98);
-  }
-
-  .home-background-surface::after {
-    opacity: 0.24;
-    transform: perspective(900px) rotateX(54deg) translateY(-13%) scaleX(1.08);
-  }
+  z-index: 1;
 }
 
 .hero {
