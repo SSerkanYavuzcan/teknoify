@@ -124,7 +124,7 @@
     border: none; 
 }
 
-/* Ana Kart Çerçevesi - Daha İnce ve Vurgusu Azaltılmış */
+/* Ana Kart Çerçevesi */
 .service-card::after {
     content: "";
     position: absolute;
@@ -228,14 +228,16 @@
 }
 
 .services--ecosystem .services-orbit-node {
-    /* Düzeltilmiş Oranlar */
-    --services-node-horizontal-length: 150px;
-    --services-node-elbow-x: 20px;
-    --services-node-elbow-y: -14px;
-    --services-node-elbow-length: 26px;
-    --services-node-elbow-angle: -30deg;
-    --services-node-label-x: 180px;
-    --services-node-label-y: -45px;
+    /* Çizgileri kısalttık */
+    --services-node-horizontal-length: 120px;
+    --services-node-elbow-x: 34px;
+    --services-node-elbow-y: -18px;
+    --services-node-elbow-length: 38.47px;
+    --services-node-elbow-angle: -27.9deg;
+    
+    /* Yazı hizalaması: 120 + 34 + 10px boşluk = 164px */
+    --services-node-label-x: 164px;
+    --services-node-label-y: -76px;
     
     --services-node-line-gradient: linear-gradient(
         90deg,
@@ -250,9 +252,9 @@
         rgba(216, 180, 254, 0.76) 100%
     );
 
-    /* Daha küçük ve dengeli kapsayıcı */
-    width: 360px;
-    height: 120px;
+    /* Kapsayıcı küçüldü */
+    width: 350px;
+    height: 190px;
 }
 
 .services--ecosystem .services-orbit-node::before {
@@ -374,12 +376,11 @@
     white-space: nowrap;
 }
 
-/* SOLA HİZALI İÇERİKLER İÇİN DÜZELTME (- VAR) */
+/* Sola Hizalı İçerikler İçin Düzeltme (Katlanmayı önler, - var kullanılmıştır) */
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__label {
     text-align: right;
     transform: translate3d(calc(-100% - var(--services-node-label-x)), calc(-50% + var(--services-node-label-y)), 0);
 }
-
 
 .services--ecosystem .services-orbit-node:hover,
 .services--ecosystem .services-orbit-node:focus-visible,
@@ -435,48 +436,38 @@
         min-height: clamp(600px, min(84vw, 76vh), 760px);
     }
 
-    /* Masaüstü boyutları düştüğü için 980px'i ona oranla uyarladık */
-    /* --- ORİJİNAL MATEMATİĞE DÖNÜŞ VE ORANTILI KÜÇÜLTME --- */
-.services--ecosystem .services-orbit-node {
-    /* 300px'lik aşırı uzun çizgileri 120px'e çektik */
-    --services-node-horizontal-length: 120px; 
-    
-    /* Dirsek (kırılım) açıları orijinal halinde kaldı */
-    --services-node-elbow-x: 34px;
-    --services-node-elbow-y: -18px;
-    --services-node-elbow-length: 38.47px;
-    --services-node-elbow-angle: -27.9deg;
-    
-    /* 370px olan yazı uzaklığını, kısa çizgiye uyumlu olarak 150px'e indirdik */
-    --services-node-label-x: 150px; 
-    --services-node-label-y: -76px;
-    
-    --services-node-line-gradient: linear-gradient(90deg, rgba(216, 180, 254, 0.76), rgba(125, 211, 252, 0.22) 84%, transparent);
-    --services-node-line-gradient-left: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.22) 16%, rgba(216, 180, 254, 0.76) 100%);
+    .services--ecosystem .services-orbit-node {
+        --services-node-horizontal-length: 80px;
+        --services-node-elbow-x: 24px;
+        --services-node-label-x: 114px; 
+        
+        width: 250px;
+        height: 164px;
+    }
 
-    /* 620px olan devasa çerçeveyi küçülterek çizgilerin ekran dışına taşıp kesilmesini engelledik */
-    width: 300px;
-    height: 190px;
+    .services--ecosystem .services-orbit-node__label {
+        width: 168px;
+    }
+
+    .services--ecosystem .services-orbit-node__copy {
+        font-size: 0.66rem;
+    }
 }
 
-/* Sola hizalı elemanların orijinal matematiğini geri getirdik (Kritik Düzeltme) */
-.services--ecosystem .services-orbit-node.is-left .services-orbit-node__label {
-    text-align: right;
-    transform: translate3d(calc(-100% + var(--services-node-label-x)), calc(-50% + var(--services-node-label-y)), 0);
-}
 @media (max-width: 576px) {
     .services--ecosystem .services-orbit-visual {
         min-height: clamp(500px, 118vw, 560px);
     }
 
     .services--ecosystem .services-orbit-node {
-        --services-node-horizontal-length: 72px;
+        --services-node-horizontal-length: 40px;
         --services-node-elbow-x: 16px;
         --services-node-elbow-y: -10px;
         --services-node-elbow-length: 20.59px;
         --services-node-elbow-angle: -29.1deg;
-
-        width: 240px;
+        
+        --services-node-label-x: 62px;
+        width: 180px;
         height: 112px;
     }
 
