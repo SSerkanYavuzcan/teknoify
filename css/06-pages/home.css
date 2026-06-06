@@ -210,3 +210,8 @@
     line-height: 1.6;
     margin-bottom: 20px;
 }
+
+/* Homepage services now uses the orbit ecosystem instead of the legacy card grid. */
+.services--ecosystem .services-grid {
+    display: none;
+}
