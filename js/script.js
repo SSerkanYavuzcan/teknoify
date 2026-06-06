@@ -762,13 +762,13 @@ class ServicesOrbitSystem {
 
         const isCompact = this.bounds.width < 600;
         const isTablet = this.bounds.width < 980;
-        const maxRadiusX = isCompact ? Math.min(this.bounds.width * 0.43, 225) : Math.min(this.bounds.width * 0.58, 750);
-        const maxRadiusY = isCompact ? Math.min(this.bounds.height * 0.37, 235) : Math.min(this.bounds.height * 0.38, 405);
-        const horizontalLength = isCompact ? 82 : isTablet ? 210 : 300;
-        const elbowX = isCompact ? 18 : isTablet ? 28 : 34;
-        const elbowBaseY = isCompact ? 10 : 18;
-        const labelGap = isCompact ? 14 : isTablet ? 18 : 22;
-        const labelOffsetY = isCompact ? 42 : isTablet ? 58 : 70;
+        const maxRadiusX = isCompact ? Math.min(this.bounds.width * 0.39, 190) : Math.min(this.bounds.width * 0.47, 540);
+        const maxRadiusY = isCompact ? Math.min(this.bounds.height * 0.32, 190) : Math.min(this.bounds.height * 0.32, 300);
+        const horizontalLength = isCompact ? 72 : isTablet ? 170 : 240;
+        const elbowX = isCompact ? 16 : isTablet ? 24 : 30;
+        const elbowBaseY = isCompact ? 10 : isTablet ? 15 : 16;
+        const labelGap = isCompact ? 12 : isTablet ? 16 : 18;
+        const labelOffsetY = isCompact ? 38 : isTablet ? 50 : 58;
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
