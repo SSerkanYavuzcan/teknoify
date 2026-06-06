@@ -121,7 +121,6 @@ class AuthSystem {
         this.modal = document.getElementById('loginModal');
         this.form = document.getElementById('loginForm');
         this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login');
-        window.teknoifyAuthSystem = this;
         this.bindEvents();
         this.checkCurrentUser();
     }
@@ -201,7 +200,6 @@ class AuthSystem {
             .then(async (userCredential) => {
                 const user = userCredential.user;
                 try {
-
                     await new Promise(resolve => setTimeout(resolve, 600));
 
                     const idTokenResult = await user.getIdTokenResult(true);
@@ -260,7 +258,6 @@ class AuthSystem {
         });
     }
 }
-
 
 class CustomSelectSystem {
     constructor() {
@@ -786,10 +783,25 @@ class ServicesOrbitSystem {
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
             const radiusValue = Number.parseFloat(node.dataset.radius || '47');
-            const ringRadiusX = radiusValue >= 49 ? ringRadii.outer : radiusValue >= 47 ? ringRadii.middle : ringRadii.inner;
-            const ringOffset = 0.985 + (radiusValue - 47) * 0.006;
+            
+            // --- KÖKLÜ DÜZELTME BURADA BAŞLIYOR ---
+            let ringRadiusX;
+            if (radiusValue >= 50) {
+                ringRadiusX = ringRadii.outer;  // Dış Halka
+            } else if (radiusValue >= 42) {
+                ringRadiusX = ringRadii.middle; // Orta Halka
+            } else {
+                ringRadiusX = ringRadii.inner;  // İç Halka
+            }
+
+            // Eskiden noktaları rastgele dalgalandıran "ringOffset = 0.985 + (radiusValue - 47) * 0.006" 
+            // formülünü silip, noktaları direkt yıldız çemberlerinin merkezine yapıştırdık:
+            const ringOffset = 0.985;
+            // ----------------------------------------
+
             const radiusX = Math.min(ringRadiusX * ringOffset, maxOrbitRadiusX);
             const radiusY = Math.min(ringRadiusX * orbitTiltScale * ringOffset, maxOrbitRadiusY);
+            
             const angle = ((baseAngle + this.rotation) * Math.PI) / 180;
             const unitX = Math.cos(angle);
             const unitY = Math.sin(angle);
