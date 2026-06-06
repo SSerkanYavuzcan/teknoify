@@ -1,6 +1,6 @@
 # Teknoify Demo Lab
 
-Standalone static-first mini-site for `https://demo.teknoify.com/`.
+Standalone static-first mini-site for `https://teknoify.com/demo/`.
 
 Teknoify Demo Lab is a polished demo platform where visitors can explore free automation demos, filter categories, select a demo in a sandbox, run simulated workflows, preview example outputs, and request a custom automation scenario.
 
