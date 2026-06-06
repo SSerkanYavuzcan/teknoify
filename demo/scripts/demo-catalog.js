@@ -102,8 +102,8 @@
               <tr>
                 <th scope="col" rowspan="2">Ürün Barkodu</th>
                 <th scope="col" rowspan="2">Ürün Adı</th>
-                <th scope="colgroup" colspan="2">${escapeHtml(selectedStore)}</th>
-                <th scope="colgroup" colspan="2">${escapeHtml(competitorStore)}</th>
+                <th class="retail-store-header retail-store-header--${escapeHtml(getStoreClassName(selectedStore))}" scope="colgroup" colspan="2">${escapeHtml(selectedStore)}</th>
+                <th class="retail-store-header retail-store-header--${escapeHtml(getStoreClassName(competitorStore))}" scope="colgroup" colspan="2">${escapeHtml(competitorStore)}</th>
                 <th scope="col" rowspan="2">Fiyat Farkı %</th>
                 <th scope="col" rowspan="2">Ürün Kategorisi</th>
               </tr>
