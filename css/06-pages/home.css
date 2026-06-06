@@ -567,11 +567,7 @@
     }
 
     .hero-right--terminal-only .hero-terminal.hero-terminal--primary {
-        min-height: 240px;
-    }
-
-    .hero-right--terminal-only .hero-terminal.hero-terminal--primary .term-body {
-        min-height: 190px;
+        height: 240px;
     }
 
     .services--ecosystem .services-orbit-visual {
