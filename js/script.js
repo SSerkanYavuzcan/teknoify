@@ -767,18 +767,14 @@ class ServicesOrbitSystem {
         const safePadding = isCompact ? 18 : isTablet ? 28 : 44;
         const dotRadius = isCompact ? 5 : 7;
         const maxLabelWidth = isCompact ? 104 : Math.min(184, Math.max(136, safeWidth * 0.13));
-        const minRadiusX = isCompact ? Math.max(72, safeWidth * 0.26) : 118;
-        const maxRadiusX = Math.max(
-            minRadiusX,
-            Math.min(
-                isCompact ? 168 : isTablet ? 250 : 330,
-                (safeWidth / 2 - safePadding - maxLabelWidth - dotRadius) * 0.9
-            )
-        );
-        const maxRadiusY = Math.max(
-            128,
-            Math.min(isCompact ? 178 : isTablet ? 245 : 285, safeHeight * (isCompact ? 0.3 : 0.31))
-        );
+        const orbitTiltScale = Math.cos((64 * Math.PI) / 180);
+        const ringRadii = {
+            outer: Math.min(safeWidth * 1.08, 1040) / 2,
+            middle: Math.min(safeWidth * 0.86, 830) / 2,
+            inner: Math.min(safeWidth * 0.62, 600) / 2
+        };
+        const maxOrbitRadiusX = safeWidth / 2 - safePadding - dotRadius;
+        const maxOrbitRadiusY = safeHeight / 2 - safePadding - dotRadius;
         const preferredHorizontalLength = isCompact ? 58 : isTablet ? 108 : 138;
         const minHorizontalLength = isCompact ? 34 : isTablet ? 54 : 72;
         const elbowBaseX = isCompact ? 12 : isTablet ? 18 : 22;
@@ -789,12 +785,16 @@ class ServicesOrbitSystem {
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
-            const radius = Number.parseFloat(node.dataset.radius || '46') / 50;
+            const radiusValue = Number.parseFloat(node.dataset.radius || '47');
+            const ringRadiusX = radiusValue >= 49 ? ringRadii.outer : radiusValue >= 47 ? ringRadii.middle : ringRadii.inner;
+            const ringOffset = 0.985 + (radiusValue - 47) * 0.006;
+            const radiusX = Math.min(ringRadiusX * ringOffset, maxOrbitRadiusX);
+            const radiusY = Math.min(ringRadiusX * orbitTiltScale * ringOffset, maxOrbitRadiusY);
             const angle = ((baseAngle + this.rotation) * Math.PI) / 180;
             const unitX = Math.cos(angle);
             const unitY = Math.sin(angle);
-            const x = unitX * maxRadiusX * radius;
-            const y = unitY * maxRadiusY * radius;
+            const x = unitX * radiusX;
+            const y = unitY * radiusY;
             const frontness = (unitY + 1) / 2;
             const scale = 0.88 + frontness * 0.1;
             const opacity = 0.76 + frontness * 0.24;
