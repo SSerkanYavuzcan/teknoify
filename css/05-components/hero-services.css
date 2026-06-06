@@ -605,11 +605,10 @@
   inset: 8% 4% 0;
   z-index: -1;
   background:
-    radial-gradient(circle at 50% 52%, rgba(99, 102, 241, 0.18), transparent 30%),
     radial-gradient(circle at 68% 28%, rgba(125, 211, 252, 0.075), transparent 24%),
     radial-gradient(circle at 26% 70%, rgba(168, 85, 247, 0.07), transparent 24%);
   filter: blur(10px);
-  opacity: 0.9;
+  opacity: 0.82;
   pointer-events: none;
 }
 
@@ -622,20 +621,33 @@
   isolation: isolate;
 }
 
-.services-orbit-visual::before {
+.services-orbit-visual::before,
+.services-orbit-visual::after {
   content: "";
   position: absolute;
   left: 50%;
   top: 50%;
-  z-index: 1;
-  width: min(100%, 1180px);
-  aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.16), transparent 62%);
   transform: translate(-50%, -50%);
-  filter: blur(28px);
-  opacity: 0.72;
   pointer-events: none;
+}
+
+.services-orbit-visual::before {
+  z-index: 1;
+  width: min(46%, 520px);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.18), rgba(99, 102, 241, 0.07) 38%, transparent 69%);
+  filter: blur(18px);
+  opacity: 0.66;
+}
+
+.services-orbit-visual::after {
+  z-index: 2;
+  width: min(25%, 285px);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), rgba(125, 211, 252, 0.09) 32%, transparent 68%);
+  filter: blur(12px);
+  opacity: 0.52;
 }
 
 .services-orbit-ring {

@@ -633,9 +633,9 @@ class ServicesOrbitSystem {
         const isCompact = window.innerWidth < 768;
         const densityScale = isCompact ? 0.72 : 1;
         const ringConfigs = [
-            { name: 'outer', count: Math.round(204 * densityScale), seed: 11, spread: 4.6 },
-            { name: 'middle', count: Math.round(156 * densityScale), seed: 29, spread: 4.0 },
-            { name: 'inner', count: Math.round(120 * densityScale), seed: 47, spread: 3.4 }
+            { name: 'outer', count: Math.round(612 * densityScale), seed: 11, spread: 4.6 },
+            { name: 'middle', count: Math.round(468 * densityScale), seed: 29, spread: 4.0 },
+            { name: 'inner', count: Math.round(360 * densityScale), seed: 47, spread: 3.4 }
         ];
 
         ringConfigs.forEach((config) => {
@@ -651,8 +651,8 @@ class ServicesOrbitSystem {
                 const x = 50 + Math.cos(angle) * radius;
                 const y = 50 + Math.sin(angle) * radius;
                 const isBright = this.seededRandom(config.seed + i * 23) > 0.92;
-                const size = 0.85 + this.seededRandom(config.seed + i * 17) * (isBright ? 1.75 : 1.15);
-                const alpha = (isBright ? 0.5 : 0.2) + this.seededRandom(config.seed + i * 19) * (isBright ? 0.34 : 0.36);
+                const size = 0.65 + this.seededRandom(config.seed + i * 17) * (isBright ? 1.35 : 0.85);
+                const alpha = (isBright ? 0.44 : 0.16) + this.seededRandom(config.seed + i * 19) * (isBright ? 0.3 : 0.3);
 
                 const particle = document.createElement('span');
                 particle.className = 'services-orbit-particle';
