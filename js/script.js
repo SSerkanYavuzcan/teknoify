@@ -752,7 +752,7 @@ class ServicesOrbitSystem {
         this.rafId = window.requestAnimationFrame(() => this.animate());
     }
 
-    updatePositions() {
+updatePositions() {
         if (!this.visual || !this.bounds.width || !this.bounds.height) return;
 
         this.visual.style.setProperty('--services-orbit-rotation', `${this.rotation}deg`);
@@ -762,9 +762,15 @@ class ServicesOrbitSystem {
         const isCompact = safeWidth < 600;
         const isTablet = safeWidth < 980;
         const safePadding = isCompact ? 18 : isTablet ? 28 : 44;
+        const dotRadius = isCompact ? 5 : 7;
         const maxLabelWidth = isCompact ? 104 : Math.min(184, Math.max(136, safeWidth * 0.13));
         
-        const orbitTiltScale = 0.38; 
+        // --- SANTİM SANTİM AYAR BÖLÜMÜ 1: Dikey Basıklık (Tilt) ---
+        // Bu değer yörüngenin ne kadar "flat" (basık) duracağını belirler. 
+        // 1.0 tam dörtten, 0.0 tam çizgi. Dizayn partikülleri için ideal değer: 0.33 (approx cos(71 deg))
+        // Eğer noktalar yukarı/aşağı taşıyorsa bu değeri DÜŞÜRÜN. Eğer içeride kalıyorsa YÜKSELTİN.
+        const orbitTiltScale = 0.33; 
+        // -------------------------------------------------------------
         
         const ringRadii = {
             outer: Math.min(safeWidth * 1.08, 1040) / 2,
@@ -782,15 +788,23 @@ class ServicesOrbitSystem {
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
-            const ringName = node.dataset.ring || 'middle';
             
+            const ringName = node.dataset.ring || 'middle';
             let ringRadiusX;
             if (ringName === 'outer') ringRadiusX = ringRadii.outer;
             else if (ringName === 'middle') ringRadiusX = ringRadii.middle;
             else ringRadiusX = ringRadii.inner;
 
-            const ringOffset = 0.99;
+            // --- SANTİM SANTİM AYAR BÖLÜMÜ 2: Radius Faktörü ---
+            // Noktaları partikül bandının tam merkezine (%49.5) veya biraz 
+            // içerisine (%48.5 = 0.98) çekmek için kullanılan santimlik santimlik santimlik ayar.
+            // Eğer noktalar yatayda (sağ/sol) taşıyorsa bu değeri DÜŞÜRÜN.
+            const ringOffset = 0.985;
+            // -----------------------------------------------------------
 
+            // --- KÖKLÜ DÜZELTME: Görünmez Duvarı (Clamp) Santim Santim Yıktık ---
+            // Orijinal kodda dörtten radiusunu (radiusX) sınırlayan ve noktaları sıkıştıran Math.min sınırlamasını (clamp) sildik.
+            // Artık noktalar jilet gibi eliptik yörüngeyi santim santim takip edecek.
             const radiusX = ringRadiusX * ringOffset;
             const radiusY = ringRadiusX * orbitTiltScale * ringOffset;
             
