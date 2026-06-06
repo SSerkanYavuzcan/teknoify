@@ -128,20 +128,19 @@
 .service-card::after {
     content: "";
     position: absolute;
-    inset: -1px; /* 2px'den 1px'e düşürdük, daha ince bir çerçeve oldu */
+    inset: -1px; 
     border-radius: 13px; 
     pointer-events: none; 
     z-index: 2; 
     
     background: 
-        /* 45px olan vurgu alanını 25px'e düşürdük, renk daha az yayılecek */
         radial-gradient(circle at top left, var(--primary) 0%, transparent 25px),
         radial-gradient(circle at top right, var(--primary) 0%, transparent 25px),
         radial-gradient(circle at bottom left, var(--primary) 0%, transparent 25px),
         radial-gradient(circle at bottom right, var(--primary) 0%, transparent 25px),
-        #1a1a24; /* Çerçevenin kenarlarındaki renk, siyah yerine biraz daha belirgin koyu gri */
+        #1a1a24; 
         
-    padding: 1px; /* Sadece 1px kalınlığında çizilecek */
+    padding: 1px; 
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -152,13 +151,12 @@
    İKON KUTUSU - DÖNEN IŞIK EFEKTİ
    ========================================= */
 
-/* HTML'de ikonunu bu sınıf ile sarmaladığından emin ol */
 .service-icon-box {
     position: relative;
-    width: 54px; /* Kutu genişliği */
-    height: 54px; /* Kutu yüksekliği */
+    width: 54px; 
+    height: 54px; 
     border-radius: 12px;
-    background-color: #12121a; /* İkon arkasındaki koyu renk */
+    background-color: #12121a; 
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -170,14 +168,12 @@
 .service-icon-box::before {
     content: "";
     position: absolute;
-    inset: -1.5px; /* Işığın kalınlığı */
-    border-radius: 13.5px; /* Kutuyla uyumlu köşe ovalliği */
-    /* Işığın kuyruk efekti: Transparan başlayıp sona doğru mor renge ulaşıyor */
+    inset: -1.5px; 
+    border-radius: 13.5px; 
     background: conic-gradient(from 0deg, transparent 60%, var(--primary) 100%);
-    animation: spinLight 2s linear infinite; /* 2 saniyede bir tam tur */
+    animation: spinLight 2s linear infinite; 
     padding: 1.5px;
     
-    /* İçini boşaltıp sadece çerçevede dönmesini sağlayan maske */
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -190,15 +186,13 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Kutu içindeki İkonun (font-awesome, svg vb.) Stili */
 .service-icon-box i, 
 .service-icon-box svg {
-    color: var(--primary); /* İkon rengi */
+    color: var(--primary); 
     font-size: 1.5rem;
     z-index: 10;
 }
 
-/* Diğer Metin Stilleri */
 .service-card h3 {
     margin-top: 5px;
     margin-bottom: 10px;
@@ -211,12 +205,10 @@
     margin-bottom: 20px;
 }
 
-/* Homepage services now uses the orbit ecosystem instead of the legacy card grid. */
 .services--ecosystem .services-grid {
     display: none;
 }
 
-/* Keep the shared homepage grid visible through the gap before the footer. */
 .home-page-shell {
     padding-bottom: clamp(3rem, 7vw, 5rem);
 }
@@ -225,20 +217,26 @@
     margin-top: 0;
 }
 
-/* Orbit annotation redesign: replaces floating chips with editorial system labels. */
+
+/* =========================================
+   YÖRÜNGE (ORBIT) EKOSİSTEMİ
+   ========================================= */
+
 .services--ecosystem .services-orbit-visual {
     width: min(100%, clamp(720px, 78vw, 1080px));
     min-height: clamp(560px, min(58vw, 78vh), 760px);
 }
 
 .services--ecosystem .services-orbit-node {
-    --services-node-horizontal-length: 300px;
-    --services-node-elbow-x: 34px;
-    --services-node-elbow-y: -18px;
-    --services-node-elbow-length: 38.47px;
-    --services-node-elbow-angle: -27.9deg;
-    --services-node-label-x: 370px;
-    --services-node-label-y: -76px;
+    /* Düzeltilmiş Oranlar */
+    --services-node-horizontal-length: 150px;
+    --services-node-elbow-x: 20px;
+    --services-node-elbow-y: -14px;
+    --services-node-elbow-length: 26px;
+    --services-node-elbow-angle: -30deg;
+    --services-node-label-x: 180px;
+    --services-node-label-y: -45px;
+    
     --services-node-line-gradient: linear-gradient(
         90deg,
         rgba(216, 180, 254, 0.76),
@@ -252,8 +250,9 @@
         rgba(216, 180, 254, 0.76) 100%
     );
 
-    width: 620px;
-    height: 190px;
+    /* Daha küçük ve dengeli kapsayıcı */
+    width: 360px;
+    height: 120px;
 }
 
 .services--ecosystem .services-orbit-node::before {
@@ -375,9 +374,10 @@
     white-space: nowrap;
 }
 
+/* SOLA HİZALI İÇERİKLER İÇİN DÜZELTME (- VAR) */
 .services--ecosystem .services-orbit-node.is-left .services-orbit-node__label {
     text-align: right;
-    transform: translate3d(calc(-100% + var(--services-node-label-x)), calc(-50% + var(--services-node-label-y)), 0);
+    transform: translate3d(calc(-100% - var(--services-node-label-x)), calc(-50% + var(--services-node-label-y)), 0);
 }
 
 
@@ -426,17 +426,22 @@
         0 0 34px rgba(37, 99, 235, 0.2);
 }
 
+/* =========================================
+   MEDYA SORGULARI (Responsive)
+   ========================================= */
+
 @media (max-width: 980px) {
     .services--ecosystem .services-orbit-visual {
         min-height: clamp(600px, min(84vw, 76vh), 760px);
     }
 
+    /* Masaüstü boyutları düştüğü için 980px'i ona oranla uyarladık */
     .services--ecosystem .services-orbit-node {
-        --services-node-horizontal-length: 170px;
-        --services-node-elbow-x: 24px;
+        --services-node-horizontal-length: 120px;
+        --services-node-elbow-x: 18px;
 
-        width: 470px;
-        height: 164px;
+        width: 300px;
+        height: 120px;
     }
 
     .services--ecosystem .services-orbit-node__label {
