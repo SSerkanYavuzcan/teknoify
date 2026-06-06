@@ -18,8 +18,22 @@
         });
     }
 
+    function bindMobileMenu() {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('#navMenu');
+        if (!hamburger || !navMenu) {
+            return;
+        }
+
+        hamburger.addEventListener('click', () => {
+            const isOpen = navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active', isOpen);
+            hamburger.setAttribute('aria-expanded', String(isOpen));
+        });
+    }
+
     function bootstrap() {
-        const demos = window.TEKNOIFY_DEMOS || [];
+        const demos = Array.isArray(window.TEKNOIFY_DEMOS) ? window.TEKNOIFY_DEMOS : [];
 
         if (window.TeknoifySandboxSimulator) {
             window.TeknoifySandboxSimulator.init(demos);
@@ -30,6 +44,7 @@
         }
 
         bindSmoothScroll();
+        bindMobileMenu();
     }
 
     if (document.readyState === 'loading') {
