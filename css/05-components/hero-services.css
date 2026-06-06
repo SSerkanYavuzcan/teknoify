@@ -592,7 +592,7 @@
   position: relative;
   display: flex;
   justify-content: center;
-  width: min(100%, clamp(760px, 82vw, 1180px));
+  width: min(100%, clamp(680px, 78vw, 1080px));
   margin: 0 auto;
   padding: clamp(0.5rem, 2vw, 1rem) 0 clamp(0.75rem, 2vw, 1.25rem);
   overflow: visible;
@@ -613,9 +613,11 @@
 
 .services-orbit-visual {
   --services-orbit-rotation: 0deg;
+  --services-annotation-line-length: clamp(84px, 9vw, 154px);
+  --services-annotation-angle-length: clamp(14px, 2vw, 26px);
   position: relative;
-  width: min(100%, clamp(720px, 78vw, 1080px));
-  min-height: clamp(560px, min(58vw, 78vh), 760px);
+  width: min(100%, clamp(640px, 72vw, 960px));
+  min-height: clamp(500px, min(52vw, 74vh), 680px);
   overflow: visible;
   isolation: isolate;
 }
@@ -661,20 +663,20 @@
 }
 
 .services-orbit-ring--outer {
-  width: min(126%, 1320px);
-  height: min(126%, 1320px);
+  width: min(108%, 1040px);
+  height: min(108%, 1040px);
   opacity: 0.78;
 }
 
 .services-orbit-ring--middle {
-  width: min(99%, 1040px);
-  height: min(99%, 1040px);
+  width: min(86%, 830px);
+  height: min(86%, 830px);
   opacity: 0.7;
 }
 
 .services-orbit-ring--inner {
-  width: min(72%, 760px);
-  height: min(72%, 760px);
+  width: min(62%, 600px);
+  height: min(62%, 600px);
   opacity: 0.62;
 }
 
@@ -704,7 +706,9 @@
   --services-node-y: 0px;
   --services-node-scale: 1;
   --services-node-line-angle: 0deg;
-  --services-node-line-length: 72px;
+  --services-node-horizontal-length: var(--services-annotation-line-length);
+  --services-node-elbow-length: var(--services-annotation-angle-length);
+  --services-node-elbow-angle: 0deg;
   --services-node-label-x: 106px;
   --services-node-label-y: 0px;
 
@@ -712,8 +716,8 @@
   left: 50%;
   top: 50%;
   display: block;
-  width: 280px;
-  height: 112px;
+  width: clamp(210px, 22vw, 260px);
+  height: clamp(90px, 10vw, 108px);
   color: #fff;
   text-decoration: none;
   pointer-events: auto;
@@ -727,17 +731,51 @@
 }
 
 .services-orbit-node::before {
-  content: "";
+  content: none;
+}
+
+.services-orbit-node__connector,
+.services-orbit-node__connector-line,
+.services-orbit-node__connector-elbow {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--services-node-line-length);
-  height: 1px;
-  background: linear-gradient(90deg, rgba(168, 85, 247, 0.52), rgba(125, 211, 252, 0.2), transparent);
-  opacity: 0.46;
-  transform: translateY(-50%) rotate(var(--services-node-line-angle));
-  transform-origin: 0 50%;
   pointer-events: none;
+}
+
+.services-orbit-node__connector {
+  opacity: 0.46;
+}
+
+.services-orbit-node__connector-line,
+.services-orbit-node__connector-elbow {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(168, 85, 247, 0.52), rgba(125, 211, 252, 0.22), transparent);
+  transform: translateY(-50%);
+  transform-origin: 0 50%;
+}
+
+.services-orbit-node__connector-line {
+  width: var(--services-node-horizontal-length);
+}
+
+.services-orbit-node__connector-elbow {
+  width: var(--services-node-elbow-length);
+  transform: translate(var(--services-node-horizontal-length), -50%) rotate(var(--services-node-elbow-angle));
+}
+
+.services-orbit-node.is-left .services-orbit-node__connector-line,
+.services-orbit-node.is-left .services-orbit-node__connector-elbow {
+  background: linear-gradient(270deg, rgba(168, 85, 247, 0.52), rgba(125, 211, 252, 0.22), transparent);
+  transform-origin: 100% 50%;
+}
+
+.services-orbit-node.is-left .services-orbit-node__connector-line {
+  transform: translate(calc(-1 * var(--services-node-horizontal-length)), -50%);
+}
+
+.services-orbit-node.is-left .services-orbit-node__connector-elbow {
+  transform: translate(calc(-1 * (var(--services-node-horizontal-length) + var(--services-node-elbow-length))), -50%) rotate(var(--services-node-elbow-angle));
 }
 
 .services-orbit-node__dot {
@@ -775,7 +813,7 @@
   display: grid;
   gap: 0.16rem;
   width: max-content;
-  max-width: 154px;
+  max-width: clamp(136px, 13vw, 184px);
   padding: 0.12rem 0;
   color: rgba(255, 255, 255, 0.92);
   text-align: left;
@@ -803,7 +841,8 @@
   font-weight: 500;
   letter-spacing: 0.01em;
   line-height: 1.25;
-  white-space: nowrap;
+  white-space: normal;
+  text-wrap: balance;
 }
 
 .services-orbit-node.is-left .services-orbit-node__label {
@@ -816,11 +855,28 @@
   filter: brightness(1.12);
 }
 
-.services-orbit-node:hover::before,
-.services-orbit-node:focus-visible::before,
-.services-orbit-node.is-active::before {
+.services-orbit-node:hover .services-orbit-node__connector,
+.services-orbit-node:focus-visible .services-orbit-node__connector,
+.services-orbit-node.is-active .services-orbit-node__connector {
   opacity: 0.72;
+}
+
+.services-orbit-node:hover .services-orbit-node__connector-line,
+.services-orbit-node:hover .services-orbit-node__connector-elbow,
+.services-orbit-node:focus-visible .services-orbit-node__connector-line,
+.services-orbit-node:focus-visible .services-orbit-node__connector-elbow,
+.services-orbit-node.is-active .services-orbit-node__connector-line,
+.services-orbit-node.is-active .services-orbit-node__connector-elbow {
   background: linear-gradient(90deg, rgba(216, 180, 254, 0.68), rgba(125, 211, 252, 0.3), transparent);
+}
+
+.services-orbit-node.is-left:hover .services-orbit-node__connector-line,
+.services-orbit-node.is-left:hover .services-orbit-node__connector-elbow,
+.services-orbit-node.is-left:focus-visible .services-orbit-node__connector-line,
+.services-orbit-node.is-left:focus-visible .services-orbit-node__connector-elbow,
+.services-orbit-node.is-left.is-active .services-orbit-node__connector-line,
+.services-orbit-node.is-left.is-active .services-orbit-node__connector-elbow {
+  background: linear-gradient(270deg, rgba(216, 180, 254, 0.68), rgba(125, 211, 252, 0.3), transparent);
 }
 
 .services-orbit-node:hover .services-orbit-node__dot,
@@ -839,22 +895,22 @@
 
 @media (max-width: 980px) {
   .services-orbit-visual {
-    min-height: clamp(600px, min(84vw, 76vh), 760px);
+    min-height: clamp(560px, min(78vw, 76vh), 700px);
   }
 
   .services-orbit-ring--outer {
-    width: min(126%, 1040px);
-    height: min(126%, 1040px);
+    width: min(100%, 760px);
+    height: min(100%, 760px);
   }
 
   .services-orbit-ring--middle {
-    width: min(99%, 820px);
-    height: min(99%, 820px);
+    width: min(80%, 610px);
+    height: min(80%, 610px);
   }
 
   .services-orbit-ring--inner {
-    width: min(72%, 600px);
-    height: min(72%, 600px);
+    width: min(58%, 440px);
+    height: min(58%, 440px);
   }
 }
 
@@ -873,18 +929,18 @@
   }
 
   .services-orbit-ring--outer {
-    width: min(126%, 540px);
-    height: min(126%, 540px);
+    width: min(100%, 430px);
+    height: min(100%, 430px);
   }
 
   .services-orbit-ring--middle {
-    width: min(99%, 420px);
-    height: min(99%, 420px);
+    width: min(80%, 344px);
+    height: min(80%, 344px);
   }
 
   .services-orbit-ring--inner {
-    width: min(72%, 310px);
-    height: min(72%, 310px);
+    width: min(58%, 250px);
+    height: min(58%, 250px);
   }
 
   .services-orbit-node {

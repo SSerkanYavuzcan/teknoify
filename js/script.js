@@ -760,15 +760,32 @@ class ServicesOrbitSystem {
 
         this.visual.style.setProperty('--services-orbit-rotation', `${this.rotation}deg`);
 
-        const isCompact = this.bounds.width < 600;
-        const isTablet = this.bounds.width < 980;
-        const maxRadiusX = isCompact ? Math.min(this.bounds.width * 0.39, 190) : Math.min(this.bounds.width * 0.47, 540);
-        const maxRadiusY = isCompact ? Math.min(this.bounds.height * 0.32, 190) : Math.min(this.bounds.height * 0.32, 300);
-        const horizontalLength = isCompact ? 72 : isTablet ? 170 : 240;
-        const elbowX = isCompact ? 16 : isTablet ? 24 : 30;
-        const elbowBaseY = isCompact ? 10 : isTablet ? 15 : 16;
-        const labelGap = isCompact ? 12 : isTablet ? 16 : 18;
-        const labelOffsetY = isCompact ? 38 : isTablet ? 50 : 58;
+        const safeWidth = this.bounds.width;
+        const safeHeight = this.bounds.height;
+        const isCompact = safeWidth < 600;
+        const isTablet = safeWidth < 980;
+        const safePadding = isCompact ? 18 : isTablet ? 28 : 44;
+        const dotRadius = isCompact ? 5 : 7;
+        const maxLabelWidth = isCompact ? 104 : Math.min(184, Math.max(136, safeWidth * 0.13));
+        const minRadiusX = isCompact ? Math.max(72, safeWidth * 0.26) : 118;
+        const maxRadiusX = Math.max(
+            minRadiusX,
+            Math.min(
+                isCompact ? 168 : isTablet ? 250 : 330,
+                (safeWidth / 2 - safePadding - maxLabelWidth - dotRadius) * 0.9
+            )
+        );
+        const maxRadiusY = Math.max(
+            128,
+            Math.min(isCompact ? 178 : isTablet ? 245 : 285, safeHeight * (isCompact ? 0.3 : 0.31))
+        );
+        const preferredHorizontalLength = isCompact ? 58 : isTablet ? 108 : 138;
+        const minHorizontalLength = isCompact ? 34 : isTablet ? 54 : 72;
+        const elbowBaseX = isCompact ? 12 : isTablet ? 18 : 22;
+        const elbowBaseY = isCompact ? 8 : isTablet ? 12 : 14;
+        const labelGap = isCompact ? 9 : isTablet ? 12 : 14;
+        const labelOffsetY = isCompact ? 30 : isTablet ? 42 : 48;
+        const centerX = safeWidth / 2;
 
         this.nodes.forEach((node) => {
             const baseAngle = Number.parseFloat(node.dataset.angle || '0');
@@ -779,19 +796,33 @@ class ServicesOrbitSystem {
             const x = unitX * maxRadiusX * radius;
             const y = unitY * maxRadiusY * radius;
             const frontness = (unitY + 1) / 2;
-            const scale = 0.9 + frontness * 0.12;
+            const scale = 0.88 + frontness * 0.1;
             const opacity = 0.76 + frontness * 0.24;
             const side = unitX < 0 ? -1 : 1;
+            const elbowX = elbowBaseX;
             const elbowY = (unitY < 0 ? 1 : -1) * elbowBaseY;
             const elbowLength = Math.hypot(elbowX, elbowY);
             const elbowAngle = (Math.atan2(elbowY, side * elbowX) * 180) / Math.PI;
-            const labelX = side * (horizontalLength + elbowX + labelGap);
+            const label = node.querySelector('.services-orbit-node__label');
+            const measuredLabelWidth = label ? Math.min(label.scrollWidth || maxLabelWidth, maxLabelWidth) : maxLabelWidth;
+            const dotX = centerX + x;
+            const availableForLabel = side > 0
+                ? safeWidth - safePadding - dotX - measuredLabelWidth / 2 - elbowX - labelGap
+                : dotX - safePadding - measuredLabelWidth / 2 - elbowX - labelGap;
+            const horizontalLength = Math.max(
+                minHorizontalLength,
+                Math.min(preferredHorizontalLength, availableForLabel)
+            );
+            const unclampedLabelX = side * (horizontalLength + elbowX + labelGap);
+            const labelMinX = safePadding + measuredLabelWidth / 2 - dotX;
+            const labelMaxX = safeWidth - safePadding - measuredLabelWidth / 2 - dotX;
+            const labelX = Math.min(labelMaxX, Math.max(labelMinX, unclampedLabelX));
             const labelY = elbowY + (unitY < 0 ? -labelOffsetY : labelOffsetY);
 
             node.style.setProperty('--services-node-x', `${x.toFixed(2)}px`);
             node.style.setProperty('--services-node-y', `${y.toFixed(2)}px`);
             node.style.setProperty('--services-node-scale', scale.toFixed(3));
-            node.style.setProperty('--services-node-horizontal-length', `${horizontalLength}px`);
+            node.style.setProperty('--services-node-horizontal-length', `${horizontalLength.toFixed(2)}px`);
             node.style.setProperty('--services-node-elbow-x', `${elbowX}px`);
             node.style.setProperty('--services-node-elbow-y', `${elbowY.toFixed(2)}px`);
             node.style.setProperty('--services-node-elbow-length', `${elbowLength.toFixed(2)}px`);
