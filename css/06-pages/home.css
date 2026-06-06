@@ -221,6 +221,6 @@
     padding-bottom: clamp(3rem, 7vw, 5rem);
 }
 
-.home-page-shell + .footer {
+.home-page-shell ~ .footer {
     margin-top: 0;
 }
