@@ -530,22 +530,13 @@
         0 0 34px rgba(37, 99, 235, 0.2);
 }
 
-
-/* =========================================
-   MEDYA SORGULARI (Responsive)
-   ========================================= */
-
 @media (max-width: 980px) {
     .hero-right--terminal-only {
         min-height: 390px;
     }
 
     .hero-right--terminal-only .hero-terminal.hero-terminal--primary {
-        min-height: 310px;
-    }
-
-    .hero-right--terminal-only .hero-terminal.hero-terminal--primary .term-body {
-        min-height: 250px;
+        height: 310px;
     }
 
     .services--ecosystem .services-orbit-visual {
