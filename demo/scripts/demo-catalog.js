@@ -8,11 +8,30 @@
         { key: 'Integrations', label: 'Entegrasyonlar' }
     ];
 
+    const LIVE_LOG_MESSAGES = [
+        'Migros sitesine giriş yapılıyor...',
+        'Kategori ve ürün bilgileri alınıyor...',
+        'Demo amacıyla ilk 100 ürün bilgisi toplandı.',
+        'CarrefourSA sitesine giriş yapılıyor...',
+        'Kategori ve ürün bilgileri alınıyor...',
+        'Demo amacıyla ilk 100 ürün bilgisi toplandı.',
+        'Ürün eşleştirmeleri gerçekleşiyor...',
+        'Ürün eşleşmeleri tamamlandı. 95 benzer ürün tespit edildi.',
+        'Data analizi gerçekleştiriliyor...',
+        'Analiz tamamlandı.',
+        'Teknoify Demo alanına verileri aktarılıyor...',
+        'Veri aktarımı başarılı.'
+    ];
+
+    const LIVE_LOG_INTERVAL_MS = 2500;
+
     const state = {
         demos: [],
         activeCategory: 'Web Scraping',
         selectedStore: '',
-        competitorStore: ''
+        competitorStore: '',
+        liveLogVisibleCount: 0,
+        liveLogTimer: null
     };
 
     function getCategoryLabel(categoryKey) {
@@ -375,20 +394,7 @@
                 description:
                     'Rakip fiyatlarını karşılaştırın, mağaza eşleşmelerini değiştirin ve canlı perakende scraping çıktılarını demo alanından inceleyin.',
                 pills: ['Canlı Demo', 'Web Scraping', 'Perakende Verisi'],
-                code: [
-                    'Migros sitesine giriş yapılıyor...',
-                    'Kategori ve ürün bilgileri alınıyor...',
-                    'Demo amacıyla ilk 100 ürün bilgisi toplandı.',
-                    'CarrefourSA sitesine giriş yapılıyor...',
-                    'Kategori ve ürün bilgileri alınıyor...',
-                    'Demo amacıyla ilk 100 ürün bilgisi toplandı.',
-                    'Ürün eşleştirmeleri gerçekleşiyor...',
-                    'Ürün eşleşmeleri tamamlandı. 95 benzer ürün tespit edildi.',
-                    'Data analizi gerçekleştiriliyor...',
-                    'Analiz tamamlandı.',
-                    'Teknoify Demo alanına verileri aktarılıyor...',
-                    'Veri aktarımı başarılı.'
-                ],
+                code: LIVE_LOG_MESSAGES,
                 icon: 'fa-spider',
                 status: 'AKTİF',
                 isLive: true
@@ -412,20 +418,107 @@
         };
     }
 
+    function getVisibleLogLines(config) {
+        if (!config.isLive) {
+            return config.code;
+        }
+
+        return config.code.slice(0, state.liveLogVisibleCount);
+    }
+
+    function renderLogLine(line, index, totalCount) {
+        const isSuccess = index === totalCount - 1 && line === 'Veri aktarımı başarılı.';
+
+        return `<span class="demo-log-line${isSuccess ? ' demo-log-line--success' : ''}">${escapeHtml(line)}</span>`;
+    }
+
     function renderCodePreview(config) {
+        const visibleLines = getVisibleLogLines(config);
+        const isRunning = config.isLive && state.liveLogVisibleCount < config.code.length;
+
         return `
-          <div class="demo-code-preview" aria-label="Seçili demo durum ön izlemesi">
+          <div class="demo-code-preview${config.isLive ? ' demo-code-preview--live' : ''}" aria-label="Seçili demo durum ön izlemesi">
             <div class="demo-code-preview__header">
               <span>${config.isLive ? 'Canlı Log' : 'Modül Durumu'}</span>
-              <strong>${escapeHtml(config.status)}</strong>
+              <strong class="${isRunning ? 'is-running' : ''}">${escapeHtml(config.status)}</strong>
             </div>
-            <pre><code>${config.code
-                .map(
-                    (line, index) =>
-                        `<span class="demo-log-line${config.isLive && index === config.code.length - 1 ? ' demo-log-line--success' : ''}">${escapeHtml(line)}</span>`
-                )
+            <pre data-live-log-feed role="log" aria-live="polite" aria-relevant="additions"><code>${visibleLines
+                .map((line, index) => renderLogLine(line, index, config.code.length))
                 .join('')}</code></pre>
           </div>`;
+    }
+
+    function stopLiveLog() {
+        if (state.liveLogTimer) {
+            window.clearInterval(state.liveLogTimer);
+            state.liveLogTimer = null;
+        }
+    }
+
+    function scrollLiveLogToBottom(container) {
+        if (!container) {
+            return;
+        }
+
+        container.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+        });
+    }
+
+    function appendNextLiveLogLine() {
+        if (state.activeCategory !== 'Web Scraping') {
+            stopLiveLog();
+            return;
+        }
+
+        if (state.liveLogVisibleCount >= LIVE_LOG_MESSAGES.length) {
+            stopLiveLog();
+            return;
+        }
+
+        state.liveLogVisibleCount += 1;
+
+        const feed = document.querySelector('[data-live-log-feed]');
+        const code = feed ? feed.querySelector('code') : null;
+
+        if (!feed || !code) {
+            return;
+        }
+
+        const lineIndex = state.liveLogVisibleCount - 1;
+        code.insertAdjacentHTML('beforeend', renderLogLine(LIVE_LOG_MESSAGES[lineIndex], lineIndex, LIVE_LOG_MESSAGES.length));
+        scrollLiveLogToBottom(feed);
+
+        if (state.liveLogVisibleCount >= LIVE_LOG_MESSAGES.length) {
+            stopLiveLog();
+            const status = document.querySelector('.demo-code-preview--live .demo-code-preview__header strong');
+            if (status) {
+                status.classList.remove('is-running');
+            }
+        }
+    }
+
+    function startLiveLog() {
+        if (state.activeCategory !== 'Web Scraping') {
+            stopLiveLog();
+            return;
+        }
+
+        const feed = document.querySelector('[data-live-log-feed]');
+        scrollLiveLogToBottom(feed);
+
+        if (state.liveLogVisibleCount >= LIVE_LOG_MESSAGES.length || state.liveLogTimer) {
+            return;
+        }
+
+        if (state.liveLogVisibleCount === 0) {
+            appendNextLiveLogLine();
+        }
+
+        if (state.liveLogVisibleCount < LIVE_LOG_MESSAGES.length) {
+            state.liveLogTimer = window.setInterval(appendNextLiveLogLine, LIVE_LOG_INTERVAL_MS);
+        }
     }
 
     function renderWorkspaceIntro(config) {
@@ -520,6 +613,12 @@
           </article>`;
 
         bindWorkspaceEvents(panel);
+
+        if (config.isLive) {
+            startLiveLog();
+        } else {
+            stopLiveLog();
+        }
     }
 
     function renderPreview() {
