@@ -116,10 +116,6 @@
     .demo-control-body {
         grid-template-columns: 1fr;
     }
-
-    .demo-code-preview {
-        min-height: 260px;
-    }
 }
 
 @media (max-width: 640px) {
@@ -153,10 +149,6 @@
 
     .demo-module-card {
         grid-template-columns: 1fr;
-    }
-
-    .demo-code-preview pre {
-        min-height: 190px;
     }
 }
 
