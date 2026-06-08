@@ -111,3 +111,51 @@
         width: 100%;
     }
 }
+
+@media (max-width: 980px) {
+    .demo-control-body {
+        grid-template-columns: 1fr;
+    }
+
+    .demo-code-preview {
+        min-height: 260px;
+    }
+}
+
+@media (max-width: 640px) {
+    .demo-control-section {
+        padding-top: 6.5rem;
+    }
+
+    .demo-control-chrome {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        gap: 0.8rem;
+    }
+
+    .demo-window-dots {
+        padding-left: 0.1rem;
+    }
+
+    .demo-control-tabs {
+        margin-right: -0.9rem;
+        padding-bottom: 0.16rem;
+    }
+
+    .demo-control-tab {
+        padding: 0.58rem 0.78rem;
+        font-size: 0.84rem;
+    }
+
+    .demo-control-body {
+        padding: 1rem;
+    }
+
+    .demo-module-card {
+        grid-template-columns: 1fr;
+    }
+
+    .demo-code-preview pre {
+        min-height: 190px;
+    }
+}
