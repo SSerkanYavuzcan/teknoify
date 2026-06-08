@@ -727,3 +727,127 @@
     font-size: clamp(0.84rem, 1.5vw, 0.98rem);
     line-height: 1.9;
 }
+
+.demo-control-panel {
+    max-width: 100%;
+    background:
+        radial-gradient(circle at 18% 0%, rgba(99, 102, 241, 0.12), transparent 34%),
+        linear-gradient(145deg, rgba(12, 14, 22, 0.94), rgba(4, 6, 12, 0.96));
+    box-shadow:
+        0 34px 100px rgba(0, 0, 0, 0.48),
+        0 0 0 1px rgba(255, 255, 255, 0.025) inset,
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.demo-control-body {
+    display: block;
+    padding: clamp(1rem, 2.4vw, 1.6rem);
+}
+
+.demo-workspace-live,
+.demo-placeholder-panel {
+    position: relative;
+    z-index: 1;
+}
+
+.demo-workspace-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+    gap: clamp(1rem, 2.4vw, 1.4rem);
+    align-items: stretch;
+    margin-bottom: clamp(1rem, 2.5vw, 1.4rem);
+}
+
+.demo-workspace-intro .demo-control-copy,
+.demo-placeholder-panel {
+    padding: clamp(1rem, 2.5vw, 1.4rem);
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.demo-control-copy h3,
+.demo-placeholder-panel h3 {
+    max-width: 780px;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.6rem, 3vw, 2.65rem);
+    line-height: 1.04;
+    letter-spacing: -0.045em;
+}
+
+.demo-preview-area {
+    margin-top: 0;
+}
+
+.demo-preview-card {
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 92% 0%, rgba(14, 165, 233, 0.1), transparent 32%),
+        rgba(8, 10, 16, 0.72);
+    border-color: rgba(255, 255, 255, 0.09);
+}
+
+.demo-placeholder-panel {
+    display: grid;
+    min-height: 480px;
+    align-content: center;
+    justify-items: center;
+    overflow: hidden;
+    text-align: center;
+}
+
+.demo-placeholder-panel::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.026) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 38px 38px;
+    mask-image: radial-gradient(
+        circle at 50% 44%,
+        #000 0%,
+        rgba(0, 0, 0, 0.62) 46%,
+        transparent 78%
+    );
+}
+
+.demo-placeholder-icon {
+    display: grid;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 1rem;
+    place-items: center;
+    color: #fff;
+    background: rgba(99, 102, 241, 0.16);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 22px;
+    box-shadow: 0 18px 52px rgba(99, 102, 241, 0.16);
+}
+
+.demo-placeholder-panel p {
+    max-width: 620px;
+    margin: 0.9rem 0 0;
+    color: var(--text-muted);
+    font-size: 1.02rem;
+    line-height: 1.65;
+}
+
+.demo-placeholder-panel .demo-status-pills {
+    justify-content: center;
+    margin: 1.2rem 0;
+}
+
+.demo-placeholder-panel .demo-code-preview {
+    width: min(620px, 100%);
+    min-height: auto;
+    margin-top: 0.5rem;
+    text-align: left;
+}
+
+.demo-placeholder-panel .demo-code-preview pre {
+    min-height: 132px;
+}

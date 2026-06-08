@@ -1,6 +1,6 @@
 (function () {
     const DEMO_CATEGORIES = [
-        'All Demos',
+        'Demo Projects',
         'Web Scraping',
         'Automation',
         'AI Tools',
@@ -353,19 +353,22 @@
         });
     }
 
+    function getModuleSlug(category) {
+        return String(category)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
     function getActivePanelConfig() {
         const isWebScraping = state.activeCategory === 'Web Scraping';
-        const isAllDemos = state.activeCategory === 'All Demos';
 
-        if (isWebScraping || isAllDemos) {
+        if (isWebScraping) {
             return {
-                eyebrow: isAllDemos ? 'Demo Control Center' : 'Live Module',
-                title: 'Manage and explore Teknoify demos from one place.',
+                eyebrow: 'Live Module',
+                title: 'Web Scraping Fiyat Karşılaştırma',
                 description:
-                    'Switch between demo modules from this developer-console style workspace and preview the Teknoify automation stack as each module goes live.',
-                moduleTitle: 'Web Scraping Fiyat Karşılaştırma',
-                moduleDescription:
-                    'Compare competitor prices and preview live retail scraping outputs.',
+                    'Compare competitor prices, switch store pairs, and export live retail scraping outputs from the workspace.',
                 pills: ['Live Demo', 'Web Scraping', 'Retail Data'],
                 code: [
                     'demo.module = "web-scraping"',
@@ -373,30 +376,93 @@
                     'source = "retail-price-comparison"'
                 ],
                 icon: 'fa-spider',
+                status: 'online',
                 isLive: true
             };
         }
 
         return {
-            eyebrow: 'Module Queue',
-            title: 'Manage and explore Teknoify demos from one place.',
+            eyebrow: 'Coming Soon',
+            title: `${state.activeCategory} demos are being prepared`,
             description:
-                'Switch between demo modules from this developer-console style workspace and preview the Teknoify automation stack as each module goes live.',
-            moduleTitle: `${state.activeCategory} demo module is being prepared`,
-            moduleDescription:
-                'This demo category is queued for launch. The control panel is already structured for future modules, datasets, and live previews.',
+                'This workspace is ready for upcoming Teknoify demo modules, datasets, automation flows, and live previews.',
             pills: ['Coming Soon', state.activeCategory, 'Roadmap'],
             code: [
-                `demo.module = "${state.activeCategory
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]+/g, '-')
-                    .replace(/^-|-$/g, '')}"`,
+                `demo.module = "${getModuleSlug(state.activeCategory)}"`,
                 'status = "preparing"',
                 'source = "teknoify-demo-roadmap"'
             ],
             icon: 'fa-layer-group',
+            status: 'queued',
             isLive: false
         };
+    }
+
+    function renderCodePreview(config) {
+        return `
+          <div class="demo-code-preview" aria-label="Selected demo configuration preview">
+            <div class="demo-code-preview__header">
+              <span>${config.isLive ? 'live.config' : 'module.config'}</span>
+              <strong>${escapeHtml(config.status)}</strong>
+            </div>
+            <pre><code>${config.code.map(escapeHtml).join('\n')}</code></pre>
+          </div>`;
+    }
+
+    function renderWorkspaceIntro(config) {
+        return `
+          <div class="demo-workspace-intro">
+            <div class="demo-control-copy">
+              <span class="demo-kicker">${escapeHtml(config.eyebrow)}</span>
+              <h3>${escapeHtml(config.title)}</h3>
+              <p>${escapeHtml(config.description)}</p>
+              <div class="demo-status-pills" aria-label="Demo metadata">
+                ${config.pills.map((pill) => `<span class="demo-status-pill">${escapeHtml(pill)}</span>`).join('')}
+              </div>
+            </div>
+            ${renderCodePreview(config)}
+          </div>`;
+    }
+
+    function renderPlaceholderPanel(config) {
+        return `
+          <div class="demo-placeholder-panel" role="tabpanel" aria-label="${escapeHtml(state.activeCategory)} coming soon">
+            <div class="demo-placeholder-icon"><i class="fa-solid ${escapeHtml(config.icon)}"></i></div>
+            <span class="demo-kicker">${escapeHtml(config.eyebrow)}</span>
+            <h3>${escapeHtml(config.title)}</h3>
+            <p>${escapeHtml(config.description)}</p>
+            <div class="demo-status-pills" aria-label="Demo metadata">
+              ${config.pills.map((pill) => `<span class="demo-status-pill">${escapeHtml(pill)}</span>`).join('')}
+            </div>
+            ${renderCodePreview(config)}
+          </div>`;
+    }
+
+    function renderWorkspaceContent(config) {
+        if (!config.isLive) {
+            return renderPlaceholderPanel(config);
+        }
+
+        const demo = getRetailDemo();
+
+        return `
+          <div class="demo-workspace-live" role="tabpanel" aria-label="Web Scraping demo workspace">
+            ${renderWorkspaceIntro(config)}
+            <div class="demo-preview-area" data-demo-preview>
+              ${demo ? renderRetailComparisonTable(demo) : ''}
+            </div>
+          </div>`;
+    }
+
+    function bindWorkspaceEvents(panel) {
+        panel.querySelectorAll('[data-demo-panel-tab]').forEach((button) => {
+            button.addEventListener('click', () => {
+                state.activeCategory = button.dataset.demoPanelTab || 'Web Scraping';
+                renderDemoControlPanel();
+            });
+        });
+
+        bindRetailPreviewEvents();
     }
 
     function renderDemoControlPanel() {
@@ -407,14 +473,14 @@
 
         const config = getActivePanelConfig();
         panel.innerHTML = `
-          <article class="demo-control-panel demo-glass-card" aria-label="Teknoify demo control panel">
+          <article class="demo-control-panel demo-glass-card" aria-label="Teknoify demo workspace">
             <div class="demo-control-chrome">
               <div class="demo-window-dots" aria-hidden="true">
                 <span class="demo-window-dot demo-window-dot--red"></span>
                 <span class="demo-window-dot demo-window-dot--yellow"></span>
                 <span class="demo-window-dot demo-window-dot--green"></span>
               </div>
-              <div class="demo-control-tabs" role="tablist" aria-label="Demo categories">
+              <div class="demo-control-tabs" role="tablist" aria-label="Demo workspace modules">
                 ${DEMO_CATEGORIES.map(
                     (category) => `
                     <button
@@ -430,54 +496,15 @@
               </div>
             </div>
             <div class="demo-control-body">
-              <div class="demo-control-copy">
-                <span class="demo-kicker">${escapeHtml(config.eyebrow)}</span>
-                <h2>${escapeHtml(config.title)}</h2>
-                <p>${escapeHtml(config.description)}</p>
-                <div class="demo-module-card">
-                  <span class="demo-module-icon"><i class="fa-solid ${escapeHtml(config.icon)}"></i></span>
-                  <div>
-                    <h3>${escapeHtml(config.moduleTitle)}</h3>
-                    <p>${escapeHtml(config.moduleDescription)}</p>
-                    <div class="demo-status-pills" aria-label="Demo metadata">
-                      ${config.pills
-                          .map(
-                              (pill) => `<span class="demo-status-pill">${escapeHtml(pill)}</span>`
-                          )
-                          .join('')}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="demo-code-preview" aria-label="Selected demo configuration preview">
-                <div class="demo-code-preview__header">
-                  <span>${config.isLive ? 'live.config' : 'module.config'}</span>
-                  <strong>${config.isLive ? 'online' : 'queued'}</strong>
-                </div>
-                <pre><code>${config.code.map(escapeHtml).join('\n')}</code></pre>
-              </div>
+              ${renderWorkspaceContent(config)}
             </div>
           </article>`;
 
-        panel.querySelectorAll('[data-demo-panel-tab]').forEach((button) => {
-            button.addEventListener('click', () => {
-                state.activeCategory = button.dataset.demoPanelTab || 'Web Scraping';
-                renderDemoControlPanel();
-            });
-        });
+        bindWorkspaceEvents(panel);
     }
 
     function renderPreview() {
-        const preview = document.querySelector('[data-demo-preview]');
-        if (!preview) {
-            return;
-        }
-
-        const demo = getRetailDemo();
-
-        preview.hidden = !demo;
-        preview.innerHTML = demo ? renderRetailComparisonTable(demo) : '';
-        bindRetailPreviewEvents();
+        renderDemoControlPanel();
     }
 
     function init(demos) {
