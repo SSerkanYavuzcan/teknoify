@@ -1,14 +1,19 @@
 (function () {
+    const DEMO_CATEGORIES = [
+        'All Demos',
+        'Web Scraping',
+        'Automation',
+        'AI Tools',
+        'Analytics',
+        'Integrations'
+    ];
+
     const state = {
         demos: [],
-        activeCategory: 'Tümü',
+        activeCategory: 'Web Scraping',
         selectedStore: '',
         competitorStore: ''
     };
-
-    function hasDemos() {
-        return state.demos.length > 0;
-    }
 
     function escapeHtml(value) {
         return String(value)
@@ -17,29 +22,6 @@
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
-    }
-
-    function getFilteredDemos() {
-        if (state.activeCategory === 'Tümü') {
-            return state.demos;
-        }
-
-        return state.demos.filter((demo) => demo.category === state.activeCategory);
-    }
-
-    function renderEmptyState(isFiltered) {
-        const title = isFiltered ? 'Bu kategoride demo bulunamadı' : 'Demo akışları hazırlanıyor';
-        const description = isFiltered
-            ? 'Farklı bir kategori seçerek yayınlanan demo akışlarını görüntüleyebilirsiniz.'
-            : 'Teknoify Demo Lab yakında ücretsiz otomasyon ön izlemeleriyle açılacak. İlk demo akışları hazır olduğunda bu alanda listelenecek.';
-
-        return `
-      <article class="empty-state demo-empty-state">
-        <span class="empty-state__icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-        <span class="demo-kicker">${isFiltered ? 'Filtre' : 'Yakında'}</span>
-        <h3>${escapeHtml(title)}</h3>
-        <p>${escapeHtml(description)}</p>
-      </article>`;
     }
 
     function getRetailDemo() {
@@ -371,103 +353,142 @@
         });
     }
 
+    function getActivePanelConfig() {
+        const isWebScraping = state.activeCategory === 'Web Scraping';
+        const isAllDemos = state.activeCategory === 'All Demos';
+
+        if (isWebScraping || isAllDemos) {
+            return {
+                eyebrow: isAllDemos ? 'Demo Control Center' : 'Live Module',
+                title: 'Manage and explore Teknoify demos from one place.',
+                description:
+                    'Switch between demo modules from this developer-console style workspace and preview the Teknoify automation stack as each module goes live.',
+                moduleTitle: 'Web Scraping Fiyat Karşılaştırma',
+                moduleDescription:
+                    'Compare competitor prices and preview live retail scraping outputs.',
+                pills: ['Live Demo', 'Web Scraping', 'Retail Data'],
+                code: [
+                    'demo.module = "web-scraping"',
+                    'status = "live"',
+                    'source = "retail-price-comparison"'
+                ],
+                icon: 'fa-spider',
+                isLive: true
+            };
+        }
+
+        return {
+            eyebrow: 'Module Queue',
+            title: 'Manage and explore Teknoify demos from one place.',
+            description:
+                'Switch between demo modules from this developer-console style workspace and preview the Teknoify automation stack as each module goes live.',
+            moduleTitle: `${state.activeCategory} demo module is being prepared`,
+            moduleDescription:
+                'This demo category is queued for launch. The control panel is already structured for future modules, datasets, and live previews.',
+            pills: ['Coming Soon', state.activeCategory, 'Roadmap'],
+            code: [
+                `demo.module = "${state.activeCategory
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-|-$/g, '')}"`,
+                'status = "preparing"',
+                'source = "teknoify-demo-roadmap"'
+            ],
+            icon: 'fa-layer-group',
+            isLive: false
+        };
+    }
+
+    function renderDemoControlPanel() {
+        const panel = document.querySelector('[data-demo-control-panel]');
+        if (!panel) {
+            return;
+        }
+
+        const config = getActivePanelConfig();
+        panel.innerHTML = `
+          <article class="demo-control-panel demo-glass-card" aria-label="Teknoify demo control panel">
+            <div class="demo-control-chrome">
+              <div class="demo-window-dots" aria-hidden="true">
+                <span class="demo-window-dot demo-window-dot--red"></span>
+                <span class="demo-window-dot demo-window-dot--yellow"></span>
+                <span class="demo-window-dot demo-window-dot--green"></span>
+              </div>
+              <div class="demo-control-tabs" role="tablist" aria-label="Demo categories">
+                ${DEMO_CATEGORIES.map(
+                    (category) => `
+                    <button
+                      class="demo-control-tab${category === state.activeCategory ? ' is-active' : ''}"
+                      type="button"
+                      role="tab"
+                      aria-selected="${category === state.activeCategory}"
+                      data-demo-panel-tab="${escapeHtml(category)}"
+                    >
+                      ${escapeHtml(category)}
+                    </button>`
+                ).join('')}
+              </div>
+            </div>
+            <div class="demo-control-body">
+              <div class="demo-control-copy">
+                <span class="demo-kicker">${escapeHtml(config.eyebrow)}</span>
+                <h2>${escapeHtml(config.title)}</h2>
+                <p>${escapeHtml(config.description)}</p>
+                <div class="demo-module-card">
+                  <span class="demo-module-icon"><i class="fa-solid ${escapeHtml(config.icon)}"></i></span>
+                  <div>
+                    <h3>${escapeHtml(config.moduleTitle)}</h3>
+                    <p>${escapeHtml(config.moduleDescription)}</p>
+                    <div class="demo-status-pills" aria-label="Demo metadata">
+                      ${config.pills
+                          .map(
+                              (pill) => `<span class="demo-status-pill">${escapeHtml(pill)}</span>`
+                          )
+                          .join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="demo-code-preview" aria-label="Selected demo configuration preview">
+                <div class="demo-code-preview__header">
+                  <span>${config.isLive ? 'live.config' : 'module.config'}</span>
+                  <strong>${config.isLive ? 'online' : 'queued'}</strong>
+                </div>
+                <pre><code>${config.code.map(escapeHtml).join('\n')}</code></pre>
+              </div>
+            </div>
+          </article>`;
+
+        panel.querySelectorAll('[data-demo-panel-tab]').forEach((button) => {
+            button.addEventListener('click', () => {
+                state.activeCategory = button.dataset.demoPanelTab || 'Web Scraping';
+                renderDemoControlPanel();
+            });
+        });
+    }
+
     function renderPreview() {
         const preview = document.querySelector('[data-demo-preview]');
         if (!preview) {
             return;
         }
 
-        const demos = getFilteredDemos();
-        const demo = demos.find((item) => item.outputType === 'retailComparisonTable');
+        const demo = getRetailDemo();
 
         preview.hidden = !demo;
         preview.innerHTML = demo ? renderRetailComparisonTable(demo) : '';
         bindRetailPreviewEvents();
     }
 
-    function renderFilters() {
-        const filterBar = document.querySelector('[data-category-filters]');
-        if (!filterBar) {
-            return;
-        }
-
-        filterBar.hidden = !hasDemos();
-        if (!hasDemos()) {
-            filterBar.innerHTML = '';
-            return;
-        }
-
-        const categories = [
-            'Tümü',
-            ...new Set(state.demos.map((demo) => demo.category).filter(Boolean))
-        ];
-        filterBar.innerHTML = categories
-            .map(
-                (category) => `
-          <button
-            class="category-filter${category === state.activeCategory ? ' is-active' : ''}"
-            type="button"
-            data-category-filter="${escapeHtml(category)}"
-            aria-pressed="${category === state.activeCategory}"
-          >
-            ${escapeHtml(category)}
-          </button>`
-            )
-            .join('');
-
-        filterBar.querySelectorAll('[data-category-filter]').forEach((button) => {
-            button.addEventListener('click', () => {
-                state.activeCategory = button.dataset.categoryFilter || 'Tümü';
-                renderFilters();
-                renderCards();
-                renderPreview();
-            });
-        });
-    }
-
-    function renderCards() {
-        const grid = document.querySelector('[data-demo-grid]');
-        if (!grid) {
-            return;
-        }
-
-        if (!hasDemos()) {
-            grid.innerHTML = renderEmptyState(false);
-            return;
-        }
-
-        const demos = getFilteredDemos();
-        if (demos.length === 0) {
-            grid.innerHTML = renderEmptyState(true);
-            return;
-        }
-
-        grid.innerHTML = demos
-            .map(
-                (demo) => `
-          <article class="demo-card demo-glass-card" data-demo-card="${escapeHtml(demo.id)}">
-            <div class="demo-card-topline">
-              <span class="demo-icon"><i class="fa-solid ${escapeHtml(demo.icon || 'fa-cube')}"></i></span>
-              <span class="demo-category">${escapeHtml(demo.category || 'Demo')}</span>
-            </div>
-            <h3>${escapeHtml(demo.title)}</h3>
-            <p>${escapeHtml(demo.description)}</p>
-          </article>`
-            )
-            .join('');
-    }
-
     function init(demos) {
         state.demos = Array.isArray(demos) ? demos : [];
-        state.activeCategory = 'Tümü';
-        renderFilters();
-        renderCards();
+        state.activeCategory = 'Web Scraping';
+        renderDemoControlPanel();
         renderPreview();
     }
 
     window.TeknoifyDemoCatalog = {
         init,
-        renderCards,
         renderPreview
     };
 })();

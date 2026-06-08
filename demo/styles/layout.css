@@ -41,3 +41,7 @@
 .demo-page .footer {
     margin-top: 0;
 }
+
+.demo-control-section {
+    padding-top: clamp(7.5rem, 12vw, 10rem);
+}

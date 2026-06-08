@@ -470,3 +470,260 @@
     margin-top: 0.35rem;
     color: rgba(125, 211, 252, 0.94);
 }
+
+.demo-control-panel {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.demo-control-panel::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: calc(var(--radius-lg) - 1px);
+    background:
+        linear-gradient(to right, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(135deg, #000 0%, rgba(0, 0, 0, 0.42) 70%, transparent 100%);
+    pointer-events: none;
+}
+
+.demo-control-panel::after {
+    content: '';
+    position: absolute;
+    right: -18%;
+    bottom: -30%;
+    z-index: -1;
+    width: 44rem;
+    height: 44rem;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent 62%);
+    pointer-events: none;
+}
+
+.demo-control-chrome {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    padding: 0.88rem clamp(0.9rem, 2vw, 1.15rem);
+    background: rgba(7, 9, 15, 0.78);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.demo-window-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.48rem;
+}
+
+.demo-window-dot {
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 999px;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
+}
+
+.demo-window-dot--red {
+    background: #ff5f57;
+}
+
+.demo-window-dot--yellow {
+    background: #ffbd2e;
+}
+
+.demo-window-dot--green {
+    background: #28c840;
+}
+
+.demo-control-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.48) transparent;
+    -webkit-overflow-scrolling: touch;
+}
+
+.demo-control-tab {
+    flex: 0 0 auto;
+    padding: 0.62rem 0.86rem;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 850;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: 999px;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.demo-control-tab:hover,
+.demo-control-tab:focus-visible {
+    color: #fff;
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.34);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.demo-control-tab.is-active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(14, 165, 233, 0.16));
+    border-color: rgba(125, 211, 252, 0.42);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+        0 10px 28px rgba(99, 102, 241, 0.18);
+}
+
+.demo-control-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+    gap: clamp(1.35rem, 4vw, 2.6rem);
+    align-items: stretch;
+    padding: clamp(1.35rem, 4vw, 2.6rem);
+}
+
+.demo-control-copy {
+    display: grid;
+    align-content: center;
+    gap: 1rem;
+}
+
+.demo-control-copy .demo-kicker {
+    margin-bottom: 0;
+}
+
+.demo-control-copy h2 {
+    max-width: 760px;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(2.1rem, 5vw, 4.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.06em;
+}
+
+.demo-control-copy > p,
+.demo-module-card p {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.65;
+}
+
+.demo-control-copy > p {
+    max-width: 680px;
+    font-size: clamp(1rem, 2vw, 1.12rem);
+}
+
+.demo-module-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    max-width: 760px;
+    margin-top: 0.5rem;
+    padding: clamp(1rem, 2.5vw, 1.25rem);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.demo-module-icon {
+    display: grid;
+    width: 50px;
+    height: 50px;
+    place-items: center;
+    color: #fff;
+    background: rgba(99, 102, 241, 0.16);
+    border: 1px solid rgba(99, 102, 241, 0.32);
+    border-radius: 16px;
+}
+
+.demo-module-card h3 {
+    margin: 0 0 0.35rem;
+    color: #fff;
+    font-size: clamp(1.18rem, 2vw, 1.45rem);
+    letter-spacing: -0.025em;
+}
+
+.demo-status-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+}
+
+.demo-status-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0.38rem 0.68rem;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 850;
+    background: rgba(125, 211, 252, 0.09);
+    border: 1px solid rgba(125, 211, 252, 0.22);
+    border-radius: 999px;
+}
+
+.demo-code-preview {
+    display: grid;
+    align-content: start;
+    min-height: 100%;
+    overflow: hidden;
+    color: #d9f99d;
+    font-family: 'Fira Code', monospace;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(125, 211, 252, 0.12), transparent 38%),
+        rgba(3, 6, 12, 0.82);
+    border: 1px solid rgba(125, 211, 252, 0.18);
+    border-radius: var(--radius-md);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.045),
+        0 20px 55px rgba(0, 0, 0, 0.24);
+}
+
+.demo-code-preview__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    color: var(--text-muted);
+    font-family: var(--font-main);
+    font-size: 0.78rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.demo-code-preview__header strong {
+    color: #86efac;
+}
+
+.demo-code-preview pre {
+    min-height: 220px;
+    margin: 0;
+    padding: clamp(1rem, 3vw, 1.35rem);
+    overflow-x: auto;
+    white-space: pre;
+}
+
+.demo-code-preview code {
+    font: inherit;
+    font-size: clamp(0.84rem, 1.5vw, 0.98rem);
+    line-height: 1.9;
+}
