@@ -1,11 +1,11 @@
 (function () {
     const DEMO_CATEGORIES = [
-        'Demo Projects',
-        'Web Scraping',
-        'Automation',
-        'AI Tools',
-        'Analytics',
-        'Integrations'
+        { key: 'Demo Projects', label: 'Demo Projeleri' },
+        { key: 'Web Scraping', label: 'Web Scraping' },
+        { key: 'Automation', label: 'Otomasyon' },
+        { key: 'AI Tools', label: 'AI Araçları' },
+        { key: 'Analytics', label: 'Analitik' },
+        { key: 'Integrations', label: 'Entegrasyonlar' }
     ];
 
     const state = {
@@ -14,6 +14,11 @@
         selectedStore: '',
         competitorStore: ''
     };
+
+    function getCategoryLabel(categoryKey) {
+        const category = DEMO_CATEGORIES.find((item) => item.key === categoryKey);
+        return category ? category.label : categoryKey;
+    }
 
     function escapeHtml(value) {
         return String(value)
@@ -365,47 +370,61 @@
 
         if (isWebScraping) {
             return {
-                eyebrow: 'Live Module',
+                eyebrow: 'Canlı Modül',
                 title: 'Web Scraping Fiyat Karşılaştırma',
                 description:
-                    'Compare competitor prices, switch store pairs, and export live retail scraping outputs from the workspace.',
-                pills: ['Live Demo', 'Web Scraping', 'Retail Data'],
+                    'Rakip fiyatlarını karşılaştırın, mağaza eşleşmelerini değiştirin ve canlı perakende scraping çıktılarını demo alanından inceleyin.',
+                pills: ['Canlı Demo', 'Web Scraping', 'Perakende Verisi'],
                 code: [
-                    'demo.module = "web-scraping"',
-                    'status = "live"',
-                    'source = "retail-price-comparison"'
+                    'Migros sitesine giriş yapılıyor...',
+                    'Kategori ve ürün bilgileri alınıyor...',
+                    'Demo amacıyla ilk 100 ürün bilgisi toplandı.',
+                    'CarrefourSA sitesine giriş yapılıyor...',
+                    'Kategori ve ürün bilgileri alınıyor...',
+                    'Demo amacıyla ilk 100 ürün bilgisi toplandı.',
+                    'Ürün eşleştirmeleri gerçekleşiyor...',
+                    'Ürün eşleşmeleri tamamlandı. 95 benzer ürün tespit edildi.',
+                    'Data analizi gerçekleştiriliyor...',
+                    'Analiz tamamlandı.',
+                    'Teknoify Demo alanına verileri aktarılıyor...',
+                    'Veri aktarımı başarılı.'
                 ],
                 icon: 'fa-spider',
-                status: 'online',
+                status: 'AKTİF',
                 isLive: true
             };
         }
 
         return {
-            eyebrow: 'Coming Soon',
-            title: `${state.activeCategory} demos are being prepared`,
+            eyebrow: 'Yakında',
+            title: `${getCategoryLabel(state.activeCategory)} demoları hazırlanıyor`,
             description:
-                'This workspace is ready for upcoming Teknoify demo modules, datasets, automation flows, and live previews.',
-            pills: ['Coming Soon', state.activeCategory, 'Roadmap'],
+                'Bu alan yaklaşan Teknoify demo modülleri, veri setleri, otomasyon akışları ve canlı ön izlemeler için hazırlanıyor.',
+            pills: ['Yakında', getCategoryLabel(state.activeCategory), 'Yol Haritası'],
             code: [
-                `demo.module = "${getModuleSlug(state.activeCategory)}"`,
-                'status = "preparing"',
-                'source = "teknoify-demo-roadmap"'
+                `demo.modul = "${getModuleSlug(state.activeCategory)}"`,
+                'durum = "hazırlanıyor"',
+                'kaynak = "teknoify-demo-yol-haritasi"'
             ],
             icon: 'fa-layer-group',
-            status: 'queued',
+            status: 'Sırada',
             isLive: false
         };
     }
 
     function renderCodePreview(config) {
         return `
-          <div class="demo-code-preview" aria-label="Selected demo configuration preview">
+          <div class="demo-code-preview" aria-label="Seçili demo durum ön izlemesi">
             <div class="demo-code-preview__header">
-              <span>${config.isLive ? 'live.config' : 'module.config'}</span>
+              <span>${config.isLive ? 'Canlı Log' : 'Modül Durumu'}</span>
               <strong>${escapeHtml(config.status)}</strong>
             </div>
-            <pre><code>${config.code.map(escapeHtml).join('\n')}</code></pre>
+            <pre><code>${config.code
+                .map(
+                    (line, index) =>
+                        `<span class="demo-log-line${config.isLive && index === config.code.length - 1 ? ' demo-log-line--success' : ''}">${escapeHtml(line)}</span>`
+                )
+                .join('')}</code></pre>
           </div>`;
     }
 
@@ -416,7 +435,7 @@
               <span class="demo-kicker">${escapeHtml(config.eyebrow)}</span>
               <h3>${escapeHtml(config.title)}</h3>
               <p>${escapeHtml(config.description)}</p>
-              <div class="demo-status-pills" aria-label="Demo metadata">
+              <div class="demo-status-pills" aria-label="Demo meta bilgileri">
                 ${config.pills.map((pill) => `<span class="demo-status-pill">${escapeHtml(pill)}</span>`).join('')}
               </div>
             </div>
@@ -431,7 +450,7 @@
             <span class="demo-kicker">${escapeHtml(config.eyebrow)}</span>
             <h3>${escapeHtml(config.title)}</h3>
             <p>${escapeHtml(config.description)}</p>
-            <div class="demo-status-pills" aria-label="Demo metadata">
+            <div class="demo-status-pills" aria-label="Demo meta bilgileri">
               ${config.pills.map((pill) => `<span class="demo-status-pill">${escapeHtml(pill)}</span>`).join('')}
             </div>
             ${renderCodePreview(config)}
@@ -446,7 +465,7 @@
         const demo = getRetailDemo();
 
         return `
-          <div class="demo-workspace-live" role="tabpanel" aria-label="Web Scraping demo workspace">
+          <div class="demo-workspace-live" role="tabpanel" aria-label="Web Scraping demo alanı">
             ${renderWorkspaceIntro(config)}
             <div class="demo-preview-area" data-demo-preview>
               ${demo ? renderRetailComparisonTable(demo) : ''}
@@ -473,24 +492,24 @@
 
         const config = getActivePanelConfig();
         panel.innerHTML = `
-          <article class="demo-control-panel demo-glass-card" aria-label="Teknoify demo workspace">
+          <article class="demo-control-panel demo-glass-card" aria-label="Teknoify demo alanı">
             <div class="demo-control-chrome">
               <div class="demo-window-dots" aria-hidden="true">
                 <span class="demo-window-dot demo-window-dot--red"></span>
                 <span class="demo-window-dot demo-window-dot--yellow"></span>
                 <span class="demo-window-dot demo-window-dot--green"></span>
               </div>
-              <div class="demo-control-tabs" role="tablist" aria-label="Demo workspace modules">
+              <div class="demo-control-tabs" role="tablist" aria-label="Demo alanı modülleri">
                 ${DEMO_CATEGORIES.map(
                     (category) => `
                     <button
-                      class="demo-control-tab${category === state.activeCategory ? ' is-active' : ''}"
+                      class="demo-control-tab${category.key === state.activeCategory ? ' is-active' : ''}"
                       type="button"
                       role="tab"
-                      aria-selected="${category === state.activeCategory}"
-                      data-demo-panel-tab="${escapeHtml(category)}"
+                      aria-selected="${category.key === state.activeCategory}"
+                      data-demo-panel-tab="${escapeHtml(category.key)}"
                     >
-                      ${escapeHtml(category)}
+                      ${escapeHtml(category.label)}
                     </button>`
                 ).join('')}
               </div>

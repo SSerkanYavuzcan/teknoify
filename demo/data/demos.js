@@ -6,7 +6,7 @@ window.TEKNOIFY_DEMOS = [
         icon: 'fa-spider',
         level: 'Başlangıç',
         time: '2 dk',
-        status: 'Free Demo',
+        status: 'Ücretsiz Demo',
         description:
             'Perakende sektöründe ortak ürünleri listeleyen şirketlerin fiyatlarını gerçek zamanlı karşılaştırmak için hazırlanmış veri ön izleme alanını inceleyebilirsiniz.',
         outputType: 'retailComparisonTable',
