@@ -159,3 +159,29 @@
         min-height: 190px;
     }
 }
+
+@media (max-width: 980px) {
+    .demo-workspace-intro {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .demo-control-section {
+        padding-top: 0;
+    }
+
+    .demo-workspace-container {
+        max-width: 100%;
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+    }
+
+    .demo-control-body {
+        padding: 0.8rem;
+    }
+
+    .demo-placeholder-panel {
+        min-height: 420px;
+    }
+}
