@@ -4,17 +4,35 @@
    ================================================================ */
 
 
+/* --- PAGE BACKGROUND --- */
+.rpa-page-shell {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+
+.rpa-background-surface {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+
+.rpa-page-shell > section {
+    position: relative;
+    z-index: 1;
+}
+
+
 /* --- HERO SECTION --- */
 .rpa-hero {
     padding: 140px 0 80px 0;
     position: relative;
     overflow: hidden;
-    /* Hafif bir grid arka planı */
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 20%),
-        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px;
+    background: transparent;
 }
 
 
