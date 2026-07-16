@@ -637,15 +637,8 @@
   overflow: visible;
 }
 
-.services-hub__connector-grid path,
 .services-hub-connector,
 .services-hub-signal { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
-
-.services-hub__connector-grid path {
-  stroke: rgba(99, 102, 241, 0.16);
-  stroke-width: 1;
-  opacity: 0.72;
-}
 
 .services-hub-connector { stroke: rgba(165, 180, 252, 0.34); stroke-width: 1.35; opacity: 0.86; }
 .services-hub-signal { stroke: rgba(125, 211, 252, 0.96); stroke-width: 3; stroke-dasharray: 16 100; stroke-dashoffset: 116; opacity: 0; }
@@ -703,8 +696,6 @@
 
 .services-hub:has(.service-hub-card:hover) .services-hub-core-network, .services-hub:has(.service-hub-card:focus-visible) .services-hub-core-network { opacity: 1; filter: drop-shadow(0 0 18px rgba(125,211,252,.32)) drop-shadow(0 0 28px rgba(168,85,247,.22)); transform: scale(1.025); }
 .services-hub:has(.service-hub-card:hover) .services-hub-demo, .services-hub:has(.service-hub-card:focus-visible) .services-hub-demo { box-shadow: 0 0 0 10px rgba(99,102,241,.09), 0 18px 40px rgba(124,58,237,.32), 0 0 28px rgba(125,211,252,.16); }
-.services-hub:has(.service-hub-card:hover) .services-hub__connector-grid path, .services-hub:has(.service-hub-card:focus-visible) .services-hub__connector-grid path { stroke: rgba(125,211,252,.24); opacity: .9; }
-
 .services-hub:has(.service-hub-card--education:hover) .services-hub-signal--education, .services-hub:has(.service-hub-card--education:focus-visible) .services-hub-signal--education,
 .services-hub:has(.service-hub-card--investment:hover) .services-hub-signal--investment, .services-hub:has(.service-hub-card--investment:focus-visible) .services-hub-signal--investment,
 .services-hub:has(.service-hub-card--rpa:hover) .services-hub-signal--rpa, .services-hub:has(.service-hub-card--rpa:focus-visible) .services-hub-signal--rpa,
