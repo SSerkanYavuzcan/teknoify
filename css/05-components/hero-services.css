@@ -574,405 +574,185 @@
   position: relative;
   z-index: 1;
   overflow: hidden;
-  padding: 5.5rem 0 4rem;
+  padding: 5rem 0 3.75rem;
   isolation: isolate;
 }
 
 .services::before {
   content: "";
   position: absolute;
-  inset: 10% 0 4%;
+  inset: 8% 0 3%;
   z-index: -1;
   background:
-    radial-gradient(circle at 50% 48%, rgba(99, 102, 241, 0.16), transparent 30%),
-    radial-gradient(circle at 42% 52%, rgba(168, 85, 247, 0.09), transparent 34%);
-  opacity: 0.78;
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.2), transparent 26%),
+    radial-gradient(circle at 50% 48%, rgba(168, 85, 247, 0.12), transparent 36%),
+    radial-gradient(circle at 18% 28%, rgba(125, 211, 252, 0.07) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 82% 74%, rgba(196, 181, 253, 0.08) 0 1px, transparent 1.8px);
+  background-size: auto, auto, 62px 62px, 74px 74px;
+  opacity: 0.82;
   pointer-events: none;
 }
 
-.services > .container {
-  position: relative;
-  z-index: 1;
+.services::after {
+  content: "";
+  position: absolute;
+  inset: 16% 7% 12%;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, transparent 0 48%, rgba(165, 180, 252, 0.1) 48% 48.4%, transparent 48.4% 100%),
+    linear-gradient(0deg, transparent 0 48%, rgba(125, 211, 252, 0.08) 48% 48.3%, transparent 48.3% 100%);
+  mask-image: radial-gradient(circle at 50% 50%, #000, transparent 62%);
+  opacity: 0.45;
+  pointer-events: none;
 }
 
-.section-header { text-align: center; margin-bottom: 4rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+.services > .container { position: relative; z-index: 1; }
+
+.section-header { text-align: center; margin-bottom: 3.15rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 .section-header h2 { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 1rem; font-weight: 700; }
 .section-header p { color: var(--text-muted); font-size: 1.1rem; }
 
 .services-hub {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, minmax(190px, 1fr));
+  grid-template-columns: repeat(3, 210px);
   grid-template-areas:
     "education investment rpa"
     "finance   demo       scraping"
-    "api       empty      ai";
-  gap: clamp(1.5rem, 3vw, 2.625rem);
+    ".         lower      .";
+  justify-content: center;
   align-items: center;
-  width: min(100%, 1020px);
+  gap: 1.35rem 1.7rem;
+  width: min(100%, 770px);
   margin: 0 auto;
+  min-height: 560px;
   isolation: isolate;
 }
 
 .services-hub__connectors {
   position: absolute;
-  inset: 3% 4% 4%;
+  inset: 0;
   z-index: -1;
   pointer-events: none;
   overflow: visible;
 }
 
+.services-hub__connector-grid path,
 .services-hub-connector,
-.services-hub-signal {
-  fill: none;
-  vector-effect: non-scaling-stroke;
+.services-hub-signal { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+
+.services-hub__connector-grid path {
+  stroke: rgba(99, 102, 241, 0.16);
+  stroke-width: 1;
+  opacity: 0.72;
 }
 
-.services-hub-connector {
-  stroke: rgba(165, 180, 252, 0.3);
-  stroke-width: 1.15;
-  stroke-linecap: round;
-  opacity: 0.78;
-}
-
-.services-hub-signal {
-  stroke: rgba(125, 211, 252, 0.92);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-dasharray: 18 100;
-  stroke-dashoffset: 118;
-  opacity: 0;
-}
-
-.services-hub__connector-nodes circle {
-  fill: rgba(196, 181, 253, 0.6);
-  opacity: 0.58;
-  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.28));
-}
-
-.services-hub__connector-nodes .services-hub__connector-core-node {
-  fill: rgba(216, 180, 254, 0.9);
-  opacity: 0.82;
-  filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.52));
-}
+.services-hub-connector { stroke: rgba(165, 180, 252, 0.34); stroke-width: 1.35; opacity: 0.86; }
+.services-hub-signal { stroke: rgba(125, 211, 252, 0.96); stroke-width: 3; stroke-dasharray: 16 100; stroke-dashoffset: 116; opacity: 0; }
+.services-hub__connector-nodes circle { fill: rgba(196, 181, 253, 0.7); opacity: 0.68; filter: drop-shadow(0 0 7px rgba(168, 85, 247, 0.35)); }
+.services-hub__connector-nodes .services-hub__connector-core-node { fill: rgba(224, 231, 255, 0.95); opacity: 0.92; filter: drop-shadow(0 0 15px rgba(125, 211, 252, 0.55)); }
 
 .service-hub-card,
 .services-hub-center,
-.services-hub-demo {
-  position: relative;
-  z-index: 1;
-  color: #fff;
-  text-decoration: none;
-  -webkit-user-drag: none;
-}
+.services-hub-demo { position: relative; z-index: 1; color: #fff; text-decoration: none; -webkit-user-drag: none; }
 
 .service-hub-card {
-  display: grid;
-  gap: 0.65rem;
-  min-height: 145px;
-  padding: 1.15rem;
-  border: 1px solid rgba(165, 180, 252, 0.26);
-  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.58rem;
+  width: 210px;
+  min-height: 170px;
+  padding: 1.15rem 1rem;
+  border: 1px solid rgba(165, 180, 252, 0.36);
+  border-radius: 20px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 42%),
-    linear-gradient(145deg, rgba(22, 24, 36, 0.96), rgba(10, 11, 18, 0.94));
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.085), transparent 31%),
+    radial-gradient(circle at 50% 0%, rgba(129, 140, 248, 0.18), transparent 48%),
+    linear-gradient(145deg, rgba(24, 27, 43, 0.97), rgba(8, 10, 20, 0.96));
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,.12), inset 0 -18px 34px rgba(15, 23, 42, 0.34);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
 }
 
+.service-hub-card::before { content: ""; position: absolute; inset: 10px 22px auto; height: 1px; background: linear-gradient(90deg, transparent, rgba(224,231,255,.75), transparent); opacity: .7; }
 .service-hub-card--education { grid-area: education; }
 .service-hub-card--investment { grid-area: investment; }
 .service-hub-card--rpa { grid-area: rpa; }
 .service-hub-card--finance { grid-area: finance; }
 .service-hub-card--scraping { grid-area: scraping; }
-.service-hub-card--api { grid-area: api; justify-self: end; width: min(100%, 235px); }
-.service-hub-card--ai { grid-area: ai; justify-self: start; width: min(100%, 235px); }
+.service-hub-card--api { grid-area: lower; justify-self: start; transform: translateX(36px); }
+.service-hub-card--ai { grid-area: lower; justify-self: end; transform: translateX(-36px); }
 
-.service-hub-card__icon {
-  display: inline-grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border: 1px solid rgba(196, 181, 253, 0.34);
-  border-radius: 14px;
-  background: rgba(109, 40, 217, 0.18);
-  color: #c4b5fd;
-  font-size: 1.05rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 18px rgba(99, 102, 241, 0.16);
-  transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease;
-}
+.service-hub-card__icon { display: inline-grid; place-items: center; width: 48px; height: 48px; border: 1px solid rgba(196,181,253,.42); border-radius: 15px; background: linear-gradient(145deg, rgba(99,102,241,.24), rgba(109,40,217,.16)); color: #c4b5fd; font-size: 1.06rem; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 0 18px rgba(99,102,241,.18); transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease; }
+.service-hub-card__title { display: block; color: rgba(255,255,255,.98); font-size: 1.04rem; font-weight: 780; line-height: 1.12; white-space: nowrap; }
+.service-hub-card__description { display: block; color: rgba(203,213,225,.78); font-size: .88rem; font-weight: 500; line-height: 1.38; max-width: 16ch; }
+.service-hub-card:hover, .service-hub-card:focus-visible { transform: translateY(-4px); border-color: rgba(216,180,254,.58); box-shadow: 0 22px 48px rgba(0,0,0,.34), 0 0 26px rgba(124,58,237,.22), inset 0 1px 0 rgba(255,255,255,.16); }
+.service-hub-card--api:hover, .service-hub-card--api:focus-visible { transform: translate(36px, -4px); }
+.service-hub-card--ai:hover, .service-hub-card--ai:focus-visible { transform: translate(-36px, -4px); }
+.service-hub-card:hover .service-hub-card__icon, .service-hub-card:focus-visible .service-hub-card__icon { color: #f5f3ff; border-color: rgba(216,180,254,.62); background: rgba(124,58,237,.28); }
+.service-hub-card:focus-visible, .services-hub-demo:focus-visible { outline: 2px solid rgba(216,180,254,.86); outline-offset: 4px; }
 
-.service-hub-card__title {
-  display: block;
-  color: rgba(255, 255, 255, 0.96);
-  font-size: 1.02rem;
-  font-weight: 760;
-  line-height: 1.15;
-}
+.services-hub-center { grid-area: demo; justify-self: center; display: grid; place-items: center; width: 220px; min-height: 170px; border-radius: 34px; }
+.services-hub-center::before { content: ""; position: absolute; inset: -36px; z-index: -2; border-radius: 50%; background: radial-gradient(circle, rgba(125,211,252,.16), rgba(168,85,247,.14) 36%, transparent 68%); filter: blur(1px); }
+.services-hub-center::after { content: ""; position: absolute; width: 112px; height: 112px; z-index: -1; border: 1px solid rgba(165,180,252,.22); border-radius: 28px; background: linear-gradient(135deg, rgba(15,23,42,.72), rgba(30,27,75,.42)); box-shadow: inset 0 0 28px rgba(99,102,241,.18), 0 0 34px rgba(99,102,241,.18); transform: rotate(45deg); }
+.services-hub-core-network { position: absolute; inset: -10px; z-index: -1; overflow: visible; opacity: .95; filter: drop-shadow(0 0 15px rgba(99,102,241,.26)); transition: opacity 220ms ease, filter 220ms ease, transform 220ms ease; }
+.services-hub-core-network path, .services-hub-core-network circle { fill: none; stroke: rgba(196,181,253,.56); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.services-hub-core-network circle { fill: rgba(99,102,241,.28); stroke: rgba(216,180,254,.7); }
+.services-hub-demo { display: inline-flex; align-items: center; justify-content: center; width: 182px; min-height: 56px; padding: 0 1.25rem; border: 1px solid transparent; border-radius: 999px; background: linear-gradient(rgba(10,11,18,.97), rgba(10,11,18,.97)) padding-box, linear-gradient(135deg, rgba(125,211,252,.78), rgba(168,85,247,.9), rgba(99,102,241,.78)) border-box; box-shadow: 0 0 0 8px rgba(99,102,241,.08), 0 14px 34px rgba(67,56,202,.28); font-size: .96rem; font-weight: 760; letter-spacing: .01em; transition: transform 220ms ease, box-shadow 220ms ease; }
+.services-hub-demo::before { content: ""; position: absolute; inset: -24px; z-index: -1; border-radius: 999px; background: radial-gradient(circle, rgba(168,85,247,.2), transparent 68%); pointer-events: none; }
+.services-hub-demo:hover, .services-hub-demo:focus-visible { transform: translateY(-3px); box-shadow: 0 0 0 9px rgba(99,102,241,.1), 0 18px 38px rgba(124,58,237,.3); }
 
-.service-hub-card__description {
-  display: block;
-  color: rgba(203, 213, 225, 0.78);
-  font-size: 0.92rem;
-  font-weight: 500;
-  line-height: 1.45;
-}
+.services-hub:has(.service-hub-card:hover) .services-hub-core-network, .services-hub:has(.service-hub-card:focus-visible) .services-hub-core-network { opacity: 1; filter: drop-shadow(0 0 18px rgba(125,211,252,.32)) drop-shadow(0 0 28px rgba(168,85,247,.22)); transform: scale(1.025); }
+.services-hub:has(.service-hub-card:hover) .services-hub-demo, .services-hub:has(.service-hub-card:focus-visible) .services-hub-demo { box-shadow: 0 0 0 10px rgba(99,102,241,.09), 0 18px 40px rgba(124,58,237,.32), 0 0 28px rgba(125,211,252,.16); }
+.services-hub:has(.service-hub-card:hover) .services-hub__connector-grid path, .services-hub:has(.service-hub-card:focus-visible) .services-hub__connector-grid path { stroke: rgba(125,211,252,.24); opacity: .9; }
 
-.service-hub-card:hover,
-.service-hub-card:focus-visible {
-  transform: translateY(-4px);
-  border-color: rgba(196, 181, 253, 0.48);
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.3), 0 0 24px rgba(124, 58, 237, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
+.services-hub:has(.service-hub-card--education:hover) .services-hub-signal--education, .services-hub:has(.service-hub-card--education:focus-visible) .services-hub-signal--education,
+.services-hub:has(.service-hub-card--investment:hover) .services-hub-signal--investment, .services-hub:has(.service-hub-card--investment:focus-visible) .services-hub-signal--investment,
+.services-hub:has(.service-hub-card--rpa:hover) .services-hub-signal--rpa, .services-hub:has(.service-hub-card--rpa:focus-visible) .services-hub-signal--rpa,
+.services-hub:has(.service-hub-card--finance:hover) .services-hub-signal--finance, .services-hub:has(.service-hub-card--finance:focus-visible) .services-hub-signal--finance,
+.services-hub:has(.service-hub-card--scraping:hover) .services-hub-signal--scraping, .services-hub:has(.service-hub-card--scraping:focus-visible) .services-hub-signal--scraping,
+.services-hub:has(.service-hub-card--api:hover) .services-hub-signal--api, .services-hub:has(.service-hub-card--api:focus-visible) .services-hub-signal--api,
+.services-hub:has(.service-hub-card--ai:hover) .services-hub-signal--ai, .services-hub:has(.service-hub-card--ai:focus-visible) .services-hub-signal--ai { opacity: 1; animation: servicesHubSignal 1100ms ease-out forwards; }
+.services-hub:has(.service-hub-card--education:hover) .services-hub-connector--education, .services-hub:has(.service-hub-card--education:focus-visible) .services-hub-connector--education,
+.services-hub:has(.service-hub-card--investment:hover) .services-hub-connector--investment, .services-hub:has(.service-hub-card--investment:focus-visible) .services-hub-connector--investment,
+.services-hub:has(.service-hub-card--rpa:hover) .services-hub-connector--rpa, .services-hub:has(.service-hub-card--rpa:focus-visible) .services-hub-connector--rpa,
+.services-hub:has(.service-hub-card--finance:hover) .services-hub-connector--finance, .services-hub:has(.service-hub-card--finance:focus-visible) .services-hub-connector--finance,
+.services-hub:has(.service-hub-card--scraping:hover) .services-hub-connector--scraping, .services-hub:has(.service-hub-card--scraping:focus-visible) .services-hub-connector--scraping,
+.services-hub:has(.service-hub-card--api:hover) .services-hub-connector--api, .services-hub:has(.service-hub-card--api:focus-visible) .services-hub-connector--api,
+.services-hub:has(.service-hub-card--ai:hover) .services-hub-connector--ai, .services-hub:has(.service-hub-card--ai:focus-visible) .services-hub-connector--ai { stroke: rgba(196,181,253,.68); stroke-width: 1.7; opacity: 1; }
 
-.service-hub-card:hover .service-hub-card__icon,
-.service-hub-card:focus-visible .service-hub-card__icon {
-  color: #e9d5ff;
-  border-color: rgba(216, 180, 254, 0.5);
-  background: rgba(124, 58, 237, 0.25);
-}
-
-.service-hub-card:focus-visible,
-.services-hub-demo:focus-visible {
-  outline: 2px solid rgba(216, 180, 254, 0.86);
-  outline-offset: 4px;
-}
-
-.services-hub-center {
-  grid-area: demo;
-  justify-self: center;
-  display: grid;
-  place-items: center;
-  width: clamp(230px, 24vw, 270px);
-  min-height: 178px;
-}
-
-.services-hub-core-network {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  overflow: visible;
-  opacity: 0.88;
-  filter: drop-shadow(0 0 14px rgba(99, 102, 241, 0.22));
-  transition: opacity 220ms ease, filter 220ms ease, transform 220ms ease;
-}
-
-.services-hub-core-network path,
-.services-hub-core-network circle {
-  fill: none;
-  stroke: rgba(196, 181, 253, 0.52);
-  stroke-width: 1.25;
-  vector-effect: non-scaling-stroke;
-}
-
-.services-hub-core-network circle {
-  fill: rgba(99, 102, 241, 0.26);
-  stroke: rgba(216, 180, 254, 0.64);
-}
-
-.services-hub-demo {
-  justify-self: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(170px, 18vw, 196px);
-  min-height: 56px;
-  padding: 0 1.35rem;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background:
-    linear-gradient(rgba(10, 11, 18, 0.96), rgba(10, 11, 18, 0.96)) padding-box,
-    linear-gradient(135deg, rgba(125, 211, 252, 0.72), rgba(168, 85, 247, 0.82), rgba(99, 102, 241, 0.72)) border-box;
-  box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.06), 0 14px 34px rgba(67, 56, 202, 0.24);
-  font-size: 0.96rem;
-  font-weight: 760;
-  letter-spacing: 0.01em;
-  transition: transform 220ms ease, box-shadow 220ms ease;
-}
-
-.services-hub-demo::before {
-  content: "";
-  position: absolute;
-  inset: -42px;
-  z-index: -1;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.18), transparent 66%);
-  pointer-events: none;
-}
-
-.services-hub-demo:hover,
-.services-hub-demo:focus-visible {
-  transform: translateY(-3px);
-  box-shadow: 0 0 0 9px rgba(99, 102, 241, 0.08), 0 18px 38px rgba(124, 58, 237, 0.26);
-}
-
-
-.services-hub:has(.service-hub-card:hover) .services-hub-core-network,
-.services-hub:has(.service-hub-card:focus-visible) .services-hub-core-network {
-  opacity: 1;
-  filter: drop-shadow(0 0 18px rgba(125, 211, 252, 0.28)) drop-shadow(0 0 28px rgba(168, 85, 247, 0.2));
-  transform: scale(1.02);
-}
-
-.services-hub:has(.service-hub-card:hover) .services-hub-demo,
-.services-hub:has(.service-hub-card:focus-visible) .services-hub-demo {
-  border-color: transparent;
-  box-shadow: 0 0 0 10px rgba(99, 102, 241, 0.08), 0 18px 40px rgba(124, 58, 237, 0.3), 0 0 28px rgba(125, 211, 252, 0.14);
-}
-
-.services-hub:has(.service-hub-card--education:hover) .services-hub-signal--education,
-.services-hub:has(.service-hub-card--education:focus-visible) .services-hub-signal--education,
-.services-hub:has(.service-hub-card--investment:hover) .services-hub-signal--investment,
-.services-hub:has(.service-hub-card--investment:focus-visible) .services-hub-signal--investment,
-.services-hub:has(.service-hub-card--rpa:hover) .services-hub-signal--rpa,
-.services-hub:has(.service-hub-card--rpa:focus-visible) .services-hub-signal--rpa,
-.services-hub:has(.service-hub-card--finance:hover) .services-hub-signal--finance,
-.services-hub:has(.service-hub-card--finance:focus-visible) .services-hub-signal--finance,
-.services-hub:has(.service-hub-card--scraping:hover) .services-hub-signal--scraping,
-.services-hub:has(.service-hub-card--scraping:focus-visible) .services-hub-signal--scraping,
-.services-hub:has(.service-hub-card--api:hover) .services-hub-signal--api,
-.services-hub:has(.service-hub-card--api:focus-visible) .services-hub-signal--api,
-.services-hub:has(.service-hub-card--ai:hover) .services-hub-signal--ai,
-.services-hub:has(.service-hub-card--ai:focus-visible) .services-hub-signal--ai {
-  opacity: 1;
-  animation: servicesHubSignal 1150ms ease-out forwards;
-}
-
-.services-hub:has(.service-hub-card--education:hover) .services-hub-connector--education,
-.services-hub:has(.service-hub-card--education:focus-visible) .services-hub-connector--education,
-.services-hub:has(.service-hub-card--investment:hover) .services-hub-connector--investment,
-.services-hub:has(.service-hub-card--investment:focus-visible) .services-hub-connector--investment,
-.services-hub:has(.service-hub-card--rpa:hover) .services-hub-connector--rpa,
-.services-hub:has(.service-hub-card--rpa:focus-visible) .services-hub-connector--rpa,
-.services-hub:has(.service-hub-card--finance:hover) .services-hub-connector--finance,
-.services-hub:has(.service-hub-card--finance:focus-visible) .services-hub-connector--finance,
-.services-hub:has(.service-hub-card--scraping:hover) .services-hub-connector--scraping,
-.services-hub:has(.service-hub-card--scraping:focus-visible) .services-hub-connector--scraping,
-.services-hub:has(.service-hub-card--api:hover) .services-hub-connector--api,
-.services-hub:has(.service-hub-card--api:focus-visible) .services-hub-connector--api,
-.services-hub:has(.service-hub-card--ai:hover) .services-hub-connector--ai,
-.services-hub:has(.service-hub-card--ai:focus-visible) .services-hub-connector--ai {
-  stroke: rgba(196, 181, 253, 0.58);
-  stroke-width: 1.45;
-  opacity: 1;
-}
-
-@keyframes servicesHubSignal {
-  0% { stroke-dashoffset: 118; opacity: 0; }
-  12% { opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 0.15; }
-}
+@keyframes servicesHubSignal { 0% { stroke-dashoffset: 116; opacity: 0; } 12% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: .18; } }
 
 @media (max-width: 999px) {
-  .services {
-    padding: 5rem 0 3.5rem;
-  }
-
-  .services-hub {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas:
-      "demo demo"
-      "education investment"
-      "rpa finance"
-      "scraping api"
-      "ai ai";
-    gap: 1.25rem;
-    width: min(100%, 720px);
-  }
-
-  .services-hub__connectors {
-    display: none;
-  }
-
-  .service-hub-card,
-  .service-hub-card--api,
-  .service-hub-card--ai {
-    width: auto;
-    min-height: 138px;
-    justify-self: stretch;
-  }
-
-  .services-hub-center {
-    width: min(100%, 250px);
-    min-height: 154px;
-    margin: 0 auto 0.35rem;
-  }
-
-  .services-hub-demo {
-    margin-bottom: 0;
-  }
+  .services { padding: 4.75rem 0 3.4rem; }
+  .section-header { margin-bottom: 2.7rem; }
+  .services-hub { grid-template-columns: repeat(3, minmax(0, 190px)); gap: 1.05rem; width: min(100%, 700px); min-height: 520px; }
+  .service-hub-card { width: auto; min-height: 154px; padding: 1rem .85rem; }
+  .service-hub-card__description { font-size: .84rem; }
+  .services-hub-center { width: 190px; min-height: 154px; }
+  .services-hub-demo { width: 168px; }
+  .services-hub__connectors { inset: 1% 0; opacity: .78; }
 }
 
-@media (max-width: 640px) {
-  .services {
-    padding: 4.5rem 0 3rem;
-  }
-
-  .services .container {
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-  }
-
-  .section-header {
-    margin-bottom: 2.25rem;
-  }
-
-  .services-hub {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "demo"
-      "education"
-      "investment"
-      "rpa"
-      "finance"
-      "scraping"
-      "api"
-      "ai";
-    gap: 1rem;
-    width: 100%;
-  }
-
-  .service-hub-card,
-  .service-hub-card--api,
-  .service-hub-card--ai {
-    grid-template-columns: 46px 1fr;
-    grid-template-rows: auto auto;
-    column-gap: 0.9rem;
-    row-gap: 0.25rem;
-    align-items: center;
-    min-height: 108px;
-    padding: 1rem;
-  }
-
-  .service-hub-card__icon {
-    grid-row: 1 / span 2;
-  }
-
-  .services-hub-center {
-    width: min(100%, 210px);
-    min-height: 124px;
-    margin: 0 auto 0.25rem;
-  }
-
-  .services-hub-core-network {
-    opacity: 0.54;
-    transform: scale(0.92);
-  }
-
-  .services-hub-demo {
-    width: min(100%, 190px);
-    min-height: 54px;
-    margin: 0;
-  }
+@media (max-width: 760px) {
+  .services { padding: 4.5rem 0 3rem; }
+  .services .container { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+  .section-header { margin-bottom: 2.2rem; }
+  .services-hub { grid-template-columns: 1fr; grid-template-areas: "demo" "education" "investment" "rpa" "finance" "scraping" "api" "ai"; gap: 1rem; width: 100%; min-height: 0; }
+  .services-hub__connectors { display: none; }
+  .service-hub-card, .service-hub-card--api, .service-hub-card--ai { width: 100%; min-height: 108px; transform: none; display: grid; grid-template-columns: 46px 1fr; grid-template-rows: auto auto; column-gap: .9rem; row-gap: .25rem; align-items: center; justify-items: start; text-align: left; padding: 1rem; }
+  .service-hub-card:hover, .service-hub-card:focus-visible, .service-hub-card--api:hover, .service-hub-card--api:focus-visible, .service-hub-card--ai:hover, .service-hub-card--ai:focus-visible { transform: translateY(-3px); }
+  .service-hub-card__icon { grid-row: 1 / span 2; width: 46px; height: 46px; }
+  .service-hub-card__description { max-width: none; }
+  .services-hub-center { width: min(100%, 220px); min-height: 132px; margin: 0 auto .2rem; }
+  .services-hub-core-network { opacity: .64; transform: scale(.92); }
+  .services-hub-demo { width: min(100%, 190px); min-height: 54px; margin: 0; }
 }
-
 
 @media (prefers-reduced-motion: reduce) {
-  .services-hub-signal {
-    animation: none !important;
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
-  }
+  .services-hub-signal { animation: none !important; stroke-dasharray: none; stroke-dashoffset: 0; }
 }
 
 /* ================================================================

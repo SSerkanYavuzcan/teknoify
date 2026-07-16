@@ -26,7 +26,7 @@
 
     <script src="https://www.google.com/recaptcha/api.js?render=6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk"></script>
 
-    <link rel="stylesheet" href="css/style.css?v=services-hub-2" />
+    <link rel="stylesheet" href="css/style.css?v=services-hub-3" />
     
     <style>
         .password-toggle-icon {
@@ -239,38 +239,45 @@
                 </div>
 
                 <div class="services-hub" aria-label="Teknoify hizmet merkezi">
-                    <svg class="services-hub__connectors" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <svg class="services-hub__connectors" viewBox="0 0 900 560" preserveAspectRatio="none" aria-hidden="true" focusable="false">
                         <defs>
-                            <filter id="servicesSignalGlow" x="-25%" y="-25%" width="150%" height="150%">
-                                <feGaussianBlur stdDeviation="5" result="blur" />
+                            <filter id="servicesSignalGlow" x="-30%" y="-30%" width="160%" height="160%">
+                                <feGaussianBlur stdDeviation="4" result="blur" />
                                 <feMerge>
                                     <feMergeNode in="blur" />
                                     <feMergeNode in="SourceGraphic" />
                                 </feMerge>
                             </filter>
                         </defs>
+                        <g class="services-hub__connector-grid">
+                            <path d="M356 174 V226 H544 V174 M356 334 V282 H544 V334 M400 160 V400 M500 160 V400 M450 118 V442" />
+                            <path d="M310 226 H590 M310 282 H590 M372 206 H528 M372 302 H528" />
+                            <path d="M426 244 H474 M426 264 H474 M430 206 V302 M470 206 V302" />
+                        </g>
                         <g class="services-hub__connector-base">
-                            <path class="services-hub-connector services-hub-connector--education" d="M170 95 C255 155 355 210 500 310" />
-                            <path class="services-hub-connector services-hub-connector--investment" d="M500 95 C500 165 500 225 500 310" />
-                            <path class="services-hub-connector services-hub-connector--rpa" d="M830 95 C745 155 645 210 500 310" />
-                            <path class="services-hub-connector services-hub-connector--finance" d="M170 310 C270 310 370 310 500 310" />
-                            <path class="services-hub-connector services-hub-connector--scraping" d="M830 310 C730 310 630 310 500 310" />
-                            <path class="services-hub-connector services-hub-connector--api" d="M170 525 C255 465 355 410 500 310" />
-                            <path class="services-hub-connector services-hub-connector--ai" d="M830 525 C745 465 645 410 500 310" />
+                            <path class="services-hub-connector services-hub-connector--education" d="M152 92 H300 V174 H390 V252 H450" />
+                            <path class="services-hub-connector services-hub-connector--investment" d="M450 92 V174 H450 V252" />
+                            <path class="services-hub-connector services-hub-connector--rpa" d="M748 92 H600 V174 H510 V252 H450" />
+                            <path class="services-hub-connector services-hub-connector--finance" d="M152 280 H318 V262 H450" />
+                            <path class="services-hub-connector services-hub-connector--scraping" d="M748 280 H582 V262 H450" />
+                            <path class="services-hub-connector services-hub-connector--api" d="M302 468 V386 H392 V308 H450" />
+                            <path class="services-hub-connector services-hub-connector--ai" d="M598 468 V386 H508 V308 H450" />
                         </g>
                         <g class="services-hub__connector-active" filter="url(#servicesSignalGlow)">
-                            <path class="services-hub-signal services-hub-signal--education" pathLength="100" d="M170 95 C255 155 355 210 500 310" />
-                            <path class="services-hub-signal services-hub-signal--investment" pathLength="100" d="M500 95 C500 165 500 225 500 310" />
-                            <path class="services-hub-signal services-hub-signal--rpa" pathLength="100" d="M830 95 C745 155 645 210 500 310" />
-                            <path class="services-hub-signal services-hub-signal--finance" pathLength="100" d="M170 310 C270 310 370 310 500 310" />
-                            <path class="services-hub-signal services-hub-signal--scraping" pathLength="100" d="M830 310 C730 310 630 310 500 310" />
-                            <path class="services-hub-signal services-hub-signal--api" pathLength="100" d="M170 525 C255 465 355 410 500 310" />
-                            <path class="services-hub-signal services-hub-signal--ai" pathLength="100" d="M830 525 C745 465 645 410 500 310" />
+                            <path class="services-hub-signal services-hub-signal--education" pathLength="100" d="M152 92 H300 V174 H390 V252 H450" />
+                            <path class="services-hub-signal services-hub-signal--investment" pathLength="100" d="M450 92 V174 H450 V252" />
+                            <path class="services-hub-signal services-hub-signal--rpa" pathLength="100" d="M748 92 H600 V174 H510 V252 H450" />
+                            <path class="services-hub-signal services-hub-signal--finance" pathLength="100" d="M152 280 H318 V262 H450" />
+                            <path class="services-hub-signal services-hub-signal--scraping" pathLength="100" d="M748 280 H582 V262 H450" />
+                            <path class="services-hub-signal services-hub-signal--api" pathLength="100" d="M302 468 V386 H392 V308 H450" />
+                            <path class="services-hub-signal services-hub-signal--ai" pathLength="100" d="M598 468 V386 H508 V308 H450" />
                         </g>
                         <g class="services-hub__connector-nodes">
-                            <circle cx="170" cy="95" r="4" /><circle cx="500" cy="95" r="4" /><circle cx="830" cy="95" r="4" />
-                            <circle cx="170" cy="310" r="4" /><circle cx="830" cy="310" r="4" /><circle cx="170" cy="525" r="4" /><circle cx="830" cy="525" r="4" />
-                            <circle class="services-hub__connector-core-node" cx="500" cy="310" r="6" />
+                            <circle cx="152" cy="92" r="4" /><circle cx="450" cy="92" r="4" /><circle cx="748" cy="92" r="4" />
+                            <circle cx="152" cy="280" r="4" /><circle cx="748" cy="280" r="4" /><circle cx="302" cy="468" r="4" /><circle cx="598" cy="468" r="4" />
+                            <circle cx="300" cy="174" r="3" /><circle cx="600" cy="174" r="3" /><circle cx="318" cy="262" r="3" /><circle cx="582" cy="262" r="3" />
+                            <circle cx="392" cy="308" r="3" /><circle cx="508" cy="308" r="3" /><circle cx="400" cy="226" r="2.5" /><circle cx="500" cy="226" r="2.5" />
+                            <circle class="services-hub__connector-core-node" cx="450" cy="252" r="6" /><circle class="services-hub__connector-core-node" cx="450" cy="308" r="5" />
                         </g>
                     </svg>
 
@@ -630,7 +637,7 @@
 
 <script src="js/session-manager.js"></script>
 <script type="module" src="/packages/config/routes-global.js"></script>
-<script src="js/script.js?v=services-hub-2" defer></script>
+<script src="js/script.js?v=services-hub-3" defer></script>
 <script src="js/cookies.js" defer></script>
 
 <script>
