@@ -16,7 +16,22 @@
     grid-template-columns: 1.2fr 1fr 1fr; /* Sol sütunu biraz daralttık */
     gap: 1rem;
     margin-bottom: 0.8rem; /* Alt çizgi ile mesafe kısaldı */
-    align-items: start;
+    align-items: stretch;
+}
+
+
+.footer-col {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0) 44%),
+        linear-gradient(135deg, rgba(15, 16, 26, 0.99), rgba(10, 11, 19, 0.985));
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
 
