@@ -615,17 +615,17 @@
 .services-hub {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, 210px);
+  grid-template-columns: repeat(3, 230px);
   grid-template-areas:
     "education investment rpa"
     "finance   demo       scraping"
-    ".         lower      .";
+    "api       empty      ai";
   justify-content: center;
   align-items: center;
-  gap: 1.35rem 1.7rem;
-  width: min(100%, 770px);
+  gap: 46px 90px;
+  width: min(100%, 1020px);
   margin: 0 auto;
-  min-height: 560px;
+  min-height: 650px;
   isolation: isolate;
 }
 
@@ -682,15 +682,13 @@
 .service-hub-card--rpa { grid-area: rpa; }
 .service-hub-card--finance { grid-area: finance; }
 .service-hub-card--scraping { grid-area: scraping; }
-.service-hub-card--api { grid-area: lower; justify-self: start; transform: translateX(36px); }
-.service-hub-card--ai { grid-area: lower; justify-self: end; transform: translateX(-36px); }
+.service-hub-card--api { grid-area: api; }
+.service-hub-card--ai { grid-area: ai; }
 
 .service-hub-card__icon { display: inline-grid; place-items: center; width: 48px; height: 48px; border: 1px solid rgba(196,181,253,.42); border-radius: 15px; background: linear-gradient(145deg, rgba(99,102,241,.24), rgba(109,40,217,.16)); color: #c4b5fd; font-size: 1.06rem; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 0 18px rgba(99,102,241,.18); transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease; }
 .service-hub-card__title { display: block; color: rgba(255,255,255,.98); font-size: 1.04rem; font-weight: 780; line-height: 1.12; white-space: nowrap; }
 .service-hub-card__description { display: block; color: rgba(203,213,225,.78); font-size: .88rem; font-weight: 500; line-height: 1.38; max-width: 16ch; }
 .service-hub-card:hover, .service-hub-card:focus-visible { transform: translateY(-4px); border-color: rgba(216,180,254,.58); box-shadow: 0 22px 48px rgba(0,0,0,.34), 0 0 26px rgba(124,58,237,.22), inset 0 1px 0 rgba(255,255,255,.16); }
-.service-hub-card--api:hover, .service-hub-card--api:focus-visible { transform: translate(36px, -4px); }
-.service-hub-card--ai:hover, .service-hub-card--ai:focus-visible { transform: translate(-36px, -4px); }
 .service-hub-card:hover .service-hub-card__icon, .service-hub-card:focus-visible .service-hub-card__icon { color: #f5f3ff; border-color: rgba(216,180,254,.62); background: rgba(124,58,237,.28); }
 .service-hub-card:focus-visible, .services-hub-demo:focus-visible { outline: 2px solid rgba(216,180,254,.86); outline-offset: 4px; }
 
@@ -728,7 +726,7 @@
 @media (max-width: 999px) {
   .services { padding: 4.75rem 0 3.4rem; }
   .section-header { margin-bottom: 2.7rem; }
-  .services-hub { grid-template-columns: repeat(3, minmax(0, 190px)); gap: 1.05rem; width: min(100%, 700px); min-height: 520px; }
+  .services-hub { grid-template-columns: repeat(3, minmax(0, 188px)); gap: 32px 46px; width: min(100%, 700px); min-height: 560px; }
   .service-hub-card { width: auto; min-height: 154px; padding: 1rem .85rem; }
   .service-hub-card__description { font-size: .84rem; }
   .services-hub-center { width: 190px; min-height: 154px; }
