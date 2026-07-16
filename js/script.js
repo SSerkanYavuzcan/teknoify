@@ -862,6 +862,12 @@ class BackgroundFX {
             majorGridSize: 160,
             desktopWaveAmplitude: 5.5,
             mobileWaveAmplitude: 4,
+            desktopDepthAmplitude: 24,
+            mobileDepthAmplitude: 16,
+            perspectiveStrength: 0.42,
+            verticalDepthLift: 0.22,
+            cameraFocalLength: 1100,
+            gridOverscan: 140,
             waveCycleDuration: 10000,
             sampleStep: 20,
             targetFrameInterval: 1000 / 30
@@ -1038,56 +1044,118 @@ class BackgroundFX {
         };
     }
 
+    getQuantumDepth(worldX, worldY, elapsed) {
+        const amplitude = window.innerWidth < 768 ? this.gridConfig.mobileDepthAmplitude : this.gridConfig.desktopDepthAmplitude;
+        const phase = (elapsed / this.gridConfig.waveCycleDuration) * Math.PI * 2;
+        const depthWaveA = Math.sin((worldX * 0.0028) + (worldY * 0.0036) + phase * 0.84) * (amplitude * 0.46);
+        const depthWaveB = Math.sin((worldX * -0.0034) + (worldY * 0.0024) - phase * 0.72) * (amplitude * 0.34);
+        const depthWaveC = Math.sin((worldX + worldY) * 0.0019 + phase * 0.52) * (amplitude * 0.20);
+
+        return depthWaveA + depthWaveB + depthWaveC;
+    }
+
+    projectQuantumPoint(worldX, worldY, elapsed, scrollX, scrollY) {
+        const displacement = this.getQuantumDisplacement(worldX, worldY, elapsed);
+        const z = this.getQuantumDepth(worldX, worldY, elapsed);
+        const depthAmplitude = window.innerWidth < 768 ? this.gridConfig.mobileDepthAmplitude : this.gridConfig.desktopDepthAmplitude;
+        const normalizedDepth = Math.max(-1, Math.min(1, z / depthAmplitude));
+        const viewportX = worldX - scrollX + displacement.x;
+        const viewportY = worldY - scrollY + displacement.y;
+        const originX = this.width * 0.5;
+        const originY = this.height * 0.48;
+        const focalLength = this.gridConfig.cameraFocalLength;
+        const perspectiveZ = z * this.gridConfig.perspectiveStrength;
+        const scale = focalLength / (focalLength - perspectiveZ);
+
+        return {
+            x: originX + (viewportX - originX) * scale,
+            y: originY + (viewportY - originY) * scale - z * this.gridConfig.verticalDepthLift,
+            normalizedDepth
+        };
+    }
+
     drawQuantumGrid(timestamp) {
         if (!this.ctx) return false;
 
-        const { minorGridSize, majorGridSize, sampleStep } = this.gridConfig;
+        const { minorGridSize, majorGridSize, sampleStep, gridOverscan } = this.gridConfig;
         const ctx = this.ctx;
         const elapsed = Math.max(0, timestamp - this.animationStartTime);
         const scrollX = window.scrollX || window.pageXOffset || 0;
         const scrollY = window.scrollY || window.pageYOffset || 0;
-        const firstX = Math.floor(scrollX / minorGridSize) * minorGridSize - minorGridSize;
-        const lastX = scrollX + this.width + minorGridSize;
-        const firstY = Math.floor(scrollY / minorGridSize) * minorGridSize - minorGridSize;
-        const lastY = scrollY + this.height + minorGridSize;
+        const overscan = gridOverscan + minorGridSize;
+        const firstX = Math.floor((scrollX - overscan) / minorGridSize) * minorGridSize;
+        const lastX = scrollX + this.width + overscan;
+        const firstY = Math.floor((scrollY - overscan) / minorGridSize) * minorGridSize;
+        const lastY = scrollY + this.height + overscan;
+        const depthBands = this.createQuantumDepthBands();
 
         ctx.clearRect(0, 0, this.width, this.height);
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
         for (let x = firstX; x <= lastX; x += minorGridSize) {
-            this.drawQuantumLine(ctx, x, firstY, x, lastY, true, x % majorGridSize === 0, elapsed, sampleStep, scrollX, scrollY);
+            this.drawQuantumLine(depthBands, x, firstY, x, lastY, true, x % majorGridSize === 0, elapsed, sampleStep, scrollX, scrollY);
         }
 
         for (let y = firstY; y <= lastY; y += minorGridSize) {
-            this.drawQuantumLine(ctx, firstX, y, lastX, y, false, y % majorGridSize === 0, elapsed, sampleStep, scrollX, scrollY);
+            this.drawQuantumLine(depthBands, firstX, y, lastX, y, false, y % majorGridSize === 0, elapsed, sampleStep, scrollX, scrollY);
         }
+
+        this.strokeQuantumDepthBands(ctx, depthBands);
 
         return true;
     }
 
-    drawQuantumLine(ctx, startX, startY, endX, endY, isVertical, isMajor, elapsed, sampleStep, scrollX, scrollY) {
+    createQuantumDepthBands() {
+        return {
+            minor: [new Path2D(), new Path2D(), new Path2D()],
+            major: [new Path2D(), new Path2D(), new Path2D()]
+        };
+    }
+
+    getQuantumDepthBand(normalizedDepth) {
+        if (normalizedDepth < -0.24) return 0;
+        if (normalizedDepth > 0.24) return 2;
+        return 1;
+    }
+
+    drawQuantumLine(depthBands, startX, startY, endX, endY, isVertical, isMajor, elapsed, sampleStep, scrollX, scrollY) {
         const length = isVertical ? endY - startY : endX - startX;
         const steps = Math.max(2, Math.ceil(length / sampleStep));
+        const paths = isMajor ? depthBands.major : depthBands.minor;
+        let previousPoint = null;
 
-        ctx.beginPath();
         for (let i = 0; i <= steps; i++) {
             const progress = i / steps;
             const worldX = isVertical ? startX : startX + length * progress;
             const worldY = isVertical ? startY + length * progress : startY;
-            const displacement = this.getQuantumDisplacement(worldX, worldY, elapsed);
-            const screenX = worldX - scrollX + displacement.x;
-            const screenY = worldY - scrollY + displacement.y;
+            const point = this.projectQuantumPoint(worldX, worldY, elapsed, scrollX, scrollY);
 
-            if (i === 0) {
-                ctx.moveTo(screenX, screenY);
-            } else {
-                ctx.lineTo(screenX, screenY);
+            if (previousPoint) {
+                const path = paths[this.getQuantumDepthBand((previousPoint.normalizedDepth + point.normalizedDepth) * 0.5)];
+                path.moveTo(previousPoint.x, previousPoint.y);
+                path.lineTo(point.x, point.y);
             }
-        }
 
-        ctx.strokeStyle = isMajor ? 'rgba(99, 102, 241, 0.12)' : 'rgba(255, 255, 255, 0.072)';
-        ctx.lineWidth = isMajor ? 1.22 : 0.95;
-        ctx.stroke();
+            previousPoint = point;
+        }
+    }
+
+    strokeQuantumDepthBands(ctx, depthBands) {
+        const bandStyles = [
+            { minorAlpha: 0.052, majorAlpha: 0.092, minorWidth: 0.9, majorWidth: 1.12 },
+            { minorAlpha: 0.066, majorAlpha: 0.118, minorWidth: 0.99, majorWidth: 1.24 },
+            { minorAlpha: 0.084, majorAlpha: 0.152, minorWidth: 1.08, majorWidth: 1.38 }
+        ];
+
+        bandStyles.forEach((style, index) => {
+            ctx.strokeStyle = `rgba(255, 255, 255, ${style.minorAlpha})`;
+            ctx.lineWidth = style.minorWidth;
+            ctx.stroke(depthBands.minor[index]);
+
+            ctx.strokeStyle = `rgba(99, 102, 241, ${style.majorAlpha})`;
+            ctx.lineWidth = style.majorWidth;
+            ctx.stroke(depthBands.major[index]);
+        });
     }
 }
