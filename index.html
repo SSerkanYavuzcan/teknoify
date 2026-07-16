@@ -26,7 +26,7 @@
 
     <script src="https://www.google.com/recaptcha/api.js?render=6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk"></script>
 
-    <link rel="stylesheet" href="css/style.css?v=services-hub-1" />
+    <link rel="stylesheet" href="css/style.css?v=services-hub-2" />
     
     <style>
         .password-toggle-icon {
@@ -239,7 +239,40 @@
                 </div>
 
                 <div class="services-hub" aria-label="Teknoify hizmet merkezi">
-                    <div class="services-hub__connectors" aria-hidden="true"></div>
+                    <svg class="services-hub__connectors" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                        <defs>
+                            <filter id="servicesSignalGlow" x="-25%" y="-25%" width="150%" height="150%">
+                                <feGaussianBlur stdDeviation="5" result="blur" />
+                                <feMerge>
+                                    <feMergeNode in="blur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <g class="services-hub__connector-base">
+                            <path class="services-hub-connector services-hub-connector--education" d="M170 95 C255 155 355 210 500 310" />
+                            <path class="services-hub-connector services-hub-connector--investment" d="M500 95 C500 165 500 225 500 310" />
+                            <path class="services-hub-connector services-hub-connector--rpa" d="M830 95 C745 155 645 210 500 310" />
+                            <path class="services-hub-connector services-hub-connector--finance" d="M170 310 C270 310 370 310 500 310" />
+                            <path class="services-hub-connector services-hub-connector--scraping" d="M830 310 C730 310 630 310 500 310" />
+                            <path class="services-hub-connector services-hub-connector--api" d="M170 525 C255 465 355 410 500 310" />
+                            <path class="services-hub-connector services-hub-connector--ai" d="M830 525 C745 465 645 410 500 310" />
+                        </g>
+                        <g class="services-hub__connector-active" filter="url(#servicesSignalGlow)">
+                            <path class="services-hub-signal services-hub-signal--education" pathLength="100" d="M170 95 C255 155 355 210 500 310" />
+                            <path class="services-hub-signal services-hub-signal--investment" pathLength="100" d="M500 95 C500 165 500 225 500 310" />
+                            <path class="services-hub-signal services-hub-signal--rpa" pathLength="100" d="M830 95 C745 155 645 210 500 310" />
+                            <path class="services-hub-signal services-hub-signal--finance" pathLength="100" d="M170 310 C270 310 370 310 500 310" />
+                            <path class="services-hub-signal services-hub-signal--scraping" pathLength="100" d="M830 310 C730 310 630 310 500 310" />
+                            <path class="services-hub-signal services-hub-signal--api" pathLength="100" d="M170 525 C255 465 355 410 500 310" />
+                            <path class="services-hub-signal services-hub-signal--ai" pathLength="100" d="M830 525 C745 465 645 410 500 310" />
+                        </g>
+                        <g class="services-hub__connector-nodes">
+                            <circle cx="170" cy="95" r="4" /><circle cx="500" cy="95" r="4" /><circle cx="830" cy="95" r="4" />
+                            <circle cx="170" cy="310" r="4" /><circle cx="830" cy="310" r="4" /><circle cx="170" cy="525" r="4" /><circle cx="830" cy="525" r="4" />
+                            <circle class="services-hub__connector-core-node" cx="500" cy="310" r="6" />
+                        </g>
+                    </svg>
 
                     <a class="service-hub-card service-hub-card--education" href="pages/training-consulting.html" aria-label="Eğitim hizmetini incele: Ekiplerinizi geliştirir.">
                         <span class="service-hub-card__icon"><i class="fas fa-graduation-cap" aria-hidden="true"></i></span>
@@ -265,9 +298,17 @@
                         <span class="service-hub-card__description">Piyasaları senin için izler.</span>
                     </a>
 
-                    <a class="services-hub-demo" href="/demo/" aria-label="Demoyu Keşfet sayfasına git">
-                        <span>Demoyu Keşfet</span>
-                    </a>
+                    <div class="services-hub-center">
+                        <svg class="services-hub-core-network" viewBox="0 0 260 180" aria-hidden="true" focusable="false">
+                            <path class="services-hub-core-branch" d="M130 90 H34 M130 90 H226 M130 90 V28 M130 90 V152 M130 90 L62 42 M130 90 L198 42 M130 90 L62 138 M130 90 L198 138" />
+                            <circle cx="130" cy="90" r="18" />
+                            <circle cx="34" cy="90" r="5" /><circle cx="226" cy="90" r="5" /><circle cx="130" cy="28" r="5" /><circle cx="130" cy="152" r="5" />
+                            <circle cx="62" cy="42" r="4" /><circle cx="198" cy="42" r="4" /><circle cx="62" cy="138" r="4" /><circle cx="198" cy="138" r="4" />
+                        </svg>
+                        <a class="services-hub-demo" href="/demo/" aria-label="Demoyu Keşfet sayfasına git">
+                            <span>Demoyu Keşfet</span>
+                        </a>
+                    </div>
 
                     <a class="service-hub-card service-hub-card--scraping" href="pages/webscraping.html" aria-label="Scraping hizmetini incele: Veriyi otomatik toplar.">
                         <span class="service-hub-card__icon"><i class="fas fa-spider" aria-hidden="true"></i></span>
@@ -589,7 +630,7 @@
 
 <script src="js/session-manager.js"></script>
 <script type="module" src="/packages/config/routes-global.js"></script>
-<script src="js/script.js?v=services-hub-1" defer></script>
+<script src="js/script.js?v=services-hub-2" defer></script>
 <script src="js/cookies.js" defer></script>
 
 <script>

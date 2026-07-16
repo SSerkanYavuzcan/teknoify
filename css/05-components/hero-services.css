@@ -616,43 +616,48 @@
 
 .services-hub__connectors {
   position: absolute;
-  inset: 8% 9% 12%;
+  inset: 3% 4% 4%;
   z-index: -1;
   pointer-events: none;
+  overflow: visible;
+}
+
+.services-hub-connector,
+.services-hub-signal {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.services-hub-connector {
+  stroke: rgba(165, 180, 252, 0.3);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  opacity: 0.78;
+}
+
+.services-hub-signal {
+  stroke: rgba(125, 211, 252, 0.92);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 18 100;
+  stroke-dashoffset: 118;
+  opacity: 0;
+}
+
+.services-hub__connector-nodes circle {
+  fill: rgba(196, 181, 253, 0.6);
   opacity: 0.58;
-  background:
-    linear-gradient(90deg, transparent 0 8%, rgba(129, 140, 248, 0.32) 8% 42%, transparent 42% 58%, rgba(168, 85, 247, 0.26) 58% 92%, transparent 92%),
-    linear-gradient(0deg, transparent 0 18%, rgba(129, 140, 248, 0.24) 18% 51%, transparent 51% 100%),
-    linear-gradient(45deg, transparent 0 31%, rgba(168, 85, 247, 0.26) 31% 45%, transparent 45% 100%),
-    linear-gradient(-45deg, transparent 0 31%, rgba(125, 211, 252, 0.18) 31% 45%, transparent 45% 100%);
-  background-size: 100% 1px, 1px 100%, 100% 1px, 100% 1px;
-  background-position: center, center, center, center;
-  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.28));
 }
 
-.services-hub__connectors::before,
-.services-hub__connectors::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(216, 180, 254, 0.78);
-  box-shadow: 0 0 16px rgba(168, 85, 247, 0.45);
-  transform: translate(-50%, -50%);
-}
-
-.services-hub__connectors::after {
-  width: 62%;
-  height: 62%;
-  border: 1px solid rgba(129, 140, 248, 0.1);
-  background: none;
-  box-shadow: none;
+.services-hub__connector-nodes .services-hub__connector-core-node {
+  fill: rgba(216, 180, 254, 0.9);
+  opacity: 0.82;
+  filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.52));
 }
 
 .service-hub-card,
+.services-hub-center,
 .services-hub-demo {
   position: relative;
   z-index: 1;
@@ -733,8 +738,39 @@
   outline-offset: 4px;
 }
 
-.services-hub-demo {
+.services-hub-center {
   grid-area: demo;
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: clamp(230px, 24vw, 270px);
+  min-height: 178px;
+}
+
+.services-hub-core-network {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: visible;
+  opacity: 0.88;
+  filter: drop-shadow(0 0 14px rgba(99, 102, 241, 0.22));
+  transition: opacity 220ms ease, filter 220ms ease, transform 220ms ease;
+}
+
+.services-hub-core-network path,
+.services-hub-core-network circle {
+  fill: none;
+  stroke: rgba(196, 181, 253, 0.52);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.services-hub-core-network circle {
+  fill: rgba(99, 102, 241, 0.26);
+  stroke: rgba(216, 180, 254, 0.64);
+}
+
+.services-hub-demo {
   justify-self: center;
   display: inline-flex;
   align-items: center;
@@ -770,6 +806,63 @@
   box-shadow: 0 0 0 9px rgba(99, 102, 241, 0.08), 0 18px 38px rgba(124, 58, 237, 0.26);
 }
 
+
+.services-hub:has(.service-hub-card:hover) .services-hub-core-network,
+.services-hub:has(.service-hub-card:focus-visible) .services-hub-core-network {
+  opacity: 1;
+  filter: drop-shadow(0 0 18px rgba(125, 211, 252, 0.28)) drop-shadow(0 0 28px rgba(168, 85, 247, 0.2));
+  transform: scale(1.02);
+}
+
+.services-hub:has(.service-hub-card:hover) .services-hub-demo,
+.services-hub:has(.service-hub-card:focus-visible) .services-hub-demo {
+  border-color: transparent;
+  box-shadow: 0 0 0 10px rgba(99, 102, 241, 0.08), 0 18px 40px rgba(124, 58, 237, 0.3), 0 0 28px rgba(125, 211, 252, 0.14);
+}
+
+.services-hub:has(.service-hub-card--education:hover) .services-hub-signal--education,
+.services-hub:has(.service-hub-card--education:focus-visible) .services-hub-signal--education,
+.services-hub:has(.service-hub-card--investment:hover) .services-hub-signal--investment,
+.services-hub:has(.service-hub-card--investment:focus-visible) .services-hub-signal--investment,
+.services-hub:has(.service-hub-card--rpa:hover) .services-hub-signal--rpa,
+.services-hub:has(.service-hub-card--rpa:focus-visible) .services-hub-signal--rpa,
+.services-hub:has(.service-hub-card--finance:hover) .services-hub-signal--finance,
+.services-hub:has(.service-hub-card--finance:focus-visible) .services-hub-signal--finance,
+.services-hub:has(.service-hub-card--scraping:hover) .services-hub-signal--scraping,
+.services-hub:has(.service-hub-card--scraping:focus-visible) .services-hub-signal--scraping,
+.services-hub:has(.service-hub-card--api:hover) .services-hub-signal--api,
+.services-hub:has(.service-hub-card--api:focus-visible) .services-hub-signal--api,
+.services-hub:has(.service-hub-card--ai:hover) .services-hub-signal--ai,
+.services-hub:has(.service-hub-card--ai:focus-visible) .services-hub-signal--ai {
+  opacity: 1;
+  animation: servicesHubSignal 1150ms ease-out forwards;
+}
+
+.services-hub:has(.service-hub-card--education:hover) .services-hub-connector--education,
+.services-hub:has(.service-hub-card--education:focus-visible) .services-hub-connector--education,
+.services-hub:has(.service-hub-card--investment:hover) .services-hub-connector--investment,
+.services-hub:has(.service-hub-card--investment:focus-visible) .services-hub-connector--investment,
+.services-hub:has(.service-hub-card--rpa:hover) .services-hub-connector--rpa,
+.services-hub:has(.service-hub-card--rpa:focus-visible) .services-hub-connector--rpa,
+.services-hub:has(.service-hub-card--finance:hover) .services-hub-connector--finance,
+.services-hub:has(.service-hub-card--finance:focus-visible) .services-hub-connector--finance,
+.services-hub:has(.service-hub-card--scraping:hover) .services-hub-connector--scraping,
+.services-hub:has(.service-hub-card--scraping:focus-visible) .services-hub-connector--scraping,
+.services-hub:has(.service-hub-card--api:hover) .services-hub-connector--api,
+.services-hub:has(.service-hub-card--api:focus-visible) .services-hub-connector--api,
+.services-hub:has(.service-hub-card--ai:hover) .services-hub-connector--ai,
+.services-hub:has(.service-hub-card--ai:focus-visible) .services-hub-connector--ai {
+  stroke: rgba(196, 181, 253, 0.58);
+  stroke-width: 1.45;
+  opacity: 1;
+}
+
+@keyframes servicesHubSignal {
+  0% { stroke-dashoffset: 118; opacity: 0; }
+  12% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0.15; }
+}
+
 @media (max-width: 999px) {
   .services {
     padding: 5rem 0 3.5rem;
@@ -799,8 +892,14 @@
     justify-self: stretch;
   }
 
+  .services-hub-center {
+    width: min(100%, 250px);
+    min-height: 154px;
+    margin: 0 auto 0.35rem;
+  }
+
   .services-hub-demo {
-    margin-bottom: 0.35rem;
+    margin-bottom: 0;
   }
 }
 
@@ -849,10 +948,30 @@
     grid-row: 1 / span 2;
   }
 
+  .services-hub-center {
+    width: min(100%, 210px);
+    min-height: 124px;
+    margin: 0 auto 0.25rem;
+  }
+
+  .services-hub-core-network {
+    opacity: 0.54;
+    transform: scale(0.92);
+  }
+
   .services-hub-demo {
     width: min(100%, 190px);
     min-height: 54px;
-    margin: 0 auto 0.25rem;
+    margin: 0;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .services-hub-signal {
+    animation: none !important;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
   }
 }
 
