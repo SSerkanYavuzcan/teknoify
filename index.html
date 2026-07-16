@@ -26,7 +26,7 @@
 
     <script src="https://www.google.com/recaptcha/api.js?render=6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk"></script>
 
-    <link rel="stylesheet" href="css/style.css?v=services-hub-6" />
+    <link rel="stylesheet" href="css/style.css?v=services-hub-7" />
     
     <style>
         .password-toggle-icon {
@@ -264,6 +264,7 @@
                             <path class="services-hub-connector services-hub-connector--scraping" d="M842 325 H668 V320 H540" />
                             <path class="services-hub-connector services-hub-connector--scraping" d="M842 346 H692 V348 H540" />
                             <path class="services-hub-connector services-hub-connector--api" d="M520 368 V432 H384 V492 H198 V540" />
+                            <path class="services-hub-connector services-hub-connector--analytics" d="M520 540 V368" />
                             <path class="services-hub-connector services-hub-connector--ai" d="M520 368 V432 H656 V492 H842 V540" />
                         </g>
                         <g class="services-hub__connector-active" filter="url(#servicesSignalGlow)">
@@ -272,12 +273,13 @@
                             <path class="services-hub-signal services-hub-signal--rpa" pathLength="100" d="M804 134 V190 H704 V238 H576 V306 H540" />
                             <path class="services-hub-signal services-hub-signal--finance" pathLength="100" d="M198 325 H372 V320 H500" />
                             <path class="services-hub-signal services-hub-signal--scraping" pathLength="100" d="M842 325 H668 V320 H540" />
-                            <path class="services-hub-signal services-hub-signal--api" pathLength="100" d="M520 368 V432 H384 V492 H198 V540" />
-                            <path class="services-hub-signal services-hub-signal--ai" pathLength="100" d="M520 368 V432 H656 V492 H842 V540" />
+                            <path class="services-hub-signal services-hub-signal--api" pathLength="100" d="M198 540 V492 H384 V432 H520 V368" />
+                            <path class="services-hub-signal services-hub-signal--analytics" pathLength="100" d="M520 540 V368" />
+                            <path class="services-hub-signal services-hub-signal--ai" pathLength="100" d="M842 540 V492 H656 V432 H520 V368" />
                         </g>
                         <g class="services-hub__connector-nodes">
                             <circle cx="188" cy="116" r="4" /><circle cx="520" cy="112" r="4" /><circle cx="852" cy="116" r="4" />
-                            <circle cx="198" cy="325" r="4" /><circle cx="842" cy="325" r="4" /><circle cx="198" cy="540" r="4" /><circle cx="842" cy="540" r="4" />
+                            <circle cx="198" cy="325" r="4" /><circle cx="842" cy="325" r="4" /><circle cx="198" cy="540" r="4" /><circle cx="520" cy="540" r="4" /><circle cx="842" cy="540" r="4" />
                             <circle cx="336" cy="238" r="3" /><circle cx="464" cy="306" r="3" /><circle cx="704" cy="238" r="3" /><circle cx="576" cy="306" r="3" />
                             <circle cx="372" cy="320" r="3" /><circle cx="668" cy="320" r="3" /><circle cx="384" cy="492" r="3" /><circle cx="656" cy="492" r="3" />
                             <circle cx="520" cy="432" r="3.5" /><circle cx="492" cy="222" r="2.5" /><circle cx="548" cy="222" r="2.5" />
@@ -330,6 +332,12 @@
                         <span class="service-hub-card__icon"><i class="fas fa-plug" aria-hidden="true"></i></span>
                         <span class="service-hub-card__title">API</span>
                         <span class="service-hub-card__description">Sistemlerinizi birbirine bağlar.</span>
+                    </a>
+
+                    <a class="service-hub-card service-hub-card--analytics" href="/demo/?service=data-analytics" aria-label="Veri Analitiği hizmetini incele: Verilerinizi anlamlı içgörülere dönüştürür.">
+                        <span class="service-hub-card__icon"><i class="fas fa-chart-bar" aria-hidden="true"></i></span>
+                        <span class="service-hub-card__title">Veri Analitiği</span>
+                        <span class="service-hub-card__description">Verilerinizi anlamlı içgörülere dönüştürür.</span>
                     </a>
 
                     <a class="service-hub-card service-hub-card--ai" href="pages/ai-assistant.html" aria-label="AI Asistan hizmetini incele: Süreçlerinizi akıllı şekilde destekler.">
@@ -408,6 +416,7 @@
                                     <option value="ai">AI Asistan</option>
                                     <option value="api">API Entegrasyon Hizmetleri</option>
                                     <option value="finans">Finansal İndikatör & Botlar</option>
+                                    <option value="veri-analitigi">Veri Analitiği</option>
                                     <option value="yatirim-analizleri">Yatırım Analizleri</option>
                                     <option value="egitim">Eğitim & Danışmanlık</option>
                                 </select>
@@ -445,6 +454,10 @@
                                         <li class="custom-select-option" role="option" data-value="finans" aria-selected="false">
                                             <i class="fas fa-chart-line custom-select-option-icon" aria-hidden="true"></i>
                                             <span>Finansal İndikatör & Botlar</span>
+                                        </li>
+                                        <li class="custom-select-option" role="option" data-value="veri-analitigi" aria-selected="false">
+                                            <i class="fas fa-chart-bar custom-select-option-icon" aria-hidden="true"></i>
+                                            <span>Veri Analitiği</span>
                                         </li>
                                         <li class="custom-select-option" role="option" data-value="yatirim-analizleri" aria-selected="false">
                                             <i class="fas fa-chart-pie custom-select-option-icon" aria-hidden="true"></i>
@@ -640,7 +653,7 @@
 
 <script src="js/session-manager.js"></script>
 <script type="module" src="/packages/config/routes-global.js"></script>
-<script src="js/script.js?v=services-hub-6" defer></script>
+<script src="js/script.js?v=services-hub-7" defer></script>
 <script src="js/cookies.js" defer></script>
 
 <script>
