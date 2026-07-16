@@ -860,9 +860,10 @@ class BackgroundFX {
         this.gridConfig = {
             minorGridSize: 40,
             majorGridSize: 160,
-            waveAmplitude: 2.2,
-            waveSpeed: 0.055,
-            sampleStep: 24,
+            desktopWaveAmplitude: 5.5,
+            mobileWaveAmplitude: 4,
+            waveCycleDuration: 10000,
+            sampleStep: 20,
             targetFrameInterval: 1000 / 30
         };
         this.starCount = window.innerWidth < 768 ? 12 : 24;
@@ -874,10 +875,12 @@ class BackgroundFX {
         this.width = 0;
         this.height = 0;
         this.animationFrame = null;
+        this.animationStartTime = 0;
         this.lastFrameTime = 0;
         this.boundAnimate = this.animateQuantumGrid.bind(this);
         this.boundResize = this.resizeQuantumGrid.bind(this);
         this.boundVisibilityChange = this.handleVisibilityChange.bind(this);
+        this.boundReducedMotionChange = this.handleReducedMotionChange.bind(this);
         this.init();
     }
 
@@ -899,29 +902,87 @@ class BackgroundFX {
         }
         this.container.appendChild(frag);
 
+        this.bindReducedMotionListener();
+
         if (!this.prefersReducedMotion) {
             this.initQuantumGrid();
         }
     }
 
+    bindReducedMotionListener() {
+        if (typeof this.reducedMotionQuery.addEventListener === 'function') {
+            this.reducedMotionQuery.addEventListener('change', this.boundReducedMotionChange);
+        } else if (typeof this.reducedMotionQuery.addListener === 'function') {
+            this.reducedMotionQuery.addListener(this.boundReducedMotionChange);
+        }
+    }
+
+    handleReducedMotionChange(event) {
+        this.prefersReducedMotion = event.matches;
+        Array.from(this.container.children).forEach((child) => {
+            if (!child.classList.contains('quantum-grid-canvas')) {
+                child.style.animationPlayState = this.prefersReducedMotion ? 'paused' : '';
+            }
+        });
+
+        if (this.prefersReducedMotion) {
+            this.destroyQuantumGrid();
+            return;
+        }
+
+        this.initQuantumGrid();
+    }
+
     initQuantumGrid() {
+        if (this.canvas || this.prefersReducedMotion) return;
+
         this.canvas = document.createElement('canvas');
         this.canvas.className = 'quantum-grid-canvas';
         this.canvas.setAttribute('aria-hidden', 'true');
         this.ctx = this.canvas.getContext('2d');
 
-        if (!this.ctx) return;
+        if (!this.ctx) {
+            this.canvas = null;
+            return;
+        }
 
         this.container.prepend(this.canvas);
-        this.resizeQuantumGrid();
+        this.animationStartTime = window.performance.now();
+        this.lastFrameTime = 0;
+
+        if (!this.resizeQuantumGrid(this.animationStartTime)) {
+            this.destroyQuantumGrid();
+            return;
+        }
+
         this.container.classList.add('has-quantum-grid');
         window.addEventListener('resize', this.boundResize, { passive: true });
         document.addEventListener('visibilitychange', this.boundVisibilityChange);
         this.animationFrame = window.requestAnimationFrame(this.boundAnimate);
     }
 
-    resizeQuantumGrid() {
-        if (!this.canvas || !this.ctx) return;
+    destroyQuantumGrid() {
+        if (this.animationFrame) {
+            window.cancelAnimationFrame(this.animationFrame);
+            this.animationFrame = null;
+        }
+
+        window.removeEventListener('resize', this.boundResize);
+        document.removeEventListener('visibilitychange', this.boundVisibilityChange);
+        this.container.classList.remove('has-quantum-grid');
+
+        if (this.canvas) {
+            this.canvas.remove();
+        }
+
+        this.canvas = null;
+        this.ctx = null;
+        this.lastFrameTime = 0;
+        this.animationStartTime = 0;
+    }
+
+    resizeQuantumGrid(timestamp = window.performance.now()) {
+        if (!this.canvas || !this.ctx) return false;
 
         this.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
         this.width = window.innerWidth;
@@ -931,7 +992,7 @@ class BackgroundFX {
         this.canvas.style.width = `${this.width}px`;
         this.canvas.style.height = `${this.height}px`;
         this.ctx.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
-        this.drawQuantumGrid(window.performance.now());
+        return this.drawQuantumGrid(timestamp);
     }
 
     handleVisibilityChange() {
@@ -944,13 +1005,13 @@ class BackgroundFX {
         }
 
         this.lastFrameTime = 0;
-        if (!this.animationFrame) {
+        if (!this.animationFrame && !this.prefersReducedMotion) {
             this.animationFrame = window.requestAnimationFrame(this.boundAnimate);
         }
     }
 
     animateQuantumGrid(timestamp) {
-        if (document.hidden) {
+        if (document.hidden || this.prefersReducedMotion) {
             this.animationFrame = null;
             return;
         }
@@ -963,13 +1024,13 @@ class BackgroundFX {
         this.animationFrame = window.requestAnimationFrame(this.boundAnimate);
     }
 
-    getQuantumDisplacement(worldX, worldY, time) {
-        const { waveAmplitude, waveSpeed } = this.gridConfig;
-        const phase = time * 0.001 * waveSpeed;
-        const waveA = Math.sin(worldY * 0.010 + phase * 6.4) * waveAmplitude;
-        const waveB = Math.sin((worldX + worldY) * 0.006 - phase * 5.2) * (waveAmplitude * 0.58);
-        const waveC = Math.sin(worldX * 0.009 - phase * 5.8) * (waveAmplitude * 0.82);
-        const waveD = Math.sin((worldX - worldY) * 0.005 + phase * 4.6) * (waveAmplitude * 0.5);
+    getQuantumDisplacement(worldX, worldY, elapsed) {
+        const amplitude = window.innerWidth < 768 ? this.gridConfig.mobileWaveAmplitude : this.gridConfig.desktopWaveAmplitude;
+        const phase = (elapsed / this.gridConfig.waveCycleDuration) * Math.PI * 2;
+        const waveA = Math.sin(worldY * 0.010 + phase) * amplitude;
+        const waveB = Math.sin((worldX + worldY) * 0.006 - phase * 0.92) * (amplitude * 0.58);
+        const waveC = Math.sin(worldX * 0.009 - phase * 1.08) * (amplitude * 0.82);
+        const waveD = Math.sin((worldX - worldY) * 0.005 + phase * 0.78) * (amplitude * 0.5);
 
         return {
             x: waveA + waveB,
@@ -978,10 +1039,11 @@ class BackgroundFX {
     }
 
     drawQuantumGrid(timestamp) {
-        if (!this.ctx) return;
+        if (!this.ctx) return false;
 
         const { minorGridSize, majorGridSize, sampleStep } = this.gridConfig;
         const ctx = this.ctx;
+        const elapsed = Math.max(0, timestamp - this.animationStartTime);
         const scrollX = window.scrollX || window.pageXOffset || 0;
         const scrollY = window.scrollY || window.pageYOffset || 0;
         const firstX = Math.floor(scrollX / minorGridSize) * minorGridSize - minorGridSize;
@@ -994,15 +1056,17 @@ class BackgroundFX {
         ctx.lineJoin = 'round';
 
         for (let x = firstX; x <= lastX; x += minorGridSize) {
-            this.drawQuantumLine(ctx, x, firstY, x, lastY, true, x % majorGridSize === 0, timestamp, sampleStep, scrollX, scrollY);
+            this.drawQuantumLine(ctx, x, firstY, x, lastY, true, x % majorGridSize === 0, elapsed, sampleStep, scrollX, scrollY);
         }
 
         for (let y = firstY; y <= lastY; y += minorGridSize) {
-            this.drawQuantumLine(ctx, firstX, y, lastX, y, false, y % majorGridSize === 0, timestamp, sampleStep, scrollX, scrollY);
+            this.drawQuantumLine(ctx, firstX, y, lastX, y, false, y % majorGridSize === 0, elapsed, sampleStep, scrollX, scrollY);
         }
+
+        return true;
     }
 
-    drawQuantumLine(ctx, startX, startY, endX, endY, isVertical, isMajor, timestamp, sampleStep, scrollX, scrollY) {
+    drawQuantumLine(ctx, startX, startY, endX, endY, isVertical, isMajor, elapsed, sampleStep, scrollX, scrollY) {
         const length = isVertical ? endY - startY : endX - startX;
         const steps = Math.max(2, Math.ceil(length / sampleStep));
 
@@ -1011,7 +1075,7 @@ class BackgroundFX {
             const progress = i / steps;
             const worldX = isVertical ? startX : startX + length * progress;
             const worldY = isVertical ? startY + length * progress : startY;
-            const displacement = this.getQuantumDisplacement(worldX, worldY, timestamp);
+            const displacement = this.getQuantumDisplacement(worldX, worldY, elapsed);
             const screenX = worldX - scrollX + displacement.x;
             const screenY = worldY - scrollY + displacement.y;
 
@@ -1022,8 +1086,8 @@ class BackgroundFX {
             }
         }
 
-        ctx.strokeStyle = isMajor ? 'rgba(99, 102, 241, 0.038)' : 'rgba(255, 255, 255, 0.034)';
-        ctx.lineWidth = isMajor ? 1.15 : 0.9;
+        ctx.strokeStyle = isMajor ? 'rgba(99, 102, 241, 0.12)' : 'rgba(255, 255, 255, 0.072)';
+        ctx.lineWidth = isMajor ? 1.22 : 0.95;
         ctx.stroke();
     }
 }

@@ -88,7 +88,7 @@
   pointer-events: none;
 }
 
-.home-background-surface > * {
+.home-background-surface > :not(.quantum-grid-canvas) {
   position: relative;
   z-index: 1;
 }
