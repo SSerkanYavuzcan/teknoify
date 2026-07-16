@@ -55,6 +55,20 @@
   background-size: 40px 40px, 40px 40px, 160px 160px, 160px 160px;
 }
 
+.home-background-surface.has-quantum-grid {
+  background-image: none;
+}
+
+.quantum-grid-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
 .home-background-surface::before {
   content: "";
   position: absolute;
