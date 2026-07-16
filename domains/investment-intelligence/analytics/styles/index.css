@@ -5,7 +5,7 @@
  * and leaves existing public CSS links unchanged.
  */
 
-@import url('../../../../css/06-pages/investment-analytics/base.css');
+@import url('../../../../css/06-pages/investment-analytics/base.css?v=investment-quantum-grid-1');
 @import url('../../../../css/06-pages/investment-analytics/hero.css');
 @import url('../../../../css/06-pages/investment-analytics/orbit-visual.css');
 @import url('../../../../css/06-pages/investment-analytics/calculators.css');

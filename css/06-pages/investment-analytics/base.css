@@ -1,1 +1,20 @@
 /* Investment Analytics page-level helpers live here. */
+
+.investment-page-shell {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.investment-page-shell > section {
+    position: relative;
+    z-index: 1;
+}
+
+.investment-background-surface {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
