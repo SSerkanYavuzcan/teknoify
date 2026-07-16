@@ -11,22 +11,38 @@
     --ws-glow: rgba(14, 165, 233, 0.5);
 }
 
+/* --- PAGE BACKGROUND --- */
+.webscraping-page-shell {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.webscraping-background-surface {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.webscraping-page-shell > section {
+    position: relative;
+    z-index: 1;
+}
+
 /* --- HERO SECTION --- */
 .ws-hero {
     /* Hizalama RPA ile birebir aynı (140px üst boşluk) */
     padding: 140px 0 80px 0;
     position: relative;
     overflow: hidden;
-    
-    /* ARKA PLAN: RPA Grid Yapısı (Renk farkı olmadan) */
-    /* background-color satırı kaldırıldı, böylece RPA gibi daha açık duracak */
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 20%),
-        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px;
-    
-    border-bottom: 1px solid var(--border-light);
+    background:
+        radial-gradient(
+            circle at 10% 20%,
+            rgba(14, 165, 233, 0.05),
+            transparent 24%
+        );
 }
 
 .hero-grid {
