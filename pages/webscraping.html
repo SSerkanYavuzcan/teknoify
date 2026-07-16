@@ -10,8 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
    
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/webscraping.css">
+    <link rel="stylesheet" href="../css/style.css?v=webscraping-quantum-grid-1">
+    <link rel="stylesheet" href="../css/webscraping.css?v=webscraping-quantum-grid-1">
 </head>
 <body>
 
@@ -55,7 +55,12 @@
     </nav>
 </header>
 
-<main class="page-frame">
+<main class="page-frame home-page-shell webscraping-page-shell">
+    <div
+        id="stars-container"
+        class="hero-surface home-background-surface webscraping-background-surface"
+        aria-hidden="true"
+    ></div>
 
     <section class="ws-hero">
         <div class="container hero-grid">
@@ -270,7 +275,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 <script src="../js/session-manager.js"></script>
 <script type="module" src="/packages/config/routes-global.js"></script>
-<script src="../js/script.js" defer></script>
+<script src="../js/script.js?v=webscraping-quantum-grid-1" defer></script>
 
 <script>
     document.getElementById('header').classList.add('scrolled');
