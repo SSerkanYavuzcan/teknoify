@@ -263,18 +263,51 @@
     .request-meta-item { background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.04); border-radius:12px; padding:10px 12px; min-width:0; }
     .request-meta-label { display:block; color:#71717a; font-size:0.74rem; margin-bottom:5px; }
     .request-meta-value { display:block; color:#e4e4e7; font-size:0.85rem; font-weight:600; overflow-wrap:anywhere; }
-    .project-request-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.78); backdrop-filter:blur(6px); z-index:1000; padding:20px; box-sizing:border-box; }
+    .project-request-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(2,6,23,0.78); backdrop-filter:blur(10px); z-index:1000; padding:20px; box-sizing:border-box; }
     .project-request-modal.is-open { display:flex; }
-    .project-request-dialog { width:100%; max-width:460px; background:#11131a; border:1px solid rgba(255,255,255,0.08); border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,0.45); padding:28px; position:relative; text-align:center; box-sizing:border-box; }
-    .project-request-close-icon { position:absolute; top:14px; right:14px; width:34px; height:34px; border:0; border-radius:9px; background:rgba(255,255,255,0.04); color:#a1a1aa; cursor:pointer; }
-    .project-request-close-icon:hover, .project-request-close-icon:focus-visible { color:#fff; background:rgba(99,102,241,0.16); outline:none; }
-    .project-request-modal-icon { width:58px; height:58px; border-radius:16px; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; color:#c4b5fd; background:rgba(99,102,241,0.13); font-size:1.55rem; }
-    .project-request-dialog h2 { color:#fff; margin:0 0 10px; font-size:1.35rem; }
-    .project-request-dialog p { color:#a1a1aa; margin:0 0 10px; line-height:1.55; }
-    .project-request-secondary { color:#71717a !important; font-size:0.92rem; }
-    .project-request-actions { margin-top:22px; display:flex; justify-content:center; }
-    .project-request-confirm { border:0; border-radius:10px; padding:11px 22px; background:linear-gradient(135deg,#6366f1,#7c3aed); color:#fff; font-weight:700; cursor:pointer; font-family:'Inter Tight',sans-serif; }
-    .project-request-confirm:hover, .project-request-confirm:focus-visible { filter:brightness(1.05); outline:3px solid rgba(129,140,248,0.35); outline-offset:3px; }
+    .project-request-dialog { width:100%; max-width:min(820px, calc(100vw - 32px)); max-height:88vh; background:linear-gradient(180deg,#11131a 0%,#0b1020 100%); border:1px solid rgba(129,140,248,0.18); border-radius:22px; box-shadow:0 28px 90px rgba(0,0,0,0.58), 0 0 0 1px rgba(255,255,255,0.025) inset; position:relative; box-sizing:border-box; overflow:hidden; display:flex; flex-direction:column; }
+    .project-request-close-icon { position:absolute; top:18px; right:18px; width:38px; height:38px; border:1px solid rgba(255,255,255,0.07); border-radius:11px; background:rgba(255,255,255,0.04); color:#a1a1aa; cursor:pointer; z-index:2; transition:background 0.18s ease,color 0.18s ease,border-color 0.18s ease; }
+    .project-request-close-icon:hover, .project-request-close-icon:focus-visible { color:#fff; background:rgba(99,102,241,0.16); border-color:rgba(129,140,248,0.35); outline:none; }
+    .project-request-header { display:flex; gap:16px; align-items:flex-start; padding:28px 72px 22px 28px; border-bottom:1px solid rgba(255,255,255,0.06); background:radial-gradient(circle at 18% 0%, rgba(99,102,241,0.18), transparent 34%); }
+    .project-request-modal-icon { width:54px; height:54px; min-width:54px; border-radius:16px; display:flex; align-items:center; justify-content:center; color:#c4b5fd; background:rgba(99,102,241,0.14); border:1px solid rgba(129,140,248,0.22); font-size:1.45rem; box-shadow:0 12px 28px rgba(99,102,241,0.12); }
+    .project-request-heading h2 { color:#fff; margin:0 0 8px; font-size:1.45rem; letter-spacing:-0.02em; }
+    .project-request-heading p { color:#a1a1aa; margin:0; line-height:1.55; font-size:0.96rem; }
+    .project-request-form { display:flex; flex:1; flex-direction:column; min-height:0; }
+    .project-request-body { padding:24px 28px; overflow-y:auto; display:grid; gap:18px; min-height:0; }
+    .project-request-intro { margin:0; color:#c4b5fd; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.16); border-radius:14px; padding:12px 14px; font-size:0.9rem; line-height:1.45; }
+    .request-form-field { display:grid; gap:8px; }
+    .request-form-field label { color:#e4e4e7; font-size:0.92rem; font-weight:700; }
+    .request-form-helper { color:#71717a; font-size:0.84rem; line-height:1.45; }
+    .request-form-control { width:100%; box-sizing:border-box; border:1px solid rgba(148,163,184,0.16); border-radius:13px; background:#080d18; color:#f8fafc; font-family:'Inter Tight',sans-serif; font-size:0.95rem; padding:13px 14px; transition:border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease; }
+    .request-form-control::placeholder { color:#64748b; }
+    .request-form-control:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,0.18); background:#0b1020; }
+    textarea.request-form-control { min-height:128px; resize:vertical; line-height:1.5; }
+    .request-select-wrap { position:relative; max-width:260px; }
+    .request-select-wrap::after { content:'\f078'; font-family:'Font Awesome 6 Free'; font-weight:900; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#818cf8; pointer-events:none; font-size:0.78rem; }
+    .request-select-wrap select { appearance:none; padding-right:42px; }
+    .request-form-field.is-invalid .request-form-control, .request-form-field.is-invalid .request-upload-zone { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.12); }
+    .request-form-error { min-height:18px; color:#fca5a5; font-size:0.82rem; }
+    .request-upload-zone { border:1.5px dashed rgba(129,140,248,0.34); border-radius:16px; background:rgba(8,13,24,0.86); padding:22px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:border-color 0.18s ease, background 0.18s ease, transform 0.18s ease; }
+    .request-upload-zone:hover, .request-upload-zone:focus-visible { border-color:#818cf8; background:rgba(99,102,241,0.08); outline:none; }
+    .request-upload-icon { width:46px; height:46px; min-width:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#c4b5fd; background:rgba(99,102,241,0.13); }
+    .request-upload-copy { flex:1; min-width:0; }
+    .request-upload-copy strong { display:block; color:#fff; margin-bottom:5px; }
+    .request-upload-copy span { display:block; color:#94a3b8; font-size:0.86rem; line-height:1.4; }
+    .request-upload-button { border:1px solid rgba(129,140,248,0.28); border-radius:10px; padding:9px 13px; color:#fff; background:rgba(99,102,241,0.18); font-weight:700; white-space:nowrap; }
+    .request-file-input { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+    .request-file-list { display:grid; gap:10px; margin-top:4px; }
+    .request-file-item { display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(255,255,255,0.07); border-radius:12px; background:rgba(255,255,255,0.035); padding:10px 12px; }
+    .request-file-meta { min-width:0; color:#e4e4e7; font-size:0.9rem; }
+    .request-file-name { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .request-file-size { display:block; color:#71717a; font-size:0.78rem; margin-top:3px; }
+    .request-file-remove { width:32px; height:32px; border:0; border-radius:9px; color:#fca5a5; background:rgba(239,68,68,0.1); cursor:pointer; }
+    .project-request-status { display:none; margin:0 28px 18px; color:#a7f3d0; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.22); border-radius:13px; padding:12px 14px; font-size:0.9rem; }
+    .project-request-status.is-visible { display:block; }
+    .project-request-actions { padding:18px 28px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:flex-end; gap:12px; background:rgba(5,8,10,0.45); }
+    .project-request-button { border:0; border-radius:11px; padding:12px 18px; font-weight:800; cursor:pointer; font-family:'Inter Tight',sans-serif; }
+    .project-request-cancel { color:#e4e4e7; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); }
+    .project-request-confirm { background:linear-gradient(135deg,#6366f1,#7c3aed); color:#fff; box-shadow:0 10px 24px rgba(99,102,241,0.24); }
+    .project-request-button:hover, .project-request-button:focus-visible { filter:brightness(1.06); outline:3px solid rgba(129,140,248,0.35); outline-offset:3px; }
     body.project-request-modal-open { overflow:hidden; }
     @media (max-width: 900px) { .request-meta-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 520px) {
@@ -283,7 +316,15 @@
       .request-card-header { flex-direction: column; align-items: stretch; }
       .request-status-badge { align-self: flex-start; }
       .request-meta-grid { grid-template-columns: 1fr; }
-      .project-request-dialog { padding: 24px 18px; }
+      .project-request-dialog { max-width: calc(100vw - 20px); max-height: 92vh; }
+      .project-request-header { padding: 24px 58px 18px 18px; }
+      .project-request-body { padding: 18px; }
+      .project-request-actions { flex-direction: column-reverse; padding: 16px 18px; }
+      .project-request-button { width: 100%; }
+      .request-upload-zone { align-items: flex-start; flex-direction: column; }
+      .request-upload-button { width: 100%; text-align: center; box-sizing: border-box; }
+      .request-select-wrap { max-width: 100%; }
+      .project-request-status { margin: 0 18px 16px; }
     }
 
     /* Profil Alanı Stilleri */
@@ -454,21 +495,83 @@
     role="dialog"
     aria-modal="true"
     aria-labelledby="new-project-request-title"
+    aria-describedby="new-project-request-subtitle"
     aria-hidden="true"
   >
     <div id="new-project-request-dialog" class="project-request-dialog">
       <button type="button" class="project-request-close-icon" data-project-request-close aria-label="Pencereyi kapat">
         <i class="fas fa-times" aria-hidden="true"></i>
       </button>
-      <div class="project-request-modal-icon" aria-hidden="true">
-        <i class="fas fa-rocket"></i>
+
+      <div class="project-request-header">
+        <div class="project-request-modal-icon" aria-hidden="true">
+          <i class="fas fa-rocket"></i>
+        </div>
+        <div class="project-request-heading">
+          <h2 id="new-project-request-title">Yeni Proje Başlat</h2>
+          <p id="new-project-request-subtitle">İhtiyacınızı bize iletin, ekibimiz talebinizi inceleyip sizinle en kısa sürede iletişime geçsin.</p>
+        </div>
       </div>
-      <h2 id="new-project-request-title">Yeni Proje Başlat</h2>
-      <p>Projenizi bize anlatabileceğiniz talep formunu bir sonraki adımda bu alana ekleyeceğiz.</p>
-      <p class="project-request-secondary">Şimdilik bu pencerenin tasarımını ve açılış akışını hazırladık.</p>
-      <div class="project-request-actions">
-        <button type="button" class="project-request-confirm" data-project-request-close>Tamam</button>
-      </div>
+
+      <form id="new-project-request-form" class="project-request-form" novalidate>
+        <div class="project-request-body">
+          <p class="project-request-intro">Teknoify ekibinin talebinizi doğru değerlendirebilmesi için proje kapsamını, beklenen çıktıları ve önceliği paylaşın.</p>
+
+          <div class="request-form-field" data-field="projectName">
+            <label for="project-request-name">Project Name *</label>
+            <input id="project-request-name" name="projectName" class="request-form-control" type="text" placeholder="Örn. Rakip Fiyat Takip Paneli" aria-describedby="project-request-name-helper project-request-name-error" required>
+            <span id="project-request-name-helper" class="request-form-helper">Projenizin kısa ve anlaşılır adını yazın.</span>
+            <span id="project-request-name-error" class="request-form-error" aria-live="polite"></span>
+          </div>
+
+          <div class="request-form-field" data-field="projectDescription">
+            <label for="project-request-description">Proje Açıklaması *</label>
+            <textarea id="project-request-description" name="projectDescription" class="request-form-control" placeholder="Projenin amacı nedir, hangi problemi çözecek, hangi çıktıları bekliyorsunuz?" aria-describedby="project-request-description-error" required></textarea>
+            <span id="project-request-description-error" class="request-form-error" aria-live="polite"></span>
+          </div>
+
+          <div class="request-form-field" data-field="projectFlow">
+            <label for="project-request-flow">Proje Akışı *</label>
+            <textarea id="project-request-flow" name="projectFlow" class="request-form-control" placeholder="Projenin nasıl işlemesini istediğinizi adım adım anlatın." aria-describedby="project-request-flow-helper project-request-flow-error" required></textarea>
+            <span id="project-request-flow-helper" class="request-form-helper">Kullanıcının izleyeceği akış, temel ekranlar veya süreç adımları gibi detayları ekleyebilirsiniz.</span>
+            <span id="project-request-flow-error" class="request-form-error" aria-live="polite"></span>
+          </div>
+
+          <div class="request-form-field" data-field="priority">
+            <label for="project-request-priority">Priority *</label>
+            <div class="request-select-wrap">
+              <select id="project-request-priority" name="priority" class="request-form-control" aria-describedby="project-request-priority-error" required>
+                <option value="Düşük">Düşük</option>
+                <option value="Orta" selected>Orta</option>
+                <option value="Yüksek">Yüksek</option>
+                <option value="Kritik">Kritik</option>
+              </select>
+            </div>
+            <span id="project-request-priority-error" class="request-form-error" aria-live="polite"></span>
+          </div>
+
+          <div class="request-form-field request-attachment-field">
+            <label for="project-request-attachments">Attachment</label>
+            <input id="project-request-attachments" class="request-file-input" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.zip">
+            <div class="request-upload-zone" id="project-request-upload-zone" role="button" tabindex="0" aria-describedby="project-request-attachment-helper">
+              <div class="request-upload-icon" aria-hidden="true"><i class="fas fa-cloud-arrow-up"></i></div>
+              <div class="request-upload-copy">
+                <strong>Dosyalarınızı ekleyin</strong>
+                <span id="project-request-attachment-helper">PDF, DOCX, XLSX, PNG, JPG, ZIP gibi dosyaları ekleyebilirsiniz.</span>
+              </div>
+              <span class="request-upload-button">Dosya Seç</span>
+            </div>
+            <div id="project-request-file-list" class="request-file-list" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div id="project-request-status" class="project-request-status" role="status" aria-live="polite">Form yapısı hazırlandı. Gönderim entegrasyonu bir sonraki adımda eklenecek.</div>
+
+        <div class="project-request-actions">
+          <button type="button" class="project-request-button project-request-cancel" data-project-request-close>İptal</button>
+          <button type="submit" class="project-request-button project-request-confirm">Talebi Oluştur</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -915,10 +1018,103 @@
         const trigger = document.getElementById("btn-new-project-request");
         const modal = document.getElementById("new-project-request-modal");
         const dialog = document.getElementById("new-project-request-dialog");
-        if (!trigger || !modal || !dialog) return;
+        const form = document.getElementById("new-project-request-form");
+        const fileInput = document.getElementById("project-request-attachments");
+        const uploadZone = document.getElementById("project-request-upload-zone");
+        const fileList = document.getElementById("project-request-file-list");
+        const statusMessage = document.getElementById("project-request-status");
+        if (!trigger || !modal || !dialog || !form) return;
+
         const closeButtons = modal.querySelectorAll("[data-project-request-close]");
-        const focusTarget = modal.querySelector(".project-request-confirm") || closeButtons[0];
+        const focusTarget = form.querySelector("input, textarea, select, button");
+        const fields = {
+            projectName: document.getElementById("project-request-name"),
+            projectDescription: document.getElementById("project-request-description"),
+            projectFlow: document.getElementById("project-request-flow"),
+            priority: document.getElementById("project-request-priority")
+        };
+        const requiredMessages = {
+            projectName: "Project Name alanı zorunludur.",
+            projectDescription: "Proje Açıklaması alanı zorunludur.",
+            projectFlow: "Proje Akışı alanı zorunludur.",
+            priority: "Priority alanı zorunludur."
+        };
         let lastFocusedElement = null;
+        let selectedFiles = [];
+
+        const formatFileSize = (bytes) => {
+            if (!bytes) return "0 KB";
+            if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+            return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+        };
+
+        const getFileKey = (file) => `${file.name}-${file.size}-${file.lastModified}`;
+
+        const renderFiles = () => {
+            if (!fileList) return;
+            fileList.innerHTML = "";
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement("div");
+                item.className = "request-file-item";
+
+                const meta = document.createElement("div");
+                meta.className = "request-file-meta";
+
+                const name = document.createElement("span");
+                name.className = "request-file-name";
+                name.textContent = file.name;
+
+                const size = document.createElement("span");
+                size.className = "request-file-size";
+                size.textContent = formatFileSize(file.size);
+
+                const remove = document.createElement("button");
+                remove.type = "button";
+                remove.className = "request-file-remove";
+                remove.setAttribute("aria-label", `${file.name} dosyasını kaldır`);
+                remove.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
+                remove.addEventListener("click", () => {
+                    selectedFiles.splice(index, 1);
+                    renderFiles();
+                });
+
+                meta.append(name, size);
+                item.append(meta, remove);
+                fileList.appendChild(item);
+            });
+        };
+
+        const addFiles = (files) => {
+            const existingKeys = new Set(selectedFiles.map(getFileKey));
+            Array.from(files || []).forEach((file) => {
+                const key = getFileKey(file);
+                if (!existingKeys.has(key)) {
+                    selectedFiles.push(file);
+                    existingKeys.add(key);
+                }
+            });
+            renderFiles();
+        };
+
+        const setFieldError = (fieldName, message = "") => {
+            const control = fields[fieldName];
+            if (!control) return;
+            const wrapper = control.closest(".request-form-field");
+            const error = wrapper ? wrapper.querySelector(".request-form-error") : null;
+            if (wrapper) wrapper.classList.toggle("is-invalid", Boolean(message));
+            if (error) error.textContent = message;
+            control.setAttribute("aria-invalid", message ? "true" : "false");
+        };
+
+        const validateField = (fieldName) => {
+            const control = fields[fieldName];
+            const value = control ? control.value.trim() : "";
+            const isValid = Boolean(value);
+            setFieldError(fieldName, isValid ? "" : requiredMessages[fieldName]);
+            return isValid;
+        };
+
+        const validateForm = () => Object.keys(fields).reduce((isValid, fieldName) => validateField(fieldName) && isValid, true);
 
         const openModal = () => {
             lastFocusedElement = document.activeElement;
@@ -935,6 +1131,52 @@
             if (lastFocusedElement && typeof lastFocusedElement.focus === "function") lastFocusedElement.focus();
             else trigger.focus();
         };
+
+        Object.keys(fields).forEach((fieldName) => {
+            const eventName = fields[fieldName].tagName === "SELECT" ? "change" : "input";
+            fields[fieldName].addEventListener(eventName, () => {
+                if (statusMessage) statusMessage.classList.remove("is-visible");
+                validateField(fieldName);
+            });
+        });
+
+        if (uploadZone && fileInput) {
+            uploadZone.addEventListener("click", () => fileInput.click());
+            uploadZone.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    fileInput.click();
+                }
+            });
+            fileInput.addEventListener("change", () => {
+                addFiles(fileInput.files);
+                fileInput.value = "";
+            });
+        }
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (!validateForm()) {
+                const firstInvalid = form.querySelector('[aria-invalid="true"]');
+                if (firstInvalid) firstInvalid.focus();
+                return;
+            }
+
+            const payload = {
+                projectName: fields.projectName.value.trim(),
+                projectDescription: fields.projectDescription.value.trim(),
+                projectFlow: fields.projectFlow.value.trim(),
+                priority: fields.priority.value.trim(),
+                attachments: selectedFiles.map((file) => ({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                }))
+            };
+
+            console.log("Yeni proje talebi payload:", payload);
+            if (statusMessage) statusMessage.classList.add("is-visible");
+        });
 
         trigger.addEventListener("click", openModal);
         closeButtons.forEach((button) => button.addEventListener("click", closeModal));
