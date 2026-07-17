@@ -122,18 +122,20 @@ class ProfileManager {
                 #shared-profile-modal .phone-country-control.is-open #prof-phone-country-trigger .fa-chevron-down { color: #6366f1; transform: rotate(180deg); }
                 #shared-profile-modal .phone-country-control select { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
                 #shared-profile-modal .phone-field-combined input { flex: 1; min-width: 0; border-radius: 0 8px 8px 0; padding: 12px 15px; }
-                #shared-profile-modal .profile-phone-country-dropdown { position: absolute; top: calc(100% + 0.5rem); left: 0; z-index: 60; width: min(320px, calc(100vw - 48px)); max-height: 260px; padding: 0.45rem; margin: 0; list-style: none; background: rgba(18, 18, 30, 0.98); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(99, 102, 241, 0.08); opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.98); transform-origin: top center; transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease; overflow-y: auto; scrollbar-color: rgba(255, 255, 255, 0.1) #050505; scrollbar-width: thin; }
+                #shared-profile-modal .profile-phone-country-dropdown { position: fixed; top: 0; left: 0; z-index: 60; width: min(270px, calc(100vw - 32px)); max-height: 372px; box-sizing: border-box; padding: 6px; margin: 0; list-style: none; background: rgba(18, 18, 30, 0.98); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(99, 102, 241, 0.08); opacity: 0; visibility: hidden; transform: translateY(8px) scale(0.98); transform-origin: bottom left; transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; scrollbar-color: rgba(255, 255, 255, 0.1) #050505; scrollbar-width: auto; -webkit-overflow-scrolling: touch; }
+                #shared-profile-modal .profile-phone-country-dropdown.opens-up { transform: translateY(8px) scale(0.98); transform-origin: bottom left; }
+                #shared-profile-modal .profile-phone-country-dropdown.opens-down { transform: translateY(-8px) scale(0.98); transform-origin: top left; }
                 #shared-profile-modal .profile-phone-country-dropdown.is-open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-                #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar { width: 10px; }
+                #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar { width: 8px; }
                 #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar-track { background: #050505; }
                 #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; border: 2px solid #050505; }
                 #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
-                #shared-profile-modal .profile-phone-country-option { position: relative; display: flex; align-items: center; gap: 0.75rem; min-height: 42px; padding: 0.65rem 0.8rem; border-radius: 8px; color: #9ca3af; cursor: pointer; transition: background 0.18s ease, color 0.18s ease; }
+                #shared-profile-modal .profile-phone-country-option { position: relative; display: flex; align-items: center; gap: 0.65rem; height: 36px; min-height: 36px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; color: #9ca3af; cursor: pointer; font-size: 0.84rem; transition: background 0.18s ease, color 0.18s ease; }
                 #shared-profile-modal .profile-phone-country-option:hover, #shared-profile-modal .profile-phone-country-option.is-focused { background: rgba(99, 102, 241, 0.12); color: #fff; }
                 #shared-profile-modal .profile-phone-country-option.is-selected { background: rgba(99, 102, 241, 0.12); color: #fff; padding-right: 2.25rem; }
                 #shared-profile-modal .profile-phone-country-option.is-selected::after { position: absolute; right: 0.8rem; color: #6366f1; font-family: "Font Awesome 5 Free"; font-size: 0.8rem; font-weight: 900; content: "\f00c"; }
                 #shared-profile-modal .profile-phone-country-flag { flex: 0 0 1.1rem; width: 1.1rem; line-height: 1; text-align: center; }
-                #shared-profile-modal .profile-phone-country-name { flex: 1; min-width: 0; line-height: 1.2; }
+                #shared-profile-modal .profile-phone-country-name { flex: 1; min-width: 0; overflow: hidden; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
                 #shared-profile-modal .profile-phone-country-code { flex-shrink: 0; color: #9ca3af; font-size: 0.86rem; }
                 @media (max-width: 520px) {
                     #profile-modal-content { width: calc(100% - 24px) !important; padding: 22px !important; }
@@ -146,14 +148,12 @@ class ProfileManager {
                     #shared-profile-modal #prof-phone-country-trigger { padding: 0 9px; }
                     #shared-profile-modal #prof-phone-country-display { font-size: 0.78rem; }
                     #shared-profile-modal .phone-field-combined input { padding: 12px 11px; }
-                    #shared-profile-modal .profile-phone-country-dropdown { width: min(310px, calc(100vw - 48px)); }
                 }
                 @media (max-width: 329px) {
                     #shared-profile-modal .phone-field-combined { flex-direction: column; }
                     #shared-profile-modal .phone-country-control { width: 100%; flex-basis: auto; min-height: 43px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 8px 8px 0 0; }
                     #shared-profile-modal #prof-phone-country-trigger { border-radius: 8px 8px 0 0; }
                     #shared-profile-modal .phone-field-combined input { width: 100%; border-radius: 0 0 8px 8px; }
-                    #shared-profile-modal .profile-phone-country-dropdown { width: calc(100vw - 48px); }
                 }
             </style>
             <div id="shared-profile-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 99999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease; padding: 16px; box-sizing: border-box;">
@@ -311,7 +311,9 @@ class ProfileManager {
         });
 
         document.addEventListener('click', (e) => {
-            if (!e.target?.closest?.('.phone-country-control')) this.closePhoneCountryDropdown(false);
+            const clickedControl = e.target?.closest?.('.phone-country-control');
+            const clickedDropdown = e.target?.closest?.('#prof-phone-country-dropdown');
+            if (!clickedControl && !clickedDropdown) this.closePhoneCountryDropdown(false);
         });
 
         window.addEventListener('beforeunload', () => this.cancelProfileOnboarding());
@@ -468,7 +470,7 @@ class ProfileManager {
                     aria-selected="false"
                 >
                     <span class="profile-phone-country-flag" aria-hidden="true">${country.flag}</span>
-                    <span class="profile-phone-country-name">${country.name}</span>
+                    <span class="profile-phone-country-name" title="${country.name}">${country.name}</span>
                     <span class="profile-phone-country-code">${country.dialCode}</span>
                 </div>
             `).join('');
@@ -511,6 +513,11 @@ class ProfileManager {
         control.dataset.dropdownBound = 'true';
         this.phoneCountryTypeahead = '';
         this.phoneCountryTypeaheadTimer = null;
+        this.phoneCountryRepositionHandler = () => this.positionPhoneCountryDropdown();
+
+        const dropdown = document.getElementById('prof-phone-country-dropdown');
+        const modal = document.getElementById('shared-profile-modal');
+        if (dropdown && modal && dropdown.parentElement !== modal) modal.appendChild(dropdown);
 
         trigger.addEventListener('click', (event) => {
             event.stopPropagation();
@@ -544,12 +551,14 @@ class ProfileManager {
         const group = document.getElementById('prof-phone-group');
         if (!control || !trigger || !dropdown) return;
         this.syncPhoneCountryUI();
+        this.positionPhoneCountryDropdown();
         control.classList.add('is-open');
         dropdown.classList.add('is-open');
         group?.classList.add('phone-country-open');
         trigger.setAttribute('aria-expanded', 'true');
+        this.bindPhoneCountryPositionListeners();
         this.setPhoneCountryFocus(this.phoneCountryFocusedIndex || 0);
-        document.querySelector('#prof-phone-country-list .is-selected')?.scrollIntoView({ block: 'nearest' });
+        this.centerPhoneCountryOption(document.querySelector('#prof-phone-country-list .is-selected'));
     }
 
     closePhoneCountryDropdown(returnFocus = false) {
@@ -559,9 +568,83 @@ class ProfileManager {
         const group = document.getElementById('prof-phone-group');
         control?.classList.remove('is-open');
         dropdown?.classList.remove('is-open');
+        dropdown?.classList.remove('opens-up', 'opens-down');
         group?.classList.remove('phone-country-open');
         trigger?.setAttribute('aria-expanded', 'false');
+        this.unbindPhoneCountryPositionListeners();
         if (returnFocus) trigger?.focus();
+    }
+
+    positionPhoneCountryDropdown() {
+        const trigger = document.getElementById('prof-phone-country-trigger');
+        const dropdown = document.getElementById('prof-phone-country-dropdown');
+        if (!trigger || !dropdown) return;
+
+        const triggerRect = trigger.getBoundingClientRect();
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const margin = 12;
+        const gap = 8;
+        const targetWidth = Math.min(270, Math.max(0, viewportWidth - 32));
+        const availableAbove = Math.max(0, triggerRect.top - margin - gap);
+        const availableBelow = Math.max(0, viewportHeight - triggerRect.bottom - margin - gap);
+        const opensDown = availableAbove < 180 && availableBelow > availableAbove;
+        const availableSpace = opensDown ? availableBelow : availableAbove;
+        const maxHeight = Math.max(0, Math.min(372, availableSpace));
+        const width = Math.min(targetWidth, viewportWidth - (margin * 2));
+        const left = Math.min(
+            Math.max(triggerRect.left, margin),
+            Math.max(margin, viewportWidth - width - margin)
+        );
+        const top = opensDown
+            ? Math.min(triggerRect.bottom + gap, viewportHeight - margin - maxHeight)
+            : Math.max(margin, triggerRect.top - gap - maxHeight);
+
+        dropdown.style.width = `${width}px`;
+        dropdown.style.maxHeight = `${maxHeight}px`;
+        dropdown.style.left = `${left}px`;
+        dropdown.style.top = `${top}px`;
+        dropdown.classList.toggle('opens-up', !opensDown);
+        dropdown.classList.toggle('opens-down', opensDown);
+    }
+
+    bindPhoneCountryPositionListeners() {
+        if (this.phoneCountryPositionListenersBound) return;
+        const modalContent = document.getElementById('profile-modal-content');
+        window.addEventListener('resize', this.phoneCountryRepositionHandler);
+        window.addEventListener('scroll', this.phoneCountryRepositionHandler, true);
+        window.addEventListener('orientationchange', this.phoneCountryRepositionHandler);
+        modalContent?.addEventListener('scroll', this.phoneCountryRepositionHandler);
+        this.phoneCountryPositionListenersBound = true;
+    }
+
+    unbindPhoneCountryPositionListeners() {
+        if (!this.phoneCountryPositionListenersBound) return;
+        const modalContent = document.getElementById('profile-modal-content');
+        window.removeEventListener('resize', this.phoneCountryRepositionHandler);
+        window.removeEventListener('scroll', this.phoneCountryRepositionHandler, true);
+        window.removeEventListener('orientationchange', this.phoneCountryRepositionHandler);
+        modalContent?.removeEventListener('scroll', this.phoneCountryRepositionHandler);
+        this.phoneCountryPositionListenersBound = false;
+    }
+
+    ensurePhoneCountryOptionVisible(option) {
+        const dropdown = document.getElementById('prof-phone-country-dropdown');
+        if (!dropdown || !option) return;
+        const optionTop = option.offsetTop;
+        const optionBottom = optionTop + option.offsetHeight;
+        const visibleTop = dropdown.scrollTop;
+        const visibleBottom = visibleTop + dropdown.clientHeight;
+        if (optionTop < visibleTop) dropdown.scrollTop = optionTop;
+        else if (optionBottom > visibleBottom) dropdown.scrollTop = optionBottom - dropdown.clientHeight;
+    }
+
+    centerPhoneCountryOption(option) {
+        const dropdown = document.getElementById('prof-phone-country-dropdown');
+        if (!dropdown || !option) return;
+        const centeredTop = option.offsetTop - ((dropdown.clientHeight - option.offsetHeight) / 2);
+        dropdown.scrollTop = Math.max(0, centeredTop);
+        this.ensurePhoneCountryOptionVisible(option);
     }
 
     setPhoneCountryFocus(index) {
@@ -572,7 +655,7 @@ class ProfileManager {
         options.forEach((option, optionIndex) => option.classList.toggle('is-focused', optionIndex === this.phoneCountryFocusedIndex));
         const focused = options[this.phoneCountryFocusedIndex];
         trigger?.setAttribute('aria-activedescendant', focused.id);
-        if (this.isPhoneCountryDropdownOpen()) focused.scrollIntoView({ block: 'nearest' });
+        if (this.isPhoneCountryDropdownOpen()) this.ensurePhoneCountryOptionVisible(focused);
     }
 
     movePhoneCountryFocus(delta) {
