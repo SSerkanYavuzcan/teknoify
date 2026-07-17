@@ -113,7 +113,11 @@ class ProfileManager {
                 .phone-field-combined:focus-within { border-color: #6366f1; box-shadow: 0 0 0 1px rgba(99,102,241,0.2); }
                 .phone-field-combined.phone-field-invalid { border-color: #ef4444; box-shadow: 0 0 0 1px rgba(239,68,68,0.18); }
                 .phone-field-combined select, .phone-field-combined input { background: transparent !important; border: 0 !important; color: #fff; outline: none; box-sizing: border-box; }
-                .phone-field-combined select { width: 175px; flex: 0 0 175px; border-right: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px 0 0 8px; padding: 12px 10px; }
+                .phone-country-control { position: relative; flex: 0 0 112px; width: 112px; display: flex; align-items: center; justify-content: space-between; padding: 0 11px; border-right: 1px solid rgba(255,255,255,0.1); border-radius: 8px 0 0 8px; box-sizing: border-box; white-space: nowrap; overflow: hidden; }
+                #prof-phone-country-display { font-size: 0.82rem; font-weight: 600; color: #e4e4e7; overflow: hidden; text-overflow: ellipsis; }
+                .phone-country-control .fa-chevron-down { font-size: 0.65rem; color: #71717a; pointer-events: none; margin-left: 6px; }
+                .phone-country-control:focus-within #prof-phone-country-display { color: #fff; }
+                .phone-country-control select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
                 .phone-field-combined input { flex: 1; min-width: 0; border-radius: 0 8px 8px 0; padding: 12px 15px; }
                 .phone-field-combined select option { background: #11131a; color: #fff; }
                 @media (max-width: 520px) {
@@ -122,9 +126,14 @@ class ProfileManager {
                     .profile-step-actions { flex-direction: column !important; }
                     .profile-step-actions button { width: 100% !important; }
                 }
-                @media (max-width: 420px) {
+                @media (max-width: 390px) {
+                    .phone-country-control { flex-basis: 106px; width: 106px; padding: 0 9px; }
+                    #prof-phone-country-display { font-size: 0.78rem; }
+                    .phone-field-combined input { padding: 12px 11px; }
+                }
+                @media (max-width: 329px) {
                     .phone-field-combined { flex-direction: column; }
-                    .phone-field-combined select { width: 100%; flex-basis: auto; border-right: 0 !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px 8px 0 0; }
+                    .phone-country-control { width: 100%; flex-basis: auto; min-height: 43px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 8px 8px 0 0; }
                     .phone-field-combined input { width: 100%; border-radius: 0 0 8px 8px; }
                 }
             </style>
@@ -162,7 +171,7 @@ class ProfileManager {
                             <div class="profile-field-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; margin-bottom: 15px;">
                                 <div><label for="prof-firstname" style="${labelStyle}">Ad</label><input type="text" id="prof-firstname" autocomplete="given-name" maxlength="60" required style="${fieldStyle}"></div>
                                 <div><label for="prof-lastname" style="${labelStyle}">Soyisim</label><input type="text" id="prof-lastname" autocomplete="family-name" maxlength="80" required style="${fieldStyle}"></div>
-                                <div><label for="prof-phone-national" style="${labelStyle}">Telefon</label><div id="prof-phone-group" class="phone-field-combined"><select id="prof-phone-country" aria-label="Ülke telefon kodu" autocomplete="tel-country-code"></select><input type="tel" id="prof-phone-national" autocomplete="tel-national" inputmode="numeric" maxlength="28" aria-describedby="prof-phone-error" placeholder="5XX XXX XX XX"></div><p id="prof-phone-error" role="alert" aria-live="polite" style="display:none; color:#ef4444; font-size:0.8rem; margin:6px 0 0; font-family:'Inter Tight', sans-serif;"></p></div>
+                                <div><label for="prof-phone-national" style="${labelStyle}">Telefon</label><div id="prof-phone-group" class="phone-field-combined"><div class="phone-country-control"><span id="prof-phone-country-display" aria-hidden="true">TR (+90)</span><i class="fas fa-chevron-down" aria-hidden="true"></i><select id="prof-phone-country" aria-label="Ülke telefon kodu" autocomplete="tel-country-code"></select></div><input type="tel" id="prof-phone-national" autocomplete="tel-national" inputmode="numeric" maxlength="28" aria-describedby="prof-phone-error" placeholder="5XX XXX XX XX"></div><p id="prof-phone-error" role="alert" aria-live="polite" style="display:none; color:#ef4444; font-size:0.8rem; margin:6px 0 0; font-family:'Inter Tight', sans-serif;"></p></div>
                                 <div><label for="prof-position" style="${labelStyle}">Pozisyon / Ünvan</label><input type="text" id="prof-position" autocomplete="organization-title" maxlength="100" placeholder="Örn. Operasyon Müdürü" style="${fieldStyle}"></div>
                             </div>
                             <div class="profile-step-actions" style="display:flex; justify-content:flex-end; margin-top:25px;"><button type="button" id="btn-profile-next" style="background: #6366f1; color: #fff; border: none; padding: 14px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Devam Et</button></div>
@@ -266,6 +275,7 @@ class ProfileManager {
         document.getElementById('prof-phone-national').addEventListener('input', () => this.formatPhoneInput());
         document.getElementById('prof-phone-national').addEventListener('paste', () => window.setTimeout(() => this.formatPhoneInput(), 0));
         document.getElementById('prof-phone-country').addEventListener('change', () => {
+            this.updatePhoneCountryDisplay();
             this.updatePhonePlaceholder();
             this.formatPhoneInput();
         });
@@ -408,11 +418,24 @@ class ProfileManager {
 
     populatePhoneCountries() {
         const countrySelect = document.getElementById('prof-phone-country');
-        if (!countrySelect || countrySelect.options.length) return;
+        if (!countrySelect) return;
+        if (countrySelect.options.length) {
+            this.updatePhoneCountryDisplay();
+            return;
+        }
         countrySelect.innerHTML = PHONE_COUNTRIES.map(country =>
             `<option value="${country.iso2}">${country.flag} ${country.name} (${country.dialCode})</option>`
         ).join('');
         countrySelect.value = DEFAULT_PHONE_COUNTRY;
+        this.updatePhoneCountryDisplay();
+    }
+
+    updatePhoneCountryDisplay() {
+        const countrySelect = document.getElementById('prof-phone-country');
+        const display = document.getElementById('prof-phone-country-display');
+        if (!countrySelect || !display) return;
+        const country = this.getPhoneCountry(countrySelect.value);
+        display.textContent = `${country.iso2} (${country.dialCode})`;
     }
 
     getPhoneCountry(iso2) {
@@ -519,6 +542,7 @@ class ProfileManager {
         if (!input || !countrySelect) return;
         const pastedCountry = input.value.trim().startsWith('+') ? this.findCountryByDialCode(input.value) : null;
         if (pastedCountry) countrySelect.value = pastedCountry.iso2;
+        this.updatePhoneCountryDisplay();
         const country = this.getPhoneCountry(countrySelect.value);
         const nationalDigits = input.value.trim().startsWith('+') ? this.stripDialCode(input.value, country) : input.value;
         input.value = country.iso2 === 'TR' ? this.formatTurkishNational(nationalDigits) : this.getPhoneDigits(nationalDigits);
@@ -536,6 +560,7 @@ class ProfileManager {
         if (!country && /^0?5\d{9}$/.test(this.getPhoneDigits(storedPhone))) country = this.getPhoneCountry('TR');
         country = country || this.getPhoneCountry(DEFAULT_PHONE_COUNTRY);
         countrySelect.value = country.iso2;
+        this.updatePhoneCountryDisplay();
         const national = storedPhone.startsWith('+') ? this.stripDialCode(storedPhone, country) : this.getPhoneDigits(storedPhone);
         input.value = country.iso2 === 'TR' ? this.formatTurkishNational(national) : national;
         this.updatePhonePlaceholder();
