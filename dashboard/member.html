@@ -334,6 +334,16 @@
     .screen-recorder-actions { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:10px; }
     .screen-recorder-message { min-height:18px; color:#fca5a5; font-size:0.84rem; }
     .screen-recorder-message.is-neutral { color:#c4b5fd; }
+    .microphone-permission-panel { display:grid; gap:10px; border:1px solid rgba(250,204,21,0.2); border-radius:13px; padding:12px; background:rgba(250,204,21,0.06); color:#cbd5e1; }
+    .microphone-permission-panel.is-ready { border-color:rgba(34,197,94,0.22); background:rgba(34,197,94,0.08); color:#bbf7d0; }
+    .microphone-permission-panel.is-denied { border-color:rgba(248,113,113,0.24); background:rgba(127,29,29,0.16); }
+    .microphone-permission-heading { display:flex; align-items:center; gap:8px; color:#fff; font-weight:900; }
+    .microphone-permission-panel.is-ready .microphone-permission-heading { color:#bbf7d0; }
+    .microphone-permission-panel p, .microphone-permission-panel li { color:#cbd5e1; font-size:0.86rem; line-height:1.45; }
+    .microphone-permission-panel ol { margin:0; padding-left:20px; display:grid; gap:5px; }
+    .microphone-permission-actions { display:flex; flex-wrap:wrap; gap:9px; }
+    .microphone-permission-help summary { cursor:pointer; color:#c4b5fd; font-weight:800; font-size:0.84rem; }
+    .microphone-permission-help div { display:grid; gap:6px; margin-top:8px; }
     .screen-recorder-countdown { display:none; place-items:center; gap:12px; position:fixed; inset:0; z-index:1110; pointer-events:none; color:#fff; }
     .screen-recorder-countdown.is-visible { display:grid; }
     .screen-recorder-countdown strong { width:96px; height:96px; display:grid; place-items:center; border-radius:999px; background:rgba(15,23,42,0.94); border:1px solid rgba(129,140,248,0.34); font-size:3rem; box-shadow:0 24px 70px rgba(0,0,0,0.44); }
@@ -1113,6 +1123,7 @@
         let pendingRecording = null;
         let activePreviewUrl = null;
         let recorderState = "idle";
+        let microphonePermission = { state: "unknown", message: "", errorType: "" };
         const priorityDropdown = document.querySelector("[data-priority-dropdown]");
         const priorityTrigger = document.getElementById("project-request-priority-trigger");
         const prioritySelected = priorityDropdown ? priorityDropdown.querySelector("[data-priority-selected]") : null;
@@ -1259,6 +1270,52 @@
             updateRecorderAvailability();
         };
 
+        const isMicrophoneReady = () => microphonePermission.state === "granted";
+        const getSelectedRecordingMode = () => recorderPanel?.querySelector('input[name="project-screen-recording-mode"]:checked')?.value || "screen-mic";
+        const isScreenOnlyMode = () => getSelectedRecordingMode() === "screen-only";
+        const computerPermissionHelp = () => `<details class="microphone-permission-help"><summary>Bilgisayar mikrofon ayarlarını kontrol et</summary><div><p><strong>Windows:</strong> Ayarlar &gt; Gizlilik ve güvenlik &gt; Mikrofon bölümünde Mikrofon erişimi ve masaüstü uygulamalarının mikrofon erişimi açık olmalıdır.</p><p><strong>macOS:</strong> Sistem Ayarları &gt; Gizlilik ve Güvenlik &gt; Mikrofon bölümünde kullandığınız tarayıcıya izin verin.</p></div></details>`;
+        const switchToScreenOnly = () => {
+            const screenOnly = recorderPanel?.querySelector('input[name="project-screen-recording-mode"][value="screen-only"]');
+            if (screenOnly) screenOnly.checked = true;
+            renderMicrophonePermissionPanel();
+            updateRecorderStartButton(true);
+        };
+        const updateRecorderStartButton = (focusStart = false) => {
+            const startButton = recorderPanel?.querySelector("[data-recorder-start]");
+            if (!startButton) return;
+            const disabledForMic = !isScreenOnlyMode() && !isMicrophoneReady();
+            const insecureContext = window.isSecureContext === false;
+            startButton.disabled = insecureContext || disabledForMic || getRecordingCount() >= 2 || recorderState !== "setup";
+            if (focusStart && !startButton.disabled) startButton.focus();
+        };
+        const renderMicrophonePermissionPanel = () => {
+            const panel = recorderPanel?.querySelector("[data-microphone-permission]");
+            if (!panel) return;
+            if (isScreenOnlyMode() && window.isSecureContext !== false) { panel.innerHTML = ""; panel.hidden = true; updateRecorderStartButton(); return; }
+            panel.hidden = false;
+            const state = microphonePermission.state;
+            const msg = microphonePermission.message;
+            const role = state === "denied" ? ' role="alert"' : "";
+            if (state === "granted") {
+                panel.innerHTML = `<div class="microphone-permission-panel is-ready" aria-live="polite"><div class="microphone-permission-heading"><i class="fas fa-microphone-circle-check" aria-hidden="true"></i> Mikrofon kullanıma hazır.</div></div>`;
+            } else if (state === "denied") {
+                const policyText = microphonePermission.errorType === "policy" ? `<p>Bu sayfanın yerleştirildiği ortam mikrofon erişimine izin vermiyor.</p>` : `<p>Mikrofonla kayıt yapabilmek için Teknoify’a tarayıcı ayarlarından mikrofon izni vermeniz gerekiyor.</p>`;
+                panel.innerHTML = `<div class="microphone-permission-panel is-denied" aria-live="polite"${role}><div class="microphone-permission-heading"><i class="fas fa-sliders-h" aria-hidden="true"></i> Mikrofon erişimi engellendi</div>${policyText}<ol><li>Adres çubuğunun solundaki site ayarları simgesine tıklayın.</li><li>Mikrofon iznini ‘İzin ver’ olarak değiştirin.</li><li>Bu alana dönüp ‘Tekrar Kontrol Et’ düğmesine basın.</li></ol><div class="microphone-permission-actions"><button type="button" class="project-request-button project-request-confirm" data-mic-refresh>Tekrar Kontrol Et</button><button type="button" class="project-request-button project-request-cancel" data-mic-screen-only>Yalnızca Ekranla Devam Et</button></div>${computerPermissionHelp()}</div>`;
+            } else if (state === "unavailable") {
+                panel.innerHTML = `<div class="microphone-permission-panel" aria-live="polite"><div class="microphone-permission-heading"><i class="fas fa-microphone-slash" aria-hidden="true"></i> Kullanılabilir mikrofon bulunamadı.</div><p>${msg || "Bilgisayarınızda kullanılabilir bir mikrofon bulunamadı."}</p><div class="microphone-permission-actions"><button type="button" class="project-request-button project-request-confirm" data-mic-retry>Yeniden Kontrol Et</button><button type="button" class="project-request-button project-request-cancel" data-mic-screen-only>Yalnızca Ekranla Devam Et</button></div>${computerPermissionHelp()}</div>`;
+            } else if (state === "error") {
+                const secure = microphonePermission.errorType === "secure-context";
+                panel.innerHTML = `<div class="microphone-permission-panel" aria-live="polite"><div class="microphone-permission-heading"><i class="fas fa-circle-exclamation" aria-hidden="true"></i> Mikrofon şu anda kullanılamıyor.</div><p>${msg || "Mikrofon başka bir uygulama tarafından kullanılıyor veya şu anda erişilemiyor."}</p>${microphonePermission.errorType === "busy" ? "<p>Mikrofonu kullanan diğer uygulamaları kapatıp tekrar deneyin.</p>" : ""}<div class="microphone-permission-actions">${secure ? "" : '<button type="button" class="project-request-button project-request-confirm" data-mic-retry>Tekrar Dene</button>'}<button type="button" class="project-request-button project-request-cancel" data-mic-screen-only>Yalnızca Ekranla Devam Et</button></div>${computerPermissionHelp()}</div>`;
+            } else {
+                panel.innerHTML = `<div class="microphone-permission-panel" aria-live="polite"><div class="microphone-permission-heading"><i class="fas fa-microphone" aria-hidden="true"></i> Mikrofon erişimine izin verin.</div><p>Bu düğmeye bastığınızda tarayıcınız mikrofon erişimi için izin isteyecektir.</p>${msg ? `<p>${msg}</p>` : ""}<div class="microphone-permission-actions"><button type="button" class="project-request-button project-request-confirm" data-mic-request>Mikrofon İzni Ver</button></div>${computerPermissionHelp()}</div>`;
+            }
+            panel.querySelector("[data-mic-request]")?.addEventListener("click", () => recorder.requestMicrophonePermission({ userAction: true }));
+            panel.querySelector("[data-mic-refresh]")?.addEventListener("click", () => recorder.refreshMicrophonePermission({ userAction: true, allowFallbackRequest: true }));
+            panel.querySelector("[data-mic-retry]")?.addEventListener("click", () => recorder.requestMicrophonePermission({ userAction: true }));
+            panel.querySelectorAll("[data-mic-screen-only]").forEach((button) => button.addEventListener("click", switchToScreenOnly));
+            updateRecorderStartButton();
+        };
+
         const renderSetupPanel = () => {
             if (!recorderPanel) return;
             recorderPanel.className = "screen-recorder-panel is-visible";
@@ -1269,15 +1326,19 @@
                     <label class="screen-recorder-option"><input type="radio" name="project-screen-recording-mode" value="screen-mic" checked> Ekran + Mikrofon</label>
                     <label class="screen-recorder-option"><input type="radio" name="project-screen-recording-mode" value="screen-only"> Yalnızca Ekran</label>
                 </div>
+                <div data-microphone-permission></div>
                 <div class="screen-recorder-guidance"><span><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Kayda başlamadan önce şifrelerin, kişisel bilgilerin ve gizli şirket verilerinin ekranda görünmediğinden emin olun.</span><span>Sekme veya sistem sesi, tarayıcınız ve seçtiğiniz paylaşım türü destekliyorsa kayda dahil edilebilir.</span></div>
-                <div class="screen-recorder-message" data-recorder-message></div>
+                <div class="screen-recorder-message" data-recorder-message aria-live="polite"></div>
                 <div class="screen-recorder-actions"><button type="button" class="project-request-button project-request-cancel" data-recorder-cancel>Vazgeç</button><button type="button" class="project-request-button project-request-confirm" data-recorder-start>Kaydı Başlat</button></div>`;
+            recorderPanel.querySelectorAll('input[name="project-screen-recording-mode"]').forEach((input) => input.addEventListener("change", () => { renderMicrophonePermissionPanel(); updateRecorderStartButton(); }));
             recorderPanel.querySelector("[data-recorder-cancel]").addEventListener("click", () => { recorderPanel.classList.remove("is-visible"); recorder.setState ? recorder.setState("idle") : null; });
             recorderPanel.querySelector("[data-recorder-start]").addEventListener("click", () => {
                 if (getRecordingCount() >= 2) { setRecorderHelper("Bir talebe en fazla 2 ekran kaydı ekleyebilirsiniz.", true); return; }
-                const mode = recorderPanel.querySelector('input[name="project-screen-recording-mode"]:checked')?.value;
-                recorder.start({ includeMicrophone: mode !== "screen-only" });
+                if (!isScreenOnlyMode() && !isMicrophoneReady()) { renderMicrophonePermissionPanel(); return; }
+                recorder.start({ includeMicrophone: !isScreenOnlyMode() });
             });
+            recorder.openSetup();
+            renderMicrophonePermissionPanel();
             recorderPanel.focus();
         };
 
@@ -1345,6 +1406,12 @@
                 if (["recording", "paused", "stopping"].includes(state)) renderControls({ state, durationSeconds });
                 else hideControls();
                 updateRecorderAvailability();
+                if (state === "setup") updateRecorderStartButton();
+            },
+            onMicrophonePermissionChange: (permission) => {
+                microphonePermission = permission;
+                renderMicrophonePermissionPanel();
+                if (permission.state === "granted" && permission.userAction) recorderPanel?.querySelector("[data-recorder-start]")?.focus();
             },
             onRecordingReady: ({ file, durationSeconds, mimeType }) => { pendingRecording = { file, durationSeconds, mimeType }; renderPendingPreview(); updateRecorderAvailability(); },
             onError: (message, error) => { console.warn("Screen recorder:", error || message); const target = recorderPanel?.querySelector("[data-recorder-message]"); if (target) target.textContent = message; else setRecorderHelper(message, true); },
