@@ -9,10 +9,12 @@
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+import { PHONE_COUNTRIES } from "./phone-countries.js";
 
 const auth = getAuth();
 const db = getFirestore();
 const storage = getStorage();
+const DEFAULT_PHONE_COUNTRY = "TR";
 
 class ProfileManager {
     constructor() {
@@ -107,11 +109,23 @@ class ProfileManager {
         const labelStyle = "display: block; color: #a1a1aa; font-size: 0.85rem; margin-bottom: 6px; font-family: 'Inter Tight', sans-serif;";
         const modalHTML = `
             <style>
+                .phone-field-combined { display: flex; width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: #05080a; transition: border-color 0.2s, box-shadow 0.2s; }
+                .phone-field-combined:focus-within { border-color: #6366f1; box-shadow: 0 0 0 1px rgba(99,102,241,0.2); }
+                .phone-field-combined.phone-field-invalid { border-color: #ef4444; box-shadow: 0 0 0 1px rgba(239,68,68,0.18); }
+                .phone-field-combined select, .phone-field-combined input { background: transparent !important; border: 0 !important; color: #fff; outline: none; box-sizing: border-box; }
+                .phone-field-combined select { width: 175px; flex: 0 0 175px; border-right: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px 0 0 8px; padding: 12px 10px; }
+                .phone-field-combined input { flex: 1; min-width: 0; border-radius: 0 8px 8px 0; padding: 12px 15px; }
+                .phone-field-combined select option { background: #11131a; color: #fff; }
                 @media (max-width: 520px) {
                     #profile-modal-content { width: calc(100% - 24px) !important; padding: 22px !important; }
                     .profile-field-grid { grid-template-columns: 1fr !important; }
                     .profile-step-actions { flex-direction: column !important; }
                     .profile-step-actions button { width: 100% !important; }
+                }
+                @media (max-width: 420px) {
+                    .phone-field-combined { flex-direction: column; }
+                    .phone-field-combined select { width: 100%; flex-basis: auto; border-right: 0 !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px 8px 0 0; }
+                    .phone-field-combined input { width: 100%; border-radius: 0 0 8px 8px; }
                 }
             </style>
             <div id="shared-profile-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 99999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease; padding: 16px; box-sizing: border-box;">
@@ -148,7 +162,7 @@ class ProfileManager {
                             <div class="profile-field-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; margin-bottom: 15px;">
                                 <div><label for="prof-firstname" style="${labelStyle}">Ad</label><input type="text" id="prof-firstname" autocomplete="given-name" maxlength="60" required style="${fieldStyle}"></div>
                                 <div><label for="prof-lastname" style="${labelStyle}">Soyisim</label><input type="text" id="prof-lastname" autocomplete="family-name" maxlength="80" required style="${fieldStyle}"></div>
-                                <div><label for="prof-phone" style="${labelStyle}">Telefon</label><input type="tel" id="prof-phone" autocomplete="tel" inputmode="tel" maxlength="24" pattern="[0-9+()\\-\\s]*" title="Telefon için sadece rakam, boşluk ve + ( ) - karakterlerini kullanın." placeholder="+90 5xx xxx xx xx" style="${fieldStyle}"></div>
+                                <div><label for="prof-phone-national" style="${labelStyle}">Telefon</label><div id="prof-phone-group" class="phone-field-combined"><select id="prof-phone-country" aria-label="Ülke telefon kodu" autocomplete="tel-country-code"></select><input type="tel" id="prof-phone-national" autocomplete="tel-national" inputmode="numeric" maxlength="28" aria-describedby="prof-phone-error" placeholder="5XX XXX XX XX"></div><p id="prof-phone-error" role="alert" aria-live="polite" style="display:none; color:#ef4444; font-size:0.8rem; margin:6px 0 0; font-family:'Inter Tight', sans-serif;"></p></div>
                                 <div><label for="prof-position" style="${labelStyle}">Pozisyon / Ünvan</label><input type="text" id="prof-position" autocomplete="organization-title" maxlength="100" placeholder="Örn. Operasyon Müdürü" style="${fieldStyle}"></div>
                             </div>
                             <div class="profile-step-actions" style="display:flex; justify-content:flex-end; margin-top:25px;"><button type="button" id="btn-profile-next" style="background: #6366f1; color: #fff; border: none; padding: 14px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Devam Et</button></div>
@@ -170,10 +184,13 @@ class ProfileManager {
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
+        this.populatePhoneCountries();
         const fields = document.querySelectorAll('#shared-profile-form input, #shared-profile-form select');
         fields.forEach(input => {
-            input.addEventListener('focus', () => input.style.borderColor = '#6366f1');
-            input.addEventListener('blur', () => input.style.borderColor = 'rgba(255,255,255,0.1)');
+            if (!input.closest('.phone-field-combined')) {
+                input.addEventListener('focus', () => input.style.borderColor = '#6366f1');
+                input.addEventListener('blur', () => input.style.borderColor = 'rgba(255,255,255,0.1)');
+            }
             input.addEventListener('input', () => { this.profileFormDirty = true; });
             input.addEventListener('change', () => { this.profileFormDirty = true; });
         });
@@ -245,6 +262,12 @@ class ProfileManager {
                 e.preventDefault();
                 this.goToStep2();
             }
+        });
+        document.getElementById('prof-phone-national').addEventListener('input', () => this.formatPhoneInput());
+        document.getElementById('prof-phone-national').addEventListener('paste', () => window.setTimeout(() => this.formatPhoneInput(), 0));
+        document.getElementById('prof-phone-country').addEventListener('change', () => {
+            this.updatePhonePlaceholder();
+            this.formatPhoneInput();
         });
 
         document.addEventListener('keydown', (e) => {
@@ -383,6 +406,142 @@ class ProfileManager {
         };
     }
 
+    populatePhoneCountries() {
+        const countrySelect = document.getElementById('prof-phone-country');
+        if (!countrySelect || countrySelect.options.length) return;
+        countrySelect.innerHTML = PHONE_COUNTRIES.map(country =>
+            `<option value="${country.iso2}">${country.flag} ${country.name} (${country.dialCode})</option>`
+        ).join('');
+        countrySelect.value = DEFAULT_PHONE_COUNTRY;
+    }
+
+    getPhoneCountry(iso2) {
+        return PHONE_COUNTRIES.find(country => country.iso2 === iso2) || PHONE_COUNTRIES[0];
+    }
+
+    findCountryByDialCode(value) {
+        const normalized = (value || '').replace(/[^\d+]/g, '');
+        if (!normalized.startsWith('+')) return null;
+        return [...PHONE_COUNTRIES]
+            .sort((a, b) => b.dialCode.length - a.dialCode.length)
+            .find(country => normalized.startsWith(country.dialCode)) || null;
+    }
+
+    getPhoneDigits(value) {
+        return (value || '').replace(/\D/g, '');
+    }
+
+    stripDialCode(value, country) {
+        const compact = (value || '').replace(/[^\d+]/g, '');
+        if (compact.startsWith(country.dialCode)) {
+            return compact.slice(country.dialCode.length).replace(/\D/g, '');
+        }
+        return this.getPhoneDigits(value);
+    }
+
+    formatTurkishNational(value) {
+        let digits = this.getPhoneDigits(value);
+        if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1);
+        if (digits.length > 10 && digits.startsWith('90')) digits = digits.slice(2);
+        const groups = [digits.slice(0, 3), digits.slice(3, 6), digits.slice(6, 8), digits.slice(8, 10)].filter(Boolean);
+        return groups.join(' ');
+    }
+
+    setPhoneError(message = '') {
+        const group = document.getElementById('prof-phone-group');
+        const input = document.getElementById('prof-phone-national');
+        const error = document.getElementById('prof-phone-error');
+        const invalid = Boolean(message);
+        if (group) group.classList.toggle('phone-field-invalid', invalid);
+        if (input) {
+            if (invalid) input.setAttribute('aria-invalid', 'true');
+            else input.removeAttribute('aria-invalid');
+        }
+        if (error) {
+            error.textContent = message;
+            error.style.display = invalid ? 'block' : 'none';
+        }
+    }
+
+    updatePhonePlaceholder() {
+        const country = this.getPhoneCountry(document.getElementById('prof-phone-country')?.value);
+        const input = document.getElementById('prof-phone-national');
+        if (!input) return;
+        input.placeholder = country.iso2 === 'TR' ? '5XX XXX XX XX' : 'Telefon numarası';
+    }
+
+    validatePhone({ showError = false } = {}) {
+        const country = this.getPhoneCountry(document.getElementById('prof-phone-country')?.value);
+        const inputValue = document.getElementById('prof-phone-national')?.value || '';
+        const hasPlus = inputValue.trim().startsWith('+');
+        let nationalDigits = hasPlus ? this.stripDialCode(inputValue, this.findCountryByDialCode(inputValue) || country) : this.getPhoneDigits(inputValue);
+        if (!nationalDigits) {
+            this.setPhoneError('');
+            return { valid: true, normalized: '', countryIso2: country.iso2 };
+        }
+
+        if (country.iso2 === 'TR') {
+            if (nationalDigits.length === 12 && nationalDigits.startsWith('90')) nationalDigits = nationalDigits.slice(2);
+            if (nationalDigits.length === 11 && nationalDigits.startsWith('0')) nationalDigits = nationalDigits.slice(1);
+            if (nationalDigits.length !== 10) {
+                if (showError) this.setPhoneError('Türkiye telefon numarası 10 haneli olmalıdır.');
+                return { valid: false };
+            }
+            if (!nationalDigits.startsWith('5')) {
+                if (showError) this.setPhoneError('Cep telefonu numarası 5 ile başlamalıdır.');
+                return { valid: false };
+            }
+            this.setPhoneError('');
+            return { valid: true, normalized: `+90${nationalDigits}`, countryIso2: 'TR' };
+        }
+
+        const dialDigits = country.dialCode.replace(/\D/g, '');
+        if (/[^0-9\s()+-]/.test(inputValue)) {
+            if (showError) this.setPhoneError('Geçerli bir telefon numarası girin.');
+            return { valid: false };
+        }
+        const totalDigits = `${dialDigits}${nationalDigits}`;
+        if (totalDigits.length > 15) {
+            if (showError) this.setPhoneError('Telefon numarası en fazla 15 haneli olabilir.');
+            return { valid: false };
+        }
+        if (totalDigits.length < 8) {
+            if (showError) this.setPhoneError('Geçerli bir telefon numarası girin.');
+            return { valid: false };
+        }
+        this.setPhoneError('');
+        return { valid: true, normalized: `+${totalDigits}`, countryIso2: country.iso2 };
+    }
+
+    formatPhoneInput() {
+        const input = document.getElementById('prof-phone-national');
+        const countrySelect = document.getElementById('prof-phone-country');
+        if (!input || !countrySelect) return;
+        const pastedCountry = input.value.trim().startsWith('+') ? this.findCountryByDialCode(input.value) : null;
+        if (pastedCountry) countrySelect.value = pastedCountry.iso2;
+        const country = this.getPhoneCountry(countrySelect.value);
+        const nationalDigits = input.value.trim().startsWith('+') ? this.stripDialCode(input.value, country) : input.value;
+        input.value = country.iso2 === 'TR' ? this.formatTurkishNational(nationalDigits) : this.getPhoneDigits(nationalDigits);
+        this.updatePhonePlaceholder();
+        this.validatePhone({ showError: Boolean(document.getElementById('prof-phone-error')?.textContent) });
+    }
+
+    loadPhoneValue(profile = {}) {
+        const countrySelect = document.getElementById('prof-phone-country');
+        const input = document.getElementById('prof-phone-national');
+        if (!countrySelect || !input) return;
+        const storedPhone = profile.phone || '';
+        let country = profile.phoneCountry ? this.getPhoneCountry(profile.phoneCountry) : null;
+        if (!country && storedPhone.startsWith('+')) country = this.findCountryByDialCode(storedPhone);
+        if (!country && /^0?5\d{9}$/.test(this.getPhoneDigits(storedPhone))) country = this.getPhoneCountry('TR');
+        country = country || this.getPhoneCountry(DEFAULT_PHONE_COUNTRY);
+        countrySelect.value = country.iso2;
+        const national = storedPhone.startsWith('+') ? this.stripDialCode(storedPhone, country) : this.getPhoneDigits(storedPhone);
+        input.value = country.iso2 === 'TR' ? this.formatTurkishNational(national) : national;
+        this.updatePhonePlaceholder();
+        this.setPhoneError('');
+    }
+
 
     showProfileStep(step) {
         this.currentStep = step;
@@ -416,7 +575,13 @@ class ProfileManager {
             invalidField.reportValidity();
             return;
         }
+        const phoneValidation = this.validatePhone({ showError: true });
+        if (!phoneValidation.valid) {
+            document.getElementById('prof-phone-national')?.focus();
+            return;
+        }
         this.clearWebsiteError();
+        this.setPhoneError('');
         this.showProfileStep(2);
     }
 
@@ -469,7 +634,8 @@ class ProfileManager {
         const cleanFirst = this.collapseSpaces(document.getElementById('prof-firstname').value, 60);
         const cleanLast = this.collapseSpaces(document.getElementById('prof-lastname').value, 80);
         const safeFullName = this.sanitizeInput(`${cleanFirst} ${cleanLast}`.trim());
-        const safePhone = this.sanitizeInput(this.collapseSpaces(document.getElementById('prof-phone').value, 24));
+        const phoneValidation = this.validatePhone({ showError: true });
+        if (!phoneValidation.valid) return null;
         const safePosition = this.sanitizeInput(this.collapseSpaces(document.getElementById('prof-position').value, 100));
         const safeCompanyName = this.sanitizeInput(this.collapseSpaces(document.getElementById('prof-company').value, 140));
         const normalizedWebsite = this.normalizeWebsite(document.getElementById('prof-company-website').value);
@@ -480,7 +646,8 @@ class ProfileManager {
         return {
             cleanFirst,
             safeFullName,
-            safePhone,
+            safePhone: phoneValidation.normalized,
+            safePhoneCountry: phoneValidation.countryIso2,
             safePosition,
             safeCompanyName,
             safeCompanyWebsite: this.sanitizeInput(normalizedWebsite),
@@ -559,7 +726,7 @@ class ProfileManager {
             if (!this.profileFormDirty) {
                 document.getElementById('prof-firstname').value = nameParts[0] || authNameParts.firstName || "";
                 document.getElementById('prof-lastname').value = nameParts.slice(1).join(" ") || authNameParts.lastName || "";
-                document.getElementById('prof-phone').value = profile.phone || "";
+                this.loadPhoneValue(profile);
                 document.getElementById('prof-position').value = profile.position || "";
                 document.getElementById('prof-company').value = profile.companyName || "";
                 document.getElementById('prof-company-website').value = profile.companyWebsite || "";
@@ -635,13 +802,10 @@ class ProfileManager {
             return;
         }
 
-        const phoneField = document.getElementById('prof-phone');
-        if (phoneField && !phoneField.checkValidity()) {
+        const phoneValidation = this.validatePhone({ showError: true });
+        if (!phoneValidation.valid) {
             this.showProfileStep(1);
-            window.setTimeout(() => {
-                phoneField.focus();
-                phoneField.reportValidity();
-            }, 60);
+            window.setTimeout(() => document.getElementById('prof-phone-national')?.focus(), 60);
             return;
         }
 
@@ -664,6 +828,7 @@ class ProfileManager {
                     ...existingProfile,
                     fullName: formValues.safeFullName,
                     phone: formValues.safePhone,
+                    phoneCountry: formValues.safePhoneCountry,
                     position: formValues.safePosition,
                     companyName: formValues.safeCompanyName,
                     companyWebsite: formValues.safeCompanyWebsite,
