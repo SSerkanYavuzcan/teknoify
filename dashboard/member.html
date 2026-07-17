@@ -329,7 +329,7 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
   <script type="module" src="/js/pages/member.js?v=999"></script>
-  <script type="module" src="/dashboard/shared/profile-manager.js"></script>
+  <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-onboarding-1"></script>
 
   <script type="module">
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -342,9 +342,17 @@
         if (user) {
             // Firestore'dan kullanıcı dokümanını çekiyoruz
             const userDocRef = doc(db, "users", user.uid);
-            const userDocSnap = await getDoc(userDocRef);
+            let userDocSnap;
+
+            try {
+                userDocSnap = await getDoc(userDocRef);
+            } catch (error) {
+                console.error("Kullanıcı profili yüklenirken hata oluştu:", error);
+                fetchUserProjects(user.uid, null, { profileLoadFailed: true });
+                return;
+            }
             
-            let name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+            let name = user.displayName || (user.email ? user.email.split('@')[0] : "Kullanıcı");
             let accountType = "bireysel"; 
             let userData = null;
 
@@ -419,18 +427,27 @@
 
             fetchUserProjects(user.uid, userDocSnap);
 
+            if (!userDocSnap.exists() && window.SharedProfileManager) {
+                window.SharedProfileManager.scheduleProfileOnboarding(user);
+            }
+
         } else {
             window.location.href = "/";
         }
     });
 
-    async function fetchUserProjects(userUid, userDocSnap) {
+    async function fetchUserProjects(userUid, userDocSnap, options = {}) {
         const container = document.getElementById('dynamic-projects-container');
         if (!container) return;
 
         try {
+            if (options.profileLoadFailed) {
+                container.innerHTML = '<p style="color: #ef4444;">Projeler yüklenirken bir sorun oluştu. Konsolu kontrol edin.</p>';
+                return;
+            }
+
             if (!userDocSnap || !userDocSnap.exists()) {
-                container.innerHTML = '<p style="color: #ef4444;">Kullanıcı profili bulunamadı.</p>';
+                container.innerHTML = '';
                 return;
             }
 
@@ -566,6 +583,18 @@
             container.innerHTML = '<p style="color: #ef4444;">Projeler yüklenirken bir sorun oluştu. Konsolu kontrol edin.</p>';
         }
     }
+
+    window.addEventListener('shared-profile-updated', async (event) => {
+        const uid = event.detail && event.detail.uid;
+        if (!uid || !auth.currentUser || auth.currentUser.uid !== uid) return;
+
+        try {
+            const refreshedSnap = await getDoc(doc(db, "users", uid));
+            fetchUserProjects(uid, refreshedSnap);
+        } catch (error) {
+            console.error("Profil kaydı sonrası projeler yenilenemedi:", error);
+        }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       if(document.querySelector("#finance-summary-chart")) {

@@ -7,7 +7,7 @@
  */
 
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
 const auth = getAuth();
@@ -20,6 +20,12 @@ class ProfileManager {
         this.userData = null;
         this.selectedFile = null;
         this.pendingFile = null; // Sıkıştırılmayı bekleyen dosya
+        this.onboardingTimer = null;
+        this.onboardingModalOpened = false;
+        this.onboardingUid = null;
+        this.lastAuthUid = null;
+        this.lastFocusedElement = null;
+        this.isSavingProfile = false;
         this.init();
     }
 
@@ -30,9 +36,13 @@ class ProfileManager {
         this.bindEvents();
 
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                this.currentUser = user;
+            const uidChanged = (user ? user.uid : null) !== this.lastAuthUid;
+            this.currentUser = user || null;
+            if (uidChanged) {
+                this.cancelProfileOnboarding();
+                this.onboardingModalOpened = false;
             }
+            this.lastAuthUid = user ? user.uid : null;
         });
     }
 
@@ -63,7 +73,7 @@ class ProfileManager {
                     </div>
                     <h3 style="color: #fff; margin: 0 0 10px 0; font-family: 'Inter Tight', sans-serif; font-size: 1.2rem;">Fotoğraf Boyutu Büyük</h3>
                     <p style="color: #a1a1aa; font-size: 0.9rem; margin: 0 0 25px 0; line-height: 1.5;">Seçtiğiniz dosya 2MB sınırını aşıyor. Yüksek kalitede dönüştürerek yüklememizi ister misiniz?</p>
-                    
+
                     <div style="display: flex; gap: 10px;">
                         <button id="btn-cancel-compress" style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #e4e4e7; padding: 12px; border-radius: 8px; font-family: 'Inter Tight', sans-serif; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">İptal</button>
                         <button id="btn-compress-image" style="flex: 1; background: #6366f1; border: none; color: #fff; padding: 12px; border-radius: 8px; font-weight: 600; font-family: 'Inter Tight', sans-serif; cursor: pointer; transition: background 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">
@@ -81,14 +91,14 @@ class ProfileManager {
         const modalHTML = `
             <div id="shared-profile-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 99999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease;">
                 <div style="background: #11131a; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; width: 100%; max-width: 480px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s ease;" id="profile-modal-content">
-                    
+
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 25px;">
                         <h3 style="color: #fff; margin: 0; font-family: 'Inter Tight', sans-serif; font-size: 1.2rem;"><i class="fas fa-user-edit" style="color: #6366f1; margin-right: 8px;"></i> Profili Düzenle</h3>
                         <button id="close-profile-modal" style="background: none; border: none; color: #71717a; cursor: pointer; font-size: 1.2rem; transition: color 0.2s;"><i class="fas fa-times"></i></button>
                     </div>
 
                     <form id="shared-profile-form">
-                        
+
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
                             <div style="position: relative; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #1e2130; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; flex-shrink: 0;" id="photo-preview-container">
                                 <div id="default-avatar-placeholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #6366f1; color: white; font-size: 2rem; font-weight: 600;">U</div>
@@ -149,7 +159,7 @@ class ProfileManager {
                 img.src = event.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    
+
                     // Fotoğrafı en fazla 1024x1024 boyutuna küçült
                     const MAX_WIDTH = 1024;
                     const MAX_HEIGHT = 1024;
@@ -187,14 +197,22 @@ class ProfileManager {
     bindEvents() {
         const closeBtn = document.getElementById('close-profile-modal');
         const modal = document.getElementById('shared-profile-modal');
-        
+
         closeBtn.addEventListener('click', () => this.closeModal());
-        modal.addEventListener('click', (e) => { 
-            if (e.target === modal) this.closeModal(); 
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) this.closeModal();
         });
 
         const form = document.getElementById('shared-profile-form');
         form.addEventListener('submit', (e) => this.handleProfileSave(e));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                this.closeModal();
+            }
+        });
+
+        window.addEventListener('beforeunload', () => this.cancelProfileOnboarding());
 
         // Sıkıştırma Modalı Butonları
         const compModal = document.getElementById('compression-modal');
@@ -222,7 +240,7 @@ class ProfileManager {
             try {
                 // Fotoğrafı dönüştür
                 this.selectedFile = await this.compressImage(this.pendingFile);
-                
+
                 // Önizlemeye bas
                 const reader = new FileReader();
                 reader.onload = (event) => {
@@ -267,7 +285,7 @@ class ProfileManager {
                     }, 10);
                     return; // Pop-up onayı bekle
                 }
-                
+
                 // Sınırın altındaysa normal devam
                 this.selectedFile = file;
                 const reader = new FileReader();
@@ -292,13 +310,70 @@ class ProfileManager {
         setTimeout(() => { toast.style.right = '-400px'; }, 4000);
     }
 
-    async openModal() {
-        if (!this.currentUser) return;
+    scheduleProfileOnboarding(user) {
+        if (!user || this.onboardingModalOpened) return;
+        this.cancelProfileOnboarding();
+        this.onboardingUid = user.uid;
+        this.onboardingTimer = window.setTimeout(() => {
+            this.onboardingTimer = null;
+            if (this.onboardingModalOpened || !this.currentUser || this.currentUser.uid !== user.uid) return;
+
+            const modal = document.getElementById('shared-profile-modal');
+            if (modal && modal.style.display === 'flex') return;
+
+            this.openModal({ onboarding: true, user, profile: null });
+        }, 1500);
+    }
+
+    cancelProfileOnboarding() {
+        if (this.onboardingTimer) {
+            window.clearTimeout(this.onboardingTimer);
+            this.onboardingTimer = null;
+        }
+        this.onboardingUid = null;
+    }
+
+    getAuthDisplayNameParts(user) {
+        const displayName = (user && user.displayName ? user.displayName : '').trim();
+        const parts = displayName.split(/\s+/).filter(Boolean);
+        return {
+            firstName: parts[0] || '',
+            lastName: parts.slice(1).join(' ') || ''
+        };
+    }
+
+    focusFirstIncompleteField() {
+        const fields = [
+            document.getElementById('prof-firstname'),
+            document.getElementById('prof-lastname'),
+            document.getElementById('prof-company')
+        ].filter(field => field && field.offsetParent !== null && !field.disabled && !field.value.trim());
+
+        const target = fields[0] || document.getElementById('prof-firstname');
+        if (target) target.focus();
+    }
+
+    async openModal(options = {}) {
+        const requestedUser = options.user || this.currentUser;
+        if (!requestedUser) return;
+
+        if (options.onboarding && this.onboardingModalOpened) return;
+        if (!options.onboarding) {
+            this.onboardingModalOpened = true;
+            this.cancelProfileOnboarding();
+        }
+
+        this.currentUser = requestedUser;
+        this.lastFocusedElement = document.activeElement;
+
         const modal = document.getElementById('shared-profile-modal');
         const modalContent = document.getElementById('profile-modal-content');
+        if (modal.style.display === 'flex') return;
+
         this.selectedFile = null;
         this.pendingFile = null;
-        
+        if (options.onboarding) this.onboardingModalOpened = true;
+
         const fileInput = document.getElementById('prof-photo-input');
         if (fileInput) fileInput.value = "";
 
@@ -307,45 +382,64 @@ class ProfileManager {
         btn.disabled = true;
 
         modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
         setTimeout(() => { modal.style.opacity = '1'; modalContent.style.transform = 'translateY(0)'; }, 10);
 
         try {
-            const userDoc = await getDoc(doc(db, "users", this.currentUser.uid));
-            if (userDoc.exists()) {
-                this.userData = userDoc.data();
-                const profile = this.userData.profile || {};
-                const fullName = profile.fullName || "";
-                const nameParts = fullName.trim().split(" ");
-                
-                document.getElementById('prof-firstname').value = nameParts[0] || "";
-                document.getElementById('prof-lastname').value = nameParts.slice(1).join(" ") || "";
-                
-                const imgPreview = document.getElementById('prof-photo-preview');
-                const placeholder = document.getElementById('default-avatar-placeholder');
-                
-                if (profile.photoURL) {
-                    imgPreview.src = profile.photoURL;
-                    imgPreview.style.display = 'block';
-                    placeholder.style.display = 'none';
+            let profile = options.profile || null;
+            let userData = null;
+
+            if (Object.prototype.hasOwnProperty.call(options, 'profile')) {
+                userData = profile ? { profile } : { profile: {} };
+            } else {
+                const userDoc = await getDoc(doc(db, "users", this.currentUser.uid));
+                if (userDoc.exists()) {
+                    const rootData = userDoc.data() || {};
+                    userData = rootData.data || rootData || {};
+                    profile = userData.profile || {};
                 } else {
-                    imgPreview.style.display = 'none';
-                    placeholder.style.display = 'flex';
-                    placeholder.textContent = (nameParts[0] || "U").charAt(0).toUpperCase();
+                    userData = { profile: {} };
+                    profile = {};
                 }
-                
-                const companyWrapper = document.getElementById('company-field-wrapper');
-                if (profile.accountType === "kurumsal") {
-                    companyWrapper.style.display = 'block';
-                    document.getElementById('prof-company').value = profile.companyName || "";
-                } else {
-                    companyWrapper.style.display = 'none'; 
-                }
+            }
+
+            this.userData = userData;
+            const fullName = profile.fullName || "";
+            const nameParts = fullName.trim().split(" ").filter(Boolean);
+            const authNameParts = this.getAuthDisplayNameParts(this.currentUser);
+
+            document.getElementById('prof-firstname').value = nameParts[0] || authNameParts.firstName || "";
+            document.getElementById('prof-lastname').value = nameParts.slice(1).join(" ") || authNameParts.lastName || "";
+
+            const imgPreview = document.getElementById('prof-photo-preview');
+            const placeholder = document.getElementById('default-avatar-placeholder');
+            const authPhotoURL = this.currentUser.photoURL || "";
+            const photoURL = profile.photoURL || authPhotoURL;
+
+            if (photoURL) {
+                imgPreview.src = photoURL;
+                imgPreview.style.display = 'block';
+                placeholder.style.display = 'none';
+            } else {
+                imgPreview.style.display = 'none';
+                placeholder.style.display = 'flex';
+                placeholder.textContent = (nameParts[0] || authNameParts.firstName || "U").charAt(0).toUpperCase();
+            }
+
+            const companyWrapper = document.getElementById('company-field-wrapper');
+            if (profile.accountType === "kurumsal") {
+                companyWrapper.style.display = 'block';
+                document.getElementById('prof-company').value = profile.companyName || "";
+            } else {
+                companyWrapper.style.display = 'none';
+                document.getElementById('prof-company').value = "";
             }
         } catch (error) {
             console.error("Profil bilgileri alınamadı:", error);
         } finally {
             btn.innerHTML = '<span>Değişiklikleri Kaydet</span>';
             btn.disabled = false;
+            setTimeout(() => this.focusFirstIncompleteField(), 50);
         }
     }
 
@@ -354,24 +448,31 @@ class ProfileManager {
         const modalContent = document.getElementById('profile-modal-content');
         modal.style.opacity = '0';
         modalContent.style.transform = 'translateY(20px)';
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            if (this.lastFocusedElement && typeof this.lastFocusedElement.focus === 'function') {
+                this.lastFocusedElement.focus();
+            }
+        }, 300);
     }
 
     sanitizeInput(str) {
         if (!str) return "";
         const div = document.createElement('div');
-        div.textContent = str.trim(); 
+        div.textContent = str.trim();
         return div.innerHTML;
     }
 
     async handleProfileSave(e) {
         e.preventDefault();
-        if (!this.currentUser) return;
+        if (!this.currentUser || this.isSavingProfile) return;
 
         const btn = document.getElementById('btn-save-profile');
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
         btn.disabled = true;
+        this.isSavingProfile = true;
 
         try {
             const rawFirst = document.getElementById('prof-firstname').value.trim();
@@ -379,14 +480,14 @@ class ProfileManager {
             const cleanFirst = rawFirst.replace(/\s+/g, ' ');
             const cleanLast = rawLast.replace(/\s+/g, ' ');
             const mergedFullName = `${cleanFirst} ${cleanLast}`;
-            
+
             const safeFullName = this.sanitizeInput(mergedFullName);
             const safeCompany = this.sanitizeInput(document.getElementById('prof-company').value);
 
-            const updatePayload = { "profile.fullName": safeFullName };
+            const updatePayload = { profile: { fullName: safeFullName } };
 
             if (this.userData && this.userData.profile && this.userData.profile.accountType === "kurumsal") {
-                updatePayload["profile.companyName"] = safeCompany;
+                updatePayload.profile.companyName = safeCompany;
             }
 
             // FOTOĞRAF YÜKLEME (FIREBASE STORAGE)
@@ -394,33 +495,34 @@ class ProfileManager {
                 const storageRef = ref(storage, `users/${this.currentUser.uid}/profile_photo.jpg`);
                 await uploadBytes(storageRef, this.selectedFile);
                 const downloadURL = await getDownloadURL(storageRef);
-                updatePayload["profile.photoURL"] = downloadURL;
+                updatePayload.profile.photoURL = downloadURL;
             }
 
-            // Firestore güncellemesi
-            await updateDoc(doc(db, "users", this.currentUser.uid), updatePayload);
-            
+            // Firestore güncellemesi (ilk profil oluşturma ve mevcut profil güncelleme)
+            await setDoc(doc(db, "users", this.currentUser.uid), updatePayload, { merge: true });
+
             this.showSuccessToast();
-            
+            this.cancelProfileOnboarding();
+
             // Ekrandaki UI güncellemeleri
             const finalName = safeFullName;
             const displayEl = document.getElementById("user-name-display");
             const titleEl = document.getElementById("user-name-title");
             const avatarEl = document.getElementById("user-avatar");
-            
+
             if(displayEl) displayEl.textContent = finalName;
             if(titleEl) titleEl.textContent = finalName;
-            
+
             if(avatarEl) {
-                const currentPhotoURL = updatePayload["profile.photoURL"] || (this.userData.profile && this.userData.profile.photoURL);
+                const currentPhotoURL = updatePayload.profile.photoURL || (this.userData.profile && this.userData.profile.photoURL);
                 if (currentPhotoURL) {
                     avatarEl.innerHTML = `<img src="${currentPhotoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
                     // ARKA PLAN DÜZELTMESİ: Fotoğraf yüklendiğinde mor rengi kaldırıyoruz.
-                    avatarEl.style.background = 'transparent'; 
+                    avatarEl.style.background = 'transparent';
                 } else {
                     avatarEl.innerHTML = cleanFirst.charAt(0).toUpperCase();
                     // ARKA PLAN DÜZELTMESİ: Fotoğraf yoksa mor rengi geri getiriyoruz.
-                    avatarEl.style.background = '#6366f1'; 
+                    avatarEl.style.background = '#6366f1';
                 }
             }
 
@@ -428,6 +530,8 @@ class ProfileManager {
                 this.closeModal();
                 btn.innerHTML = originalText;
                 btn.disabled = false;
+                this.isSavingProfile = false;
+                window.dispatchEvent(new CustomEvent('shared-profile-updated', { detail: { uid: this.currentUser.uid } }));
             }, 1000);
 
         } catch (error) {
@@ -438,6 +542,7 @@ class ProfileManager {
                 btn.innerHTML = originalText;
                 btn.style.background = '#6366f1';
                 btn.disabled = false;
+                this.isSavingProfile = false;
             }, 3000);
         }
     }
