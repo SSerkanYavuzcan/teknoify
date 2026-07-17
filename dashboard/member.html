@@ -306,6 +306,10 @@
     .request-upload-copy { flex:1; min-width:0; }
     .request-upload-copy strong { display:block; color:#fff; margin-bottom:5px; }
     .request-upload-copy span { display:block; color:#94a3b8; font-size:0.86rem; line-height:1.4; }
+    .request-attachment-actions { display:flex; flex-wrap:wrap; gap:10px; }
+    .request-attachment-action { border:1px solid rgba(129,140,248,0.28); border-radius:11px; padding:10px 14px; color:#fff; background:rgba(99,102,241,0.16); font-weight:800; cursor:pointer; font-family:'Inter Tight',sans-serif; display:inline-flex; align-items:center; gap:8px; transition:border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease; }
+    .request-attachment-action:hover, .request-attachment-action:focus-visible { border-color:#818cf8; background:rgba(99,102,241,0.24); outline:none; box-shadow:0 0 0 4px rgba(99,102,241,0.18); }
+    .request-attachment-action:disabled { cursor:not-allowed; opacity:0.55; box-shadow:none; }
     .request-upload-button { border:1px solid rgba(129,140,248,0.28); border-radius:10px; padding:9px 13px; color:#fff; background:rgba(99,102,241,0.18); font-weight:700; white-space:nowrap; }
     .request-file-input { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
     .request-file-list { display:grid; gap:10px; margin-top:4px; }
@@ -313,7 +317,36 @@
     .request-file-meta { min-width:0; color:#e4e4e7; font-size:0.9rem; }
     .request-file-name { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .request-file-size { display:block; color:#71717a; font-size:0.78rem; margin-top:3px; }
-    .request-file-remove { width:32px; height:32px; border:0; border-radius:9px; color:#fca5a5; background:rgba(239,68,68,0.1); cursor:pointer; }
+    .request-file-remove, .request-file-preview-button { min-height:32px; border:0; border-radius:9px; cursor:pointer; font-weight:800; }
+    .request-file-remove { width:32px; color:#fca5a5; background:rgba(239,68,68,0.1); }
+    .request-file-preview-button { color:#c4b5fd; background:rgba(99,102,241,0.14); padding:0 10px; }
+    .request-file-leading { color:#a5b4fc; }
+    .request-file-badge { display:inline-flex; margin-top:6px; border:1px solid rgba(129,140,248,0.28); border-radius:999px; padding:3px 8px; color:#c4b5fd; background:rgba(99,102,241,0.12); font-size:0.72rem; font-weight:800; }
+    .screen-recorder-panel { display:none; border:1px solid rgba(129,140,248,0.18); border-radius:16px; background:rgba(8,13,24,0.92); padding:16px; box-shadow:0 16px 38px rgba(0,0,0,0.24); }
+    .screen-recorder-panel.is-visible { display:grid; gap:14px; }
+    .screen-recorder-panel h3 { color:#fff; margin:0; font-size:1.05rem; }
+    .screen-recorder-panel p { color:#a1a1aa; margin:0; line-height:1.45; }
+    .screen-recorder-options { display:flex; flex-wrap:wrap; gap:10px; }
+    .screen-recorder-option { flex:1 1 180px; display:flex; align-items:center; gap:9px; border:1px solid rgba(148,163,184,0.16); border-radius:12px; padding:11px 12px; color:#e4e4e7; background:#080d18; cursor:pointer; }
+    .screen-recorder-option:focus-within { border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,0.18); }
+    .screen-recorder-guidance { display:grid; gap:6px; border:1px solid rgba(250,204,21,0.16); border-radius:12px; padding:11px 12px; color:#cbd5e1; background:rgba(250,204,21,0.055); font-size:0.85rem; }
+    .screen-recorder-guidance i { color:#fde68a; margin-right:6px; }
+    .screen-recorder-actions { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:10px; }
+    .screen-recorder-message { min-height:18px; color:#fca5a5; font-size:0.84rem; }
+    .screen-recorder-message.is-neutral { color:#c4b5fd; }
+    .screen-recorder-countdown { display:none; place-items:center; gap:12px; position:fixed; inset:0; z-index:1110; pointer-events:none; color:#fff; }
+    .screen-recorder-countdown.is-visible { display:grid; }
+    .screen-recorder-countdown strong { width:96px; height:96px; display:grid; place-items:center; border-radius:999px; background:rgba(15,23,42,0.94); border:1px solid rgba(129,140,248,0.34); font-size:3rem; box-shadow:0 24px 70px rgba(0,0,0,0.44); }
+    .screen-recorder-countdown button { pointer-events:auto; }
+    #project-screen-recording-controls { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); z-index:1120; display:none; align-items:center; gap:12px; max-width:calc(100vw - 24px); border:1px solid rgba(129,140,248,0.28); border-radius:16px; padding:12px; background:#080d18; color:#fff; box-shadow:0 22px 70px rgba(0,0,0,0.5); }
+    #project-screen-recording-controls.is-visible { display:flex; }
+    .screen-recording-dot { width:10px; height:10px; border-radius:999px; background:#ef4444; box-shadow:0 0 0 6px rgba(239,68,68,0.12); animation:recordingPulse 1.4s ease-in-out infinite; }
+    @keyframes recordingPulse { 50% { transform:scale(1.2); opacity:0.75; } }
+    .screen-recording-status { min-width:116px; font-weight:800; }
+    .screen-recording-timer { font-variant-numeric:tabular-nums; color:#c4b5fd; font-weight:900; }
+    .screen-recorder-preview video { width:100%; max-height:320px; border-radius:12px; background:#020617; }
+    .screen-recorder-preview-meta { color:#cbd5e1; font-size:0.9rem; }
+    @media (prefers-reduced-motion: reduce) { .screen-recording-dot { animation:none; } .screen-recorder-panel { transition:none; } }
     .project-request-status { display:none; margin:0 28px 18px; color:#a7f3d0; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.22); border-radius:13px; padding:12px 14px; font-size:0.9rem; }
     .project-request-status.is-visible { display:block; }
     .project-request-actions { padding:18px 28px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:flex-end; gap:12px; background:rgba(5,8,10,0.45); }
@@ -573,7 +606,12 @@
           </div>
 
           <div class="request-form-field request-attachment-field">
-            <label for="project-request-attachments">Attachment</label>
+            <label for="project-request-attachments">Ek Dosyalar ve Kayıtlar</label>
+            <div class="request-attachment-actions">
+              <button type="button" class="request-attachment-action" id="project-request-file-select-button"><i class="fas fa-paperclip" aria-hidden="true"></i> Dosya Yükle</button>
+              <button type="button" class="request-attachment-action" id="project-request-screen-record-button"><i class="fas fa-desktop" aria-hidden="true"></i> Ekran Kaydı Oluştur</button>
+            </div>
+            <span id="project-request-recorder-helper" class="request-form-helper" aria-live="polite"></span>
             <input id="project-request-attachments" class="request-file-input" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.zip,.mp4,.mov,.avi,.mkv,.webm">
             <div class="request-upload-zone" id="project-request-upload-zone" role="button" tabindex="0" aria-describedby="project-request-attachment-helper">
               <div class="request-upload-icon" aria-hidden="true"><i class="fas fa-cloud-arrow-up"></i></div>
@@ -583,6 +621,7 @@
               </div>
               <span class="request-upload-button">Dosya Seç</span>
             </div>
+            <div id="project-request-screen-recorder-panel" class="screen-recorder-panel" tabindex="-1" aria-live="polite"></div>
             <div id="project-request-file-list" class="request-file-list" aria-live="polite"></div>
           </div>
         </div>
@@ -603,6 +642,7 @@
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
 
   <script type="module">
+    import { createScreenRecorderController } from "/dashboard/shared/screen-recorder.js?v=project-screen-recorder-1";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
@@ -1045,6 +1085,12 @@
         const uploadZone = document.getElementById("project-request-upload-zone");
         const fileList = document.getElementById("project-request-file-list");
         const statusMessage = document.getElementById("project-request-status");
+        const fileSelectButton = document.getElementById("project-request-file-select-button");
+        const screenRecordButton = document.getElementById("project-request-screen-record-button");
+        const recorderPanel = document.getElementById("project-request-screen-recorder-panel");
+        const recorderHelper = document.getElementById("project-request-recorder-helper");
+        const submitButton = form.querySelector('.project-request-confirm');
+        const cancelButton = form.querySelector('.project-request-cancel');
         if (!trigger || !modal || !dialog || !form) return;
 
         const closeButtons = modal.querySelectorAll("[data-project-request-close]");
@@ -1063,6 +1109,10 @@
         };
         let lastFocusedElement = null;
         let selectedFiles = [];
+        const attachmentMetadata = new Map();
+        let pendingRecording = null;
+        let activePreviewUrl = null;
+        let recorderState = "idle";
         const priorityDropdown = document.querySelector("[data-priority-dropdown]");
         const priorityTrigger = document.getElementById("project-request-priority-trigger");
         const prioritySelected = priorityDropdown ? priorityDropdown.querySelector("[data-priority-selected]") : null;
@@ -1112,13 +1162,43 @@
         };
 
         const getFileKey = (file) => `${file.name}-${file.size}-${file.lastModified}`;
+        const formatDuration = (seconds = 0) => {
+            const safeSeconds = Math.max(0, Math.floor(seconds));
+            return `${String(Math.floor(safeSeconds / 60)).padStart(2, "0")}:${String(safeSeconds % 60).padStart(2, "0")}`;
+        };
+        const revokeActivePreviewUrl = () => {
+            if (activePreviewUrl) URL.revokeObjectURL(activePreviewUrl);
+            activePreviewUrl = null;
+        };
+        const getRecordingCount = () => selectedFiles.filter((file) => attachmentMetadata.get(getFileKey(file))?.source === "screen_recording").length + (pendingRecording ? 1 : 0);
+        const setRecorderHelper = (message = "", isError = false) => {
+            if (!recorderHelper) return;
+            recorderHelper.textContent = message;
+            recorderHelper.style.color = isError ? "#fca5a5" : "#a1a1aa";
+        };
+        const updateRecorderAvailability = () => {
+            if (!screenRecordButton) return;
+            const actuallySupported = Boolean(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && window.MediaRecorder);
+            const limitReached = getRecordingCount() >= 2;
+            screenRecordButton.disabled = !actuallySupported || limitReached || Boolean(pendingRecording) || ["requesting", "countdown", "recording", "paused", "stopping"].includes(recorderState);
+            if (!actuallySupported) setRecorderHelper("Bu tarayıcı ekran kaydını desteklemiyor. Bunun yerine video dosyası yükleyebilirsiniz.");
+            else if (limitReached) setRecorderHelper("Bir talebe en fazla 2 ekran kaydı ekleyebilirsiniz.");
+            else if (pendingRecording) setRecorderHelper("Ekran kaydını talebe ekleyin veya silin.");
+            else if (!recorderHelper.textContent || recorderHelper.textContent.includes("en fazla 2") || recorderHelper.textContent.includes("desteklemiyor") || recorderHelper.textContent.includes("talebe ekleyin")) setRecorderHelper("");
+        };
 
         const renderFiles = () => {
             if (!fileList) return;
             fileList.innerHTML = "";
             selectedFiles.forEach((file, index) => {
+                const metadata = attachmentMetadata.get(getFileKey(file)) || { source: "uploaded_file" };
+                const isRecording = metadata.source === "screen_recording";
                 const item = document.createElement("div");
                 item.className = "request-file-item";
+
+                const leading = document.createElement("div");
+                leading.className = "request-file-leading";
+                leading.innerHTML = `<i class="fas ${isRecording ? "fa-desktop" : "fa-paperclip"}" aria-hidden="true"></i>`;
 
                 const meta = document.createElement("div");
                 meta.className = "request-file-meta";
@@ -1129,20 +1209,38 @@
 
                 const size = document.createElement("span");
                 size.className = "request-file-size";
-                size.textContent = formatFileSize(file.size);
+                size.textContent = isRecording ? `${formatDuration(metadata.durationSeconds)} • ${formatFileSize(file.size)}` : formatFileSize(file.size);
+                meta.append(name, size);
+                if (isRecording) {
+                    const badge = document.createElement("span");
+                    badge.className = "request-file-badge";
+                    badge.textContent = "Ekran Kaydı";
+                    meta.appendChild(badge);
+                }
 
+                const actions = document.createElement("div");
+                actions.className = "request-attachment-actions";
+                if (isRecording) {
+                    const preview = document.createElement("button");
+                    preview.type = "button";
+                    preview.className = "request-file-preview-button";
+                    preview.textContent = "İzle";
+                    preview.addEventListener("click", () => showAddedRecordingPreview(file, metadata));
+                    actions.appendChild(preview);
+                }
                 const remove = document.createElement("button");
                 remove.type = "button";
                 remove.className = "request-file-remove";
                 remove.setAttribute("aria-label", `${file.name} dosyasını kaldır`);
                 remove.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
                 remove.addEventListener("click", () => {
+                    attachmentMetadata.delete(getFileKey(file));
                     selectedFiles.splice(index, 1);
                     renderFiles();
+                    updateRecorderAvailability();
                 });
-
-                meta.append(name, size);
-                item.append(meta, remove);
+                actions.appendChild(remove);
+                item.append(leading, meta, actions);
                 fileList.appendChild(item);
             });
         };
@@ -1153,11 +1251,105 @@
                 const key = getFileKey(file);
                 if (!existingKeys.has(key)) {
                     selectedFiles.push(file);
+                    attachmentMetadata.set(key, attachmentMetadata.get(key) || { source: "uploaded_file" });
                     existingKeys.add(key);
                 }
             });
             renderFiles();
+            updateRecorderAvailability();
         };
+
+        const renderSetupPanel = () => {
+            if (!recorderPanel) return;
+            recorderPanel.className = "screen-recorder-panel is-visible";
+            recorderPanel.innerHTML = `
+                <h3>Ekran Kaydı Ayarları</h3>
+                <p>Ekranınızı kaydederek projenizi veya yaşadığınız süreci daha kolay anlatabilirsiniz.</p>
+                <div class="screen-recorder-options" role="radiogroup" aria-label="Ekran kaydı modu">
+                    <label class="screen-recorder-option"><input type="radio" name="project-screen-recording-mode" value="screen-mic" checked> Ekran + Mikrofon</label>
+                    <label class="screen-recorder-option"><input type="radio" name="project-screen-recording-mode" value="screen-only"> Yalnızca Ekran</label>
+                </div>
+                <div class="screen-recorder-guidance"><span><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Kayda başlamadan önce şifrelerin, kişisel bilgilerin ve gizli şirket verilerinin ekranda görünmediğinden emin olun.</span><span>Sekme veya sistem sesi, tarayıcınız ve seçtiğiniz paylaşım türü destekliyorsa kayda dahil edilebilir.</span></div>
+                <div class="screen-recorder-message" data-recorder-message></div>
+                <div class="screen-recorder-actions"><button type="button" class="project-request-button project-request-cancel" data-recorder-cancel>Vazgeç</button><button type="button" class="project-request-button project-request-confirm" data-recorder-start>Kaydı Başlat</button></div>`;
+            recorderPanel.querySelector("[data-recorder-cancel]").addEventListener("click", () => { recorderPanel.classList.remove("is-visible"); recorder.setState ? recorder.setState("idle") : null; });
+            recorderPanel.querySelector("[data-recorder-start]").addEventListener("click", () => {
+                if (getRecordingCount() >= 2) { setRecorderHelper("Bir talebe en fazla 2 ekran kaydı ekleyebilirsiniz.", true); return; }
+                const mode = recorderPanel.querySelector('input[name="project-screen-recording-mode"]:checked')?.value;
+                recorder.start({ includeMicrophone: mode !== "screen-only" });
+            });
+            recorderPanel.focus();
+        };
+
+        const renderCountdown = (count) => {
+            let overlay = document.getElementById("project-screen-recording-countdown");
+            if (!overlay) {
+                overlay = document.createElement("div");
+                overlay.id = "project-screen-recording-countdown";
+                overlay.className = "screen-recorder-countdown";
+                document.body.appendChild(overlay);
+            }
+            overlay.innerHTML = `<strong>${count}</strong><button type="button" class="project-request-button project-request-cancel">Kaydı İptal Et</button>`;
+            overlay.classList.add("is-visible");
+            overlay.querySelector("button").addEventListener("click", () => recorder.cancel());
+        };
+        const hideCountdown = () => document.getElementById("project-screen-recording-countdown")?.classList.remove("is-visible");
+        const renderControls = ({ state, durationSeconds = 0 }) => {
+            let controls = document.getElementById("project-screen-recording-controls");
+            if (!controls) { controls = document.createElement("div"); controls.id = "project-screen-recording-controls"; document.body.appendChild(controls); }
+            const paused = state === "paused";
+            controls.innerHTML = `<span class="screen-recording-dot" aria-hidden="true"></span><span class="screen-recording-status">${paused ? "Kayıt duraklatıldı" : "Kayıt yapılıyor"}</span><span class="screen-recording-timer">${formatDuration(durationSeconds)}</span><button type="button" class="project-request-button project-request-cancel" data-recorder-pause>${paused ? "Devam Et" : "Duraklat"}</button><button type="button" class="project-request-button project-request-cancel" data-recorder-cancel>Kaydı İptal Et</button><button type="button" class="project-request-button project-request-confirm" data-recorder-stop>Kaydı Bitir</button>`;
+            controls.classList.add("is-visible");
+            controls.querySelector("[data-recorder-pause]").addEventListener("click", () => paused ? recorder.resume() : recorder.pause());
+            controls.querySelector("[data-recorder-cancel]").addEventListener("click", () => recorder.cancel());
+            controls.querySelector("[data-recorder-stop]").addEventListener("click", (event) => { event.currentTarget.disabled = true; recorder.stop(); });
+        };
+        const hideControls = () => document.getElementById("project-screen-recording-controls")?.classList.remove("is-visible");
+        const renderPendingPreview = () => {
+            if (!recorderPanel || !pendingRecording) return;
+            revokeActivePreviewUrl();
+            activePreviewUrl = URL.createObjectURL(pendingRecording.file);
+            recorderPanel.className = "screen-recorder-panel screen-recorder-preview is-visible";
+            recorderPanel.innerHTML = `<h3>Ekran Kaydı Önizleme</h3><video controls playsinline src="${activePreviewUrl}"></video><strong class="request-file-name">${pendingRecording.file.name}</strong><div class="screen-recorder-preview-meta">${formatDuration(pendingRecording.durationSeconds)} • ${formatFileSize(pendingRecording.file.size)}</div><div class="screen-recorder-message" data-recorder-message></div><div class="screen-recorder-actions"><button type="button" class="project-request-button project-request-cancel" data-preview-delete>Sil</button><button type="button" class="project-request-button project-request-cancel" data-preview-again>Yeniden Kaydet</button><button type="button" class="project-request-button project-request-confirm" data-preview-add>Talebe Ekle</button></div>`;
+            recorderPanel.querySelector("[data-preview-add]").addEventListener("click", () => {
+                const file = pendingRecording.file;
+                attachmentMetadata.set(getFileKey(file), { source: "screen_recording", durationSeconds: pendingRecording.durationSeconds, mimeType: pendingRecording.mimeType });
+                addFiles([file]);
+                pendingRecording = null;
+                revokeActivePreviewUrl();
+                recorderPanel.classList.remove("is-visible");
+                updateRecorderAvailability();
+            });
+            recorderPanel.querySelector("[data-preview-delete]").addEventListener("click", () => { pendingRecording = null; revokeActivePreviewUrl(); recorderPanel.classList.remove("is-visible"); updateRecorderAvailability(); });
+            recorderPanel.querySelector("[data-preview-again]").addEventListener("click", () => { pendingRecording = null; revokeActivePreviewUrl(); renderSetupPanel(); updateRecorderAvailability(); });
+            recorderPanel.focus();
+        };
+        const showAddedRecordingPreview = (file, metadata) => {
+            pendingRecording = null;
+            revokeActivePreviewUrl();
+            activePreviewUrl = URL.createObjectURL(file);
+            recorderPanel.className = "screen-recorder-panel screen-recorder-preview is-visible";
+            recorderPanel.innerHTML = `<h3>Ekran Kaydı Önizleme</h3><video controls playsinline src="${activePreviewUrl}"></video><strong class="request-file-name">${file.name}</strong><div class="screen-recorder-preview-meta">${formatDuration(metadata.durationSeconds)} • ${formatFileSize(file.size)}</div><div class="screen-recorder-actions"><button type="button" class="project-request-button project-request-cancel" data-preview-close>Önizlemeyi Kapat</button></div>`;
+            recorderPanel.querySelector("[data-preview-close]").addEventListener("click", () => { revokeActivePreviewUrl(); recorderPanel.classList.remove("is-visible"); });
+            recorderPanel.focus();
+        };
+
+        const recorder = createScreenRecorderController({
+            onStateChange: ({ state, countdown, durationSeconds }) => {
+                recorderState = state;
+                const active = ["requesting", "countdown", "recording", "paused", "stopping"].includes(state);
+                if (submitButton) submitButton.disabled = active;
+                if (cancelButton) cancelButton.disabled = active;
+                if (state === "countdown") renderCountdown(countdown);
+                else hideCountdown();
+                if (["recording", "paused", "stopping"].includes(state)) renderControls({ state, durationSeconds });
+                else hideControls();
+                updateRecorderAvailability();
+            },
+            onRecordingReady: ({ file, durationSeconds, mimeType }) => { pendingRecording = { file, durationSeconds, mimeType }; renderPendingPreview(); updateRecorderAvailability(); },
+            onError: (message, error) => { console.warn("Screen recorder:", error || message); const target = recorderPanel?.querySelector("[data-recorder-message]"); if (target) target.textContent = message; else setRecorderHelper(message, true); },
+            onNotice: (message) => setRecorderHelper(message)
+        });
 
         const setFieldError = (fieldName, message = "") => {
             const control = fields[fieldName];
@@ -1188,6 +1380,14 @@
         };
 
         const closeModal = () => {
+            if (["requesting", "countdown", "recording", "paused", "stopping"].includes(recorderState)) {
+                setRecorderHelper("Önce ekran kaydını bitirin veya iptal edin.", true);
+                return;
+            }
+            recorder.destroy();
+            pendingRecording = null;
+            revokeActivePreviewUrl();
+            if (recorderPanel) recorderPanel.classList.remove("is-visible");
             modal.classList.remove("is-open");
             modal.setAttribute("aria-hidden", "true");
             document.body.classList.remove("project-request-modal-open");
@@ -1251,6 +1451,10 @@
             });
         }
 
+        if (fileSelectButton && fileInput) fileSelectButton.addEventListener("click", () => fileInput.click());
+        if (screenRecordButton) screenRecordButton.addEventListener("click", () => { setRecorderHelper(""); renderSetupPanel(); });
+        updateRecorderAvailability();
+
         if (uploadZone && fileInput) {
             uploadZone.addEventListener("click", () => fileInput.click());
             uploadZone.addEventListener("keydown", (event) => {
@@ -1267,6 +1471,8 @@
 
         form.addEventListener("submit", (event) => {
             event.preventDefault();
+            if (["requesting", "countdown", "recording", "paused", "stopping"].includes(recorderState)) { setRecorderHelper("Önce ekran kaydını bitirin veya iptal edin.", true); return; }
+            if (pendingRecording) { setRecorderHelper("Ekran kaydını talebe ekleyin veya silin.", true); recorderPanel?.scrollIntoView({ behavior: "smooth", block: "center" }); recorderPanel?.focus(); return; }
             if (!validateForm()) {
                 const firstInvalid = form.querySelector('[aria-invalid="true"]');
                 if (firstInvalid) firstInvalid.focus();
@@ -1278,11 +1484,16 @@
                 projectDescription: fields.projectDescription.value.trim(),
                 projectFlow: fields.projectFlow.value.trim(),
                 priority: fields.priority.value.trim(),
-                attachments: selectedFiles.map((file) => ({
-                    name: file.name,
-                    size: file.size,
-                    type: file.type
-                }))
+                attachments: selectedFiles.map((file) => {
+                    const metadata = attachmentMetadata.get(getFileKey(file)) || { source: "uploaded_file" };
+                    return {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        source: metadata.source || "uploaded_file",
+                        ...(metadata.source === "screen_recording" ? { durationSeconds: metadata.durationSeconds } : {})
+                    };
+                })
             };
 
             console.log("Yeni proje talebi payload:", payload);
@@ -1295,7 +1506,11 @@
             if (event.target === modal) closeModal();
         });
         dialog.addEventListener("click", (event) => event.stopPropagation());
+        window.addEventListener("beforeunload", () => { recorder.destroy(); revokeActivePreviewUrl(); });
+        window.addEventListener("pagehide", () => { recorder.destroy(); revokeActivePreviewUrl(); });
+
         document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && ["requesting", "countdown", "recording", "paused", "stopping"].includes(recorderState)) { setRecorderHelper("Önce ekran kaydını bitirin veya iptal edin.", true); event.preventDefault(); return; }
             if (event.key === "Escape" && priorityDropdown && priorityDropdown.classList.contains("is-open")) {
                 closePriorityDropdown();
                 return;
