@@ -268,8 +268,7 @@
     .project-request-dialog { width:100%; max-width:min(820px, calc(100vw - 32px)); max-height:88vh; background:linear-gradient(180deg,#11131a 0%,#0b1020 100%); border:1px solid rgba(129,140,248,0.18); border-radius:22px; box-shadow:0 28px 90px rgba(0,0,0,0.58), 0 0 0 1px rgba(255,255,255,0.025) inset; position:relative; box-sizing:border-box; overflow:hidden; display:flex; flex-direction:column; }
     .project-request-close-icon { position:absolute; top:18px; right:18px; width:38px; height:38px; border:1px solid rgba(255,255,255,0.07); border-radius:11px; background:rgba(255,255,255,0.04); color:#a1a1aa; cursor:pointer; z-index:2; transition:background 0.18s ease,color 0.18s ease,border-color 0.18s ease; }
     .project-request-close-icon:hover, .project-request-close-icon:focus-visible { color:#fff; background:rgba(99,102,241,0.16); border-color:rgba(129,140,248,0.35); outline:none; }
-    .project-request-header { display:flex; gap:16px; align-items:flex-start; padding:28px 72px 22px 28px; border-bottom:1px solid rgba(255,255,255,0.06); background:radial-gradient(circle at 18% 0%, rgba(99,102,241,0.18), transparent 34%); }
-    .project-request-modal-icon { width:54px; height:54px; min-width:54px; border-radius:16px; display:flex; align-items:center; justify-content:center; color:#c4b5fd; background:rgba(99,102,241,0.14); border:1px solid rgba(129,140,248,0.22); font-size:1.45rem; box-shadow:0 12px 28px rgba(99,102,241,0.12); }
+    .project-request-header { display:flex; align-items:flex-start; padding:30px 72px 24px 28px; border-bottom:1px solid rgba(255,255,255,0.06); background:radial-gradient(circle at 18% 0%, rgba(99,102,241,0.18), transparent 34%); }
     .project-request-heading h2 { color:#fff; margin:0 0 8px; font-size:1.45rem; letter-spacing:-0.02em; }
     .project-request-heading p { color:#a1a1aa; margin:0; line-height:1.55; font-size:0.96rem; }
     .project-request-form { display:flex; flex:1; flex-direction:column; min-height:0; }
@@ -283,9 +282,23 @@
     .request-form-control:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,0.18); background:#0b1020; }
     textarea.request-form-control { min-height:128px; resize:vertical; line-height:1.5; }
     .request-select-wrap { position:relative; max-width:260px; }
-    .request-select-wrap::after { content:'\f078'; font-family:'Font Awesome 6 Free'; font-weight:900; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#818cf8; pointer-events:none; font-size:0.78rem; }
-    .request-select-wrap select { appearance:none; padding-right:42px; }
-    .request-form-field.is-invalid .request-form-control, .request-form-field.is-invalid .request-upload-zone { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.12); }
+    .request-select-native { position:absolute; inset:0; opacity:0; pointer-events:none; }
+    .request-priority-dropdown { position:relative; width:100%; }
+    .request-priority-trigger { width:100%; min-height:48px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(148,163,184,0.16); border-radius:13px; background:#080d18; color:#f8fafc; font-family:'Inter Tight',sans-serif; font-size:0.95rem; font-weight:700; padding:13px 14px; cursor:pointer; transition:border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease; }
+    .request-priority-trigger:hover { border-color:rgba(129,140,248,0.34); background:#0b1020; }
+    .request-priority-trigger:focus-visible, .request-priority-dropdown.is-open .request-priority-trigger { outline:none; border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,0.18); background:#0b1020; }
+    .request-priority-trigger i { color:#818cf8; font-size:0.78rem; transition:transform 0.18s ease; }
+    .request-priority-dropdown.is-open .request-priority-trigger i { transform:rotate(180deg); }
+    .request-priority-menu { position:absolute; left:0; right:0; top:calc(100% + 8px); z-index:4; display:none; max-height:220px; overflow-y:auto; margin:0; padding:7px; list-style:none; border:1px solid rgba(129,140,248,0.22); border-radius:14px; background:#0b1020; box-shadow:0 18px 42px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.025) inset; }
+    .request-priority-dropdown.is-open .request-priority-menu { display:block; }
+    .request-priority-menu::-webkit-scrollbar { width:8px; }
+    .request-priority-menu::-webkit-scrollbar-track { background:rgba(15,23,42,0.9); border-radius:999px; }
+    .request-priority-menu::-webkit-scrollbar-thumb { background:rgba(129,140,248,0.38); border-radius:999px; }
+    .request-priority-menu::-webkit-scrollbar-thumb:hover { background:rgba(129,140,248,0.55); }
+    .request-priority-option { border-radius:10px; color:#e4e4e7; cursor:pointer; font-size:0.93rem; font-weight:700; padding:10px 11px; transition:background 0.16s ease, color 0.16s ease; }
+    .request-priority-option:hover, .request-priority-option.is-active { background:rgba(99,102,241,0.16); color:#fff; }
+    .request-priority-option[aria-selected="true"] { background:linear-gradient(135deg,rgba(99,102,241,0.32),rgba(124,58,237,0.26)); color:#fff; }
+    .request-form-field.is-invalid .request-form-control, .request-form-field.is-invalid .request-upload-zone, .request-form-field.is-invalid .request-priority-trigger { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.12); }
     .request-form-error { min-height:18px; color:#fca5a5; font-size:0.82rem; }
     .request-upload-zone { border:1.5px dashed rgba(129,140,248,0.34); border-radius:16px; background:rgba(8,13,24,0.86); padding:22px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:border-color 0.18s ease, background 0.18s ease, transform 0.18s ease; }
     .request-upload-zone:hover, .request-upload-zone:focus-visible { border-color:#818cf8; background:rgba(99,102,241,0.08); outline:none; }
@@ -504,9 +517,6 @@
       </button>
 
       <div class="project-request-header">
-        <div class="project-request-modal-icon" aria-hidden="true">
-          <i class="fas fa-rocket"></i>
-        </div>
         <div class="project-request-heading">
           <h2 id="new-project-request-title">Yeni Proje Başlat</h2>
           <p id="new-project-request-subtitle">İhtiyacınızı bize iletin, ekibimiz talebinizi inceleyip sizinle en kısa sürede iletişime geçsin.</p>
@@ -518,7 +528,7 @@
           <p class="project-request-intro">Teknoify ekibinin talebinizi doğru değerlendirebilmesi için proje kapsamını, beklenen çıktıları ve önceliği paylaşın.</p>
 
           <div class="request-form-field" data-field="projectName">
-            <label for="project-request-name">Project Name *</label>
+            <label for="project-request-name">Proje Adı *</label>
             <input id="project-request-name" name="projectName" class="request-form-control" type="text" placeholder="Örn. Rakip Fiyat Takip Paneli" aria-describedby="project-request-name-helper project-request-name-error" required>
             <span id="project-request-name-helper" class="request-form-helper">Projenizin kısa ve anlaşılır adını yazın.</span>
             <span id="project-request-name-error" class="request-form-error" aria-live="polite"></span>
@@ -538,26 +548,38 @@
           </div>
 
           <div class="request-form-field" data-field="priority">
-            <label for="project-request-priority">Priority *</label>
+            <label for="project-request-priority">Öncelik *</label>
             <div class="request-select-wrap">
-              <select id="project-request-priority" name="priority" class="request-form-control" aria-describedby="project-request-priority-error" required>
+              <select id="project-request-priority" name="priority" class="request-select-native" aria-describedby="project-request-priority-error" required tabindex="-1">
                 <option value="Düşük">Düşük</option>
                 <option value="Orta" selected>Orta</option>
                 <option value="Yüksek">Yüksek</option>
                 <option value="Kritik">Kritik</option>
               </select>
+              <div class="request-priority-dropdown" data-priority-dropdown>
+                <button type="button" class="request-priority-trigger" id="project-request-priority-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="project-request-priority-menu">
+                  <span data-priority-selected>Orta</span>
+                  <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <ul class="request-priority-menu" id="project-request-priority-menu" role="listbox" aria-labelledby="project-request-priority-trigger" tabindex="-1">
+                  <li class="request-priority-option" role="option" data-value="Düşük" aria-selected="false" tabindex="-1">Düşük</li>
+                  <li class="request-priority-option" role="option" data-value="Orta" aria-selected="true" tabindex="-1">Orta</li>
+                  <li class="request-priority-option" role="option" data-value="Yüksek" aria-selected="false" tabindex="-1">Yüksek</li>
+                  <li class="request-priority-option" role="option" data-value="Kritik" aria-selected="false" tabindex="-1">Kritik</li>
+                </ul>
+              </div>
             </div>
             <span id="project-request-priority-error" class="request-form-error" aria-live="polite"></span>
           </div>
 
           <div class="request-form-field request-attachment-field">
             <label for="project-request-attachments">Attachment</label>
-            <input id="project-request-attachments" class="request-file-input" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.zip">
+            <input id="project-request-attachments" class="request-file-input" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.webp,.zip,.mp4,.mov,.avi,.mkv,.webm">
             <div class="request-upload-zone" id="project-request-upload-zone" role="button" tabindex="0" aria-describedby="project-request-attachment-helper">
               <div class="request-upload-icon" aria-hidden="true"><i class="fas fa-cloud-arrow-up"></i></div>
               <div class="request-upload-copy">
                 <strong>Dosyalarınızı ekleyin</strong>
-                <span id="project-request-attachment-helper">PDF, DOCX, XLSX, PNG, JPG, ZIP gibi dosyaları ekleyebilirsiniz.</span>
+                <span id="project-request-attachment-helper">PDF, DOCX, XLSX, PNG, JPG, ZIP ve video dosyaları ekleyebilirsiniz.</span>
               </div>
               <span class="request-upload-button">Dosya Seç</span>
             </div>
@@ -1034,13 +1056,54 @@
             priority: document.getElementById("project-request-priority")
         };
         const requiredMessages = {
-            projectName: "Project Name alanı zorunludur.",
+            projectName: "Proje Adı alanı zorunludur.",
             projectDescription: "Proje Açıklaması alanı zorunludur.",
             projectFlow: "Proje Akışı alanı zorunludur.",
-            priority: "Priority alanı zorunludur."
+            priority: "Öncelik alanı zorunludur."
         };
         let lastFocusedElement = null;
         let selectedFiles = [];
+        const priorityDropdown = document.querySelector("[data-priority-dropdown]");
+        const priorityTrigger = document.getElementById("project-request-priority-trigger");
+        const prioritySelected = priorityDropdown ? priorityDropdown.querySelector("[data-priority-selected]") : null;
+        const priorityOptions = priorityDropdown ? Array.from(priorityDropdown.querySelectorAll(".request-priority-option")) : [];
+
+        const closePriorityDropdown = () => {
+            if (!priorityDropdown || !priorityTrigger) return;
+            priorityDropdown.classList.remove("is-open");
+            priorityTrigger.setAttribute("aria-expanded", "false");
+            priorityOptions.forEach((option) => option.classList.remove("is-active"));
+        };
+
+        const openPriorityDropdown = () => {
+            if (!priorityDropdown || !priorityTrigger) return;
+            priorityDropdown.classList.add("is-open");
+            priorityTrigger.setAttribute("aria-expanded", "true");
+            const selectedOption = priorityOptions.find((option) => option.getAttribute("aria-selected") === "true") || priorityOptions[0];
+            if (selectedOption) selectedOption.classList.add("is-active");
+        };
+
+        const selectPriority = (value, shouldFocus = true) => {
+            const option = priorityOptions.find((item) => item.dataset.value === value);
+            if (!fields.priority || !option) return;
+            fields.priority.value = value;
+            if (prioritySelected) prioritySelected.textContent = value;
+            priorityOptions.forEach((item) => {
+                const isSelected = item === option;
+                item.setAttribute("aria-selected", isSelected ? "true" : "false");
+                item.classList.toggle("is-active", isSelected);
+            });
+            fields.priority.dispatchEvent(new Event("change", { bubbles: true }));
+            closePriorityDropdown();
+            if (shouldFocus && priorityTrigger) priorityTrigger.focus();
+        };
+
+        const movePriorityFocus = (direction) => {
+            if (!priorityOptions.length) return;
+            const currentIndex = priorityOptions.findIndex((option) => option.classList.contains("is-active"));
+            const nextIndex = currentIndex < 0 ? 0 : (currentIndex + direction + priorityOptions.length) % priorityOptions.length;
+            priorityOptions.forEach((option, index) => option.classList.toggle("is-active", index === nextIndex));
+        };
 
         const formatFileSize = (bytes) => {
             if (!bytes) return "0 KB";
@@ -1140,6 +1203,54 @@
             });
         });
 
+        if (priorityTrigger && priorityDropdown) {
+            priorityTrigger.addEventListener("click", () => {
+                if (priorityDropdown.classList.contains("is-open")) closePriorityDropdown();
+                else openPriorityDropdown();
+            });
+            priorityTrigger.addEventListener("keydown", (event) => {
+                if (["Enter", " ", "ArrowDown", "ArrowUp"].includes(event.key)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (!priorityDropdown.classList.contains("is-open")) {
+                        openPriorityDropdown();
+                    } else if (event.key === "Enter" || event.key === " ") {
+                        const activeOption = priorityOptions.find((option) => option.classList.contains("is-active"));
+                        if (activeOption) selectPriority(activeOption.dataset.value);
+                    }
+                    if (event.key === "ArrowDown") movePriorityFocus(1);
+                    if (event.key === "ArrowUp") movePriorityFocus(-1);
+                } else if (event.key === "Escape") {
+                    event.stopPropagation();
+                    closePriorityDropdown();
+                }
+            });
+            priorityOptions.forEach((option) => {
+                option.addEventListener("click", () => selectPriority(option.dataset.value));
+                option.addEventListener("mouseenter", () => {
+                    priorityOptions.forEach((item) => item.classList.toggle("is-active", item === option));
+                });
+            });
+            document.addEventListener("keydown", (event) => {
+                if (!priorityDropdown.classList.contains("is-open")) return;
+                if (event.key === "Enter" || event.key === " ") {
+                    const activeOption = priorityOptions.find((option) => option.classList.contains("is-active"));
+                    if (activeOption) {
+                        event.preventDefault();
+                        selectPriority(activeOption.dataset.value);
+                    }
+                } else if (event.key === "Escape") {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    closePriorityDropdown();
+                    priorityTrigger.focus();
+                }
+            });
+            document.addEventListener("click", (event) => {
+                if (!priorityDropdown.contains(event.target)) closePriorityDropdown();
+            });
+        }
+
         if (uploadZone && fileInput) {
             uploadZone.addEventListener("click", () => fileInput.click());
             uploadZone.addEventListener("keydown", (event) => {
@@ -1185,6 +1296,10 @@
         });
         dialog.addEventListener("click", (event) => event.stopPropagation());
         document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && priorityDropdown && priorityDropdown.classList.contains("is-open")) {
+                closePriorityDropdown();
+                return;
+            }
             if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
         });
     }
