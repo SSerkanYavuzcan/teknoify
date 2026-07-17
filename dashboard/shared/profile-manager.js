@@ -167,7 +167,7 @@ class ProfileManager {
                     <div id="profile-step-progress" aria-label="Profil adımları" style="display: flex; align-items: center; gap: 10px; margin-bottom: 22px; color: #71717a; font-family: 'Inter Tight', sans-serif; font-size: 0.85rem;">
                         <span id="profile-progress-step-1" aria-current="step" style="display: inline-flex; align-items: center; gap: 6px; color: #6366f1; font-weight: 700;"><span style="display:inline-flex; width:22px; height:22px; border-radius:50%; background:rgba(99,102,241,0.16); align-items:center; justify-content:center;">1</span> Kişisel Bilgiler</span>
                         <span aria-hidden="true">→</span>
-                        <span id="profile-progress-step-2" style="display: inline-flex; align-items: center; gap: 6px; color: #71717a; font-weight: 600;"><span style="display:inline-flex; width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.05); align-items:center; justify-content:center;">2</span> Şirket ve İhtiyaçlar</span>
+                        <span id="profile-progress-step-2" style="display: inline-flex; align-items: center; gap: 6px; color: #71717a; font-weight: 600;"><span style="display:inline-flex; width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.05); align-items:center; justify-content:center;">2</span> Şirket Bilgileri</span>
                     </div>
 
                     <form id="shared-profile-form" novalidate>
@@ -197,7 +197,7 @@ class ProfileManager {
                         </section>
 
                         <section id="profile-step-2" aria-labelledby="profile-step-2-title" aria-hidden="true" hidden>
-                            <h4 id="profile-step-2-title" style="color:#fff; font-family:'Inter Tight', sans-serif; margin:0 0 14px; font-size:1rem;">Şirket ve İhtiyaçlar</h4>
+                            <h4 id="profile-step-2-title" style="color:#fff; font-family:'Inter Tight', sans-serif; margin:0 0 14px; font-size:1rem;">Şirket Bilgileri</h4>
                             <div style="display:grid; gap:15px; margin-bottom:8px;">
                                 <div id="company-field-wrapper"><label for="prof-company" style="${labelStyle}">Şirket Adı</label><input type="text" id="prof-company" autocomplete="organization" maxlength="140" style="${fieldStyle}"></div>
                                 <div><label for="prof-company-website" style="${labelStyle}">Şirket Web Sitesi</label><input type="text" id="prof-company-website" autocomplete="url" inputmode="url" maxlength="250" placeholder="https://sirketiniz.com" aria-describedby="prof-company-website-error" style="${fieldStyle}"><p id="prof-company-website-error" role="alert" style="display:none; color:#f87171; font-size:0.8rem; margin:6px 0 0; font-family:'Inter Tight', sans-serif;"></p></div>
