@@ -109,17 +109,32 @@ class ProfileManager {
         const labelStyle = "display: block; color: #a1a1aa; font-size: 0.85rem; margin-bottom: 6px; font-family: 'Inter Tight', sans-serif;";
         const modalHTML = `
             <style>
-                .phone-field-combined { display: flex; width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: #05080a; transition: border-color 0.2s, box-shadow 0.2s; }
-                .phone-field-combined:focus-within { border-color: #6366f1; box-shadow: 0 0 0 1px rgba(99,102,241,0.2); }
-                .phone-field-combined.phone-field-invalid { border-color: #ef4444; box-shadow: 0 0 0 1px rgba(239,68,68,0.18); }
-                .phone-field-combined select, .phone-field-combined input { background: transparent !important; border: 0 !important; color: #fff; outline: none; box-sizing: border-box; }
-                .phone-country-control { position: relative; flex: 0 0 112px; width: 112px; display: flex; align-items: center; justify-content: space-between; padding: 0 11px; border-right: 1px solid rgba(255,255,255,0.1); border-radius: 8px 0 0 8px; box-sizing: border-box; white-space: nowrap; overflow: hidden; }
-                #prof-phone-country-display { font-size: 0.82rem; font-weight: 600; color: #e4e4e7; overflow: hidden; text-overflow: ellipsis; }
-                .phone-country-control .fa-chevron-down { font-size: 0.65rem; color: #71717a; pointer-events: none; margin-left: 6px; }
-                .phone-country-control:focus-within #prof-phone-country-display { color: #fff; }
-                .phone-country-control select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-                .phone-field-combined input { flex: 1; min-width: 0; border-radius: 0 8px 8px 0; padding: 12px 15px; }
-                .phone-field-combined select option { background: #11131a; color: #fff; }
+                #shared-profile-modal .phone-field-combined { position: relative; display: flex; width: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: #05080a; transition: border-color 0.2s, box-shadow 0.2s; overflow: visible; }
+                #shared-profile-modal .phone-field-combined:focus-within, #shared-profile-modal .phone-field-combined.phone-country-open { border-color: #6366f1; box-shadow: 0 0 0 1px rgba(99,102,241,0.2); }
+                #shared-profile-modal .phone-field-combined.phone-field-invalid { border-color: #ef4444; box-shadow: 0 0 0 1px rgba(239,68,68,0.18); }
+                #shared-profile-modal .phone-field-combined input { background: transparent !important; border: 0 !important; color: #fff; outline: none; box-sizing: border-box; }
+                #shared-profile-modal .phone-country-control { position: relative; flex: 0 0 112px; width: 112px; border-right: 1px solid rgba(255,255,255,0.1); border-radius: 8px 0 0 8px; box-sizing: border-box; }
+                #shared-profile-modal #prof-phone-country-trigger { width: 100%; height: 100%; min-height: 43px; display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 11px; background: rgba(255, 255, 255, 0.03); border: 0; border-radius: 8px 0 0 8px; color: #fff; font: inherit; cursor: pointer; text-align: left; transition: 150ms cubic-bezier(0.4, 0, 0.2, 1); }
+                #shared-profile-modal #prof-phone-country-trigger:hover, #shared-profile-modal .phone-country-control.is-open #prof-phone-country-trigger { background: rgba(255, 255, 255, 0.05); }
+                #shared-profile-modal #prof-phone-country-trigger:focus-visible { outline: none; box-shadow: inset 0 0 0 1px #6366f1, 0 0 0 3px rgba(99, 102, 241, 0.18); }
+                #shared-profile-modal #prof-phone-country-display { min-width: 0; overflow: hidden; color: #fff; font-size: 0.82rem; font-weight: 600; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+                #shared-profile-modal #prof-phone-country-trigger .fa-chevron-down { position: static; flex-shrink: 0; width: 1.1rem; color: #9ca3af; font-size: 0.8rem; line-height: 1; pointer-events: none; transition: transform 0.2s ease, color 0.2s ease; }
+                #shared-profile-modal .phone-country-control.is-open #prof-phone-country-trigger .fa-chevron-down { color: #6366f1; transform: rotate(180deg); }
+                #shared-profile-modal .phone-country-control select { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+                #shared-profile-modal .phone-field-combined input { flex: 1; min-width: 0; border-radius: 0 8px 8px 0; padding: 12px 15px; }
+                #shared-profile-modal .profile-phone-country-dropdown { position: absolute; top: calc(100% + 0.5rem); left: 0; z-index: 60; width: min(320px, calc(100vw - 48px)); max-height: 260px; padding: 0.45rem; margin: 0; list-style: none; background: rgba(18, 18, 30, 0.98); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(99, 102, 241, 0.08); opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.98); transform-origin: top center; transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease; overflow-y: auto; scrollbar-color: rgba(255, 255, 255, 0.1) #050505; scrollbar-width: thin; }
+                #shared-profile-modal .profile-phone-country-dropdown.is-open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+                #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar { width: 10px; }
+                #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar-track { background: #050505; }
+                #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; border: 2px solid #050505; }
+                #shared-profile-modal .profile-phone-country-dropdown::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+                #shared-profile-modal .profile-phone-country-option { position: relative; display: flex; align-items: center; gap: 0.75rem; min-height: 42px; padding: 0.65rem 0.8rem; border-radius: 8px; color: #9ca3af; cursor: pointer; transition: background 0.18s ease, color 0.18s ease; }
+                #shared-profile-modal .profile-phone-country-option:hover, #shared-profile-modal .profile-phone-country-option.is-focused { background: rgba(99, 102, 241, 0.12); color: #fff; }
+                #shared-profile-modal .profile-phone-country-option.is-selected { background: rgba(99, 102, 241, 0.12); color: #fff; padding-right: 2.25rem; }
+                #shared-profile-modal .profile-phone-country-option.is-selected::after { position: absolute; right: 0.8rem; color: #6366f1; font-family: "Font Awesome 5 Free"; font-size: 0.8rem; font-weight: 900; content: "\f00c"; }
+                #shared-profile-modal .profile-phone-country-flag { flex: 0 0 1.1rem; width: 1.1rem; line-height: 1; text-align: center; }
+                #shared-profile-modal .profile-phone-country-name { flex: 1; min-width: 0; line-height: 1.2; }
+                #shared-profile-modal .profile-phone-country-code { flex-shrink: 0; color: #9ca3af; font-size: 0.86rem; }
                 @media (max-width: 520px) {
                     #profile-modal-content { width: calc(100% - 24px) !important; padding: 22px !important; }
                     .profile-field-grid { grid-template-columns: 1fr !important; }
@@ -127,14 +142,18 @@ class ProfileManager {
                     .profile-step-actions button { width: 100% !important; }
                 }
                 @media (max-width: 390px) {
-                    .phone-country-control { flex-basis: 106px; width: 106px; padding: 0 9px; }
-                    #prof-phone-country-display { font-size: 0.78rem; }
-                    .phone-field-combined input { padding: 12px 11px; }
+                    #shared-profile-modal .phone-country-control { flex-basis: 106px; width: 106px; }
+                    #shared-profile-modal #prof-phone-country-trigger { padding: 0 9px; }
+                    #shared-profile-modal #prof-phone-country-display { font-size: 0.78rem; }
+                    #shared-profile-modal .phone-field-combined input { padding: 12px 11px; }
+                    #shared-profile-modal .profile-phone-country-dropdown { width: min(310px, calc(100vw - 48px)); }
                 }
                 @media (max-width: 329px) {
-                    .phone-field-combined { flex-direction: column; }
-                    .phone-country-control { width: 100%; flex-basis: auto; min-height: 43px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 8px 8px 0 0; }
-                    .phone-field-combined input { width: 100%; border-radius: 0 0 8px 8px; }
+                    #shared-profile-modal .phone-field-combined { flex-direction: column; }
+                    #shared-profile-modal .phone-country-control { width: 100%; flex-basis: auto; min-height: 43px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 8px 8px 0 0; }
+                    #shared-profile-modal #prof-phone-country-trigger { border-radius: 8px 8px 0 0; }
+                    #shared-profile-modal .phone-field-combined input { width: 100%; border-radius: 0 0 8px 8px; }
+                    #shared-profile-modal .profile-phone-country-dropdown { width: calc(100vw - 48px); }
                 }
             </style>
             <div id="shared-profile-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 99999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease; padding: 16px; box-sizing: border-box;">
@@ -171,7 +190,7 @@ class ProfileManager {
                             <div class="profile-field-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; margin-bottom: 15px;">
                                 <div><label for="prof-firstname" style="${labelStyle}">Ad</label><input type="text" id="prof-firstname" autocomplete="given-name" maxlength="60" required style="${fieldStyle}"></div>
                                 <div><label for="prof-lastname" style="${labelStyle}">Soyisim</label><input type="text" id="prof-lastname" autocomplete="family-name" maxlength="80" required style="${fieldStyle}"></div>
-                                <div><label for="prof-phone-national" style="${labelStyle}">Telefon</label><div id="prof-phone-group" class="phone-field-combined"><div class="phone-country-control"><span id="prof-phone-country-display" aria-hidden="true">TR (+90)</span><i class="fas fa-chevron-down" aria-hidden="true"></i><select id="prof-phone-country" aria-label="Ülke telefon kodu" autocomplete="tel-country-code"></select></div><input type="tel" id="prof-phone-national" autocomplete="tel-national" inputmode="numeric" maxlength="28" aria-describedby="prof-phone-error" placeholder="5XX XXX XX XX"></div><p id="prof-phone-error" role="alert" aria-live="polite" style="display:none; color:#ef4444; font-size:0.8rem; margin:6px 0 0; font-family:'Inter Tight', sans-serif;"></p></div>
+                                <div><label for="prof-phone-national" style="${labelStyle}">Telefon</label><div id="prof-phone-group" class="phone-field-combined"><div class="phone-country-control"><button type="button" id="prof-phone-country-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="prof-phone-country-list"><span id="prof-phone-country-display">TR (+90)</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button><select id="prof-phone-country" aria-label="Ülke telefon kodu" autocomplete="tel-country-code"></select><div id="prof-phone-country-dropdown" class="profile-phone-country-dropdown"><div id="prof-phone-country-list" role="listbox" aria-label="Ülke telefon kodu"></div></div></div><input type="tel" id="prof-phone-national" autocomplete="tel-national" inputmode="numeric" maxlength="28" aria-describedby="prof-phone-error" placeholder="5XX XXX XX XX"></div><p id="prof-phone-error" role="alert" aria-live="polite" style="display:none; color:#ef4444; font-size:0.8rem; margin:6px 0 0; font-family:'Inter Tight', sans-serif;"></p></div>
                                 <div><label for="prof-position" style="${labelStyle}">Pozisyon / Ünvan</label><input type="text" id="prof-position" autocomplete="organization-title" maxlength="100" placeholder="Örn. Operasyon Müdürü" style="${fieldStyle}"></div>
                             </div>
                             <div class="profile-step-actions" style="display:flex; justify-content:flex-end; margin-top:25px;"><button type="button" id="btn-profile-next" style="background: #6366f1; color: #fff; border: none; padding: 14px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Devam Et</button></div>
@@ -268,6 +287,7 @@ class ProfileManager {
         document.getElementById('btn-profile-back').addEventListener('click', () => this.showProfileStep(1));
         form.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && this.currentStep === 1) {
+                if (e.target?.closest('.phone-country-control')) return;
                 e.preventDefault();
                 this.goToStep2();
             }
@@ -275,15 +295,23 @@ class ProfileManager {
         document.getElementById('prof-phone-national').addEventListener('input', () => this.formatPhoneInput());
         document.getElementById('prof-phone-national').addEventListener('paste', () => window.setTimeout(() => this.formatPhoneInput(), 0));
         document.getElementById('prof-phone-country').addEventListener('change', () => {
-            this.updatePhoneCountryDisplay();
-            this.updatePhonePlaceholder();
+            this.syncPhoneCountryUI();
             this.formatPhoneInput();
         });
+        this.bindPhoneCountryDropdown();
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal.style.display === 'flex') {
+                if (this.isPhoneCountryDropdownOpen()) {
+                    this.closePhoneCountryDropdown(true);
+                    return;
+                }
                 this.closeModal();
             }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target?.closest?.('.phone-country-control')) this.closePhoneCountryDropdown(false);
         });
 
         window.addEventListener('beforeunload', () => this.cancelProfileOnboarding());
@@ -420,22 +448,193 @@ class ProfileManager {
         const countrySelect = document.getElementById('prof-phone-country');
         if (!countrySelect) return;
         if (countrySelect.options.length) {
-            this.updatePhoneCountryDisplay();
+            this.syncPhoneCountryUI();
             return;
         }
         countrySelect.innerHTML = PHONE_COUNTRIES.map(country =>
             `<option value="${country.iso2}">${country.flag} ${country.name} (${country.dialCode})</option>`
         ).join('');
         countrySelect.value = DEFAULT_PHONE_COUNTRY;
-        this.updatePhoneCountryDisplay();
+        const list = document.getElementById('prof-phone-country-list');
+        if (list) {
+            list.innerHTML = PHONE_COUNTRIES.map((country, index) => `
+                <div
+                    id="prof-phone-country-option-${country.iso2}"
+                    class="profile-phone-country-option"
+                    role="option"
+                    tabindex="-1"
+                    data-iso2="${country.iso2}"
+                    data-index="${index}"
+                    aria-selected="false"
+                >
+                    <span class="profile-phone-country-flag" aria-hidden="true">${country.flag}</span>
+                    <span class="profile-phone-country-name">${country.name}</span>
+                    <span class="profile-phone-country-code">${country.dialCode}</span>
+                </div>
+            `).join('');
+        }
+        this.phoneCountryFocusedIndex = PHONE_COUNTRIES.findIndex(country => country.iso2 === DEFAULT_PHONE_COUNTRY);
+        this.syncPhoneCountryUI();
+    }
+
+    syncPhoneCountryUI() {
+        const countrySelect = document.getElementById('prof-phone-country');
+        const display = document.getElementById('prof-phone-country-display');
+        const trigger = document.getElementById('prof-phone-country-trigger');
+        const options = Array.from(document.querySelectorAll('#prof-phone-country-list [role="option"]'));
+        if (!countrySelect || !display) return;
+        const country = this.getPhoneCountry(countrySelect.value);
+        countrySelect.value = country.iso2;
+        display.textContent = `${country.iso2} (${country.dialCode})`;
+        this.updatePhonePlaceholder();
+        options.forEach((option, index) => {
+            const selected = option.dataset.iso2 === country.iso2;
+            option.classList.toggle('is-selected', selected);
+            option.classList.toggle('is-focused', selected);
+            option.setAttribute('aria-selected', selected ? 'true' : 'false');
+            if (selected) this.phoneCountryFocusedIndex = index;
+        });
+        const focused = options[this.phoneCountryFocusedIndex] || options.find(option => option.dataset.iso2 === country.iso2);
+        if (trigger && focused) trigger.setAttribute('aria-activedescendant', focused.id);
     }
 
     updatePhoneCountryDisplay() {
+        this.syncPhoneCountryUI();
+    }
+
+    bindPhoneCountryDropdown() {
+        const control = document.querySelector('#shared-profile-modal .phone-country-control');
+        const trigger = document.getElementById('prof-phone-country-trigger');
+        const list = document.getElementById('prof-phone-country-list');
+        if (!control || !trigger || !list || control.dataset.dropdownBound === 'true') return;
+
+        control.dataset.dropdownBound = 'true';
+        this.phoneCountryTypeahead = '';
+        this.phoneCountryTypeaheadTimer = null;
+
+        trigger.addEventListener('click', (event) => {
+            event.stopPropagation();
+            this.togglePhoneCountryDropdown();
+        });
+        trigger.addEventListener('keydown', (event) => this.handlePhoneCountryKeydown(event));
+        list.addEventListener('keydown', (event) => this.handlePhoneCountryKeydown(event));
+        list.addEventListener('click', (event) => {
+            const option = event.target.closest('[role="option"]');
+            if (option) this.selectPhoneCountry(option.dataset.iso2);
+        });
+        list.addEventListener('mousemove', (event) => {
+            const option = event.target.closest('[role="option"]');
+            if (option) this.setPhoneCountryFocus(Number(option.dataset.index));
+        });
+    }
+
+    isPhoneCountryDropdownOpen() {
+        return document.querySelector('#shared-profile-modal .phone-country-control')?.classList.contains('is-open');
+    }
+
+    togglePhoneCountryDropdown() {
+        if (this.isPhoneCountryDropdownOpen()) this.closePhoneCountryDropdown(false);
+        else this.openPhoneCountryDropdown();
+    }
+
+    openPhoneCountryDropdown() {
+        const control = document.querySelector('#shared-profile-modal .phone-country-control');
+        const trigger = document.getElementById('prof-phone-country-trigger');
+        const dropdown = document.getElementById('prof-phone-country-dropdown');
+        const group = document.getElementById('prof-phone-group');
+        if (!control || !trigger || !dropdown) return;
+        this.syncPhoneCountryUI();
+        control.classList.add('is-open');
+        dropdown.classList.add('is-open');
+        group?.classList.add('phone-country-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        this.setPhoneCountryFocus(this.phoneCountryFocusedIndex || 0);
+        document.querySelector('#prof-phone-country-list .is-selected')?.scrollIntoView({ block: 'nearest' });
+    }
+
+    closePhoneCountryDropdown(returnFocus = false) {
+        const control = document.querySelector('#shared-profile-modal .phone-country-control');
+        const trigger = document.getElementById('prof-phone-country-trigger');
+        const dropdown = document.getElementById('prof-phone-country-dropdown');
+        const group = document.getElementById('prof-phone-group');
+        control?.classList.remove('is-open');
+        dropdown?.classList.remove('is-open');
+        group?.classList.remove('phone-country-open');
+        trigger?.setAttribute('aria-expanded', 'false');
+        if (returnFocus) trigger?.focus();
+    }
+
+    setPhoneCountryFocus(index) {
+        const options = Array.from(document.querySelectorAll('#prof-phone-country-list [role="option"]'));
+        const trigger = document.getElementById('prof-phone-country-trigger');
+        if (!options.length) return;
+        this.phoneCountryFocusedIndex = Math.max(0, Math.min(index, options.length - 1));
+        options.forEach((option, optionIndex) => option.classList.toggle('is-focused', optionIndex === this.phoneCountryFocusedIndex));
+        const focused = options[this.phoneCountryFocusedIndex];
+        trigger?.setAttribute('aria-activedescendant', focused.id);
+        if (this.isPhoneCountryDropdownOpen()) focused.scrollIntoView({ block: 'nearest' });
+    }
+
+    movePhoneCountryFocus(delta) {
+        const options = document.querySelectorAll('#prof-phone-country-list [role="option"]');
+        if (!options.length) return;
+        this.setPhoneCountryFocus(((this.phoneCountryFocusedIndex || 0) + delta + options.length) % options.length);
+    }
+
+    selectPhoneCountry(iso2) {
         const countrySelect = document.getElementById('prof-phone-country');
-        const display = document.getElementById('prof-phone-country-display');
-        if (!countrySelect || !display) return;
-        const country = this.getPhoneCountry(countrySelect.value);
-        display.textContent = `${country.iso2} (${country.dialCode})`;
+        if (!countrySelect) return;
+        countrySelect.value = this.getPhoneCountry(iso2).iso2;
+        countrySelect.dispatchEvent(new window.Event('change', { bubbles: true }));
+        this.validatePhone({ showError: Boolean(document.getElementById('prof-phone-error')?.textContent) });
+        this.closePhoneCountryDropdown(true);
+    }
+
+    handlePhoneCountryKeydown(event) {
+        const isOpen = this.isPhoneCountryDropdownOpen();
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            this.closePhoneCountryDropdown(true);
+            return;
+        }
+        if (event.key === 'Tab') {
+            this.closePhoneCountryDropdown(false);
+            return;
+        }
+        if (['Enter', ' '].includes(event.key)) {
+            event.preventDefault();
+            if (!isOpen) this.openPhoneCountryDropdown();
+            else {
+                const focused = document.querySelectorAll('#prof-phone-country-list [role="option"]')[this.phoneCountryFocusedIndex || 0];
+                if (focused) this.selectPhoneCountry(focused.dataset.iso2);
+            }
+            return;
+        }
+        if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+            event.preventDefault();
+            if (!isOpen) this.openPhoneCountryDropdown();
+            this.movePhoneCountryFocus(event.key === 'ArrowDown' ? 1 : -1);
+            return;
+        }
+        if (event.key === 'Home' || event.key === 'End') {
+            event.preventDefault();
+            if (!isOpen) this.openPhoneCountryDropdown();
+            this.setPhoneCountryFocus(event.key === 'Home' ? 0 : PHONE_COUNTRIES.length - 1);
+            return;
+        }
+        if (isOpen && event.key.length === 1 && /\S/.test(event.key)) {
+            this.handlePhoneCountryTypeahead(event.key);
+        }
+    }
+
+    handlePhoneCountryTypeahead(char) {
+        window.clearTimeout(this.phoneCountryTypeaheadTimer);
+        this.phoneCountryTypeahead = `${this.phoneCountryTypeahead || ''}${char}`.toLocaleLowerCase('tr-TR');
+        const index = PHONE_COUNTRIES.findIndex(country => country.name.toLocaleLowerCase('tr-TR').startsWith(this.phoneCountryTypeahead));
+        if (index >= 0) this.setPhoneCountryFocus(index);
+        this.phoneCountryTypeaheadTimer = window.setTimeout(() => {
+            this.phoneCountryTypeahead = '';
+        }, 700);
     }
 
     getPhoneCountry(iso2) {
@@ -569,6 +768,7 @@ class ProfileManager {
 
 
     showProfileStep(step) {
+        this.closePhoneCountryDropdown(false);
         this.currentStep = step;
         const step1 = document.getElementById('profile-step-1');
         const step2 = document.getElementById('profile-step-2');
@@ -782,6 +982,7 @@ class ProfileManager {
     }
 
     closeModal() {
+        this.closePhoneCountryDropdown(false);
         const modal = document.getElementById('shared-profile-modal');
         const modalContent = document.getElementById('profile-modal-content');
         modal.style.opacity = '0';
@@ -809,6 +1010,7 @@ class ProfileManager {
 
     async handleProfileSave(e) {
         e.preventDefault();
+        this.closePhoneCountryDropdown(false);
         if (!this.currentUser || this.isSavingProfile) return;
 
         if (this.currentStep !== 2) {
