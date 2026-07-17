@@ -143,10 +143,30 @@
       padding: 0 0 40px 0;
       box-sizing: border-box;
     }
+    .section-heading-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .section-heading-row .section-title { margin: 0; }
     .section-title {
       font-size: 1.2rem; color: #fff; margin-bottom: 20px; font-weight: 600;
       display: flex; align-items: center; gap: 10px;
     }
+    .btn-new-project-request {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 18px; border: 0; border-radius: 10px;
+      background: linear-gradient(135deg, #6366f1, #7c3aed);
+      color: #fff; font-family: 'Inter Tight', sans-serif; font-size: 0.92rem; font-weight: 700;
+      cursor: pointer; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.22);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      white-space: nowrap;
+    }
+    .btn-new-project-request:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 10px 24px rgba(99, 102, 241, 0.3); }
+    .btn-new-project-request:active { transform: translateY(0); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.22); }
+    .btn-new-project-request:focus-visible { outline: 3px solid rgba(129, 140, 248, 0.45); outline-offset: 3px; }
     .section-title::before {
       content: ""; display: inline-block; width: 4px; height: 18px; background: #6366f1; border-radius: 4px;
     }
@@ -198,6 +218,73 @@
     .btn-launch-project:hover { background: #6d28d9; }
     .details-link { color: #71717a; font-size: 0.8rem; text-decoration: none; display: block; text-align: right; margin-top: 8px; transition: color 0.2s;}
     .details-link:hover { color: #fff; }
+
+
+
+    .requests-section {
+      width: 100%; max-width: 1400px; padding: 0 0 56px 0; box-sizing: border-box;
+    }
+    .requests-loading, .requests-empty-state, .requests-error-state {
+      color: #a1a1aa; font-size: 0.95rem; background: #11131a; border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px; padding: 24px; margin: 0;
+    }
+    .requests-empty-state { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .requests-empty-state i { color: #6366f1; font-size: 1.6rem; }
+    .requests-empty-state strong { color: #fff; font-size: 1.05rem; }
+    .requests-empty-state span { color: #a1a1aa; }
+    .requests-error-state { color: #fca5a5; border-color: rgba(239,68,68,0.2); }
+    .requests-list { display: grid; gap: 18px; }
+    .request-card { background: #11131a; border: 1px solid rgba(99,102,241,0.14); border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .request-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+    .request-title-group { min-width: 0; display: flex; flex-direction: column; gap: 7px; }
+    .request-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .request-title { color: #fff; margin: 0; font-size: 1.08rem; font-weight: 700; overflow-wrap: anywhere; }
+    .request-code { color: #c4b5fd; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.22); border-radius: 999px; padding: 3px 8px; font-size: 0.75rem; font-weight: 700; }
+    .request-service { color: #a1a1aa; font-size: 0.86rem; }
+    .request-status-badge { flex: 0 0 auto; border-radius: 999px; padding: 6px 11px; font-size: 0.78rem; font-weight: 700; border: 1px solid; }
+    .request-status--received { color:#93c5fd; background:rgba(59,130,246,0.1); border-color:rgba(59,130,246,0.22); }
+    .request-status--reviewing { color:#67e8f9; background:rgba(6,182,212,0.1); border-color:rgba(6,182,212,0.22); }
+    .request-status--planning { color:#d8b4fe; background:rgba(168,85,247,0.1); border-color:rgba(168,85,247,0.22); }
+    .request-status--approved { color:#a5b4fc; background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.22); }
+    .request-status--in_progress { color:#c4b5fd; background:rgba(139,92,246,0.1); border-color:rgba(139,92,246,0.22); }
+    .request-status--testing { color:#fcd34d; background:rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.22); }
+    .request-status--delivered, .request-status--completed { color:#86efac; background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.22); }
+    .request-status--cancelled, .request-status--rejected { color:#fca5a5; background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.22); }
+    .request-status--unknown { color:#d4d4d8; background:rgba(161,161,170,0.08); border-color:rgba(161,161,170,0.18); }
+    .request-current-stage { color: #d4d4d8; font-size: 0.93rem; line-height: 1.5; margin: 0 0 18px 0; }
+    .request-progress-section { margin-bottom: 18px; }
+    .request-progress-label { display:flex; justify-content:space-between; color:#a1a1aa; font-size:0.86rem; margin-bottom:8px; }
+    .request-progress-label strong { color:#fff; }
+    .request-progress-track { width:100%; height:9px; overflow:hidden; border-radius:999px; background:rgba(255,255,255,0.06); }
+    .request-progress-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#6366f1,#8b5cf6); transition:width 0.3s ease; }
+    .request-progress-fill--completed { background:linear-gradient(90deg,#10b981,#22c55e); }
+    .request-progress-fill--closed { background:linear-gradient(90deg,#6b7280,#ef4444); }
+    .request-meta-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px; }
+    .request-meta-item { background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.04); border-radius:12px; padding:10px 12px; min-width:0; }
+    .request-meta-label { display:block; color:#71717a; font-size:0.74rem; margin-bottom:5px; }
+    .request-meta-value { display:block; color:#e4e4e7; font-size:0.85rem; font-weight:600; overflow-wrap:anywhere; }
+    .project-request-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.78); backdrop-filter:blur(6px); z-index:1000; padding:20px; box-sizing:border-box; }
+    .project-request-modal.is-open { display:flex; }
+    .project-request-dialog { width:100%; max-width:460px; background:#11131a; border:1px solid rgba(255,255,255,0.08); border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,0.45); padding:28px; position:relative; text-align:center; box-sizing:border-box; }
+    .project-request-close-icon { position:absolute; top:14px; right:14px; width:34px; height:34px; border:0; border-radius:9px; background:rgba(255,255,255,0.04); color:#a1a1aa; cursor:pointer; }
+    .project-request-close-icon:hover, .project-request-close-icon:focus-visible { color:#fff; background:rgba(99,102,241,0.16); outline:none; }
+    .project-request-modal-icon { width:58px; height:58px; border-radius:16px; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; color:#c4b5fd; background:rgba(99,102,241,0.13); font-size:1.55rem; }
+    .project-request-dialog h2 { color:#fff; margin:0 0 10px; font-size:1.35rem; }
+    .project-request-dialog p { color:#a1a1aa; margin:0 0 10px; line-height:1.55; }
+    .project-request-secondary { color:#71717a !important; font-size:0.92rem; }
+    .project-request-actions { margin-top:22px; display:flex; justify-content:center; }
+    .project-request-confirm { border:0; border-radius:10px; padding:11px 22px; background:linear-gradient(135deg,#6366f1,#7c3aed); color:#fff; font-weight:700; cursor:pointer; font-family:'Inter Tight',sans-serif; }
+    .project-request-confirm:hover, .project-request-confirm:focus-visible { filter:brightness(1.05); outline:3px solid rgba(129,140,248,0.35); outline-offset:3px; }
+    body.project-request-modal-open { overflow:hidden; }
+    @media (max-width: 900px) { .request-meta-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) {
+      .section-heading-row { align-items: stretch; flex-direction: column; }
+      .btn-new-project-request { width: 100%; justify-content: center; white-space: normal; }
+      .request-card-header { flex-direction: column; align-items: stretch; }
+      .request-status-badge { align-self: flex-start; }
+      .request-meta-grid { grid-template-columns: 1fr; }
+      .project-request-dialog { padding: 24px 18px; }
+    }
 
     /* Profil Alanı Stilleri */
     .user-profile { display: flex; align-items: center; gap: 12px; }
@@ -316,15 +403,74 @@
       </div>
 
       <div class="projects-section">
-        <h2 class="section-title">Projeleriniz</h2>
+        <div class="section-heading-row">
+          <h2 class="section-title">Projeleriniz</h2>
+          <button
+            type="button"
+            id="btn-new-project-request"
+            class="btn-new-project-request"
+            aria-haspopup="dialog"
+            aria-controls="new-project-request-modal"
+          >
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            <span>Yeni Proje Başlat</span>
+          </button>
+        </div>
         
         <div id="dynamic-projects-container">
             <p style="color: #a1a1aa; font-size: 0.9rem;">Projeler yükleniyor...</p>
         </div>
       </div>
 
+      <section
+        class="requests-section"
+        aria-labelledby="requests-section-title"
+      >
+        <div class="section-heading-row section-heading-row--requests">
+          <h2
+            id="requests-section-title"
+            class="section-title"
+          >
+            Talepleriniz
+          </h2>
+        </div>
+
+        <div
+          id="dynamic-requests-container"
+          aria-live="polite"
+        >
+          <p class="requests-loading">
+            Talepler yükleniyor...
+          </p>
+        </div>
+      </section>
+
     </div>
   </main>
+
+  <div
+    id="new-project-request-modal"
+    class="project-request-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="new-project-request-title"
+    aria-hidden="true"
+  >
+    <div id="new-project-request-dialog" class="project-request-dialog">
+      <button type="button" class="project-request-close-icon" data-project-request-close aria-label="Pencereyi kapat">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+      <div class="project-request-modal-icon" aria-hidden="true">
+        <i class="fas fa-rocket"></i>
+      </div>
+      <h2 id="new-project-request-title">Yeni Proje Başlat</h2>
+      <p>Projenizi bize anlatabileceğiniz talep formunu bir sonraki adımda bu alana ekleyeceğiz.</p>
+      <p class="project-request-secondary">Şimdilik bu pencerenin tasarımını ve açılış akışını hazırladık.</p>
+      <div class="project-request-actions">
+        <button type="button" class="project-request-confirm" data-project-request-close>Tamam</button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
@@ -333,7 +479,7 @@
 
   <script type="module">
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"; 
+    import { getFirestore, doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     const auth = getAuth();
     const db = getFirestore(); 
@@ -348,6 +494,7 @@
                 userDocSnap = await getDoc(userDocRef);
             } catch (error) {
                 console.error("Kullanıcı profili yüklenirken hata oluştu:", error);
+                fetchUserRequests(user.uid);
                 fetchUserProjects(user.uid, null, { profileLoadFailed: true });
                 return;
             }
@@ -425,6 +572,7 @@
                 window.TK_RENDER_SIDEBAR();
             }
 
+            fetchUserRequests(user.uid);
             fetchUserProjects(user.uid, userDocSnap);
 
             if (!userDocSnap.exists() && window.SharedProfileManager) {
@@ -584,6 +732,221 @@
         }
     }
 
+
+    const REQUEST_STATUS_CONFIG = {
+        received: { label: "Talep Alındı", className: "request-status--received" },
+        reviewing: { label: "İnceleniyor", className: "request-status--reviewing" },
+        planning: { label: "Planlanıyor", className: "request-status--planning" },
+        approved: { label: "Onaylandı", className: "request-status--approved" },
+        in_progress: { label: "Geliştirme Aşamasında", className: "request-status--in_progress" },
+        testing: { label: "Test Ediliyor", className: "request-status--testing" },
+        delivered: { label: "Teslim Edildi", className: "request-status--delivered" },
+        completed: { label: "Tamamlandı", className: "request-status--completed" },
+        cancelled: { label: "İptal Edildi", className: "request-status--cancelled" },
+        rejected: { label: "Reddedildi", className: "request-status--rejected" }
+    };
+
+    const REQUEST_DATE_FORMATTER = new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "long", year: "numeric" });
+    const REQUEST_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+
+    function normalizeRequestStatus(status) {
+        return typeof status === "string" && REQUEST_STATUS_CONFIG[status] ? status : "unknown";
+    }
+
+    function parseRequestDate(value) {
+        if (!value) return null;
+        let date = null;
+        if (typeof value.toDate === "function") date = value.toDate();
+        else if (value instanceof Date) date = value;
+        else if (typeof value === "string" || typeof value === "number") date = new Date(value);
+        return date instanceof Date && !Number.isNaN(date.getTime()) ? date : null;
+    }
+
+    function formatRequestDate(value, includeTime = false) {
+        const date = parseRequestDate(value);
+        if (!date) return "Belirtilmedi";
+        return includeTime ? REQUEST_DATE_TIME_FORMATTER.format(date) : REQUEST_DATE_FORMATTER.format(date);
+    }
+
+    function getRequestSortTime(value) {
+        const date = parseRequestDate(value);
+        return date ? date.getTime() : 0;
+    }
+
+    function normalizeRequestProgress(progress, status) {
+        if (status === "delivered" || status === "completed") return 100;
+        const numericProgress = typeof progress === "number" ? progress : Number(progress);
+        if (!Number.isFinite(numericProgress)) return 0;
+        return Math.round(Math.min(100, Math.max(0, numericProgress)));
+    }
+
+    function getRemainingDeliveryText(estimatedDeliveryAt, status) {
+        if (status === "cancelled" || status === "rejected") return "Talep kapatıldı";
+        if (status === "delivered" || status === "completed") return "Teslim edildi";
+        const deliveryDate = parseRequestDate(estimatedDeliveryAt);
+        if (!deliveryDate) return "Henüz planlanmadı";
+
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const deliveryStart = new Date(deliveryDate.getFullYear(), deliveryDate.getMonth(), deliveryDate.getDate());
+        const calendarDiff = deliveryStart.getTime() - todayStart.getTime();
+        if (calendarDiff === 0) return "Bugün teslim";
+        if (deliveryDate.getTime() < now.getTime()) return "Tahmini tarih geçti";
+
+        const daysLeft = Math.ceil((deliveryDate.getTime() - now.getTime()) / 86400000);
+        if (daysLeft <= 0) return "Bugün teslim";
+        return `${daysLeft} gün kaldı`;
+    }
+
+    function appendTextElement(parent, tagName, className, text) {
+        const element = document.createElement(tagName);
+        if (className) element.className = className;
+        element.textContent = text;
+        parent.appendChild(element);
+        return element;
+    }
+
+    function renderRequestsEmptyState(container) {
+        container.innerHTML = "";
+        const empty = document.createElement("div");
+        empty.className = "requests-empty-state";
+        const icon = document.createElement("i");
+        icon.className = "fas fa-clipboard-list";
+        icon.setAttribute("aria-hidden", "true");
+        empty.appendChild(icon);
+        appendTextElement(empty, "strong", "", "Henüz oluşturulmuş bir proje talebiniz bulunmuyor.");
+        appendTextElement(empty, "span", "", "Yeni bir çalışma başlatmak için yukarıdaki ‘Yeni Proje Başlat’ butonunu kullanabilirsiniz.");
+        container.appendChild(empty);
+    }
+
+    function createRequestCard(request) {
+        const data = request.data || {};
+        const statusKey = normalizeRequestStatus(data.status);
+        const statusConfig = REQUEST_STATUS_CONFIG[statusKey] || { label: "Durum Güncelleniyor", className: "request-status--unknown" };
+        const progress = normalizeRequestProgress(data.progress, statusKey);
+        const card = document.createElement("article");
+        card.className = "request-card";
+
+        const header = document.createElement("div");
+        header.className = "request-card-header";
+        const titleGroup = document.createElement("div");
+        titleGroup.className = "request-title-group";
+        const titleRow = document.createElement("div");
+        titleRow.className = "request-title-row";
+        appendTextElement(titleRow, "h3", "request-title", data.title || "İsimsiz Proje Talebi");
+        if (data.requestCode) appendTextElement(titleRow, "span", "request-code", data.requestCode);
+        titleGroup.appendChild(titleRow);
+        appendTextElement(titleGroup, "span", "request-service", data.serviceName || "Hizmet bilgisi belirtilmedi");
+        const badge = appendTextElement(header, "span", `request-status-badge ${statusConfig.className}`, statusConfig.label);
+        header.insertBefore(titleGroup, badge);
+        card.appendChild(header);
+
+        appendTextElement(card, "p", "request-current-stage", data.currentStage || data.description || "Talebiniz için süreç bilgisi yakında güncellenecek.");
+
+        const progressSection = document.createElement("div");
+        progressSection.className = "request-progress-section";
+        const progressLabel = document.createElement("div");
+        progressLabel.className = "request-progress-label";
+        appendTextElement(progressLabel, "span", "", "İlerleme");
+        appendTextElement(progressLabel, "strong", "", `${progress}%`);
+        const progressTrack = document.createElement("div");
+        progressTrack.className = "request-progress-track";
+        const progressFill = document.createElement("div");
+        progressFill.className = "request-progress-fill";
+        if (statusKey === "delivered" || statusKey === "completed") progressFill.classList.add("request-progress-fill--completed");
+        if (statusKey === "cancelled" || statusKey === "rejected") progressFill.classList.add("request-progress-fill--closed");
+        progressFill.style.width = `${progress}%`;
+        progressTrack.appendChild(progressFill);
+        progressSection.append(progressLabel, progressTrack);
+        card.appendChild(progressSection);
+
+        const metaGrid = document.createElement("div");
+        metaGrid.className = "request-meta-grid";
+        [
+            ["Talep Tarihi", formatRequestDate(data.createdAt)],
+            ["Tahmini Teslim", formatRequestDate(data.estimatedDeliveryAt)],
+            ["Kalan Süre", getRemainingDeliveryText(data.estimatedDeliveryAt, statusKey)],
+            ["Son Güncelleme", formatRequestDate(data.updatedAt, true)]
+        ].forEach(([label, value]) => {
+            const item = document.createElement("div");
+            item.className = "request-meta-item";
+            appendTextElement(item, "span", "request-meta-label", label);
+            appendTextElement(item, "span", "request-meta-value", value);
+            metaGrid.appendChild(item);
+        });
+        card.appendChild(metaGrid);
+        return card;
+    }
+
+    async function fetchUserRequests(userUid) {
+        const container = document.getElementById("dynamic-requests-container");
+        if (!container || !userUid) return;
+        container.innerHTML = '<p class="requests-loading">Talepler yükleniyor...</p>';
+
+        try {
+            const requestsQuery = query(collection(db, "project_requests"), where("userId", "==", userUid));
+            const requestSnaps = await getDocs(requestsQuery);
+            const requests = requestSnaps.docs.map((requestDoc) => ({ id: requestDoc.id, data: requestDoc.data() || {} }));
+            requests.sort((a, b) => {
+                const updatedDiff = getRequestSortTime(b.data.updatedAt) - getRequestSortTime(a.data.updatedAt);
+                if (updatedDiff !== 0) return updatedDiff;
+                const createdDiff = getRequestSortTime(b.data.createdAt) - getRequestSortTime(a.data.createdAt);
+                if (createdDiff !== 0) return createdDiff;
+                return b.id.localeCompare(a.id);
+            });
+
+            if (requests.length === 0) {
+                renderRequestsEmptyState(container);
+                return;
+            }
+
+            container.innerHTML = "";
+            const list = document.createElement("div");
+            list.className = "requests-list";
+            requests.forEach((request) => list.appendChild(createRequestCard(request)));
+            container.appendChild(list);
+        } catch (error) {
+            console.error("Proje talepleri yüklenirken hata oluştu:", error);
+            container.innerHTML = '<p class="requests-error-state">Talepleriniz şu anda yüklenemiyor. Lütfen daha sonra tekrar deneyin.</p>';
+        }
+    }
+
+    function setupNewProjectRequestModal() {
+        const trigger = document.getElementById("btn-new-project-request");
+        const modal = document.getElementById("new-project-request-modal");
+        const dialog = document.getElementById("new-project-request-dialog");
+        if (!trigger || !modal || !dialog) return;
+        const closeButtons = modal.querySelectorAll("[data-project-request-close]");
+        const focusTarget = modal.querySelector(".project-request-confirm") || closeButtons[0];
+        let lastFocusedElement = null;
+
+        const openModal = () => {
+            lastFocusedElement = document.activeElement;
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("project-request-modal-open");
+            window.requestAnimationFrame(() => focusTarget && focusTarget.focus());
+        };
+
+        const closeModal = () => {
+            modal.classList.remove("is-open");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("project-request-modal-open");
+            if (lastFocusedElement && typeof lastFocusedElement.focus === "function") lastFocusedElement.focus();
+            else trigger.focus();
+        };
+
+        trigger.addEventListener("click", openModal);
+        closeButtons.forEach((button) => button.addEventListener("click", closeModal));
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) closeModal();
+        });
+        dialog.addEventListener("click", (event) => event.stopPropagation());
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+        });
+    }
+
     window.addEventListener('shared-profile-updated', async (event) => {
         const uid = event.detail && event.detail.uid;
         if (!uid || !auth.currentUser || auth.currentUser.uid !== uid) return;
@@ -597,6 +960,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
+      setupNewProjectRequestModal();
       if(document.querySelector("#finance-summary-chart")) {
           new ApexCharts(document.querySelector("#finance-summary-chart"), {
             series: [{ name: 'Portföy', data: [310, 330, 325, 360, 345, 385] }],
