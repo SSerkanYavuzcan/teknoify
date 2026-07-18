@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
   
   <style>
     /* ========================================================= */
@@ -23,20 +24,6 @@
       flex-direction: column !important;
       box-sizing: border-box !important;
       overflow: hidden !important;
-    }
-
-    .top-bar {
-      position: relative !important; 
-      flex: 0 0 auto !important; 
-      width: 100% !important;
-      background: #05080a !important;
-      padding: 20px 30px !important;
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      box-sizing: border-box !important;
-      border-bottom: 1px solid rgba(255,255,255,0.05); 
-      z-index: 100 !important;
     }
 
     .content-scroll {
@@ -413,9 +400,6 @@
       .project-request-status { margin: 0 18px 16px; }
     }
 
-    /* Profil Alanı Stilleri */
-    .user-profile { display: flex; align-items: center; gap: 12px; }
-    .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.1rem; }
   </style>
 </head>
 <body>
@@ -424,14 +408,7 @@
 
   <main class="main-content">
     
-    <header class="top-bar">
-      <h2 style="font-weight: 600; margin: 0; color: #fff; font-size: 1.4rem;">Hoşgeldin, <span id="user-name-title" style="color: #6366f1;">...</span></h2>
-      <div class="user-profile" style="cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'" onclick="if(window.SharedProfileManager) window.SharedProfileManager.openModal()">
-        <span id="user-name-display" style="font-weight: 500; color: #e4e4e7; font-size: 0.95rem;">Yükleniyor...</span>
-        <div class="avatar" id="user-avatar" style="background:#6366f1;">U</div>
-        <i class="fas fa-chevron-down" style="color: #71717a; font-size: 0.8rem; margin-left: 5px;"></i>
-      </div>
-    </header>
+    <div id="tk-member-topbar-root"></div>
 
     <div class="content-scroll">
       
@@ -706,6 +683,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
+  <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
   <script type="module" src="/js/pages/member.js?v=999"></script>
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
 
@@ -716,6 +694,29 @@
 
     const auth = getAuth();
     const db = getFirestore(); 
+
+    function isRecord(value) { return Boolean(value && typeof value === "object" && !Array.isArray(value)); }
+    function cleanProfileText(value) { return typeof value === "string" ? value.trim().replace(/\s+/g, " ") : ""; }
+    function normalizeUserDocument(rootData = {}) {
+      const safeRoot = isRecord(rootData) ? rootData : {};
+      const nestedData = isRecord(safeRoot.data) ? safeRoot.data : {};
+      const rootProfile = isRecord(safeRoot.profile) ? safeRoot.profile : {};
+      const nestedProfile = isRecord(nestedData.profile) ? nestedData.profile : {};
+      return { userData: { ...safeRoot, ...nestedData }, profile: { ...rootProfile, ...nestedProfile } };
+    }
+    function emailLocalPart(authUser) {
+      const email = cleanProfileText(authUser?.email);
+      return email ? email.split("@")[0] : "";
+    }
+    function resolveUserDisplayName({ profile = {}, userData = {}, authUser = {} } = {}) {
+      const combinedProfileName = [cleanProfileText(profile.firstName || profile.first_name), cleanProfileText(profile.lastName || profile.last_name)].filter(Boolean).join(" ");
+      const combinedUserName = [cleanProfileText(userData.firstName || userData.first_name), cleanProfileText(userData.lastName || userData.last_name)].filter(Boolean).join(" ");
+      const candidates = [profile.fullName, profile.displayName, combinedProfileName, userData.fullName, userData.displayName, userData.name, combinedUserName, authUser.displayName, emailLocalPart(authUser), "Teknoify Kullanıcısı"];
+      return candidates.map(cleanProfileText).find(Boolean) || "Teknoify Kullanıcısı";
+    }
+    function resolveUserPhoto({ profile = {}, userData = {}, authUser = {} } = {}) {
+      return [profile.photoURL, profile.photoUrl, userData.photoURL, userData.photoUrl, authUser.photoURL].map(cleanProfileText).find(Boolean) || "";
+    }
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -732,39 +733,23 @@
                 return;
             }
             
-            let name = user.displayName || (user.email ? user.email.split('@')[0] : "Kullanıcı");
             let accountType = "bireysel"; 
-            let userData = null;
+            let userData = {};
+            let profile = {};
 
             if (userDocSnap.exists()) {
-                const rootData = userDocSnap.data() || {};
-                userData = rootData.data || rootData || {};
+                const normalized = normalizeUserDocument(userDocSnap.data() || {});
+                userData = normalized.userData;
+                profile = normalized.profile;
                 
-                if (userData.profile && userData.profile.accountType) {
-                    accountType = userData.profile.accountType;
-                }
-                
-                if (userData.profile && userData.profile.fullName) {
-                    name = userData.profile.fullName;
+                if (profile.accountType) {
+                    accountType = profile.accountType;
                 }
             }
 
-            const displayEl = document.getElementById("user-name-display");
-            const titleEl = document.getElementById("user-name-title");
-            const avatarEl = document.getElementById("user-avatar");
-
-            if(displayEl) displayEl.textContent = name;
-            if(titleEl) titleEl.textContent = name;
-
-            if(avatarEl) {
-                if (userData && userData.profile && userData.profile.photoURL) {
-                    avatarEl.innerHTML = `<img src="${userData.profile.photoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-                    avatarEl.style.background = 'transparent';
-                } else {
-                    avatarEl.innerHTML = name.charAt(0).toUpperCase();
-                    avatarEl.style.background = '#6366f1';
-                }
-            }
+            const name = resolveUserDisplayName({ profile, userData, authUser: user });
+            const photoURL = resolveUserPhoto({ profile, userData, authUser: user });
+            window.TK_MEMBER_TOPBAR?.setIdentity({ name, photoURL });
 
             const personalCardsGrid = document.getElementById("personal-cards-grid");
             if (accountType === "kurumsal" && personalCardsGrid) {
@@ -774,32 +759,14 @@
             // --- ADMIN BUTONU EKLEME KODU BAŞLANGICI ---
             const roleType = (userData && userData.role && typeof userData.role === 'object') ? userData.role.type : (userData?.role || 'member');
             user.getIdTokenResult().then(idTokenResult => {
-                if (idTokenResult.claims.admin || roleType === 'admin') {
-                    if (!document.getElementById("btn-go-admin")) {
-                        const userProfileDiv = document.querySelector('.user-profile');
-                        if (userProfileDiv) {
-                            const adminBtn = document.createElement("button");
-                            adminBtn.id = "btn-go-admin";
-                            adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin Paneli';
-                            
-                            adminBtn.style.cssText = "background: #f97316; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3); transition: all 0.2s;";
-                            
-                            adminBtn.onmouseover = () => { adminBtn.style.transform = "translateY(-2px)"; adminBtn.style.background = "#ea580c"; };
-                            adminBtn.onmouseout = () => { adminBtn.style.transform = "translateY(0)"; adminBtn.style.background = "#f97316"; };
-                            
-                            adminBtn.onclick = (e) => {
-                                e.stopPropagation(); 
-                                window.location.href = '/dashboard/admin.html';
-                            };
-
-                            userProfileDiv.prepend(adminBtn);
-                        }
-                    }
-                }
+                window.TK_MEMBER_TOPBAR?.setAdminAccess({
+                    visible: Boolean(idTokenResult.claims.admin || roleType === 'admin'),
+                    href: "/dashboard/admin.html"
+                });
             });
             // --- ADMIN BUTONU EKLEME KODU BİTİŞİ ---
 
-            window.USER_SESSION = { uid: user.uid, name: name, email: user.email, type: accountType };
+            window.USER_SESSION = { uid: user.uid, name: name, displayName: name, email: user.email, photoURL, type: accountType };
             
             if(typeof window.TK_RENDER_SIDEBAR === "function") {
                 window.TK_RENDER_SIDEBAR();

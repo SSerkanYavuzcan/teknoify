@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
   <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-scroll-flags-2">
 </head>
 <body class="investment-dashboard-body">
@@ -16,12 +17,7 @@
     id="investment-market-scroll-root"
     class="investment-market-page"
   >
-    <header class="top-bar investment-page-header">
-      <button class="investment-user-profile" id="investment-profile-button" type="button" aria-label="Profil seçeneklerini aç">
-        <span id="investment-user-name">—</span>
-        <span class="investment-avatar" id="investment-user-avatar">T</span>
-      </button>
-    </header>
+    <div id="tk-member-topbar-root"></div>
 
     <section class="market-overview-grid" aria-label="Piyasa özet kartları">
       <a href="https://teknoify.com/pages/subscription" class="overview-card overview-card--locked" data-overview-card="BIST100" aria-label="BIST 100 erişimi için üyeliği yükselt">
@@ -54,6 +50,8 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-user-identity-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-user-identity-1"></script>
+  <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
+  <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-shared-topbar-1"></script>
 </body>
 </html>
