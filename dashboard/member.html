@@ -281,6 +281,8 @@
     .request-form-control::placeholder { color:#64748b; }
     .request-form-control:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,0.18); background:#0b1020; }
     textarea.request-form-control { min-height:128px; resize:vertical; line-height:1.5; }
+    .request-planning-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:start; gap:18px; }
+    .request-planning-row .request-select-wrap { width:100%; max-width:none; }
     .request-select-wrap { position:relative; max-width:260px; }
     .request-select-native { position:absolute; inset:0; opacity:0; pointer-events:none; }
     .request-priority-dropdown { position:relative; width:100%; }
@@ -298,6 +300,9 @@
     .request-priority-option { border-radius:10px; color:#e4e4e7; cursor:pointer; font-size:0.93rem; font-weight:700; padding:10px 11px; transition:background 0.16s ease, color 0.16s ease; }
     .request-priority-option:hover, .request-priority-option.is-active { background:rgba(99,102,241,0.16); color:#fff; }
     .request-priority-option[aria-selected="true"] { background:linear-gradient(135deg,rgba(99,102,241,0.32),rgba(124,58,237,0.26)); color:#fff; }
+    .request-date-input { width:100%; min-height:48px; color-scheme:dark; cursor:pointer; }
+    .request-date-input::-webkit-calendar-picker-indicator { cursor:pointer; opacity:0.75; }
+    .request-date-input::-webkit-calendar-picker-indicator:hover { opacity:1; }
     .request-form-field.is-invalid .request-form-control, .request-form-field.is-invalid .request-upload-zone, .request-form-field.is-invalid .request-priority-trigger { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.12); }
     .request-form-error { min-height:18px; color:#fca5a5; font-size:0.82rem; }
     .request-upload-zone { border:1.5px dashed rgba(129,140,248,0.34); border-radius:16px; background:rgba(8,13,24,0.86); padding:22px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:border-color 0.18s ease, background 0.18s ease, transform 0.18s ease; }
@@ -366,6 +371,9 @@
     .project-request-button:hover, .project-request-button:focus-visible { filter:brightness(1.06); outline:3px solid rgba(129,140,248,0.35); outline-offset:3px; }
     body.project-request-modal-open { overflow:hidden; }
     @media (max-width: 900px) { .request-meta-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) {
+      .request-planning-row { grid-template-columns: 1fr; gap: 16px; }
+    }
     @media (max-width: 520px) {
       .section-heading-row { align-items: stretch; flex-direction: column; }
       .btn-new-project-request { width: 100%; justify-content: center; white-space: normal; }
@@ -590,29 +598,38 @@
             <span id="project-request-flow-error" class="request-form-error" aria-live="polite"></span>
           </div>
 
-          <div class="request-form-field" data-field="priority">
-            <label for="project-request-priority">Öncelik *</label>
-            <div class="request-select-wrap">
-              <select id="project-request-priority" name="priority" class="request-select-native" aria-describedby="project-request-priority-error" required tabindex="-1">
-                <option value="Düşük">Düşük</option>
-                <option value="Orta" selected>Orta</option>
-                <option value="Yüksek">Yüksek</option>
-                <option value="Kritik">Kritik</option>
-              </select>
-              <div class="request-priority-dropdown" data-priority-dropdown>
-                <button type="button" class="request-priority-trigger" id="project-request-priority-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="project-request-priority-menu">
-                  <span data-priority-selected>Orta</span>
-                  <i class="fas fa-chevron-down" aria-hidden="true"></i>
-                </button>
-                <ul class="request-priority-menu" id="project-request-priority-menu" role="listbox" aria-labelledby="project-request-priority-trigger" tabindex="-1">
-                  <li class="request-priority-option" role="option" data-value="Düşük" aria-selected="false" tabindex="-1">Düşük</li>
-                  <li class="request-priority-option" role="option" data-value="Orta" aria-selected="true" tabindex="-1">Orta</li>
-                  <li class="request-priority-option" role="option" data-value="Yüksek" aria-selected="false" tabindex="-1">Yüksek</li>
-                  <li class="request-priority-option" role="option" data-value="Kritik" aria-selected="false" tabindex="-1">Kritik</li>
-                </ul>
+          <div class="request-planning-row">
+            <div class="request-form-field" data-field="priority">
+              <label for="project-request-priority">Öncelik *</label>
+              <div class="request-select-wrap">
+                <select id="project-request-priority" name="priority" class="request-select-native" aria-describedby="project-request-priority-error" required tabindex="-1">
+                  <option value="Düşük">Düşük</option>
+                  <option value="Orta" selected>Orta</option>
+                  <option value="Yüksek">Yüksek</option>
+                  <option value="Kritik">Kritik</option>
+                </select>
+                <div class="request-priority-dropdown" data-priority-dropdown>
+                  <button type="button" class="request-priority-trigger" id="project-request-priority-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="project-request-priority-menu">
+                    <span data-priority-selected>Orta</span>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                  </button>
+                  <ul class="request-priority-menu" id="project-request-priority-menu" role="listbox" aria-labelledby="project-request-priority-trigger" tabindex="-1">
+                    <li class="request-priority-option" role="option" data-value="Düşük" aria-selected="false" tabindex="-1">Düşük</li>
+                    <li class="request-priority-option" role="option" data-value="Orta" aria-selected="true" tabindex="-1">Orta</li>
+                    <li class="request-priority-option" role="option" data-value="Yüksek" aria-selected="false" tabindex="-1">Yüksek</li>
+                    <li class="request-priority-option" role="option" data-value="Kritik" aria-selected="false" tabindex="-1">Kritik</li>
+                  </ul>
+                </div>
               </div>
+              <span id="project-request-priority-error" class="request-form-error" aria-live="polite"></span>
             </div>
-            <span id="project-request-priority-error" class="request-form-error" aria-live="polite"></span>
+
+            <div class="request-form-field" data-field="deliveryDate">
+              <label for="project-request-delivery-date">Proje Teslim Tarihi</label>
+              <input type="date" id="project-request-delivery-date" class="request-form-control request-date-input" autocomplete="off" aria-describedby="project-request-delivery-date-helper project-request-delivery-date-error">
+              <span id="project-request-delivery-date-helper" class="request-form-helper">Projeyi teslim almak istediğiniz hedef tarihi seçebilirsiniz.</span>
+              <span id="project-request-delivery-date-error" class="request-form-error" aria-live="polite"></span>
+            </div>
           </div>
 
           <div class="request-form-field request-attachment-field">
@@ -1111,6 +1128,7 @@
             projectFlow: document.getElementById("project-request-flow"),
             priority: document.getElementById("project-request-priority")
         };
+        const deliveryDateInput = document.getElementById("project-request-delivery-date");
         const requiredMessages = {
             projectName: "Proje Adı alanı zorunludur.",
             projectDescription: "Proje Açıklaması alanı zorunludur.",
@@ -1438,11 +1456,58 @@
 
         const validateForm = () => Object.keys(fields).reduce((isValid, fieldName) => validateField(fieldName) && isValid, true);
 
+        const formatLocalDateForInput = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
+
+        const setDeliveryDateError = (message = "") => {
+            if (!deliveryDateInput) return;
+            const wrapper = deliveryDateInput.closest(".request-form-field");
+            const error = document.getElementById("project-request-delivery-date-error");
+            if (wrapper) wrapper.classList.toggle("is-invalid", Boolean(message));
+            if (error) error.textContent = message;
+            if (message) deliveryDateInput.setAttribute("aria-invalid", "true");
+            else deliveryDateInput.removeAttribute("aria-invalid");
+        };
+
+        const parseLocalDateInput = (value) => {
+            const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+            if (!match) return null;
+            const year = Number(match[1]);
+            const monthIndex = Number(match[2]) - 1;
+            const day = Number(match[3]);
+            const parsedDate = new Date(year, monthIndex, day);
+            if (parsedDate.getFullYear() !== year || parsedDate.getMonth() !== monthIndex || parsedDate.getDate() !== day) return null;
+            return parsedDate;
+        };
+
+        const refreshDeliveryDateMin = () => {
+            if (deliveryDateInput) deliveryDateInput.min = formatLocalDateForInput(new Date());
+        };
+
+        const validateDeliveryDate = () => {
+            if (!deliveryDateInput) return true;
+            const value = deliveryDateInput.value.trim();
+            if (!value) { setDeliveryDateError(""); return true; }
+            const selectedDate = parseLocalDateInput(value);
+            if (!selectedDate) { setDeliveryDateError("Geçerli bir teslim tarihi seçin."); return false; }
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            if (selectedDate.getTime() < today.getTime()) { setDeliveryDateError("Geçmiş bir teslim tarihi seçemezsiniz."); return false; }
+            setDeliveryDateError("");
+            return true;
+        };
+
         const openModal = () => {
             lastFocusedElement = document.activeElement;
             modal.classList.add("is-open");
             modal.setAttribute("aria-hidden", "false");
             document.body.classList.add("project-request-modal-open");
+            refreshDeliveryDateMin();
+            setDeliveryDateError("");
             window.requestAnimationFrame(() => focusTarget && focusTarget.focus());
         };
 
@@ -1469,6 +1534,18 @@
                 validateField(fieldName);
             });
         });
+
+        if (deliveryDateInput) {
+            refreshDeliveryDateMin();
+            deliveryDateInput.addEventListener("input", () => {
+                if (statusMessage) statusMessage.classList.remove("is-visible");
+                validateDeliveryDate();
+            });
+            deliveryDateInput.addEventListener("change", () => {
+                if (statusMessage) statusMessage.classList.remove("is-visible");
+                validateDeliveryDate();
+            });
+        }
 
         if (priorityTrigger && priorityDropdown) {
             priorityTrigger.addEventListener("click", () => {
@@ -1540,7 +1617,9 @@
             event.preventDefault();
             if (["requesting", "countdown", "recording", "paused", "stopping"].includes(recorderState)) { setRecorderHelper("Önce ekran kaydını bitirin veya iptal edin.", true); return; }
             if (pendingRecording) { setRecorderHelper("Ekran kaydını talebe ekleyin veya silin.", true); recorderPanel?.scrollIntoView({ behavior: "smooth", block: "center" }); recorderPanel?.focus(); return; }
-            if (!validateForm()) {
+            const requiredFieldsValid = validateForm();
+            const deliveryDateValid = validateDeliveryDate();
+            if (!requiredFieldsValid || !deliveryDateValid) {
                 const firstInvalid = form.querySelector('[aria-invalid="true"]');
                 if (firstInvalid) firstInvalid.focus();
                 return;
@@ -1551,6 +1630,7 @@
                 projectDescription: fields.projectDescription.value.trim(),
                 projectFlow: fields.projectFlow.value.trim(),
                 priority: fields.priority.value.trim(),
+                requestedDeliveryDate: deliveryDateInput.value || null,
                 attachments: selectedFiles.map((file) => {
                     const metadata = attachmentMetadata.get(getFileKey(file)) || { source: "uploaded_file" };
                     return {
