@@ -46,6 +46,7 @@ export const DASHBOARD_ROUTES = Object.freeze({
     geoIntelligence: '/dashboard/geo-intelligence/index.html',
     marketAnalysisDemoProject: '/dashboard/demo/market-analysis/index.html',
     memberFinance: '/dashboard/member/finance/index.html',
+    investmentMarket: '/dashboard/services/investment/index.html',
     memberHealth: '/dashboard/member/health/index.html',
     memberProductivity: '/dashboard/member/productivity/index.html',
     memberSubscriptions: '/dashboard/member/subscriptions/index.html'
