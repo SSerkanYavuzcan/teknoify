@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-performance-2">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-scroll-icons-1">
 </head>
 <body>
   <div id="tk-global-sidebar-root"></div>
@@ -30,14 +30,14 @@
         <div class="overview-lock-content"><span class="overview-lock-icon"><i class="fas fa-lock" aria-hidden="true"></i></span><strong>Üyeliği Yükselt</strong></div>
       </a>
       <article class="overview-card" data-overview-card="BTCUSD" aria-label="BTC USD piyasa özeti">
-        <header class="overview-card-head"><span class="asset-token">₿</span><div><span class="overview-label" data-overview-title>BTC/USD</span><small data-overview-subtitle>Bitcoin</small></div><span class="freshness-badge connecting" data-overview-status>Bağlanıyor</span></header>
+        <header class="overview-card-head"><span class="asset-token asset-token--brand" id="overview-btc-icon" aria-hidden="true"></span><div><span class="overview-label" data-overview-title>BTC/USD</span><small data-overview-subtitle>Bitcoin</small></div><span class="freshness-badge connecting" data-overview-status>Bağlanıyor</span></header>
         <div class="overview-value-row"><strong class="overview-value" data-overview-price>—</strong><span class="overview-change neutral" data-overview-change>—</span><small data-overview-updated>—</small></div>
         <div class="overview-chart-shell loading"><div id="overview-chart-btcusd" class="overview-chart"></div><p class="overview-empty">Veri entegrasyonu hazırlanıyor.</p></div>
       </article>
     </section>
 
     <section class="market-topbar" aria-label="Seçili piyasa özeti">
-      <div class="selected-asset-summary"><span class="asset-token" id="selected-asset-icon">B</span><div class="asset-identity"><strong id="selected-display-symbol">BTC-USDT</strong><span id="selected-asset-name">Bitcoin</span></div><div class="asset-live-price"><strong id="selected-current-price">—</strong><span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span></div></div>
+      <div class="selected-asset-summary"><span class="asset-token asset-token--brand" id="selected-asset-icon" aria-hidden="true"></span><div class="asset-identity"><strong id="selected-display-symbol">BTC-USDT</strong><span id="selected-asset-name">Bitcoin</span></div><div class="asset-live-price"><strong id="selected-current-price">—</strong><span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span></div></div>
     </section>
 
     <section class="investment-dashboard-grid" aria-label="Yatırım piyasa panosu">
@@ -52,6 +52,6 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-market-live-data-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-market-performance-2"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-market-scroll-icons-1"></script>
 </body>
 </html>
