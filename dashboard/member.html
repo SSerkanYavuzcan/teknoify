@@ -300,10 +300,32 @@
     .request-priority-option { border-radius:10px; color:#e4e4e7; cursor:pointer; font-size:0.93rem; font-weight:700; padding:10px 11px; transition:background 0.16s ease, color 0.16s ease; }
     .request-priority-option:hover, .request-priority-option.is-active { background:rgba(99,102,241,0.16); color:#fff; }
     .request-priority-option[aria-selected="true"] { background:linear-gradient(135deg,rgba(99,102,241,0.32),rgba(124,58,237,0.26)); color:#fff; }
-    .request-date-input { width:100%; min-height:48px; color-scheme:dark; cursor:pointer; }
-    .request-date-input::-webkit-calendar-picker-indicator { cursor:pointer; opacity:0.75; }
-    .request-date-input::-webkit-calendar-picker-indicator:hover { opacity:1; }
-    .request-form-field.is-invalid .request-form-control, .request-form-field.is-invalid .request-upload-zone, .request-form-field.is-invalid .request-priority-trigger { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.12); }
+    .request-date-picker { position:relative; }
+    .request-date-trigger { width:100%; min-height:48px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(148,163,184,0.16); border-radius:13px; background:#080d18; color:#f8fafc; font-family:'Inter Tight',sans-serif; font-size:0.95rem; font-weight:700; padding:13px 14px; cursor:pointer; text-align:left; transition:border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease; }
+    .request-date-trigger:hover { border-color:rgba(129,140,248,0.34); background:#0b1020; }
+    .request-date-trigger:focus-visible, .request-date-picker.is-open .request-date-trigger { outline:none; border-color:#6366f1; box-shadow:0 0 0 4px rgba(99,102,241,0.18); background:#0b1020; }
+    .request-date-trigger i { color:#818cf8; font-size:0.95rem; }
+    .request-date-placeholder { color:#64748b; font-weight:700; }
+    .request-date-trigger.has-value .request-date-placeholder { color:#f8fafc; }
+    .request-date-calendar { position:fixed; z-index:1105; width:min(316px, calc(100vw - 24px)); box-sizing:border-box; border:1px solid rgba(129,140,248,0.24); border-radius:16px; background:linear-gradient(180deg,#111827 0%,#080d18 100%); padding:14px; box-shadow:0 24px 70px rgba(0,0,0,0.56), 0 0 0 1px rgba(255,255,255,0.025) inset; }
+    .request-date-calendar[hidden] { display:none; }
+    .request-date-calendar-header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+    .request-date-calendar-header strong { color:#fff; font-size:1rem; letter-spacing:-0.01em; }
+    .request-date-nav, .request-date-footer button { border:1px solid rgba(129,140,248,0.18); border-radius:10px; background:rgba(99,102,241,0.1); color:#c4b5fd; cursor:pointer; font-family:'Inter Tight',sans-serif; font-weight:800; transition:background 0.16s ease,border-color 0.16s ease,color 0.16s ease; }
+    .request-date-nav { width:34px; height:34px; }
+    .request-date-nav:hover, .request-date-nav:focus-visible, .request-date-footer button:hover, .request-date-footer button:focus-visible { outline:none; background:rgba(99,102,241,0.22); border-color:rgba(129,140,248,0.42); color:#fff; }
+    .request-date-weekdays, .request-date-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+    .request-date-weekdays { margin-bottom:6px; color:#818cf8; font-size:0.73rem; font-weight:900; text-align:center; }
+    .request-date-day { min-height:34px; border:1px solid transparent; border-radius:10px; background:transparent; color:#e5e7eb; cursor:pointer; font-family:'Inter Tight',sans-serif; font-size:0.88rem; font-weight:800; }
+    .request-date-day:hover, .request-date-day:focus-visible { outline:none; background:rgba(99,102,241,0.16); border-color:rgba(129,140,248,0.28); color:#fff; }
+    .request-date-day.is-outside { color:#475569; }
+    .request-date-day.is-today:not(.is-selected) { border-color:rgba(196,181,253,0.55); box-shadow:0 0 0 2px rgba(99,102,241,0.12) inset; }
+    .request-date-day.is-selected { background:linear-gradient(135deg,#6366f1,#7c3aed); border-color:rgba(199,210,254,0.5); color:#fff; box-shadow:0 8px 18px rgba(99,102,241,0.28); }
+    .request-date-day:disabled { opacity:0.32; color:#64748b; cursor:not-allowed; box-shadow:none; }
+    .request-date-day:disabled:hover { background:transparent; border-color:transparent; color:#64748b; }
+    .request-date-footer { display:flex; justify-content:space-between; gap:10px; border-top:1px solid rgba(255,255,255,0.06); margin-top:12px; padding-top:12px; }
+    .request-date-footer button { min-height:34px; padding:0 12px; }
+    .request-form-field.is-invalid .request-form-control, .request-form-field.is-invalid .request-upload-zone, .request-form-field.is-invalid .request-priority-trigger, .request-form-field.is-invalid .request-date-trigger { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.12); }
     .request-form-error { min-height:18px; color:#fca5a5; font-size:0.82rem; }
     .request-upload-zone { border:1.5px dashed rgba(129,140,248,0.34); border-radius:16px; background:rgba(8,13,24,0.86); padding:22px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:border-color 0.18s ease, background 0.18s ease, transform 0.18s ease; }
     .request-upload-zone:hover, .request-upload-zone:focus-visible { border-color:#818cf8; background:rgba(99,102,241,0.08); outline:none; }
@@ -624,9 +646,28 @@
               <span id="project-request-priority-error" class="request-form-error" aria-live="polite"></span>
             </div>
 
-            <div class="request-form-field" data-field="deliveryDate">
-              <label for="project-request-delivery-date">Proje Teslim Tarihi</label>
-              <input type="date" id="project-request-delivery-date" class="request-form-control request-date-input" autocomplete="off" aria-describedby="project-request-delivery-date-helper project-request-delivery-date-error">
+            <div class="request-form-field request-date-picker" data-field="deliveryDate" data-request-date-picker>
+              <label for="project-request-delivery-date-trigger">Proje Teslim Tarihi</label>
+              <button type="button" class="request-date-trigger" id="project-request-delivery-date-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="project-request-delivery-date-calendar" aria-describedby="project-request-delivery-date-helper project-request-delivery-date-error">
+                <span class="request-date-placeholder" data-request-date-display>Tarih seçin</span>
+                <i class="far fa-calendar-alt" aria-hidden="true"></i>
+              </button>
+              <input type="hidden" id="project-request-delivery-date" name="requestedDeliveryDate" value="">
+              <div class="request-date-calendar" id="project-request-delivery-date-calendar" role="dialog" aria-modal="false" aria-label="Proje teslim tarihi takvimi" hidden>
+                <div class="request-date-calendar-header">
+                  <button type="button" class="request-date-nav" data-request-date-prev aria-label="Önceki ay"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+                  <strong data-request-date-month>Temmuz 2026</strong>
+                  <button type="button" class="request-date-nav" data-request-date-next aria-label="Sonraki ay"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+                </div>
+                <div class="request-date-weekdays" aria-hidden="true">
+                  <span>Pt</span><span>Sa</span><span>Ça</span><span>Pe</span><span>Cu</span><span>Ct</span><span>Pa</span>
+                </div>
+                <div class="request-date-grid" data-request-date-grid></div>
+                <div class="request-date-footer">
+                  <button type="button" data-request-date-clear>Temizle</button>
+                  <button type="button" data-request-date-today>Bugün</button>
+                </div>
+              </div>
               <span id="project-request-delivery-date-helper" class="request-form-helper">Projeyi teslim almak istediğiniz hedef tarihi seçebilirsiniz.</span>
               <span id="project-request-delivery-date-error" class="request-form-error" aria-live="polite"></span>
             </div>
@@ -1129,6 +1170,16 @@
             priority: document.getElementById("project-request-priority")
         };
         const deliveryDateInput = document.getElementById("project-request-delivery-date");
+        const deliveryDatePicker = document.querySelector("[data-request-date-picker]");
+        const deliveryDateTrigger = document.getElementById("project-request-delivery-date-trigger");
+        const deliveryDateDisplay = deliveryDatePicker ? deliveryDatePicker.querySelector("[data-request-date-display]") : null;
+        const deliveryDateCalendar = document.getElementById("project-request-delivery-date-calendar");
+        const deliveryDateMonth = deliveryDatePicker ? deliveryDatePicker.querySelector("[data-request-date-month]") : null;
+        const deliveryDateGrid = deliveryDatePicker ? deliveryDatePicker.querySelector("[data-request-date-grid]") : null;
+        const deliveryDatePrev = deliveryDatePicker ? deliveryDatePicker.querySelector("[data-request-date-prev]") : null;
+        const deliveryDateNext = deliveryDatePicker ? deliveryDatePicker.querySelector("[data-request-date-next]") : null;
+        const deliveryDateClear = deliveryDatePicker ? deliveryDatePicker.querySelector("[data-request-date-clear]") : null;
+        const deliveryDateToday = deliveryDatePicker ? deliveryDatePicker.querySelector("[data-request-date-today]") : null;
         const requiredMessages = {
             projectName: "Proje Adı alanı zorunludur.",
             projectDescription: "Proje Açıklaması alanı zorunludur.",
@@ -1456,24 +1507,22 @@
 
         const validateForm = () => Object.keys(fields).reduce((isValid, fieldName) => validateField(fieldName) && isValid, true);
 
-        const formatLocalDateForInput = (date) => {
+        const turkishMonthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+
+        const formatDateForPayload = (date) => {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, "0");
             const day = String(date.getDate()).padStart(2, "0");
             return `${year}-${month}-${day}`;
         };
 
-        const setDeliveryDateError = (message = "") => {
-            if (!deliveryDateInput) return;
-            const wrapper = deliveryDateInput.closest(".request-form-field");
-            const error = document.getElementById("project-request-delivery-date-error");
-            if (wrapper) wrapper.classList.toggle("is-invalid", Boolean(message));
-            if (error) error.textContent = message;
-            if (message) deliveryDateInput.setAttribute("aria-invalid", "true");
-            else deliveryDateInput.removeAttribute("aria-invalid");
+        const formatDateForDisplay = (date) => {
+            const day = String(date.getDate()).padStart(2, "0");
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            return `${day}.${month}.${date.getFullYear()}`;
         };
 
-        const parseLocalDateInput = (value) => {
+        const parsePayloadDate = (value) => {
             const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
             if (!match) return null;
             const year = Number(match[1]);
@@ -1484,21 +1533,130 @@
             return parsedDate;
         };
 
-        const refreshDeliveryDateMin = () => {
-            if (deliveryDateInput) deliveryDateInput.min = formatLocalDateForInput(new Date());
+        let visibleDeliveryMonth = new Date();
+
+        const getTodayStart = () => {
+            const now = new Date();
+            return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        };
+
+        const setDeliveryDateError = (message = "") => {
+            if (!deliveryDateInput) return;
+            const wrapper = deliveryDateInput.closest(".request-form-field");
+            const error = document.getElementById("project-request-delivery-date-error");
+            if (wrapper) wrapper.classList.toggle("is-invalid", Boolean(message));
+            if (error) error.textContent = message;
+            const ariaInvalid = message ? "true" : "false";
+            deliveryDateInput.setAttribute("aria-invalid", ariaInvalid);
+            if (deliveryDateTrigger) deliveryDateTrigger.setAttribute("aria-invalid", ariaInvalid);
+        };
+
+        const syncDeliveryDateDisplay = () => {
+            if (!deliveryDateInput || !deliveryDateDisplay || !deliveryDateTrigger) return;
+            const selectedDate = parsePayloadDate(deliveryDateInput.value);
+            deliveryDateDisplay.textContent = selectedDate ? formatDateForDisplay(selectedDate) : "Tarih seçin";
+            deliveryDateTrigger.classList.toggle("has-value", Boolean(selectedDate));
         };
 
         const validateDeliveryDate = () => {
             if (!deliveryDateInput) return true;
             const value = deliveryDateInput.value.trim();
             if (!value) { setDeliveryDateError(""); return true; }
-            const selectedDate = parseLocalDateInput(value);
+            const selectedDate = parsePayloadDate(value);
             if (!selectedDate) { setDeliveryDateError("Geçerli bir teslim tarihi seçin."); return false; }
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const today = getTodayStart();
             if (selectedDate.getTime() < today.getTime()) { setDeliveryDateError("Geçmiş bir teslim tarihi seçemezsiniz."); return false; }
             setDeliveryDateError("");
             return true;
+        };
+
+        const positionDeliveryCalendar = () => {
+            if (!deliveryDateTrigger || !deliveryDateCalendar || deliveryDateCalendar.hidden) return;
+            const rect = deliveryDateTrigger.getBoundingClientRect();
+            const width = Math.min(316, window.innerWidth - 24);
+            const left = Math.min(Math.max(12, rect.left), window.innerWidth - width - 12);
+            const below = rect.bottom + 8;
+            const height = deliveryDateCalendar.offsetHeight || 360;
+            const top = below + height <= window.innerHeight - 12 ? below : Math.max(12, rect.top - height - 8);
+            deliveryDateCalendar.style.left = `${left}px`;
+            deliveryDateCalendar.style.top = `${top}px`;
+            deliveryDateCalendar.style.width = `${width}px`;
+        };
+
+        const renderDeliveryCalendar = () => {
+            if (!deliveryDateMonth || !deliveryDateGrid) return;
+            const selectedDate = parsePayloadDate(deliveryDateInput.value);
+            const today = getTodayStart();
+            const year = visibleDeliveryMonth.getFullYear();
+            const month = visibleDeliveryMonth.getMonth();
+            deliveryDateMonth.textContent = `${turkishMonthNames[month]} ${year}`;
+            deliveryDateGrid.innerHTML = "";
+            const firstDay = new Date(year, month, 1);
+            const startOffset = (firstDay.getDay() + 6) % 7;
+            const gridStart = new Date(year, month, 1 - startOffset);
+            for (let index = 0; index < 42; index += 1) {
+                const cellDate = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + index);
+                const payloadValue = formatDateForPayload(cellDate);
+                const isOutside = cellDate.getMonth() !== month;
+                const isPast = cellDate.getTime() < today.getTime();
+                const isSelected = selectedDate && cellDate.getTime() === selectedDate.getTime();
+                const isToday = cellDate.getTime() === today.getTime();
+                const dayButton = document.createElement("button");
+                dayButton.type = "button";
+                dayButton.className = "request-date-day";
+                dayButton.textContent = String(cellDate.getDate());
+                dayButton.dataset.date = payloadValue;
+                dayButton.setAttribute("aria-label", `${formatDateForDisplay(cellDate)} tarihini seç`);
+                dayButton.classList.toggle("is-outside", isOutside);
+                dayButton.classList.toggle("is-selected", Boolean(isSelected));
+                dayButton.classList.toggle("is-today", isToday);
+                if (isSelected) dayButton.setAttribute("aria-pressed", "true");
+                if (isPast) dayButton.disabled = true;
+                dayButton.addEventListener("click", () => {
+                    if (dayButton.disabled) return;
+                    deliveryDateInput.value = payloadValue;
+                    syncDeliveryDateDisplay();
+                    setDeliveryDateError("");
+                    closeDeliveryCalendar();
+                    deliveryDateTrigger?.focus();
+                });
+                deliveryDateGrid.appendChild(dayButton);
+            }
+            window.requestAnimationFrame(positionDeliveryCalendar);
+        };
+
+        const openDeliveryCalendar = () => {
+            if (!deliveryDatePicker || !deliveryDateTrigger || !deliveryDateCalendar) return;
+            const selectedDate = parsePayloadDate(deliveryDateInput.value);
+            visibleDeliveryMonth = selectedDate || getTodayStart();
+            deliveryDateCalendar.hidden = false;
+            deliveryDatePicker.classList.add("is-open");
+            deliveryDateTrigger.setAttribute("aria-expanded", "true");
+            renderDeliveryCalendar();
+        };
+
+        const closeDeliveryCalendar = () => {
+            if (!deliveryDatePicker || !deliveryDateTrigger || !deliveryDateCalendar) return;
+            deliveryDateCalendar.hidden = true;
+            deliveryDatePicker.classList.remove("is-open");
+            deliveryDateTrigger.setAttribute("aria-expanded", "false");
+        };
+
+        const selectDeliveryDate = (date) => {
+            if (!deliveryDateInput) return;
+            deliveryDateInput.value = formatDateForPayload(date);
+            syncDeliveryDateDisplay();
+            setDeliveryDateError("");
+            closeDeliveryCalendar();
+        };
+
+        const clearDeliveryDate = () => {
+            if (!deliveryDateInput) return;
+            deliveryDateInput.value = "";
+            syncDeliveryDateDisplay();
+            setDeliveryDateError("");
+            closeDeliveryCalendar();
+            deliveryDateTrigger?.focus();
         };
 
         const openModal = () => {
@@ -1506,7 +1664,7 @@
             modal.classList.add("is-open");
             modal.setAttribute("aria-hidden", "false");
             document.body.classList.add("project-request-modal-open");
-            refreshDeliveryDateMin();
+            syncDeliveryDateDisplay();
             setDeliveryDateError("");
             window.requestAnimationFrame(() => focusTarget && focusTarget.focus());
         };
@@ -1522,6 +1680,7 @@
             if (recorderPanel) recorderPanel.classList.remove("is-visible");
             modal.classList.remove("is-open");
             modal.setAttribute("aria-hidden", "true");
+            closeDeliveryCalendar();
             document.body.classList.remove("project-request-modal-open");
             if (lastFocusedElement && typeof lastFocusedElement.focus === "function") lastFocusedElement.focus();
             else trigger.focus();
@@ -1535,16 +1694,33 @@
             });
         });
 
-        if (deliveryDateInput) {
-            refreshDeliveryDateMin();
-            deliveryDateInput.addEventListener("input", () => {
-                if (statusMessage) statusMessage.classList.remove("is-visible");
-                validateDeliveryDate();
+        if (deliveryDateInput && deliveryDateTrigger && deliveryDateCalendar) {
+            syncDeliveryDateDisplay();
+            deliveryDateTrigger.addEventListener("click", openDeliveryCalendar);
+            deliveryDateTrigger.addEventListener("keydown", (event) => {
+                if (["Enter", " ", "ArrowDown"].includes(event.key)) {
+                    event.preventDefault();
+                    openDeliveryCalendar();
+                } else if (event.key === "Escape") {
+                    closeDeliveryCalendar();
+                }
             });
-            deliveryDateInput.addEventListener("change", () => {
-                if (statusMessage) statusMessage.classList.remove("is-visible");
-                validateDeliveryDate();
+            deliveryDatePrev?.addEventListener("click", () => {
+                visibleDeliveryMonth = new Date(visibleDeliveryMonth.getFullYear(), visibleDeliveryMonth.getMonth() - 1, 1);
+                renderDeliveryCalendar();
             });
+            deliveryDateNext?.addEventListener("click", () => {
+                visibleDeliveryMonth = new Date(visibleDeliveryMonth.getFullYear(), visibleDeliveryMonth.getMonth() + 1, 1);
+                renderDeliveryCalendar();
+            });
+            deliveryDateClear?.addEventListener("click", clearDeliveryDate);
+            deliveryDateToday?.addEventListener("click", () => selectDeliveryDate(getTodayStart()));
+            deliveryDateCalendar.addEventListener("click", (event) => event.stopPropagation());
+            document.addEventListener("click", (event) => {
+                if (!deliveryDatePicker.contains(event.target) && !deliveryDateCalendar.contains(event.target)) closeDeliveryCalendar();
+            });
+            window.addEventListener("resize", positionDeliveryCalendar);
+            document.querySelector(".project-request-body")?.addEventListener("scroll", positionDeliveryCalendar);
         }
 
         if (priorityTrigger && priorityDropdown) {
@@ -1658,6 +1834,11 @@
 
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape" && ["requesting", "countdown", "recording", "paused", "stopping"].includes(recorderState)) { setRecorderHelper("Önce ekran kaydını bitirin veya iptal edin.", true); event.preventDefault(); return; }
+            if (event.key === "Escape" && deliveryDateCalendar && !deliveryDateCalendar.hidden) {
+                closeDeliveryCalendar();
+                deliveryDateTrigger?.focus();
+                return;
+            }
             if (event.key === "Escape" && priorityDropdown && priorityDropdown.classList.contains("is-open")) {
                 closePriorityDropdown();
                 return;
