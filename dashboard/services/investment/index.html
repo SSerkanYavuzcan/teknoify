@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="teknoify-market-api-base" content="" />
   <title>Yatırım | Teknoify</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-2">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-2">
+  <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-live-data-1">
 </head>
 <body>
   <div id="tk-global-sidebar-root"></div>
@@ -16,7 +17,7 @@
       <div class="page-info">
         <span class="eyebrow">Teknoify Markets</span>
         <h1>Yatırım</h1>
-        <p>Canlı kripto verileri ve demo piyasa özetleriyle kompakt finans panosu.</p>
+        <p>Kripto, ABD ve Borsa İstanbul piyasalarını tek ekrandan takip edin.</p>
       </div>
       <button class="investment-user-profile" id="investment-profile-button" type="button" aria-label="Profil seçeneklerini aç">
         <span id="investment-user-name">—</span>
@@ -25,87 +26,43 @@
     </header>
 
     <section class="market-overview-grid" aria-label="Piyasa özet kartları">
-      <article class="overview-card positive-card" aria-label="BIST 100 demo özeti">
-        <div><span class="overview-label">BIST 100</span><small>İstanbul endeksi · Demo</small></div>
-        <strong class="overview-value">10.842</strong>
-        <span class="overview-change positive">+1.24%</span>
-        <svg class="sparkline" viewBox="0 0 120 42" aria-hidden="true"><path d="M4 31 L20 26 L35 29 L50 18 L65 21 L80 12 L96 16 L116 7"/></svg>
-        <span class="demo-badge">Demo</span>
+      <article class="overview-card" data-overview-card="BIST100" aria-label="BIST 100 piyasa özeti">
+        <header class="overview-card-head"><span class="asset-token">B</span><div><span class="overview-label" data-overview-title>BIST 100</span><small data-overview-subtitle>Borsa İstanbul</small></div><span class="freshness-badge upcoming" data-overview-status>Yakında</span></header>
+        <div class="overview-value-row"><strong class="overview-value" data-overview-price>—</strong><span class="overview-change neutral" data-overview-change>—</span><small data-overview-updated>—</small></div>
+        <div class="overview-chart-shell"><div id="overview-chart-bist100" class="overview-chart"></div><p class="overview-empty">Veri entegrasyonu hazırlanıyor.</p></div>
       </article>
-      <article class="overview-card negative-card" aria-label="S&P 500 demo özeti">
-        <div><span class="overview-label">S&amp;P 500</span><small>ABD büyük ölçek · Demo</small></div>
-        <strong class="overview-value">5,118</strong>
-        <span class="overview-change negative">-0.43%</span>
-        <svg class="sparkline" viewBox="0 0 120 42" aria-hidden="true"><path d="M4 9 L20 14 L35 12 L50 20 L65 18 L80 27 L96 25 L116 34"/></svg>
-        <span class="demo-badge">Demo</span>
+      <article class="overview-card" data-overview-card="SP500" aria-label="S&P 500 piyasa özeti">
+        <header class="overview-card-head"><span class="asset-token">S</span><div><span class="overview-label" data-overview-title>S&amp;P 500</span><small data-overview-subtitle>ABD Büyük Şirketler Endeksi</small></div><span class="freshness-badge upcoming" data-overview-status>Yakında</span></header>
+        <div class="overview-value-row"><strong class="overview-value" data-overview-price>—</strong><span class="overview-change neutral" data-overview-change>—</span><small data-overview-updated>—</small></div>
+        <div class="overview-chart-shell"><div id="overview-chart-sp500" class="overview-chart"></div><p class="overview-empty">Veri entegrasyonu hazırlanıyor.</p></div>
       </article>
-      <article class="overview-card positive-card" aria-label="BTC USD canlı özeti">
-        <div><span class="overview-label">BTC/USD</span><small id="btc-overview-source">Canlı kripto akışı</small></div>
-        <strong class="overview-value" id="btc-overview-price">—</strong>
-        <span class="overview-change positive" id="btc-overview-change">—</span>
-        <svg class="sparkline" viewBox="0 0 120 42" aria-hidden="true"><path d="M4 34 L18 27 L33 30 L47 22 L63 24 L78 15 L94 18 L116 8"/></svg>
-        <span class="live-chip" id="btc-overview-chip">Canlı</span>
+      <article class="overview-card" data-overview-card="BTCUSD" aria-label="BTC USD piyasa özeti">
+        <header class="overview-card-head"><span class="asset-token">₿</span><div><span class="overview-label" data-overview-title>BTC/USD</span><small data-overview-subtitle>Bitcoin</small></div><span class="freshness-badge connecting" data-overview-status>Bağlanıyor</span></header>
+        <div class="overview-value-row"><strong class="overview-value" data-overview-price>—</strong><span class="overview-change neutral" data-overview-change>—</span><small data-overview-updated>—</small></div>
+        <div class="overview-chart-shell loading"><div id="overview-chart-btcusd" class="overview-chart"></div><p class="overview-empty">Veri entegrasyonu hazırlanıyor.</p></div>
       </article>
     </section>
 
     <section class="market-topbar" aria-label="Seçili piyasa özeti">
-      <div class="selected-asset-summary">
-        <span class="asset-token" id="selected-asset-icon">B</span>
-        <div class="asset-identity">
-          <strong id="selected-display-symbol">BTC-USDT</strong>
-          <span id="selected-asset-name">Bitcoin</span>
-        </div>
-        <div class="asset-live-price">
-          <strong id="selected-current-price">—</strong>
-          <span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span>
-        </div>
-      </div>
-      <div class="market-meta">
-        <span id="market-status" class="market-status connecting" aria-live="polite"><span></span>Bağlanıyor</span>
-        <span class="timezone-pill">UTC+3</span>
-      </div>
+      <div class="selected-asset-summary"><span class="asset-token" id="selected-asset-icon">B</span><div class="asset-identity"><strong id="selected-display-symbol">BTC-USDT</strong><span id="selected-asset-name">Bitcoin</span></div><div class="asset-live-price"><strong id="selected-current-price">—</strong><span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span></div></div>
+      <div class="market-meta"><span id="market-status" class="market-status connecting" aria-live="polite"><span></span>Bağlanıyor</span><span class="timezone-pill">UTC+3</span></div>
     </section>
 
     <section class="investment-dashboard-grid" aria-label="Yatırım piyasa panosu">
       <section class="market-chart-card dashboard-card">
-        <div class="chart-card-header">
-          <button class="symbol-selector" type="button" aria-label="Seçili varlık"><span id="chart-selected-symbol">BTC/USD</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-          <div class="chart-actions">
-            <div class="interval-controls" role="group" aria-label="Grafik zaman aralığı">
-              <button type="button" data-interval="15m">1D</button><button type="button" data-interval="4h">1W</button><button type="button" data-interval="1d">1M</button>
-            </div>
-            <select id="advanced-interval" class="advanced-interval" aria-label="Gelişmiş zaman aralığı"><option value="15m">15dk</option><option value="1h" selected>1sa</option><option value="4h">4sa</option><option value="1d">1g</option></select>
-          </div>
-        </div>
+        <div class="chart-card-header"><button class="symbol-selector" type="button" aria-label="Seçili varlık"><span id="chart-selected-symbol">BTC/USD</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button><div class="chart-actions"><div class="interval-controls" role="group" aria-label="Grafik zaman aralığı"><button type="button" data-interval="15m">1D</button><button type="button" data-interval="4h">1W</button><button type="button" data-interval="1d">1M</button></div><select id="advanced-interval" class="advanced-interval" aria-label="Gelişmiş zaman aralığı"><option value="15m">15dk</option><option value="1h" selected>1sa</option><option value="4h">4sa</option><option value="1d">1g</option></select></div></div>
         <div class="live-price-pill"><span>Son fiyat</span><strong id="chart-live-price">—</strong></div>
         <div id="chart-message" class="chart-message" hidden><span>Piyasa verileri şu anda yüklenemiyor.</span><button type="button" id="retry-market-load">Tekrar Dene</button></div>
-        <div class="chart-panel loading" id="price-chart-card" aria-label="Mum fiyat grafiği"><div id="investment-price-chart"></div></div>
-        <div class="chart-panel volume-panel loading" id="volume-chart-card" aria-label="Hacim grafiği"><div id="investment-volume-chart"></div></div>
-        <div class="indicator-panel loading" id="rsi-chart-card" aria-label="RSI göstergesi"><span>RSI</span><div id="investment-rsi-chart"></div></div>
-        <div class="indicator-panel loading" id="macd-chart-card" aria-label="MACD göstergesi"><span>MACD</span><div id="investment-macd-chart"></div></div>
-        <p class="market-disclaimer">Buradaki piyasa verileri yalnızca bilgilendirme amaçlıdır ve yatırım tavsiyesi değildir. Demo etiketli piyasa ögeleri canlı veri değildir.</p>
+        <div class="chart-panel loading" id="price-chart-card" aria-label="Mum fiyat grafiği"><div id="investment-price-chart"></div></div><div class="chart-panel volume-panel loading" id="volume-chart-card" aria-label="Hacim grafiği"><div id="investment-volume-chart"></div></div><div class="indicator-panel loading" id="rsi-chart-card" aria-label="RSI göstergesi"><span>RSI</span><div id="investment-rsi-chart"></div></div><div class="indicator-panel loading" id="macd-chart-card" aria-label="MACD göstergesi"><span>MACD</span><div id="investment-macd-chart"></div></div>
+        <p class="market-disclaimer">Buradaki piyasa verileri yalnızca bilgilendirme amaçlıdır ve yatırım tavsiyesi değildir. Veri güncelliği piyasa ve sağlayıcıya göre değişebilir.</p>
       </section>
-
-      <aside class="market-watchlist dashboard-card" aria-label="Popüler varlıklar">
-        <div class="watchlist-head"><h2>Popüler Varlıklar</h2><span id="watchlist-updated">—</span></div>
-        <div class="watchlist-toolbar">
-          <input id="watchlist-search" class="watchlist-search" type="search" placeholder="Varlık ara" autocomplete="off" aria-label="Varlık ara" />
-          <button type="button" id="favorite-filter-toggle" class="favorite-filter-toggle" aria-pressed="false" aria-label="Sadece favorileri göster"><i class="fas fa-star"></i></button>
-        </div>
-        <p id="watchlist-error" class="watchlist-error" hidden>Fiyat listesi şu anda güncellenemiyor.</p>
-        <div id="watchlist-rows" class="watchlist-rows" aria-live="polite"></div>
-      </aside>
+      <aside class="market-watchlist dashboard-card" aria-label="Popüler varlıklar"><div class="watchlist-head"><h2>Popüler Varlıklar</h2><span id="watchlist-updated">—</span></div><div class="watchlist-toolbar"><input id="watchlist-search" class="watchlist-search" type="search" placeholder="Varlık ara" autocomplete="off" aria-label="Varlık ara" /><button type="button" id="favorite-filter-toggle" class="favorite-filter-toggle" aria-pressed="false" aria-label="Sadece favorileri göster"><i class="fas fa-star"></i></button></div><p id="watchlist-error" class="watchlist-error" hidden>Fiyat listesi şu anda güncellenemiyor.</p><div id="watchlist-rows" class="watchlist-rows" aria-live="polite"></div></aside>
     </section>
 
-    <section class="market-news-card dashboard-card" aria-labelledby="market-news-title">
-      <div class="news-head"><h2 id="market-news-title">Piyasa Haberleri</h2><span>Demo başlıklar</span></div>
-      <div class="news-chip-row" aria-label="Demo piyasa haberleri">
-        <span>Fed Faiz Kararı Bekleniyor</span><span>Kripto Dünyasında Son Gelişmeler</span><span>Teknoloji Hisselerinde Yükseliş</span><span>Küresel Piyasalarda Dalgalanma</span>
-      </div>
-    </section>
+    <section class="market-news-card dashboard-card" aria-labelledby="market-news-title"><div class="news-head"><h2 id="market-news-title">Piyasa Haberleri</h2><span class="freshness-badge upcoming">Yakında</span></div><p class="news-empty-state">Güncel piyasa haberleri entegrasyonu hazırlanıyor.</p></section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script type="module" src="/dashboard/shared/sidebar.js?v=investment-market-2"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-market-2"></script>
+  <script type="module" src="/dashboard/shared/sidebar.js?v=investment-market-live-data-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-market-live-data-1"></script>
 </body>
 </html>
