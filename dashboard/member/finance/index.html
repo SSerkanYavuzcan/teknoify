@@ -4,39 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yatırım & Finans | Teknoify</title>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
+
   <link rel="stylesheet" href="/css/dashboard.css?v=20260503">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
 </head>
 <body>
 
   <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
-    
-    <header class="top-bar">
-      <div class="page-info" style="display: flex; align-items: center; gap: 20px; padding-left: 10px;">
-        <h2>Yatırım & Finans</h2>
-        <button class="filter-btn active" style="padding: 8px 16px; background: #6366f1; border-radius: 8px; color:white; border: none; cursor: pointer;">
-            <i class="fas fa-edit"></i> Verileri Güncelle
-        </button>
-      </div>
-      
-      <div class="user-profile">
-        <div style="text-align: right; line-height: 1.2;">
-            <span id="user-name-display" style="display:block; font-weight:600;">Yükleniyor...</span>
-            <span style="font-size:0.7rem; color:#a1a1aa;">Premium Üye</span>
-        </div>
-        <div class="avatar" id="user-avatar" style="background:#6366f1;">U</div>
-      </div>
-    </header>
+
+    <div id="tk-member-topbar-root"></div>
 
     <div class="content-scroll">
       <div class="fin-dashboard-grid">
-        
+
         <div class="fin-card col-portfoy">
           <div class="fin-card-title">
             <span>Portföy Performansı <i class="fas fa-info-circle info-icon"></i></span>
@@ -45,7 +31,7 @@
               <span class="filter-btn"><i class="fas fa-expand"></i></span>
             </div>
           </div>
-          
+
           <div style="display: flex; justify-content: space-between;">
             <div>
               <p class="text-sub">Toplam Portföy Değeri</p>
@@ -63,7 +49,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div style="width: 60%; position: relative;">
                 <div id="chart-main-portfolio" style="height: 180px; margin-top:-20px;"></div>
                 <div class="chart-toggle-legend" style="position: absolute; bottom: 0; right: 0;">
@@ -123,37 +109,37 @@
             <div id="chart-donut-assets" style="width: 180px;"></div>
             <div class="varlik-legend">
                 <div class="varlik-item">
-                    <span><div class="toggle-dot" style="background:#a855f7;"></div> Hisse Senedi</span> 
+                    <span><div class="toggle-dot" style="background:#a855f7;"></div> Hisse Senedi</span>
                     <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
                 </div>
                 <div class="varlik-subitem"><span>- BIST</span> <span>₺0</span></div>
                 <div class="varlik-subitem"><span>- ABD Hisseleri</span> <span>₺0</span></div>
                 <div class="varlik-subitem"><span>- Temettü</span> <span>₺0</span></div>
                 <div style="height:8px;"></div>
-                
+
                 <div class="varlik-item">
-                    <span><div class="toggle-dot" style="background:#3b82f6;"></div> Fonlar</span> 
+                    <span><div class="toggle-dot" style="background:#3b82f6;"></div> Fonlar</span>
                     <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
                 </div>
                 <div class="varlik-subitem"><span>- Hisse Fonları</span> <span>₺0</span></div>
                 <div class="varlik-subitem"><span>- Eurobond Fonları</span> <span>₺0</span></div>
                 <div class="varlik-subitem"><span>- Para Piyasası</span> <span>₺0</span></div>
                 <div style="height:8px;"></div>
-                
+
                 <div class="varlik-item">
-                    <span><div class="toggle-dot" style="background:#f97316;"></div> Kripto</span> 
+                    <span><div class="toggle-dot" style="background:#f97316;"></div> Kripto</span>
                     <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
                 </div>
                 <div class="varlik-subitem"><span>- BTC</span> <span>₺0</span></div>
                 <div class="varlik-subitem"><span>- ETH</span> <span>₺0</span></div>
                 <div style="height:8px;"></div>
-                
+
                 <div class="varlik-item">
-                    <span><div class="toggle-dot" style="background:#f59e0b;"></div> Emtia</span> 
+                    <span><div class="toggle-dot" style="background:#f59e0b;"></div> Emtia</span>
                     <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
                 </div>
                 <div class="varlik-item" style="margin-top:5px;">
-                    <span><div class="toggle-dot" style="background:#10b981;"></div> Nakit</span> 
+                    <span><div class="toggle-dot" style="background:#10b981;"></div> Nakit</span>
                     <span>0% &nbsp; <strong style="color:#fff;">₺0</strong></span>
                 </div>
             </div>
@@ -168,7 +154,7 @@
                   <div class="hedef-icon" style="color:#10b981;"><i class="fas fa-shield-alt"></i></div>
                   <div class="hedef-details">
                       <div class="hedef-row-1">
-                          <span class="hedef-title">Acil Durum Fonu</span> 
+                          <span class="hedef-title">Acil Durum Fonu</span>
                           <span class="hedef-amounts">₺0 / ₺0</span>
                       </div>
                       <div class="prog-bg" style="width:100%"><div class="prog-fill" style="width:0%; background:#10b981;"></div></div>
@@ -179,7 +165,7 @@
                   <div class="hedef-icon" style="color:#a855f7;"><i class="fas fa-home"></i></div>
                   <div class="hedef-details">
                       <div class="hedef-row-1">
-                          <span class="hedef-title">Ev Peşinatı</span> 
+                          <span class="hedef-title">Ev Peşinatı</span>
                           <span class="hedef-amounts">₺0 / ₺0</span>
                       </div>
                       <div class="prog-bg" style="width:100%"><div class="prog-fill" style="width:0%; background:#a855f7;"></div></div>
@@ -190,7 +176,7 @@
                   <div class="hedef-icon" style="color:#3b82f6;"><i class="fas fa-plane-departure"></i></div>
                   <div class="hedef-details">
                       <div class="hedef-row-1">
-                          <span class="hedef-title">Tatil Bütçesi</span> 
+                          <span class="hedef-title">Tatil Bütçesi</span>
                           <span class="hedef-amounts">₺0 / ₺0</span>
                       </div>
                       <div class="prog-bg" style="width:100%"><div class="prog-fill" style="width:0%; background:#3b82f6;"></div></div>
@@ -307,7 +293,7 @@
         <div class="fin-card col-tarayicilar">
           <div class="fin-card-title"><span>Finansal Tarayıcılar & Sinyaller <i class="fas fa-info-circle info-icon"></i></span></div>
           <div class="tarayici-grid">
-              
+
               <div class="tarayici-col">
                   <h4>Düşeni Kıranlar</h4>
                   <table class="mini-table">
@@ -392,17 +378,17 @@
 
   <div id="savings-modal" class="tk-center-overlay">
       <div class="tk-center-box wide-box">
-          
+
           <div class="tk-center-header">
               <span class="tk-center-title"><i class="fas fa-chart-line" style="color:#6366f1;"></i> Birikim & Tasarruf Performansı</span>
               <div class="modal-actions">
-                  
+
                   <div class="chart-currency-filters" style="display:flex; gap:5px; margin-right:15px; border-right: 1px solid rgba(255,255,255,0.1); padding-right:15px;">
                       <button class="currency-filter-btn active" data-curr="TL">TL</button>
                       <button class="currency-filter-btn" data-curr="USD">USD</button>
                       <button class="currency-filter-btn" data-curr="EUR">EUR</button>
                   </div>
-                  
+
                   <div class="chart-time-filters">
                       <button class="time-filter-btn" data-range="3">3A</button>
                       <button class="time-filter-btn" data-range="6">6A</button>
@@ -410,13 +396,13 @@
                       <button class="time-filter-btn" data-range="ytd">YTD</button>
                       <button class="time-filter-btn" data-range="all">Tümü</button>
                   </div>
-                  
+
                   <button class="btn-modal-action" id="btn-manual-mode" style="margin-left: 15px;">Düzenle</button>
                   <button class="btn-modal-action" id="btn-upload-mode">Yükle</button>
                   <button class="tk-center-close" style="margin-left:15px;"><i class="fas fa-times"></i></button>
               </div>
           </div>
-          
+
           <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
               <div class="chart-scroll-container">
                   <div class="chart-inner-wrapper" id="dynamic-chart-width">
@@ -465,14 +451,14 @@
                   <select class="tk-select" disabled><option>Dosya Seçilmedi</option></select>
                   <button class="btn-template" id="btn-download-template">Şablonu İndir</button>
               </div>
-              
+
               <div class="upload-section-title">Yüklenecek dosyayı seçin</div>
               <input type="file" id="file-upload-input" accept=".csv, .xlsx, .xls" style="display: none;" />
               <div class="upload-zone" id="upload-drag-zone">
                   <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; margin-bottom: 15px; color:#6366f1;"></i>
                   <p id="upload-file-name">Dosyayı yüklemek için bu alana tıklayın veya sürükleyin</p>
               </div>
-              
+
               <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 25px;">
                   <button class="btn-cancel" id="cancel-upload">Vazgeç</button>
                   <button class="btn-save-final" id="btn-confirm-upload" disabled style="opacity:0.5; cursor:not-allowed;">Dosyayı Yükle</button>
@@ -511,9 +497,11 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  
+
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
+  <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
+  <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
   <script type="module" src="/js/finance.js"></script>
-  
+
 </body>
 </html>

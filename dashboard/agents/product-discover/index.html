@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Product Discover | Teknoify Agents</title>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
+
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
   <link rel="stylesheet" href="/dashboard/agents/css/agent-main.css?v=1">
   <link rel="stylesheet" href="/dashboard/agents/product-discover/product-discover.css">
 </head>
@@ -64,24 +65,7 @@
   <div id="toast-container"></div>
 
   <main class="main-content">
-    <header class="top-bar">
-      <h2 style="font-weight: 600; margin: 0; color: #fff; font-size: 1.4rem;">
-        Product Discover
-        <span style="color: #71717a; font-size: 1rem; font-weight:400; margin-left:10px;">| AI Agent</span>
-      </h2>
-
-      <div
-        class="user-profile"
-        style="cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: background 0.2s;"
-        onmouseover="this.style.background='rgba(255,255,255,0.05)'"
-        onmouseout="this.style.background='transparent'"
-        onclick="if(window.SharedProfileManager) window.SharedProfileManager.openModal()"
-      >
-        <span id="user-name-display" style="font-weight: 500; color: #e4e4e7; font-size: 0.95rem;">Yükleniyor...</span>
-        <div class="top-avatar" id="user-avatar" style="background:#6366f1;">U</div>
-        <i class="fas fa-chevron-down" style="color: #71717a; font-size: 0.8rem; margin-left: 5px;"></i>
-      </div>
-    </header>
+    <div id="tk-member-topbar-root"></div>
 
     <div
       class="content-scroll"
@@ -412,7 +396,8 @@
   </div>
 
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
-  <script type="module" src="/dashboard/shared/profile-manager.js"></script>
+  <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
+  <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
   <script type="module" src="/dashboard/agents/product-discover/product-discover.js"></script>
 
 </body>

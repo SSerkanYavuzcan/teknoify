@@ -1,0 +1,138 @@
+.tk-member-topbar {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
+  background: #05080a;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 100;
+  gap: 20px;
+}
+
+.tk-member-greeting {
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+  font-size: 1.4rem;
+  min-width: 0;
+}
+
+.tk-member-greeting span {
+  color: #6366f1;
+}
+
+.tk-member-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tk-member-admin-slot:empty {
+  display: none;
+}
+
+.tk-member-admin-button {
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tk-member-admin-button:hover,
+.tk-member-admin-button:focus-visible {
+  background: #ea580c;
+  transform: translateY(-2px);
+  outline: 3px solid rgba(249, 115, 22, 0.3);
+  outline-offset: 3px;
+}
+
+.user-profile.tk-member-profile-trigger {
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.user-profile.tk-member-profile-trigger:hover,
+.user-profile.tk-member-profile-trigger:focus-visible {
+  background: rgba(255, 255, 255, 0.05);
+  outline: 3px solid rgba(99, 102, 241, 0.35);
+  outline-offset: 2px;
+}
+
+#user-name-display {
+  font-weight: 500;
+  color: #e4e4e7;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  background: #6366f1;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.tk-member-profile-trigger .fa-chevron-down {
+  color: #71717a;
+  font-size: 0.8rem;
+  margin-left: 5px;
+}
+
+@media (max-width: 900px) {
+  .tk-member-topbar { padding: 18px 20px; gap: 14px; }
+  .tk-member-greeting { font-size: 1.25rem; }
+  #user-name-display { max-width: 150px; }
+}
+
+@media (max-width: 520px) {
+  .tk-member-topbar { padding: 14px 12px; }
+  .tk-member-greeting { font-size: 1.05rem; }
+  #user-name-display { display: none; }
+  .user-profile.tk-member-profile-trigger { padding: 4px 8px; gap: 8px; }
+}

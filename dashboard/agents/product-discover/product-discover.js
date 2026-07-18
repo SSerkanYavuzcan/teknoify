@@ -2109,16 +2109,8 @@ onAuthStateChanged(auth, async (user) => {
         let name = user.displayName || user.email.split('@')[0] || "Kullanıcı";
         if (userData.profile && userData.profile.fullName) name = userData.profile.fullName;
 
-        document.getElementById("user-name-display").textContent = name;
         document.getElementById("chat-user-name").textContent = name;
-
-        const avatarEl = document.getElementById("user-avatar");
-        if (userData.profile && userData.profile.photoURL) {
-            avatarEl.innerHTML = `<img src="${userData.profile.photoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-            avatarEl.style.background = 'transparent';
-        } else {
-            avatarEl.innerHTML = name.charAt(0).toUpperCase();
-        }
+        window.TK_MEMBER_TOPBAR?.setIdentity({ name, photoURL: userData.profile?.photoURL || "" });
 
         const agentAccess = userData.agentAccess || rootData.agentAccess || {};
         const roleType = (userData.role && typeof userData.role === 'object') ? userData.role.type : (userData.role || 'member');
@@ -2130,7 +2122,8 @@ onAuthStateChanged(auth, async (user) => {
             return;
         }
 
-        window.USER_SESSION = { uid: user.uid, name: name, email: user.email, isAdmin: isAdmin };
+        window.USER_SESSION = { uid: user.uid, name: name, displayName: name, email: user.email, photoURL: userData.profile?.photoURL || "", isAdmin: isAdmin };
+        window.TK_MEMBER_TOPBAR?.setAdminAccess({ visible: Boolean(isAdmin), href: "/dashboard/admin.html" });
         if(typeof window.TK_RENDER_SIDEBAR === "function") window.TK_RENDER_SIDEBAR();
         
         document.getElementById("agent-main-view").style.opacity = "1";

@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
   <link rel="stylesheet" href="/css/dashboard.css?v=20260502">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
   <link rel="stylesheet" href="/css/analysis.css?v=20260502">
 
   <style>
@@ -57,14 +58,7 @@
   </div>
 
   <main class="main-content">
-    <header class="top-bar">
-      <h2 style="padding-left: 10px;">Fiyat Karşılaştırma</h2>
-      
-      <div class="user-profile">
-        <span id="user-name-display">Yükleniyor...</span>
-        <div class="avatar" id="user-avatar">U</div>
-      </div>
-    </header>
+    <div id="tk-member-topbar-root"></div>
 
     <div class="content-scroll">
       <div class="filter-bar">
@@ -150,6 +144,8 @@
   <script src="config.js?v=20260502"></script> 
 
   <script type="module" src="/dashboard/shared/sidebar.js"></script>
+  <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
+  <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
 
   <script type="module">
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -161,6 +157,8 @@
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             let displayName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
+            let photoURL = user.photoURL || "";
+            let roleType = "member";
 
             try {
                 // Firestore'dan profile.fullName verisini çekiyoruz
@@ -171,25 +169,23 @@
                     const data = snap.data();
                     if (data.profile) {
                         displayName = data.profile.fullName || data.profile.companyName || displayName;
+                        photoURL = data.profile.photoURL || data.profile.photoUrl || photoURL;
                     }
+                    roleType = data.role && typeof data.role === "object" ? data.role.type : (data.role || "member");
                 }
 
-                // UI Güncellemesi
-                const displayEl = document.getElementById("user-name-display");
-                const avatarEl = document.getElementById("user-avatar");
-                
-                if(displayEl) displayEl.textContent = displayName;
-                if(avatarEl) avatarEl.textContent = displayName.charAt(0).toUpperCase();
+                window.TK_MEMBER_TOPBAR?.setIdentity({ name: displayName, photoURL });
+                const idTokenResult = await user.getIdTokenResult().catch(() => ({ claims: {} }));
+                window.TK_MEMBER_TOPBAR?.setAdminAccess({ visible: Boolean(idTokenResult.claims?.admin || roleType === "admin"), href: "/dashboard/admin.html" });
 
             } catch (error) {
                 console.error("Profil verisi çekilemedi:", error);
                 // Çökerse varsayılan fallback
                 const fallbackName = user.displayName || user.email.split('@')[0] || "Kullanıcı";
-                document.getElementById("user-name-display").textContent = fallbackName;
-                document.getElementById("user-avatar").textContent = fallbackName.charAt(0).toUpperCase();
+                window.TK_MEMBER_TOPBAR?.setIdentity({ name: fallbackName, photoURL: user.photoURL || "" });
             }
 
-            window.USER_SESSION = { uid: user.uid, name: displayName, email: user.email };
+            window.USER_SESSION = { uid: user.uid, name: displayName, displayName, email: user.email };
             
             // Eğer sidebar hazıra verileri doldur
             if(typeof window.TK_RENDER_SIDEBAR === "function") {

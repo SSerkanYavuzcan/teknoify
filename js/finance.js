@@ -273,6 +273,8 @@ onAuthStateChanged(auth, async (user) => {
 
     const userRef = doc(db, "users", user.uid);
     let displayName = user.displayName || user.email?.split('@')[0] || "Kullanıcı";
+    let photoURL = user.photoURL || "";
+    let roleType = "member";
 
     try {
         const snap = await getDoc(userRef);
@@ -280,15 +282,18 @@ onAuthStateChanged(auth, async (user) => {
             const data = snap.data();
             globalHistory = data.dashboardStats?.finance?.history || {};
             globalTargetRate = data.dashboardStats?.finance?.targetRate || 35; 
-            if (data.profile) displayName = data.profile.fullName || data.profile.companyName || displayName;
+            if (data.profile) {
+                displayName = data.profile.fullName || data.profile.companyName || displayName;
+                photoURL = data.profile.photoURL || data.profile.photoUrl || photoURL;
+            }
+            roleType = data.role && typeof data.role === "object" ? data.role.type : (data.role || "member");
         }
-        if(document.getElementById("user-name-display")) {
-            document.getElementById("user-name-display").textContent = displayName;
-            document.getElementById("user-avatar").textContent = displayName.charAt(0).toUpperCase();
-        }
+        window.TK_MEMBER_TOPBAR?.setIdentity({ name: displayName, photoURL });
+        const idTokenResult = await user.getIdTokenResult().catch(() => ({ claims: {} }));
+        window.TK_MEMBER_TOPBAR?.setAdminAccess({ visible: Boolean(idTokenResult.claims?.admin || roleType === "admin"), href: "/dashboard/admin.html" });
     } catch (e) { console.error(e); }
 
-    window.USER_SESSION = { uid: user.uid, name: displayName, email: user.email };
+    window.USER_SESSION = { uid: user.uid, name: displayName, displayName, email: user.email };
     if(typeof window.TK_RENDER_SIDEBAR === "function") window.TK_RENDER_SIDEBAR();
 
     updateCardUI(globalHistory, getCurrentMonth());
