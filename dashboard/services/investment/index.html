@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
   <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-scroll-flags-2">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-tools-toolbar-1">
 </head>
 <body class="investment-dashboard-body">
   <div id="tk-global-sidebar-root"></div>
@@ -41,17 +41,27 @@
 
     <section class="investment-dashboard-grid" aria-label="Yatırım piyasa panosu">
       <section class="market-chart-card dashboard-card">
-        <div class="chart-card-header"><button class="symbol-selector" type="button" aria-label="Seçili varlık"><span id="chart-selected-symbol">BTC/USD</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button><div class="chart-actions"><div class="interval-controls" role="group" aria-label="Grafik zaman aralığı"><button type="button" data-interval="15m">1D</button><button type="button" data-interval="4h">1W</button><button type="button" data-interval="1d">1M</button></div><select id="advanced-interval" class="advanced-interval" aria-label="Gelişmiş zaman aralığı"><option value="15m">15dk</option><option value="1h" selected>1sa</option><option value="4h">4sa</option><option value="1d">1g</option></select></div></div>
+        <div class="chart-card-header"><div class="chart-primary-actions"><button class="symbol-selector" type="button" aria-label="Seçili varlık"><span id="chart-selected-symbol">BTC/USD</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button><button type="button" class="investment-tool-button" data-investment-tool="stock-screener" aria-haspopup="dialog" aria-controls="investment-tool-dialog"><i class="fas fa-chart-line" aria-hidden="true"></i><span>Hisse Tarayıcı</span></button><button type="button" class="investment-tool-button" data-investment-tool="indicators" aria-haspopup="dialog" aria-controls="investment-tool-dialog"><i class="fas fa-wave-square" aria-hidden="true"></i><span>İndikatörlerim</span></button></div><div class="chart-actions"><div class="interval-controls" role="group" aria-label="Grafik zaman aralığı"><button type="button" data-interval="15m">1D</button><button type="button" data-interval="4h">1W</button><button type="button" data-interval="1d">1M</button></div><select id="advanced-interval" class="advanced-interval" aria-label="Gelişmiş zaman aralığı"><option value="15m">15dk</option><option value="1h" selected>1sa</option><option value="4h">4sa</option><option value="1d">1g</option></select></div></div>
         <div class="chart-panel loading" id="price-chart-card" aria-label="Mum fiyat grafiği"><div id="investment-price-chart"></div></div><div class="chart-panel volume-panel loading" id="volume-chart-card" aria-label="Hacim grafiği"><div id="investment-volume-chart"></div></div>
         <p class="market-disclaimer">Buradaki piyasa verileri yalnızca bilgilendirme amaçlıdır ve yatırım tavsiyesi değildir. Veri güncelliği piyasa ve sağlayıcıya göre değişebilir.</p>
       </section>
       <aside class="market-watchlist dashboard-card" aria-label="Popüler varlıklar"><div class="watchlist-head"><h2>Popüler Varlıklar</h2><span id="watchlist-updated">—</span></div><div class="watchlist-toolbar"><input id="watchlist-search" class="watchlist-search" type="search" placeholder="Varlık ara" autocomplete="off" aria-label="Varlık ara" /><button type="button" id="favorite-filter-toggle" class="favorite-filter-toggle" aria-pressed="false" aria-label="Sadece favorileri göster"><i class="fas fa-star"></i></button></div><p id="watchlist-error" class="watchlist-error" hidden>Fiyat listesi şu anda güncellenemiyor.</p><div id="watchlist-rows" class="watchlist-rows" aria-live="polite"></div></aside>
     </section>
   </main>
+
+  <div id="investment-tool-modal" class="investment-tool-modal" aria-hidden="true">
+    <div id="investment-tool-dialog" class="investment-tool-dialog" role="dialog" aria-modal="true" aria-labelledby="investment-tool-dialog-title" aria-describedby="investment-tool-dialog-description">
+      <button type="button" class="investment-tool-dialog-close" data-investment-tool-close aria-label="Pencereyi kapat"><i class="fas fa-times" aria-hidden="true"></i></button>
+      <div class="investment-tool-dialog-icon" aria-hidden="true"><i id="investment-tool-dialog-icon"></i></div>
+      <h2 id="investment-tool-dialog-title"></h2>
+      <p id="investment-tool-dialog-description"></p>
+      <button type="button" class="investment-tool-dialog-confirm" data-investment-tool-close>Tamam</button>
+    </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-user-identity-1"></script>
   <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-shared-topbar-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-tools-toolbar-1"></script>
 </body>
 </html>
