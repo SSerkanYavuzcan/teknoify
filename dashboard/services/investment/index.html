@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-performance-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-subscription-locks-1">
 </head>
 <body>
   <div id="tk-global-sidebar-root"></div>
@@ -21,16 +21,14 @@
     </header>
 
     <section class="market-overview-grid" aria-label="Piyasa özet kartları">
-      <article class="overview-card" data-overview-card="BIST100" aria-label="BIST 100 piyasa özeti">
-        <header class="overview-card-head"><span class="asset-token">B</span><div><span class="overview-label" data-overview-title>BIST 100</span><small data-overview-subtitle>Borsa İstanbul</small></div><span class="freshness-badge upcoming" data-overview-status>Yakında</span></header>
-        <div class="overview-value-row"><strong class="overview-value" data-overview-price>—</strong><span class="overview-change neutral" data-overview-change>—</span><small data-overview-updated>—</small></div>
-        <div class="overview-chart-shell"><div id="overview-chart-bist100" class="overview-chart"></div><p class="overview-empty">Veri entegrasyonu hazırlanıyor.</p></div>
-      </article>
-      <article class="overview-card" data-overview-card="SP500" aria-label="S&P 500 piyasa özeti">
-        <header class="overview-card-head"><span class="asset-token">S</span><div><span class="overview-label" data-overview-title>S&amp;P 500</span><small data-overview-subtitle>ABD Büyük Şirketler Endeksi</small></div><span class="freshness-badge upcoming" data-overview-status>Yakında</span></header>
-        <div class="overview-value-row"><strong class="overview-value" data-overview-price>—</strong><span class="overview-change neutral" data-overview-change>—</span><small data-overview-updated>—</small></div>
-        <div class="overview-chart-shell"><div id="overview-chart-sp500" class="overview-chart"></div><p class="overview-empty">Veri entegrasyonu hazırlanıyor.</p></div>
-      </article>
+      <a href="https://teknoify.com/pages/subscription" class="overview-card overview-card--locked" data-overview-card="BIST100" aria-label="BIST 100 erişimini açmak için abonelik sayfasına git">
+        <header class="overview-card-head"><span class="asset-token">B</span><div><span class="overview-label" data-overview-title>BIST 100</span><small data-overview-subtitle>Borsa İstanbul</small></div><span class="freshness-badge locked" data-overview-status>Kilitli</span></header>
+        <div class="overview-lock-content"><span class="overview-lock-icon"><i class="fas fa-lock" aria-hidden="true"></i></span><strong>Abonelik ile erişin</strong></div>
+      </a>
+      <a href="https://teknoify.com/pages/subscription" class="overview-card overview-card--locked" data-overview-card="SP500" aria-label="S&P 500 erişimini açmak için abonelik sayfasına git">
+        <header class="overview-card-head"><span class="asset-token">S</span><div><span class="overview-label" data-overview-title>S&amp;P 500</span><small data-overview-subtitle>ABD Büyük Şirketler Endeksi</small></div><span class="freshness-badge locked" data-overview-status>Kilitli</span></header>
+        <div class="overview-lock-content"><span class="overview-lock-icon"><i class="fas fa-lock" aria-hidden="true"></i></span><strong>Abonelik ile erişin</strong></div>
+      </a>
       <article class="overview-card" data-overview-card="BTCUSD" aria-label="BTC USD piyasa özeti">
         <header class="overview-card-head"><span class="asset-token">₿</span><div><span class="overview-label" data-overview-title>BTC/USD</span><small data-overview-subtitle>Bitcoin</small></div><span class="freshness-badge connecting" data-overview-status>Bağlanıyor</span></header>
         <div class="overview-value-row"><strong class="overview-value" data-overview-price>—</strong><span class="overview-change neutral" data-overview-change>—</span><small data-overview-updated>—</small></div>
@@ -51,11 +49,9 @@
       </section>
       <aside class="market-watchlist dashboard-card" aria-label="Popüler varlıklar"><div class="watchlist-head"><h2>Popüler Varlıklar</h2><span id="watchlist-updated">—</span></div><div class="watchlist-toolbar"><input id="watchlist-search" class="watchlist-search" type="search" placeholder="Varlık ara" autocomplete="off" aria-label="Varlık ara" /><button type="button" id="favorite-filter-toggle" class="favorite-filter-toggle" aria-pressed="false" aria-label="Sadece favorileri göster"><i class="fas fa-star"></i></button></div><p id="watchlist-error" class="watchlist-error" hidden>Fiyat listesi şu anda güncellenemiyor.</p><div id="watchlist-rows" class="watchlist-rows" aria-live="polite"></div></aside>
     </section>
-
-    <section class="market-news-card dashboard-card" aria-labelledby="market-news-title"><div class="news-head"><h2 id="market-news-title">Piyasa Haberleri</h2><span class="freshness-badge upcoming">Yakında</span></div><p class="news-empty-state">Güncel piyasa haberleri entegrasyonu hazırlanıyor.</p></section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-market-live-data-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-market-performance-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-market-subscription-locks-1"></script>
 </body>
 </html>
