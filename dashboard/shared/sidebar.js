@@ -82,6 +82,13 @@ function injectSidebarSkeleton() {
                 border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1.05rem; transition: 0.2s; 
                 display: flex; align-items: center; justify-content: center; gap: 8px;
             }
+            .brand-home-link,
+            .brand-home-link:visited,
+            .brand-home-link:hover,
+            .brand-home-link:active {
+                color: #fff;
+                text-decoration: none;
+            }
         </style>
 
         <div id="tk-logout-modal">
@@ -100,7 +107,7 @@ function injectSidebarSkeleton() {
         <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
 
         <aside class="sidebar">
-            <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
+            <a href="/" class="brand brand-home-link" aria-label="Teknoify ana sayfasına git" title="Ana Sayfa"><i class="fas fa-cube" aria-hidden="true"></i> <span>Teknoify</span></a>
             <nav id="tk-main-nav-container">
                 <a href="/dashboard/member.html" class="menu-item ${isGeneralActive ? 'active' : ''}"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
                 
