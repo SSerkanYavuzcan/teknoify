@@ -46,6 +46,7 @@ function injectSidebarSkeleton() {
     if (!root || root.hasAttribute("data-injected")) return;
     root.style.display = "contents";
     const isGeneralActive = currentPath().includes('member.html') || currentPath().includes('admin.html');
+    const investmentHref = "/dashboard/services/investment/index.html";
 
     root.innerHTML = `
         <style>
@@ -103,6 +104,11 @@ function injectSidebarSkeleton() {
             <nav id="tk-main-nav-container">
                 <a href="/dashboard/member.html" class="menu-item ${isGeneralActive ? 'active' : ''}"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
                 
+                <div class="tk-nav-section tk-static-services-header" style="margin-top:20px;margin-bottom:10px;padding-left:16px;font-size:0.75rem;color:#71717a;font-weight:700;text-transform:uppercase;"><span>Hizmetler</span></div>
+                <a href="${investmentHref}" class="menu-item ${isActiveLink(investmentHref) ? 'active' : ''}" data-static-service="investment" title="Yatırım" aria-label="Yatırım">
+                    <i class="fas fa-chart-line"></i> <span>Yatırım</span>
+                </a>
+
                 <div class="tk-nav-section" id="tk-sidebar-agents-header" style="display: none; margin-top:20px;margin-bottom:10px;padding-left:16px;font-size:0.75rem;color:#71717a;font-weight:700;text-transform:uppercase;"><span>Ajanlar</span></div>
                 <div id="tk-sidebar-agents"></div>
 
