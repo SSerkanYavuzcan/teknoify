@@ -125,7 +125,6 @@ function injectSidebarSkeleton() {
                 <div class="tk-nav-section" id="tk-explore-header" style="display: none; margin-top:20px;margin-bottom:10px;padding-left:16px;font-size:0.75rem;color:#71717a;font-weight:700;text-transform:uppercase;"><span>Keşfet</span></div>
                 <div id="explore-services-menu"></div>
             </nav>
-            <div class="menu-spacer"></div>
             <div class="sidebar-footer">
                 <a href="#" onclick="window.logoutApp(event)" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
                 <button class="btn-collapse" onclick="window.toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
