@@ -91,7 +91,7 @@ def test_network_exception_retries_no_more_than_three(monkeypatch: pytest.Monkey
     result = collector.fetch_latest_close(stock())
 
     assert ticker.history.call_count == 3
-    assert collector.time.sleep.call_count == 2
+    assert collector.time.sleep.call_count == 1
     assert result.status == "ERROR"
     assert result.error == "Request failed (TimeoutError)"
     assert "secret" not in result.error

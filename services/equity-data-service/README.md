@@ -1,61 +1,95 @@
-# Equity daily-close collector
+# Equity data service
 
-This small command-line service retrieves the latest available **completed daily closing price** for a fixed set of US and Borsa Istanbul equities. It is an isolated collector: it does not provide an API or integrate with Teknoify's dashboard. The result is not guaranteed to be current or a live quote.
+This directory contains two deliberately separate interfaces over one centralized
+allowlist and Yahoo client:
 
-The configured symbols are `AAPL`, `TSLA`, `MSFT`, `NVDA`, `THYAO.IS`, `EREGL.IS`, `ASELS.IS`, and `BIMAS.IS`. US rows use USD; Borsa Istanbul rows use TRY. Currency is configured locally rather than fetched separately.
+* `fetch_stock_closes.py` is the backward-compatible terminal collector for the
+  latest completed **daily** close.
+* `app.main` is a read-only FastAPI application. A background task collects the
+  latest completed 15-minute candles and HTTP handlers only read its in-memory
+  snapshot; handlers never contact Yahoo.
 
-## Requirements and installation
+Yahoo Finance access is through the unofficial `yfinance` client. The feed is
+described as delayed with a nominal delay of 15 minutes, but the exact upstream
+delay and availability can vary and are not guaranteed. Review Yahoo's terms and
+applicable exchange licences before displaying or redistributing market data.
 
-Python 3.11 or newer is required. No API key or authentication is required.
+## Supported equities
 
-First, from the repository root:
+| Public symbol | Provider symbol | Exchange | Currency |
+| --- | --- | --- | --- |
+| AAPL, TSLA, MSFT, NVDA | same | NASDAQ | USD |
+| JPM, KO | same | NYSE | USD |
+| THYAO, EREGL, ASELS, BIMAS | `.IS` suffix | BIST | TRY |
 
-```text
+The fixed list is shared by the CLI and API. API clients cannot supply arbitrary
+Yahoo symbols; BIST lookups accept either `THYAO` or `THYAO.IS` form.
+
+## Install and test
+
+```bash
 cd services/equity-data-service
 python -m venv .venv
+. .venv/bin/activate
+pip install -r requirements-dev.txt
+pytest -q
 ```
 
-### Windows PowerShell
+Run the daily-close CLI (partial symbol failures do not make it fail):
 
-```powershell
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+```bash
 python fetch_stock_closes.py
 ```
 
-### Linux and macOS
+Run the API locally:
 
 ```bash
-source .venv/bin/activate
-pip install -r requirements.txt
-python fetch_stock_closes.py
+uvicorn app.main:app --host 0.0.0.0 --port 8081
 ```
 
-## Request pacing
+## Cache behavior
 
-Symbols are fetched sequentially. The collector waits after every processed symbol to reduce pressure on Yahoo Finance. The base delay defaults to 2 seconds and has up to 0.75 seconds of random jitter. Set `YF_REQUEST_DELAY_SECONDS` to a non-negative number to change the base delay:
+FastAPI lifespan starts one refresh loop without waiting for collection during
+startup. Blocking, sequential Yahoo work runs in a worker thread and an asyncio
+lock prevents overlap. The API initially reports `warming_up`, and equity routes
+return `503 {"error":"data_not_ready"}` until the first completed batch.
 
-```powershell
-$env:YF_REQUEST_DELAY_SECONDS = "3.0"
-python fetch_stock_closes.py
-```
+Each symbol first requests five days of 15-minute candles. The latest completed
+candle and prior available market-local session close provide price and change.
+If intraday data is unusable, the existing daily parser is used as an end-of-day
+fallback (`dataKind: daily_close`, `freshness: eod`). If a later refresh fails,
+the last usable quote is retained with `status: stale` and `stale: true`. A symbol
+that has never succeeded instead has `status: error` and a null price. A single
+failure does not invalidate the other symbols.
+
+## API
+
+* `GET /health` — process health and snapshot readiness/age.
+* `GET /v1/equities` — full cached response; optional case-insensitive
+  `market=US|BIST` and comma-separated `symbols=AAPL,THYAO.IS` filters.
+* `GET /v1/equities/{symbol}` — one configured cached quote.
+
+The collection response contains `generatedAt`, `lastSuccessfulRefreshAt`, source,
+nominal freshness metadata, the configured refresh interval, and `items`. Items
+contain identity/exchange/currency metadata, finite numeric price/change values
+(or null), UTC `asOf`, data kind, freshness, status, stale state, and an optional
+safe error category.
 
 ```bash
-YF_REQUEST_DELAY_SECONDS=3.0 python fetch_stock_closes.py
+curl http://localhost:8081/health
+curl http://localhost:8081/v1/equities
+curl "http://localhost:8081/v1/equities?market=BIST"
+curl http://localhost:8081/v1/equities/THYAO
 ```
 
-Invalid or negative values safely fall back to 2 seconds. A request exception is attempted at most three times, with exponential backoff of approximately 2 and 4 seconds plus jitter.
+## Environment
 
-## Output and failures
+| Variable | Meaning |
+| --- | --- |
+| `EQUITY_REFRESH_SECONDS` | Refresh period; default 900, clamped to 300–3600. Invalid/non-finite values use 900. |
+| `YF_REQUEST_DELAY_SECONDS` | Non-negative sequential request pacing; safe default 2 seconds. |
+| `ALLOWED_ORIGINS` | Comma-separated origins allowed for GET/OPTIONS CORS; empty disables cross-origin access. |
 
-After collection, a plain terminal table shows symbol, company, market, configured currency, last close, close date, and status. Prices have two decimal places. If Yahoo returns no usable close, or an individual request ultimately fails, the row has status `ERROR`; price and date appear as `—`. Other symbols continue processing, and a partial failure does not make the process exit unsuccessfully. Logs contain short failure categories rather than response bodies or credentials.
-
-The tests mock all Yahoo access and can be run without a network connection:
-
-```bash
-pytest -q tests
-```
-
-## Data-source notice
-
-The collector uses `yfinance`, an unofficial Yahoo Finance client. Availability and accuracy are controlled by the upstream service. Yahoo Finance and applicable data-usage terms must be evaluated before any public or commercial redistribution of collected data.
+CORS uses explicit configured origins, does not enable credentials or a wildcard,
+and does not affect CLI execution. Starlette's CORS middleware adds the appropriate
+origin response and `Vary: Origin` behavior for allowed browser requests.
