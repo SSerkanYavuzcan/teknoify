@@ -11,6 +11,8 @@ from app import yahoo_client
 
 US = StockConfig("AAPL", "Apple", "US", "USD", "AAPL", "NASDAQ", "America/New_York")
 BIST = StockConfig("THYAO", "THY", "BIST", "TRY", "THYAO.IS", "BIST", "Europe/Istanbul")
+XU100 = StockConfig("XU100", "BIST 100", "BIST", "TRY", "XU100.IS", "BIST", "Europe/Istanbul")
+SP500 = StockConfig("SP500", "S&P 500", "US", "USD", "^GSPC", "S&P", "America/New_York")
 
 
 @pytest.mark.parametrize(
@@ -98,3 +100,44 @@ def test_batch_isolates_unexpected_symbol_failure(monkeypatch):
     assert [quote.symbol for quote in quotes] == ["AAPL", "THYAO"]
     assert quotes[0].status == "error" and quotes[0].error_category == "ValueError"
     assert sleep.call_count == 1
+
+
+@pytest.mark.parametrize(("stock", "expected_price"), [(XU100, 105.0), (SP500, 105.0)])
+def test_index_intraday_uses_shared_collector(monkeypatch, stock, expected_price):
+    history = pd.DataFrame(
+        {"Close": [100.0, expected_price]},
+        index=pd.to_datetime(["2026-07-23 12:00Z", "2026-07-24 12:00Z"]),
+    )
+    ticker_factory = Mock()
+    ticker = ticker_factory.return_value
+    ticker.history.return_value = history
+    monkeypatch.setattr(yahoo_client.yf, "Ticker", ticker_factory)
+    quote = yahoo_client.fetch_quote(stock, datetime(2026, 7, 24, 13, tzinfo=timezone.utc))
+    assert quote.symbol == stock.symbol and quote.price == expected_price
+    ticker_factory.assert_called_once_with(stock.provider_symbol)
+    assert ticker.history.call_args.kwargs["interval"] == "15m"
+
+
+def test_index_daily_fallback_and_caret_provider_symbol_are_unchanged(monkeypatch):
+    ticker_factory = Mock()
+    ticker_factory.return_value.history.side_effect = [
+        pd.DataFrame(), pd.DataFrame({"Close": [6789.12]}, index=pd.to_datetime(["2026-07-24"])),
+    ]
+    monkeypatch.setattr(yahoo_client.yf, "Ticker", ticker_factory)
+    monkeypatch.setattr(yahoo_client.time, "sleep", Mock())
+    monkeypatch.setattr(yahoo_client.random, "uniform", lambda *_: 0)
+    quote = yahoo_client.fetch_quote(SP500)
+    assert quote.price == 6789.12 and quote.data_kind == "daily_close"
+    assert [call.args[0] for call in ticker_factory.call_args_list] == ["^GSPC", "^GSPC"]
+
+
+def test_failed_index_does_not_prevent_equity_processing(monkeypatch):
+    monkeypatch.setattr(
+        yahoo_client,
+        "fetch_quote",
+        lambda stock: (_ for _ in ()).throw(RuntimeError("failed")) if stock is XU100 else yahoo_client.error_quote(stock, "test"),
+    )
+    monkeypatch.setattr(yahoo_client.time, "sleep", Mock())
+    monkeypatch.setattr(yahoo_client.random, "uniform", lambda *_: 0)
+    quotes = yahoo_client.collect_quotes([XU100, BIST])
+    assert [item.symbol for item in quotes] == ["XU100", "THYAO"]

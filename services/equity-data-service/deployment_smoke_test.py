@@ -15,7 +15,10 @@ from urllib.request import Request, urlopen
 TIMEOUT_SECONDS = 10
 MAX_WAIT_SECONDS = 300
 RETRY_INTERVAL_SECONDS = 15
-EXPECTED_SYMBOLS = {"AAPL", "TSLA", "MSFT", "NVDA", "JPM", "KO", "THYAO", "EREGL", "ASELS", "BIMAS"}
+EXPECTED_SYMBOLS = {
+    "XU100", "THYAO", "EREGL", "ASELS", "BIMAS",
+    "SP500", "AAPL", "TSLA", "MSFT", "NVDA", "JPM", "KO",
+}
 REQUIRED_FIELDS = {
     "symbol", "displayName", "market", "exchange", "currency", "status", "stale"
 }

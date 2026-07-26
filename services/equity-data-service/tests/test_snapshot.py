@@ -10,7 +10,7 @@ from app.snapshot import SnapshotManager
 from app.symbols import STOCKS
 
 
-def quote(symbol="AAPL", status="ok", price=10.0):
+def quote(symbol="XU100", status="ok", price=10.0):
     stock = next(s for s in STOCKS if s.symbol == symbol)
     return Quote(symbol=stock.symbol, provider_symbol=stock.provider_symbol,
                  display_name=stock.display_name, market=stock.market, exchange=stock.exchange,
@@ -99,3 +99,24 @@ def test_overlap_is_skipped():
 @pytest.mark.parametrize(("raw", "expected"), [("bad", 900), ("nan", 900), ("inf", 900), ("1", 300), ("5000", 3600), ("600", 600)])
 def test_refresh_validation(raw, expected):
     assert refresh_seconds(raw) == expected
+
+
+def test_snapshot_contains_indices_in_canonical_order():
+    manager = SnapshotManager(STOCKS, lambda stocks: [quote(stock.symbol) for stock in stocks])
+    asyncio.run(manager.refresh())
+    assert [item.symbol for item in manager.snapshot.items] == [stock.symbol for stock in STOCKS]
+    assert {"XU100", "SP500"}.issubset(item.symbol for item in manager.snapshot.items)
+
+
+@pytest.mark.parametrize("prior", [True, False])
+def test_missing_index_uses_stale_prior_or_null_error(prior):
+    index = next(stock for stock in STOCKS if stock.symbol == "XU100")
+    batches = [[quote("XU100")], []] if prior else [[]]
+    manager = SnapshotManager([index], lambda _stocks: batches.pop(0))
+    if prior:
+        asyncio.run(manager.refresh())
+    asyncio.run(manager.refresh())
+    item = manager.snapshot.items[0]
+    assert item.status == ("stale" if prior else "error")
+    assert item.price == (10.0 if prior else None)
+    assert item.error_category == "missing_result"
