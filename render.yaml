@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: teknoify-equity-data
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./services/equity-data-service/Dockerfile
+    dockerContext: ./services/equity-data-service
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    maxShutdownDelaySeconds: 30
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://teknoify.com,https://www.teknoify.com
+      - key: EQUITY_REFRESH_SECONDS
+        value: "900"
+      - key: YF_REQUEST_DELAY_SECONDS
+        value: "2.0"
