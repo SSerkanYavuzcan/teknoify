@@ -78,6 +78,9 @@ failure does not invalidate the other symbols.
 * `GET /v1/equities` — full cached response; optional case-insensitive
   `market=US|BIST` and comma-separated `symbols=AAPL,THYAO.IS` filters.
 * `GET /v1/equities/{symbol}` — one configured cached quote.
+* `GET /v1/equities/{symbol}/history` — compact Yahoo close history for the
+  `XU100`/`XU100.IS` and `SP500`/`^GSPC` aliases. Supports `range=1d|5d|1m`
+  and `interval=15m|1d`; 15-minute history is limited to the 1- and 5-day ranges.
 
 The collection response contains `generatedAt`, `lastSuccessfulRefreshAt`, source,
 nominal freshness metadata, the configured refresh interval, and `items`. Items
@@ -90,6 +93,7 @@ curl http://localhost:8081/health
 curl http://localhost:8081/v1/equities
 curl "http://localhost:8081/v1/equities?market=BIST"
 curl http://localhost:8081/v1/equities/THYAO
+curl "http://localhost:8081/v1/equities/XU100/history?range=5d&interval=15m"
 ```
 
 ## Environment
