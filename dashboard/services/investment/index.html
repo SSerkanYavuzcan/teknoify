@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
   <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-equity-quotes-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-equity-overview-cards-1">
 </head>
 <body class="investment-dashboard-body">
   <div id="tk-global-sidebar-root"></div>
@@ -24,14 +24,16 @@
     <div id="tk-member-topbar-root"></div>
 
     <section class="market-overview-grid" aria-label="Piyasa özet kartları">
-      <a href="https://teknoify.com/pages/subscription" class="overview-card overview-card--locked" data-overview-card="BIST100" aria-label="BIST 100 erişimi için üyeliği yükselt">
-        <header class="overview-card-head"><span id="overview-bist-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span class="overview-label" data-overview-title>BIST 100</span><small data-overview-subtitle>XU100</small></div><span class="freshness-badge locked" data-overview-status>Üyeliği Yükselt</span></header>
-        <div class="overview-lock-content"><span class="overview-lock-icon"><i class="fas fa-lock" aria-hidden="true"></i></span><strong>Üyeliği Yükselt</strong></div>
-      </a>
-      <a href="https://teknoify.com/pages/subscription" class="overview-card overview-card--locked" data-overview-card="SP500" aria-label="S&P 500 erişimi için üyeliği yükselt">
-        <header class="overview-card-head"><span id="overview-sp500-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span class="overview-label" data-overview-title>S&amp;P 500</span><small data-overview-subtitle>SPX</small></div><span class="freshness-badge locked" data-overview-status>Üyeliği Yükselt</span></header>
-        <div class="overview-lock-content"><span class="overview-lock-icon"><i class="fas fa-lock" aria-hidden="true"></i></span><strong>Üyeliği Yükselt</strong></div>
-      </a>
+      <article class="overview-card overview-card--equities" data-equity-overview-market="BIST" aria-labelledby="overview-bist-title">
+        <header class="overview-card-head"><span id="overview-bist-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span id="overview-bist-title" class="overview-label">Borsa İstanbul</span><small>BIST</small></div><span id="overview-bist-status" class="freshness-badge connecting">Bağlanıyor</span></header>
+        <div id="overview-bist-equities" class="overview-equity-list" aria-live="polite"></div>
+        <small id="overview-bist-updated" class="overview-equity-updated">—</small>
+      </article>
+      <article class="overview-card overview-card--equities" data-equity-overview-market="US" aria-labelledby="overview-us-title">
+        <header class="overview-card-head"><span id="overview-us-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span id="overview-us-title" class="overview-label">ABD Hisseleri</span><small>NASDAQ / NYSE</small></div><span id="overview-us-status" class="freshness-badge connecting">Bağlanıyor</span></header>
+        <div id="overview-us-equities" class="overview-equity-list" aria-live="polite"></div>
+        <small id="overview-us-updated" class="overview-equity-updated">—</small>
+      </article>
       <article class="overview-card" data-overview-card="BTCUSD" aria-label="BTC USD piyasa özeti">
         <header class="overview-card-head"><span class="asset-token asset-token--brand" id="overview-btc-icon" aria-hidden="true"></span><div><span class="overview-label" data-overview-title>BTC/USD</span><small data-overview-subtitle>Bitcoin</small></div><span class="freshness-badge connecting" data-overview-status>Bağlanıyor</span></header>
         <div class="overview-value-row"><strong class="overview-value" data-overview-price>—</strong><span class="overview-change neutral" data-overview-change>—</span><small data-overview-updated>—</small></div>
@@ -41,32 +43,6 @@
 
     <section class="market-topbar" aria-label="Seçili piyasa özeti">
       <div class="selected-asset-summary"><span class="asset-token asset-token--brand" id="selected-asset-icon" aria-hidden="true"></span><div class="asset-identity"><strong id="selected-display-symbol">BTC-USDT</strong><span id="selected-asset-name">Bitcoin</span></div><div class="asset-live-price"><strong id="selected-current-price">—</strong><span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span></div></div>
-    </section>
-
-    <section class="equity-markets-section dashboard-card" aria-labelledby="equity-markets-title">
-      <header class="equity-markets-header">
-        <div>
-          <span class="eyebrow">Gecikmeli piyasa verileri</span>
-          <h1 id="equity-markets-title">Hisse Piyasaları</h1>
-          <p>Veriler gecikmeli veya gün sonu olabilir.</p>
-        </div>
-        <span class="freshness-badge delayed">15 dk gecikmeli</span>
-      </header>
-      <div class="equity-markets-toolbar">
-        <label for="equity-search">Hisse ara</label>
-        <input id="equity-search" type="search" placeholder="Hisse ara" autocomplete="off" />
-        <p id="equity-section-status" aria-live="polite">Hisse verileri yükleniyor…</p>
-      </div>
-      <div class="equity-market-groups">
-        <section class="equity-market-group" aria-labelledby="us-equities-title">
-          <h2 id="us-equities-title">ABD Hisseleri</h2>
-          <div id="us-equity-rows" class="equity-rows"></div>
-        </section>
-        <section class="equity-market-group" aria-labelledby="bist-equities-title">
-          <h2 id="bist-equities-title">Borsa İstanbul</h2>
-          <div id="bist-equity-rows" class="equity-rows"></div>
-        </section>
-      </div>
     </section>
 
     <section class="investment-dashboard-grid" aria-label="Yatırım piyasa panosu">
@@ -92,6 +68,6 @@
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-user-identity-1"></script>
   <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-equity-quotes-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-equity-overview-cards-1"></script>
 </body>
 </html>
