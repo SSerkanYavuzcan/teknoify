@@ -13,10 +13,14 @@ import pandas as pd
 import yfinance as yf
 
 from .config import request_delay
-from .models import Quote, StockConfig, StockResult
+from .models import Quote, StockConfig, StockResult, iso_utc
 
 LOGGER = logging.getLogger(__name__)
 MAX_ATTEMPTS = 3
+HISTORY_OPTIONS = {
+    ("1d", "15m"), ("5d", "15m"),
+    ("1d", "1d"), ("5d", "1d"), ("1m", "1d"),
+}
 
 
 def error_result(stock: StockConfig, message: str) -> StockResult:
@@ -135,3 +139,35 @@ def collect_quotes(stocks: Sequence[StockConfig]) -> list[Quote]:
         if index < len(stocks) - 1:
             time.sleep(delay + random.uniform(0, 0.75))
     return results
+
+
+def fetch_history(stock: StockConfig, period: str, interval: str) -> list[dict[str, object]]:
+    """Fetch and normalize a compact, JSON-safe Yahoo close series."""
+    if (period, interval) not in HISTORY_OPTIONS:
+        raise ValueError("unsupported_history_range_interval")
+    arguments = dict(period=period, interval=interval, auto_adjust=False, actions=False, timeout=10)
+    if interval == "15m":
+        arguments["prepost"] = False
+    history = None
+    for attempt in range(1, MAX_ATTEMPTS + 1):
+        try:
+            history = yf.Ticker(stock.provider_symbol).history(**arguments)
+            break
+        except Exception as exc:
+            if attempt == MAX_ATTEMPTS:
+                LOGGER.warning("History for %s failed (%s)", stock.provider_symbol, type(exc).__name__)
+                raise RuntimeError("history_upstream_error") from exc
+            time.sleep((2 ** attempt) + random.uniform(0, 0.75))
+    if not isinstance(history, pd.DataFrame) or history.empty or "Close" not in history.columns:
+        return []
+    closes = pd.to_numeric(history["Close"], errors="coerce")
+    index = pd.DatetimeIndex(pd.to_datetime(closes.index, errors="coerce"))
+    if index.tz is None:
+        index = index.tz_localize(stock.timezone, ambiguous="NaT", nonexistent="NaT")
+    index = index.tz_convert("UTC")
+    points = []
+    for stamp, value in zip(index, closes):
+        if pd.isna(stamp) or pd.isna(value) or not math.isfinite(float(value)):
+            continue
+        points.append({"t": iso_utc(stamp.to_pydatetime()), "v": float(value)})
+    return points

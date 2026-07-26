@@ -123,3 +123,21 @@ def test_cors_only_reflects_configured_origin():
                                                       "Access-Control-Request-Method": "GET"})
     assert allowed.headers["access-control-allow-origin"] == "https://allowed.example"
     assert "access-control-allow-origin" not in denied.headers
+
+
+def test_index_history_endpoint_and_alias(monkeypatch):
+    def fake_history(stock, period, interval):
+        return [{"t": "2026-07-24T12:00:00Z", "v": 10987.25}]
+    monkeypatch.setattr("app.main.fetch_history", fake_history)
+    for symbol in ("XU100", "XU100.IS", "SP500", "%5EGSPC"):
+        response = client.get(f"/v1/equities/{symbol}/history?range=5d&interval=15m")
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["symbol"] in {"XU100", "SP500"}
+        assert payload["freshness"] == "delayed" and payload["points"][0]["v"] == 10987.25
+
+
+def test_history_rejects_stocks_and_invalid_combinations(monkeypatch):
+    assert client.get("/v1/equities/AAPL/history").status_code == 404
+    response = client.get("/v1/equities/XU100/history?range=1m&interval=15m")
+    assert response.status_code == 400

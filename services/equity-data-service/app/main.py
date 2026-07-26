@@ -15,10 +15,12 @@ from .config import allowed_origins, refresh_seconds
 from .models import iso_utc
 from .snapshot import SnapshotManager
 from .symbols import STOCKS, find_stock
+from .yahoo_client import fetch_history
 
 LOGGER = logging.getLogger(__name__)
 manager = SnapshotManager(STOCKS)
 REFRESH_SECONDS = refresh_seconds()
+history_lock = asyncio.Lock()
 
 
 async def _refresh_loop() -> None:
@@ -96,6 +98,24 @@ async def equities(market: str | None = None, symbols: str | None = Query(defaul
             "lastSuccessfulRefreshAt": iso_utc(manager.last_successful_refresh_at),
             "source": "yahoo_finance_unofficial", "freshness": "delayed", "nominalDelayMinutes": 15,
             "refreshIntervalSeconds": REFRESH_SECONDS, "items": [item.to_api() for item in items]}
+
+
+@app.get("/v1/equities/{symbol}/history")
+async def equity_history(symbol: str, range: str = Query(default="5d"),
+                         interval: str = Query(default="15m")) -> dict[str, object]:
+    stock = find_stock(symbol)
+    if stock is None or stock.symbol not in {"XU100", "SP500"}:
+        raise HTTPException(404, "unsupported_symbol")
+    try:
+        async with history_lock:
+            points = await asyncio.to_thread(fetch_history, stock, range, interval)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(502, "history_upstream_error") from exc
+    return {"symbol": stock.symbol, "displayName": stock.display_name, "market": stock.market,
+            "exchange": stock.exchange, "range": range, "interval": interval,
+            "freshness": "delayed", "points": points}
 
 
 @app.get("/v1/equities/{symbol}")

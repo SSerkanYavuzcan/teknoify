@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
   <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-indices-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-index-sparklines-1">
 </head>
 <body class="investment-dashboard-body">
   <div id="tk-global-sidebar-root"></div>
@@ -24,23 +24,15 @@
     <div id="tk-member-topbar-root"></div>
 
     <section class="market-overview-grid" aria-label="Piyasa özet kartları">
-      <article class="overview-card overview-card--equities" data-equity-overview-market="BIST" aria-labelledby="overview-bist-title">
-        <header class="overview-card-head"><span id="overview-bist-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span id="overview-bist-title" class="overview-label">Borsa İstanbul</span><small>BIST</small></div><span id="overview-bist-status" class="freshness-badge connecting">Bağlanıyor</span></header>
-        <div id="overview-bist-index" class="overview-index-summary" aria-live="polite">
-          <div class="overview-index-identity"><strong>XU100</strong><span>BIST 100</span></div>
-          <div class="overview-index-quote"><strong data-index-price>—</strong><span class="neutral" data-index-change>—</span></div>
-        </div>
-        <div id="overview-bist-equities" class="overview-equity-list" aria-live="polite"></div>
-        <small id="overview-bist-updated" class="overview-equity-updated">—</small>
+      <article class="overview-card overview-card--index" data-index-card="XU100" aria-labelledby="overview-xu100-title">
+        <header class="overview-card-head"><span id="overview-bist-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span id="overview-xu100-title" class="overview-label">XU100</span><small>BIST 100</small></div><span id="overview-bist-status" class="freshness-badge connecting">Bağlanıyor</span></header>
+        <div class="overview-value-row"><strong id="overview-bist-price" class="overview-value">—</strong><span id="overview-bist-change" class="overview-change neutral">—</span><small id="overview-bist-updated">—</small></div>
+        <div class="overview-chart-shell loading"><div id="overview-chart-xu100" class="overview-chart"></div><p class="overview-empty">Endeks geçmişi yükleniyor.</p></div>
       </article>
-      <article class="overview-card overview-card--equities" data-equity-overview-market="US" aria-labelledby="overview-us-title">
-        <header class="overview-card-head"><span id="overview-us-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span id="overview-us-title" class="overview-label">ABD Hisseleri</span><small>NASDAQ / NYSE</small></div><span id="overview-us-status" class="freshness-badge connecting">Bağlanıyor</span></header>
-        <div id="overview-us-index" class="overview-index-summary" aria-live="polite">
-          <div class="overview-index-identity"><strong>SP500</strong><span>S&amp;P 500</span></div>
-          <div class="overview-index-quote"><strong data-index-price>—</strong><span class="neutral" data-index-change>—</span></div>
-        </div>
-        <div id="overview-us-equities" class="overview-equity-list" aria-live="polite"></div>
-        <small id="overview-us-updated" class="overview-equity-updated">—</small>
+      <article class="overview-card overview-card--index" data-index-card="SP500" aria-labelledby="overview-sp500-title">
+        <header class="overview-card-head"><span id="overview-us-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span id="overview-sp500-title" class="overview-label">SP500</span><small>S&amp;P 500</small></div><span id="overview-us-status" class="freshness-badge connecting">Bağlanıyor</span></header>
+        <div class="overview-value-row"><strong id="overview-us-price" class="overview-value">—</strong><span id="overview-us-change" class="overview-change neutral">—</span><small id="overview-us-updated">—</small></div>
+        <div class="overview-chart-shell loading"><div id="overview-chart-sp500" class="overview-chart"></div><p class="overview-empty">Endeks geçmişi yükleniyor.</p></div>
       </article>
       <article class="overview-card" data-overview-card="BTCUSD" aria-label="BTC USD piyasa özeti">
         <header class="overview-card-head"><span class="asset-token asset-token--brand" id="overview-btc-icon" aria-hidden="true"></span><div><span class="overview-label" data-overview-title>BTC/USD</span><small data-overview-subtitle>Bitcoin</small></div><span class="freshness-badge connecting" data-overview-status>Bağlanıyor</span></header>
@@ -48,9 +40,16 @@
         <div class="overview-chart-shell loading"><div id="overview-chart-btcusd" class="overview-chart"></div><p class="overview-empty">Veri entegrasyonu hazırlanıyor.</p></div>
       </article>
     </section>
-
     <section class="market-topbar" aria-label="Seçili piyasa özeti">
       <div class="selected-asset-summary"><span class="asset-token asset-token--brand" id="selected-asset-icon" aria-hidden="true"></span><div class="asset-identity"><strong id="selected-display-symbol">BTC-USDT</strong><span id="selected-asset-name">Bitcoin</span></div><div class="asset-live-price"><strong id="selected-current-price">—</strong><span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span></div></div>
+    </section>
+
+    <section class="equity-stock-section" aria-labelledby="equity-stock-section-title">
+      <div class="equity-stock-section-head"><div><span class="eyebrow">Piyasa listeleri</span><h2 id="equity-stock-section-title">Hisseler</h2></div><small>Salt okunur · Gecikmeli veriler</small></div>
+      <div class="equity-stock-groups">
+        <article class="equity-stock-group"><h3>Borsa İstanbul Hisseleri</h3><div id="overview-bist-equities" class="overview-equity-list" aria-live="polite"></div></article>
+        <article class="equity-stock-group"><h3>ABD Hisseleri</h3><div id="overview-us-equities" class="overview-equity-list" aria-live="polite"></div></article>
+      </div>
     </section>
 
     <section class="investment-dashboard-grid" aria-label="Yatırım piyasa panosu">
@@ -76,6 +75,6 @@
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-user-identity-1"></script>
   <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-market-indices-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-market-index-sparklines-1"></script>
 </body>
 </html>

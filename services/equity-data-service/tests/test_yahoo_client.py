@@ -141,3 +141,16 @@ def test_failed_index_does_not_prevent_equity_processing(monkeypatch):
     monkeypatch.setattr(yahoo_client.random, "uniform", lambda *_: 0)
     quotes = yahoo_client.collect_quotes([XU100, BIST])
     assert [item.symbol for item in quotes] == ["XU100", "THYAO"]
+
+
+def test_fetch_history_normalizes_and_filters_points(monkeypatch):
+    frame = pd.DataFrame({"Close": [100.5, float("nan"), float("inf"), 102.25]},
+                         index=pd.DatetimeIndex(["2026-07-24 10:00", "2026-07-24 10:15",
+                                                "2026-07-24 10:30", "2026-07-24 10:45"]))
+    class Ticker:
+        def history(self, **_kwargs):
+            return frame
+    monkeypatch.setattr(yahoo_client.yf, "Ticker", lambda _symbol: Ticker())
+    points = yahoo_client.fetch_history(XU100, "5d", "15m")
+    assert [point["v"] for point in points] == [100.5, 102.25]
+    assert all(point["t"].endswith("Z") for point in points)

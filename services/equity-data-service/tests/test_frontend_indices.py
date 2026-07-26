@@ -6,26 +6,25 @@ HTML = (ROOT / "dashboard/services/investment/index.html").read_text(encoding="u
 JS = (ROOT / "js/pages/investment-market.js").read_text(encoding="utf-8")
 
 
-def test_index_containers_and_shared_request_are_present():
-    assert 'id="overview-bist-index"' in HTML
-    assert 'id="overview-us-index"' in HTML
-    assert JS.count("/v1/equities") == 1
+def test_index_hero_cards_and_backend_history_requests_are_present():
+    assert 'data-index-card="XU100"' in HTML and 'data-index-card="SP500"' in HTML
+    assert 'id="overview-chart-xu100"' in HTML and 'id="overview-chart-sp500"' in HTML
+    assert "/history?range=5d&interval=15m" in JS
     assert "yahoo.com" not in JS.casefold()
 
 
-def test_indices_are_points_and_excluded_from_stock_tiles():
+def test_indices_are_excluded_from_read_only_stock_lists():
     assert 'symbol:"XU100"' in JS and 'symbol:"SP500"' in JS
     assert "function isMarketIndex" in JS
     assert "item.market===market&&!isMarketIndex(item)" in JS
+    assert "Borsa İstanbul Hisseleri" in HTML and "ABD Hisseleri" in HTML
     index_formatter = JS[JS.index("function formatIndexValue"):JS.index("function formatEquityPercent")]
     assert 'Intl.NumberFormat("tr-TR"' in index_formatter
     assert 'style:"currency"' not in index_formatter
-    assert 'points.textContent="puan"' in JS
 
 
-def test_indices_do_not_enter_crypto_or_chart_flows():
+def test_indices_do_not_enter_crypto_or_selected_asset_flows():
     assets = JS[JS.index("const ASSETS="):JS.index("const LOCAL_ICON_PREFIX=")]
     assert "XU100" not in assets and "SP500" not in assets
     assert "const state={selected:ASSETS[0]" in JS
-    assert "indexChart" not in JS and "indexSparkline" not in JS
     assert 'data-overview-card="BTCUSD"' in HTML
