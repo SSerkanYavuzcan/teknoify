@@ -8,7 +8,6 @@ services:
     dockerContext: ./services/equity-data-service
     healthCheckPath: /health
     autoDeployTrigger: commit
-    maxShutdownDelaySeconds: 30
     envVars:
       - key: ALLOWED_ORIGINS
         value: https://teknoify.com,https://www.teknoify.com
