@@ -93,3 +93,131 @@ curl http://localhost:8081/v1/equities/THYAO
 CORS uses explicit configured origins, does not enable credentials or a wildcard,
 and does not affect CLI execution. Starlette's CORS middleware adds the appropriate
 origin response and `Vary: Origin` behavior for allowed browser requests.
+
+## Render deployment
+
+### A. Blueprint deployment
+
+1. Merge the deployment pull request into `main`.
+2. Sign in to Render.
+3. Create a new Blueprint.
+4. Select the `SSerkanYavuzcan/teknoify` repository.
+5. Select the root `render.yaml` Blueprint file.
+6. Review the detected service:
+   * Name: `teknoify-equity-data`
+   * Runtime: Docker
+   * Region: Frankfurt
+   * Health path: `/health`
+7. Create the service.
+8. Wait for the first successful deployment before running production checks.
+
+### B. Environment values
+
+The Blueprint configures these production values:
+
+```text
+ALLOWED_ORIGINS=https://teknoify.com,https://www.teknoify.com
+EQUITY_REFRESH_SECONDS=900
+YF_REQUEST_DELAY_SECONDS=2.0
+```
+
+These operational settings are not secrets. Render supplies `PORT`; no provider
+credentials or API keys are required by this service.
+
+### C. Production checks
+
+Replace the placeholder only in the commands below with the service URL assigned
+by Render:
+
+```bash
+curl https://YOUR-RENDER-URL/health
+curl https://YOUR-RENDER-URL/v1/equities
+curl "https://YOUR-RENDER-URL/v1/equities?market=BIST"
+curl "https://YOUR-RENDER-URL/v1/equities?market=US"
+```
+
+The standard-library smoke test accepts the deployed base URL, waits up to five
+minutes for the initial snapshot, and validates the response contract:
+
+```bash
+cd services/equity-data-service
+python deployment_smoke_test.py https://YOUR-RENDER-URL
+```
+
+### D. Browser CORS check
+
+From the browser console while visiting `https://teknoify.com`, run:
+
+```javascript
+fetch("https://YOUR-RENDER-URL/v1/equities")
+  .then(response => response.json())
+  .then(console.log);
+```
+
+Production CORS remains restricted to the configured allowlist; do not disable
+CORS to troubleshoot a mismatched origin.
+
+### E. Frontend connection step
+
+The Investment frontend is intentionally disconnected until the real deployed
+URL is known. This deployment-preparation change leaves the following tag in
+`dashboard/services/investment/index.html` unchanged:
+
+```html
+<meta name="teknoify-equity-api-base" content="" />
+```
+
+After deployment, a separate small pull request must replace it with the actual
+Render URL:
+
+```html
+<meta
+  name="teknoify-equity-api-base"
+  content="https://YOUR-REAL-RENDER-URL"
+/>
+```
+
+### F. Operational notes
+
+* The service uses a single in-memory cache, an application-lifespan background
+  refresh loop, and an in-process refresh lock. It must initially run as one
+  Uvicorn process with one worker. Multiple workers would create independent
+  caches and independent Yahoo refresh loops.
+* A restart causes a short warm-up state. During warm-up, `/v1/equities` may
+  return HTTP 503; the Investment frontend already handles this state.
+* A later multi-instance deployment requires shared cache storage or leader
+  election before it can safely coordinate refresh work.
+* Yahoo requests remain sequential and paced by `YF_REQUEST_DELAY_SECONDS`.
+* This feed must not be described as live. Yahoo Finance access uses the
+  unofficial `yfinance` client, and upstream delay and availability can vary.
+* Applicable market-data usage and redistribution conditions must be reviewed
+  before broader commercial use.
+
+### G. Local Docker usage
+
+Build the production image from the service-specific context:
+
+```bash
+docker build \
+  -t teknoify-equity-data \
+  services/equity-data-service
+```
+
+Run it on the default container port:
+
+```bash
+docker run --rm \
+  -p 8081:8081 \
+  -e ALLOWED_ORIGINS=http://localhost:5500 \
+  -e EQUITY_REFRESH_SECONDS=900 \
+  -e YF_REQUEST_DELAY_SECONDS=2.0 \
+  teknoify-equity-data
+```
+
+Test the local endpoints (the equity endpoint may briefly return 503 while the
+first snapshot warms up):
+
+```bash
+curl http://localhost:8081/health
+curl http://localhost:8081/v1/equities
+```
