@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
   <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-tabbed-watchlist-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-clean-chart-1">
 </head>
 <body class="investment-dashboard-body">
   <div id="tk-global-sidebar-root"></div>
@@ -40,10 +40,6 @@
         <div class="overview-chart-shell loading"><div id="overview-chart-btcusd" class="overview-chart"></div><p class="overview-empty">Veri entegrasyonu hazırlanıyor.</p></div>
       </article>
     </section>
-    <section class="market-topbar" aria-label="Seçili piyasa özeti">
-      <div class="selected-asset-summary"><span class="asset-token asset-token--brand" id="selected-asset-icon" aria-hidden="true"></span><div class="asset-identity"><strong id="selected-display-symbol">BTC-USDT</strong><span id="selected-asset-name">Bitcoin</span></div><div class="asset-live-price"><strong id="selected-current-price">—</strong><span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span></div></div>
-    </section>
-
     <section class="investment-dashboard-grid" aria-label="Yatırım piyasa panosu">
       <section class="market-chart-card dashboard-card">
         <div class="chart-card-header"><div class="chart-primary-actions"><button class="symbol-selector" type="button" aria-label="Seçili varlık"><span id="chart-selected-symbol">BTC/USD</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button><button type="button" class="investment-tool-button" data-investment-tool="stock-screener" aria-haspopup="dialog" aria-controls="investment-tool-dialog"><i class="fas fa-chart-line" aria-hidden="true"></i><span>Hisse Tarayıcı</span></button><button type="button" class="investment-tool-button" data-investment-tool="indicators" aria-haspopup="dialog" aria-controls="investment-tool-dialog"><i class="fas fa-wave-square" aria-hidden="true"></i><span>İndikatörlerim</span></button></div><div class="chart-actions"><div class="interval-controls" role="group" aria-label="Grafik zaman aralığı"><button type="button" data-interval="15m">1D</button><button type="button" data-interval="4h">1W</button><button type="button" data-interval="1d">1M</button></div><select id="advanced-interval" class="advanced-interval" aria-label="Gelişmiş zaman aralığı"><option value="15m">15dk</option><option value="1h" selected>1sa</option><option value="4h">4sa</option><option value="1d">1g</option></select></div></div>
@@ -71,6 +67,6 @@
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-user-identity-1"></script>
   <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-tabbed-watchlist-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-clean-chart-1"></script>
 </body>
 </html>
