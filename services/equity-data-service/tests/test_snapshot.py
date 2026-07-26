@@ -12,10 +12,13 @@ from app.symbols import STOCKS
 
 def quote(symbol="AAPL", status="ok", price=10.0):
     stock = next(s for s in STOCKS if s.symbol == symbol)
-    return Quote(stock.symbol, stock.provider_symbol, stock.display_name, stock.market, stock.exchange,
-                 stock.currency, price, None, None, None, datetime.now(timezone.utc) if price else None,
-                 "intraday_15m" if price else None, "delayed" if price else None, status,
-                 error_category="timeout" if status == "error" else None)
+    return Quote(symbol=stock.symbol, provider_symbol=stock.provider_symbol,
+                 display_name=stock.display_name, market=stock.market, exchange=stock.exchange,
+                 currency=stock.currency, price=price, previous_close=None, change=None,
+                 change_percent=None, as_of=datetime.now(timezone.utc) if price else None,
+                 price_date=datetime.now(timezone.utc).date() if price else None,
+                 data_kind="intraday_15m" if price else None, freshness="delayed" if price else None,
+                 status=status, error_category="timeout" if status == "error" else None)
 
 
 def test_success_then_failure_is_preserved_stale():
@@ -31,6 +34,49 @@ def test_never_successful_remains_null_error():
     manager = SnapshotManager(STOCKS[:1], lambda _stocks: [quote(status="error", price=None)])
     asyncio.run(manager.refresh())
     assert manager.snapshot.items[0].status == "error" and manager.snapshot.items[0].price is None
+
+
+def test_complete_failure_without_snapshot_stays_not_ready():
+    manager = SnapshotManager(STOCKS[:1], lambda _stocks: (_ for _ in ()).throw(RuntimeError("secret")))
+    asyncio.run(manager.refresh())
+    assert manager.snapshot is None
+    assert manager.last_refresh_at is not None and manager.last_successful_refresh_at is None
+    assert manager.last_refresh_succeeded is False
+
+
+def test_complete_failure_preserves_values_as_stale():
+    batches = [[quote()], RuntimeError("secret")]
+    def collect(_stocks):
+        value = batches.pop(0)
+        if isinstance(value, Exception):
+            raise value
+        return value
+    manager = SnapshotManager(STOCKS[:1], collect)
+    asyncio.run(manager.refresh())
+    successful_at = manager.last_successful_refresh_at
+    original = manager.snapshot.items[0]
+    asyncio.run(manager.refresh())
+    failed = manager.snapshot.items[0]
+    assert failed.status == "stale" and failed.stale and failed.error_category == "refresh_failed"
+    assert (failed.price, failed.as_of, failed.price_date, failed.data_kind) == (
+        original.price, original.as_of, original.price_date, original.data_kind)
+    assert manager.last_successful_refresh_at == successful_at
+    assert manager.last_refresh_succeeded is False
+
+
+def test_snapshot_rebuilds_in_allowlist_order_and_handles_bad_output():
+    stocks = STOCKS[:3]
+    previous = [quote(stocks[0].symbol), quote(stocks[1].symbol)]
+    batches = [previous, [quote(stocks[1].symbol, price=20), quote(stocks[1].symbol, price=30),
+                          quote(STOCKS[3].symbol)]]
+    manager = SnapshotManager(stocks, lambda _stocks: batches.pop(0))
+    asyncio.run(manager.refresh())
+    asyncio.run(manager.refresh())
+    assert [item.symbol for item in manager.snapshot.items] == [stock.symbol for stock in stocks]
+    assert manager.snapshot.items[0].status == "stale"
+    assert manager.snapshot.items[1].price == 20
+    assert manager.snapshot.items[2].status == "error"
+    assert manager.snapshot.items[2].error_category == "missing_result"
 
 
 def test_overlap_is_skipped():

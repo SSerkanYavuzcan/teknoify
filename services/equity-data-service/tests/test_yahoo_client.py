@@ -26,6 +26,7 @@ def test_naive_indexes_use_market_timezone(stock, index, expected):
         datetime(2026, 7, 24, 21, tzinfo=timezone.utc),
     )
     assert quote.as_of.isoformat() == expected
+    assert quote.price_date.isoformat() == "2026-07-24"
     assert quote.previous_close == 100
     assert quote.change == 5
     assert quote.change_percent == pytest.approx(5)
@@ -57,6 +58,7 @@ def test_intraday_failure_uses_daily_fallback(monkeypatch):
     monkeypatch.setattr(yahoo_client.random, "uniform", lambda *_: 0)
     quote = yahoo_client.fetch_quote(US)
     assert quote.price == 12.5 and quote.data_kind == "daily_close" and quote.freshness == "eod"
+    assert quote.price_date.isoformat() == "2026-07-24" and quote.as_of is None
 
 
 def test_complete_failure_is_safe_and_retry_is_bounded(monkeypatch):
@@ -78,3 +80,21 @@ def test_batch_is_sequential_and_does_not_sleep_after_last(monkeypatch):
     monkeypatch.setattr(yahoo_client.random, "uniform", lambda *_: 0)
     yahoo_client.collect_quotes([US, BIST])
     assert calls == ["AAPL", "THYAO"] and sleep.call_count == 1
+
+
+def test_batch_isolates_unexpected_symbol_failure(monkeypatch):
+    calls = []
+    def fetch(stock):
+        calls.append(stock.symbol)
+        if stock is US:
+            raise ValueError("unsafe details")
+        return yahoo_client.error_quote(stock, "expected")
+    monkeypatch.setattr(yahoo_client, "fetch_quote", fetch)
+    sleep = Mock()
+    monkeypatch.setattr(yahoo_client.time, "sleep", sleep)
+    monkeypatch.setattr(yahoo_client.random, "uniform", lambda *_: 0)
+    quotes = yahoo_client.collect_quotes([US, BIST])
+    assert calls == ["AAPL", "THYAO"]
+    assert [quote.symbol for quote in quotes] == ["AAPL", "THYAO"]
+    assert quotes[0].status == "error" and quotes[0].error_category == "ValueError"
+    assert sleep.call_count == 1
