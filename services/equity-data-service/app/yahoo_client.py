@@ -91,9 +91,11 @@ def parse_intraday(stock: StockConfig, history: pd.DataFrame,
         previous = float(completed.loc[local_dates == previous_dates[-1], "Close"].iloc[-1])
     change = price - previous if previous is not None else None
     percent = change / previous * 100 if change is not None and previous != 0 else None
-    return Quote(stock.symbol, stock.provider_symbol or stock.symbol, stock.display_name, stock.market,
-                 stock.exchange, stock.currency, price, previous, change, percent,
-                 (latest_at + pd.Timedelta(minutes=15)).to_pydatetime(), "intraday_15m", "delayed", "ok")
+    return Quote(symbol=stock.symbol, provider_symbol=stock.provider_symbol or stock.symbol,
+                 display_name=stock.display_name, market=stock.market, exchange=stock.exchange,
+                 currency=stock.currency, price=price, previous_close=previous, change=change,
+                 change_percent=percent, as_of=(latest_at + pd.Timedelta(minutes=15)).to_pydatetime(),
+                 price_date=latest_date, data_kind="intraday_15m", freshness="delayed", status="ok")
 
 
 def fetch_quote(stock: StockConfig, now: datetime | None = None) -> Quote:
@@ -104,21 +106,32 @@ def fetch_quote(stock: StockConfig, now: datetime | None = None) -> Quote:
     time.sleep(request_delay() + random.uniform(0, 0.75))
     daily = fetch_latest_close(stock)
     if daily.latest_close is not None:
-        as_of = datetime.combine(daily.closing_date, datetime.min.time(), tzinfo=timezone.utc)
-        return Quote(stock.symbol, stock.provider_symbol or stock.symbol, stock.display_name, stock.market,
-                     stock.exchange, stock.currency, float(daily.latest_close), None, None, None,
-                     as_of, "daily_close", "eod", "ok")
+        return Quote(symbol=stock.symbol, provider_symbol=stock.provider_symbol or stock.symbol,
+                     display_name=stock.display_name, market=stock.market, exchange=stock.exchange,
+                     currency=stock.currency, price=float(daily.latest_close), previous_close=None,
+                     change=None, change_percent=None, as_of=None, price_date=daily.closing_date,
+                     data_kind="daily_close", freshness="eod", status="ok")
     failure = category or (daily.error or "invalid_data").split(" (")[-1].rstrip(")").replace(" ", "_").lower()
-    return Quote(stock.symbol, stock.provider_symbol or stock.symbol, stock.display_name, stock.market,
-                 stock.exchange, stock.currency, None, None, None, None, None, None, None,
-                 "error", False, failure)
+    return error_quote(stock, failure)
+
+
+def error_quote(stock: StockConfig, category: str) -> Quote:
+    return Quote(symbol=stock.symbol, provider_symbol=stock.provider_symbol or stock.symbol,
+                 display_name=stock.display_name, market=stock.market, exchange=stock.exchange,
+                 currency=stock.currency, price=None, previous_close=None, change=None,
+                 change_percent=None, as_of=None, price_date=None, data_kind=None, freshness=None,
+                 status="error", stale=False, error_category=category)
 
 
 def collect_quotes(stocks: Sequence[StockConfig]) -> list[Quote]:
     results: list[Quote] = []
     delay = request_delay()
     for index, stock in enumerate(stocks):
-        results.append(fetch_quote(stock))
+        try:
+            results.append(fetch_quote(stock))
+        except Exception as exc:
+            LOGGER.warning("%s failed (%s)", stock.provider_symbol, type(exc).__name__)
+            results.append(error_quote(stock, type(exc).__name__))
         if index < len(stocks) - 1:
             time.sleep(delay + random.uniform(0, 0.75))
     return results

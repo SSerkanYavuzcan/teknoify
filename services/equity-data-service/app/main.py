@@ -23,7 +23,12 @@ REFRESH_SECONDS = refresh_seconds()
 
 async def _refresh_loop() -> None:
     while True:
-        await manager.refresh()
+        try:
+            await manager.refresh()
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            LOGGER.exception("Unexpected equity refresh loop failure")
         await asyncio.sleep(REFRESH_SECONDS)
 
 
@@ -54,7 +59,10 @@ async def health() -> dict[str, object]:
         return {"status": "warming_up", "ready": False}
     age = max(0, int((datetime.now(timezone.utc) - snapshot.generated_at).total_seconds()))
     return {"status": "ok", "ready": True, "lastRefreshAt": iso_utc(manager.last_refresh_at),
-            "lastSuccessfulRefreshAt": iso_utc(manager.last_successful_refresh_at), "snapshotAgeSeconds": age}
+            "lastSuccessfulRefreshAt": iso_utc(manager.last_successful_refresh_at), "snapshotAgeSeconds": age,
+            "lastRefreshSucceeded": manager.last_refresh_succeeded,
+            "staleItemCount": sum(item.stale for item in snapshot.items),
+            "errorItemCount": sum(item.status == "error" for item in snapshot.items)}
 
 
 def _snapshot_or_503():
@@ -65,8 +73,8 @@ def _snapshot_or_503():
 
 @app.exception_handler(HTTPException)
 async def http_error(_request, exc: HTTPException):
-    if exc.status_code == 503 and exc.detail == "data_not_ready":
-        return JSONResponse(status_code=503, content={"error": "data_not_ready"})
+    if exc.status_code == 503 and exc.detail in {"data_not_ready", "symbol_data_not_ready"}:
+        return JSONResponse(status_code=503, content={"error": exc.detail})
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
@@ -96,4 +104,7 @@ async def equity(symbol: str) -> dict[str, object]:
     if stock is None:
         raise HTTPException(404, "unsupported_symbol")
     snapshot = _snapshot_or_503()
-    return next(item.to_api() for item in snapshot.items if item.symbol == stock.symbol)
+    quote = next((item for item in snapshot.items if item.symbol == stock.symbol), None)
+    if quote is None:
+        raise HTTPException(503, "symbol_data_not_ready")
+    return quote.to_api()

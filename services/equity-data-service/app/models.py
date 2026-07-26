@@ -47,6 +47,7 @@ class Quote:
     change: float | None
     change_percent: float | None
     as_of: datetime | None
+    price_date: date | None
     data_kind: str | None
     freshness: str | None
     status: str
@@ -62,10 +63,12 @@ class Quote:
             value = values[key]
             values[key] = float(value) if value is not None and math.isfinite(float(value)) else None
         values["as_of"] = iso_utc(self.as_of)
+        values["price_date"] = self.price_date.isoformat() if self.price_date is not None else None
         names = {
             "provider_symbol": "providerSymbol", "display_name": "displayName",
             "previous_close": "previousClose", "change_percent": "changePercent",
             "as_of": "asOf", "data_kind": "dataKind", "error_category": "errorCategory",
+            "price_date": "priceDate",
         }
         return {names.get(key, key): value for key, value in values.items() if value is not None or key not in {"error_category"}}
 
