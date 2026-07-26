@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
   <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-index-sparklines-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-tabbed-watchlist-1">
 </head>
 <body class="investment-dashboard-body">
   <div id="tk-global-sidebar-root"></div>
@@ -44,21 +44,17 @@
       <div class="selected-asset-summary"><span class="asset-token asset-token--brand" id="selected-asset-icon" aria-hidden="true"></span><div class="asset-identity"><strong id="selected-display-symbol">BTC-USDT</strong><span id="selected-asset-name">Bitcoin</span></div><div class="asset-live-price"><strong id="selected-current-price">—</strong><span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span></div></div>
     </section>
 
-    <section class="equity-stock-section" aria-labelledby="equity-stock-section-title">
-      <div class="equity-stock-section-head"><div><span class="eyebrow">Piyasa listeleri</span><h2 id="equity-stock-section-title">Hisseler</h2></div><small>Salt okunur · Gecikmeli veriler</small></div>
-      <div class="equity-stock-groups">
-        <article class="equity-stock-group"><h3>Borsa İstanbul Hisseleri</h3><div id="overview-bist-equities" class="overview-equity-list" aria-live="polite"></div></article>
-        <article class="equity-stock-group"><h3>ABD Hisseleri</h3><div id="overview-us-equities" class="overview-equity-list" aria-live="polite"></div></article>
-      </div>
-    </section>
-
     <section class="investment-dashboard-grid" aria-label="Yatırım piyasa panosu">
       <section class="market-chart-card dashboard-card">
         <div class="chart-card-header"><div class="chart-primary-actions"><button class="symbol-selector" type="button" aria-label="Seçili varlık"><span id="chart-selected-symbol">BTC/USD</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button><button type="button" class="investment-tool-button" data-investment-tool="stock-screener" aria-haspopup="dialog" aria-controls="investment-tool-dialog"><i class="fas fa-chart-line" aria-hidden="true"></i><span>Hisse Tarayıcı</span></button><button type="button" class="investment-tool-button" data-investment-tool="indicators" aria-haspopup="dialog" aria-controls="investment-tool-dialog"><i class="fas fa-wave-square" aria-hidden="true"></i><span>İndikatörlerim</span></button></div><div class="chart-actions"><div class="interval-controls" role="group" aria-label="Grafik zaman aralığı"><button type="button" data-interval="15m">1D</button><button type="button" data-interval="4h">1W</button><button type="button" data-interval="1d">1M</button></div><select id="advanced-interval" class="advanced-interval" aria-label="Gelişmiş zaman aralığı"><option value="15m">15dk</option><option value="1h" selected>1sa</option><option value="4h">4sa</option><option value="1d">1g</option></select></div></div>
         <div class="chart-panel loading" id="price-chart-card" aria-label="Mum fiyat grafiği"><div id="investment-price-chart"></div></div><div class="chart-panel volume-panel loading" id="volume-chart-card" aria-label="Hacim grafiği"><div id="investment-volume-chart"></div></div>
         <p class="market-disclaimer">Buradaki piyasa verileri yalnızca bilgilendirme amaçlıdır ve yatırım tavsiyesi değildir. Veri güncelliği piyasa ve sağlayıcıya göre değişebilir.</p>
       </section>
-      <aside class="market-watchlist dashboard-card" aria-label="Popüler varlıklar"><div class="watchlist-head"><h2>Popüler Varlıklar</h2><span id="watchlist-updated">—</span></div><div class="watchlist-toolbar"><input id="watchlist-search" class="watchlist-search" type="search" placeholder="Varlık ara" autocomplete="off" aria-label="Varlık ara" /><button type="button" id="favorite-filter-toggle" class="favorite-filter-toggle" aria-pressed="false" aria-label="Sadece favorileri göster"><i class="fas fa-star"></i></button></div><p id="watchlist-error" class="watchlist-error" hidden>Fiyat listesi şu anda güncellenemiyor.</p><div id="watchlist-rows" class="watchlist-rows" aria-live="polite"></div></aside>
+      <aside class="market-watchlist dashboard-card" aria-labelledby="popular-assets-title">
+        <header class="watchlist-head"><div><h2 id="popular-assets-title">Popüler Varlıklar</h2><span id="watchlist-updated">—</span></div><div class="watchlist-head-actions"><label class="watchlist-search-shell"><span class="sr-only">Varlık ara</span><i class="fas fa-search" aria-hidden="true"></i><input id="watchlist-search" class="watchlist-search" type="search" placeholder="Varlık ara" autocomplete="off" /></label><button type="button" id="favorite-filter-toggle" class="favorite-filter-toggle" aria-pressed="false" aria-label="Sadece favori kripto varlıkları göster"><i class="fas fa-star" aria-hidden="true"></i></button></div></header>
+        <div class="watchlist-market-tabs" role="tablist" aria-label="Varlık piyasası"><button type="button" class="watchlist-market-tab" data-watch-market="crypto" role="tab" aria-selected="true" tabindex="0">Kripto <span class="watchlist-market-tab-count">4</span></button><button type="button" class="watchlist-market-tab" data-watch-market="bist" role="tab" aria-selected="false" tabindex="-1">Borsa İstanbul <span class="watchlist-market-tab-count">0</span></button><button type="button" class="watchlist-market-tab" data-watch-market="us" role="tab" aria-selected="false" tabindex="-1">ABD <span class="watchlist-market-tab-count">0</span></button></div>
+        <div class="watchlist-column-head" aria-hidden="true"><span>Varlık</span><span>Son</span><span>Değişim</span></div><p id="watchlist-error" class="watchlist-error" hidden>Fiyat listesi şu anda güncellenemiyor.</p><div id="watchlist-rows" class="watchlist-rows" aria-live="polite"></div><footer id="watchlist-breadth" class="watchlist-breadth" aria-live="polite"></footer>
+      </aside>
     </section>
   </main>
 
@@ -75,6 +71,6 @@
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-user-identity-1"></script>
   <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-market-index-sparklines-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-tabbed-watchlist-1"></script>
 </body>
 </html>
