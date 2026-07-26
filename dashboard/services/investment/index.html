@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="teknoify-market-api-base" content="" />
+  <meta name="teknoify-equity-api-base" content="" />
   <title>Yatırım | Teknoify</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
   <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-tools-toolbar-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-equity-quotes-1">
 </head>
 <body class="investment-dashboard-body">
   <div id="tk-global-sidebar-root"></div>
@@ -39,6 +40,32 @@
       <div class="selected-asset-summary"><span class="asset-token asset-token--brand" id="selected-asset-icon" aria-hidden="true"></span><div class="asset-identity"><strong id="selected-display-symbol">BTC-USDT</strong><span id="selected-asset-name">Bitcoin</span></div><div class="asset-live-price"><strong id="selected-current-price">—</strong><span id="selected-change" class="change-value neutral" aria-label="24 saatlik değişim">—</span></div></div>
     </section>
 
+    <section class="equity-markets-section dashboard-card" aria-labelledby="equity-markets-title">
+      <header class="equity-markets-header">
+        <div>
+          <span class="eyebrow">Gecikmeli piyasa verileri</span>
+          <h1 id="equity-markets-title">Hisse Piyasaları</h1>
+          <p>Veriler gecikmeli veya gün sonu olabilir.</p>
+        </div>
+        <span class="freshness-badge delayed">15 dk gecikmeli</span>
+      </header>
+      <div class="equity-markets-toolbar">
+        <label for="equity-search">Hisse ara</label>
+        <input id="equity-search" type="search" placeholder="Hisse ara" autocomplete="off" />
+        <p id="equity-section-status" aria-live="polite">Hisse verileri yükleniyor…</p>
+      </div>
+      <div class="equity-market-groups">
+        <section class="equity-market-group" aria-labelledby="us-equities-title">
+          <h2 id="us-equities-title">ABD Hisseleri</h2>
+          <div id="us-equity-rows" class="equity-rows"></div>
+        </section>
+        <section class="equity-market-group" aria-labelledby="bist-equities-title">
+          <h2 id="bist-equities-title">Borsa İstanbul</h2>
+          <div id="bist-equity-rows" class="equity-rows"></div>
+        </section>
+      </div>
+    </section>
+
     <section class="investment-dashboard-grid" aria-label="Yatırım piyasa panosu">
       <section class="market-chart-card dashboard-card">
         <div class="chart-card-header"><div class="chart-primary-actions"><button class="symbol-selector" type="button" aria-label="Seçili varlık"><span id="chart-selected-symbol">BTC/USD</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button><button type="button" class="investment-tool-button" data-investment-tool="stock-screener" aria-haspopup="dialog" aria-controls="investment-tool-dialog"><i class="fas fa-chart-line" aria-hidden="true"></i><span>Hisse Tarayıcı</span></button><button type="button" class="investment-tool-button" data-investment-tool="indicators" aria-haspopup="dialog" aria-controls="investment-tool-dialog"><i class="fas fa-wave-square" aria-hidden="true"></i><span>İndikatörlerim</span></button></div><div class="chart-actions"><div class="interval-controls" role="group" aria-label="Grafik zaman aralığı"><button type="button" data-interval="15m">1D</button><button type="button" data-interval="4h">1W</button><button type="button" data-interval="1d">1M</button></div><select id="advanced-interval" class="advanced-interval" aria-label="Gelişmiş zaman aralığı"><option value="15m">15dk</option><option value="1h" selected>1sa</option><option value="4h">4sa</option><option value="1d">1g</option></select></div></div>
@@ -62,6 +89,6 @@
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-user-identity-1"></script>
   <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-tools-toolbar-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-equity-quotes-1"></script>
 </body>
 </html>
