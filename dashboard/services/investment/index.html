@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dashboard.css?v=investment-market-live-data-1">
   <link rel="stylesheet" href="/css/06-pages/dashboard/member-topbar.css?v=member-topbar-1">
-  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-equity-overview-cards-1">
+  <link rel="stylesheet" href="/css/06-pages/dashboard/investment-market.css?v=investment-market-indices-1">
 </head>
 <body class="investment-dashboard-body">
   <div id="tk-global-sidebar-root"></div>
@@ -26,11 +26,19 @@
     <section class="market-overview-grid" aria-label="Piyasa özet kartları">
       <article class="overview-card overview-card--equities" data-equity-overview-market="BIST" aria-labelledby="overview-bist-title">
         <header class="overview-card-head"><span id="overview-bist-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span id="overview-bist-title" class="overview-label">Borsa İstanbul</span><small>BIST</small></div><span id="overview-bist-status" class="freshness-badge connecting">Bağlanıyor</span></header>
+        <div id="overview-bist-index" class="overview-index-summary" aria-live="polite">
+          <div class="overview-index-identity"><strong>XU100</strong><span>BIST 100</span></div>
+          <div class="overview-index-quote"><strong data-index-price>—</strong><span class="neutral" data-index-change>—</span></div>
+        </div>
         <div id="overview-bist-equities" class="overview-equity-list" aria-live="polite"></div>
         <small id="overview-bist-updated" class="overview-equity-updated">—</small>
       </article>
       <article class="overview-card overview-card--equities" data-equity-overview-market="US" aria-labelledby="overview-us-title">
         <header class="overview-card-head"><span id="overview-us-icon" class="asset-token asset-token--flag" aria-hidden="true"></span><div><span id="overview-us-title" class="overview-label">ABD Hisseleri</span><small>NASDAQ / NYSE</small></div><span id="overview-us-status" class="freshness-badge connecting">Bağlanıyor</span></header>
+        <div id="overview-us-index" class="overview-index-summary" aria-live="polite">
+          <div class="overview-index-identity"><strong>SP500</strong><span>S&amp;P 500</span></div>
+          <div class="overview-index-quote"><strong data-index-price>—</strong><span class="neutral" data-index-change>—</span></div>
+        </div>
         <div id="overview-us-equities" class="overview-equity-list" aria-live="polite"></div>
         <small id="overview-us-updated" class="overview-equity-updated">—</small>
       </article>
@@ -68,6 +76,6 @@
   <script type="module" src="/dashboard/shared/sidebar.js?v=investment-user-identity-1"></script>
   <script type="module" src="/dashboard/shared/member-topbar.js?v=member-topbar-1"></script>
   <script type="module" src="/dashboard/shared/profile-manager.js?v=profile-company-label-1"></script>
-  <script type="module" src="/js/pages/investment-market.js?v=investment-equity-overview-cards-1"></script>
+  <script type="module" src="/js/pages/investment-market.js?v=investment-market-indices-1"></script>
 </body>
 </html>

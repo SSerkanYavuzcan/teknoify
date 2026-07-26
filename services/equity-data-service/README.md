@@ -14,7 +14,7 @@ described as delayed with a nominal delay of 15 minutes, but the exact upstream
 delay and availability can vary and are not guaranteed. Review Yahoo's terms and
 applicable exchange licences before displaying or redistributing market data.
 
-## Supported equities
+## Supported instruments
 
 | Public symbol | Provider symbol | Exchange | Currency |
 | --- | --- | --- | --- |
@@ -22,8 +22,18 @@ applicable exchange licences before displaying or redistributing market data.
 | JPM, KO | same | NYSE | USD |
 | THYAO, EREGL, ASELS, BIMAS | `.IS` suffix | BIST | TRY |
 
+Indices:
+
+* `XU100` / `XU100.IS` — BIST 100
+* `SP500` / `^GSPC` — S&P 500
+
+Index values are points, not monetary prices. They use the same delayed
+15-minute collection and daily fallback as equities; this unofficial upstream
+data must not be described as guaranteed live.
+
 The fixed list is shared by the CLI and API. API clients cannot supply arbitrary
-Yahoo symbols; BIST lookups accept either `THYAO` or `THYAO.IS` form.
+Yahoo symbols; lookups accept either the public symbol or configured provider
+symbol, including `XU100.IS` and `^GSPC` for the indices.
 
 ## Install and test
 
