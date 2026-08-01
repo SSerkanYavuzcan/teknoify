@@ -6,24 +6,24 @@
     "series": "TP.DK.USD.A.YTL",
     "frequency": "daily",
     "startDate": "2023-09-04",
-    "endDate": "2026-07-07",
-    "lastUpdatedAt": "2026-07-07T09:29:07.333450Z",
+    "endDate": "2026-07-31",
+    "lastUpdatedAt": "2026-08-01T08:08:24.420173Z",
     "rateField": "usdTry",
     "notes": [
       "Historical USD/TRY rates are fetched from TCMB EVDS using the Python evds package.",
       "Rates are stored as normalized daily values in YYYY-MM-DD format.",
       "Do not manually invent exchange rates. Use the update script or verified source data."
     ],
-    "lastFetchStartedAt": "2026-07-07T09:29:04.965842Z",
-    "lastFetchCompletedAt": "2026-07-07T09:29:07.333450Z",
+    "lastFetchStartedAt": "2026-08-01T08:08:21.260049Z",
+    "lastFetchCompletedAt": "2026-08-01T08:08:24.420173Z",
     "lastFetchStatus": "success",
     "lastFetchRange": {
-      "startDate": "2026-06-29",
-      "endDate": "2026-07-07",
+      "startDate": "2026-06-30",
+      "endDate": "2026-08-01",
       "mode": "incremental"
     },
-    "lastAvailableRateDate": "2026-07-07",
-    "lastAvailableRate": 46.7362
+    "lastAvailableRateDate": "2026-07-31",
+    "lastAvailableRate": 47.3274
   },
   "rates": [
     {
@@ -4295,6 +4295,108 @@
     {
       "date": "2026-07-07",
       "usdTry": 46.7362,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-08",
+      "usdTry": 46.7525,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-09",
+      "usdTry": 46.7694,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-10",
+      "usdTry": 46.7854,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-13",
+      "usdTry": 46.8084,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-14",
+      "usdTry": 46.9121,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-16",
+      "usdTry": 46.9253,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-17",
+      "usdTry": 46.967,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-20",
+      "usdTry": 46.9858,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-21",
+      "usdTry": 47.0938,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-22",
+      "usdTry": 47.1134,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-23",
+      "usdTry": 47.1309,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-24",
+      "usdTry": 47.1467,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-27",
+      "usdTry": 47.1647,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-28",
+      "usdTry": 47.2681,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-29",
+      "usdTry": 47.2899,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-30",
+      "usdTry": 47.3075,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-07-31",
+      "usdTry": 47.3274,
       "source": "TCMB",
       "series": "TP.DK.USD.A.YTL"
     }
