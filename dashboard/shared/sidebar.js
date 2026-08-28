@@ -96,8 +96,8 @@ function mobileOpen(open, trigger) {
   const sidebar = document.getElementById("tk-app-sidebar");
   const backdrop = document.querySelector(".sidebar-backdrop");
   if (!sidebar || !backdrop) return;
-  if (open) { lastFocus = trigger || document.activeElement; document.body.classList.add("sidebar-drawer-open"); backdrop.hidden = false; sidebar.querySelector("a,button")?.focus(); }
-  else { document.body.classList.remove("sidebar-drawer-open"); backdrop.hidden = true; lastFocus?.focus?.(); }
+  if (open) { lastFocus = trigger || document.activeElement; document.body.classList.add("sidebar-drawer-open"); document.body.style.overflow = "hidden"; backdrop.hidden = false; document.querySelector("main")?.setAttribute("inert", ""); sidebar.querySelector("a,button")?.focus(); }
+  else { document.body.classList.remove("sidebar-drawer-open"); document.body.style.overflow = ""; backdrop.hidden = true; document.querySelector("main")?.removeAttribute("inert"); lastFocus?.focus?.(); lastFocus = null; }
   drawerTrigger = drawerTrigger || document.getElementById("tk-sidebar-menu-button");
   drawerTrigger?.setAttribute("aria-expanded", String(open));
 }
