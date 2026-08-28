@@ -204,36 +204,7 @@
       <p id="toast-message">Mesaj</p>
     </div>
   </div>
-
-  <aside class="sidebar">
-    <div class="brand">
-      <i class="fas fa-cube"></i> <span>Teknoify</span>
-    </div>
-    <nav>
-      <a href="../../member.html" class="menu-item">
-        <i class="fas fa-home"></i> <span>Genel Bakış</span>
-      </a>
-      <div
-        style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
-        <span>Hizmetler</span>
-      </div>
-      <a href="index.html" class="menu-item active" id="nav-comparison">
-        <i class="fas fa-tags"></i> <span>Fiyat Karşılaştırma</span>
-      </a>
-      <a href="../../market-analysis.html" class="menu-item" id="nav-market">
-        <i class="fas fa-chart-line"></i> <span>Pazar Analizi</span>
-      </a>
-    </nav>
-    <div class="menu-spacer"></div>
-    <div class="sidebar-footer">
-      <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
-        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
-      </a>
-      <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-    </div>
-  </aside>
+  <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
     <header class="top-bar">
@@ -380,6 +351,7 @@
   <script src="../shared/engine.js?v=20260221"></script> <!-- 2. Core render motoru -->
   <script src="../shared/auth.js?v=20260221"></script> <!-- 3. Auth + bootstrap -->
 
+  <script type="module" src="/dashboard/shared/sidebar.js?v=20260828"></script>
 </body>
 
 </html>

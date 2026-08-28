@@ -33,37 +33,7 @@
       <p id="tk-toast-message">Mesaj buraya gelecek.</p>
     </div>
   </div>
-
-  <button id="floating-toggle-btn" onclick="toggleSidebar()" title="Paneli Aç">
-    <i class="fas fa-bars"></i>
-  </button>
-
-  <aside class="sidebar">
-    <div class="brand">
-      <i class="fas fa-cube"></i> <span>Teknoify</span>
-    </div>
-    <nav>
-      <a href="../../dashboard/member.html" class="menu-item">
-        <i class="fas fa-home"></i> <span>Genel Bakış</span>
-      </a>
-      
-      <div style="margin-top:10px;margin-bottom:5px;padding-left:16px;font-size:0.75rem;color:#666;font-weight:700;text-transform:uppercase;">
-        <span>Hizmetler</span>
-      </div>
-
-      <div id="dynamic-services-menu">
-      </div>
-    </nav>
-    <div class="menu-spacer"></div>
-    <div class="sidebar-footer">
-      <a href="#" onclick="logout()" class="btn-logout" title="Çıkış Yap">
-        <i class="fas fa-sign-out-alt"></i> <span>Çıkış</span>
-      </a>
-      <button class="btn-collapse" onclick="toggleSidebar()" title="Menüyü Gizle">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-    </div>
-  </aside>
+  <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
     
@@ -966,5 +936,6 @@
     }
   </script>
 
+  <script type="module" src="/dashboard/shared/sidebar.js?v=20260828"></script>
 </body>
 </html>

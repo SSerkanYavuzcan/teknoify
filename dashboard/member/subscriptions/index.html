@@ -70,19 +70,7 @@
   </style>
 </head>
 <body>
-
-  <button id="floating-toggle-btn" onclick="window.toggleSidebar()"><i class="fas fa-bars"></i></button>
-
-  <aside class="sidebar">
-    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-main-nav-container">
-      <a href="/dashboard/member.html" class="menu-item"><i class="fas fa-home"></i> <span>Genel Bakış</span></a>
-      <div class="tk-nav-section"><span>Harcama Yönetimi</span></div>
-      <a href="#" class="menu-item active"><i class="fas fa-credit-card"></i> <span>Aboneliklerim</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-file-invoice-dollar"></i> <span>Faturalar</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-tags"></i> <span>Kategoriler</span></a>
-    </nav>
-  </aside>
+  <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
     <header class="top-bar">
@@ -165,7 +153,6 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="../../config.js"></script>
   <script src="../../shared/auth.js?v=999"></script>
-  <script src="../../shared/sidebar.js?v=999"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -184,5 +171,6 @@
 
     window.toggleSidebar = function() { document.body.classList.toggle("sidebar-closed"); };
   </script>
+  <script type="module" src="/dashboard/shared/sidebar.js?v=20260828"></script>
 </body>
 </html>

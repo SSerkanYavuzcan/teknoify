@@ -531,6 +531,9 @@ async function init() {
     const session = await requireAuth();
     if (!session) return;
 
+    window.USER_SESSION = session;
+    window.TK_RENDER_SIDEBAR?.();
+
     const logoutBtn = qs("#logout-btn") || qs("#logout") || qs("[data-action='logout']");
     if (logoutBtn) logoutBtn.addEventListener("click", logout);
 
