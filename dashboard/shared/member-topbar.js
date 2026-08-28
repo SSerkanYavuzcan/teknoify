@@ -38,7 +38,9 @@ function buildTopbar() {
   menuButton.append(el("i", { className: "fas fa-bars", "aria-hidden": "true" }));
   menuButton.addEventListener("click", () => window.toggleSidebar?.());
   const pageTitles = { overview: "Genel Bakış", agents: "Ajan Kütüphanesi", tools: "Araçlar & Servisler", models: "Özel Modellerim", projects: "Aktif Projeler", history: "İşlem Geçmişi", api: "API Yönetimi", docs: "Dokümantasyon", webhooks: "Webhooks", usage: "Abonelik ve Kullanım", invoices: "Faturalar", team: "Takım", profile: "Profil ve Güvenlik", help: "Yardım Merkezi" };
-  const greeting = el("h2", { className: "tk-member-greeting" }, pageTitles[document.body.dataset.page] || document.body.dataset.title || "Teknoify");
+  const isAgentLibrary = document.body.dataset.page === "agents";
+  const greeting = isAgentLibrary ? el("nav", { className: "tk-member-greeting tk-member-breadcrumb", "aria-label": "Sayfa yolu" }) : el("h2", { className: "tk-member-greeting" }, pageTitles[document.body.dataset.page] || document.body.dataset.title || "Teknoify");
+  if (isAgentLibrary) greeting.append(el("span", {}, "AI Hub"), el("i", { className: "fas fa-chevron-right", "aria-hidden": "true" }), el("strong", {}, "Ajan Kütüphanesi"));
 
   const actions = el("div", { className: "tk-member-topbar-actions" });
   actions.append(el("div", { id: "tk-member-admin-slot", className: "tk-member-admin-slot" }));
