@@ -37,9 +37,8 @@ function buildTopbar() {
   });
   menuButton.append(el("i", { className: "fas fa-bars", "aria-hidden": "true" }));
   menuButton.addEventListener("click", () => window.toggleSidebar?.());
-  const greeting = el("h2", { className: "tk-member-greeting" });
-  greeting.append(document.createTextNode("Hoşgeldin, "));
-  greeting.append(el("span", { id: "user-name-title" }, DEFAULT_NAME));
+  const pageTitles = { overview: "Genel Bakış", agents: "Ajan Kütüphanesi", tools: "Araçlar & Servisler", models: "Özel Modellerim", projects: "Aktif Projeler", history: "İşlem Geçmişi", api: "API Yönetimi", docs: "Dokümantasyon", webhooks: "Webhooks", usage: "Abonelik ve Kullanım", invoices: "Faturalar", team: "Takım", profile: "Profil ve Güvenlik", help: "Yardım Merkezi" };
+  const greeting = el("h2", { className: "tk-member-greeting" }, pageTitles[document.body.dataset.page] || document.body.dataset.title || "Teknoify");
 
   const actions = el("div", { className: "tk-member-topbar-actions" });
   actions.append(el("div", { id: "tk-member-admin-slot", className: "tk-member-admin-slot" }));
@@ -96,10 +95,8 @@ function setIdentity({ name, photoURL } = {}) {
   if (lastIdentity.name === normalizedName && lastIdentity.photoURL === normalizedPhoto) return;
   lastIdentity = { name: normalizedName, photoURL: normalizedPhoto };
   if (!mounted) mount();
-  const title = document.getElementById("user-name-title");
   const display = document.getElementById("user-name-display");
   const avatar = document.getElementById("user-avatar");
-  if (title && title.textContent !== normalizedName) title.textContent = normalizedName;
   if (display && display.textContent !== normalizedName) display.textContent = normalizedName;
   if (!avatar) return;
   const currentPhoto = avatar.dataset.photoUrl || "";

@@ -3,7 +3,6 @@
 .main-content {
     display: flex;
     flex-direction: column;
-    width: 100%;
 }
 
 /* Üst Bar Tasarımı */
@@ -29,7 +28,6 @@
 
 /* İçerik Kaydırma Alanı */
 .content-scroll {
-    padding: 40px;
     flex: 1;
 }
 
