@@ -91,7 +91,8 @@ async function buildRealSession(user) {
     email: user.email,
     name: profileData.fullName || user.email.split("@")[0],
     role: roleData,
-    isAdmin: isAdminRole(roleData)
+    isAdmin: isAdminRole(roleData),
+    permissionData: userDoc || {}
   };
 }
 
@@ -112,10 +113,27 @@ async function getEffectiveSession(realSession) {
       type: DEFAULT_ROLE_TYPE,
       status: DEFAULT_ROLE_STATUS
     },
+    permissionData: targetDoc,
     impersonating: true,
     realIsAdmin: true,
     isAdmin: false
   };
+}
+
+let sessionPromise = null;
+let sessionContext = "";
+
+function resolveEffectiveSession() {
+  const context = window.localStorage.getItem(IMPERSONATE_UID_KEY) || "";
+  if (sessionPromise && sessionContext === context) return sessionPromise;
+  sessionContext = context;
+  sessionPromise = waitForAuthUser()
+    .then(user => user ? buildRealSession(user).then(getEffectiveSession) : null)
+    .catch(error => {
+      sessionPromise = null;
+      throw error;
+    });
+  return sessionPromise;
 }
 
 export async function logout() {
@@ -130,17 +148,14 @@ export async function logout() {
 export async function requireAuth({ allowedRoles = [] } = {}) {
   if (checkSecurityBan()) return null;
 
-  const user = await waitForAuthUser();
+  const effective = await resolveEffectiveSession();
 
   // Oturum yoksa ana sayfaya (login modal'ın olduğu yere) gönder
-  if (!user) {
+  if (!effective) {
     console.warn("Oturum bulunamadı, ana sayfaya yönlendiriliyor...");
     window.location.href = getLoginPath(); // GÜNCELLEME: Yorum satırı kaldırıldı
     return null;
   }
-
-  const real = await buildRealSession(user);
-  const effective = await getEffectiveSession(real);
 
   // Rol kontrolü
   const roleType = getRoleTypeFromRole(effective.role);
