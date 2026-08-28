@@ -1,4 +1,5 @@
 import { requireAuth } from "/js/lib/auth.js";
+import "./profile-manager.js";
 import { db } from "/js/lib/firebase.js";
 import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
@@ -40,6 +41,12 @@ function setIdentity(session) {
   window.TK_MEMBER_TOPBAR?.setIdentity({ name, photoURL: session.photoURL || "" });
   window.TK_MEMBER_TOPBAR?.setAdminAccess({ visible: Boolean(session.isAdmin), href: "/dashboard/admin.html" });
   window.TK_RENDER_SIDEBAR?.();
+  const profileTrigger = document.getElementById("tk-member-profile-trigger");
+  if (profileTrigger && session.impersonating) {
+    profileTrigger.disabled = true;
+    profileTrigger.title = "Kullanıcı görünümünde profil değiştirilemez";
+    profileTrigger.setAttribute("aria-label", "Kullanıcı görünümünde profil değiştirilemez");
+  }
 }
 function element(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text) node.textContent = text; return node; }
 function showState(kind, title, detail, action) {
@@ -75,7 +82,10 @@ function setupFilters() {
 }
 async function authorizedRecords(session, userData, type) {
   const source = type === "agents" ? "agents" : "projects";
-  const maps = type === "agents" ? [userData.agentAccess, userData.discoverAccess] : [userData.projectAccess];
+  // A product-discovery permission grants access to that project surface, not
+  // to arbitrary records in the agents collection. Agent discovery must use
+  // the dedicated agentAccess map.
+  const maps = type === "agents" ? [userData.agentAccess] : [userData.projectAccess];
   const ids = [...new Set(maps.flatMap(map => Object.keys(map || {}).filter(id => map[id] === true)))];
   if (session.isAdmin) { const all = []; (await getDocs(collection(db, source))).forEach(s => all.push(normalizeRecord(s, type))); return all.filter(r => r.status !== "Kullanılamıyor"); }
   const snaps = await Promise.all(ids.map(id => getDoc(doc(db, source, id))));
