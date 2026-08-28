@@ -25,6 +25,8 @@
 
     --font-main: 'Inter Tight', sans-serif;
     --font-mono: 'Fira Code', monospace;
+    /* Standart kenar çubuğu bağlantısı ve içerik metni için ortak ölçü. */
+    --font-interface: 15px;
     
     /* Geçiş Efektleri */
     --transition-fast: 0.2s ease;

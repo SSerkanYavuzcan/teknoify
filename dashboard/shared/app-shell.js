@@ -41,7 +41,8 @@ function normalizeRecord(snap, type) {
 }
 function setIdentity(session) {
   const name = session.name || session.displayName || session.email || "Teknoify Kullanıcısı";
-  window.USER_SESSION = { ...session, name, displayName: name };
+  const { permissionData: _permissionData, ...publicSession } = session;
+  window.USER_SESSION = { ...publicSession, name, displayName: name };
   window.TK_MEMBER_TOPBAR?.setIdentity({ name, photoURL: session.photoURL || "" });
   window.TK_MEMBER_TOPBAR?.setAdminAccess({ visible: Boolean(session.isAdmin), href: "/dashboard/admin.html" });
   window.TK_RENDER_SIDEBAR?.();
@@ -97,12 +98,18 @@ function safeFavorites(session) {
 function saveFavorites(session) { if (session.impersonating) return; try { localStorage.setItem(`teknoify_agent_favorites_${session.uid}`, JSON.stringify([...state.favorites])); } catch { /* Depolama kullanılamadığında görünüm çalışmaya devam eder. */ } }
 function agentFeature(record, session) {
   const article = element("article", "agent-feature");
+  article.dataset.agentId = record.id;
   const info = element("div", "agent-feature__info");
   const icon = element("span", "agent-feature__icon"); icon.append(element("i", record.icon || "fas fa-robot"));
   const category = element("p", "agent-feature__category", record.category || "Ajan");
   const title = element("h3", "", record.name); const status = element("span", "agent-feature__status", record.status || "Erişilebilir");
   const bookmark = element("button", `agent-feature__bookmark${state.favorites.has(record.id) ? " is-active" : ""}`); bookmark.type = "button"; bookmark.setAttribute("aria-label", state.favorites.has(record.id) ? `${record.name} favorilerden çıkar` : `${record.name} favorilere ekle`); bookmark.setAttribute("aria-pressed", String(state.favorites.has(record.id))); bookmark.append(element("i", state.favorites.has(record.id) ? "fas fa-bookmark" : "far fa-bookmark"));
-  bookmark.addEventListener("click", () => { state.favorites.has(record.id) ? state.favorites.delete(record.id) : state.favorites.add(record.id); saveFavorites(session); renderAgentCatalog(session); });
+  bookmark.addEventListener("click", () => {
+    state.favorites.has(record.id) ? state.favorites.delete(record.id) : state.favorites.add(record.id);
+    saveFavorites(session);
+    updateFavoriteButton(bookmark, record);
+    if (state.tab === "favorites") renderAgentCatalog(session);
+  });
   const referenceDescription = record.id === "product-discover" ? "Ürünleri keşfedin, karşılaştırın ve ihtiyacınıza uygun sonuçlara daha hızlı ulaşın." : record.description;
   const description = element("p", "agent-feature__description", referenceDescription || "Bu ajanın mevcut çalışma alanını ve desteklenen yeteneklerini inceleyin.");
   const tags = element("div", "agent-feature__tags"); const capabilities = record.id === "product-discover" && !record.tags.length ? ["Ürün araştırması", "Karşılaştırma", "Akıllı keşif"] : record.tags; capabilities.slice(0, 4).forEach(tag => tags.append(element("span", "", tag)));
@@ -112,13 +119,22 @@ function agentFeature(record, session) {
   const art = element("div", "agent-feature__art"); art.setAttribute("aria-hidden", "true"); art.innerHTML = productArtwork;
   article.append(info, art); return article;
 }
+function updateFavoriteButton(button, record) {
+  const favorite = state.favorites.has(record.id);
+  button.classList.toggle("is-active", favorite);
+  button.setAttribute("aria-label", favorite ? `${record.name} favorilerden çıkar` : `${record.name} favorilere ekle`);
+  button.setAttribute("aria-pressed", String(favorite));
+  button.querySelector("i").className = favorite ? "fas fa-bookmark" : "far fa-bookmark";
+}
 function openAgentDetails(record, description, capabilities) { const dialog = document.getElementById("agent-details-dialog"); document.getElementById("agent-details-title").textContent = record.name; const content = document.getElementById("agent-details-content"); content.replaceChildren(element("p", "", description)); if (capabilities.length) { const heading = element("h3", "", "Yetenekler"); const list = element("ul"); capabilities.forEach(value => list.append(element("li", "", value))); content.append(heading, list); } dialog.showModal(); }
 function agentMatches(record) { return matches(record) && (state.tab !== "favorites" || state.favorites.has(record.id)); }
 function renderAgentCatalog(session) {
   const filtered = state.records.filter(agentMatches); document.getElementById("agent-total-count").textContent = state.records.length; document.getElementById("result-count").textContent = `${filtered.length} ajan`;
   if (!state.records.length) return showState("empty", "Erişilebilir ajan bulunamadı", "Hesabınıza bir ajan erişimi tanımlandığında kayıtlar burada görünecek.");
   if (!filtered.length) return showState("empty", state.tab === "favorites" ? "Henüz favori ajanınız yok" : "Aramanızla eşleşen ajan yok", state.tab === "favorites" ? "Kitap ayracı simgesiyle erişilebilir ajanları favorilerinize ekleyebilirsiniz." : "Arama ifadenizi veya kategori seçiminizi değiştirin.", state.tab !== "favorites");
-  const root = document.getElementById("phase2-results"); root.replaceChildren(...filtered.map(record => agentFeature(record, session)));
+  const root = document.getElementById("phase2-results");
+  const existing = new Map([...root.querySelectorAll("[data-agent-id]")].map(node => [node.dataset.agentId, node]));
+  root.replaceChildren(...filtered.map(record => existing.get(record.id) || agentFeature(record, session)));
 }
 function setupAgentLibrary(session) {
   state.session = session; state.favorites = safeFavorites(session); const select = document.getElementById("catalog-category"); [...new Set(state.records.map(r => r.category).filter(Boolean))].sort().forEach(value => { const option = element("option", "", value); option.value = value; select.append(option); });
@@ -164,7 +180,9 @@ function renderModelsOrHistory() {
   showState("empty", isModels ? "Henüz özel model kaydı yok" : "Görüntülenebilir işlem kaydı yok", isModels ? "Kaydedilmiş istem, bilgi kaynağı veya eğitilmiş model desteği bu hesap için henüz sunulmuyor. Bilgi kaynağı eklemek model eğitimi olarak değerlendirilmez." : "Uygun ve yetkilendirilmiş bir işlem geçmişi kaynağı bulunmadığı için burada hesap verisi gösterilmiyor.");
 }
 async function init() {
+  performance.mark("teknoify:app-init");
   const session = await requireAuth(); if (!session) return; setIdentity(session);
+  performance.mark("teknoify:auth-ready");
   if (!copy[page]) {
     const descriptions = { api: "API erişimlerinizi güvenli biçimde yönetin.", docs: "Geliştirici kaynaklarına ve entegrasyon rehberlerine ulaşın.", webhooks: "Webhook entegrasyonlarınızı yönetin.", usage: "Abonelik ve kullanım bilgilerinizi görüntüleyin.", invoices: "Faturalandırma kayıtlarınızı görüntüleyin.", team: "Kuruluşunuzun takım yönetimi alanı.", profile: "Profil ve hesap güvenliği ayarlarınızı yönetin.", help: "Teknoify ürünleri için yardım kaynaklarına ulaşın." };
     const titleNode = document.getElementById("app-shell-title"); const descriptionNode = document.getElementById("app-shell-description");
@@ -174,8 +192,9 @@ async function init() {
   }
   const [title, description] = copy[page]; document.getElementById("phase2-title").textContent = title; document.getElementById("phase2-description").textContent = description;
   try {
-    const userSnap = await getDoc(doc(db, "users", session.uid)); const userData = userSnap.exists() ? userSnap.data() : {};
-    if (page === "agents") { state.records = await authorizedRecords(session, userData, "agents"); setupAgentLibrary(session); renderAgentCatalog(session); }
+    const userData = session.permissionData || {};
+    performance.mark("teknoify:permission-data-ready");
+    if (page === "agents") { state.records = await authorizedRecords(session, userData, "agents"); performance.mark("teknoify:agent-data-ready"); setupAgentLibrary(session); renderAgentCatalog(session); performance.mark("teknoify:first-usable-catalog-render"); }
     else if (page === "tools") { state.records = builtIns.tools.map(r => ({ ...r, href: withImpersonation(r.href), tags: [], status: "Erişilebilir" })); setupFilters(); renderCatalog(); }
     else if (page === "projects") { state.records = await authorizedRecords(session, userData, "projects"); setupFilters(); renderCatalog(); }
     else if (page === "overview") { const [projects, agents] = await Promise.all([authorizedRecords(session, userData, "projects"), authorizedRecords(session, userData, "agents")]); renderOverview(userData, projects, agents); }
