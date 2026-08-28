@@ -33,7 +33,11 @@ function normalizeRecord(snap, type) {
   const details = value.details || {};
   const config = value.config || {};
   const rawPath = `/${config.folderPath || ""}/${config.entryPoint || "index.html"}`.replace(/\/+/g, "/");
-  return { id: snap.id || value.id, name: details.name || value.name || snap.id, description: details.description || value.description || "Açıklama sağlanmamış.", category: details.category || value.category || (type === "agents" ? "Ajan" : "Servis"), tags: Array.isArray(details.capabilities) ? details.capabilities : Array.isArray(value.tags) ? value.tags : [], icon: details.icon || value.icon || "fas fa-cube", href: withImpersonation(rawPath), status: config.isActive === false ? "Kullanılamıyor" : "Erişilebilir" };
+  const rawIcon = details.icon || value.icon || "";
+  const icon = /(^|\s)fa[srlb]?\s+fa-[\w-]+/.test(rawIcon)
+    ? rawIcon
+    : /^fa-[\w-]+$/.test(rawIcon) ? `fas ${rawIcon}` : type === "agents" ? "fas fa-robot" : "fas fa-folder-open";
+  return { id: snap.id || value.id, name: details.name || value.name || snap.id, description: details.description || value.description || "", category: details.category || value.category || (type === "agents" ? "Ajan" : "Servis"), tags: Array.isArray(details.capabilities) ? details.capabilities : Array.isArray(value.tags) ? value.tags : [], icon, href: withImpersonation(rawPath), status: config.isActive === false ? "Kullanılamıyor" : "Erişilebilir" };
 }
 function setIdentity(session) {
   const name = session.name || session.displayName || session.email || "Teknoify Kullanıcısı";
@@ -61,7 +65,8 @@ function card(record, label) {
   const article = element("article", "catalog-card");
   const head = element("div", "catalog-card__head"); const icon = element("span", "catalog-card__icon"); icon.append(element("i", record.icon));
   const identity = element("div"); identity.append(element("h2", "", record.name), element("span", "phase2-badge", record.status || "Erişilebilir")); head.append(icon, identity);
-  article.append(head, element("p", "catalog-card__description", record.description));
+  article.append(head);
+  if (record.description) article.append(element("p", "catalog-card__description", record.description));
   const tags = element("div", "phase2-tags"); [record.category, ...record.tags].filter(Boolean).slice(0, 4).forEach(tag => tags.append(element("span", "phase2-tag", tag))); article.append(tags);
   if (record.href) { const link = element("a", "phase2-button phase2-button--secondary", label); link.href = record.href; link.append(element("i", "fas fa-arrow-right")); article.append(link); }
   return article;
@@ -71,12 +76,14 @@ function renderCatalog() {
   const filtered = state.records.filter(matches); document.getElementById("result-count").textContent = `${filtered.length} sonuç`;
   if (!state.records.length) return showState("empty", "Erişilebilir kayıt bulunamadı", "Hesabınıza bir erişim tanımlandığında kayıtlar burada görünecek.");
   if (!filtered.length) return showState("empty", "Aramanızla eşleşen sonuç yok", "Arama ifadenizi veya kategori seçiminizi değiştirin.", true);
-  const root = document.getElementById("phase2-results"); root.replaceChildren(); const grid = element("div", "catalog-grid");
+  const root = document.getElementById("phase2-results"); root.replaceChildren(); const grid = element("div", `catalog-grid${filtered.length === 1 ? " catalog-grid--single" : ""}`);
   filtered.forEach(item => grid.append(card(item, page === "agents" ? "Ajanı Aç" : "Aracı Aç"))); root.append(grid);
 }
 function resetFilters() { state.query = ""; state.category = "tumu"; document.getElementById("catalog-search").value = ""; document.getElementById("catalog-category").value = "tumu"; renderCatalog(); }
 function setupFilters() {
-  const select = document.getElementById("catalog-category"); [...new Set(state.records.map(r => r.category).filter(Boolean))].sort().forEach(value => { const option = element("option", "", value); option.value = value; select.append(option); });
+  const select = document.getElementById("catalog-category"); const categories = [...new Set(state.records.map(r => r.category).filter(Boolean))].sort();
+  categories.forEach(value => { const option = element("option", "", value); option.value = value; select.append(option); });
+  select.closest("label").hidden = categories.length <= 1;
   document.getElementById("catalog-search").addEventListener("input", event => { state.query = event.target.value.trim(); renderCatalog(); });
   select.addEventListener("change", event => { state.category = event.target.value; renderCatalog(); });
 }
@@ -95,8 +102,8 @@ async function authorizedRecords(session, userData, type) {
 }
 function renderOverview(userData, projects, agents) {
   const metrics = [
-    ["API İstekleri", "—", "Bu dönem için istek sayacı bulunmuyor."], ["Token / Kredi Kullanımı", "—", "Kullanım verisi henüz sağlanmıyor."],
-    ["Erişilebilir Projeler", String(projects.length), "Yetki verilen proje ve servisler."], ["Erişilebilir Ajanlar", String(agents.length), "Kütüphanede açabildiğiniz ajanlar."]
+    ["Erişilebilir Projeler", String(projects.length), "Yetki verilen proje ve servisler."], ["Erişilebilir Ajanlar", String(agents.length), "Kütüphanede açabildiğiniz ajanlar."],
+    ["API İstekleri", "—", "İstek sayacı bulunmuyor."], ["Token / Kredi Kullanımı", "—", "Kullanım verisi sağlanmıyor."]
   ];
   const root = document.getElementById("metric-grid"); metrics.forEach(([name, value, note]) => { const item = element("article", "metric-card"); item.append(element("span", "", name), element("strong", "", value), element("small", "", note)); root.append(item); });
   const projectRoot = document.getElementById("overview-projects");
