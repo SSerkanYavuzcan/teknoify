@@ -4,31 +4,52 @@ const STORAGE_KEY = "teknoify_sidebar_collapsed";
 const MOBILE_QUERY = "(max-width: 768px)";
 
 export const NAVIGATION = Object.freeze([
-  { id: "overview", label: "Genel Bakış", icon: "fas fa-house", url: "/dashboard/member.html" },
-  { section: "AI HUB", items: [
-    { id: "agents", label: "Ajan Kütüphanesi", icon: "fas fa-robot", url: "/dashboard/ai-hub/agents.html", routes: ["/dashboard/agents/"] },
-    { id: "tools", label: "Araçlar & Servisler", icon: "fas fa-wand-magic-sparkles", url: "/dashboard/ai-hub/tools.html", routes: ["/dashboard/web-scraping/", "/dashboard/geo-intelligence/"] },
-    { id: "models", label: "Özel Modellerim", icon: "fas fa-brain", url: "/dashboard/ai-hub/models.html" }
+  { id: "overview", label: "Genel Bakış", icon: "house", url: "/dashboard/member.html" },
+  { section: "AI Hub", items: [
+    { id: "agents", label: "Ajan Kütüphanesi", icon: "robot", url: "/dashboard/ai-hub/agents.html", routes: ["/dashboard/agents/"] },
+    { id: "tools", label: "Araçlar & Servisler", icon: "tools", url: "/dashboard/ai-hub/tools.html", routes: ["/dashboard/web-scraping/", "/dashboard/geo-intelligence/"] },
+    { id: "models", label: "Özel Modellerim", icon: "brain", url: "/dashboard/ai-hub/models.html" }
   ]},
-  { section: "ÇALIŞMA ALANI", items: [
-    { id: "projects", label: "Aktif Projeler", icon: "fas fa-folder-open", url: "/dashboard/workspace/projects.html", routes: ["/dashboard/services/"] },
-    { id: "history", label: "İşlem Geçmişi", icon: "fas fa-clock-rotate-left", url: "/dashboard/workspace/history.html" }
+  { section: "Çalışma Alanı", items: [
+    { id: "projects", label: "Aktif Projeler", icon: "folder", url: "/dashboard/workspace/projects.html", routes: ["/dashboard/services/"] },
+    { id: "history", label: "İşlem Geçmişi", icon: "history", url: "/dashboard/workspace/history.html" }
   ]},
-  { section: "GELİŞTİRİCİ MERKEZİ", items: [
-    { id: "api", label: "API Yönetimi", icon: "fas fa-key", url: "/dashboard/developer/api.html", routes: ["/dashboard/bim-istekleri/"] },
-    { id: "docs", label: "Dokümantasyon", icon: "fas fa-book", url: "/dashboard/developer/docs.html" },
-    { id: "webhooks", label: "Webhooks", icon: "fas fa-code-branch", url: "/dashboard/developer/webhooks.html" }
+  { section: "Geliştirici Merkezi", items: [
+    { id: "api", label: "API Yönetimi", icon: "key", url: "/dashboard/developer/api.html", routes: ["/dashboard/bim-istekleri/"] },
+    { id: "docs", label: "Dokümantasyon", icon: "book", url: "/dashboard/developer/docs.html" },
+    { id: "webhooks", label: "Webhooks", icon: "nodes", url: "/dashboard/developer/webhooks.html" }
   ]},
-  { section: "FATURALANDIRMA & ORGANİZASYON", items: [
-    { id: "usage", label: "Abonelik ve Kullanım", icon: "fas fa-chart-pie", url: "/dashboard/billing/usage.html", routes: ["/dashboard/member/subscriptions/"] },
-    { id: "invoices", label: "Faturalar", icon: "fas fa-file-invoice", url: "/dashboard/billing/invoices.html" },
-    { id: "team", label: "Takım", icon: "fas fa-users", url: "/dashboard/organization/team.html", access: "admin" }
+  { section: "Faturalandırma & Organizasyon", items: [
+    { id: "usage", label: "Abonelik ve Kullanım", icon: "card", url: "/dashboard/billing/usage.html", routes: ["/dashboard/member/subscriptions/"] },
+    { id: "invoices", label: "Faturalar", icon: "receipt", url: "/dashboard/billing/invoices.html" },
+    { id: "team", label: "Takım", icon: "users", url: "/dashboard/organization/team.html", access: "admin" }
   ]},
-  { section: "DESTEK & AYARLAR", items: [
-    { id: "profile", label: "Profil ve Güvenlik", icon: "fas fa-user-shield", url: "/dashboard/settings/profile.html" },
-    { id: "help", label: "Yardım Merkezi", icon: "fas fa-circle-question", url: "/dashboard/support/help.html" }
+  { section: "Destek & Ayarlar", items: [
+    { id: "profile", label: "Profil ve Güvenlik", icon: "shield-user", url: "/dashboard/settings/profile.html" },
+    { id: "help", label: "Yardım Merkezi", icon: "help", url: "/dashboard/support/help.html" }
   ]}
 ]);
+
+const SIDEBAR_ICONS = Object.freeze({
+  house: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10M9.5 20v-6h5v6"/>',
+  robot: '<rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 3v4M9 3h6M8 12h.01M16 12h.01M8.5 16h7"/>',
+  tools: '<path d="M14.7 6.3a4 4 0 0 0-5-5L12 3.6 9.6 6 7.3 3.7a4 4 0 0 0 5 5L4 17l3 3 8.3-8.3a4 4 0 0 0 5-5L18 9l-3-3 2.3-2.3"/>',
+  brain: '<path d="M9.5 4.5a3 3 0 0 0-5 2.2 3.5 3.5 0 0 0-1 6.5A3.5 3.5 0 0 0 7 18.5 3 3 0 0 0 12 20V7a3 3 0 0 0-2.5-2.5Z"/><path d="M14.5 4.5a3 3 0 0 1 5 2.2 3.5 3.5 0 0 1 1 6.5 3.5 3.5 0 0 1-3.5 5.3A3 3 0 0 1 12 20M8 9a3 3 0 0 0 4 2M16 9a3 3 0 0 1-4 2M8 15a3 3 0 0 1 4-2M16 15a3 3 0 0 0-4-2"/>',
+  folder: '<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',
+  history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4M12 7v5l3 2"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M15 8l3 3M17 6l2 2"/>',
+  book: '<path d="M3.5 5.5A3.5 3.5 0 0 1 7 4h5v16H7a3.5 3.5 0 0 0-3.5 1.5ZM20.5 5.5A3.5 3.5 0 0 0 17 4h-5v16h5a3.5 3.5 0 0 1 3.5 1.5Z"/>',
+  nodes: '<circle cx="5" cy="12" r="2.5"/><circle cx="19" cy="5" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="m7.3 10.8 9.4-4.6M7.3 13.2l9.4 4.6"/>',
+  card: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18M7 15h3"/>',
+  receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+  users: '<path d="M16 20v-1.5a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4V20"/><circle cx="9" cy="7" r="4"/><path d="M17 11a3.5 3.5 0 0 0 0-7M22 20v-1.5a4 4 0 0 0-3-3.7"/>',
+  "shield-user": '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><circle cx="12" cy="9" r="2.5"/><path d="M8.5 16a3.5 3.5 0 0 1 7 0"/>',
+  help: '<circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.5 2.5 0 1 1 3.2 2.4c-.9.4-.9 1-.9 1.8M12 17h.01"/>'
+});
+
+function sidebarIcon(name) {
+  return `<svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${SIDEBAR_ICONS[name]}</svg>`;
+}
 
 let injected = false;
 let initializedUid = "";
@@ -68,7 +89,7 @@ function withImpersonation(url) {
 
 function link(item) {
   const active = isActive(item);
-  return `<a class="menu-item${active ? " active" : ""}" href="${withImpersonation(item.url)}" data-nav-id="${item.id}" aria-label="${item.label}" title="${item.label}"${active ? ' aria-current="page"' : ""}><i class="${item.icon}" aria-hidden="true"></i><span>${item.label}</span></a>`;
+  return `<a class="menu-item${active ? " active" : ""}" href="${withImpersonation(item.url)}" data-nav-id="${item.id}" aria-label="${item.label}" title="${item.label}"${active ? ' aria-current="page"' : ""}>${sidebarIcon(item.icon)}<span>${item.label}</span></a>`;
 }
 
 function navigationMarkup() {
