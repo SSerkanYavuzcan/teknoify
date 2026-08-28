@@ -974,6 +974,10 @@ class ProfileManager {
     }
 
     async openModal(options = {}) {
+        if (window.USER_SESSION?.impersonating) {
+            console.warn('Kullanıcı görünümünde profil açılamaz.');
+            return;
+        }
         const requestedUser = options.user || this.currentUser;
         if (!requestedUser) return;
 
@@ -1093,6 +1097,11 @@ class ProfileManager {
 
     async handleProfileSave(e) {
         e.preventDefault();
+        if (window.USER_SESSION?.impersonating) {
+            this.closeModal();
+            console.warn('Kullanıcı görünümünde profil değiştirilemez.');
+            return;
+        }
         this.closePhoneCountryDropdown(false);
         if (!this.currentUser || this.isSavingProfile) return;
 
