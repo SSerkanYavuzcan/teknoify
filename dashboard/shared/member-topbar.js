@@ -28,6 +28,15 @@ function el(tag, attrs = {}, text = "") {
 
 function buildTopbar() {
   const header = el("header", { className: "top-bar tk-member-topbar" });
+  const menuButton = el("button", {
+    type: "button",
+    id: "tk-sidebar-menu-button",
+    "aria-label": "Ana menüyü aç",
+    "aria-controls": "tk-app-sidebar",
+    "aria-expanded": "false"
+  });
+  menuButton.append(el("i", { className: "fas fa-bars", "aria-hidden": "true" }));
+  menuButton.addEventListener("click", () => window.toggleSidebar?.());
   const greeting = el("h2", { className: "tk-member-greeting" });
   greeting.append(document.createTextNode("Hoşgeldin, "));
   greeting.append(el("span", { id: "user-name-title" }, DEFAULT_NAME));
@@ -46,7 +55,7 @@ function buildTopbar() {
   profileTrigger.append(el("span", { className: "avatar", id: "user-avatar", "aria-hidden": "true" }, FALLBACK_INITIAL));
   profileTrigger.append(el("i", { className: "fas fa-chevron-down", "aria-hidden": "true" }));
   actions.append(profileTrigger);
-  header.append(greeting, actions);
+  header.append(menuButton, greeting, actions);
   return header;
 }
 

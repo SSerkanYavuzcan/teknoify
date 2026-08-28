@@ -42,21 +42,7 @@
 </head>
 
 <body>
-  <button id="floating-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-
-  <aside class="sidebar">
-    <div class="brand"><i class="fas fa-cube"></i> <span>Teknoify</span></div>
-    <nav id="tk-sidebar-nav">
-       <a id="nav-back-link" href="#" class="menu-item" style="color: #94a3b8; margin-bottom: 15px;">
-         <i class="fas fa-arrow-left"></i> <span>Panele Dön</span>
-       </a>
-    </nav>
-    <div class="menu-spacer"></div>
-    <div class="sidebar-footer">
-      <a href="#" onclick="window.logoutApp()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> <span>Çıkış</span></a>
-      <button class="btn-collapse" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></button>
-    </div>
-  </aside>
+  <div id="tk-global-sidebar-root"></div>
 
   <main class="main-content">
     <header class="top-bar">
@@ -278,5 +264,6 @@
 
     });
   </script>
+  <script type="module" src="/dashboard/shared/sidebar.js?v=20260828"></script>
 </body>
 </html>

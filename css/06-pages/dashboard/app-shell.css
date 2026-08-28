@@ -1,0 +1,7 @@
+.app-shell { width: min(960px, 100%); margin: 46px auto; }
+.app-shell-kicker { margin: 0 0 10px; color: #8f83f8; font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+.app-shell h1 { margin: 0; color: #f2f2f6; font-size: clamp(28px, 4vw, 40px); }
+#app-shell-description { max-width: 620px; margin: 12px 0 30px; color: #959aa8; line-height: 1.65; }
+.app-shell-features { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 12px; margin-bottom: 20px; }
+.app-shell-feature { display: flex; align-items: center; gap: 12px; padding: 16px; color: #dddde6; text-decoration: none; background: #12151b; border: 1px solid #292d37; border-radius: 10px; }.app-shell-feature:hover,.app-shell-feature:focus-visible { border-color: #665bc3; background: #171925; }.app-shell-feature span { flex: 1; }.app-shell-feature > i:first-child { color: #8e82f8; }
+.app-shell-empty { display: flex; min-height: 210px; align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: #777c89; background: #101218; border: 1px dashed #30343f; border-radius: 12px; }.app-shell-empty i { color: #665e9e; font-size: 24px; }.app-shell-empty strong { color: #c9c9d2; }
