@@ -37,7 +37,8 @@
 .sidebar-account-copy strong, .sidebar-account-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar-account-copy strong { color: #e5e5eb; font-size: 13px; }.sidebar-account-copy small { margin-top: 2px; color: #777c89; font-size: 11px; }
 .sidebar-footer-actions { display: flex; gap: 8px; }
-.btn-logout, .btn-collapse, .sidebar-mobile-close { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; color: #a9adba; background: #181b22; border: 1px solid #2a2e38; border-radius: 8px; cursor: pointer; }
+.btn-logout, .btn-collapse { display: inline-flex; }
+.btn-logout, .btn-collapse, .sidebar-mobile-close { align-items: center; justify-content: center; min-height: 38px; color: #a9adba; background: #181b22; border: 1px solid #2a2e38; border-radius: 8px; cursor: pointer; }
 .btn-logout { flex: 1; gap: 9px; }.btn-collapse { flex: 0 0 40px; width: 40px; }.btn-logout:hover, .btn-collapse:hover { color: #fff; background: #20232c; }
 
 body.sidebar-collapsed .sidebar nav { padding-inline: 10px; }

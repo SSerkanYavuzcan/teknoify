@@ -22,6 +22,13 @@
   min-width: 0;
 }
 
+body[data-page="overview"] .tk-member-greeting {
+  font-size: 18px;
+  font-weight: 550;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
 .tk-member-greeting span {
   color: #6366f1;
 }
