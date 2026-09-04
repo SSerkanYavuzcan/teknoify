@@ -1,6 +1,10 @@
 {
     "$comment": "Allow-list contract for the public web artifact of teknoify.com. Only files reachable from the entries below (plus the public/ overlay) may enter the artifact. See docs/marketing-rebuild/05-production-boundary-and-legacy-exit.md.",
     "siteOrigin": "https://teknoify.com",
+    "netlify": {
+        "$comment": "Only this Netlify site may publish the artifact. Name is LIKELY (derived from PR commit statuses and an identical js/script.js on fancy-klepon-8eac4e.netlify.app); the first Deploy Preview build log confirms it. A second site (teknoify-demo) builds from this repository and is refused by build.mjs.",
+        "siteName": "fancy-klepon-8eac4e"
+    },
     "outputDir": "dist",
     "overlayDir": "public",
     "entryPages": [

@@ -7,6 +7,8 @@ Ownership decision in force: `teknoify.com` owns only the public marketing websi
 
 Nothing in this phase was pushed, merged, or deployed. The prototype below runs locally only.
 
+> **Phase A.3 (2026-09-05).** The ownership question is now decided and recorded in `docs/decisions/ADR-0002-marketing-platform-ownership.md`: marketing visitors are anonymous; all auth/user/premium concepts are platform concerns. `06-deployment-cutover.md` revalidates the Netlify environment, resolves what can be resolved about the two Netlify sites, adds a site-name guard and LF normalization to the builder, classifies legacy URLs under the ownership decision, defines branch protection, previews and rollback, and gives the merge verdict (**NOT MERGE-READY**, three read-only UI checks outstanding). Where §4, §13, §14, §15 and §18 below differ from doc 06, doc 06 supersedes.
+
 ---
 
 ## 1. Revalidated Phase A claims

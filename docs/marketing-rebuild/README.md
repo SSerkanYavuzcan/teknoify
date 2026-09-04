@@ -12,13 +12,16 @@ Phase A (2026-09-04) is an audit only: no runtime files were changed.
 - [`04-phased-implementation-plan.md`](04-phased-implementation-plan.md): phased roadmap with prerequisites, risks, validation and production checkpoints.
 - [`05-production-boundary-and-legacy-exit.md`](05-production-boundary-and-legacy-exit.md): Phase A.2 — revalidated claims, public artifact contract (`npm run check:public` → `dist/`), path classification, Netlify configuration as code, URL migration matrix, legacy exit classification, security headers, generated-data workflows, safeguards, rollout/rollback, end-of-phase decisions.
 
+- [`06-deployment-cutover.md`](06-deployment-cutover.md): Phase A.3 — ownership lock (see [`../decisions/ADR-0002-marketing-platform-ownership.md`](../decisions/ADR-0002-marketing-platform-ownership.md)), what is known about the two Netlify sites, root `netlify.toml` precedence analysis, cutover contract validation (clean-checkout reproducibility, EOL-independent hashes, site guard), post-cutover behaviour of internal URLs, legacy URL redirect classes, branch-protection plan, Deploy Preview model, rollback contract, merge verdict and next PR plan.
+
 ## Tooling introduced in Phase A.2
 
 - `scripts/public-artifact/manifest.json`: allow-list of entry pages, transitional pages/files, explicit static data, allowed roots and forbidden rules.
 - `scripts/public-artifact/build.mjs`: builds `dist/` from the manifest by following asset references structurally; fails on any forbidden reference. `npm run build:public`.
 - `scripts/public-artifact/verify.mjs`: asserts the artifact contains only permitted content and all required files; checks robots, sitemap, `_redirects` and `_headers` consistency. `npm run verify:public`.
 - `public/`: overlay copied verbatim into the artifact (`_redirects`, `_headers`, `robots.txt`, `sitemap.xml`, `404.html`).
-- `netlify.toml`: deployment contract as code (not active until merged; see doc 05 §4 and §15).
+- `netlify.toml`: deployment contract as code (not active until merged; see doc 05 §4 and §15, doc 06 §4 and §11).
+- Phase A.3 additions: `build.mjs` normalizes text files to LF (artifact hash is identical on CRLF and LF checkouts) and refuses to run on Netlify for any site other than `manifest.netlify.siteName`.
 
 ## Evidence convention
 

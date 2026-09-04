@@ -66,9 +66,10 @@ export function isUnderAllowedRoot(rel, allowedRoots) {
     return (allowedRoots || []).some((r) => (r.endsWith('/') ? rel.startsWith(r) : rel === r));
 }
 
-const TEXT_EXT = new Set(['.html', '.htm', '.css', '.js', '.mjs', '.svg', '.xml', '.txt', '.json']);
+const TEXT_EXT = new Set(['.html', '.htm', '.css', '.js', '.mjs', '.svg', '.xml', '.txt', '.json', '.webmanifest']);
+const TEXT_BASENAMES = new Set(['_headers', '_redirects']);
 export function isTextFile(rel) {
-    return TEXT_EXT.has(path.posix.extname(rel).toLowerCase());
+    return TEXT_EXT.has(path.posix.extname(rel).toLowerCase()) || TEXT_BASENAMES.has(path.posix.basename(rel));
 }
 
 export function isExternal(spec) {

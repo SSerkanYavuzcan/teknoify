@@ -8,7 +8,11 @@
  *
  * Zero dependencies. Node >= 18. Deterministic: no timestamps are written into the output.
  *
- * Usage: node scripts/public-artifact/build.mjs [--out=dist] [--report=.artifact-report.json] [--dry-run] [--quiet]
+ * Usage: node scripts/public-artifact/build.mjs [--out=dist] [--report=.artifact-report.json] [--dry-run] [--quiet] [--keep-eol]
+ *
+ * Text files are written with LF line endings (what Git stores) so the artifact hash is identical whether the
+ * checkout uses CRLF (Windows, core.autocrlf=true) or LF (Netlify's Linux build image). --keep-eol disables this.
+ * On Netlify the build refuses to run for any site other than manifest.netlify.siteName (see below).
  */
 import { promises as fs } from 'node:fs';
 import { existsSync, statSync } from 'node:fs';
@@ -48,6 +52,28 @@ if (!OUT.startsWith(ROOT + path.sep) || path.relative(ROOT, OUT).startsWith('..'
 if (['', '.', 'pages', 'css', 'js', 'docs', 'public'].includes(path.relative(ROOT, OUT))) {
     console.error(`Refusing to use "${OUT_REL}" as the output directory.`);
     process.exit(2);
+}
+
+// Netlify site guard: more than one Netlify site builds from this repository. Only the marketing site may
+// publish this artifact. Netlify exposes SITE_NAME (the site's subdomain) during every build, including
+// Deploy Previews, so a wrong or unexpected site fails loudly and keeps its previous deploy.
+const expectedSite = manifest.netlify?.siteName;
+if (process.env.NETLIFY === 'true' && expectedSite && process.env.SITE_NAME && process.env.SITE_NAME !== expectedSite) {
+    console.error(
+        `PUBLIC ARTIFACT BUILD REFUSED: this build runs for Netlify site "${process.env.SITE_NAME}" ` +
+            `(context ${process.env.CONTEXT || 'unknown'}), but the marketing artifact may only be published by ` +
+            `"${expectedSite}". If that name is wrong, update scripts/public-artifact/manifest.json → netlify.siteName. ` +
+            `Any other site (for example the demo site) needs its own configuration; see docs/marketing-rebuild/06-deployment-cutover.md.`
+    );
+    process.exit(3);
+}
+const KEEP_EOL = !!args['keep-eol'];
+
+/** Text files are normalized to LF so the artifact does not depend on the checkout's line-ending mode. */
+function normalizeContent(rel, buf) {
+    if (KEEP_EOL || !isTextFile(rel)) return buf;
+    const text = buf.toString('utf8');
+    return text.includes('\r') ? Buffer.from(text.replace(/\r\n?/g, '\n'), 'utf8') : buf;
 }
 
 const errors = [];
@@ -193,7 +219,7 @@ if (!DRY) {
     await fs.mkdir(OUT, { recursive: true });
 }
 for (const rel of [...included.keys()].sort()) {
-    const buf = await fs.readFile(path.join(ROOT, rel));
+    const buf = normalizeContent(rel, await fs.readFile(path.join(ROOT, rel)));
     const meta = included.get(rel);
     files.push({
         path: rel,
@@ -209,7 +235,7 @@ for (const rel of [...included.keys()].sort()) {
     }
 }
 for (const rel of overlayFiles) {
-    const buf = await fs.readFile(path.join(overlayDir, rel));
+    const buf = normalizeContent(rel, await fs.readFile(path.join(overlayDir, rel)));
     files.push({ path: rel, bytes: buf.length, sha256: sha256(buf), origin: 'overlay', transitional: false, referrers: [] });
     if (!DRY) {
         await fs.mkdir(path.dirname(path.join(OUT, rel)), { recursive: true });
