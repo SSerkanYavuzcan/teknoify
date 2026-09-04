@@ -63,7 +63,8 @@ if (process.env.NETLIFY === 'true' && expectedSite && process.env.SITE_NAME && p
         `PUBLIC ARTIFACT BUILD REFUSED: this build runs for Netlify site "${process.env.SITE_NAME}" ` +
             `(context ${process.env.CONTEXT || 'unknown'}), but the marketing artifact may only be published by ` +
             `"${expectedSite}". If that name is wrong, update scripts/public-artifact/manifest.json → netlify.siteName. ` +
-            `Any other site (for example the demo site) needs its own configuration; see docs/marketing-rebuild/06-deployment-cutover.md.`
+            `If this is the demo site (demo.teknoify.com), its Netlify "Package directory" must be set to "demo" so that ` +
+            `demo/netlify.toml is used instead of the root netlify.toml; see docs/marketing-rebuild/06-deployment-cutover.md §14.`
     );
     process.exit(3);
 }

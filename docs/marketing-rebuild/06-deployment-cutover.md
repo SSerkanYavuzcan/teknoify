@@ -2,6 +2,8 @@
 
 Date: 2026-09-05. Branch: `chore/marketing-rebuild-audit`. Builds on doc 05 (Phase A.2). Evidence labels: **CONFIRMED** / **LIKELY** / **UNVERIFIED**, applied strictly. Nothing was merged, pushed, or deployed; no Netlify, Firebase, GitHub or DNS setting was changed.
 
+> **Update, same day.** Sections 1–13 were written before the Netlify and GitHub UIs were read. The owner then supplied the verified settings; **§14–§20 below incorporate them and supersede §2, §4, §8, §11, §12 and §13 wherever they differ.** In particular: the demo site does **not** use `demo/` as its base directory; both sites use base `/`, and the demo site differs only by publish directory `demo`.
+
 ---
 
 ## 1. Ownership decision (locked)
@@ -42,7 +44,7 @@ No Netlify CLI, credential file, environment variable, or `.netlify/` state exis
 | Repository | `SSerkanYavuzcan/teknoify` | CONFIRMED | Preview statuses on this repo's PRs (present since PR #309/#310 era, absent at PR #231). |
 | Production branch | `main` | LIKELY | Its content matches `main`'s `demo/` folder. |
 | What is published | the contents of `demo/` as site root | CONFIRMED (behaviour) | `/index.html`, `/scripts/app.js`, `/scripts/demo-catalog.js`, `/data/demos.js`, `/styles/index.css`, **`/README.md`** are `200`; `/css/style.css`, `/pages/rpa.html`, `/demo/`, `/package.json` are `404`. |
-| How that is configured (base = `demo` vs base = root + publish/package = `demo`) | — | **UNVERIFIED** | Indistinguishable from outside. This is the blocker: the two configurations react differently to a root `netlify.toml` (§4). |
+| How that is configured | base `/`, package directory not set, publish directory `demo`, no build command | **CONFIRMED (UI, §14)** | Earlier text in this table and in §4 that considered base = `demo/` is superseded. |
 | Build command | none | LIKELY | Raw files served, including `README.md`. |
 | Deploy Previews | enabled | CONFIRMED | Statuses; `deploy-preview-318--teknoify-demo.netlify.app` `200`. |
 | Post-processing | **no** link rewriting | CONFIRMED (behaviour) | Its served `index.html` keeps `href="/pages/gizlilik.html"` etc., whereas the same file at `teknoify.com/demo/` is rewritten to `href='/pages/gizlilik'`. |
@@ -228,6 +230,113 @@ Not blockers (already resolved or acceptable): artifact determinism and reproduc
 
 ---
 
-## 13. Remaining external unknowns
+## 13. Remaining external unknowns (superseded by §20)
 
 U1 (main-site UI settings, env vars, hooks, Pretty URLs toggle, production deploy ID), U2/U13 (demo site base/package directory and its future), U3 (shared Firebase project), U4 (reset e-mail action URL), U6 (contact endpoint from another network), U7 (Search Console), U14 (UI build settings the toml would override). U5 and U11 are resolved (doc 05). New in this phase: U15 — whether the observed link rewriting (`/x.html` → `/x`, no trailing slash) is reproduced by `[build.processing.html] pretty_urls = true` on a fresh build, given current docs describe a trailing-slash form; the first Deploy Preview answers it.
+
+---
+
+# Phase A.3 (continued) — verified external configuration
+
+## 14. Confirmed Netlify and GitHub configuration
+
+Supplied from the Netlify and GitHub UIs on 2026-09-05. All rows **CONFIRMED** unless labelled.
+
+| Setting | Main site (`teknoify.com`) | Demo site (`demo.teknoify.com`) |
+| --- | --- | --- |
+| Repository | `SSerkanYavuzcan/teknoify` | `SSerkanYavuzcan/teknoify` |
+| Production branch | `main` | `main` |
+| Branch deploys | production branch only | production branch only |
+| Deploy Previews | enabled for PRs against the production branch | enabled for PRs against the production branch |
+| Base directory | `/` | `/` |
+| Package directory | not set | not set |
+| Build command | not set | not set |
+| Publish directory | `/` | `demo` |
+| Build status | Active | Active |
+| Site name (`*.netlify.app`) | `fancy-klepon-8eac4e` — **LIKELY** (not among the supplied values; from PR statuses plus identical served JS) | `teknoify-demo` — **LIKELY** (same basis) |
+
+GitHub: the repository is `SSerkanYavuzcan/teknoify` (public). The local folder name `teknoify-marketing` is only a clone name; there is no separate marketing repository and none will be created. **No repository rulesets and no branch protection exist on `main`** (CONFIRMED; matches the API result in doc 05). The repository, its history and both Netlify relationships remain intact.
+
+Corrections to earlier text: doc 05 §4/§9/§13/§14 and doc 06 §2.2/§4 treated "base directory = `demo/`" as a possibility. It is not the case. The demo site is a plain "same base, different publish directory" configuration.
+
+## 15. Reassessment of the root `netlify.toml`
+
+Documented Netlify behaviour (fetched in this phase): settings in `netlify.toml` override the UI; a configuration file is looked up in the order package directory → base directory → repository root; paths are relative to the base directory.
+
+With both sites at base `/` and no package directory, **the root `netlify.toml` is read by both sites**. For the demo site it would override publish `demo` → `dist` and add the marketing build command; the `SITE_NAME` guard would then fail every demo build (keeping the last deploy but never updating it). That satisfies "no wrong content" but fails "both sites remain operational". **Therefore the root `netlify.toml` as designed in A.2 cannot be merged on its own.** The content of the root file does not need to change; what must change is that the demo site stops reading it.
+
+## 16. Site isolation options
+
+| Option | How it works | Git changes | Netlify UI changes | Deploy Previews | Rollback | Failure modes | Maintainability | Astro/static migration |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **A. Package-directory isolation (Netlify's documented multi-site model)** | Demo site gets Package directory `demo`; Netlify then reads `demo/netlify.toml` first (`publish = "demo"`, no build) and never the root file. Root `netlify.toml` governs only `teknoify.com`. | `demo/netlify.toml` (added; one config key) | **One field**: demo site → Build settings → Package directory = `demo`. Main site unchanged. | Both sites keep building previews, each with its own file. | Revert the PR: root file gone → main site returns to UI root publishing; the demo file pins behaviour identical to its UI, so reverting it changes nothing. | If the package directory is ever cleared, the root file applies to the demo again; the `SITE_NAME` guard then fails that build loudly instead of publishing marketing content. If Netlify merged both files rather than stopping at the first, the demo would inherit root `[build.processing]`/env keys; docs describe a search order, not a merge, and the preview verifies it. | One tiny file per site; no shared script; each contract is readable in its own folder. | Clean: the root file later runs `astro build`; the demo file is untouched. |
+| B. Site-specific build dispatch | Root command becomes a dispatcher that inspects `SITE_NAME` (or a per-site env var) and writes the demo surface into `dist/` for the demo site, the marketing artifact for the main site. | Dispatcher script + demo copy logic; single root file. | None (or one env var per site for explicit roles). | Both work. | Revert PR. | Demo deploys depend on the marketing build script forever; a dispatcher bug breaks both sites; identification by `SITE_NAME` is LIKELY-grade until confirmed; `publish = "dist"` is shared, so the demo can never publish a different directory. | Coupled; every marketing build change is a demo risk. | Every future build tool must keep the dispatcher; awkward with Astro's own `astro build` entry point. |
+| C. Temporary UI-owned build settings for the demo site | Keep the demo on UI settings by preventing the root file from reaching it. | — | Not achievable without a package/base directory change: the toml overrides the UI whenever it is read. | — | — | Not a real option; it collapses into A. | — | — |
+| D. Marketing config in a package directory instead | Main site gets a Package directory (for example `site`) containing the marketing `netlify.toml`; the repository root has no toml; demo untouched. | Move `netlify.toml` into a subfolder; paths stay relative to root. | One field on the **main** site instead of the demo site. | Both work. | Revert PR. | Inverts the risk: a misconfigured main site silently returns to root publishing (the thing being removed) rather than failing loudly. Root has no visible deployment contract. | Acceptable but less discoverable. | Astro expects its config at the package root; workable but non-standard. |
+| E. Base-directory isolation (`demo/` as base) | Demo site base = `demo`. | `demo/netlify.toml` with `publish = "."` | One field, plus paths become relative to `demo/`. | Both work. | Same as A. | Changes the demo's dependency-install root and cache; `demo/` has no `package.json`, fine today, but any future demo tooling needs its own. | Equivalent to A with more moving parts. | Equivalent. |
+| F. Restructure the demo boundary (retire the site, serve `/demo/` from the artifact) | — | — | Delete site / redirect domain. | — | — | **Excluded**: not decided; the demo site must keep publishing its surface. | — | — |
+
+**Recommendation: A, package-directory isolation.** It is Netlify's documented pattern for several sites in one repository, needs exactly one UI field on the demo site and one one-key file in Git, changes nothing about what the demo site publishes today, keeps the root file a pure marketing contract, keeps both Deploy Preview pipelines working, is reversible by reverting the PR, and leaves the `SITE_NAME` guard as a loud backstop rather than a load-bearing mechanism. `demo/netlify.toml` is added on this branch. It pins today's behaviour exactly (publish `demo/` as-is, no build); the demo site's known styling defect (`/css/style.css` 404 there) is deliberately not addressed, because that is a demo-surface change, not a deployment-safety change.
+
+Note: with publish `demo` the demo site already serves `demo/README.md` publicly and will also serve `demo/netlify.toml`; both are harmless text. The marketing artifact never contains either (`.md` and `.toml` are forbidden extensions and the crawler follows references only; verified after adding the file).
+
+## 17. Role of the `SITE_NAME` guard after isolation
+
+Keep it, as defence in depth only. With option A the demo site never reads the root file, so the guard never fires in normal operation. It fires only if the demo site's package directory is cleared or a third site is attached to the repository; a loud failed build is then strictly better than a silent publish of the marketing artifact under the wrong domain. It is not, and must not become, the mechanism that keeps the demo operational. If the main site's real name differs from the LIKELY value, the first Deploy Preview of the boundary PR fails with a message naming the actual site; the fix is one manifest field. The guard is skipped outside Netlify (`NETLIFY` unset), so local and CI builds are unaffected.
+
+## 18. GitHub protection model (recommendation only; nothing enabled)
+
+Constraints: user-owned public repository; classic branch protection cannot grant bypass actors on user-owned repositories; rulesets are the modern mechanism; two workflows push generated data to `main` with the default `GITHUB_TOKEN`, which is subject to whatever rules exist.
+
+**Bot workflow evolution (must land before or together with protection):**
+1. Preferred: relocate `update-usd-try-rates.yml`, `extract-stock-document-text.yml`, their scripts, `data/currency/` and `data/stock/` to the platform/data repository together with the investment analytics consumer (doc 05 §12). Until the consumer moves, the marketing artifact still needs `data/currency/usd_try_rates.json`, so:
+2. Interim: change the rates workflow to **open a pull request** instead of pushing (for example `peter-evans/create-pull-request` on a `bot/usd-try-rates` branch) and enable **auto-merge** for it once required checks pass. The `Public artifact check` builds the artifact with the new data, Netlify builds a Deploy Preview, and the merge is automatic; production receives the data minutes later than today, once per day. Requires "Allow auto-merge" in repository settings (currently off) and a PAT or GitHub App token for creating the PR, because PRs opened with the default `GITHUB_TOKEN` do not trigger `pull_request` workflows (documented GitHub behaviour).
+3. Rejected: running the bot with an admin token and a ruleset bypass; it makes the owner's token the weakest link and hides bot writes from review.
+
+**Required before substantial redesign (as a ruleset targeting `main`):**
+- Require a pull request before merging; 1 approval (self-review with one maintainer; raise later).
+- Dismiss stale approvals on new commits; require conversation resolution.
+- Required status checks: `Public artifact check / Build and verify dist/` (workflow added on this branch) and the main site's Netlify Deploy Preview status.
+- Block force pushes; block deletion.
+- No bypass list (rulesets on user-owned repositories allow "repository admin" bypass; leave it off so the rules bind the owner too).
+- Enable only after step 2 above is merged; otherwise the daily push is rejected and the rates feed silently stops.
+
+**Hardening that can follow:** CODEOWNERS for `netlify.toml`, `demo/netlify.toml`, `public/`, `scripts/public-artifact/`, `.github/`; required linear history; signed commits; secret scanning with push protection (free on public repos); Dependabot once `firebase-admin` is removed; a second maintainer and one external approval; a merge queue if PR volume warrants it.
+
+## 19. First production-safety PR
+
+**Branch strategy:** open the PR from the existing `chore/marketing-rebuild-audit` branch (it holds only audit docs, the artifact tooling, the two Netlify files, the workflow and `.gitignore`; no page changes). Squash-merge into `main` so one commit is the revert unit. Later work starts from fresh branches off `main`; `main` remains the only production branch.
+
+**Title:** `chore(deploy): publish teknoify.com from a verified public artifact; isolate the demo site`
+
+**Description:**
+> Production currently publishes the repository root, so backend source, docs, datasets and package metadata are served at teknoify.com and every file added to the repo goes live. This PR switches the `teknoify.com` Netlify site to publish `dist/`, built by `npm run check:public` from an allow-list of public pages and their referenced assets and verified to contain no internal paths. It adds routing-level compatibility for legacy dashboard/login URLs (302 to platform.teknoify.com; per-route targets TBD), security headers with a report-only CSP, `robots.txt`, `sitemap.xml` and a 404 page. The separate `demo.teknoify.com` site keeps publishing `demo/` unchanged via `demo/netlify.toml`, which Netlify reads once that site's Package directory is set to `demo` (done before merge). A `SITE_NAME` guard prevents any other site from publishing the marketing artifact. No page, script or stylesheet changes. Rollback: republish the previous deploy in Netlify or revert this PR; `24f3044` is the last root-published reference. Docs: `docs/marketing-rebuild/05`, `06`, `docs/decisions/ADR-0002`.
+
+**Scope (files):** `netlify.toml`, `demo/netlify.toml`, `public/*`, `scripts/public-artifact/*`, `.github/workflows/public-artifact.yml`, `package.json` scripts, `.gitignore`, `ARCHITECTURE.md`, `docs/marketing-rebuild/*`, `docs/decisions/ADR-0002-*`. **Excluded:** anything under `index.html`, `pages/`, `css/`, `js/`, `dashboard/`, Firebase, Render, data workflows, design.
+
+**Required automated checks:** `Public artifact check` (GitHub Actions, Node 20, `build.mjs` + `verify.mjs`); Netlify Deploy Preview for the main site; Netlify Deploy Preview for the demo site.
+
+**Deploy Preview checks, main site (`deploy-preview-<n>--fancy-klepon-8eac4e.netlify.app`):**
+1. Build log: `SITE_NAME` accepted (no "BUILD REFUSED"), `verify.mjs` green, Node 20.
+2. The 13 sitemap URLs return 200 in both forms (`/pages/rpa` and `/pages/rpa.html`); `/demo/` 200; `/` renders the hero and 8 service cards.
+3. Served HTML links are rewritten as on production (`href='/pages/rpa'`), confirming `pretty_urls = true` reproduces current behaviour (U15).
+4. `/dashboard/admin.html`, `/pages/login.html`, `/login.html` → 302 to `https://platform.teknoify.com/`; `/pages/impersonate.html`, `/domains/corporate-automation/rpa/page.html` → 404 page.
+5. `/package.json`, `/docs/README.md`, `/render.yaml`, `/scripts/update-usd-try-rates.py`, `/dashboard/web-scraping/backend/main.py`, `/data/entitlements.json` → 404 page.
+6. Response headers on `/` include `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Content-Security-Policy-Report-Only`; `/data/currency/usd_try_rates.json` → 200 with `Cache-Control: public, max-age=300, must-revalidate`.
+7. `/robots.txt`, `/sitemap.xml`, `/404.html` → 200; `/reset-password.html` → 200 (transitional).
+
+**Deploy Preview checks, demo site (`deploy-preview-<n>--teknoify-demo.netlify.app`):** build log shows no marketing build and no refusal; `/` is the Demo Lab page; `/scripts/demo-catalog.js` 200; `/css/style.css` still 404 and `/pages/rpa.html` still 404 (unchanged, known).
+
+**Manual smoke test after merge (production):** repeat checks 2–7 against `teknoify.com`; `curl -I https://www.teknoify.com/` → 301 to apex; `demo.teknoify.com` unchanged; submit nothing but open the contact form and confirm it renders unchanged (it still depends on `api.teknoify.com`); read both sites' deploy logs; record the new production deploy ID.
+
+**Rollback procedure:** (1) Netlify → main site → Deploys → the deploy recorded before merge → "Publish deploy" (seconds; restores root publishing and legacy URLs); optionally "Lock to this deploy". (2) If the code must go too: `git revert` the squash-merge commit on `main` through a PR; Netlify rebuilds from UI settings (root publish). (3) Demo site: nothing to roll back; if its build ever fails, restore the package directory and republish its previous deploy. No Firebase, Render, DNS or workflow change is part of this PR, so none needs reverting.
+
+## 20. Verdict and remaining blockers
+
+**NOT MERGE-READY** — exactly one blocker remains:
+
+1. **Demo site Package directory is not set.** Smallest action: Netlify → site `teknoify-demo` → Build & deploy → Build settings → Package directory = `demo` (leave base `/`, publish `demo`, no command). Safe to do immediately: with no `demo/netlify.toml` on `main` yet, Netlify finds no configuration in `demo/` and continues with the UI settings, so nothing changes until the PR merges. Then open the PR and complete the Deploy Preview checks in §19; those are pre-merge verifications, not blockers.
+
+Resolved and no longer listed: main-site and demo-site build settings, production branch, previews, branch deploys (§14); artifact determinism, reproducibility, EOL independence, internals exclusion (§5–§6); rollback (§19). Branch protection is required before substantial redesign, not before this PR, and must be preceded by the bot-workflow change (§18).
+
+Remaining external unknowns unrelated to this PR: U3 (shared Firebase project), U4 (reset e-mail action URL), U6 (contact endpoint from another network), U7 (Search Console), U12 (GA property), U15 (pretty-URL behaviour on a fresh build, answered by the preview). Site names remain LIKELY until the first preview build log.

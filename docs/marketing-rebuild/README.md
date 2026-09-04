@@ -21,7 +21,9 @@ Phase A (2026-09-04) is an audit only: no runtime files were changed.
 - `scripts/public-artifact/verify.mjs`: asserts the artifact contains only permitted content and all required files; checks robots, sitemap, `_redirects` and `_headers` consistency. `npm run verify:public`.
 - `public/`: overlay copied verbatim into the artifact (`_redirects`, `_headers`, `robots.txt`, `sitemap.xml`, `404.html`).
 - `netlify.toml`: deployment contract as code (not active until merged; see doc 05 §4 and §15, doc 06 §4 and §11).
-- Phase A.3 additions: `build.mjs` normalizes text files to LF (artifact hash is identical on CRLF and LF checkouts) and refuses to run on Netlify for any site other than `manifest.netlify.siteName`.
+- Phase A.3 additions: `build.mjs` normalizes text files to LF (artifact hash is identical on CRLF and LF checkouts) and refuses to run on Netlify for any site other than `manifest.netlify.siteName` (defence in depth only).
+- `demo/netlify.toml`: pins the separate `demo.teknoify.com` site to today's behaviour (publish `demo/`, no build). Effective once that site's Netlify Package directory is `demo` (doc 06 §16, §20).
+- `.github/workflows/public-artifact.yml`: builds and verifies the artifact on pull requests to `main` (intended required check, doc 06 §18–§19).
 
 ## Evidence convention
 
