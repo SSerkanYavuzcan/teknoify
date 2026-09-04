@@ -1,0 +1,156 @@
+{
+    "$comment": "Allow-list contract for the public web artifact of teknoify.com. Only files reachable from the entries below (plus the public/ overlay) may enter the artifact. See docs/marketing-rebuild/05-production-boundary-and-legacy-exit.md.",
+    "siteOrigin": "https://teknoify.com",
+    "netlify": {
+        "$comment": "Defence in depth only: this Netlify site is the one expected to publish the artifact. Name is LIKELY (PR commit statuses; identical js/script.js on fancy-klepon-8eac4e.netlify.app); the first Deploy Preview build log confirms it. The separate demo site (teknoify-demo, publish dir demo) is isolated by demo/netlify.toml + its Netlify Package directory, not by this guard; the guard only stops a misconfigured site from publishing marketing content.",
+        "siteName": "fancy-klepon-8eac4e"
+    },
+    "outputDir": "dist",
+    "overlayDir": "public",
+    "entryPages": [
+        "index.html",
+        "pages/rpa.html",
+        "pages/webscraping.html",
+        "pages/api.html",
+        "pages/ai-assistant.html",
+        "pages/financial-indicators.html",
+        "pages/training-consulting.html",
+        "pages/investment-analytics.html",
+        "pages/subscription.html",
+        "pages/gizlilik.html",
+        "pages/kvkk.html",
+        "pages/kullanim-sartlari.html",
+        "pages/hizmet-sozlesmesi.html",
+        "demo/index.html"
+    ],
+    "transitionalPages": {
+        "$comment": "Legacy authentication / premium-gated pages kept ONLY during the migration window. Each has a sunset condition in doc 05 §7. They are never listed in the sitemap.",
+        "reset-password.html": "Firebase email action handler; remove after the Firebase Auth action URL points at platform.teknoify.com (U4).",
+        "pages/investment-retail.html": "Premium-gated preview linked from investment-analytics; remove when the platform hosts investment analytics.",
+        "pages/investment-airlines.html": "Premium-gated preview linked from investment-analytics; remove when the platform hosts investment analytics."
+    },
+    "transitionalFiles": {
+        "$comment": "Legacy auth scripts still referenced by public pages. Referencing pages must drop them in the legacy-exit step; the build reports them on every run.",
+        "js/session-manager.js": "Firebase compat session timer + impersonation bar; referenced by index.html and pages/*.html.",
+        "js/premium-content-gate.js": "Firebase role gate for premium previews; referenced by investment and subscription pages."
+    },
+    "staticFiles": {
+        "$comment": "Files fetched at runtime by JavaScript through variables the crawler cannot follow. Listed explicitly so data exposure is a deliberate decision.",
+        "data/currency/usd_try_rates.json": "Fetched by js/investment-analytics.js; produced by .github/workflows/update-usd-try-rates.yml.",
+        "data/investment-analytics/supermarket_dataset.json": "Fetched by js/investment-analytics.js."
+    },
+    "allowedRoots": [
+        "index.html",
+        "reset-password.html",
+        "pages/",
+        "css/",
+        "js/",
+        "packages/config/",
+        "domains/investment-intelligence/analytics/scripts/",
+        "domains/investment-intelligence/analytics/styles/",
+        "demo/",
+        "data/currency/",
+        "data/investment-analytics/",
+        "images/",
+        "assets/"
+    ],
+    "forbidden": {
+        "$comment": "Structural guards. A reference from a public page to any of these fails the build; any such file found in the output fails verification.",
+        "prefixes": [
+            "docs/",
+            ".github/",
+            ".git/",
+            "dashboard/",
+            "services/",
+            "scripts/",
+            "api/",
+            "tools/",
+            "apps/",
+            "packages/auth/",
+            "packages/charts/",
+            "packages/data-access/",
+            "packages/ui/",
+            "packages/utils/",
+            "_archive/",
+            "node_modules/",
+            "public/",
+            "dist/",
+            "data/stock/",
+            "data/entitlements",
+            "data/projects",
+            "data/mock/",
+            "data/public-datasets/",
+            "data/investment/",
+            "js/lib/",
+            "js/pages/",
+            "js/impersonate.js",
+            "js/finance.js",
+            "js/pages/investment-market.js"
+        ],
+        "patterns": [
+            "^domains/.*\\.html$",
+            "^domains/.*README\\.md$",
+            "(^|/)README\\.md$",
+            "(^|/)\\.env(\\.|$)",
+            "(^|/)Dockerfile$",
+            "(^|/)requirements[^/]*\\.txt$",
+            "(^|/)deploy\\.sh$"
+        ],
+        "extensions": [
+            ".py",
+            ".pyc",
+            ".md",
+            ".yaml",
+            ".yml",
+            ".toml",
+            ".sh",
+            ".ps1",
+            ".env",
+            ".example",
+            ".lock",
+            ".geojson",
+            ".pdf",
+            ".dockerignore",
+            ".gitkeep"
+        ],
+        "basenames": [
+            "package.json",
+            "package-lock.json",
+            "render.yaml",
+            "netlify.toml",
+            "eslint.config.js",
+            ".gitignore",
+            ".editorconfig",
+            ".prettierrc.json",
+            ".prettierignore",
+            ".stylelintrc.json",
+            "manifest.schema.json"
+        ]
+    },
+    "requiredFiles": [
+        "index.html",
+        "css/style.css",
+        "css/00-settings/tokens.css",
+        "js/script.js",
+        "js/cookies.js",
+        "packages/config/routes-global.js",
+        "packages/config/routes.js",
+        "pages/rpa.html",
+        "pages/gizlilik.html",
+        "demo/index.html",
+        "_redirects",
+        "_headers",
+        "robots.txt",
+        "sitemap.xml",
+        "404.html"
+    ],
+    "contentMarkers": {
+        "$comment": "Byte patterns that must never appear in any artifact file.",
+        "forbidden": [
+            "-----BEGIN PRIVATE KEY-----",
+            "-----BEGIN RSA PRIVATE KEY-----",
+            "\"type\": \"service_account\"",
+            "firebase-admin"
+        ]
+    }
+}

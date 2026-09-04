@@ -1,0 +1,36 @@
+name: Public artifact check
+
+# Builds and verifies the teknoify.com public artifact exactly as Netlify will (npm run check:public).
+# Zero-dependency scripts: no npm install is needed, so the unused firebase-admin tree is not fetched here.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-public-artifact:
+    name: Build and verify dist/
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build public artifact
+        run: node scripts/public-artifact/build.mjs
+
+      - name: Verify public artifact
+        run: node scripts/public-artifact/verify.mjs
+
+      - name: Summarize
+        run: |
+          echo "### Public artifact" >> "$GITHUB_STEP_SUMMARY"
+          node -e "const r=require('./.artifact-report.json');console.log('- files: '+r.fileCount+'\n- bytes: '+r.totalBytes+'\n- hash: '+r.artifactHash+'\n- transitional: '+r.transitional.join(', '))" >> "$GITHUB_STEP_SUMMARY"

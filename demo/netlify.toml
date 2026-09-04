@@ -1,0 +1,12 @@
+# Netlify configuration for the SEPARATE demo site (demo.teknoify.com).
+#
+# That site deploys from this same repository with (verified in the Netlify UI, 2026-09-05):
+#   Base directory "/", Publish directory "demo", no build command, production branch "main".
+# The demo site's Package directory is set to "demo" in the Netlify UI (confirmed 2026-09-05), so
+# Netlify reads configuration in the order package directory -> base directory -> repository root and
+# stops at this file; the root netlify.toml (marketing artifact) never applies to the demo site.
+# Paths below are relative to the base directory, i.e. the repository root.
+#
+# Behaviour pinned here is exactly today's: publish the demo/ folder as-is, no build step.
+[build]
+  publish = "demo"

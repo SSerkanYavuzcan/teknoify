@@ -11,6 +11,7 @@ Home for product, architecture, API, data, RAG, security, deployment, and decisi
 - [`data-contracts/`](data-contracts/): Data contract documentation.
 - [`decisions/`](decisions/): Architecture decision records.
 - [`deployment/`](deployment/): Local development, deployment, and operations notes.
+- [`marketing-rebuild/`](marketing-rebuild/): Phase A audit, rebuild boundaries, marketing architecture proposal, and phased plan for the public marketing site rebuild.
 - [`product/`](product/): Product documentation.
 - [`rag/`](rag/): RAG pipeline, retrieval, extraction, and document index notes.
 - [`security/`](security/): Security documentation.

@@ -24,3 +24,7 @@ Phase 14B adds the final developer migration runbook at [`docs/architecture/fina
 Phase 15B adds the final architecture preparation scorecard at [`docs/architecture/final-architecture-scorecard.md`](docs/architecture/final-architecture-scorecard.md) and the archive/delete readiness freeze at [`docs/architecture/archive-readiness-freeze.md`](docs/architecture/archive-readiness-freeze.md). These docs define the current governance closeout state while keeping runtime moves and archive cleanup gated.
 Phase 16A adds the final enterprise readiness seal at [`docs/architecture/enterprise-readiness-seal.md`](docs/architecture/enterprise-readiness-seal.md). Run `npm run check:readiness-seal` before the first targeted runtime migration candidate PR.
 
+
+## Marketing / platform ownership (2026-09)
+
+[`docs/decisions/ADR-0002-marketing-platform-ownership.md`](docs/decisions/ADR-0002-marketing-platform-ownership.md) supersedes the mixed-surface assumption above: `teknoify.com` (this repository) is an anonymous public marketing surface; authentication, users, sessions, entitlements, premium logic and dashboards belong to `platform.teknoify.com`. The audit, boundary and cutover work lives in [`docs/marketing-rebuild/`](docs/marketing-rebuild/README.md); production is to be published from a verified `dist/` artifact (`npm run check:public`) rather than the repository root.

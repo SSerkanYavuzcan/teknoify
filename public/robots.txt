@@ -1,0 +1,11 @@
+# robots.txt is a crawling hint, not access control. Paths below either redirect to the platform,
+# are transitional authentication pages, or are premium-gated previews.
+User-agent: *
+Disallow: /dashboard/
+Disallow: /pages/login
+Disallow: /pages/impersonate
+Disallow: /pages/unauthorized
+Disallow: /pages/investment-retail
+Disallow: /pages/investment-airlines
+Disallow: /reset-password
+Sitemap: https://teknoify.com/sitemap.xml
