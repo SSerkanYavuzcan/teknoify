@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Environment files (examples stay tracked)
+.env
+.env.*
+!.env.example
+
+# Hosting / tooling caches
+.netlify/
+.cache/
+dist/
+.astro/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
