@@ -1,0 +1,106 @@
+/* ================================================================
+   FOUNDATION — HERO DIRECTION PROTOTYPE (limited)
+   Validates the system on the existing homepage hero without
+   composing the final hero. Removes decorative particle/grid layers,
+   applies the display face, solid accent, token spacing and the
+   surface language to the terminal aside. The next phase composes
+   the real hero and may delete this file.
+   ================================================================ */
+.home-page-shell { padding-top: var(--header-height); }
+
+/* Decorative background layers are retired from the foundation */
+#stars-container, .home-background-surface, .hero-surface { display: none; }
+.home-background-stage { position: relative; }
+
+.hero {
+  min-height: auto;
+  padding: clamp(4rem, 3rem + 6vw, 8rem) 0 clamp(3rem, 2rem + 4vw, 6rem);
+  background: none;
+}
+.hero-container {
+  max-width: var(--container-xl);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: grid;
+  gap: var(--space-10);
+  align-items: center;
+}
+@media (min-width: 64rem) {
+  .hero-container { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-16); }
+}
+
+.hero-left { order: 0; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); text-align: left; }
+.hero-kicker { display: inline-flex; align-items: center; gap: var(--space-3); }
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  margin: 0;
+  max-width: 14ch;
+  background: none;
+}
+.hero-title br { display: none; }
+.gradient-text {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
+  color: var(--color-accent);
+}
+.hero-subtitle {
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--color-fg-secondary);
+  max-width: 34rem;
+  margin: 0;
+}
+.hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2); }
+.hero-ctas .btn { min-height: 3rem; padding-inline: var(--space-6); }
+
+/* Terminal aside: a real technical surface, not a glowing card */
+.hero-right { width: 100%; margin: 0; order: 1; }
+.hero-terminal, .hero-terminal--primary {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  background: var(--color-bg-inset);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+  transform: none;
+  animation: none;
+  overflow: hidden;
+}
+.hero-terminal::before, .hero-terminal::after { content: none; }
+.term-header {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.term-controls { display: flex; gap: 6px; }
+.term-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--color-border-strong); }
+.term-dot.red, .term-dot.yellow, .term-dot.green { background: var(--color-border-strong); }
+.term-title { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.04em; color: var(--color-fg-tertiary); }
+.term-body {
+  height: auto; min-height: 15rem;
+  padding: var(--space-4) var(--space-5);
+  font-family: var(--font-mono); font-size: var(--text-small); line-height: var(--leading-relaxed);
+  color: var(--color-fg-secondary);
+}
+.term-body .term-line, .term-body span { color: inherit; }
+.term-body .highlight, .term-body .term-key { color: var(--color-signal); }
+.term-body .term-out, .term-body .success { color: var(--color-accent); }
+
+@media (max-width: 47.99rem) {
+  .hero { padding-top: var(--space-12); }
+  .term-body { min-height: 11rem; }
+}
+
+/* Section headers used by legacy sections, lifted onto the type scale so the page reads as one system */
+.section-header { text-align: left; max-width: var(--container-md); margin: 0 0 var(--space-12); }
+.section-header h2 { font-size: var(--text-h2); margin-bottom: var(--space-3); }
+.section-header p { font-size: var(--text-body-lg); color: var(--color-fg-secondary); }

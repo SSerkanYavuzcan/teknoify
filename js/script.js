@@ -286,8 +286,10 @@ class UISystem {
 
     toggleMenu() {
         if (this.hamburger && this.navMenu) {
-            this.hamburger.classList.toggle('active');
-            this.navMenu.classList.toggle('active');
+            const open = this.hamburger.classList.toggle('active');
+            this.navMenu.classList.toggle('active', open);
+            this.hamburger.setAttribute('aria-expanded', String(open));
+            this.hamburger.setAttribute('aria-label', open ? 'Menüyü kapat' : 'Menüyü aç');
         }
     }
 }

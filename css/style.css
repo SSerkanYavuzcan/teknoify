@@ -1,8 +1,30 @@
-@import url("./00-settings/tokens.css");
-@import url("./02-generic/base.css");
-@import url("./03-elements/forms-buttons.css");
-@import url("./04-objects/layout.css");
-@import url("./05-components/hero-services.css?v=services-hub-8");
-@import url("./05-components/contact-modal.css");
-@import url("./05-components/footer.css?v=footer-flat-1");
-@import url("./06-pages/home.css");
+/* ================================================================
+   TEKNOIFY MARKETING — STYLE MANIFEST
+   Cascade layers make precedence explicit and independent of file
+   order or selector specificity:
+     tokens     design tokens (CSS custom properties)
+     base       reset and global defaults
+     legacy     pre-redesign component and page styles (being replaced)
+     foundation the Phase C visual foundation (wins over legacy)
+   Page-specific stylesheets loaded by individual pages stay unlayered
+   and therefore override everything here for their own selectors.
+   ================================================================ */
+@layer tokens, base, legacy, foundation;
+
+@import url("./00-settings/tokens.css") layer(tokens);
+@import url("./02-generic/base.css") layer(base);
+
+@import url("./03-elements/forms-buttons.css") layer(legacy);
+@import url("./04-objects/layout.css") layer(legacy);
+@import url("./05-components/hero-services.css?v=services-hub-8") layer(legacy);
+@import url("./05-components/contact-modal.css") layer(legacy);
+@import url("./05-components/footer.css?v=footer-flat-1") layer(legacy);
+@import url("./06-pages/home.css") layer(legacy);
+
+@import url("./01-foundation/typography.css") layer(foundation);
+@import url("./01-foundation/layout.css") layer(foundation);
+@import url("./01-foundation/surfaces.css") layer(foundation);
+@import url("./01-foundation/actions.css") layer(foundation);
+@import url("./01-foundation/header.css") layer(foundation);
+@import url("./01-foundation/motion.css") layer(foundation);
+@import url("./01-foundation/hero.css") layer(foundation);

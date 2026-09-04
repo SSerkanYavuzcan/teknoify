@@ -1,0 +1,20 @@
+/* ================================================================
+   FOUNDATION — MOTION
+   Durations: fast 150ms (hover/focus), base 220ms (state), slow 320ms
+   (entrances). Entrances run once, translate ≤ 8px, never loop.
+   Everything here is disabled by the reduced-motion rule in base.css.
+   ================================================================ */
+.m-reveal { opacity: 0; transform: translateY(8px); transition: opacity var(--duration-slow) var(--ease-out), transform var(--duration-slow) var(--ease-out); }
+.m-reveal.is-visible { opacity: 1; transform: none; }
+.m-reveal--delay-1 { transition-delay: 60ms; }
+.m-reveal--delay-2 { transition-delay: 120ms; }
+.m-reveal--delay-3 { transition-delay: 180ms; }
+
+/* Blinking cursor for technical surfaces: a step, not a fade */
+.blink-cursor::after { content: '▋'; color: var(--color-accent); margin-left: 2px; animation: m-cursor 1s step-end infinite; }
+@keyframes m-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .m-reveal { opacity: 1; transform: none; transition: none; }
+  .blink-cursor::after { animation: none; }
+}
