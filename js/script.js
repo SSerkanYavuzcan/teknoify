@@ -1,105 +1,7 @@
-const firebaseConfig = {
-    apiKey: "AIzaSyC1Id7kdU23_A7fEO1eDna0HKprvIM30E8", 
-    authDomain: "teknoify-9449c.firebaseapp.com",
-    projectId: "teknoify-9449c",
-    storageBucket: "teknoify-9449c.firebasestorage.app",
-    messagingSenderId: "704314596026",
-    appId: "1:704314596026:web:f63fff04c00b7a698ac083",
-    measurementId: "G-1DZKJE7BXE"
-};
-
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
-if (typeof firebase !== 'undefined' && firebase.appCheck) {
-    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    }
-    
-    const appCheck = firebase.appCheck();
-    appCheck.activate(
-        '6LetmtgsAAAAAHOxEkJG4sa29oKLNnAZjQZ1dAwk', 
-        true 
-    );
-}
-
-const auth = (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') ? firebase.auth() : null;
-const db = (typeof firebase !== 'undefined' && typeof firebase.firestore === 'function') ? firebase.firestore() : null;
-
-function consumePostLoginRedirect() {
-    let redirectPath = null;
-
-    try {
-        redirectPath = sessionStorage.getItem('tk_post_login_redirect');
-        if (redirectPath) sessionStorage.removeItem('tk_post_login_redirect');
-    } catch (error) {
-        console.warn('Post-login yönlendirmesi okunamadı.', error.message);
-    }
-
-    return redirectPath && redirectPath.startsWith('/') ? redirectPath : null;
-}
-
-function getLegacyDashboardRouteFallback(roleType) {
-    if (roleType === 'admin') {
-        return '/dashboard/admin.html';
-    }
-    if (roleType === 'premium') {
-        return '/dashboard/premium.html';
-    }
-    return '/dashboard/member.html';
-}
-
-function isLegacyDashboardRouteForRole(route, roleType) {
-    return typeof route === 'string' && route === getLegacyDashboardRouteFallback(roleType);
-}
-
-function getLegacyDashboardRoute(roleType) {
-    const fallbackRoute = getLegacyDashboardRouteFallback(roleType);
-    const routeKey = roleType === 'admin' || roleType === 'premium' ? roleType : 'member';
-
-    try {
-        const routes = window.TEKNOIFY_ROUTES;
-
-        if (routes && typeof routes.getDashboardRouteForRole === 'function') {
-            const resolvedRoute = routes.getDashboardRouteForRole(roleType);
-            if (isLegacyDashboardRouteForRole(resolvedRoute, roleType)) {
-                return resolvedRoute;
-            }
-        }
-
-        const dashboardRoutes = routes && routes.dashboard;
-        if (dashboardRoutes && typeof dashboardRoutes === 'object') {
-            const dashboardRoute = dashboardRoutes[routeKey];
-            if (isLegacyDashboardRouteForRole(dashboardRoute, roleType)) {
-                return dashboardRoute;
-            }
-        }
-    } catch {
-        return fallbackRoute;
-    }
-
-    return fallbackRoute;
-}
-
-function redirectAfterLogin(isAdmin, isPremium) {
-    const postLoginRedirect = consumePostLoginRedirect();
-
-    if (postLoginRedirect) {
-        window.location.href = postLoginRedirect;
-    } else if (isAdmin) {
-        window.location.href = getLegacyDashboardRoute('admin');
-    } else if (isPremium) {
-        window.location.href = getLegacyDashboardRoute('premium');
-    } else {
-        window.location.href = getLegacyDashboardRoute('member');
-    }
-}
-
+// Teknoify public marketing site: shared page behaviour (navigation, contact form, custom select,
+// hero terminal and background effects). Authentication lives on https://platform.teknoify.com;
+// this file intentionally initializes no Firebase, App Check, reCAPTCHA or session state.
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('loginModal')) {
-        new AuthSystem();
-    }
     new UISystem();
     if (document.querySelector('[data-custom-select]')) {
         new CustomSelectSystem();
@@ -112,149 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
     }, 200);
 });
-
-class AuthSystem {
-    constructor() {
-        this.modal = document.getElementById('loginModal');
-        this.form = document.getElementById('loginForm');
-        this.triggers = document.querySelectorAll('#openLoginBtn, .trigger-login');
-        this.bindEvents();
-        this.checkCurrentUser();
-    }
-
-    bindEvents() {
-        this.triggers.forEach((btn) => {
-            btn.addEventListener('click', async (e) => {
-                e.preventDefault();
-                const user = auth ? auth.currentUser : null;
-                if (user) {
-                    try {
-                        const idTokenResult = await user.getIdTokenResult();
-                        let isAdmin = !!idTokenResult.claims.admin;
-                        let isPremium = !!idTokenResult.claims.premium;
-
-                        if (!isAdmin && db) {
-                            const userDoc = await db.collection('users').doc(user.uid).get();
-                            if (userDoc.exists) {
-                                const data = userDoc.data();
-                                isAdmin = (data.role && data.role.type === 'admin') || data.role === 'admin';
-                                isPremium = (data.role && data.role.type === 'premium') || data.role === 'premium';
-                            }
-                        }
-
-                        redirectAfterLogin(isAdmin, isPremium);
-                    } catch (error) {
-                        console.warn("Kullanıcı rolü kontrol edilemedi, standart üyeye yönlendiriliyor.", error.message);
-                        window.location.href = '/dashboard/member.html';
-                    }
-                } else {
-                    this.open();
-                }
-            });
-        });
-
-        const closeBtn = document.querySelector('.modal-close');
-        if (closeBtn) closeBtn.addEventListener('click', () => this.close());
-        if (this.modal) {
-            this.modal.addEventListener('click', (e) => {
-                if (e.target === this.modal) this.close();
-            });
-        }
-        if (this.form) this.form.addEventListener('submit', (e) => this.handleLogin(e));
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.modal && this.modal.classList.contains('active')) {
-                this.close();
-            }
-        });
-    }
-
-    open() {
-        if (this.modal) {
-            this.modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    close() {
-        if (this.modal) {
-            this.modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    }
-
-    handleLogin(e) {
-        e.preventDefault();
-        const btn = this.form.querySelector('button[type="submit"]');
-        const emailInput = document.getElementById('email').value.trim();
-        const passInput = document.getElementById('password').value.trim();
-        if (!auth) return;
-        
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Kontrol Ediliyor...';
-        btn.disabled = true;
-
-        auth.signInWithEmailAndPassword(emailInput, passInput)
-            .then(async (userCredential) => {
-                const user = userCredential.user;
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 600));
-
-                    const idTokenResult = await user.getIdTokenResult(true);
-                    let isAdmin = !!idTokenResult.claims.admin;
-                    let isPremium = !!idTokenResult.claims.premium;
-
-                    if (!isAdmin && db) {
-                        const userDoc = await db.collection('users').doc(user.uid).get();
-                        if (userDoc.exists) {
-                            const data = userDoc.data();
-                            const roleType = (typeof data.role === 'object' && data.role !== null) ? data.role.type : data.role;
-                            isAdmin = roleType === 'admin';
-                            isPremium = roleType === 'premium';
-                        }
-                    }
-
-                    localStorage.setItem('session_start_time', Date.now());
-                    
-                    btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
-                    btn.style.backgroundColor = '#10b981';
-                    
-                    setTimeout(() => {
-                        redirectAfterLogin(isAdmin, isPremium);
-                    }, 500);
-                } catch (dbError) {
-                    console.warn("--- YETKİ KONTROL UYARISI ---", dbError.message);
-                    btn.innerHTML = '<i class="fas fa-check"></i> Giriş Başarılı';
-                    btn.style.backgroundColor = '#10b981';
-                    setTimeout(() => { redirectAfterLogin(false, false); }, 1000);
-                }
-            })
-            .catch((error) => {
-                console.error("Giriş Hatası:", error);
-                let msg = "Giriş başarısız. Bilgilerinizi kontrol edin.";
-                if (error.code === 'auth/too-many-requests') msg = "Çok fazla deneme yaptınız.";
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') msg = "E-posta adresi veya şifre hatalı.";
-                if (typeof showToast === "function") showToast("Erişim Reddedildi", msg, "error");
-                
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            });
-    }
-
-    checkCurrentUser() {
-        if (!auth) return;
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                const loginBtn = document.getElementById('openLoginBtn');
-                if (loginBtn) {
-                    const displayName = user.displayName || user.email.split('@')[0];
-                    loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> ' + displayName;
-                    loginBtn.classList.remove('btn-outline');
-                    loginBtn.classList.add('btn-secondary');
-                }
-            }
-        });
-    }
-}
 
 class CustomSelectSystem {
     constructor() {
@@ -451,8 +210,8 @@ class ContactSystem {
     }
 
     async banAndLogBot() {
-        localStorage.setItem('tk_access_denied', 'true');
-        location.reload();
+        // Honeypot filled: silently drop the submission (no persistent client-side lockout).
+        this.form.reset();
     }
 
     async sendToIP() {
@@ -466,7 +225,7 @@ class ContactSystem {
                 contact_info: document.getElementById('contact_info').value.trim(),
                 service_type: document.getElementById('service_type').value,
                 message: document.getElementById('message').value.trim(),
-                visitor_id: localStorage.getItem('tk_visitor_id') || "Web_Client"
+                visitor_id: "Web_Client"
             };
             const response = await fetch(this.apiUrl, {
                 method: 'POST',

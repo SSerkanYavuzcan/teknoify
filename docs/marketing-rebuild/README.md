@@ -14,6 +14,8 @@ Phase A (2026-09-04) is an audit only: no runtime files were changed.
 
 - [`06-deployment-cutover.md`](06-deployment-cutover.md): Phase A.3 — ownership lock (see [`../decisions/ADR-0002-marketing-platform-ownership.md`](../decisions/ADR-0002-marketing-platform-ownership.md)), what is known about the two Netlify sites, root `netlify.toml` precedence analysis, cutover contract validation (clean-checkout reproducibility, EOL-independent hashes, site guard), post-cutover behaviour of internal URLs, legacy URL redirect classes, branch-protection plan, Deploy Preview model, rollback contract, merge verdict and next PR plan.
 
+- [`07-legacy-frontend-cleanup.md`](07-legacy-frontend-cleanup.md): Phase B0 — removal of the legacy authenticated application frontend (Firebase/auth, dashboard, premium gating, impersonation, MVP auth), what was retained, legacy URL behaviour, reset-password compatibility decision, dependencies removed, validation results and remaining non-blocking debt.
+
 ## Tooling introduced in Phase A.2
 
 - `scripts/public-artifact/manifest.json`: allow-list of entry pages, transitional pages/files, explicit static data, allowed roots and forbidden rules.

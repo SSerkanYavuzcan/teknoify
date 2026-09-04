@@ -1,6 +1,0 @@
-/* Shared card primitives for analysis + dashboard pages */
-.kpi-card {
-    border-radius: 12px;
-    position: relative;
-    overflow: hidden;
-}

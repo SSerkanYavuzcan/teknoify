@@ -1,10 +1,18 @@
+// Public URL contract of the teknoify.com marketing site.
+//
+// Not loaded by any page since Phase B0; kept as the single documented source of the current public route
+// strings for the redesign phases. Authenticated product surfaces live on the platform and are not routes
+// of this site: legacy /dashboard/* and login URLs are redirect rules in public/_redirects.
+
+export const PLATFORM_ROUTES = Object.freeze({
+    // Only the platform root is a verified public URL. Deep links (sign-in, reset, tools) are PLATFORM TARGET TBD.
+    root: 'https://platform.teknoify.com/'
+});
+
 export const PUBLIC_ROUTES = Object.freeze({
     home: '/',
-    login: '/pages/login.html',
     subscription: '/pages/subscription.html',
-    impersonate: '/pages/impersonate.html',
-    unauthorized: '/pages/unauthorized.html',
-    resetPassword: '/reset-password.html'
+    demo: '/demo/'
 });
 
 export const PRODUCT_ROUTES = Object.freeze({
@@ -17,9 +25,7 @@ export const PRODUCT_ROUTES = Object.freeze({
 });
 
 export const INVESTMENT_ROUTES = Object.freeze({
-    investmentAnalytics: '/pages/investment-analytics.html',
-    investmentRetail: '/pages/investment-retail.html',
-    investmentAirlines: '/pages/investment-airlines.html'
+    investmentAnalytics: '/pages/investment-analytics.html'
 });
 
 export const LEGAL_ROUTES = Object.freeze({
@@ -29,39 +35,10 @@ export const LEGAL_ROUTES = Object.freeze({
     serviceAgreement: '/pages/hizmet-sozlesmesi.html'
 });
 
-export const DASHBOARD_ROUTES = Object.freeze({
-    root: '/dashboard/index.html',
-    member: '/dashboard/member.html',
-    premium: '/dashboard/premium.html',
-    admin: '/dashboard/admin.html',
-    adminExtensionless: '/dashboard/admin',
-    analysis: '/dashboard/analysis.html',
-    marketAnalysis: '/dashboard/market-analysis.html',
-    marketAnalysisDemo: '/dashboard/market-analysis-demo.html',
-    quickCommerce: '/dashboard/web-scraping/quickcommerce/index.html',
-    clothesScraping: '/dashboard/web-scraping/clothes/index.html',
-    foodScraping: '/dashboard/web-scraping/food/index.html',
-    productDiscover: '/dashboard/agents/product-discover/index.html',
-    bimRequests: '/dashboard/bim-istekleri/index.html',
-    geoIntelligence: '/dashboard/geo-intelligence/index.html',
-    marketAnalysisDemoProject: '/dashboard/demo/market-analysis/index.html',
-    memberFinance: '/dashboard/member/finance/index.html',
-    investmentMarket: '/dashboard/services/investment/index.html',
-    memberHealth: '/dashboard/member/health/index.html',
-    memberProductivity: '/dashboard/member/productivity/index.html',
-    memberSubscriptions: '/dashboard/member/subscriptions/index.html'
-});
-
 export const ALL_ROUTES = Object.freeze({
+    platform: PLATFORM_ROUTES,
     public: PUBLIC_ROUTES,
-    dashboard: DASHBOARD_ROUTES,
     legal: LEGAL_ROUTES,
     products: PRODUCT_ROUTES,
     investments: INVESTMENT_ROUTES
 });
-
-export function getDashboardRouteForRole(roleType) {
-    if (roleType === 'admin') return DASHBOARD_ROUTES.admin;
-    if (roleType === 'premium') return DASHBOARD_ROUTES.premium;
-    return DASHBOARD_ROUTES.member;
-}
