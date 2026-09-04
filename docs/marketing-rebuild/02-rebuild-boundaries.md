@@ -2,6 +2,8 @@
 
 Companion to `01-repository-production-audit.md`. Same evidence labels (CONFIRMED / LIKELY / UNVERIFIED). Nothing in this document is executed in Phase A; it is the input for cleanup and rebuild phases.
 
+> **Phase A.2 update (2026-09-05).** Unknowns U5 (Render link: CONFIRMED linked, auto-deploys every `main` commit) and U11 (branch protection: CONFIRMED none) are resolved; U1 and U2 are partially resolved (two Netlify sites, previews on, `demo.teknoify.com` publishes `demo/` and is unstyled); new unknowns U13/U14 concern the second Netlify site and UI build settings. The public-artifact boundary, URL matrix, and exit classification now live in `05-production-boundary-and-legacy-exit.md`, which supersedes §3–§4 below where they differ.
+
 ---
 
 ## 1. Ownership boundary
@@ -187,13 +189,13 @@ Move order: copy to the platform repo → re-link Render/Cloud deploy sources �
 | U2 | Is `demo.teknoify.com` this repo's `/demo/` (branch/subdomain deploy) or a separate site? | Netlify UI | Duplicate content and which one to keep. |
 | U3 | Does `platform.teknoify.com` use Firebase project `teknoify-9449c`? Are marketing-site users the same users? | Platform team | Determines whether removing Firebase here is a pure deletion or a user migration. |
 | U4 | Where does the Firebase Auth password-reset email action URL point (`/reset-password.html` here?) | Firebase console | Deleting the page could break password resets for platform users. |
-| U5 | Is the Render service `teknoify-equity-data` linked to this GitHub repo/branch? | Render dashboard | `render.yaml` deletion safety. |
+| U5 | Is the Render service `teknoify-equity-data` linked to this GitHub repo/branch? | Render dashboard | **Resolved in A.2: CONFIRMED linked** (27 GitHub deployment records on `main`). `render.yaml` deletion still requires re-linking Render first. |
 | U6 | Is `https://api.teknoify.com/submitContactForm` alive from other networks/regions? Who owns it? | Cloud console | Lead capture is the only conversion mechanism today. |
 | U7 | Which URLs are indexed by Google today (Search Console)? Any inbound links to `/pages/*.html`, `/dashboard/*`, `/demo/`? | GSC / analytics | Redirect map for the rebuild. |
 | U8 | Are the Subscription page plans (₺199/₺1.990, Profesyonel) real, purchasable, and current? | Product owner | Pricing page content. |
 | U9 | Are "Finansal İndikatör & Botlar", "Eğitim & Danışmanlık", and "Veri Analitiği" active offerings? | Product owner | Information architecture. |
 | U10 | Real user counts on the dashboard (Firestore `users`) and which tools are in use | Firebase console | Sunset/redirect plan for `/dashboard/*`. |
-| U11 | Are GitHub branch protection rules on `main`? | GitHub settings | Workflow safety. |
+| U11 | Are GitHub branch protection rules on `main`? | GitHub settings | **Resolved in A.2: none** (`protected: false`). Workflow safety. |
 | U12 | Is the GA4 property `G-1XSJMZ0J2J` the one to keep, and is a GTM container preferred? | Marketing owner | Analytics continuity. |
 
 ---

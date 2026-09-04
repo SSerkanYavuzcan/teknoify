@@ -1,0 +1,36 @@
+# Netlify configuration as code for the teknoify.com marketing site.
+#
+# STATUS: prepared on branch chore/marketing-rebuild-audit. NOT active in production until merged.
+# Merging this file switches production from "publish the repository root" to "publish the built
+# public artifact in dist/". Complete the go-live checklist in
+# docs/marketing-rebuild/05-production-boundary-and-legacy-exit.md (section 12) first. In particular,
+# a second Netlify site (teknoify-demo, serving demo.teknoify.com) builds from this repository; its
+# base directory must be confirmed before this file lands on main, because netlify.toml overrides
+# UI build settings.
+
+[build]
+  # Builds dist/ from the allow-list in scripts/public-artifact/manifest.json, then verifies it.
+  command = "npm run check:public"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--no-audit --no-fund"
+
+# Post-processing is pinned so link-rewriting behaviour is versioned instead of living only in the UI.
+# pretty_urls = true reproduces what production does today (links rewritten to extensionless URLs).
+[build.processing]
+  skip_processing = false
+[build.processing.html]
+  pretty_urls = true
+[build.processing.css]
+  bundle = false
+  minify = false
+[build.processing.js]
+  bundle = false
+  minify = false
+[build.processing.images]
+  compress = false
+
+# Redirects and headers live as files in public/ (copied into dist/) so a future framework that copies
+# a public/ folder verbatim (for example Astro) inherits them unchanged.

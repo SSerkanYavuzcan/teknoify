@@ -7,6 +7,8 @@ Evidence labels used throughout: **CONFIRMED** (observed directly in the reposit
 
 No runtime file was modified during this audit. The only non-documentation change on the audit branch is a new `.gitignore` (see §15).
 
+> **Phase A.2 corrections (2026-09-05, see `05-production-boundary-and-legacy-exit.md` §1).** Several labels below were upgraded or corrected with new evidence: the GitHub repository is **public**; production deploying from `main` is **CONFIRMED** (the Sep 4 bot commit's data file is what production serves); `render.yaml` is **CONFIRMED** linked to this repository and Render auto-deploys every `main` commit; two Netlify sites (`fancy-klepon-8eac4e` = `teknoify.com`, `teknoify-demo` = `demo.teknoify.com`) build from this repo with Deploy Previews **CONFIRMED** enabled; `main` has **no branch protection**; `api.teknoify.com` answers neither 443 nor 80 (LIKELY dead globally). Rows below keep their original wording with inline notes where the change matters.
+
 ---
 
 ## 1. Git baseline
@@ -105,7 +107,7 @@ The expected model (`main` → feature branch → PR → Netlify preview → mer
 | `teknoify.com` is served by Netlify | **CONFIRMED** | `curl -I https://teknoify.com/` → `Server: Netlify`, `X-Nf-Request-Id: …` |
 | `www.teknoify.com` redirects to the apex | CONFIRMED | `curl -IL https://www.teknoify.com/` → final `https://teknoify.com/` |
 | Publish directory is the **repository root** with **no build step** | CONFIRMED | Non-web files are publicly served: `/package.json` 200, `/docs/README.md` 200, `/dashboard/bim-istekleri/backend/main.py` 200, `/data/entitlements.json` 200, `/packages/config/routes.js` 200. Dotfiles are hidden (`/services/equity-data-service/.env.example` 404). |
-| Production content equals `main` | **LIKELY (strong)** | Live `/js/script.js` is **byte-identical** to HEAD. Live `index.html`, `pages/rpa.html`, `dashboard/member.html` differ from HEAD **only** in link rewriting (`href="pages/rpa.html"` → `href='/pages/rpa'`, attributes re-serialized with single quotes). That is the signature of Netlify's **Pretty URLs** asset-optimization post-processing, a UI-only setting. |
+| Production content equals `main` | **LIKELY (strong)** → **CONFIRMED in A.2** (live `data/currency/usd_try_rates.json` equals the `24f3044` bot commit and no earlier commit) | Live `/js/script.js` is **byte-identical** to HEAD (modulo CRLF/LF). Live `index.html`, `pages/rpa.html`, `dashboard/member.html` differ from HEAD **only** in link rewriting (`href="pages/rpa.html"` → `href='/pages/rpa'`, attributes re-serialized with single quotes). That is the signature of Netlify's **Pretty URLs** asset-optimization post-processing, a UI-only setting. |
 | Extensionless URLs resolve | CONFIRMED | `/dashboard/admin` → 200 |
 | No `netlify.toml`, `_redirects`, `_headers`, `netlify/functions`, edge functions, plugins, or `.netlify/` directory in the repo or **anywhere in Git history** | CONFIRMED | file search + `git log --all --name-only` |
 | No custom headers beyond HSTS | CONFIRMED | Live response has `Strict-Transport-Security` only; no CSP, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` |
@@ -122,7 +124,7 @@ The expected model (`main` → feature branch → PR → Netlify preview → mer
 2. **Production branch** — `main` (LIKELY; the Netlify site settings are UNVERIFIED but nothing else fits the evidence).
 3. **What could break production if removed** — anything under `/`, `/pages/`, `/dashboard/`, `/demo/`, `/css/`, `/js/`, `/packages/config/`, `/data/currency/`, `/data/investment-analytics/` is a live URL. Removing `packages/config/routes-global.js` breaks 15 pages; removing `js/script.js` breaks every public page; removing `data/currency/usd_try_rates.json` breaks the investment page and the cron workflow.
 4. **Legacy deployment artifacts** — `render.yaml` (Render Blueprint, `autoDeployTrigger: commit`), `dashboard/*/backend/deploy.sh` (gcloud Functions deploy scripts), `services/market-data-proxy` (Cloud Run). None affect Netlify but all are couplings to platform infrastructure living in the marketing repo.
-5. **Preview deployments** — UNVERIFIED. Zero-config Netlify sites normally have Deploy Previews on by default, but the setting cannot be proven from the repo.
+5. **Preview deployments** — UNVERIFIED in Phase A; **CONFIRMED in A.2** via PR commit statuses (`netlify/fancy-klepon-8eac4e/deploy-preview` and `netlify/teknoify-demo/deploy-preview`, "Deploy Preview ready!").
 6. **Redirects/rewrites coupling marketing URLs to app functionality** — none exist. The coupling is in the HTML itself: every public page embeds the login modal and `AuthSystem` redirects into `/dashboard/*.html` on the same origin.
 7. **Auth assumptions in production routing** — none at the host level (no Netlify role-based redirects). All auth gating is client-side JavaScript after page load.
 
@@ -130,8 +132,8 @@ The expected model (`main` → feature branch → PR → Netlify preview → mer
 
 | Coupling | Evidence | Status |
 | --- | --- | --- |
-| GitHub Actions bot pushes to `main` daily (cron `0 6 1-7 * *`, plus dispatch) | `.github/workflows/update-usd-try-rates.yml` | CONFIRMED; each push LIKELY triggers a production deploy |
-| Render Blueprint in repo root | `render.yaml` → `services/equity-data-service/Dockerfile`, `ALLOWED_ORIGINS=https://teknoify.com,https://www.teknoify.com` | CONFIRMED file; whether the Render service is actually linked to this GitHub repo is UNVERIFIED |
+| GitHub Actions bot pushes to `main` daily (cron `0 6 1-7 * *`, plus dispatch) | `.github/workflows/update-usd-try-rates.yml` | CONFIRMED; **A.2: each push CONFIRMED to deploy** both Netlify (content proof) and Render (deployment record) |
+| Render Blueprint in repo root | `render.yaml` → `services/equity-data-service/Dockerfile`, `ALLOWED_ORIGINS=https://teknoify.com,https://www.teknoify.com` | CONFIRMED file; **A.2: CONFIRMED linked** — GitHub deployment records `main - teknoify-equity-data` exist for every `main` commit since 2026-07-26, bot commits included |
 | Firebase project `teknoify-9449c` (Auth, Firestore, App Check, Functions) | four config sites; `europe-west1-teknoify-9449c.cloudfunctions.net/teknoify-api`, `us-central1-…/apiProxy` | CONFIRMED referenced; whether `platform.teknoify.com` uses the **same** Firebase project is UNVERIFIED and matters for cleanup |
 | Google Cloud Run `product-discover-api-…run.app` | `dashboard/agents/product-discover/product-discover.js` | CONFIRMED referenced |
 

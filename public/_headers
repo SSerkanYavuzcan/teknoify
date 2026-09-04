@@ -1,0 +1,16 @@
+# Netlify response headers for teknoify.com. Copied verbatim into the public artifact.
+# The CSP is REPORT-ONLY on purpose: the current pages still load Firebase, reCAPTCHA, Font Awesome and
+# Google Fonts. Every host below comes from the build's external-resource inventory (.artifact-report.json)
+# and verify.mjs fails if a host that pages load resources from is not covered. Tighten to an enforcing
+# policy after the legacy-auth exit (doc 05, section 9).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy-Report-Only: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.googletagmanager.com https://apis.google.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://www.gstatic.com https://i.imgur.com; connect-src 'self' https://api.teknoify.com https://*.googleapis.com https://*.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://teknoify-9449c.firebaseapp.com https://www.google.com; frame-src https://www.google.com https://recaptcha.google.com https://teknoify-9449c.firebaseapp.com https://apis.google.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests
+
+# Static data consumed by the investment page: short cache, always revalidate (updated daily by a workflow).
+/data/*
+  Cache-Control: public, max-age=300, must-revalidate

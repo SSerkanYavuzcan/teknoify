@@ -1,0 +1,21 @@
+# Netlify redirect rules for teknoify.com (public marketing site).
+# Copied verbatim into the public artifact by scripts/public-artifact/build.mjs and checked by
+# scripts/public-artifact/verify.mjs. See docs/marketing-rebuild/05-production-boundary-and-legacy-exit.md.
+
+# --- Domain canonicalization (currently also configured in the Netlify UI; codified here) ---
+https://www.teknoify.com/*   https://teknoify.com/:splat   301!
+
+# --- Legacy authenticated application -> platform.teknoify.com ---
+# Interim: every dashboard URL goes to the platform root because no platform deep-link contract exists
+# yet (PLATFORM TARGET TBD). 302 so the mapping can change later without cache poisoning.
+/dashboard/*                 https://platform.teknoify.com/   302
+/login.html                  https://platform.teknoify.com/   302
+/pages/login.html            https://platform.teknoify.com/   302
+/pages/login                 https://platform.teknoify.com/   302
+
+# --- Retired admin / application-only surfaces ---
+/pages/impersonate.html      /404.html   404
+/pages/impersonate           /404.html   404
+/pages/unauthorized.html     /404.html   404
+/pages/unauthorized          /404.html   404
+/domains/*                   /404.html   404

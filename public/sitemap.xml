@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Public marketing URLs only. The extensionless form matches the links Netlify currently emits
+     (Pretty URLs); the canonical URL form is a Phase B decision (doc 05, section 8).
+     Transitional and application pages are deliberately excluded. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://teknoify.com/</loc></url>
+  <url><loc>https://teknoify.com/pages/rpa</loc></url>
+  <url><loc>https://teknoify.com/pages/webscraping</loc></url>
+  <url><loc>https://teknoify.com/pages/api</loc></url>
+  <url><loc>https://teknoify.com/pages/ai-assistant</loc></url>
+  <url><loc>https://teknoify.com/pages/financial-indicators</loc></url>
+  <url><loc>https://teknoify.com/pages/training-consulting</loc></url>
+  <url><loc>https://teknoify.com/pages/investment-analytics</loc></url>
+  <url><loc>https://teknoify.com/demo/</loc></url>
+  <url><loc>https://teknoify.com/pages/gizlilik</loc></url>
+  <url><loc>https://teknoify.com/pages/kvkk</loc></url>
+  <url><loc>https://teknoify.com/pages/kullanim-sartlari</loc></url>
+  <url><loc>https://teknoify.com/pages/hizmet-sozlesmesi</loc></url>
+</urlset>
