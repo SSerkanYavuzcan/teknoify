@@ -38,6 +38,8 @@ class SignalField {
         this.stages = (root.closest('.hero') || document).querySelectorAll('.hero-stage');
         if (this.reduced.matches && !this.forced) { root.classList.add('is-resolved'); this.setStage(3); return; }
         this.bindVisibility();
+        const rect = root.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight && rect.height > 0) { root.classList.add('is-live'); this.arm(); }
         if (this.finePointer.matches) this.bindPointer();
     }
     setStage(n) { this.stages.forEach((s, i) => s.classList.toggle('is-on', n === 0 ? false : i < n)); }
@@ -49,7 +51,10 @@ class SignalField {
         this.setStage(1);
         setTimeout(() => this.setStage(2), this.resolveMs * 0.3);
         setTimeout(() => this.setStage(3), this.resolveMs * 0.52);
-        setTimeout(() => { this.root.classList.remove('is-armed'); this.root.classList.add('is-resolved'); }, this.resolveMs + 50);
+        const finish = () => { if (this.root.classList.contains('is-resolved')) return; this.root.classList.remove('is-armed'); this.root.classList.add('is-resolved'); this.setStage(3); };
+        const rail = this.root.querySelector('.sf-rail');
+        if (rail) rail.addEventListener('animationend', finish, { once: true });
+        setTimeout(finish, this.resolveMs + 400);
     }
     bindVisibility() {
         if (!('IntersectionObserver' in window)) { this.root.classList.add('is-live'); this.arm(); return; }
