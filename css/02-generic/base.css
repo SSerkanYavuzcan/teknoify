@@ -17,11 +17,13 @@ body {
   line-height: var(--leading-normal);
   color: var(--color-fg-primary);
   background-color: var(--color-bg-canvas);
-  /* ink canvas: a single quiet vignette, no gradients per section */
+  /* deep field canvas: one quiet horizon of light behind the hero, and a faint
+     dot field for texture; sections never add their own gradients */
   background-image:
-    radial-gradient(60rem 30rem at 50% -10rem, rgba(244, 181, 63, 0.06), transparent 70%),
-    radial-gradient(40rem 24rem at 100% 10%, rgba(95, 212, 207, 0.04), transparent 70%);
-  background-repeat: no-repeat;
+    radial-gradient(70rem 34rem at 62% -8rem, rgba(143, 227, 255, 0.07), transparent 70%),
+    radial-gradient(1px 1px at 50% 50%, rgba(238, 241, 246, 0.05) 50%, transparent 51%);
+  background-size: auto, 26px 26px;
+  background-repeat: no-repeat, repeat;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -45,7 +47,7 @@ button { border: none; background: none; cursor: pointer; }
 /* Reduced motion: opt out of non-essential motion globally */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after {
+  html:not(.force-motion) *, html:not(.force-motion) *::before, html:not(.force-motion) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

@@ -6,39 +6,50 @@
    Legacy aliases at the bottom keep older stylesheets working.
    ================================================================ */
 :root {
-  /* ---- Color roles: ink (default, dark) ---- */
-  --color-bg-canvas: #0b0e14;
-  --color-bg-surface: #11151d;
-  --color-bg-elevated: #171c26;
-  --color-bg-inset: #0d1118;
-  --color-bg-overlay: rgba(11, 14, 20, 0.82);
+  /* ---- Color roles: "Deep Field" (default, dark) ----
+     The palette encodes the product transformation:
+       steel  = raw inputs (muted)            → --color-signal
+       ion    = intelligence + interactive UI → --color-accent
+       solar  = action / outcome + primary CTA → --color-action
+     Brand UI stays near-monochrome; the spectral range lives in diagrams. */
+  --color-bg-canvas: #070a10;
+  --color-bg-surface: #0e121a;
+  --color-bg-elevated: #141924;
+  --color-bg-inset: #0a0d14;
+  --color-bg-overlay: rgba(7, 10, 16, 0.8);
 
-  --color-fg-primary: #f3f5f8;
-  --color-fg-secondary: #b1b9c6;
-  --color-fg-tertiary: #7d8797;
-  --color-fg-inverse: #12151b;
+  --color-fg-primary: #eef1f6;
+  --color-fg-secondary: #a8b1bf;
+  --color-fg-tertiary: #717c8d;
+  --color-fg-inverse: #0b0e14;
 
-  --color-border-subtle: rgba(243, 245, 248, 0.08);
-  --color-border-strong: rgba(243, 245, 248, 0.16);
-  --color-border-accent: rgba(244, 181, 63, 0.45);
+  --color-border-subtle: rgba(238, 241, 246, 0.08);
+  --color-border-strong: rgba(238, 241, 246, 0.16);
+  --color-border-accent: rgba(143, 227, 255, 0.45);
 
-  --color-accent: #f4b53f;            /* amber signal */
-  --color-accent-hover: #ffc75c;
-  --color-accent-active: #e3a22b;
-  --color-accent-soft: rgba(244, 181, 63, 0.12);
-  --color-accent-fg: #1a1204;         /* text on accent */
+  --color-accent: #8fe3ff;            /* ion: intelligence, links, focus, interactive */
+  --color-accent-hover: #b4edff;
+  --color-accent-active: #6fd3f2;
+  --color-accent-soft: rgba(143, 227, 255, 0.12);
+  --color-accent-fg: #06141a;         /* text on ion */
 
-  --color-signal: #5fd4cf;            /* cyan: data, code, technical labels only */
-  --color-signal-soft: rgba(95, 212, 207, 0.12);
+  --color-action: #ffb454;            /* solar: action, outcomes, primary CTA */
+  --color-action-hover: #ffc46f;
+  --color-action-active: #f0a23c;
+  --color-action-soft: rgba(255, 180, 84, 0.12);
+  --color-action-fg: #1a1103;         /* text on solar */
 
-  --color-positive: #4ade80;
-  --color-warning: #fb923c;
-  --color-destructive: #f87171;
+  --color-signal: #8797ad;            /* steel: raw inputs, technical labels */
+  --color-signal-soft: rgba(135, 151, 173, 0.12);
 
-  --color-focus: #ffd27a;
+  --color-positive: #5ee0a0;
+  --color-warning: #ff8a5b;
+  --color-destructive: #ff6b6b;
+
+  --color-focus: #b4edff;
 
   /* ---- Typography ---- */
-  --font-display: 'Bricolage Grotesque', 'Inter Tight', system-ui, sans-serif;
+  --font-display: 'Fraunces', 'Iowan Old Style', 'Georgia', serif;
   --font-sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Fira Code', 'JetBrains Mono', Consolas, monospace;
 
@@ -145,13 +156,18 @@
   --color-fg-inverse: #f3f5f8;
   --color-border-subtle: rgba(18, 21, 27, 0.1);
   --color-border-strong: rgba(18, 21, 27, 0.2);
-  --color-accent: #b7790f;
-  --color-accent-hover: #9d660a;
-  --color-accent-active: #85560a;
-  --color-accent-soft: rgba(183, 121, 15, 0.12);
+  --color-accent: #0b6f8a;
+  --color-accent-hover: #095a70;
+  --color-accent-active: #074a5c;
+  --color-accent-soft: rgba(11, 111, 138, 0.12);
   --color-accent-fg: #ffffff;
-  --color-signal: #0f8b86;
-  --color-focus: #8a5a06;
+  --color-action: #b7790f;
+  --color-action-hover: #9d660a;
+  --color-action-active: #85560a;
+  --color-action-soft: rgba(183, 121, 15, 0.12);
+  --color-action-fg: #ffffff;
+  --color-signal: #5f6b7c;
+  --color-focus: #0b6f8a;
   --focus-ring: 0 0 0 2px var(--color-bg-canvas), 0 0 0 4px var(--color-focus);
   --bg-body: var(--color-bg-canvas);
   --bg-surface: var(--color-bg-surface);

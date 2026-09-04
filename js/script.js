@@ -1,6 +1,9 @@
 // Teknoify public marketing site: shared page behaviour (navigation, contact form, custom select,
 // hero terminal and background effects). Authentication lives on https://platform.teknoify.com;
 // this file intentionally initializes no Firebase, App Check, reCAPTCHA or session state.
+
+// Review-only: ?motion=force previews the motion system under an OS reduced-motion setting. Never set for visitors.
+if (new URLSearchParams(window.location.search).get('motion') === 'force') document.documentElement.classList.add('force-motion');
 document.addEventListener('DOMContentLoaded', () => {
     new UISystem();
     if (document.querySelector('[data-custom-select]')) {
@@ -9,12 +12,65 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.contact-form')) {
         new ContactSystem();
     }
+    document.querySelectorAll('[data-signal-field]').forEach((el) => new SignalField(el));
     setTimeout(() => {
         if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
         if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
     }, 200);
 });
 
+
+class SignalField {
+    constructor(root) {
+        this.root = root;
+        this.layers = root.querySelectorAll('.sf--desktop .sf-stage, .sf--desktop .sf-core');
+        this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+        this.finePointer = window.matchMedia('(pointer: fine)');
+        this.frame = null;
+        this.target = { x: 0, y: 0 };
+        this.current = { x: 0, y: 0 };
+        this.bindVisibility();
+        const forced = document.documentElement.classList.contains('force-motion');
+        if ((!this.reduced.matches || forced) && this.finePointer.matches) this.bindPointer();
+    }
+    bindVisibility() {
+        if (!('IntersectionObserver' in window)) { this.root.classList.add('is-live'); return; }
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((e) => this.root.classList.toggle('is-live', e.isIntersecting));
+        }, { threshold: 0.15 });
+        io.observe(this.root);
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) this.root.classList.remove('is-live');
+        });
+    }
+    bindPointer() {
+        const hero = this.root.closest('.hero') || this.root;
+        hero.addEventListener('pointermove', (e) => {
+            const r = hero.getBoundingClientRect();
+            this.target.x = ((e.clientX - r.left) / r.width - 0.5) * 2;
+            this.target.y = ((e.clientY - r.top) / r.height - 0.5) * 2;
+            if (!this.frame) this.frame = requestAnimationFrame(() => this.tick());
+        }, { passive: true });
+        hero.addEventListener('pointerleave', () => {
+            this.target.x = 0; this.target.y = 0;
+            if (!this.frame) this.frame = requestAnimationFrame(() => this.tick());
+        });
+    }
+    tick() {
+        this.frame = null;
+        this.current.x += (this.target.x - this.current.x) * 0.12;
+        this.current.y += (this.target.y - this.current.y) * 0.12;
+        // depth: traces move least, core moves most (max 6px); a spatial hint, not a cursor follower
+        const depth = [1, 2, 3, 2, 4];
+        this.layers.forEach((layer, i) => {
+            const d = depth[i % depth.length];
+            layer.style.transform = `translate(${(this.current.x * d).toFixed(2)}px, ${(this.current.y * d).toFixed(2)}px)`;
+        });
+        if (Math.abs(this.target.x - this.current.x) > 0.005 || Math.abs(this.target.y - this.current.y) > 0.005) {
+            this.frame = requestAnimationFrame(() => this.tick());
+        }
+    }
+}
 class CustomSelectSystem {
     constructor() {
         this.selects = document.querySelectorAll('[data-custom-select]');

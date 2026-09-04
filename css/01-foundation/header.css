@@ -32,10 +32,10 @@
   color: var(--color-fg-primary);
   border-radius: var(--radius-sm);
 }
-.logo-mark { width: 1.75rem; height: 1.75rem; flex: none; color: var(--color-fg-primary); }
+.logo-mark { width: 1.6rem; height: 1.6rem; flex: none; color: var(--color-fg-primary); }
 .logo-mark .logo-mark__signal { fill: var(--color-accent); }
 .logo-icon { color: var(--color-accent); margin-right: 0; font-size: 1.1rem; }   /* legacy icon fallback on old pages */
-.logo-text { font-family: var(--font-display); font-weight: var(--weight-bold); font-size: 1.25rem; letter-spacing: -0.02em; color: var(--color-fg-primary); }
+.logo-text { font-family: var(--font-sans); font-weight: var(--weight-semibold); font-size: 1.125rem; letter-spacing: -0.01em; color: var(--color-fg-primary); }
 
 /* Primary navigation */
 .nav-menu { display: flex; align-items: center; gap: var(--space-1); }

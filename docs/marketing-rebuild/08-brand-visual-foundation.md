@@ -1,85 +1,78 @@
-# 08 — Brand & Visual Foundation (Phase C)
+# 08 — Brand & Visual Foundation (Phase C → C.1)
 
-Date: 2026-09-05. Branch: `feat/marketing-brand-foundation` (from `main` at `593dff9`). Status: **implemented on the branch, awaiting visual review; not pushed**.
+Date: 2026-09-05. Branch: `feat/marketing-brand-foundation`. Status: **prototype awaiting visual review; not pushed, no PR.**
 
-This is a design decision record, not a style guide. Values live in `css/00-settings/tokens.css`; components in `css/01-foundation/`.
+Phase C laid the engineering foundation (tokens, cascade layers, fluid type, spacing, focus, reduced motion, containers). Phase C.1 replaced its art direction: the amber-on-ink "Ink & Signal" hero with a typing terminal was judged a competent but conventional dark-SaaS composition. This record describes what stands now.
 
 ---
 
-## 1. Creative direction: "Ink & Signal"
+## 1. Creative direction: the Signal Field
 
-Teknoify sells scheduled business automation, agents and investment intelligence to Turkish enterprise buyers. The identity should read as an instrument you trust, not as a startup landing template. Three directions were formulated:
+**Principle: motion explains the product.** Teknoify turns fragmented inputs into working decisions, so the signature visual is a *system*, not a screenshot: heterogeneous inputs (web page, document, market signal, product data, task) travel along traces into a precise **intelligence lattice**; the lattice reasons in a moment of stillness; ordered outputs (report, alert, workflow, automated action) assemble on the far side. The visitor can read what Teknoify does from the field alone, and the three-step legend under the copy ("01 Girdi → 02 Zekâ → 03 Eylem") tracks the same phases in words.
 
-| Direction | Idea | Why not / why |
+Rejected on the way: the typing terminal (communicates developer tooling, not a broad automation platform); decorative particles and the canvas grid; gradient text; glassmorphic cards; a two-square lattice whose quarter turn was invisible (replaced by an asymmetric square + circle + three arcs).
+
+## 2. Motion grammar
+
+| Layer | Behaviour |
+| --- | --- |
+| **Signature** (12 s cycle, CSS/SVG only) | 0–24 % gather: ion packets travel input traces (`offset-path`), each input glyph and trace lights as its packet passes; 24–42 % understand: lattice turns 120° and brightens, core dot pulses, halo rises; 42–66 % act: solar packets leave the core, output boxes take a solar edge and a low fill; 66–100 % stillness: everything holds, then the cycle restarts. Packets are staggered 0.45–0.5 s so the field reads as a sequence, not a burst. |
+| **Narrative** | Deferred to the homepage phase; only the first stage ("01 Gözlemle") and the rail hint at continuity, and the hero's spine line hands the output rail to the next section. |
+| **Component** | Entrances reveal once (opacity + 8 px, 320 ms). |
+| **Micro** | 150 ms colour/border changes, 1 px press, no lifts. |
+| Depth | Layered SVG groups; on fine pointers the groups shift by at most 1–4 px per layer toward the pointer (rAF, eased, off on touch). A spatial hint, not a cursor follower. |
+| Stillness | A third of every cycle is a hold. |
+
+Runtime: animations run only while the field is at least 15 % in view and the tab is visible (`IntersectionObserver` + `visibilitychange` toggle `.is-live`); nothing animates offscreen. No canvas, no WebGL, no dependency.
+
+Reduced motion: the field renders the *resolved* state (all inputs lit, lattice bright, outputs edged and filled), packets hidden, legend fully lit; the global rule in `base.css` neutralises everything else. A documented review-only override, `?motion=force`, adds `html.force-motion` so reviewers on a reduced-motion OS can inspect the motion; it is never set for visitors.
+
+## 3. Compositions
+
+- **Desktop (≥ 1280 px):** copy 10/24, field 14/24; field is a masked region of the canvas, not a card; inputs left, lattice centre, outputs right.
+- **Laptop (1024–1279 px):** copy 5/12, field 7/12.
+- **Tablet (768–1023 px):** stacked, copy first, desktop field below at full width.
+- **Mobile (< 768 px):** a separate SVG: four inputs in a row feed a smaller lattice from above; three outputs stack below. Same phases, same classes, fewer elements; packets still travel.
+
+## 4. Typography
+
+- **Display: Fraunces** (variable, optical size 144 in the hero, 96 in section titles, weight 500, italic for the accent clause). An editorial serif separates Teknoify from grotesk-heavy AI brands and carries authority in Turkish; Latin Extended covers ğ, ş, İ, ç, ö, ü.
+- **Body / UI: Inter Tight** 400–700 (retained: readable, neutral next to the serif, Turkish rendering is excellent).
+- **Mono: Fira Code** for technical labels, kickers, field labels.
+- Scale unchanged from Phase C (display 40→68 px, H1 34→56, H2 26→38, lead 17→19, body 16). Headline max width 12ch with authored line breaks.
+- Loading: one Google Fonts request (Fraunces 500/600 + Inter Tight 400–700) plus Fira Code; self-hosting/subsetting is a Phase D item.
+
+## 5. Color: "Deep Field"
+
+Near-monochrome UI with a spectral range reserved for meaning:
+
+| Role | Value | Meaning |
 | --- | --- | --- |
-| A. **Ink & Signal** (chosen) | Deep ink canvas (not black), typographic hierarchy carried by a characterful grotesk, hairline surfaces, one **amber signal** accent used like an indicator light, cyan reserved for data/code. Warm "paper" mode for long-form content. | Distinct from the purple/indigo dark-SaaS norm; amber on ink is rare in this category and maps to the product's "control room" idea; scales to tools/agents pages (each capability gets a signal, never a gradient); performs (no imagery required); relates to a dark platform UI without copying application chrome. |
-| B. Editorial Ledger | Warm off-white paper as the default, ink typography, copper accent, data tables and rules as ornament. | Strong for trust and investment content, but the platform is dark and the brand would flip theme at the sign-in boundary; a light default also makes the terminal/technical motifs feel bolted on. Retained as the **paper mode** inside A. |
-| C. Field Grid | Graphite canvas with a persistent engineering grid, electric cyan accent, monospace everywhere. | Reads as a developer tool and drifts toward the crowded cyan/grid dark-SaaS look; monospace-heavy UI hurts Turkish body copy readability. Its useful part, technical labels in mono, survives in A as `.t-label`. |
+| canvas / surface / elevated / inset | `#070a10` / `#0e121a` / `#141924` / `#0a0d14` | depth by layering, not blur |
+| text primary / secondary / tertiary | `#eef1f6` / `#a8b1bf` / `#717c8d` | 17:1, 9.4:1, 4.7:1 on canvas |
+| **steel** `--color-signal` | `#8797ad` | raw inputs, technical labels |
+| **ion** `--color-accent` | `#8fe3ff` | intelligence, links, focus, interactive |
+| **solar** `--color-action` | `#ffb454` | action, outcomes, primary CTA (10:1 on canvas; ink text on solar 12:1) |
+| positive / warning / destructive | `#5ee0a0` / `#ff8a5b` / `#ff6b6b` | status only |
 
-Rejected outright: the existing "quantum grid" canvas and floating particle field (decorative AI particles), gradient text, glowing borders, the rotating-light login button.
+Amber survives only because the system gives it a job: it is the colour of *outcome*, which is also what the primary CTA promises. Ion is the brand's interactive colour. Paper mode (`.theme-paper`) carries the same roles with darkened accents for light surfaces. Indigo is gone.
 
-## 2. Typography
+## 6. Surfaces, actions, icons, imagery (unchanged principles, adjusted values)
 
-- **Display / headings: Bricolage Grotesque** (variable, opsz axis; Latin Extended covers Turkish). Authority and character at 34–68 px without shouting; tight tracking (−0.025em) and 1.05 line-height on display, 1.2 on H2/H3.
-- **Body / UI: Inter Tight** retained (already loaded, excellent Turkish rendering, neutral next to the display face). Weights trimmed to 400–700.
-- **Mono: Fira Code** retained for technical labels, kickers, code surfaces; JetBrains Mono listed as fallback for a future self-hosted swap.
-- Scale (fluid, 375→1440 px): display 40→68, H1 34→56, H2 26→38, H3 20→26, lead 17→19, body 16, small 14, caption 12, nav 15. Headline max width 14ch; prose 42rem.
-- Loading: one Google Fonts request for both sans families, `display=swap`, preconnect kept. Self-hosting and subsetting are a Phase D toolchain item.
+Hairlines and one inner highlight for depth; radii 6/10/14/20 with buttons at 6 px; primary button solar with a 1 px inner top highlight; secondary hairline; ghost text. Icons: inline SVG 1.5 px strokes (the field's glyphs are the first set); Font Awesome remains only for legacy sections. Imagery: the Signal Field *is* the imagery language; capability pages will reuse its grammar (traces, lattice, structured outputs) per tool, and real platform screenshots later sit inside the same inset surface. No fake dashboards.
 
-## 3. Color roles
+## 7. Brand mark
 
-Dark (default): canvas `#0b0e14`, surface `#11151d`, elevated `#171c26`, inset `#0d1118`; text primary `#f3f5f8`, secondary `#b1b9c6`, tertiary `#7d8797`; borders 8 % / 16 % white; **accent amber `#f4b53f`** (hover `#ffc75c`, active `#e3a22b`, soft 12 %, text-on-accent `#1a1204`); **signal cyan `#5fd4cf`** for data and code only; positive `#4ade80`, warning `#fb923c`, destructive `#f87171`; focus `#ffd27a`.
+Replaced the T-mark with the **field mark**: a ring (the field), a trace entering from the lower left, and an ion point at the centre (the resolved signal). Used inline in the header and as `images/favicon.svg`.
 
-Paper mode (`.theme-paper`): canvas `#f6f3ec`, surface white, text `#12151b`/`#4b5462`, accent darkened to `#b7790f` for 4.5:1 on paper.
+## 8. Performance budget (met by the prototype)
 
-Contrast (WCAG): primary text on canvas 17:1; secondary 9.6:1; tertiary 4.9:1; amber on canvas 10.5:1; accent-fg on amber 11:1; nav secondary text 9.6:1. No information is carried by color alone (the signal dot always sits beside text).
+No video, no 3D, no canvas; two inline SVGs (≈9 KB + 7.7 KB of markup); CSS animations on transform/opacity/offset-distance/stroke/fill only; one rAF loop that runs only while the pointer moves over the hero; animations paused offscreen and in hidden tabs; fonts loaded with `display=swap`; LCP is the headline text. Nothing blocks interaction readiness.
 
-The old indigo seed is **rejected** as brand color: it is the default of the category. It survives nowhere in the foundation; legacy sections still show it until they are rebuilt.
+## 9. Accessibility
 
-## 4. Spacing and layout
+The SVGs carry `role="img"` with a title and a Turkish description; the legend duplicates the narrative in text; reduced motion is fully static and still explanatory; no information is colour-only (every packet ends in a labelled box); focus ring is ion on a canvas gap; the hamburger is a real button with state.
 
-- 4 px base; tokens `--space-1…32`.
-- Containers: prose 42rem, md 64rem, **lg 72rem (default)**, xl 80rem (hero/nav).
-- Gutters: 20 px (<480), 24 px (≥480), 32 px (≥1024), 40 px (≥1440). Never below 20 px.
-- Section rhythm: `--section-y` = clamp(64px, 3rem+4vw, 112px); adjacent sections separated by a hairline, not by empty space.
-- Breakpoints (rem): 30, 48, 64, 80, 90. Two-column compositions stay two-column down to 1024 px, then stack with the text first.
-- Primitives: `.l-container`, `.l-section`, `.l-section-head`, `.l-stack`, `.l-cluster`, `.l-grid`, `.l-split`. Layout is grid/flex, no fixed pixel widths.
+## 10. Implementation notes
 
-## 5. Surface language
-
-Depth from hairlines and a single inner highlight; shadows only for raised (`--shadow-raised`) and overlay surfaces. Radii 6/10/14/20; tags are rectangular (6 px), not pills. Cards only to group or to act (`.s-surface`, `--interactive`). Highlighted content is an amber left rule (`.s-highlight`), not a box. Technical content sits on the inset surface with a mono bar (`.s-code`). The hero terminal is the first instance of this language.
-
-## 6. Actions
-
-`.btn` (44 px min height, 10 px radius, 14 px semibold), `.btn-primary` amber/ink, `.btn-secondary`/`.btn-outline` hairline, `.btn-ghost` text, `.btn-sm` (40 px), `.btn-lg` (52 px). `.link-action` (arrow affordance), `.link-inline` (underline that turns amber). States: hover, focus-visible (2 px canvas gap + 2 px amber ring), active (1 px press), disabled (50 %). Class names are unchanged so every existing page inherits the new buttons.
-
-## 7. Icons
-
-Decision: **inline SVG, 1.5 px stroke, 20/24 px, one set** (Lucide-compatible geometry) introduced with the navigation/homepage phase; Font Awesome stays loaded only until the legacy sections that use its 938 glyphs are rebuilt, then the CDN stylesheet is removed. No new icon dependency was added in this phase. New brand assets: the **T-mark** (bar-and-stem "T" with an amber signal dot) as inline SVG in the header and as `images/favicon.svg` (fixes the missing favicon). Existing image assets: none worth keeping.
-
-## 8. Imagery / product visual direction
-
-No fake dashboards. Capabilities are shown as **schematic capability diagrams**: monoline strokes on the inset surface, amber for the "live" path, cyan for data, labels in mono. Suitable for scheduled workflows (tracks and timelines), agent → tool → result narratives, and data flows without inventing UI. Real platform screenshots, when available, sit inside one consistent window chrome derived from the terminal surface. The current typing terminal is the interim placeholder for this language.
-
-## 9. Motion principles
-
-Durations 150 / 220 / 320 ms; `ease-out` for entrances and state, `ease-in-out` for movement. Entrances reveal once (opacity + 8 px), hover states 150 ms, no looping decoration, no parallax. Global reduced-motion rule in `base.css` neutralizes all animation and transitions; `.m-reveal` and the cursor blink additionally opt out. The hero animation is deferred to the hero phase; the particle field and canvas grid are retired.
-
-## 10. Responsive principles
-
-Mobile is designed, not derived: the mobile nav is a full-width sheet under the header with inlined sub-links (every destination reachable on touch), 48 px rows and full-width CTAs; the hero stacks text-first with the terminal below; type and gutters scale by tokens. Verified at 1440, 1280, 768, 390 and 375 px (see §12).
-
-## 11. Accessibility foundation
-
-Skip link, `<main id="main">`, `<nav aria-label>`, hamburger is a `<button>` with `aria-expanded`/`aria-controls` (synced by `script.js`), `aria-current` on the active nav item, decorative icons `aria-hidden`, global `:focus-visible` policy, 44 px targets, reduced motion honored globally, contrast per §3.
-
-## 12. Implementation notes and review results
-
-- `css/style.css` now declares cascade layers `tokens, base, legacy, foundation`; legacy stylesheets are imported into `legacy`, the foundation into `foundation`, so the foundation wins without specificity games. Page-specific stylesheets stay unlayered and override for their own selectors. The one legacy `!important` block (nav login light effect) was deleted because `!important` inverts layer order.
-- New files: `css/01-foundation/{typography,layout,surfaces,actions,header,motion,hero}.css`; rewritten `tokens.css` (with legacy aliases) and `base.css`; `images/favicon.svg`.
-- Markup changed only on `index.html` (head links, skip link, header, hero kicker/title/CTAs, `main` id). Other pages inherit the foundation through shared classes and keep their old header markup (visible inconsistency accepted until the navigation phase).
-- Review on the built artifact: desktop 1440 and 1280 show the ink canvas, Bricolage headline at 68 px, amber CTAs (48 px), 72 px header; tablet 768 stacks text first after fixing a legacy `order` conflict; zero failed same-origin requests; artifact gate green.
-
-## 13. Known refinements before approval (see the end-of-phase critique)
-
-Listed in the phase report; tracked for the navigation/homepage phase.
+`css/01-foundation/hero.css` (field, grammar, mobile variant, narrative hint), `css/00-settings/tokens.css` (Deep Field palette, Fraunces), `css/02-generic/base.css` (canvas horizon + dot field, reduced-motion gate), `css/01-foundation/{actions,header}.css` (button radius/highlight, wordmark), `index.html` (hero markup generated from a reproducible script, narrative stage 01, field mark, fonts), `js/script.js` (`SignalField` controller, review flag), `images/favicon.svg`.
