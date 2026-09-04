@@ -373,3 +373,35 @@ Checks executed on the branch state that becomes the PR:
 | GitHub Actions workflow | structurally valid (`jobs.check-public-artifact`) |
 
 Conclusions required before the PR is considered ready: `teknoify.com` uses the root marketing configuration — yes; `demo.teknoify.com` resolves `demo/netlify.toml` through Package directory `demo` — yes; the `SITE_NAME` guard remains defence in depth only — yes; both sites build without intentionally failing — yes (the demo has no build step; the main build passes locally, in the clean export and in CI); the clean-export artifact remains deterministic — yes; forbidden internal files remain excluded — yes. Observed confirmation of the two resolution rows comes from the PR's Deploy Previews (§19 checklists).
+
+## 22. Deploy Preview results for PR #319 (commit `7568b2d`, 2026-09-05)
+
+PR: https://github.com/SSerkanYavuzcan/teknoify/pull/319 (open, not merged). GitHub statuses: `netlify/fancy-klepon-8eac4e/deploy-preview` success, `netlify/teknoify-demo/deploy-preview` success, `Build and verify dist/` success, Netlify "Header rules" and "Redirect rules" checks success for the main site (neutral for the demo site, which has none).
+
+**Site names are now CONFIRMED**: the main-site preview built and published, which is only possible if the `SITE_NAME` guard accepted `fancy-klepon-8eac4e`; the demo preview built without running the marketing command, which is only possible if it resolved `demo/netlify.toml` rather than the root file.
+
+Main site preview (`deploy-preview-319--fancy-klepon-8eac4e.netlify.app`):
+
+| Check | Result |
+| --- | --- |
+| 13 sitemap URLs | all 200, in both extensionless and `.html` form |
+| Homepage content | title correct; 32 `service-hub-card` occurrences (8 cards and their CSS hooks) |
+| Link rewriting | `href='/pages/rpa'` present in served HTML — `pretty_urls = true` reproduces production behaviour (**U15 resolved**) |
+| Legacy redirects | `/dashboard/admin.html`, `/dashboard/member.html`, `/pages/login.html`, `/pages/login`, `/login.html` → 302 `https://platform.teknoify.com/` |
+| Retired | `/pages/impersonate.html`, `/pages/unauthorized`, `/domains/corporate-automation/rpa/page.html` → 404 |
+| Internals | `/package.json`, `/docs/README.md`, `/render.yaml`, `/scripts/update-usd-try-rates.py`, `/data/entitlements.json`, `/api/chat.js`, `/netlify.toml`, `/demo/netlify.toml`, `/demo/README.md` → 404; `/dashboard/web-scraping/backend/main.py` → 302 (caught by the `/dashboard/*` rule; not served) |
+| Headers on `/` | `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `Content-Security-Policy-Report-Only` present. `Strict-Transport-Security` shows `max-age=31536000; includeSubDomains; preload` on the preview host: Netlify's platform HSTS for `*.netlify.app` superseded the `_headers` value. Post-merge check on `teknoify.com`: confirm which HSTS value is served on the custom domain and remove the `_headers` line if Netlify's HTTPS setting already emits one. |
+| Data file | `/data/currency/usd_try_rates.json` → 200, `Cache-Control: public,max-age=300,must-revalidate` |
+| Plumbing | `/robots.txt`, `/sitemap.xml`, `/404.html`, `/reset-password.html` → 200; unknown path → 404 with the branded page title |
+
+Demo site preview (`deploy-preview-319--teknoify-demo.netlify.app`):
+
+| Check | Result |
+| --- | --- |
+| `/`, `/index.html`, `/scripts/demo-catalog.js`, `/data/demos.js`, `/styles/index.css`, `/README.md` | 200 — unchanged demo surface |
+| `/css/style.css`, `/pages/rpa.html` | 404 — pre-existing, unchanged |
+| `/dist/`, `/package.json`, `/netlify.toml` | 404 — no marketing artifact, no repository root, Netlify does not publish its own config file |
+| Link rewriting | none (`href="/pages/gizlilik.html"`) — unchanged |
+| Marketing `_headers` | not applied (no CSP header) — isolation confirmed |
+
+Not testable on preview hosts: the `www.teknoify.com` domain-level redirect (verify after merge). Verdict unchanged: **MERGE-READY**.
