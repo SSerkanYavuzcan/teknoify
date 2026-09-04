@@ -19,15 +19,12 @@ npm run check
 - Use a local static server, such as VS Code Live Server, during development.
 - Run `npm run check` before opening a PR.
 
-## Architecture checks
+## Public artifact
 
-Run these developer-facing architecture checks when working on migration readiness, public mirrors, or Dashboard route compatibility:
+Production publishes the verified `dist/` artifact, not the repository root:
 
 ```bash
-npm run check:architecture
-npm run check:public-mirrors
-npm run check:dashboard-routes
-npm run check:readiness-seal
+npm run check:public
 ```
 
-The final migration runbook and Phase 15B scorecard define the architecture migration gates for future runtime, wrapper, data/RAG, and archive cleanup PRs. Review [`docs/architecture/final-migration-runbook.md`](docs/architecture/final-migration-runbook.md) and [`docs/architecture/final-architecture-scorecard.md`](docs/architecture/final-architecture-scorecard.md) before architecture-governed migration work. Run `npm run check:readiness-seal` for the final Phase 16A readiness gate before targeted runtime candidate PRs.
+This builds `dist/` from the allow-list in `scripts/public-artifact/manifest.json` and verifies it (no repository internals, no browser-side authentication, required Netlify files present). Run it before opening a PR. See `docs/marketing-rebuild/` for the boundary, cutover and legacy-cleanup records.

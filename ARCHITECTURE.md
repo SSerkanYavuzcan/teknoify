@@ -28,3 +28,7 @@ Phase 16A adds the final enterprise readiness seal at [`docs/architecture/enterp
 ## Marketing / platform ownership (2026-09)
 
 [`docs/decisions/ADR-0002-marketing-platform-ownership.md`](docs/decisions/ADR-0002-marketing-platform-ownership.md) supersedes the mixed-surface assumption above: `teknoify.com` (this repository) is an anonymous public marketing surface; authentication, users, sessions, entitlements, premium logic and dashboards belong to `platform.teknoify.com`. The audit, boundary and cutover work lives in [`docs/marketing-rebuild/`](docs/marketing-rebuild/README.md); production is to be published from a verified `dist/` artifact (`npm run check:public`) rather than the repository root.
+
+## Legacy application frontend removed (Phase B0)
+
+The Firebase-based login modal, session manager, dashboard/admin frontend, premium gating, impersonation and MVP auth code were removed from this repository (see [`docs/marketing-rebuild/07-legacy-frontend-cleanup.md`](docs/marketing-rebuild/07-legacy-frontend-cleanup.md)). The `npm run check:*` architecture governance checkers that referenced those files were removed with them; the remaining gate is `npm run check:public`. Legacy application URLs are redirect rules in `public/_redirects`.

@@ -1475,7 +1475,7 @@
                         </p>
                     </div>
                     <div class="investment-sector-header__action">
-                        <a class="investment-sector-detail-button" href="investment-retail.html">
+                        <a class="investment-sector-detail-button" href="https://platform.teknoify.com/" rel="noopener">
                             Detaylı İncele
                         </a>
                     </div>
@@ -1514,7 +1514,7 @@
             placeholderCopy:
                 "Yolcu trafiği, doluluk oranı, filo büyüklüğü ve faaliyet kârlılığı gibi metrikler kaynaklı veri setleriyle hazırlanacak.",
             tags: ["Yolcu Trafiği", "Doluluk Oranı", "Filo", "FAVÖK"],
-            detailHref: "investment-airlines.html",
+            detailHref: "https://platform.teknoify.com/",
             tagsLabel: "Planlanan havayolu metrikleri"
         },
         automotive: {

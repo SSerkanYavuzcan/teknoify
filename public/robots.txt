@@ -1,5 +1,5 @@
-# robots.txt is a crawling hint, not access control. Paths below either redirect to the platform,
-# are transitional authentication pages, or are premium-gated previews.
+# robots.txt is a crawling hint, not access control. Paths below redirect to the platform
+# or are compatibility pages that carry no marketing content.
 User-agent: *
 Disallow: /dashboard/
 Disallow: /pages/login

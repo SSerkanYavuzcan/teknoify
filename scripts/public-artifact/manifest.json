@@ -24,15 +24,11 @@
         "demo/index.html"
     ],
     "transitionalPages": {
-        "$comment": "Legacy authentication / premium-gated pages kept ONLY during the migration window. Each has a sunset condition in doc 05 §7. They are never listed in the sitemap.",
-        "reset-password.html": "Firebase email action handler; remove after the Firebase Auth action URL points at platform.teknoify.com (U4).",
-        "pages/investment-retail.html": "Premium-gated preview linked from investment-analytics; remove when the platform hosts investment analytics.",
-        "pages/investment-airlines.html": "Premium-gated preview linked from investment-analytics; remove when the platform hosts investment analytics."
+        "$comment": "URL-compatibility pages kept during the migration window; never listed in the sitemap.",
+        "reset-password.html": "Static compatibility page (no auth logic since Phase B0) for old Firebase reset e-mails/bookmarks; replace with a redirect once the platform publishes its reset URL and the Firebase action URL is repointed (U4)."
     },
     "transitionalFiles": {
-        "$comment": "Legacy auth scripts still referenced by public pages. Referencing pages must drop them in the legacy-exit step; the build reports them on every run.",
-        "js/session-manager.js": "Firebase compat session timer + impersonation bar; referenced by index.html and pages/*.html.",
-        "js/premium-content-gate.js": "Firebase role gate for premium previews; referenced by investment and subscription pages."
+        "$comment": "None since Phase B0. Browser-side auth scripts were removed from every public page."
     },
     "staticFiles": {
         "$comment": "Files fetched at runtime by JavaScript through variables the crawler cannot follow. Listed explicitly so data exposure is a deliberate decision.",
@@ -133,8 +129,6 @@
         "css/00-settings/tokens.css",
         "js/script.js",
         "js/cookies.js",
-        "packages/config/routes-global.js",
-        "packages/config/routes.js",
         "pages/rpa.html",
         "pages/gizlilik.html",
         "demo/index.html",
@@ -145,12 +139,26 @@
         "404.html"
     ],
     "contentMarkers": {
-        "$comment": "Byte patterns that must never appear in any artifact file.",
+        "$comment": "Byte patterns that must never appear in any artifact file. The second group is the auth-free assertion: the public marketing site must not load or initialize browser-side Firebase, App Check, reCAPTCHA, sessions or entitlement gating (ADR-0002, Phase B0).",
         "forbidden": [
             "-----BEGIN PRIVATE KEY-----",
             "-----BEGIN RSA PRIVATE KEY-----",
             "\"type\": \"service_account\"",
-            "firebase-admin"
+            "firebase-admin",
+            "gstatic.com/firebasejs",
+            "firebase.initializeApp",
+            "initializeAppCheck",
+            "firebase.appCheck",
+            "google.com/recaptcha/api.js",
+            "onAuthStateChanged",
+            "getIdTokenResult",
+            "sendPasswordResetEmail",
+            "confirmPasswordReset",
+            "id=\"loginModal\"",
+            "session-manager.js",
+            "premium-content-gate",
+            "teknoify_impersonate_uid",
+            "tk_access_denied"
         ]
     }
 }

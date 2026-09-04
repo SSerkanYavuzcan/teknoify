@@ -41,9 +41,9 @@
                 </li>
                 <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
                 <li class="nav-item nav-login-btn">
-                    <button id="openLoginBtn" class="btn btn-sm btn-primary">
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-primary" rel="noopener">
                         <i class="fas fa-user"></i> Giriş Yap
-                    </button>
+                    </a>
                 </li>
             </ul>
             
@@ -239,42 +239,7 @@
 </footer>
 
 
-<div class="modal-overlay" id="loginModal">
-    <div class="modal-container">
-        <div class="modal-close"><i class="fas fa-times"></i></div>
-        <div class="modal-header">
-            <h3>Giriş Yap</h3>
-            <p>Teknoify hesabınıza erişin</p>
-        </div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">E-posta Adresi</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" required placeholder="ornek@sirket.com">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="password">Şifre</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" required placeholder="••••••••">
-                </div>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
-            </div>
-            <div class="form-footer">
-                <a href="#" class="link-sm">Şifremi Unuttum</a>
-            </div>
-        </form>
-    </div>
-</div>
 
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-<script src="../js/session-manager.js"></script>
-<script type="module" src="/packages/config/routes-global.js"></script>
 <script src="../js/script.js?v=api-quantum-grid-1" defer></script>
 
 <script>

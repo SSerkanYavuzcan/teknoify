@@ -77,3 +77,7 @@ Phase 11A requires protected Dashboard route moves to continue using centralized
 ## Phase 11B Dashboard route compatibility note
 
 Phase 11B requires route constants to continue representing public route URLs during Dashboard migration. Admin, premium, and member dashboard constants must keep returning `/dashboard/admin.html`, `/dashboard/premium.html`, and `/dashboard/member.html` through `getDashboardRouteForRole()` until a dedicated route-change PR updates static hosting and compatibility wrappers.
+
+## Phase B0 status (2026-09-05)
+
+`routes.js` now lists only public marketing routes plus `PLATFORM_ROUTES.root`; the dashboard route constants, `getDashboardRouteForRole()` and the `routes-global.js` window bridge were removed together with the legacy application frontend (see `docs/marketing-rebuild/07-legacy-frontend-cleanup.md`). No page loads this module; it is the documented URL contract for the redesign phases.
