@@ -16,7 +16,10 @@
   box-shadow: none;
   transition: background-color var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
 }
-.header.scrolled { background: rgba(11, 14, 20, 0.92); border-bottom-color: var(--color-border-strong); box-shadow: none; }
+.header.scrolled { background: rgba(7, 10, 16, 0.9); border-bottom-color: var(--color-border-strong); box-shadow: none; }
+/* On the stage the header is part of the field: transparent, no line, until the page scrolls */
+.header--stage:not(.scrolled) { background: linear-gradient(to bottom, rgba(7, 10, 16, 0.85), rgba(7, 10, 16, 0)); border-bottom-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.header--stage .nav-container { height: calc(var(--header-height) + 0.5rem); }
 
 .nav-container {
   height: var(--header-height);
@@ -32,10 +35,11 @@
   color: var(--color-fg-primary);
   border-radius: var(--radius-sm);
 }
-.logo-mark { width: 1.6rem; height: 1.6rem; flex: none; color: var(--color-fg-primary); }
+.logo-mark { width: 1.75rem; height: 1.75rem; flex: none; color: var(--color-fg-primary); }
 .logo-mark .logo-mark__signal { fill: var(--color-accent); }
 .logo-icon { color: var(--color-accent); margin-right: 0; font-size: 1.1rem; }   /* legacy icon fallback on old pages */
-.logo-text { font-family: var(--font-sans); font-weight: var(--weight-semibold); font-size: 1.125rem; letter-spacing: -0.01em; color: var(--color-fg-primary); }
+.logo-text { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--color-fg-primary); }
+html.type-b { --font-display: 'Host Grotesk', 'Inter Tight', system-ui, sans-serif; }   /* review-only: ?type=b */
 
 /* Primary navigation */
 .nav-menu { display: flex; align-items: center; gap: var(--space-1); }

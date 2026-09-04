@@ -27,4 +27,4 @@
 @import url("./01-foundation/actions.css") layer(foundation);
 @import url("./01-foundation/header.css") layer(foundation);
 @import url("./01-foundation/motion.css") layer(foundation);
-@import url("./01-foundation/hero.css") layer(foundation);
+@import url("./01-foundation/hero-stage.css") layer(foundation);

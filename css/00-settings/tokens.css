@@ -33,11 +33,16 @@
   --color-accent-soft: rgba(143, 227, 255, 0.12);
   --color-accent-fg: #06141a;         /* text on ion */
 
-  --color-action: #ffb454;            /* solar: action, outcomes, primary CTA */
-  --color-action-hover: #ffc46f;
-  --color-action-active: #f0a23c;
-  --color-action-soft: rgba(255, 180, 84, 0.12);
-  --color-action-fg: #1a1103;         /* text on solar */
+  --color-action: #f0c65e;            /* gold: resolved action / outcomes (diagrams, rails, resolved states) */
+  --color-action-hover: #f7d27a;
+  --color-action-active: #e0b54a;
+  --color-action-soft: rgba(240, 198, 94, 0.12);
+  --color-action-fg: #1a1403;         /* text on gold */
+
+  --color-cta: #eef1f6;               /* primary CTA: luminous, the brightest object on the stage */
+  --color-cta-hover: #ffffff;
+  --color-cta-active: #d9dee6;
+  --color-cta-fg: #0b0e14;
 
   --color-signal: #8797ad;            /* steel: raw inputs, technical labels */
   --color-signal-soft: rgba(135, 151, 173, 0.12);
@@ -49,7 +54,7 @@
   --color-focus: #b4edff;
 
   /* ---- Typography ---- */
-  --font-display: 'Fraunces', 'Iowan Old Style', 'Georgia', serif;
+  --font-display: 'Schibsted Grotesk', 'Inter Tight', system-ui, sans-serif;
   --font-sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Fira Code', 'JetBrains Mono', Consolas, monospace;
 
@@ -166,6 +171,10 @@
   --color-action-active: #85560a;
   --color-action-soft: rgba(183, 121, 15, 0.12);
   --color-action-fg: #ffffff;
+  --color-cta: #12151b;
+  --color-cta-hover: #000000;
+  --color-cta-active: #2a2f38;
+  --color-cta-fg: #ffffff;
   --color-signal: #5f6b7c;
   --color-focus: #0b6f8a;
   --focus-ring: 0 0 0 2px var(--color-bg-canvas), 0 0 0 4px var(--color-focus);

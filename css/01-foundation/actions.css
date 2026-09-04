@@ -40,13 +40,14 @@
 .btn i, .btn svg { width: 1em; height: 1em; flex: none; }
 
 .btn-primary {
-  --btn-bg: var(--color-action);
-  --btn-fg: var(--color-action-fg);
-  --btn-border: var(--color-action);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  --btn-bg: var(--color-cta);
+  --btn-fg: var(--color-cta-fg);
+  --btn-border: var(--color-cta);
+  box-shadow: 0 0 0 1px rgba(238, 241, 246, 0.08), 0 10px 30px -12px rgba(238, 241, 246, 0.35);
 }
-.btn-primary:hover { --btn-bg: var(--color-action-hover); --btn-border: var(--color-action-hover); transform: none; }
-.btn-primary:active { --btn-bg: var(--color-action-active); }
+.btn-primary:hover { --btn-bg: var(--color-cta-hover); --btn-border: var(--color-cta-hover); transform: none; }
+.btn-primary:active { --btn-bg: var(--color-cta-active); }
+.btn-primary:focus-visible { box-shadow: var(--focus-ring); }
 
 .btn-secondary,
 .btn-outline {

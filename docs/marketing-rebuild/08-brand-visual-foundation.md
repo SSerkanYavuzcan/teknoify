@@ -1,78 +1,68 @@
-# 08 — Brand & Visual Foundation (Phase C → C.1)
+# 08 — Brand & Visual Foundation (Phase C → C.2)
 
 Date: 2026-09-05. Branch: `feat/marketing-brand-foundation`. Status: **prototype awaiting visual review; not pushed, no PR.**
 
-Phase C laid the engineering foundation (tokens, cascade layers, fluid type, spacing, focus, reduced motion, containers). Phase C.1 replaced its art direction: the amber-on-ink "Ink & Signal" hero with a typing terminal was judged a competent but conventional dark-SaaS composition. This record describes what stands now.
+Phase C built the engineering foundation (tokens, cascade layers, fluid type, spacing, focus, reduced motion, containers). C.1 introduced the Signal Field. C.2 integrates copy and system into one stage, adds the signature gesture, and revisits type and colour. This record describes what stands now.
 
 ---
 
-## 1. Creative direction: the Signal Field
+## 1. Direction: the Signal Field as one stage
 
-**Principle: motion explains the product.** Teknoify turns fragmented inputs into working decisions, so the signature visual is a *system*, not a screenshot: heterogeneous inputs (web page, document, market signal, product data, task) travel along traces into a precise **intelligence lattice**; the lattice reasons in a moment of stillness; ordered outputs (report, alert, workflow, automated action) assemble on the far side. The visitor can read what Teknoify does from the field alone, and the three-step legend under the copy ("01 Girdi → 02 Zekâ → 03 Eylem") tracks the same phases in words.
+**Principle: motion explains the product.** The hero is a single full-bleed composition, not copy beside a diagram. Five raw inputs enter from beyond the left edge along faint dashed traces that pass *behind* the headline (a soft reading zone keeps the text clear), surface as labelled markers to the right of the copy, and converge on a deep intelligence lattice right of centre. Outputs (Rapor, Uyarı, İş akışı, Otomatik eylem) live in a column on the far right whose rail drops through the hero's bottom edge and lands, at the same x, on the rail of the next section ("01 Gözlemle").
 
-Rejected on the way: the typing terminal (communicates developer tooling, not a broad automation platform); decorative particles and the canvas grid; gradient text; glassmorphic cards; a two-square lattice whose quarter turn was invisible (replaced by an asymmetric square + circle + three arcs).
+Depth: ambient field lines behind everything, two faint depth rings around the core, a diagonal light field from the upper right, a soft halo, hairline traces with two thicknesses, the reading zone, and a lateral mask so the field belongs to the canvas. No glass, no cards.
 
-## 2. Motion grammar
+## 2. The signature gesture: disorder resolves into a column
 
-| Layer | Behaviour |
-| --- | --- |
-| **Signature** (12 s cycle, CSS/SVG only) | 0–24 % gather: ion packets travel input traces (`offset-path`), each input glyph and trace lights as its packet passes; 24–42 % understand: lattice turns 120° and brightens, core dot pulses, halo rises; 42–66 % act: solar packets leave the core, output boxes take a solar edge and a low fill; 66–100 % stillness: everything holds, then the cycle restarts. Packets are staggered 0.45–0.5 s so the field reads as a sequence, not a burst. |
-| **Narrative** | Deferred to the homepage phase; only the first stage ("01 Gözlemle") and the rail hint at continuity, and the hero's spine line hands the output rail to the next section. |
-| **Component** | Entrances reveal once (opacity + 8 px, 320 ms). |
-| **Micro** | 150 ms colour/border changes, 1 px press, no lifts. |
-| Depth | Layered SVG groups; on fine pointers the groups shift by at most 1–4 px per layer toward the pointer (rAF, eased, off on touch). A spatial hint, not a cursor follower. |
-| Stillness | A third of every cycle is a hold. |
+One-shot, 8 s, plays once when the field first enters view:
 
-Runtime: animations run only while the field is at least 15 % in view and the tab is visible (`IntersectionObserver` + `visibilitychange` toggle `.is-live`); nothing animates offscreen. No canvas, no WebGL, no dependency.
+| Phase | % | What happens |
+| --- | --- | --- |
+| Gather | 0–30 | three shards per input stream along the traces (fragmented signals), inputs and traces light in sequence |
+| Understand | 30–52 | rings contract and turn, 36 ticks sweep in ion, the lattice rotates 120° and brightens, the core dot pulses |
+| **Resolve** | 52–62 | the decision line draws from the core; the four outputs, until now scattered, rotated and ghosted, **snap into one aligned column** with overshoot, take a gold edge and a brief fill; the rail drops to the section edge and its node lights |
+| Stillness | 62–100 | everything holds |
 
-Reduced motion: the field renders the *resolved* state (all inputs lit, lattice bright, outputs edged and filled), packets hidden, legend fully lit; the global rule in `base.css` neutralises everything else. A documented review-only override, `?motion=force`, adds `html.force-motion` so reviewers on a reduced-motion OS can inspect the motion; it is never set for visitors.
+After resolution a quiet ambient loop continues (occasional shards, a 7 s breath in the halo). Under reduced motion the resolved frame is rendered directly. `?motion=force` and `?stage=pre` are review-only flags (force motion on a reduced-motion OS; hold the unresolved frame).
 
 ## 3. Compositions
 
-- **Desktop (≥ 1280 px):** copy 10/24, field 14/24; field is a masked region of the canvas, not a card; inputs left, lattice centre, outputs right.
-- **Laptop (1024–1279 px):** copy 5/12, field 7/12.
-- **Tablet (768–1023 px):** stacked, copy first, desktop field below at full width.
-- **Mobile (< 768 px):** a separate SVG: four inputs in a row feed a smaller lattice from above; three outputs stack below. Same phases, same classes, fewer elements; packets still travel.
+- **Desktop (≥ 1024):** stage 1440 × 820 units, right-anchored scaling (`xMaxYMax slice`) so the output column never crops; copy 33 rem wide on the left; marker column at ≈ 48 % of width; core at ≈ 68 %; outputs at 80–95 %. Hero height clamps between 44 and 56 rem (92 vh).
+- **Mobile (< 1024):** copy first, then a dedicated pipeline SVG: four inputs across the top feed a compact lattice, three outputs resolve below with the same snap, the rail continues down.
 
 ## 4. Typography
 
-- **Display: Fraunces** (variable, optical size 144 in the hero, 96 in section titles, weight 500, italic for the accent clause). An editorial serif separates Teknoify from grotesk-heavy AI brands and carries authority in Turkish; Latin Extended covers ğ, ş, İ, ç, ö, ü.
-- **Body / UI: Inter Tight** 400–700 (retained: readable, neutral next to the serif, Turkish rendering is excellent).
-- **Mono: Fira Code** for technical labels, kickers, field labels.
-- Scale unchanged from Phase C (display 40→68 px, H1 34→56, H2 26→38, lead 17→19, body 16). Headline max width 12ch with authored line breaks.
-- Loading: one Google Fonts request (Fraunces 500/600 + Inter Tight 400–700) plus Fira Code; self-hosting/subsetting is a Phase D item.
+- **Display: Schibsted Grotesk 500/600** (neo-grotesk; authority without editorial softness; Latin Extended covers Turkish). Tested against **Host Grotesk** (technical-humanist, review flag `?type=b`) and the previous **Fraunces** (rejected: read as editorial/finance). Headline 40 → 68 px, −0.035 em tracking, 11 ch max, authored line breaks.
+- **Body / UI: Inter Tight 400–700. Mono: Fira Code** for labels and kickers.
+- Loading: one Google Fonts request for Schibsted Grotesk + Inter Tight plus Fira Code; self-hosting is a Phase D item.
 
-## 5. Color: "Deep Field"
-
-Near-monochrome UI with a spectral range reserved for meaning:
+## 5. Colour: role-based progression
 
 | Role | Value | Meaning |
 | --- | --- | --- |
-| canvas / surface / elevated / inset | `#070a10` / `#0e121a` / `#141924` / `#0a0d14` | depth by layering, not blur |
-| text primary / secondary / tertiary | `#eef1f6` / `#a8b1bf` / `#717c8d` | 17:1, 9.4:1, 4.7:1 on canvas |
-| **steel** `--color-signal` | `#8797ad` | raw inputs, technical labels |
-| **ion** `--color-accent` | `#8fe3ff` | intelligence, links, focus, interactive |
-| **solar** `--color-action` | `#ffb454` | action, outcomes, primary CTA (10:1 on canvas; ink text on solar 12:1) |
-| positive / warning / destructive | `#5ee0a0` / `#ff8a5b` / `#ff6b6b` | status only |
+| steel (`--color-signal`) | `#8797ad` | raw signals, technical labels |
+| ion (`--color-accent`) | `#8fe3ff` | reasoning, links, focus, interactive |
+| gold (`--color-action`) | `#f0c65e` | resolved action: output column, decision line, rail, accent clause |
+| luminous CTA (`--color-cta`) | `#eef1f6` on `#0b0e14` | the primary button is the brightest object on the stage, no orange |
 
-Amber survives only because the system gives it a job: it is the colour of *outcome*, which is also what the primary CTA promises. Ion is the brand's interactive colour. Paper mode (`.theme-paper`) carries the same roles with darkened accents for light surfaces. Indigo is gone.
+Canvas `#070a10`, surfaces `#0e121a` / `#141924`, text `#eef1f6` / `#a8b1bf` / `#717c8d`. Contrast: gold on canvas 12:1, CTA text 16:1, tertiary text 4.7:1. Paper mode keeps the roles with darkened accents. The earlier solar orange is gone; warmth survives only as the colour of resolved outcomes.
 
-## 6. Surfaces, actions, icons, imagery (unchanged principles, adjusted values)
+## 6. Header
 
-Hairlines and one inner highlight for depth; radii 6/10/14/20 with buttons at 6 px; primary button solar with a 1 px inner top highlight; secondary hairline; ghost text. Icons: inline SVG 1.5 px strokes (the field's glyphs are the first set); Font Awesome remains only for legacy sections. Imagery: the Signal Field *is* the imagery language; capability pages will reuse its grammar (traces, lattice, structured outputs) per tool, and real platform screenshots later sit inside the same inset surface. No fake dashboards.
+Transparent over the stage (a top gradient only) until scrolled, then the surface returns; the mark is the **field mark**: a dashed ring (field), a rotated rounded square (lattice) and an ion point; wordmark in the display face; actions are a ghost "Giriş yap" and the luminous "Başla" CTA.
 
-## 7. Brand mark
+## 7. Surfaces, actions, icons, imagery
 
-Replaced the T-mark with the **field mark**: a ring (the field), a trace entering from the lower left, and an ion point at the centre (the resolved signal). Used inline in the header and as `images/favicon.svg`.
+Hairlines and one inner highlight; radii 6/10/14/20 with buttons at 6 px; inline SVG 1.5 px stroke glyphs (the field's five inputs are the first icon set; Font Awesome remains only in legacy sections). Capability pages will reuse the field grammar (traces, lattice, structured outputs) per tool; real screenshots later sit on the inset surface. No fake dashboards.
 
-## 8. Performance budget (met by the prototype)
+## 8. Performance
 
-No video, no 3D, no canvas; two inline SVGs (≈9 KB + 7.7 KB of markup); CSS animations on transform/opacity/offset-distance/stroke/fill only; one rAF loop that runs only while the pointer moves over the hero; animations paused offscreen and in hidden tabs; fonts loaded with `display=swap`; LCP is the headline text. Nothing blocks interaction readiness.
+No video, 3D or canvas; two inline SVGs (≈ 15 KB + 10 KB markup); animations on `offset-distance`, transform, opacity, stroke and fill; one-shot then a sparse loop; animations run only in view and with the tab visible; one rAF loop only while the pointer moves over the hero on fine pointers. Fonts with `display=swap`; LCP is the headline.
 
 ## 9. Accessibility
 
-The SVGs carry `role="img"` with a title and a Turkish description; the legend duplicates the narrative in text; reduced motion is fully static and still explanatory; no information is colour-only (every packet ends in a labelled box); focus ring is ion on a canvas gap; the hamburger is a real button with state.
+SVGs carry `role="img"`, title and Turkish description; the legend ("01 Girdi · 02 Zekâ · 03 Eylem") follows the phases in text; the reduced-motion frame is fully explanatory; no colour-only information; skip link, `main` landmark, real `<button>` hamburger with state; focus ring in ion.
 
 ## 10. Implementation notes
 
-`css/01-foundation/hero.css` (field, grammar, mobile variant, narrative hint), `css/00-settings/tokens.css` (Deep Field palette, Fraunces), `css/02-generic/base.css` (canvas horizon + dot field, reduced-motion gate), `css/01-foundation/{actions,header}.css` (button radius/highlight, wordmark), `index.html` (hero markup generated from a reproducible script, narrative stage 01, field mark, fonts), `js/script.js` (`SignalField` controller, review flag), `images/favicon.svg`.
+`css/01-foundation/hero-stage.css` (stage, field drawing, initial state, one-shot keyframes, ambient loop, reduced motion, hand-off), `css/00-settings/tokens.css` (Deep Field roles incl. `--color-cta`, Schibsted Grotesk), `css/02-generic/base.css`, `css/01-foundation/{actions,header}.css`, `index.html` (hero generated by a reproducible script; narrative stage 01 with the aligned rail), `js/script.js` (`SignalField`: arms once on view, marks resolution, syncs the legend, pointer depth, review flags), `images/favicon.svg`.

@@ -3,7 +3,12 @@
 // this file intentionally initializes no Firebase, App Check, reCAPTCHA or session state.
 
 // Review-only: ?motion=force previews the motion system under an OS reduced-motion setting. Never set for visitors.
-if (new URLSearchParams(window.location.search).get('motion') === 'force') document.documentElement.classList.add('force-motion');
+(function () {
+    const q = new URLSearchParams(window.location.search);
+    if (q.get('motion') === 'force') document.documentElement.classList.add('force-motion');
+    if (q.get('stage') === 'pre') document.documentElement.classList.add('review-pre');
+    if (q.get('type') === 'b') { document.documentElement.classList.add('type-b'); const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@500;600&display=swap'; document.head.appendChild(l); }
+})();
 document.addEventListener('DOMContentLoaded', () => {
     new UISystem();
     if (document.querySelector('[data-custom-select]')) {
@@ -23,25 +28,36 @@ document.addEventListener('DOMContentLoaded', () => {
 class SignalField {
     constructor(root) {
         this.root = root;
-        this.layers = root.querySelectorAll('.sf--desktop .sf-stage, .sf--desktop .sf-core');
+        this.layers = root.querySelectorAll('.sf--stage .sf-layer, .sf--stage .sf-core');
         this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
         this.finePointer = window.matchMedia('(pointer: fine)');
-        this.frame = null;
-        this.target = { x: 0, y: 0 };
-        this.current = { x: 0, y: 0 };
+        this.forced = document.documentElement.classList.contains('force-motion');
+        this.hold = document.documentElement.classList.contains('review-pre');   // review-only: freeze the unresolved frame
+        this.resolveMs = 8000;
+        this.frame = null; this.target = { x: 0, y: 0 }; this.current = { x: 0, y: 0 };
+        this.stages = (root.closest('.hero') || document).querySelectorAll('.hero-stage');
+        if (this.reduced.matches && !this.forced) { root.classList.add('is-resolved'); this.setStage(3); return; }
         this.bindVisibility();
-        const forced = document.documentElement.classList.contains('force-motion');
-        if ((!this.reduced.matches || forced) && this.finePointer.matches) this.bindPointer();
+        if (this.finePointer.matches) this.bindPointer();
+    }
+    setStage(n) { this.stages.forEach((s, i) => s.classList.toggle('is-on', n === 0 ? false : i < n)); }
+    arm() {
+        if (this.armed || this.hold) return;
+        this.armed = true;
+        this.root.classList.add('is-armed');
+        // legend follows the one-shot phases: gather 0-30%, understand 30-52%, act 52%+
+        this.setStage(1);
+        setTimeout(() => this.setStage(2), this.resolveMs * 0.3);
+        setTimeout(() => this.setStage(3), this.resolveMs * 0.52);
+        setTimeout(() => { this.root.classList.remove('is-armed'); this.root.classList.add('is-resolved'); }, this.resolveMs + 50);
     }
     bindVisibility() {
-        if (!('IntersectionObserver' in window)) { this.root.classList.add('is-live'); return; }
+        if (!('IntersectionObserver' in window)) { this.root.classList.add('is-live'); this.arm(); return; }
         const io = new IntersectionObserver((entries) => {
-            entries.forEach((e) => this.root.classList.toggle('is-live', e.isIntersecting));
-        }, { threshold: 0.15 });
+            entries.forEach((e) => { this.root.classList.toggle('is-live', e.isIntersecting); if (e.isIntersecting) this.arm(); });
+        }, { threshold: 0.2 });
         io.observe(this.root);
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) this.root.classList.remove('is-live');
-        });
+        document.addEventListener('visibilitychange', () => { if (document.hidden) this.root.classList.remove('is-live'); });
     }
     bindPointer() {
         const hero = this.root.closest('.hero') || this.root;
@@ -51,24 +67,18 @@ class SignalField {
             this.target.y = ((e.clientY - r.top) / r.height - 0.5) * 2;
             if (!this.frame) this.frame = requestAnimationFrame(() => this.tick());
         }, { passive: true });
-        hero.addEventListener('pointerleave', () => {
-            this.target.x = 0; this.target.y = 0;
-            if (!this.frame) this.frame = requestAnimationFrame(() => this.tick());
-        });
+        hero.addEventListener('pointerleave', () => { this.target.x = 0; this.target.y = 0; if (!this.frame) this.frame = requestAnimationFrame(() => this.tick()); });
     }
     tick() {
         this.frame = null;
         this.current.x += (this.target.x - this.current.x) * 0.12;
         this.current.y += (this.target.y - this.current.y) * 0.12;
-        // depth: traces move least, core moves most (max 6px); a spatial hint, not a cursor follower
-        const depth = [1, 2, 3, 2, 4];
+        const depth = [1, 2, 3, 2, 5, 3];   // ambient least, core most (max 5px)
         this.layers.forEach((layer, i) => {
             const d = depth[i % depth.length];
             layer.style.transform = `translate(${(this.current.x * d).toFixed(2)}px, ${(this.current.y * d).toFixed(2)}px)`;
         });
-        if (Math.abs(this.target.x - this.current.x) > 0.005 || Math.abs(this.target.y - this.current.y) > 0.005) {
-            this.frame = requestAnimationFrame(() => this.tick());
-        }
+        if (Math.abs(this.target.x - this.current.x) > 0.005 || Math.abs(this.target.y - this.current.y) > 0.005) this.frame = requestAnimationFrame(() => this.tick());
     }
 }
 class CustomSelectSystem {
