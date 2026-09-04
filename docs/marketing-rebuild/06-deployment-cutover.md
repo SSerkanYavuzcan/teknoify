@@ -249,7 +249,7 @@ Supplied from the Netlify and GitHub UIs on 2026-09-05. All rows **CONFIRMED** u
 | Branch deploys | production branch only | production branch only |
 | Deploy Previews | enabled for PRs against the production branch | enabled for PRs against the production branch |
 | Base directory | `/` | `/` |
-| Package directory | not set | not set |
+| Package directory | not set | **`demo`** — CONFIRMED (set in the Netlify UI on 2026-09-05 after §20's blocker was raised; previously "not set") |
 | Build command | not set | not set |
 | Publish directory | `/` | `demo` |
 | Build status | Active | Active |
@@ -333,10 +333,43 @@ Constraints: user-owned public repository; classic branch protection cannot gran
 
 ## 20. Verdict and remaining blockers
 
-**NOT MERGE-READY** — exactly one blocker remains:
+**Initial verdict (before the UI change): NOT MERGE-READY** with one blocker, the demo site's Package directory. That blocker was resolved the same day: the owner set Package directory = `demo` on `teknoify-demo` (base `/`, publish `demo`, no build command, Active), CONFIRMED from the Netlify UI.
 
-1. **Demo site Package directory is not set.** Smallest action: Netlify → site `teknoify-demo` → Build & deploy → Build settings → Package directory = `demo` (leave base `/`, publish `demo`, no command). Safe to do immediately: with no `demo/netlify.toml` on `main` yet, Netlify finds no configuration in `demo/` and continues with the UI settings, so nothing changes until the PR merges. Then open the PR and complete the Deploy Preview checks in §19; those are pre-merge verifications, not blockers.
+**Final verdict: MERGE-READY.** Re-evaluation after the change (§21):
 
-Resolved and no longer listed: main-site and demo-site build settings, production branch, previews, branch deploys (§14); artifact determinism, reproducibility, EOL independence, internals exclusion (§5–§6); rollback (§19). Branch protection is required before substantial redesign, not before this PR, and must be preceded by the bot-workflow change (§18).
+- `teknoify.com` (base `/`, no package directory) resolves the **root** `netlify.toml` — the only configuration file on its search path (package → base → root, with package unset and base = root). CONFIRMED by Netlify's documented lookup order.
+- `demo.teknoify.com` (base `/`, package directory `demo`) resolves **`demo/netlify.toml`** first and stops there; its `publish = "demo"` (relative to base `/`) equals the UI value, so behaviour is unchanged. CONFIRMED by the same documented order; observed confirmation comes from the PR's demo Deploy Preview.
+- The `SITE_NAME` guard is not on either site's normal path: the demo never runs the marketing command, and the main site's name is expected to match. It remains defence in depth only (§17).
+- Neither site is designed to fail: the demo site has no build command; the main site's build succeeds locally and in CI. The only way a build fails intentionally is the guard on a misconfigured site.
+- The clean-export artifact remains deterministic (§21 re-run).
+- Forbidden internal files remain excluded from `dist/` (§21 re-run).
+
+Resolved and no longer listed: all UI settings (§14); artifact determinism, reproducibility, EOL independence, internals exclusion (§5–§6, §21); rollback (§19). Branch protection is required before substantial redesign, not before this PR, and must be preceded by the bot-workflow change (§18); it is deliberately **not** enabled now because the rates automation still pushes to `main`.
 
 Remaining external unknowns unrelated to this PR: U3 (shared Firebase project), U4 (reset e-mail action URL), U6 (contact endpoint from another network), U7 (Search Console), U12 (GA property), U15 (pretty-URL behaviour on a fresh build, answered by the preview). Site names remain LIKELY until the first preview build log.
+
+## 21. Re-verification after the demo-site Package directory was set (2026-09-05)
+
+Resolution model, per Netlify's documented lookup order (package directory → base directory → repository root; first file found wins; `netlify.toml` overrides UI settings; paths relative to base):
+
+| Site | Base | Package dir | File resolved | Effective settings |
+| --- | --- | --- | --- | --- |
+| `teknoify.com` | `/` | not set | root `netlify.toml` | `command = "npm run check:public"`, `publish = "dist"`, Node 20, post-processing pinned (`pretty_urls = true`, no bundling/minify/image compression) |
+| `demo.teknoify.com` | `/` | `demo` (CONFIRMED) | `demo/netlify.toml` | `publish = "demo"` (relative to base `/`), no build command — identical to the UI values, so the demo surface is unchanged |
+
+Checks executed on the branch state that becomes the PR:
+
+| Check | Result |
+| --- | --- |
+| `npm run check:public` (working tree) | exit 0; 76 files; verifier green |
+| Clean `git archive` export, no `node_modules`, no `dist`, `npm run check:public` | exit 0; **artifact hash identical** to the working-tree build |
+| `SITE_NAME=teknoify-demo` with `NETLIFY=true` | build refused, exit 3, no output directory (defence in depth) |
+| `SITE_NAME=fancy-klepon-8eac4e` with `NETLIFY=true`, `CONTEXT=deploy-preview` | exit 0 |
+| `SITE_NAME` set but `NETLIFY` unset (local/CI) | exit 0 (guard inactive outside Netlify) |
+| 16 representative internal paths (`.py`, `render.yaml`, docs, `package*.json`, entitlements, stock catalog, `api/`, dashboard, login page, both `netlify.toml`, `demo/README.md`, the workflow) | all absent from `dist/` |
+| Verifier negative test (`services/main.py` injected) | exit 1 |
+| Both `netlify.toml` files | parse with Python `tomllib`; keys as intended |
+| `scripts/public-artifact/*.mjs` | `node --check` clean |
+| GitHub Actions workflow | structurally valid (`jobs.check-public-artifact`) |
+
+Conclusions required before the PR is considered ready: `teknoify.com` uses the root marketing configuration — yes; `demo.teknoify.com` resolves `demo/netlify.toml` through Package directory `demo` — yes; the `SITE_NAME` guard remains defence in depth only — yes; both sites build without intentionally failing — yes (the demo has no build step; the main build passes locally, in the clean export and in CI); the clean-export artifact remains deterministic — yes; forbidden internal files remain excluded — yes. Observed confirmation of the two resolution rows comes from the PR's Deploy Previews (§19 checklists).

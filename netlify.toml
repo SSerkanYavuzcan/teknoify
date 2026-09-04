@@ -5,8 +5,8 @@
 # public artifact in dist/". Complete the go-live checklist in
 # docs/marketing-rebuild/06-deployment-cutover.md (sections 14-17) first. In particular, a second
 # Netlify site (teknoify-demo, serving demo.teknoify.com; base "/", publish "demo", no build) deploys
-# from this repository. Because netlify.toml overrides UI build settings, that site MUST have its
-# Netlify "Package directory" set to "demo" before this file lands on main, so Netlify reads
+# from this repository. Because netlify.toml overrides UI build settings, that site has its Netlify
+# "Package directory" set to "demo" (confirmed in the UI, 2026-09-05), so Netlify reads
 # demo/netlify.toml for it and this file only governs teknoify.com.
 
 [build]
