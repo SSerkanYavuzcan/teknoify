@@ -3,7 +3,7 @@
    entrance starts as soon as the document is ready. */
 import { viewport, scheduler, clamp } from './scroll.js';
 
-const QUERY = 'ürün fiyat';
+const QUERY = 'Perakende sektöründe rakip analizi yapmak istiyorum';
 export function initHero(root, field) {
     if (!root) return;
     const inner = root.querySelector('[data-hero-inner]');
@@ -37,7 +37,7 @@ export function initHero(root, field) {
         measureHeadline(); protectHeadline(true);
         if (reduced) { if (input) input.textContent = QUERY; rows.forEach((r) => r.classList.add('is-on')); if (count) count.textContent = `${rows.length} sonuç`; return; }
         let i = 0;
-        const type = () => { i++; if (input) input.textContent = QUERY.slice(0, i); if (i < QUERY.length) at(55 + Math.random() * 70, type); else { at(260, () => rows.forEach((r, k) => at(k * 160, () => { r.classList.add('is-on'); if (count) count.textContent = `${k + 1} sonuç`; }))); } };
+        const type = () => { i++; if (input) input.textContent = QUERY.slice(0, i); if (i < QUERY.length) at(24 + Math.random() * 30, type); else { at(260, () => rows.forEach((r, k) => at(k * 160, () => { r.classList.add('is-on'); if (count) count.textContent = `${k + 1} sonuç`; }))); } };
         at(900, type);
     }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(ready, ready); else ready();

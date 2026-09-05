@@ -27,9 +27,9 @@
 .hero-v2__window { --tx: 0deg; --ty: 0deg; min-height: 400px; transform: perspective(1200px) rotateX(var(--tx)) rotateY(var(--ty)); opacity: 0; scale: 0.96; transition: opacity 1s 0.35s, scale 1.3s 0.35s var(--ease-out), transform 0.3s ease-out; }
 .is-ready .hero-v2__window { opacity: 1; scale: 1; }
 .lib { flex: 1; padding: 18px 18px 18px; display: flex; flex-direction: column; gap: 10px; }
-.lib__search { display: flex; align-items: center; gap: 10px; height: 42px; padding: 0 14px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 13.5px; color: var(--color-fg-primary); background: rgba(255, 255, 255, 0.02); }
-.lib__search svg { color: var(--color-fg-tertiary); flex: 0 0 auto; }
-.lib__query { flex: 1; min-height: 1em; }
+.lib__search { display: flex; align-items: flex-start; gap: 10px; min-height: 42px; padding: 11px 14px; line-height: 1.45; border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 13.5px; color: var(--color-fg-primary); background: rgba(255, 255, 255, 0.02); }
+.lib__search svg { color: var(--color-fg-tertiary); flex: 0 0 auto; margin-top: 2px; }
+.lib__query { flex: 1; min-height: 1em; min-width: 0; overflow-wrap: anywhere; }
 .lib__caret { display: inline-block; width: 7px; height: 1.05em; margin-left: 1px; background: var(--color-accent); vertical-align: text-bottom; animation: lib-blink 1s steps(2) infinite; }
 @keyframes lib-blink { 50% { opacity: 0; } }
 .lib__meta { font-family: var(--font-mono); font-size: 12px; color: var(--color-fg-tertiary); letter-spacing: 0.04em; min-height: 1.4em; }
@@ -38,7 +38,7 @@
 .lib__row.is-on { opacity: 1; transform: none; }
 .lib__icon { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, rgba(143, 227, 255, 0.55), rgba(143, 227, 255, 0.15)); }
 .lib__row b { display: block; font-weight: 600; font-size: 14.5px; line-height: 1.25; }
-.lib__row small { display: block; color: var(--color-fg-tertiary); font-size: 12px; margin-top: 2px; }
+.lib__row small { display: block; color: var(--color-fg-tertiary); font-size: 12px; line-height: 1.4; margin-top: 3px; }
 .lib__kind { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent); border: 1px solid var(--color-border-accent); border-radius: var(--radius-sm); padding: 3px 7px; white-space: nowrap; }
 
 @media (max-width: 56.25rem) {

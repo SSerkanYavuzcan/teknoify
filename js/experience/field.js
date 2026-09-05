@@ -5,18 +5,20 @@
 import { viewport, scheduler, clamp, lerp } from './scroll.js';
 
 /* Every mode carries its own cell colour (cr, cg, cb), the cap for the wave-driven cell alpha (bmax) and the
-   cap after sparks and the pointer lens (amax); colours blend with the rest of the state. The hero state is
-   the calm motion with the canonical Teknoify purple #5945D2 (89, 69, 210): most cells stay ink, the wave
-   resolves into a muted dark purple, and only sparks and the pointer lens reach the canonical tint. */
-const ION = { cr: 143, cg: 227, cb: 255, bmax: 0.75, amax: 0.75, line: 0.11 };
+   cap after sparks and the pointer lens (amax); colours blend with the rest of the state. One colour family
+   for the whole page: the canonical Teknoify purple #5945D2 (89, 69, 210), composited over the ink at low
+   alpha so most cells stay ink, the wave resolves into a muted dark purple, and only sparks and the pointer
+   lens reach the canonical tint. The hero is the intensity reference; the energetic modes (chaos, pulse)
+   allow a slightly higher wave cap, the quiet modes stay at the hero's. Motion parameters are per mode. */
 const PURPLE = { cr: 89, cg: 69, cb: 210, bmax: 0.52, amax: 0.9, line: 0.17 };
+const PURPLE_HIGH = { ...PURPLE, bmax: 0.6 };
 const MODES = {
-    calm: { amp: 1.00, freq: 1.00, noise: 0, radial: 0, lanes: 0, speed: 1.9, glow: 0.62, warp: 8, shimmer: 0.55, spark: 0.55, ...ION },
+    calm: { amp: 1.00, freq: 1.00, noise: 0, radial: 0, lanes: 0, speed: 1.9, glow: 0.62, warp: 8, shimmer: 0.55, spark: 0.55, ...PURPLE },
     hero: { amp: 1.00, freq: 1.00, noise: 0, radial: 0, lanes: 0, speed: 1.9, glow: 0.82, warp: 8, shimmer: 0.55, spark: 0.6, ...PURPLE },
-    chaos: { amp: 1.35, freq: 2.10, noise: 1, radial: 0, lanes: 0, speed: 3.2, glow: 0.82, warp: 12, shimmer: 1.0, spark: 1.0, ...ION },
-    order: { amp: 1.00, freq: 1.00, noise: 0, radial: 1, lanes: 0, speed: 1.6, glow: 0.66, warp: 6, shimmer: 0.30, spark: 0.25, ...ION },
-    lanes: { amp: 0.90, freq: 1.15, noise: 0, radial: 0, lanes: 1, speed: 2.2, glow: 0.56, warp: 5, shimmer: 0.45, spark: 0.40, ...ION },
-    pulse: { amp: 1.20, freq: 0.85, noise: 0, radial: 1, lanes: 0, speed: 2.6, glow: 1.0, warp: 10, shimmer: 0.50, spark: 0.85, ...ION },
+    chaos: { amp: 1.35, freq: 2.10, noise: 1, radial: 0, lanes: 0, speed: 3.2, glow: 0.82, warp: 12, shimmer: 1.0, spark: 1.0, ...PURPLE_HIGH },
+    order: { amp: 1.00, freq: 1.00, noise: 0, radial: 1, lanes: 0, speed: 1.6, glow: 0.66, warp: 6, shimmer: 0.30, spark: 0.25, ...PURPLE },
+    lanes: { amp: 0.90, freq: 1.15, noise: 0, radial: 0, lanes: 1, speed: 2.2, glow: 0.56, warp: 5, shimmer: 0.45, spark: 0.40, ...PURPLE },
+    pulse: { amp: 1.20, freq: 0.85, noise: 0, radial: 1, lanes: 0, speed: 2.6, glow: 1.0, warp: 10, shimmer: 0.50, spark: 0.85, ...PURPLE_HIGH },
 };
 const KEYS = Object.keys(MODES.calm);
 const hash = (a, b) => { const v = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return v - Math.floor(v); };
