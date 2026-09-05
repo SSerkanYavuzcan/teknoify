@@ -1,0 +1,13 @@
+/* ================================================================
+   FOUNDATION — MANIFESTO
+   A 240vh section with a sticky viewport; scroll progress reveals the
+   statement word by word (js/experience/manifesto.js) while the field
+   behind it moves from chaos toward order.
+   ================================================================ */
+.manifesto { position: relative; height: 240vh; }
+.manifesto__pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; align-items: center; padding: 0 var(--gutter); }
+.manifesto__text { max-width: 68rem; margin: 0 auto; font-family: var(--font-display); font-weight: 500; font-size: clamp(1.7rem, 1rem + 3vw, 3.3rem); line-height: 1.18; letter-spacing: -0.025em; color: var(--color-fg-primary); text-wrap: pretty; }
+.manifesto__w { display: inline-block; opacity: 0.12; will-change: opacity; }
+.manifesto__text strong { font-weight: 500; color: var(--color-action); }
+@media (max-width: 56.25rem) { .manifesto { height: 200vh; } }
+@media (prefers-reduced-motion: reduce) { html:not(.force-motion) .manifesto { height: auto; padding: var(--section-y) 0; } html:not(.force-motion) .manifesto__pin { position: static; height: auto; } html:not(.force-motion) .manifesto__w { opacity: 1 !important; } }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Review frame (development only)</title>
+<style>html,body{margin:0;background:#000;overflow:hidden}iframe{display:block;border:0;background:#070a10}</style>
+</head>
+<body>
+<!-- Development-only harness: renders the homepage (or the reference) inside an iframe scrolled to ?s=<px>
+     so a capture-limited browser can photograph pinned states. Not part of the public artifact. -->
+<iframe id="f" title="review"></iframe>
+<script>
+(function(){
+  const q=new URLSearchParams(location.search);
+  const w=+q.get('w')||1440, h=+q.get('h')||900, s=+q.get('s')||0, src=q.get('src')||'/?motion=force';
+  const f=document.getElementById('f'); f.width=w; f.height=h; f.style.width=w+'px'; f.style.height=h+'px';
+  f.src=src+(src.includes('?')?'&':'?')+'frame='+Date.now();
+  f.addEventListener('load',()=>{ const win=f.contentWindow; const go=()=>win.scrollTo(0,s); setTimeout(go,150); setTimeout(go,600); });
+})();
+</script>
+</body>
+</html>
