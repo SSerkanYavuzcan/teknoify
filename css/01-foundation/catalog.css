@@ -22,7 +22,10 @@
 .catalog__index button.is-active::before { color: var(--color-accent); }
 .catalog__status { margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.08em; color: var(--color-fg-tertiary); }
 .catalog__link { margin-top: var(--space-2); }
-.catalog__right { position: relative; overflow: hidden; min-width: 0; }
+/* The track wrapper clips only horizontally. Its box starts exactly at the cards' top edge, so a vertical clip
+   sliced the active card's 4px lift (rounded corners, top hairline) and the cards' shadows; the pinned stage
+   above still guards the vertical extent. overflow: hidden stays as the fallback for browsers without clip. */
+.catalog__right { position: relative; overflow: hidden; overflow-x: clip; overflow-y: visible; min-width: 0; }
 .catalog__track { display: flex; align-items: stretch; gap: 20px; height: 100%; padding-right: max(var(--gutter), calc((100vw - var(--container-xl)) / 2 + var(--gutter))); will-change: transform; }
 
 /* ---- card ---- */
