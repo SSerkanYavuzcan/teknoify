@@ -22,89 +22,8 @@
 
 
 
-    <link rel="stylesheet" href="css/style.css?v=phase2d" />
+    <link rel="stylesheet" href="css/style.css?v=phase3" />
     
-    <style>
-        .custom-toast {
-            position: fixed;
-            top: 30px;
-            right: -500px;
-            width: 380px; 
-            background: #181824;
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            padding: 20px 25px; 
-            z-index: 100000;
-            transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .custom-toast.show {
-            right: 30px;
-        }
-
-        .custom-toast.success {
-            border-left: 6px solid #10b981;
-        }
-
-        .custom-toast.success .toast-icon {
-            color: #10b981;
-            font-size: 28px;
-            margin-right: 15px;
-        }
-
-        .custom-toast.error {
-            border-left: 6px solid #ff4b4b;
-        }
-
-        .custom-toast.error .toast-icon {
-            color: #ff4b4b;
-            font-size: 28px;
-            margin-right: 15px;
-        }
-
-        .custom-toast .toast-body {
-            flex-grow: 1;
-        }
-
-        .custom-toast .toast-title {
-            margin: 0 0 4px 0;
-            font-size: 17px;
-            font-weight: 700;
-        }
-
-        .custom-toast .toast-message {
-            margin: 0;
-            font-size: 14px;
-            color: #a1a1aa;
-            line-height: 1.5;
-        }
-
-        .custom-toast .toast-close {
-            background: none;
-            border: none;
-            color: #a1a1aa;
-            cursor: pointer;
-            font-size: 18px;
-            padding-left: 10px;
-            transition: color 0.2s;
-        }
-
-        .custom-toast .toast-close:hover {
-            color: #fff;
-        }
-
-        .tk-hp-container {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0;
-            width: 0;
-            overflow: hidden;
-        }
-    </style>
 
 </head>
 
@@ -445,236 +364,121 @@
             </div>
         </section>
 
-        <section id="contact" class="contact-section contact-section--isolated" data-field-mode="calm">
-            <div class="container">
-                <div class="section-header">
-                    <p class="t-label">Sonraki adım · İletişim</p>
-                    <h2>Projelerinizi Hayata Geçirelim</h2>
-                    <p>Aklınızdaki fikri veya ihtiyacınız olan otomasyon çözümünü bize anlatın.</p>
-                </div>
-
-                <div class="contact-wrapper">
-                    <div class="contact-info">
-                        <div class="info-card">
-                            <h3>Neden Teknoify?</h3>
-                            <p>İş süreçlerinizi analiz ediyor, size özel botlar ve yapay zeka çözümleri geliştiriyoruz. 7/24 çalışan dijital iş gücünüzü kurmaya hazırız.</p>
-                        </div>
-                        
-                        <div class="contact-methods">
-                            <div class="method-item">
-                                <div class="icon-circle"><i class="fas fa-envelope"></i></div>
-                                <div>
-                                    <span>Bize E-posta Gönderin</span>
-                                    <a href="mailto:info@teknoify.com">info@teknoify.com</a>
-                                </div>
-                            </div>
-                            <div class="method-item">
-                                <div class="icon-circle"><i class="fas fa-map-marker-alt"></i></div>
-                                <div>
-                                    <span>Lokasyon</span>
-                                    <p>İstanbul, Türkiye</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <form id="contactForm" class="contact-form" action="#" method="POST">
-                        <div class="tk-hp-container" aria-hidden="true">
-                            <label>Do not fill this field:</label>
-                            <input type="text" name="tk_hp_field" id="tk_hp_field" tabindex="-1" autocomplete="off">
-                        </div>
-
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="fullname">Adınız Soyadınız</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-user"></i>
-                                    <input type="text" id="fullname" name="fullname" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="contact_info">E-posta veya Telefon</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-address-card"></i>
-                                    <input type="text" id="contact_info" name="contact_info" required>
-                                </div>
-                                <div id="contact-error" class="form-error-msg"></div>
-                            </div>
-                        </div>
-
-                        <div class="form-group service-select-group">
-                            <label id="service-type-label" for="service_type">İlgilendiğiniz Hizmet</label>
-                            <div class="input-wrapper service-select-wrapper">
-                                <select id="service_type" class="native-select-hidden" name="service_type" required>
-                                    <option value="" disabled selected hidden>Lütfen bir hizmet seçin</option>
-                                    <option value="rpa">Robotik Süreç Otomasyonu</option>
-                                    <option value="scraping">Web Scraping</option>
-                                    <option value="ai">AI Asistan</option>
-                                    <option value="api">API Entegrasyon Hizmetleri</option>
-                                    <option value="finans">Finansal İndikatör & Botlar</option>
-                                    <option value="veri-analitigi">Veri Analitiği</option>
-                                    <option value="yatirim-analizleri">Yatırım Analizleri</option>
-                                    <option value="egitim">Eğitim & Danışmanlık</option>
-                                </select>
-
-                                <div class="custom-select" data-custom-select>
-                                    <button
-                                        type="button"
-                                        class="custom-select-trigger"
-                                        aria-haspopup="listbox"
-                                        aria-expanded="false"
-                                        aria-labelledby="service-type-label"
-                                    >
-                                        <i class="fas fa-tag custom-select-leading-icon" aria-hidden="true"></i>
-                                        <span class="custom-select-value">Lütfen bir hizmet seçin</span>
-                                        <i class="fas fa-chevron-down custom-select-chevron" aria-hidden="true"></i>
-                                    </button>
-
-                                    <ul class="custom-select-menu" role="listbox" aria-label="İlgilendiğiniz Hizmet">
-                                        <li class="custom-select-option" role="option" data-value="rpa" aria-selected="false">
-                                            <i class="fas fa-robot custom-select-option-icon" aria-hidden="true"></i>
-                                            <span>Robotik Süreç Otomasyonu</span>
-                                        </li>
-                                        <li class="custom-select-option" role="option" data-value="scraping" aria-selected="false">
-                                            <i class="fas fa-spider custom-select-option-icon" aria-hidden="true"></i>
-                                            <span>Web Scraping</span>
-                                        </li>
-                                        <li class="custom-select-option" role="option" data-value="ai" aria-selected="false">
-                                            <i class="fas fa-brain custom-select-option-icon" aria-hidden="true"></i>
-                                            <span>AI Asistan</span>
-                                        </li>
-                                        <li class="custom-select-option" role="option" data-value="api" aria-selected="false">
-                                            <i class="fas fa-plug custom-select-option-icon" aria-hidden="true"></i>
-                                            <span>API Entegrasyon Hizmetleri</span>
-                                        </li>
-                                        <li class="custom-select-option" role="option" data-value="finans" aria-selected="false">
-                                            <i class="fas fa-chart-line custom-select-option-icon" aria-hidden="true"></i>
-                                            <span>Finansal İndikatör & Botlar</span>
-                                        </li>
-                                        <li class="custom-select-option" role="option" data-value="veri-analitigi" aria-selected="false">
-                                            <i class="fas fa-chart-bar custom-select-option-icon" aria-hidden="true"></i>
-                                            <span>Veri Analitiği</span>
-                                        </li>
-                                        <li class="custom-select-option" role="option" data-value="yatirim-analizleri" aria-selected="false">
-                                            <i class="fas fa-chart-pie custom-select-option-icon" aria-hidden="true"></i>
-                                            <span>Yatırım Analizleri</span>
-                                        </li>
-                                        <li class="custom-select-option" role="option" data-value="egitim" aria-selected="false">
-                                            <i class="fas fa-chalkboard-teacher custom-select-option-icon" aria-hidden="true"></i>
-                                            <span>Eğitim & Danışmanlık</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="message">Projenizden veya Fikrinizden Bahsedin</label>
-                            <div class="input-wrapper textarea-wrapper">
-                                <i class="fas fa-comment-alt"></i>
-                                <textarea id="message" name="message" rows="4"></textarea>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="btn-contact-submit" class="btn-primary btn-block">
-                            <span>Teklif İste / Gönder</span> <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
+        <section class="why" id="neden" data-field-mode="order" aria-labelledby="why-title">
+            <div class="why__wrap">
+                <div class="why__resolve" data-reveal aria-hidden="true"><i></i><span>Keşif tamamlandı</span></div>
+                <div class="why__grid">
+                    <header class="why__head" data-reveal>
+                        <p class="t-label t-label--accent">Neden Teknoify</p>
+                        <h2 class="why__title" id="why-title">Sıfırdan kurmazsınız. <em>Hazır olanı seçersiniz.</em></h2>
+                        <p class="why__intro">Gördüğünüz her yetenek bugün çalışan bir ürüne ya da hizmete karşılık gelir. Gerisi dört ilkeye dayanır.</p>
+                    </header>
+                    <ol class="why__list">
+                        <li class="why__item why__item--lead" data-reveal><span class="why__n" aria-hidden="true">01</span><div><h3>Hazır</h3><p>Ajanlar, araçlar ve otomasyonlar kütüphanede sizi bekler. Seçer, çalışma alanınıza ekler, aynı gün çalıştırırsınız.</p></div></li>
+                        <li class="why__item" data-reveal data-reveal-delay="1"><span class="why__n" aria-hidden="true">02</span><div><h3>Gerçek işler için</h3><p>Ürün keşfi, fiyat karşılaştırma, planlı web taraması, kur takibi, süreç otomasyonu. Her yetenek bugün yapılan bir işin karşılığıdır; vitrin için üretilmiş değildir.</p></div></li>
+                        <li class="why__item" data-reveal data-reveal-delay="2"><span class="why__n" aria-hidden="true">03</span><div><h3>Parça parça</h3><p>Her yetenek kendi başına çalışır. Bir ajanla başlar, ihtiyaç doğdukça yenisini eklersiniz; hepsini birden almak zorunda kalmazsınız.</p></div></li>
+                        <li class="why__item" data-reveal data-reveal-delay="3"><span class="why__n" aria-hidden="true">04</span><div><h3>Bağlı</h3><p>Kendi sitelerinizi, veri kaynaklarınızı ve sistemlerinizi siz bağlarsınız. Çıktılar kendi çalışma alanınızda birikir ve sohbetle sorgulanır.</p></div></li>
+                    </ol>
                 </div>
             </div>
-            
-            <div class="contact-glow"></div>
+        </section>
+
+        <section class="trust" id="guven" data-field-mode="order" aria-labelledby="trust-title">
+            <div class="trust__wrap">
+                <div class="trust__head" data-reveal>
+                    <div>
+                        <p class="t-label t-label--accent">Güven ve kontrol</p>
+                        <h2 class="trust__title" id="trust-title">Kara kutu değil.</h2>
+                    </div>
+                    <p class="trust__lead">Neyin eklendiği, neyin çalıştığı ve neyin üretildiği görünür kalır. Bu sayfada yalnızca ürünün gerçekten yaptığını yazıyoruz.</p>
+                </div>
+                <dl class="trust__list">
+                    <div class="trust__item" data-reveal><dt><small>Erişim</small>Görünür erişim</dt><dd>Bir ajanın neye dokunduğu çalışma alanınızda görünür. <b>Product Discover</b> örneğinde: eklediğiniz siteler okunur, sonuçlar çalışma alanınıza yazılır, sohbet geçmişi hesabınızda kalır.</dd></div>
+                    <div class="trust__item" data-reveal data-reveal-delay="1"><dt><small>Çalıştırma</small>Kontrollü çalıştırma</dt><dd>Ajanlar siz başlatınca çalışır ve adım adım ilerler. Product Discover ürünleri yirmişer yirmişer işler; <b>sonraki adımı siz tetiklersiniz</b>.</dd></div>
+                    <div class="trust__item" data-reveal data-reveal-delay="2"><dt><small>Mimari</small>Ayrı yüzeyler</dt><dd><b>teknoify.com yalnızca tanıtım sitesidir</b>; oturum, hesap ya da veri tutmaz. Hesabınız, bağlantılarınız ve ajanlarınız platform.teknoify.com üzerinde yaşar.</dd></div>
+                    <div class="trust__item" data-reveal data-reveal-delay="3"><dt><small>Bağlantılar</small>Kendi bağlantılarınız</dt><dd>Taranacak siteleri, izlenecek kaynakları ve bağlanacak sistemleri <b>siz eklersiniz</b>; ajanlar yalnızca sizin eklediğiniz kaynaklarla çalışır.</dd></div>
+                </dl>
+                <p class="trust__note" data-reveal>Bu sayfadaki akışlar temsilîdir ve gerçek ürünlere dayanır. Referans, sayı ya da sertifika iddiası yok; olmayan bir şeyi yazmıyoruz.</p>
+            </div>
+        </section>
+
+        <section class="cta" id="contact" data-field-mode="pulse" data-reveal aria-labelledby="cta-title">
+            <div class="cta__wrap">
+                <p class="t-label t-label--accent">Sıradaki adım</p>
+                <h2 class="cta__title" id="cta-title"><span class="cta__line"><span>Keşif tamam.</span></span><span class="cta__line cta__line--accent"><span>Şimdi çalıştırın.</span></span></h2>
+                <p class="cta__lead">Platforma girin, kütüphaneden bir ajan seçin, çalışma alanınıza ekleyin. Sorunuz varsa yazın; bir e-posta uzağınızdayız.</p>
+                <div class="cta__actions">
+                    <a class="btn btn-primary btn-lg" href="https://platform.teknoify.com/" rel="noopener">Platforma git</a>
+                    <a class="btn btn-secondary btn-lg" href="mailto:info@teknoify.com">Bize yazın</a>
+                </div>
+                <p class="cta__meta"><a href="mailto:info@teknoify.com">info@teknoify.com</a><span>İstanbul, Türkiye</span></p>
+            </div>
         </section>
     </div>
 
 </main>
 
 
-<footer class="footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="logo">
-                    <a aria-label="Teknoify ana sayfa" href="#home" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
-                        <img class="logo-lockup" src="images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
-                    </a>
-                </div>
-                <p class="footer-desc">
-                    Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
-                </p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-col">
-                <h4>Yasal</h4>
-                <ul>
-                    <li><a href="pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
-                    <li><a href="pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
-                    <li><a href="pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
-                    <li><a href="pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>Bize Ulaşın</h4>
-                <ul class="contact-list">
-                    <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
-                    <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
-                </ul>
-            </div>
+<footer class="site-footer" id="footer">
+    <div class="site-footer__wrap">
+        <div class="site-footer__brand">
+            <a href="#home" aria-label="Teknoify ana sayfa"><img class="logo-lockup" src="images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async"></a>
+            <p>Hazır yapay zekâ ajanları, araçlar ve otomasyonlar. İşletmeler ve bireyler için.</p>
         </div>
-
-        <div class="footer-bottom">
-            <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
-        </div>
+        <nav class="site-footer__group" aria-labelledby="footer-yetenekler">
+            <h3 id="footer-yetenekler">Yetenekler</h3>
+            <ul>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Product Discover</a></li>
+                <li><a href="/demo/">Fiyat Karşılaştırma</a></li>
+                <li><a href="pages/webscraping.html">Web Scraping</a></li>
+                <li><a href="pages/investment-analytics.html">Yatırım Analizleri</a></li>
+                <li><a href="pages/financial-indicators.html">Finansal İndikatör &amp; Botlar</a></li>
+                <li><a href="pages/rpa.html">Robotik Süreç Otomasyonu</a></li>
+                <li><a href="pages/api.html">API Entegrasyon Hizmetleri</a></li>
+                <li><a href="pages/ai-assistant.html">AI Asistan</a></li>
+                <li><a href="pages/training-consulting.html">Eğitim &amp; Danışmanlık</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-platform">
+            <h3 id="footer-platform">Platform</h3>
+            <ul>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Platforma git</a></li>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Ajan Kütüphanesi</a></li>
+                <li><a href="/demo/">Demo Lab</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-sayfa">
+            <h3 id="footer-sayfa">Ana sayfa</h3>
+            <ul>
+                <li><a href="#nasil-calisir">Nasıl çalışır</a></li>
+                <li><a href="#kimin-icin">Kimin için</a></li>
+                <li><a href="#katalog">Katalog</a></li>
+                <li><a href="#guven">Güven ve kontrol</a></li>
+                <li><a href="#contact">İletişim</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-yasal">
+            <h3 id="footer-yasal">Şirket ve yasal</h3>
+            <ul>
+                <li><a href="mailto:info@teknoify.com">info@teknoify.com</a></li>
+                <li>İstanbul, Türkiye</li>
+                <li><a href="pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
+                <li><a href="pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                <li><a href="pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
+                <li><a href="pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="site-footer__bottom">
+        <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
+        <span>teknoify.com · platform.teknoify.com · demo.teknoify.com</span>
     </div>
 </footer>
 
-<div id="customToast" class="custom-toast">
-    <div class="toast-icon">
-        <i class="fas fa-exclamation-triangle"></i>
-    </div>
-    <div class="toast-body">
-        <h4 class="toast-title" id="toastTitle">Hata</h4>
-        <p class="toast-message" id="toastMessage">Bir sorun oluştu.</p>
-    </div>
-    <button class="toast-close" onclick="hideToast()">
-        <i class="fas fa-times"></i>
-    </button>
-</div>
-
-<script src="js/script.js?v=phase2c" defer></script>
+<script src="js/script.js?v=phase3" defer></script>
 <script src="js/cookies.js" defer></script>
-<script type="module" src="js/experience/index.js?v=phase2c"></script>
+<script type="module" src="js/experience/index.js?v=phase3"></script>
 
-<script>
-    function showToast(title, message, type = 'error') {
-        const toast = document.getElementById('customToast');
-        const toastIcon = toast.querySelector('.toast-icon i');
-        document.getElementById('toastTitle').textContent = title;
-        document.getElementById('toastMessage').textContent = message;
-        
-        toast.classList.remove('show', 'success', 'error');
-        toast.classList.add('show', type);
-
-        if(type === 'success') {
-            toastIcon.className = 'fas fa-check-circle';
-        } else {
-            toastIcon.className = 'fas fa-exclamation-triangle';
-        }
-        
-        setTimeout(() => { hideToast(); }, 5000);
-    }
-
-    function hideToast() {
-        document.getElementById('customToast').classList.remove('show');
-    }
-</script>
 
 </body>
 </html>
