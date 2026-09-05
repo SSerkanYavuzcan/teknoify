@@ -81,3 +81,6 @@
     white-space: nowrap;
     border: 0;
 }
+
+/* Canonical Teknoify brand lockup (shared asset copied from the marketing site) */
+.logo-lockup { display: block; height: 1.75rem; width: auto; flex: none; }
