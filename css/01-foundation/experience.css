@@ -14,7 +14,8 @@
 .scroll-progress { position: fixed; top: 0; left: 0; z-index: 60; width: 100%; height: 2px; background: var(--color-accent); transform-origin: left; transform: scaleX(0); pointer-events: none; }
 
 /* custom cursor: opt-in after the first pointer movement on fine pointers with motion */
-.cursor, .cursor__ring { position: fixed; left: 0; top: 0; z-index: 90; pointer-events: none; border-radius: 50%; display: none; }
+/* the custom cursor must sit above every fixed chrome layer (header 1000, mobile menu 2000) or it vanishes behind the scrolled header */
+.cursor, .cursor__ring { position: fixed; left: 0; top: 0; z-index: 3000; pointer-events: none; border-radius: 50%; display: none; }
 .cursor { width: 7px; height: 7px; background: var(--color-accent); }
 .cursor__ring { width: 34px; height: 34px; border: 1px solid rgba(143, 227, 255, 0.55); transition: width var(--duration-slow), height var(--duration-slow), border-color var(--duration-slow), background var(--duration-slow), opacity var(--duration-slow); }
 .cursor__ring.is-hover { width: 54px; height: 54px; background: rgba(143, 227, 255, 0.1); border-color: rgba(143, 227, 255, 0.9); }

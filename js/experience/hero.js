@@ -12,14 +12,18 @@ export function initHero(root, field) {
     const rows = Array.from(root.querySelectorAll('[data-hero-row]'));
     const count = root.querySelector('[data-hero-count]');
     // the headline line that ends in the canonical purple: the field yields to the page ink behind it
-    const purpleLine = (root.querySelector('.hero-v2__line em') || {}).closest ? root.querySelector('.hero-v2__line em').closest('.hero-v2__line') : null;
+    const purpleEm = root.querySelector('.hero-v2__line em');
+    const purpleLine = purpleEm ? purpleEm.closest('.hero-v2__line') : null;
     const PARALLAX = 0.22;                                   // the inner block's translateY factor, also used below
-    let shadeOn = false, base = null;                        // base: the line's box in document space, measured only on ready / resize
+    const TAIL_FROM = 0.38;                                  // the gradient is light until here; only the darker tail needs the field to yield
+    let shadeOn = false, base = null;                        // base: the tail's glyph box in document space, measured only on ready / resize
     function measureHeadline() {
         if (!purpleLine) return;
-        const r = purpleLine.getBoundingClientRect(), s = window.scrollY;
+        // the em is the glyph run; its vertical extent comes from the line box (stable during the entrance)
+        const g = purpleEm.getBoundingClientRect(), r = purpleLine.getBoundingClientRect(), s = window.scrollY;
+        const x = g.left + g.width * TAIL_FROM;
         // undo the parallax that was applied at this scroll position so the box is stored in untransformed document space
-        base = { x: r.left, top: r.top + s - (reduced ? 0 : s * PARALLAX), w: r.width, h: r.height };
+        base = { x, top: r.top + s - (reduced ? 0 : s * PARALLAX), w: g.right - x, h: r.height };
     }
     /** derive the current viewport box from the cached geometry and the parallax already driving the headline: no layout read */
     function protectHeadline(visible, scrollY = window.scrollY) {

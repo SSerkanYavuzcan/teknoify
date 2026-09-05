@@ -2,8 +2,8 @@
    journey, the audience split, the capability catalog, the closing sections and the pointer layer to one scheduler. Sections declare the field state they own with
    data-field; the manifesto blends chaos → order with its own progress. */
 import { viewport, scheduler, clamp } from './scroll.js';
-import { createField } from './field.js?v=polish7';
-import { initHero } from './hero.js?v=polish7';
+import { createField } from './field.js?v=polish8';
+import { initHero } from './hero.js?v=polish8';
 import { initManifesto } from './manifesto.js';
 import { initJourney } from './journey.js?v=journey-auto';
 import { initPointer } from './pointer.js';

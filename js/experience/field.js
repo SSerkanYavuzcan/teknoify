@@ -31,10 +31,10 @@ export function createField(canvas) {
     const cur = Object.assign({}, MODES.hero), target = Object.assign({}, MODES.hero);
     const mouse = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4 };
     const ripples = [];
-    // text protection: a feathered ink mask over one viewport rectangle (the hero headline's purple line), drawn
-    // after cells and grid lines so the field yields to the page ink exactly where the canonical-purple glyphs sit
+    // text protection: a feathered ink mask over one viewport rectangle (the canonical-purple tail of the hero
+    // headline, glyph box only), drawn after cells and grid lines so the field yields to the page ink just there
     let shade = null;
-    const SHADE_FEATHER = 64, SHADE_STEPS = 10, SHADE_PAD = 8;
+    const SHADE_FEATHER = 40, SHADE_STEPS = 10, SHADE_PAD = 6;
     let W = 0, H = 0, cell = 48, cols = 0, rows = 0, asp = 1, Z, PX, PY, PH, WV, SP, phase = 0;
     let extra = 0;                                                    // adaptive cell growth when frames are expensive
     const lowPower = (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.connection && navigator.connection.saveData);
