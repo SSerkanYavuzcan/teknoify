@@ -4,23 +4,40 @@
 import { viewport, scheduler, clamp } from './scroll.js';
 
 const QUERY = 'ürün fiyat';
-export function initHero(root) {
+export function initHero(root, field) {
     if (!root) return;
     const inner = root.querySelector('[data-hero-inner]');
     const win = root.querySelector('[data-hero-window]');
     const input = root.querySelector('[data-hero-query]');
     const rows = Array.from(root.querySelectorAll('[data-hero-row]'));
-    const status = root.querySelector('[data-hero-status]');
     const count = root.querySelector('[data-hero-count]');
+    // the headline line that ends in the canonical purple: the field yields to the page ink behind it
+    const purpleLine = (root.querySelector('.hero-v2__line em') || {}).closest ? root.querySelector('.hero-v2__line em').closest('.hero-v2__line') : null;
+    const PARALLAX = 0.22;                                   // the inner block's translateY factor, also used below
+    let shadeOn = false, base = null;                        // base: the line's box in document space, measured only on ready / resize
+    function measureHeadline() {
+        if (!purpleLine) return;
+        const r = purpleLine.getBoundingClientRect(), s = window.scrollY;
+        // undo the parallax that was applied at this scroll position so the box is stored in untransformed document space
+        base = { x: r.left, top: r.top + s - (reduced ? 0 : s * PARALLAX), w: r.width, h: r.height };
+    }
+    /** derive the current viewport box from the cached geometry and the parallax already driving the headline: no layout read */
+    function protectHeadline(visible, scrollY = window.scrollY) {
+        if (!field || !purpleLine) return;
+        if (!visible) { if (shadeOn) { field.shade(null); shadeOn = false; } return; }
+        if (!base) measureHeadline();
+        field.shade({ x: base.x, y: base.top - scrollY + (reduced ? 0 : scrollY * PARALLAX), w: base.w, h: base.h }); shadeOn = true;
+    }
     const reduced = viewport.reduced;
     let timers = [];
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
 
     function ready() {
         document.body.classList.add('is-ready');
-        if (reduced) { if (input) input.textContent = QUERY; rows.forEach((r) => r.classList.add('is-on')); if (status) status.classList.add('is-on'); if (count) count.textContent = `${rows.length} sonuç`; return; }
+        measureHeadline(); protectHeadline(true);
+        if (reduced) { if (input) input.textContent = QUERY; rows.forEach((r) => r.classList.add('is-on')); if (count) count.textContent = `${rows.length} sonuç`; return; }
         let i = 0;
-        const type = () => { i++; if (input) input.textContent = QUERY.slice(0, i); if (i < QUERY.length) at(55 + Math.random() * 70, type); else { at(260, () => rows.forEach((r, k) => at(k * 160, () => { r.classList.add('is-on'); if (count) count.textContent = `${k + 1} sonuç`; }))); at(260 + rows.length * 160 + 300, () => status && status.classList.add('is-on')); } };
+        const type = () => { i++; if (input) input.textContent = QUERY.slice(0, i); if (i < QUERY.length) at(55 + Math.random() * 70, type); else { at(260, () => rows.forEach((r, k) => at(k * 160, () => { r.classList.add('is-on'); if (count) count.textContent = `${k + 1} sonuç`; }))); } };
         at(900, type);
     }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(ready, ready); else ready();
@@ -35,8 +52,12 @@ export function initHero(root) {
     scheduler.add(({ scrollY, changed, H }) => {
         if (!changed || !inner) return;
         const hp = clamp(scrollY / H, 0, 1);
-        if (!reduced) inner.style.transform = `translate3d(0, ${(scrollY * 0.22).toFixed(1)}px, 0)`;
-        inner.style.opacity = clamp(1 - hp * 1.25, 0, 1).toFixed(3);
+        if (!reduced) inner.style.transform = `translate3d(0, ${(scrollY * PARALLAX).toFixed(1)}px, 0)`;
+        const op = clamp(1 - hp * 1.25, 0, 1);
+        inner.style.opacity = op.toFixed(3);
+        protectHeadline(op > 0.05, scrollY);
     });
+    scheduler.onResize(() => { measureHeadline(); protectHeadline(true); });
+    measureHeadline(); protectHeadline(true);
     window.addEventListener('pagehide', () => timers.forEach(clearTimeout));
 }
