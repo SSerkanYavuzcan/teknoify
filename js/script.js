@@ -9,6 +9,13 @@
     if (q.get('stage') === 'pre') document.documentElement.classList.add('review-pre');
     if (q.get('type') === 'b') { document.documentElement.classList.add('type-b'); const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@500;600&display=swap'; document.head.appendChild(l); }
 })();
+// Context-menu deterrent for the public marketing site: the native right-click menu is suppressed.
+// This is a deterrent only, not a security boundary; DevTools, keyboard shortcuts and selection are untouched.
+// Editable fields keep their native menu (paste, spell-check, dictation) so they stay usable.
+document.addEventListener('contextmenu', (e) => {
+    if (e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"]')) return;
+    e.preventDefault();
+});
 document.addEventListener('DOMContentLoaded', () => {
     new UISystem();
     if (document.querySelector('[data-custom-select]')) {
