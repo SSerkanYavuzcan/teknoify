@@ -23,7 +23,25 @@
       if(q.get('reveal')){ doc.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('is-in')); }
       if(open){ const sec=doc.querySelector('[data-audience]'); if(sec) sec.dataset.open=open; doc.querySelectorAll('.half').forEach(el=>{ const on=el.dataset.half===open; el.classList.toggle('is-open',on); el.classList.toggle('is-recede',!on); el.querySelector('[data-half-toggle]')?.setAttribute('aria-expanded', on?'true':'false'); }); }
       if(vg){ doc.querySelectorAll('.kcard').forEach(k=>k.classList.add('is-in')); doc.getAnimations().forEach(a=>{ if(a.animationName && /^(vg|tok|mos)/.test(a.animationName)){ a.currentTime=+vg; a.pause(); } }); }
-    }; setTimeout(go,150); setTimeout(go,600); setTimeout(go,1500); });
+    }; setTimeout(go,150); setTimeout(go,600); setTimeout(go,1500);
+    // journey auto-progression review: sample the active step and scrollY, and inject scripted input
+    if(q.get('journeyLog')){
+      const log=document.createElement('pre'); log.id='rf-log'; document.body.appendChild(log); const t0=performance.now();
+      const acts=(q.get('act')||'').split(',').filter(Boolean).map(a=>{ const m=a.match(/^(\w+)@(\d+)(?::(.+))?$/); return m && {kind:m[1], at:+m[2], arg:m[3]}; }).filter(Boolean);
+      acts.forEach(a=>setTimeout(()=>{
+        const tabs=doc.querySelectorAll('.journey-tab');
+        if(a.kind==='wheel') win.dispatchEvent(new WheelEvent('wheel',{deltaY:40,bubbles:true}));
+        if(a.kind==='key') win.dispatchEvent(new KeyboardEvent('keydown',{key:a.arg||'ArrowDown',bubbles:true}));
+        if(a.kind==='tab') tabs[+a.arg].click();
+        if(a.kind==='scrollp'){ const el=doc.querySelector('#nasil-calisir'); const p=+a.arg; win.scrollTo(0, p<0 ? 0 : el.offsetTop + p*(el.offsetHeight - h)); }
+        if(a.kind==='hide'){ Object.defineProperty(doc,'hidden',{get:()=>true,configurable:true}); doc.dispatchEvent(new Event('visibilitychange')); }
+        if(a.kind==='show'){ Object.defineProperty(doc,'hidden',{get:()=>false,configurable:true}); doc.dispatchEvent(new Event('visibilitychange')); }
+        log.textContent+=`${Math.round(performance.now()-t0)}ms ACT ${a.kind}${a.arg?':'+a.arg:''}
+`;
+      }, 1600+a.at));
+      setInterval(()=>{ const tabs=[...doc.querySelectorAll('.journey-tab')]; const i=tabs.findIndex(t=>t.classList.contains('is-active')); const cur=doc.querySelector('[data-fcur]'); log.textContent+=`${Math.round(performance.now()-t0)}ms step=${i} y=${Math.round(win.scrollY)} cursor=${cur&&cur.classList.contains('is-on')?1:0}
+`; }, 250);
+    } });
 })();
 </script>
 </body>
