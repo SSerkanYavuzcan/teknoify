@@ -35,8 +35,7 @@
   color: var(--color-fg-primary);
   border-radius: var(--radius-sm);
 }
-.logo-mark { width: 1.75rem; height: 1.75rem; flex: none; color: var(--color-fg-primary); }
-.logo-mark .logo-mark__signal { fill: var(--color-accent); }
+.logo-lockup { display: block; height: 1.875rem; width: auto; flex: none; }   /* canonical lockup: images/brand/teknoify-logo.svg (996 × 216) */
 .logo-icon { color: var(--color-accent); margin-right: 0; font-size: 1.1rem; }   /* legacy icon fallback on old pages */
 .logo-text { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--color-fg-primary); }
 html.type-b { --font-display: 'Host Grotesk', 'Inter Tight', system-ui, sans-serif; }   /* review-only: ?type=b */

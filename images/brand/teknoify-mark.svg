@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="14" fill="#0A0A0A"/>
-  <g transform="translate(32 32) scale(0.27) translate(-547.97 -540)" stroke="#5945D2" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="460 440 176 200" width="176" height="200">
+  <g id="icon" stroke="#5945D2" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
     <polygon points="547.97,448.33 627.36,494.17 547.97,540.00 468.58,494.17" fill="#0A0A0A" stroke="none"/>
     <polygon points="547.97,540.00 627.36,494.17 627.36,585.83 547.97,631.67" fill="#0A0A0A" stroke="none"/>
     <polygon points="468.58,494.17 547.97,540.00 547.97,631.67 468.58,585.83" fill="#5945D2" stroke="none"/>
