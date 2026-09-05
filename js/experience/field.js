@@ -4,23 +4,29 @@
    measured frame cost, no work while the document is hidden, and a static render under reduced motion. */
 import { viewport, scheduler, clamp, lerp } from './scroll.js';
 
+/* Every mode carries its own cell colour (cr, cg, cb), the cap for the wave-driven cell alpha (bmax) and the
+   cap after sparks and the pointer lens (amax); colours blend with the rest of the state. The hero state is
+   the calm motion with the canonical Teknoify purple #5945D2 (89, 69, 210): most cells stay ink, the wave
+   resolves into a muted dark purple, and only sparks and the pointer lens reach the canonical tint. */
+const ION = { cr: 143, cg: 227, cb: 255, bmax: 0.75, amax: 0.75, line: 0.11 };
+const PURPLE = { cr: 89, cg: 69, cb: 210, bmax: 0.52, amax: 0.9, line: 0.17 };
 const MODES = {
-    calm: { amp: 1.00, freq: 1.00, noise: 0, radial: 0, lanes: 0, speed: 1.9, glow: 0.62, warp: 8, shimmer: 0.55, spark: 0.55 },
-    chaos: { amp: 1.35, freq: 2.10, noise: 1, radial: 0, lanes: 0, speed: 3.2, glow: 0.82, warp: 12, shimmer: 1.0, spark: 1.0 },
-    order: { amp: 1.00, freq: 1.00, noise: 0, radial: 1, lanes: 0, speed: 1.6, glow: 0.66, warp: 6, shimmer: 0.30, spark: 0.25 },
-    lanes: { amp: 0.90, freq: 1.15, noise: 0, radial: 0, lanes: 1, speed: 2.2, glow: 0.56, warp: 5, shimmer: 0.45, spark: 0.40 },
-    pulse: { amp: 1.20, freq: 0.85, noise: 0, radial: 1, lanes: 0, speed: 2.6, glow: 1.0, warp: 10, shimmer: 0.50, spark: 0.85 },
+    calm: { amp: 1.00, freq: 1.00, noise: 0, radial: 0, lanes: 0, speed: 1.9, glow: 0.62, warp: 8, shimmer: 0.55, spark: 0.55, ...ION },
+    hero: { amp: 1.00, freq: 1.00, noise: 0, radial: 0, lanes: 0, speed: 1.9, glow: 0.82, warp: 8, shimmer: 0.55, spark: 0.6, ...PURPLE },
+    chaos: { amp: 1.35, freq: 2.10, noise: 1, radial: 0, lanes: 0, speed: 3.2, glow: 0.82, warp: 12, shimmer: 1.0, spark: 1.0, ...ION },
+    order: { amp: 1.00, freq: 1.00, noise: 0, radial: 1, lanes: 0, speed: 1.6, glow: 0.66, warp: 6, shimmer: 0.30, spark: 0.25, ...ION },
+    lanes: { amp: 0.90, freq: 1.15, noise: 0, radial: 0, lanes: 1, speed: 2.2, glow: 0.56, warp: 5, shimmer: 0.45, spark: 0.40, ...ION },
+    pulse: { amp: 1.20, freq: 0.85, noise: 0, radial: 1, lanes: 0, speed: 2.6, glow: 1.0, warp: 10, shimmer: 0.50, spark: 0.85, ...ION },
 };
 const KEYS = Object.keys(MODES.calm);
 const hash = (a, b) => { const v = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return v - Math.floor(v); };
-const COLOR = '143, 227, 255';           // ion: the production accent
 const BG = '#070a10';
 
 export function createField(canvas) {
     const ctx = canvas.getContext('2d', { alpha: false });
     const reduced = viewport.reduced;
     const MS = reduced ? 0 : 1, WS = reduced ? 0 : 1, SPARK = reduced ? 0 : 1;
-    const cur = Object.assign({}, MODES.calm), target = Object.assign({}, MODES.calm);
+    const cur = Object.assign({}, MODES.hero), target = Object.assign({}, MODES.hero);
     const mouse = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4 };
     const ripples = [];
     let W = 0, H = 0, cell = 48, cols = 0, rows = 0, asp = 1, Z, PX, PY, PH, WV, SP, phase = 0;
@@ -67,19 +73,20 @@ export function createField(canvas) {
     function draw(nowS) {
         ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
         const glow = cur.glow, shim = cur.shimmer, spark = cur.spark * SPARK, mx = mouse.x, my = mouse.y, sig2 = 2 * 120 * 120, cw = cols - 1;
+        const COLOR = `${Math.round(cur.cr)}, ${Math.round(cur.cg)}, ${Math.round(cur.cb)}`, bmax = cur.bmax, amax = cur.amax;
         for (let j = 0; j < rows - 1; j++) for (let i = 0; i < cw; i++) {
             const k = j * cols + i, k1 = k + 1, k2 = k + cols, k3 = k + cols + 1, c = j * cw + i;
             let z = (Z[k] + Z[k1] + Z[k2] + Z[k3]) * 0.25; if (z > 1.2) z = 1.2;
             const v = z * 0.8 + Math.sin(nowS * WV[c] + PH[c]) * 0.5 * shim;
-            let a = v > 0 ? v * v * glow * 0.42 : 0;
+            let a = v > 0 ? v * v * glow * 0.42 : 0; if (a > bmax) a = bmax;
             if (spark > 0) { const cyc = nowS * 0.8 + SP[c] * 9, idx = Math.floor(cyc), fr = cyc - idx; if (hash(idx * 1.37 + i * 0.53, j * 0.71 + SP[c] * 11) > 0.94) a += spark * 0.4 * Math.exp(-fr * 7); }
             const cx = (PX[k] + PX[k3]) * 0.5, cy = (PY[k] + PY[k3]) * 0.5, dx = cx - mx, dy = cy - my;
             a += Math.exp(-(dx * dx + dy * dy) / sig2) * 0.12;
-            if (a < 0.02) continue; if (a > 0.75) a = 0.75;
+            if (a < 0.02) continue; if (a > amax) a = amax;
             ctx.fillStyle = `rgba(${COLOR},${a.toFixed(2)})`;
             ctx.beginPath(); ctx.moveTo(PX[k], PY[k]); ctx.lineTo(PX[k1], PY[k1]); ctx.lineTo(PX[k3], PY[k3]); ctx.lineTo(PX[k2], PY[k2]); ctx.closePath(); ctx.fill();
         }
-        ctx.strokeStyle = `rgba(${COLOR},.11)`; ctx.lineWidth = 1; ctx.beginPath();
+        ctx.strokeStyle = `rgba(${COLOR},${cur.line.toFixed(2)})`; ctx.lineWidth = 1; ctx.beginPath();
         for (let j = 0; j < rows; j++) { const k0 = j * cols; ctx.moveTo(PX[k0], PY[k0]); for (let i = 1; i < cols; i++) { const k = k0 + i; ctx.lineTo(PX[k], PY[k]); } }
         for (let i = 0; i < cols; i++) { ctx.moveTo(PX[i], PY[i]); for (let j = 1; j < rows; j++) { const k = j * cols + i; ctx.lineTo(PX[k], PY[k]); } }
         ctx.stroke();

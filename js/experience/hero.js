@@ -10,7 +10,6 @@ export function initHero(root) {
     const win = root.querySelector('[data-hero-window]');
     const input = root.querySelector('[data-hero-query]');
     const rows = Array.from(root.querySelectorAll('[data-hero-row]'));
-    const status = root.querySelector('[data-hero-status]');
     const count = root.querySelector('[data-hero-count]');
     const reduced = viewport.reduced;
     let timers = [];
@@ -18,9 +17,9 @@ export function initHero(root) {
 
     function ready() {
         document.body.classList.add('is-ready');
-        if (reduced) { if (input) input.textContent = QUERY; rows.forEach((r) => r.classList.add('is-on')); if (status) status.classList.add('is-on'); if (count) count.textContent = `${rows.length} sonuç`; return; }
+        if (reduced) { if (input) input.textContent = QUERY; rows.forEach((r) => r.classList.add('is-on')); if (count) count.textContent = `${rows.length} sonuç`; return; }
         let i = 0;
-        const type = () => { i++; if (input) input.textContent = QUERY.slice(0, i); if (i < QUERY.length) at(55 + Math.random() * 70, type); else { at(260, () => rows.forEach((r, k) => at(k * 160, () => { r.classList.add('is-on'); if (count) count.textContent = `${k + 1} sonuç`; }))); at(260 + rows.length * 160 + 300, () => status && status.classList.add('is-on')); } };
+        const type = () => { i++; if (input) input.textContent = QUERY.slice(0, i); if (i < QUERY.length) at(55 + Math.random() * 70, type); else { at(260, () => rows.forEach((r, k) => at(k * 160, () => { r.classList.add('is-on'); if (count) count.textContent = `${k + 1} sonuç`; }))); } };
         at(900, type);
     }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(ready, ready); else ready();
