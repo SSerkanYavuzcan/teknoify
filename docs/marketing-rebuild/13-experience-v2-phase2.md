@@ -24,7 +24,7 @@ Taxonomy on cards: Ajan · Araç · Otomasyon · Katalog (closing card).
 
 ## 2. Audience (Kimin için)
 
-"İki farklı ihtiyaç, tek platform." Two halves: İşletmeler için (Product Discover, Web Scraping, RPA ve API entegrasyonu, perakende ve yatırım analitiği) and Bireyler için (Fiyat Karşılaştırma, finansal göstergeler, AI Asistan, eğitim ve danışmanlık), each item linking to its real page or the platform. On fine pointers a hovered half expands (flex 1.5) while the other recedes (0.85) and its list unfolds; keyboard focus inside a half, or its heading button (`aria-expanded`), does the same; Escape and leaving collapse. Below 64rem both lists are open and the heading buttons are inert. `js/experience/audience.js`, `css/01-foundation/audience.css`.
+"İki farklı ihtiyaç, tek platform." Two halves: İşletmeler için (Product Discover, Web Scraping, RPA ve API entegrasyonu, perakende ve yatırım analitiği) and Bireyler için (Fiyat Karşılaştırma, finansal göstergeler, AI Asistan, eğitim ve danışmanlık), each item linking to its real page or the platform. On fine pointers a hovered half expands (flex-grow 1.22) while the other recedes (0.92) and its list unfolds; keyboard focus inside a half, or its heading button (`aria-expanded`), does the same; Escape and leaving collapse. Below 64rem both lists are open and the heading buttons are inert. `js/experience/audience.js`, `css/01-foundation/audience.css`.
 
 ## 3. Catalog
 
@@ -37,3 +37,12 @@ Each card carries an 11-second CSS loop of states entering in sequence (s1…s5)
 ## 5. Performance
 
 Baseline before this phase at 1440×900: 510 DOM nodes, 25 running animations. After: see the report. No new canvas, loop or dependency; the catalog writes one transform per changed frame through the shared scheduler and measures only on resize.
+
+## 6. Polish pass (same branch, after review)
+
+Review found three issues; all fixed locally, still not pushed.
+
+- **Audience clipping.** The halves had no outer padding (the first half's text started at the container's left edge, the second ended at its right edge), the open half's gradient was painted from that edge, and at 1.5 : 0.85 the receding half's list column dropped below its `minmax(0, 17ch)` name column, so the reading zone of both halves touched or crossed the container edges. Each half is now a self-contained surface (own padding, 1px border, tinted top line, soft radial glow, blurred backdrop) inside `.audience__wrap`, the pair is separated by a gap, and the expansion is 1.22 : 0.92. Measured at 1440×900, 1280×800 and 1024×768: both halves stay inside the container in the default, business-open and individual-open states with zero descendants outside their surface.
+- **Audience clarity.** A darkening radial veil behind the section calms the field; each half carries a business (ion) or individual (gold) line and number chip, a row of capability tags visible in the collapsed state, and rows with a dot marker, a fixed name column and the description. Keyboard focus ring added on the heading buttons.
+- **Catalog density.** Every vignette is now a small living interface: a status strip (agent/tool name + state), then five to six rows that read input → process → output with status words, bars, cells or a sparkline, closing with the result chip. Cards are 24rem wide with tighter padding and hug their content; the row's height is the taller of the rail and the cards (about 520px at the three desktop sizes), so the pin never overflows. The rail's index was compacted to match. The narrow cue ("Kartları yana kaydırın") was being laid out beside the track because the pin kept `display: flex`; it is now below the track.
+- Review-only harness `design-reference/review-frame.html` gained `sel`, `p`, `open`, `still` and `vg` parameters so a capture-only browser can photograph the hover/scroll states; excluded from the artifact.
