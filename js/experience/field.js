@@ -29,6 +29,10 @@ export function createField(canvas) {
     const cur = Object.assign({}, MODES.hero), target = Object.assign({}, MODES.hero);
     const mouse = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4 };
     const ripples = [];
+    // text protection: a feathered ink mask over one viewport rectangle (the hero headline's purple line), drawn
+    // after cells and grid lines so the field yields to the page ink exactly where the canonical-purple glyphs sit
+    let shade = null;
+    const SHADE_FEATHER = 64, SHADE_STEPS = 10, SHADE_PAD = 8;
     let W = 0, H = 0, cell = 48, cols = 0, rows = 0, asp = 1, Z, PX, PY, PH, WV, SP, phase = 0;
     let extra = 0;                                                    // adaptive cell growth when frames are expensive
     const lowPower = (navigator.deviceMemory && navigator.deviceMemory < 4) || (navigator.connection && navigator.connection.saveData);
@@ -90,6 +94,21 @@ export function createField(canvas) {
         for (let j = 0; j < rows; j++) { const k0 = j * cols; ctx.moveTo(PX[k0], PY[k0]); for (let i = 1; i < cols; i++) { const k = k0 + i; ctx.lineTo(PX[k], PY[k]); } }
         for (let i = 0; i < cols; i++) { ctx.moveTo(PX[i], PY[i]); for (let j = 1; j < rows; j++) { const k = j * cols + i; ctx.lineTo(PX[k], PY[k]); } }
         ctx.stroke();
+        if (shade) drawShade();
+    }
+    function drawShade() {
+        const x = shade.x - SHADE_PAD, y = shade.y - SHADE_PAD, w = shade.w + SHADE_PAD * 2, h = shade.h + SHADE_PAD * 2;
+        if (w <= 0 || h <= 0 || y > H || y + h < 0) return;
+        ctx.fillStyle = BG;
+        const canRound = typeof ctx.roundRect === 'function';
+        for (let s = SHADE_STEPS; s >= 1; s--) {
+            const f = s / SHADE_STEPS, e = SHADE_FEATHER * f, u = 1 - f, k = u * u * (3 - 2 * u);   // smoothstep inward
+            ctx.globalAlpha = 0.12 + 0.88 * k * k;
+            ctx.beginPath();
+            if (canRound) ctx.roundRect(x - e, y - e, w + e * 2, h + e * 2, Math.min(28 + e, (h + e * 2) / 2)); else ctx.rect(x - e, y - e, w + e * 2, h + e * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
     }
     function tick({ now, dt }) {
         const nowS = now / 1000;
@@ -111,5 +130,7 @@ export function createField(canvas) {
         blend(a, b, t) { const A = MODES[a], B = MODES[b]; for (const k of KEYS) target[k] = lerp(A[k], B[k], t); dirty = true; },
         pointer(x, y) { mouse.tx = x; mouse.ty = y; },
         ripple(x, y) { if (reduced) return; ripples.push({ x, y, t0: performance.now() / 1000 }); if (ripples.length > 5) ripples.shift(); },
+        /** protect a viewport rectangle (CSS px) with the ink mask; null clears it */
+        shade(rect) { const next = rect && rect.w > 0 && rect.h > 0 ? { x: rect.x, y: rect.y, w: rect.w, h: rect.h } : null; if (!next && !shade) return; shade = next; dirty = true; },
     };
 }

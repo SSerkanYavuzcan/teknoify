@@ -4,19 +4,29 @@
 import { viewport, scheduler, clamp } from './scroll.js';
 
 const QUERY = 'ürün fiyat';
-export function initHero(root) {
+export function initHero(root, field) {
     if (!root) return;
     const inner = root.querySelector('[data-hero-inner]');
     const win = root.querySelector('[data-hero-window]');
     const input = root.querySelector('[data-hero-query]');
     const rows = Array.from(root.querySelectorAll('[data-hero-row]'));
     const count = root.querySelector('[data-hero-count]');
+    // the headline line that ends in the canonical purple: the field yields to the page ink behind it
+    const purpleLine = (root.querySelector('.hero-v2__line em') || {}).closest ? root.querySelector('.hero-v2__line em').closest('.hero-v2__line') : null;
+    let shadeOn = false;
+    function protectHeadline(visible) {
+        if (!field || !purpleLine) return;
+        if (!visible) { if (shadeOn) { field.shade(null); shadeOn = false; } return; }
+        const r = purpleLine.getBoundingClientRect();
+        field.shade({ x: r.left, y: r.top, w: r.width, h: r.height }); shadeOn = true;
+    }
     const reduced = viewport.reduced;
     let timers = [];
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
 
     function ready() {
         document.body.classList.add('is-ready');
+        protectHeadline(true);
         if (reduced) { if (input) input.textContent = QUERY; rows.forEach((r) => r.classList.add('is-on')); if (count) count.textContent = `${rows.length} sonuç`; return; }
         let i = 0;
         const type = () => { i++; if (input) input.textContent = QUERY.slice(0, i); if (i < QUERY.length) at(55 + Math.random() * 70, type); else { at(260, () => rows.forEach((r, k) => at(k * 160, () => { r.classList.add('is-on'); if (count) count.textContent = `${k + 1} sonuç`; }))); } };
@@ -35,7 +45,11 @@ export function initHero(root) {
         if (!changed || !inner) return;
         const hp = clamp(scrollY / H, 0, 1);
         if (!reduced) inner.style.transform = `translate3d(0, ${(scrollY * 0.22).toFixed(1)}px, 0)`;
-        inner.style.opacity = clamp(1 - hp * 1.25, 0, 1).toFixed(3);
+        const op = clamp(1 - hp * 1.25, 0, 1);
+        inner.style.opacity = op.toFixed(3);
+        protectHeadline(op > 0.05);
     });
+    scheduler.onResize(() => protectHeadline(true));
+    protectHeadline(true);
     window.addEventListener('pagehide', () => timers.forEach(clearTimeout));
 }

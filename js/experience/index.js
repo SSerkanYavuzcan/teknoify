@@ -2,8 +2,8 @@
    journey, the audience split, the capability catalog, the closing sections and the pointer layer to one scheduler. Sections declare the field state they own with
    data-field; the manifesto blends chaos → order with its own progress. */
 import { viewport, scheduler, clamp } from './scroll.js';
-import { createField } from './field.js?v=polish4';
-import { initHero } from './hero.js?v=polish4';
+import { createField } from './field.js?v=polish5';
+import { initHero } from './hero.js?v=polish5';
 import { initManifesto } from './manifesto.js';
 import { initJourney } from './journey.js?v=journey-auto';
 import { initPointer } from './pointer.js';
@@ -13,7 +13,7 @@ import { initClosing } from './closing.js';
 
 const canvas = document.querySelector('[data-field]');
 const field = canvas ? createField(canvas) : { set() {}, blend() {}, pointer() {}, ripple() {} };
-initHero(document.querySelector('[data-hero]'));
+initHero(document.querySelector('[data-hero]'), field);
 initManifesto(document.querySelector('[data-manifesto]'), field);
 initJourney(document.querySelector('[data-journey]'));
 initPointer(field);
