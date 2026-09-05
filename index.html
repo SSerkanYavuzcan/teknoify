@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="home-v2 home-v2">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,7 +20,7 @@
 
 
 
-    <link rel="stylesheet" href="css/style.css?v=footer-flat-1" />
+    <link rel="stylesheet" href="css/style.css?v=home-v2c" />
     
     <style>
         .custom-toast {
@@ -107,6 +107,11 @@
 </head>
 
 <body>
+<canvas class="field" data-field aria-hidden="true"></canvas>
+<div class="field-veil" aria-hidden="true"></div>
+<div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
+<div class="cursor" data-cursor aria-hidden="true"></div>
+<div class="cursor__ring" data-cursor-ring aria-hidden="true"></div>
 
 <a class="skip-link" href="#main">İçeriğe geç</a>
 <header id="header" class="header header--stage">
@@ -163,299 +168,135 @@
 
 
 
-        <section id="home" class="hero hero--stage" aria-labelledby="hero-title">
-            <div class="hero-field" data-signal-field>
-                
-<svg class="sf sf--stage" viewBox="0 0 1440 820" preserveAspectRatio="xMaxYMax slice" role="img" aria-labelledby="sf-title sf-desc" focusable="false">
-  <title id="sf-title">Teknoify sinyal alanı</title>
-  <desc id="sf-desc">Web sayfaları, belgeler, piyasa sinyalleri, ürün verisi ve görevler dağınık parçalar hâlinde Teknoify zekâ katmanına akar; katman bunları anlar ve rapor, uyarı, iş akışı ve otomatik eylem olarak düzenli bir sütuna çözümler.</desc>
-  <defs>
-    <filter id="sf-packet-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <radialGradient id="sf-glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="var(--sf-ion)" stop-opacity="0.2"/><stop offset="0.55" stop-color="var(--sf-ion)" stop-opacity="0.05"/><stop offset="1" stop-color="var(--sf-ion)" stop-opacity="0"/></radialGradient>
-    <linearGradient id="sf-light" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="var(--sf-ion)" stop-opacity="0.06"/></linearGradient>
-    <linearGradient id="sf-rail" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sf-gold)" stop-opacity="0.9"/><stop offset="1" stop-color="var(--sf-gold)" stop-opacity="0.15"/></linearGradient>
-    <pattern id="sf-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="currentColor" stroke-width="0.6"/></pattern>
-  </defs>
-  <rect class="sf-grid" width="1440" height="820" fill="url(#sf-grid)"/>
-  <rect class="sf-lightfield" width="1440" height="820" fill="url(#sf-light)"/>
-  <g class="sf-layer sf-layer--ambient"><path class="sf-ambient sf-ambient--0" d="M-100 40 C638 -50, 802 300, 1540 300"/><path class="sf-ambient sf-ambient--1" d="M-100 780 C638 870, 802 520, 1540 520"/><path class="sf-ambient sf-ambient--2" d="M-100 300 C638 210, 802 60, 1540 60"/><path class="sf-ambient sf-ambient--3" d="M-100 560 C638 650, 802 760, 1540 760"/><path class="sf-ambient sf-ambient--4" d="M-100 200 C638 110, 802 700, 1540 700"/><path class="sf-ambient sf-ambient--5" d="M-100 660 C638 750, 802 160, 1540 160"/></g>
-  <g class="sf-layer sf-layer--traces"><path class="sf-trace sf-trace--in sf-trace--in-0" style="--i:0" d="M-80 60 C317.7 60, 494.2 214, 706 214 C796 214, 780 368.5, 822 374.7"/><path class="sf-trace sf-trace--in sf-trace--in-1" style="--i:1" d="M-80 250 C310.5 250, 483 318, 690 318 C780 318, 780 394.5, 822 397.6"/><path class="sf-trace sf-trace--in sf-trace--in-2" style="--i:2" d="M-80 470 C315 470, 490 422, 700 422 C790 422, 780 420.5, 822 420.4"/><path class="sf-trace sf-trace--in sf-trace--in-3" style="--i:3" d="M-80 660 C311.4 660, 484.4 526, 692 526 C782 526, 780 446.5, 822 443.3"/><path class="sf-trace sf-trace--in sf-trace--in-4" style="--i:4" d="M-80 790 C318.6 790, 495.6 630, 708 630 C798 630, 780 472.5, 822 466.2"/><path class="sf-trace sf-trace--out sf-trace--out-0" style="--i:0" d="M1138 397.7 C1149 397.7, 1149 296, 1160 296"/><path class="sf-trace sf-trace--out sf-trace--out-1" style="--i:1" d="M1138 411 C1149 411, 1149 370, 1160 370"/><path class="sf-trace sf-trace--out sf-trace--out-2" style="--i:2" d="M1138 424.3 C1149 424.3, 1149 444, 1160 444"/><path class="sf-trace sf-trace--out sf-trace--out-3" style="--i:3" d="M1138 437.6 C1149 437.6, 1149 518, 1160 518"/></g>
-  <g class="sf-layer sf-layer--inputs"><g class="sf-in sf-in--0" style="--i:0"><g class="sf-glyph" transform="translate(694 202) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="M2 9h20M7 13h6M7 16h9"/></g></g><text class="sf-in__label" x="706" y="244" text-anchor="middle">web sayfası</text></g><g class="sf-in sf-in--1" style="--i:1"><g class="sf-glyph" transform="translate(678 306) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h8l5 5V21a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1Z"/><path d="M14 2.5v5h5M8.5 12h7M8.5 16h7"/></g></g><text class="sf-in__label" x="690" y="348" text-anchor="middle">belge</text></g><g class="sf-in sf-in--2" style="--i:2"><g class="sf-glyph" transform="translate(688 410) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17 8 10.5l4 3.5 4.5-6 5 4"/><path d="M2.5 21h19"/></g></g><text class="sf-in__label" x="700" y="452" text-anchor="middle">piyasa sinyali</text></g><g class="sf-in sf-in--3" style="--i:3"><g class="sf-glyph" transform="translate(680 514) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 21 7v10l-9 4.5L3 17V7l9-4.5Z"/><path d="M3 7l9 4.5L21 7M12 11.5V21.5"/></g></g><text class="sf-in__label" x="692" y="556" text-anchor="middle">ürün verisi</text></g><g class="sf-in sf-in--4" style="--i:4"><g class="sf-glyph" transform="translate(696 618) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m7.5 12 3 3 6-6.5"/></g></g><text class="sf-in__label" x="708" y="660" text-anchor="middle">görev</text></g></g>
-  
-  <g class="sf-core" transform="translate(980 420)">
-    <circle class="sf-core__depth" r="315"/>
-    <circle class="sf-core__depth" r="232.5"/>
-    <circle class="sf-core__halo" r="187.5" fill="url(#sf-glow)"/>
-    <g class="sf-core__rings">
-      <circle class="sf-core__ring sf-core__ring--outer" r="150"/>
-      <g class="sf-core__ticks"><line style="--i:0" x1="118" y1="0" x2="130" y2="0"/><line style="--i:1" x1="116.2" y1="20.5" x2="119.2" y2="21"/><line style="--i:2" x1="110.9" y1="40.4" x2="113.7" y2="41.4"/><line style="--i:3" x1="102.2" y1="59" x2="104.8" y2="60.5"/><line style="--i:4" x1="90.4" y1="75.8" x2="92.7" y2="77.8"/><line style="--i:5" x1="75.8" y1="90.4" x2="77.8" y2="92.7"/><line style="--i:6" x1="59" y1="102.2" x2="60.5" y2="104.8"/><line style="--i:7" x1="40.4" y1="110.9" x2="41.4" y2="113.7"/><line style="--i:8" x1="20.5" y1="116.2" x2="21" y2="119.2"/><line style="--i:9" x1="0" y1="118" x2="0" y2="130"/><line style="--i:10" x1="-20.5" y1="116.2" x2="-21" y2="119.2"/><line style="--i:11" x1="-40.4" y1="110.9" x2="-41.4" y2="113.7"/><line style="--i:12" x1="-59" y1="102.2" x2="-60.5" y2="104.8"/><line style="--i:13" x1="-75.8" y1="90.4" x2="-77.8" y2="92.7"/><line style="--i:14" x1="-90.4" y1="75.8" x2="-92.7" y2="77.8"/><line style="--i:15" x1="-102.2" y1="59" x2="-104.8" y2="60.5"/><line style="--i:16" x1="-110.9" y1="40.4" x2="-113.7" y2="41.4"/><line style="--i:17" x1="-116.2" y1="20.5" x2="-119.2" y2="21"/><line style="--i:18" x1="-118" y1="0" x2="-130" y2="0"/><line style="--i:19" x1="-116.2" y1="-20.5" x2="-119.2" y2="-21"/><line style="--i:20" x1="-110.9" y1="-40.4" x2="-113.7" y2="-41.4"/><line style="--i:21" x1="-102.2" y1="-59" x2="-104.8" y2="-60.5"/><line style="--i:22" x1="-90.4" y1="-75.8" x2="-92.7" y2="-77.8"/><line style="--i:23" x1="-75.8" y1="-90.4" x2="-77.8" y2="-92.7"/><line style="--i:24" x1="-59" y1="-102.2" x2="-60.5" y2="-104.8"/><line style="--i:25" x1="-40.4" y1="-110.9" x2="-41.4" y2="-113.7"/><line style="--i:26" x1="-20.5" y1="-116.2" x2="-21" y2="-119.2"/><line style="--i:27" x1="0" y1="-118" x2="0" y2="-130"/><line style="--i:28" x1="20.5" y1="-116.2" x2="21" y2="-119.2"/><line style="--i:29" x1="40.4" y1="-110.9" x2="41.4" y2="-113.7"/><line style="--i:30" x1="59" y1="-102.2" x2="60.5" y2="-104.8"/><line style="--i:31" x1="75.8" y1="-90.4" x2="77.8" y2="-92.7"/><line style="--i:32" x1="90.4" y1="-75.8" x2="92.7" y2="-77.8"/><line style="--i:33" x1="102.2" y1="-59" x2="104.8" y2="-60.5"/><line style="--i:34" x1="110.9" y1="-40.4" x2="113.7" y2="-41.4"/><line style="--i:35" x1="116.2" y1="-20.5" x2="119.2" y2="-21"/></g>
-      <circle class="sf-core__ring sf-core__ring--inner" r="112"/>
-    </g>
-    <g class="sf-core__lattice">
-      <rect x="-42" y="-42" width="84" height="84" rx="14"/>
-      <circle r="55.4"/>
-      <path class="sf-core__arc" d="M 75.6 0 A 75.6 75.6 0 0 1 43.4 61.9"/><path class="sf-core__arc" d="M -37.8 65.5 A 75.6 75.6 0 0 1 -75.3 6.6"/><path class="sf-core__arc" d="M -37.8 -65.5 A 75.6 75.6 0 0 1 31.9 -68.5"/>
-    </g>
-    <circle class="sf-core__dot" r="5"/>
-  </g>
-  <text class="sf-core__label" x="980" y="616" text-anchor="middle">TEKNOIFY · ZEKÂ KATMANI</text>
-  <text class="sf-core__sub" x="980" y="636" text-anchor="middle">ajanlar · araçlar · orkestrasyon</text>
-  <g class="sf-layer sf-layer--outputs">
-    <path class="sf-decision" d="M1138 420 L1152 420"/>
-    
-  <g transform="translate(1160 270)"><g class="sf-out sf-out--0" style="--sx:26px;--sy:-18px;--sr:-4deg">
-    <rect class="sf-out__ghost" width="232" height="52" rx="7"/>
-    <rect class="sf-out__box" width="232" height="52" rx="7"/>
-    <rect class="sf-out__fill" width="232" height="52" rx="7"/>
-    <rect class="sf-out__bar" x="16" y="19" width="3" height="14" rx="1.5"/>
-    <text class="sf-out__label" x="32" y="31">Rapor</text>
-    <text class="sf-out__kind" x="216" y="31" text-anchor="end">özet</text>
-  </g></g>
-  <g transform="translate(1160 344)"><g class="sf-out sf-out--1" style="--sx:-34px;--sy:10px;--sr:3deg">
-    <rect class="sf-out__ghost" width="232" height="52" rx="7"/>
-    <rect class="sf-out__box" width="232" height="52" rx="7"/>
-    <rect class="sf-out__fill" width="232" height="52" rx="7"/>
-    <rect class="sf-out__bar" x="16" y="19" width="3" height="14" rx="1.5"/>
-    <text class="sf-out__label" x="32" y="31">Uyarı</text>
-    <text class="sf-out__kind" x="216" y="31" text-anchor="end">eşik</text>
-  </g></g>
-  <g transform="translate(1160 418)"><g class="sf-out sf-out--2" style="--sx:40px;--sy:22px;--sr:-2.5deg">
-    <rect class="sf-out__ghost" width="232" height="52" rx="7"/>
-    <rect class="sf-out__box" width="232" height="52" rx="7"/>
-    <rect class="sf-out__fill" width="232" height="52" rx="7"/>
-    <rect class="sf-out__bar" x="16" y="19" width="3" height="14" rx="1.5"/>
-    <text class="sf-out__label" x="32" y="31">İş akışı</text>
-    <text class="sf-out__kind" x="216" y="31" text-anchor="end">planlı</text>
-  </g></g>
-  <g transform="translate(1160 492)"><g class="sf-out sf-out--3" style="--sx:-22px;--sy:-30px;--sr:4deg">
-    <rect class="sf-out__ghost" width="232" height="52" rx="7"/>
-    <rect class="sf-out__box" width="232" height="52" rx="7"/>
-    <rect class="sf-out__fill" width="232" height="52" rx="7"/>
-    <rect class="sf-out__bar" x="16" y="19" width="3" height="14" rx="1.5"/>
-    <text class="sf-out__label" x="32" y="31">Otomatik eylem</text>
-    <text class="sf-out__kind" x="216" y="31" text-anchor="end">ajan</text>
-  </g></g>
-    <line class="sf-rail" x1="1180" y1="562" x2="1180" y2="820" stroke="url(#sf-rail)"/>
-    <circle class="sf-rail__node" cx="1180" cy="562" r="4"/>
-  </g>
-  <g class="sf-layer sf-layer--packets"><rect class="sf-shard sf-shard--0 sf-shard--k0" style="--i:0;--k:0;offset-path: path('M-80 60 C317.7 60, 494.2 214, 706 214 C796 214, 780 368.5, 822 374.7')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--0 sf-shard--k1" style="--i:0;--k:1;offset-path: path('M-80 60 C317.7 60, 494.2 214, 706 214 C796 214, 780 368.5, 822 374.7')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--0 sf-shard--k2" style="--i:0;--k:2;offset-path: path('M-80 60 C317.7 60, 494.2 214, 706 214 C796 214, 780 368.5, 822 374.7')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--1 sf-shard--k0" style="--i:1;--k:0;offset-path: path('M-80 250 C310.5 250, 483 318, 690 318 C780 318, 780 394.5, 822 397.6')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--1 sf-shard--k1" style="--i:1;--k:1;offset-path: path('M-80 250 C310.5 250, 483 318, 690 318 C780 318, 780 394.5, 822 397.6')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--1 sf-shard--k2" style="--i:1;--k:2;offset-path: path('M-80 250 C310.5 250, 483 318, 690 318 C780 318, 780 394.5, 822 397.6')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--2 sf-shard--k0" style="--i:2;--k:0;offset-path: path('M-80 470 C315 470, 490 422, 700 422 C790 422, 780 420.5, 822 420.4')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--2 sf-shard--k1" style="--i:2;--k:1;offset-path: path('M-80 470 C315 470, 490 422, 700 422 C790 422, 780 420.5, 822 420.4')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--2 sf-shard--k2" style="--i:2;--k:2;offset-path: path('M-80 470 C315 470, 490 422, 700 422 C790 422, 780 420.5, 822 420.4')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--3 sf-shard--k0" style="--i:3;--k:0;offset-path: path('M-80 660 C311.4 660, 484.4 526, 692 526 C782 526, 780 446.5, 822 443.3')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--3 sf-shard--k1" style="--i:3;--k:1;offset-path: path('M-80 660 C311.4 660, 484.4 526, 692 526 C782 526, 780 446.5, 822 443.3')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--3 sf-shard--k2" style="--i:3;--k:2;offset-path: path('M-80 660 C311.4 660, 484.4 526, 692 526 C782 526, 780 446.5, 822 443.3')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--4 sf-shard--k0" style="--i:4;--k:0;offset-path: path('M-80 790 C318.6 790, 495.6 630, 708 630 C798 630, 780 472.5, 822 466.2')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--4 sf-shard--k1" style="--i:4;--k:1;offset-path: path('M-80 790 C318.6 790, 495.6 630, 708 630 C798 630, 780 472.5, 822 466.2')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><rect class="sf-shard sf-shard--4 sf-shard--k2" style="--i:4;--k:2;offset-path: path('M-80 790 C318.6 790, 495.6 630, 708 630 C798 630, 780 472.5, 822 466.2')" x="-5" y="-1.2" width="10" height="2.4" rx="1.2"/><circle class="sf-packet sf-packet--out sf-packet--0" style="--i:0;offset-path: path('M1138 397.7 C1149 397.7, 1149 296, 1160 296')" r="4.5" filter="url(#sf-packet-glow)"/><circle class="sf-packet sf-packet--out sf-packet--1" style="--i:1;offset-path: path('M1138 411 C1149 411, 1149 370, 1160 370')" r="4.5" filter="url(#sf-packet-glow)"/><circle class="sf-packet sf-packet--out sf-packet--2" style="--i:2;offset-path: path('M1138 424.3 C1149 424.3, 1149 444, 1160 444')" r="4.5" filter="url(#sf-packet-glow)"/><circle class="sf-packet sf-packet--out sf-packet--3" style="--i:3;offset-path: path('M1138 437.6 C1149 437.6, 1149 518, 1160 518')" r="4.5" filter="url(#sf-packet-glow)"/></g>
-</svg>
-            </div>
-            <div class="hero-stage-copy l-container--wide">
-                <div class="hero-copy">
-                    <p class="hero-kicker t-label"><span class="hero-kicker__dot" aria-hidden="true"></span>Planlı iş otomasyonu için zekâ katmanı</p>
-                    <h1 id="hero-title" class="hero-title"><span class="hero-title__line">Dağınık bilgiyi,</span> <span class="hero-title__line">çalışan kararlara</span> <span class="hero-title__line hero-title__line--accent">dönüştürün.</span></h1>
-                    <p class="hero-lead">Teknoify web sayfalarını, belgeleri ve piyasa sinyallerini toplar; ajanlar ve araçlar bunları anlar, birbirine bağlar ve raporlara, uyarılara ve otomatik eylemlere dönüştürür.</p>
-                    <div class="hero-ctas">
-                        <a href="https://platform.teknoify.com/" class="btn btn-primary btn-lg" rel="noopener">Teknoify'ı kullanmaya başla</a>
-                        <a href="#nasil-calisir" class="btn btn-secondary btn-lg">Nasıl çalışır</a>
+        <section class="hero-v2" id="home" data-hero data-field-mode="calm" aria-labelledby="hero-title">
+            <div class="hero-v2__grid" data-hero-inner>
+                <div class="hero-v2__copy">
+                    <p class="hero-v2__kicker t-label">Yapay zekâ ajanları · araçlar · otomasyonlar</p>
+                    <h1 class="hero-v2__title" id="hero-title"><span class="hero-v2__line"><span>Geleceğin iş</span></span><span class="hero-v2__line"><span>gücünü bugün</span></span><span class="hero-v2__line"><span><em>inşa edin.</em></span></span></h1>
+                    <p class="hero-v2__sub">Hazır yapay zekâ ajanları, araçlar ve otomasyonlar; işletmeniz için de, kendiniz için de. Seçin, bağlayın, çalıştırın.</p>
+                    <div class="hero-v2__actions">
+                        <a class="btn btn-primary btn-lg" href="https://platform.teknoify.com/" rel="noopener">Hemen başla</a>
+                        <a class="btn btn-secondary btn-lg" href="#nasil-calisir">Nasıl çalışır</a>
                     </div>
-                    <ol class="hero-stages" aria-label="Teknoify akışı">
-                        <li class="hero-stage hero-stage--in"><span class="hero-stage__num">01</span>Girdi</li>
-                        <li class="hero-stage hero-stage--core"><span class="hero-stage__num">02</span>Zekâ</li>
-                        <li class="hero-stage hero-stage--out"><span class="hero-stage__num">03</span>Eylem</li>
-                    </ol>
                 </div>
-                <div class="hero-field hero-field--mobile" data-signal-field>
-                    
-<svg class="sf sf--mobile" viewBox="0 0 360 620" role="img" aria-labelledby="sfm-title" focusable="false">
-  <title id="sfm-title">Teknoify sinyal alanı: girdiler zekâ katmanından geçerek düzenli eylemlere çözümlenir</title>
-  <defs>
-    <filter id="sf-packet-glow-m" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <radialGradient id="sf-glow-m" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="var(--sf-ion)" stop-opacity="0.2"/><stop offset="0.55" stop-color="var(--sf-ion)" stop-opacity="0.05"/><stop offset="1" stop-color="var(--sf-ion)" stop-opacity="0"/></radialGradient>
-    <linearGradient id="sf-rail-m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sf-gold)" stop-opacity="0.9"/><stop offset="1" stop-color="var(--sf-gold)" stop-opacity="0.15"/></linearGradient>
-    <pattern id="sfm-grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="currentColor" stroke-width="0.6"/></pattern>
-  </defs>
-  <rect class="sf-grid" width="360" height="620" fill="url(#sfm-grid)"/>
-  <g class="sf-layer sf-layer--traces"><path class="sf-trace sf-trace--in sf-trace--in-0" style="--i:0" d="M54 -40 C54 87.7, 154.8 38.3, 154.8 166"/><path class="sf-trace sf-trace--in sf-trace--in-1" style="--i:1" d="M138 -40 C138 87.7, 171.6 38.3, 171.6 166"/><path class="sf-trace sf-trace--in sf-trace--in-2" style="--i:2" d="M222 -40 C222 87.7, 188.4 38.3, 188.4 166"/><path class="sf-trace sf-trace--in sf-trace--in-3" style="--i:3" d="M306 -40 C306 87.7, 205.2 38.3, 205.2 166"/><path class="sf-trace sf-trace--out sf-trace--out-0" style="--i:0" d="M180 358 C180 394, 180 382, 180 418"/><path class="sf-trace sf-trace--out sf-trace--out-1" style="--i:1" d="M180 358 C180 428.8, 180 405.2, 180 476"/><path class="sf-trace sf-trace--out sf-trace--out-2" style="--i:2" d="M180 358 C180 463.6, 180 428.4, 180 534"/></g>
-  <g class="sf-layer sf-layer--inputs"><g class="sf-in sf-in--0" style="--i:0"><g class="sf-glyph" transform="translate(42 26) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="M2 9h20M7 13h6M7 16h9"/></g></g><text class="sf-in__label" x="54" y="70" text-anchor="middle">web</text></g><g class="sf-in sf-in--1" style="--i:1"><g class="sf-glyph" transform="translate(126 26) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h8l5 5V21a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1Z"/><path d="M14 2.5v5h5M8.5 12h7M8.5 16h7"/></g></g><text class="sf-in__label" x="138" y="70" text-anchor="middle">belge</text></g><g class="sf-in sf-in--2" style="--i:2"><g class="sf-glyph" transform="translate(210 26) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17 8 10.5l4 3.5 4.5-6 5 4"/><path d="M2.5 21h19"/></g></g><text class="sf-in__label" x="222" y="70" text-anchor="middle">piyasa</text></g><g class="sf-in sf-in--3" style="--i:3"><g class="sf-glyph" transform="translate(294 26) scale(1)"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m7.5 12 3 3 6-6.5"/></g></g><text class="sf-in__label" x="306" y="70" text-anchor="middle">görev</text></g></g>
-  
-  <g class="sf-core" transform="translate(180 262)">
-    <circle class="sf-core__depth" r="195.3"/>
-    <circle class="sf-core__depth" r="144.2"/>
-    <circle class="sf-core__halo" r="116.3" fill="url(#sf-glow-m)"/>
-    <g class="sf-core__rings">
-      <circle class="sf-core__ring sf-core__ring--outer" r="93"/>
-      <g class="sf-core__ticks"><line style="--i:0" x1="73.2" y1="0" x2="80.6" y2="0"/><line style="--i:1" x1="72" y1="12.7" x2="73.9" y2="13"/><line style="--i:2" x1="68.7" y1="25" x2="70.5" y2="25.7"/><line style="--i:3" x1="63.4" y1="36.6" x2="65" y2="37.5"/><line style="--i:4" x1="56" y1="47" x2="57.5" y2="48.2"/><line style="--i:5" x1="47" y1="56" x2="48.2" y2="57.5"/><line style="--i:6" x1="36.6" y1="63.4" x2="37.5" y2="65"/><line style="--i:7" x1="25" y1="68.7" x2="25.7" y2="70.5"/><line style="--i:8" x1="12.7" y1="72" x2="13" y2="73.9"/><line style="--i:9" x1="0" y1="73.2" x2="0" y2="80.6"/><line style="--i:10" x1="-12.7" y1="72" x2="-13" y2="73.9"/><line style="--i:11" x1="-25" y1="68.7" x2="-25.7" y2="70.5"/><line style="--i:12" x1="-36.6" y1="63.4" x2="-37.5" y2="65"/><line style="--i:13" x1="-47" y1="56" x2="-48.2" y2="57.5"/><line style="--i:14" x1="-56" y1="47" x2="-57.5" y2="48.2"/><line style="--i:15" x1="-63.4" y1="36.6" x2="-65" y2="37.5"/><line style="--i:16" x1="-68.7" y1="25" x2="-70.5" y2="25.7"/><line style="--i:17" x1="-72" y1="12.7" x2="-73.9" y2="13"/><line style="--i:18" x1="-73.2" y1="0" x2="-80.6" y2="0"/><line style="--i:19" x1="-72" y1="-12.7" x2="-73.9" y2="-13"/><line style="--i:20" x1="-68.7" y1="-25" x2="-70.5" y2="-25.7"/><line style="--i:21" x1="-63.4" y1="-36.6" x2="-65" y2="-37.5"/><line style="--i:22" x1="-56" y1="-47" x2="-57.5" y2="-48.2"/><line style="--i:23" x1="-47" y1="-56" x2="-48.2" y2="-57.5"/><line style="--i:24" x1="-36.6" y1="-63.4" x2="-37.5" y2="-65"/><line style="--i:25" x1="-25" y1="-68.7" x2="-25.7" y2="-70.5"/><line style="--i:26" x1="-12.7" y1="-72" x2="-13" y2="-73.9"/><line style="--i:27" x1="0" y1="-73.2" x2="0" y2="-80.6"/><line style="--i:28" x1="12.7" y1="-72" x2="13" y2="-73.9"/><line style="--i:29" x1="25" y1="-68.7" x2="25.7" y2="-70.5"/><line style="--i:30" x1="36.6" y1="-63.4" x2="37.5" y2="-65"/><line style="--i:31" x1="47" y1="-56" x2="48.2" y2="-57.5"/><line style="--i:32" x1="56" y1="-47" x2="57.5" y2="-48.2"/><line style="--i:33" x1="63.4" y1="-36.6" x2="65" y2="-37.5"/><line style="--i:34" x1="68.7" y1="-25" x2="70.5" y2="-25.7"/><line style="--i:35" x1="72" y1="-12.7" x2="73.9" y2="-13"/></g>
-      <circle class="sf-core__ring sf-core__ring--inner" r="69.4"/>
-    </g>
-    <g class="sf-core__lattice">
-      <rect x="-26" y="-26" width="52.1" height="52.1" rx="8.7"/>
-      <circle r="34.4"/>
-      <path class="sf-core__arc" d="M 46.9 0 A 46.9 46.9 0 0 1 26.9 38.4"/><path class="sf-core__arc" d="M -23.4 40.6 A 46.9 46.9 0 0 1 -46.7 4.1"/><path class="sf-core__arc" d="M -23.4 -40.6 A 46.9 46.9 0 0 1 19.8 -42.5"/>
-    </g>
-    <circle class="sf-core__dot" r="3.1"/>
-  </g>
-  <text class="sf-core__label" x="180" y="388" text-anchor="middle">ZEKÂ KATMANI</text>
-  <g class="sf-layer sf-layer--outputs">
-  <g transform="translate(84 418)"><g class="sf-out sf-out--0" style="--sx:18px;--sy:-8px;--sr:-3deg">
-    <rect class="sf-out__ghost" width="192" height="44" rx="7"/>
-    <rect class="sf-out__box" width="192" height="44" rx="7"/>
-    <rect class="sf-out__fill" width="192" height="44" rx="7"/>
-    <rect class="sf-out__bar" x="16" y="15" width="3" height="14" rx="1.5"/>
-    <text class="sf-out__label" x="32" y="27">Rapor</text>
-    <text class="sf-out__kind" x="176" y="27" text-anchor="end">özet</text>
-  </g></g>
-  <g transform="translate(84 476)"><g class="sf-out sf-out--1" style="--sx:-22px;--sy:8px;--sr:2.5deg">
-    <rect class="sf-out__ghost" width="192" height="44" rx="7"/>
-    <rect class="sf-out__box" width="192" height="44" rx="7"/>
-    <rect class="sf-out__fill" width="192" height="44" rx="7"/>
-    <rect class="sf-out__bar" x="16" y="15" width="3" height="14" rx="1.5"/>
-    <text class="sf-out__label" x="32" y="27">Uyarı</text>
-    <text class="sf-out__kind" x="176" y="27" text-anchor="end">eşik</text>
-  </g></g>
-  <g transform="translate(84 534)"><g class="sf-out sf-out--2" style="--sx:14px;--sy:14px;--sr:-2deg">
-    <rect class="sf-out__ghost" width="192" height="44" rx="7"/>
-    <rect class="sf-out__box" width="192" height="44" rx="7"/>
-    <rect class="sf-out__fill" width="192" height="44" rx="7"/>
-    <rect class="sf-out__bar" x="16" y="15" width="3" height="14" rx="1.5"/>
-    <text class="sf-out__label" x="32" y="27">Otomatik eylem</text>
-    <text class="sf-out__kind" x="176" y="27" text-anchor="end">ajan</text>
-  </g></g><line class="sf-rail" x1="180" y1="590" x2="180" y2="620" stroke="url(#sf-rail-m)"/><circle class="sf-rail__node" cx="180" cy="590" r="3.5"/></g>
-  <g class="sf-layer sf-layer--packets"><rect class="sf-shard sf-shard--0 sf-shard--k0" style="--i:0;--k:0;offset-path: path('M54 -40 C54 87.7, 154.8 38.3, 154.8 166')" x="-1.2" y="-5" width="2.4" height="10" rx="1.2"/><rect class="sf-shard sf-shard--0 sf-shard--k1" style="--i:0;--k:1;offset-path: path('M54 -40 C54 87.7, 154.8 38.3, 154.8 166')" x="-1.2" y="-5" width="2.4" height="10" rx="1.2"/><rect class="sf-shard sf-shard--1 sf-shard--k0" style="--i:1;--k:0;offset-path: path('M138 -40 C138 87.7, 171.6 38.3, 171.6 166')" x="-1.2" y="-5" width="2.4" height="10" rx="1.2"/><rect class="sf-shard sf-shard--1 sf-shard--k1" style="--i:1;--k:1;offset-path: path('M138 -40 C138 87.7, 171.6 38.3, 171.6 166')" x="-1.2" y="-5" width="2.4" height="10" rx="1.2"/><rect class="sf-shard sf-shard--2 sf-shard--k0" style="--i:2;--k:0;offset-path: path('M222 -40 C222 87.7, 188.4 38.3, 188.4 166')" x="-1.2" y="-5" width="2.4" height="10" rx="1.2"/><rect class="sf-shard sf-shard--2 sf-shard--k1" style="--i:2;--k:1;offset-path: path('M222 -40 C222 87.7, 188.4 38.3, 188.4 166')" x="-1.2" y="-5" width="2.4" height="10" rx="1.2"/><rect class="sf-shard sf-shard--3 sf-shard--k0" style="--i:3;--k:0;offset-path: path('M306 -40 C306 87.7, 205.2 38.3, 205.2 166')" x="-1.2" y="-5" width="2.4" height="10" rx="1.2"/><rect class="sf-shard sf-shard--3 sf-shard--k1" style="--i:3;--k:1;offset-path: path('M306 -40 C306 87.7, 205.2 38.3, 205.2 166')" x="-1.2" y="-5" width="2.4" height="10" rx="1.2"/><circle class="sf-packet sf-packet--out sf-packet--0" style="--i:0;offset-path: path('M180 358 C180 394, 180 382, 180 418')" r="4" filter="url(#sf-packet-glow-m)"/><circle class="sf-packet sf-packet--out sf-packet--1" style="--i:1;offset-path: path('M180 358 C180 428.8, 180 405.2, 180 476')" r="4" filter="url(#sf-packet-glow-m)"/><circle class="sf-packet sf-packet--out sf-packet--2" style="--i:2;offset-path: path('M180 358 C180 463.6, 180 428.4, 180 534')" r="4" filter="url(#sf-packet-glow-m)"/></g>
-</svg>
+                <div class="hero-v2__visual">
+                    <div class="win hero-v2__window" data-hero-window aria-label="Ajan Kütüphanesi araması, temsilî" role="img">
+                        <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">Ajan Kütüphanesi · platform.teknoify.com</span></div>
+                        <div class="lib">
+                            <div class="lib__search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="lib__query" data-hero-query></span><span class="lib__caret" aria-hidden="true"></span></div>
+                            <div class="lib__meta" data-hero-count></div>
+                            <div class="lib__rows">
+                                <div class="lib__row" data-hero-row><span class="lib__icon" aria-hidden="true"></span><span><b>Product Discover</b><small>Siteyi ekleyin; ürünler toplu işlensin, karşılaştırılsın.</small></span><span class="lib__kind">Ajan</span></div>
+                                <div class="lib__row" data-hero-row><span class="lib__icon" aria-hidden="true"></span><span><b>Fiyat Karşılaştırma</b><small>Pazar yerleri arasında fiyat karşılaştırması.</small></span><span class="lib__kind">Araç</span></div>
+                                <div class="lib__row" data-hero-row><span class="lib__icon" aria-hidden="true"></span><span><b>Web Scraping Otomasyonu</b><small>Planlı tarama ve değişiklik izleme.</small></span><span class="lib__kind">Otomasyon</span></div>
+                                <div class="lib__row" data-hero-row><span class="lib__icon" aria-hidden="true"></span><span><b>Yatırım Analitiği</b><small>Piyasa göstergeleri ve perakende veri setleri.</small></span><span class="lib__kind">Araç</span></div>
+                            </div>
+                            <div class="lib__status" data-hero-status><span class="lib__pulse" aria-hidden="true"></span>hesabınıza ekleyip çalıştırın</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-v2__hint" aria-hidden="true"><i></i><span>Keşfetmek için kaydırın</span></div>
+        </section>
+
+        <section class="manifesto" id="manifesto" data-manifesto data-field-mode="chaos-order" aria-label="Teknoify manifestosu">
+            <div class="manifesto__pin">
+                <p class="manifesto__text" data-manifesto-text>Yapay zekâ artık bir vaat değil, bir iş gücü. Teknoify bu iş gücünü herkesin kullanabileceği hâle getirir: web verisi, ürün keşfi, analiz ve tekrarlayan işler için hazır ajanlar, hesabınıza eklenen araçlar, kendi kendine çalışan otomasyonlar. Kod yazmadan, bugün.</p>
+            </div>
+        </section>
+
+        <section class="journey" id="nasil-calisir" data-journey data-field-mode="lanes" aria-labelledby="journey-title">
+            <div class="journey__pin">
+                <h2 class="journey__title" id="journey-title">Bir ajanı çalıştırmak dört adım sürer</h2>
+                <div class="journey__wrap">
+                    <div class="journey-tabs" role="tablist" aria-label="Adımlar">
+                        <button class="journey-tab is-active" role="tab" type="button" aria-selected="true" tabindex="0"><span class="journey-tab__name"><small>1</small>Keşfet</span><span class="journey-tab__desc">Kütüphanede kategoriye göre filtreleyin.</span><i class="journey-tab__bar" aria-hidden="true"></i></button>
+                        <button class="journey-tab" role="tab" type="button" aria-selected="false" tabindex="-1"><span class="journey-tab__name"><small>2</small>Seç</span><span class="journey-tab__desc">Ne yaptığını ve neye eriştiğini görün.</span><i class="journey-tab__bar" aria-hidden="true"></i></button>
+                        <button class="journey-tab" role="tab" type="button" aria-selected="false" tabindex="-1"><span class="journey-tab__name"><small>3</small>Bağla</span><span class="journey-tab__desc">Kaynak siteleri ve çalışma alanınızı bağlayın.</span><i class="journey-tab__bar" aria-hidden="true"></i></button>
+                        <button class="journey-tab" role="tab" type="button" aria-selected="false" tabindex="-1"><span class="journey-tab__name"><small>4</small>Çalıştır</span><span class="journey-tab__desc">Ajan işler; siz sonuçları görürsünüz.</span><i class="journey-tab__bar" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="win journey-stage" aria-label="Product Discover akışı, temsilî demo" role="group">
+                        <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title" data-device-title>kütüphane</span><span class="win__tag">temsilî demo</span></div>
+                        <div class="device__body">
+                            <div class="fcur" data-fcur aria-hidden="true"><svg width="20" height="24" viewBox="0 0 20 24"><path d="M2 2v17.4l4.7-4.4 3 7 3.1-1.3-3-6.9H17z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+                            <div class="journey-panel is-active" data-panel="0">
+                                <div class="p0__top">
+                                    <div class="p0__search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Ajan, araç veya otomasyon ara</div>
+                                    <div class="chips">
+                                        <button class="chip is-on" type="button" data-chip="all" aria-pressed="true">Tümü</button>
+                                        <button class="chip" type="button" data-chip="web" aria-pressed="false">Web zekâsı</button>
+                                        <button class="chip" type="button" data-chip="urun" aria-pressed="false">Ürün</button>
+                                        <button class="chip" type="button" data-chip="analiz" aria-pressed="false">Analiz</button>
+                                        <button class="chip" type="button" data-chip="otomasyon" aria-pressed="false">Otomasyon</button>
+                                    </div>
+                                </div>
+                                <div class="p0__meta" data-count>6 sonuç</div>
+                                <div class="tiles">
+                                    <button class="tile" type="button" data-tile="urun" data-tile-main><i aria-hidden="true"></i><b>Product Discover</b><small>Ajan</small><p>Siteyi ekler, ürünleri çıkarır, karşılaştırır.</p></button>
+                                    <button class="tile" type="button" data-tile="web"><i aria-hidden="true"></i><b>Fiyat Karşılaştırma</b><small>Araç</small><p>Pazar yerleri arasında fiyat karşılaştırır.</p></button>
+                                    <button class="tile" type="button" data-tile="web"><i aria-hidden="true"></i><b>Web Scraping</b><small>Otomasyon</small><p>Planlı tarama ve değişiklik izleme.</p></button>
+                                    <button class="tile" type="button" data-tile="analiz"><i aria-hidden="true"></i><b>Yatırım Analitiği</b><small>Araç</small><p>Perakende veri setleri üzerinde analiz.</p></button>
+                                    <button class="tile" type="button" data-tile="analiz"><i aria-hidden="true"></i><b>Finansal Göstergeler</b><small>Araç</small><p>Piyasa göstergelerini izler.</p></button>
+                                    <button class="tile" type="button" data-tile="otomasyon"><i aria-hidden="true"></i><b>RPA Otomasyonu</b><small>Otomasyon</small><p>Tekrarlayan süreçleri yürütür.</p></button>
+                                </div>
+                            </div>
+                            <div class="journey-panel" data-panel="1" hidden>
+                                <div class="p1">
+                                    <div class="p1__main">
+                                        <div class="detail__head"><span class="ic" aria-hidden="true"></span><div><b>Product Discover</b><small>Ajan · Ajan Kütüphanesi</small></div></div>
+                                        <p>Eklediğiniz siteleri tarar, ürünleri çıkarır ve karşılaştırır. Sonuçları sohbet arayüzüyle sorgularsınız.</p>
+                                        <ul class="p1__list"><li><i aria-hidden="true"></i>Yeni site ekle ve tara</li><li><i aria-hidden="true"></i>Kaynak ürünleri listeler</li><li><i aria-hidden="true"></i>Ürünleri 20'şerlik gruplarla işler</li><li><i aria-hidden="true"></i>Sonuçları sohbetle sorgulama</li></ul>
+                                        <div class="sample"><div class="sample__bar">Örnek çıktı <span>ürün karşılaştırması · temsilî</span></div><p><b>Aynı ürün, 3 kaynak:</b> fiyat, stok ve başlık farkları yan yana.</p><p>Sorun: "En düşük fiyatlı kaynak hangisi?" Ajan kaynağıyla birlikte yanıtlar.</p></div>
+                                    </div>
+                                    <div class="plan">
+                                        <div class="plan__title">Çalışma alanınıza ekleyin</div>
+                                        <div class="plan__sub">İstediğiniz an durdurun veya kaldırın</div>
+                                        <div class="perm" data-perm><span>Erişim</span><ul><li>Eklediğiniz siteler <em>okuma</em></li><li>Çalışma alanınız <em>yazma</em></li><li>Sohbet geçmişi <em>hesabınızda</em></li></ul></div>
+                                        <button class="btn btn-primary" type="button" data-btn-select>Ekle</button>
+                                    </div>
+                                </div>
+                                <div class="toast" data-toast>Product Discover çalışma alanınıza eklendi</div>
+                            </div>
+                            <div class="journey-panel" data-panel="2" hidden>
+                                <div class="hub" data-hub>
+                                    <svg data-hub-lines aria-hidden="true"><line data-to="store"/><line data-to="market"/><line data-to="catalog"/><line data-to="workspace"/><line data-to="chat"/></svg>
+                                    <div class="node node--store" data-node="store"><div class="node__card"><i aria-hidden="true"></i>Mağaza sitesi</div><button class="node__btn" type="button">Bağlan</button></div>
+                                    <div class="node node--market" data-node="market"><div class="node__card"><i aria-hidden="true"></i>Pazar yeri</div><button class="node__btn" type="button">Bağlan</button></div>
+                                    <div class="node node--catalog" data-node="catalog"><div class="node__card"><i aria-hidden="true"></i>Katalog sayfası</div><button class="node__btn" type="button">Bağlan</button></div>
+                                    <div class="node node--workspace" data-node="workspace"><div class="node__card"><i aria-hidden="true"></i>Çalışma alanı</div><button class="node__btn" type="button">Bağlan</button></div>
+                                    <div class="node node--chat" data-node="chat"><div class="node__card"><i aria-hidden="true"></i>Sohbet</div><button class="node__btn" type="button">Bağlan</button></div>
+                                    <div class="node node--core" data-node="core"><div class="node__card"><i aria-hidden="true"></i>Product Discover</div></div>
+                                </div>
+                            </div>
+                            <div class="journey-panel" data-panel="3" hidden>
+                                <div class="p3">
+                                    <div class="p3__head"><span class="status" data-status><i aria-hidden="true"></i><span data-status-text>Hazır</span></span><button class="btn btn-primary btn-sm" type="button" data-btn-run>Çalıştır</button></div>
+                                    <ul class="log" data-log>
+                                        <li><time>09:14</time><span>Site eklendi: mağaza sitesi</span></li>
+                                        <li><time>09:14</time><span>Kaynak ürünleri listelendi</span></li>
+                                        <li><time>09:15</time><span>İlk 20 ürün işlendi</span></li>
+                                        <li><time>09:16</time><span>Sonraki 20 ürün işlendi</span></li>
+                                        <li><time>09:17</time><span>Karşılaştırma hazır: 3 kaynak</span></li>
+                                        <li><time>09:17</time><span>Sohbet için hazır</span></li>
+                                    </ul>
+                                    <div class="results">
+                                        <div class="result"><b data-counter="3">0</b><span>Bağlı kaynak</span></div>
+                                        <div class="result"><b data-counter="40">0</b><span>İşlenen ürün</span></div>
+                                        <div class="result"><b data-counter="1">0</b><span>Karşılaştırma raporu</span></div>
+                                        <p class="results__note">Temsilî çalışma; sayılar bu demonun adımlarıdır.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="nasil-calisir" class="narrative narrative--hint" aria-labelledby="narrative-title">
-            <div class="narrative-handoff" aria-hidden="true"><span class="narrative-handoff__node"></span></div>
-            <div class="l-container--wide narrative-grid">
-                <div class="narrative-stage">
-                    <p class="t-label t-label--ion">01 — Gözlemle</p>
-                    <h2 id="narrative-title" class="narrative-stage__title">Teknoify, dağınık kaynakları tek bir sinyal alanında toplar.</h2>
-                    <p class="narrative-stage__lead">Web sayfaları, belgeler, ürün verileri ve piyasa akışları farklı biçimlerde, farklı hızlarda gelir. İlk adım bunları izlemek ve yapılandırılmış sinyallere çevirmektir.</p>
-                </div>
-                <ol class="narrative-rail" aria-label="Teknoify anlatısı">
-                    <li class="narrative-rail__item is-current"><span class="narrative-rail__num">01</span>Gözlemle</li>
-                    <li class="narrative-rail__item"><span class="narrative-rail__num">02</span>Anla</li>
-                    <li class="narrative-rail__item"><span class="narrative-rail__num">03</span>Orkestre et</li>
-                    <li class="narrative-rail__item"><span class="narrative-rail__num">04</span>Harekete geç</li>
-                </ol>
-            </div>
-        </section>
-
-        <section id="services" class="services services--hub">
+        <section id="contact" class="contact-section contact-section--isolated" data-field-mode="calm">
             <div class="container">
                 <div class="section-header">
-                    <h2>Hizmetlerimiz</h2>
-                    <p>Uçtan uca dijital dönüşüm araçları.</p>
-                </div>
-
-                <div class="services-hub" aria-label="Teknoify hizmet merkezi">
-                    <svg class="services-hub__connectors" viewBox="0 0 1040 650" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                        <defs>
-                            <filter id="servicesSignalGlow" x="-30%" y="-30%" width="160%" height="160%">
-                                <feGaussianBlur stdDeviation="4" result="blur" />
-                                <feMerge>
-                                    <feMergeNode in="blur" />
-                                    <feMergeNode in="SourceGraphic" />
-                                </feMerge>
-                            </filter>
-                        </defs>
-                        <g class="services-hub__connector-base">
-                            <path class="services-hub-connector services-hub-connector--education" d="M188 116 V166 H314 V214 H444 V286 H500" />
-                            <path class="services-hub-connector services-hub-connector--education" d="M236 134 V190 H336 V238 H464 V306 H500" />
-                            <path class="services-hub-connector services-hub-connector--investment" d="M492 112 V222 H508 V282 H520" />
-                            <path class="services-hub-connector services-hub-connector--investment" d="M520 112 V252 H520 V282" />
-                            <path class="services-hub-connector services-hub-connector--investment" d="M548 112 V222 H532 V282 H520" />
-                            <path class="services-hub-connector services-hub-connector--rpa" d="M852 116 V166 H726 V214 H596 V286 H540" />
-                            <path class="services-hub-connector services-hub-connector--rpa" d="M804 134 V190 H704 V238 H576 V306 H540" />
-                            <path class="services-hub-connector services-hub-connector--finance" d="M198 304 H348 V292 H500" />
-                            <path class="services-hub-connector services-hub-connector--finance" d="M198 325 H372 V320 H500" />
-                            <path class="services-hub-connector services-hub-connector--finance" d="M198 346 H348 V348 H500" />
-                            <path class="services-hub-connector services-hub-connector--scraping" d="M842 304 H692 V292 H540" />
-                            <path class="services-hub-connector services-hub-connector--scraping" d="M842 325 H668 V320 H540" />
-                            <path class="services-hub-connector services-hub-connector--scraping" d="M842 346 H692 V348 H540" />
-                            <path class="services-hub-connector services-hub-connector--api" d="M520 368 V432 H384 V492 H198 V540" />
-                            <path class="services-hub-connector services-hub-connector--analytics" d="M520 540 V368" />
-                            <path class="services-hub-connector services-hub-connector--ai" d="M520 368 V432 H656 V492 H842 V540" />
-                        </g>
-                        <g class="services-hub__connector-active" filter="url(#servicesSignalGlow)">
-                            <path class="services-hub-signal services-hub-signal--education" pathLength="100" d="M236 134 V190 H336 V238 H464 V306 H500" />
-                            <path class="services-hub-signal services-hub-signal--investment" pathLength="100" d="M520 112 V252 H520 V282" />
-                            <path class="services-hub-signal services-hub-signal--rpa" pathLength="100" d="M804 134 V190 H704 V238 H576 V306 H540" />
-                            <path class="services-hub-signal services-hub-signal--finance" pathLength="100" d="M198 325 H372 V320 H500" />
-                            <path class="services-hub-signal services-hub-signal--scraping" pathLength="100" d="M842 325 H668 V320 H540" />
-                            <path class="services-hub-signal services-hub-signal--api" pathLength="100" d="M198 540 V492 H384 V432 H520 V368" />
-                            <path class="services-hub-signal services-hub-signal--analytics" pathLength="100" d="M520 540 V368" />
-                            <path class="services-hub-signal services-hub-signal--ai" pathLength="100" d="M842 540 V492 H656 V432 H520 V368" />
-                        </g>
-                        <g class="services-hub__connector-nodes">
-                            <circle cx="188" cy="116" r="4" /><circle cx="520" cy="112" r="4" /><circle cx="852" cy="116" r="4" />
-                            <circle cx="198" cy="325" r="4" /><circle cx="842" cy="325" r="4" /><circle cx="198" cy="540" r="4" /><circle cx="520" cy="540" r="4" /><circle cx="842" cy="540" r="4" />
-                            <circle cx="336" cy="238" r="3" /><circle cx="464" cy="306" r="3" /><circle cx="704" cy="238" r="3" /><circle cx="576" cy="306" r="3" />
-                            <circle cx="372" cy="320" r="3" /><circle cx="668" cy="320" r="3" /><circle cx="384" cy="492" r="3" /><circle cx="656" cy="492" r="3" />
-                            <circle cx="520" cy="432" r="3.5" /><circle cx="492" cy="222" r="2.5" /><circle cx="548" cy="222" r="2.5" />
-                            <circle class="services-hub__connector-core-node" cx="520" cy="282" r="6" /><circle class="services-hub__connector-core-node" cx="520" cy="368" r="5" />
-                        </g>
-                    </svg>
-
-                    <a class="service-hub-card service-hub-card--education" href="pages/training-consulting.html" aria-label="Eğitim hizmetini incele: Ekiplerinizi geliştirir.">
-                        <span class="service-hub-card__icon"><i class="fas fa-graduation-cap" aria-hidden="true"></i></span>
-                        <span class="service-hub-card__title">Eğitim</span>
-                        <span class="service-hub-card__description">Ekiplerinizi geliştirir.</span>
-                    </a>
-
-                    <a class="service-hub-card service-hub-card--investment" href="pages/investment-analytics.html" aria-label="Yatırım hizmetini incele: Analizlerinizi güçlendirir.">
-                        <span class="service-hub-card__icon"><i class="fas fa-chart-pie" aria-hidden="true"></i></span>
-                        <span class="service-hub-card__title">Yatırım</span>
-                        <span class="service-hub-card__description">Analizlerinizi güçlendirir.</span>
-                    </a>
-
-                    <a class="service-hub-card service-hub-card--rpa" href="pages/rpa.html" aria-label="RPA hizmetini incele: Tekrarlayan işleri otomatikleştirir.">
-                        <span class="service-hub-card__icon"><i class="fas fa-robot" aria-hidden="true"></i></span>
-                        <span class="service-hub-card__title">RPA</span>
-                        <span class="service-hub-card__description">Tekrarlayan işleri otomatikleştirir.</span>
-                    </a>
-
-                    <a class="service-hub-card service-hub-card--finance" href="pages/financial-indicators.html" aria-label="Finans Bot hizmetini incele: Piyasaları senin için izler.">
-                        <span class="service-hub-card__icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
-                        <span class="service-hub-card__title">Finans Bot</span>
-                        <span class="service-hub-card__description">Piyasaları senin için izler.</span>
-                    </a>
-
-                    <div class="services-hub-center">
-                        <svg class="services-hub-core-network" viewBox="0 0 260 180" aria-hidden="true" focusable="false">
-                            <path class="services-hub-core-branch" d="M130 90 H44 M130 90 H216 M130 90 V34 M130 90 V146" />
-                            <circle cx="130" cy="90" r="18" />
-                            <circle cx="44" cy="90" r="5" /><circle cx="216" cy="90" r="5" /><circle cx="130" cy="34" r="5" /><circle cx="130" cy="146" r="5" />
-                        </svg>
-                        <a class="services-hub-demo" href="/demo/" aria-label="Demoyu Keşfet sayfasına git">
-                            <span>Demoyu Keşfet</span>
-                        </a>
-                    </div>
-
-                    <a class="service-hub-card service-hub-card--scraping" href="pages/webscraping.html" aria-label="Scraping hizmetini incele: Veriyi otomatik toplar.">
-                        <span class="service-hub-card__icon"><i class="fas fa-spider" aria-hidden="true"></i></span>
-                        <span class="service-hub-card__title">Scraping</span>
-                        <span class="service-hub-card__description">Veriyi otomatik toplar.</span>
-                    </a>
-
-                    <a class="service-hub-card service-hub-card--api" href="pages/api.html" aria-label="API hizmetini incele: Sistemlerinizi birbirine bağlar.">
-                        <span class="service-hub-card__icon"><i class="fas fa-plug" aria-hidden="true"></i></span>
-                        <span class="service-hub-card__title">API</span>
-                        <span class="service-hub-card__description">Sistemlerinizi birbirine bağlar.</span>
-                    </a>
-
-                    <a class="service-hub-card service-hub-card--analytics" href="/demo/?service=data-analytics" aria-label="Veri Analitiği hizmetini incele: Verilerinizi anlamlı içgörülere dönüştürür.">
-                        <span class="service-hub-card__icon"><i class="fas fa-chart-bar" aria-hidden="true"></i></span>
-                        <span class="service-hub-card__title">Veri Analitiği</span>
-                        <span class="service-hub-card__description">Verilerinizi anlamlı içgörülere dönüştürür.</span>
-                    </a>
-
-                    <a class="service-hub-card service-hub-card--ai" href="pages/ai-assistant.html" aria-label="AI Asistan hizmetini incele: Süreçlerinizi akıllı şekilde destekler.">
-                        <span class="service-hub-card__icon"><i class="fas fa-brain" aria-hidden="true"></i></span>
-                        <span class="service-hub-card__title">AI Asistan</span>
-                        <span class="service-hub-card__description">Süreçlerinizi akıllı şekilde destekler.</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="contact-section">
-            <div class="container">
-                <div class="section-header">
+                    <p class="t-label">Sonraki adım · İletişim</p>
                     <h2>Projelerinizi Hayata Geçirelim</h2>
                     <p>Aklınızdaki fikri veya ihtiyacınız olan otomasyon çözümünü bize anlatın.</p>
                 </div>
@@ -656,8 +497,9 @@
     </button>
 </div>
 
-<script src="js/script.js?v=services-hub-8" defer></script>
+<script src="js/script.js?v=home-v2" defer></script>
 <script src="js/cookies.js" defer></script>
+<script type="module" src="js/experience/index.js?v=home-v2"></script>
 
 <script>
     function showToast(title, message, type = 'error') {
