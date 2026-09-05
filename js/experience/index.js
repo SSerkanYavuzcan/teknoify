@@ -3,7 +3,7 @@
    data-field; the manifesto blends chaos → order with its own progress. */
 import { viewport, scheduler, clamp } from './scroll.js';
 import { createField } from './field.js?v=polish5';
-import { initHero } from './hero.js?v=polish5';
+import { initHero } from './hero.js?v=polish6';
 import { initManifesto } from './manifesto.js';
 import { initJourney } from './journey.js?v=journey-auto';
 import { initPointer } from './pointer.js';
