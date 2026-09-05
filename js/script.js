@@ -1,6 +1,14 @@
 // Teknoify public marketing site: shared page behaviour (navigation, contact form, custom select,
 // hero terminal and background effects). Authentication lives on https://platform.teknoify.com;
 // this file intentionally initializes no Firebase, App Check, reCAPTCHA or session state.
+
+// Review-only: ?motion=force previews the motion system under an OS reduced-motion setting. Never set for visitors.
+(function () {
+    const q = new URLSearchParams(window.location.search);
+    if (q.get('motion') === 'force') document.documentElement.classList.add('force-motion');
+    if (q.get('stage') === 'pre') document.documentElement.classList.add('review-pre');
+    if (q.get('type') === 'b') { document.documentElement.classList.add('type-b'); const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@500;600&display=swap'; document.head.appendChild(l); }
+})();
 document.addEventListener('DOMContentLoaded', () => {
     new UISystem();
     if (document.querySelector('[data-custom-select]')) {
@@ -9,12 +17,75 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.contact-form')) {
         new ContactSystem();
     }
+    document.querySelectorAll('[data-signal-field]').forEach((el) => new SignalField(el));
     setTimeout(() => {
         if (document.querySelector('#heroTerminal')) new TerminalEffect('#heroTerminal');
         if (document.querySelector('#stars-container')) new BackgroundFX('#stars-container');
     }, 200);
 });
 
+
+class SignalField {
+    constructor(root) {
+        this.root = root;
+        this.layers = root.querySelectorAll('.sf--stage .sf-layer, .sf--stage .sf-core');
+        this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+        this.finePointer = window.matchMedia('(pointer: fine)');
+        this.forced = document.documentElement.classList.contains('force-motion');
+        this.hold = document.documentElement.classList.contains('review-pre');   // review-only: freeze the unresolved frame
+        this.resolveMs = 8000;
+        this.frame = null; this.target = { x: 0, y: 0 }; this.current = { x: 0, y: 0 };
+        this.stages = (root.closest('.hero') || document).querySelectorAll('.hero-stage');
+        if (this.reduced.matches && !this.forced) { root.classList.add('is-resolved'); this.setStage(3); return; }
+        this.bindVisibility();
+        const rect = root.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight && rect.height > 0) { root.classList.add('is-live'); this.arm(); }
+        if (this.finePointer.matches) this.bindPointer();
+    }
+    setStage(n) { this.stages.forEach((s, i) => s.classList.toggle('is-on', n === 0 ? false : i < n)); }
+    arm() {
+        if (this.armed || this.hold) return;
+        this.armed = true;
+        this.root.classList.add('is-armed');
+        // legend follows the one-shot phases: gather 0-30%, understand 30-52%, act 52%+
+        this.setStage(1);
+        setTimeout(() => this.setStage(2), this.resolveMs * 0.3);
+        setTimeout(() => this.setStage(3), this.resolveMs * 0.52);
+        const finish = () => { if (this.root.classList.contains('is-resolved')) return; this.root.classList.remove('is-armed'); this.root.classList.add('is-resolved'); this.setStage(3); };
+        const rail = this.root.querySelector('.sf-rail');
+        if (rail) rail.addEventListener('animationend', finish, { once: true });
+        setTimeout(finish, this.resolveMs + 400);
+    }
+    bindVisibility() {
+        if (!('IntersectionObserver' in window)) { this.root.classList.add('is-live'); this.arm(); return; }
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((e) => { this.root.classList.toggle('is-live', e.isIntersecting); if (e.isIntersecting) this.arm(); });
+        }, { threshold: 0.2 });
+        io.observe(this.root);
+        document.addEventListener('visibilitychange', () => { if (document.hidden) this.root.classList.remove('is-live'); });
+    }
+    bindPointer() {
+        const hero = this.root.closest('.hero') || this.root;
+        hero.addEventListener('pointermove', (e) => {
+            const r = hero.getBoundingClientRect();
+            this.target.x = ((e.clientX - r.left) / r.width - 0.5) * 2;
+            this.target.y = ((e.clientY - r.top) / r.height - 0.5) * 2;
+            if (!this.frame) this.frame = requestAnimationFrame(() => this.tick());
+        }, { passive: true });
+        hero.addEventListener('pointerleave', () => { this.target.x = 0; this.target.y = 0; if (!this.frame) this.frame = requestAnimationFrame(() => this.tick()); });
+    }
+    tick() {
+        this.frame = null;
+        this.current.x += (this.target.x - this.current.x) * 0.12;
+        this.current.y += (this.target.y - this.current.y) * 0.12;
+        const depth = [1, 2, 3, 2, 5, 3];   // ambient least, core most (max 5px)
+        this.layers.forEach((layer, i) => {
+            const d = depth[i % depth.length];
+            layer.style.transform = `translate(${(this.current.x * d).toFixed(2)}px, ${(this.current.y * d).toFixed(2)}px)`;
+        });
+        if (Math.abs(this.target.x - this.current.x) > 0.005 || Math.abs(this.target.y - this.current.y) > 0.005) this.frame = requestAnimationFrame(() => this.tick());
+    }
+}
 class CustomSelectSystem {
     constructor() {
         this.selects = document.querySelectorAll('[data-custom-select]');
@@ -286,8 +357,10 @@ class UISystem {
 
     toggleMenu() {
         if (this.hamburger && this.navMenu) {
-            this.hamburger.classList.toggle('active');
-            this.navMenu.classList.toggle('active');
+            const open = this.hamburger.classList.toggle('active');
+            this.navMenu.classList.toggle('active', open);
+            this.hamburger.setAttribute('aria-expanded', String(open));
+            this.hamburger.setAttribute('aria-label', open ? 'Menüyü kapat' : 'Menüyü aç');
         }
     }
 }

@@ -1,51 +1,201 @@
 /* ================================================================
-[PROJECT] TEKNOIFY v2.0
-[FILE] style.css
-[STRATEGY] Mobile-First, Performance-Oriented, Modular
-================================================================
-*/
-
-
-
-
-/* ================================================================
-[LAYER 0] DESIGN TOKENS (Variables)
-Tek bir noktadan yönetim merkezi
-================================================================
-*/
+   TEKNOIFY MARKETING — DESIGN TOKENS (Phase C foundation)
+   Direction: "Ink & Signal" — deep ink canvas, typographic hierarchy,
+   hairline surfaces, one amber signal accent, cyan reserved for data.
+   Every visual value used by the foundation layer comes from here.
+   Legacy aliases at the bottom keep older stylesheets working.
+   ================================================================ */
 :root {
-  /* 0.1 Brand Colors */
-  --primary: #6366f1;       /* Indigo 500 */
-  --primary-hover: #4f46e5; /* Indigo 600 */
-  --secondary: #0ea5e9;     /* Sky 500 */
-  --accent: #f43f5e;        /* Rose 500 (Hata/Dikkat) */
- 
-  /* 0.2 Surfaces (Dark Mode Core) */
-  --bg-body: #050505;       /* En koyu zemin */
-  --bg-surface: #0f1014;    /* Kartlar/Modallar */
+  /* ---- Color roles: "Deep Field" (default, dark) ----
+     The palette encodes the product transformation:
+       steel  = raw inputs (muted)            → --color-signal
+       ion    = intelligence + interactive UI → --color-accent
+       solar  = action / outcome + primary CTA → --color-action
+     Brand UI stays near-monochrome; the spectral range lives in diagrams. */
+  --color-bg-canvas: #070a10;
+  --color-bg-surface: #0e121a;
+  --color-bg-elevated: #141924;
+  --color-bg-inset: #0a0d14;
+  --color-bg-overlay: rgba(7, 10, 16, 0.8);
+
+  --color-fg-primary: #eef1f6;
+  --color-fg-secondary: #a8b1bf;
+  --color-fg-tertiary: #717c8d;
+  --color-fg-inverse: #0b0e14;
+
+  --color-border-subtle: rgba(238, 241, 246, 0.08);
+  --color-border-strong: rgba(238, 241, 246, 0.16);
+  --color-border-accent: rgba(143, 227, 255, 0.45);
+
+  --color-accent: #8fe3ff;            /* ion: intelligence, links, focus, interactive */
+  --color-accent-hover: #b4edff;
+  --color-accent-active: #6fd3f2;
+  --color-accent-soft: rgba(143, 227, 255, 0.12);
+  --color-accent-fg: #06141a;         /* text on ion */
+
+  --color-action: #f0c65e;            /* gold: resolved action / outcomes (diagrams, rails, resolved states) */
+  --color-action-hover: #f7d27a;
+  --color-action-active: #e0b54a;
+  --color-action-soft: rgba(240, 198, 94, 0.12);
+  --color-action-fg: #1a1403;         /* text on gold */
+
+  --color-cta: #eef1f6;               /* primary CTA: luminous, the brightest object on the stage */
+  --color-cta-hover: #ffffff;
+  --color-cta-active: #d9dee6;
+  --color-cta-fg: #0b0e14;
+
+  --color-signal: #8797ad;            /* steel: raw inputs, technical labels */
+  --color-signal-soft: rgba(135, 151, 173, 0.12);
+
+  --color-positive: #5ee0a0;
+  --color-warning: #ff8a5b;
+  --color-destructive: #ff6b6b;
+
+  --color-focus: #b4edff;
+
+  /* ---- Typography ---- */
+  --font-display: 'Schibsted Grotesk', 'Inter Tight', system-ui, sans-serif;
+  --font-sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', Consolas, monospace;
+
+  /* fluid scale: min at 375px, max at 1440px */
+  --text-display: clamp(2.5rem, 1.6rem + 3.8vw, 4.25rem);   /* 40 → 68 */
+  --text-h1: clamp(2.125rem, 1.45rem + 2.9vw, 3.5rem);      /* 34 → 56 */
+  --text-h2: clamp(1.625rem, 1.25rem + 1.6vw, 2.375rem);    /* 26 → 38 */
+  --text-h3: clamp(1.25rem, 1.1rem + 0.65vw, 1.625rem);     /* 20 → 26 */
+  --text-body-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem); /* 17 → 19 */
+  --text-body: 1rem;                                         /* 16 */
+  --text-small: 0.875rem;                                    /* 14 */
+  --text-caption: 0.75rem;                                   /* 12 */
+  --text-nav: 0.9375rem;                                     /* 15 */
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.2;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.7;
+
+  --tracking-display: -0.025em;
+  --tracking-heading: -0.015em;
+  --tracking-label: 0.08em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---- Spacing (4px base) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* ---- Layout ---- */
+  --container-prose: 42rem;   /* ~65ch body copy */
+  --container-md: 64rem;
+  --container-lg: 72rem;      /* 1152px: default content width */
+  --container-xl: 80rem;      /* 1280px: wide compositions */
+  --gutter: 1.25rem;          /* 20px mobile; raised by breakpoints in layout */
+  --section-y: clamp(4rem, 3rem + 4vw, 7rem);
+  --header-height: 4.25rem;   /* 68px */
+
+  /* ---- Surface language ---- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-round: 999px;
+
+  --shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-overlay: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+
+  /* ---- Motion ---- */
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 320ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.2, 1);
+
+  /* ---- Focus ---- */
+  --focus-ring: 0 0 0 2px var(--color-bg-canvas), 0 0 0 4px var(--color-focus);
+
+  /* ================================================================
+     Legacy aliases (consumed by older stylesheets; do not use in new code)
+     ================================================================ */
+  --primary: var(--color-accent);
+  --primary-hover: var(--color-accent-hover);
+  --secondary: var(--color-signal);
+  --accent: var(--color-destructive);
+  --bg-body: var(--color-bg-canvas);
+  --bg-surface: var(--color-bg-surface);
   --bg-input: rgba(255, 255, 255, 0.03);
-  --border-light: rgba(255, 255, 255, 0.08);
-  --border-focus: rgba(99, 102, 241, 0.5);
+  --border-light: var(--color-border-subtle);
+  --border-focus: var(--color-border-accent);
+  --font-main: var(--font-sans);
+  --text-main: var(--color-fg-primary);
+  --text-muted: var(--color-fg-secondary);
+  --container-width: var(--container-lg);
+  --ease-fast: var(--duration-fast) var(--ease-out);
+  --ease-smooth: var(--duration-slow) var(--ease-out);
+}
 
+/* Paper mode: warm light surfaces for sections that need editorial contrast
+   (legal texts, long-form content, future light compositions). Apply with
+   class="theme-paper" on a section or region. */
+.theme-paper {
+  --color-bg-canvas: #f6f3ec;
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: #ffffff;
+  --color-bg-inset: #eee9df;
+  --color-fg-primary: #12151b;
+  --color-fg-secondary: #4b5462;
+  --color-fg-tertiary: #6f7887;
+  --color-fg-inverse: #f3f5f8;
+  --color-border-subtle: rgba(18, 21, 27, 0.1);
+  --color-border-strong: rgba(18, 21, 27, 0.2);
+  --color-accent: #0b6f8a;
+  --color-accent-hover: #095a70;
+  --color-accent-active: #074a5c;
+  --color-accent-soft: rgba(11, 111, 138, 0.12);
+  --color-accent-fg: #ffffff;
+  --color-action: #b7790f;
+  --color-action-hover: #9d660a;
+  --color-action-active: #85560a;
+  --color-action-soft: rgba(183, 121, 15, 0.12);
+  --color-action-fg: #ffffff;
+  --color-cta: #12151b;
+  --color-cta-hover: #000000;
+  --color-cta-active: #2a2f38;
+  --color-cta-fg: #ffffff;
+  --color-signal: #5f6b7c;
+  --color-focus: #0b6f8a;
+  --focus-ring: 0 0 0 2px var(--color-bg-canvas), 0 0 0 4px var(--color-focus);
+  --bg-body: var(--color-bg-canvas);
+  --bg-surface: var(--color-bg-surface);
+  --text-main: var(--color-fg-primary);
+  --text-muted: var(--color-fg-secondary);
+  --border-light: var(--color-border-subtle);
+  --primary: var(--color-accent);
+  background: var(--color-bg-canvas);
+  color: var(--color-fg-primary);
+  color-scheme: light;
+}
 
-
-
-  /* 0.3 Typography */
-  --font-main: 'Inter Tight', system-ui, sans-serif;
-  --font-mono: 'Fira Code', 'Consolas', monospace;
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
-
-
-
-
-  /* 0.4 Spacing & Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --container-width: 1200px;
- 
-  /* 0.5 Animation Speeds */
-  --ease-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+/* Gutter and header scale with viewport */
+@media (min-width: 30rem) {  /* 480px */
+  :root { --gutter: 1.5rem; }
+}
+@media (min-width: 64rem) {  /* 1024px */
+  :root { --gutter: 2rem; --header-height: 4.5rem; }
+}
+@media (min-width: 90rem) {  /* 1440px */
+  :root { --gutter: 2.5rem; }
 }

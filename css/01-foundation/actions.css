@@ -1,0 +1,102 @@
+/* ================================================================
+   FOUNDATION — ACTIONS (buttons, links)
+   Class names stay compatible with existing markup (.btn, .btn-primary,
+   .btn-secondary, .btn-outline, .btn-sm, .btn-block).
+   ================================================================ */
+.btn {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-fg-primary);
+  --btn-border: var(--color-border-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;               /* 44px touch target */
+  padding: 0 var(--space-5);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.005em;
+  line-height: 1;
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: none;
+  text-shadow: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+.btn i, .btn svg { width: 1em; height: 1em; flex: none; }
+
+.btn-primary {
+  --btn-bg: var(--color-cta);
+  --btn-fg: var(--color-cta-fg);
+  --btn-border: var(--color-cta);
+  box-shadow: 0 0 0 1px rgba(238, 241, 246, 0.08), 0 10px 30px -12px rgba(238, 241, 246, 0.35);
+}
+.btn-primary:hover { --btn-bg: var(--color-cta-hover); --btn-border: var(--color-cta-hover); transform: none; }
+.btn-primary:active { --btn-bg: var(--color-cta-active); }
+.btn-primary:focus-visible { box-shadow: var(--focus-ring); }
+
+.btn-secondary,
+.btn-outline {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-fg-primary);
+  --btn-border: var(--color-border-strong);
+}
+.btn-secondary:hover, .btn-outline:hover { --btn-border: var(--color-fg-tertiary); --btn-bg: rgba(243, 245, 248, 0.04); }
+
+.btn-ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-fg-secondary);
+  --btn-border: transparent;
+}
+.btn-ghost:hover { --btn-fg: var(--color-fg-primary); --btn-bg: rgba(243, 245, 248, 0.05); }
+
+.btn-sm { min-height: 2.5rem; padding: 0 var(--space-4); font-size: var(--text-small); }
+.btn-lg { min-height: 3.25rem; padding: 0 var(--space-6); font-size: var(--text-body); }
+.btn-block { width: 100%; }
+
+/* Text action with arrow affordance */
+.link-action {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: 2.75rem;
+  font-weight: var(--weight-semibold); font-size: var(--text-small);
+  color: var(--color-fg-primary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+.link-action::after { content: "→"; transition: transform var(--duration-fast) var(--ease-out); }
+.link-action:hover { color: var(--color-accent); }
+.link-action:hover::after { transform: translateX(3px); }
+.link-action:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Inline link inside body text */
+.link-inline {
+  color: var(--color-fg-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+.link-inline:hover { text-decoration-color: var(--color-accent); }
+.link-inline:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 2px; }
+
+/* Generic focus policy for anything focusable that has no component style */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+.btn:focus-visible, .link-action:focus-visible, .link-inline:focus-visible { outline: none; }

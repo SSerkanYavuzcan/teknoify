@@ -1,0 +1,54 @@
+/* ================================================================
+   FOUNDATION — LAYOUT
+   One container system, one section rhythm, layout primitives.
+   Breakpoints (rem): 30 (480) · 48 (768) · 64 (1024) · 80 (1280) · 90 (1440)
+   ================================================================ */
+.container,
+.l-container {
+  width: 100%;
+  max-width: var(--container-lg);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.l-container--wide { max-width: var(--container-xl); }
+.l-container--narrow { max-width: var(--container-md); }
+.l-container--prose { max-width: calc(var(--container-prose) + 2 * var(--gutter)); }
+
+/* Page frame: the old frame drew its own gradient and capped width; now it is only a positioning root */
+.page-frame { max-width: none; margin: 0; background-image: none; position: relative; }
+
+/* Section rhythm */
+.l-section { padding-block: var(--section-y); }
+.l-section--tight { padding-block: calc(var(--section-y) * 0.6); }
+.l-section--flush-top { padding-top: 0; }
+.l-section + .l-section { border-top: 1px solid var(--color-border-subtle); }
+
+/* Section header: kicker + heading + lead, left-aligned by default */
+.l-section-head { max-width: var(--container-md); margin-bottom: var(--space-12); }
+.l-section-head > * + * { margin-top: var(--space-4); }
+.l-section-head .t-label { margin-bottom: var(--space-2); }
+.l-section-head--center { margin-inline: auto; text-align: center; }
+.l-section-head--center p { margin-inline: auto; }
+
+/* Stack / cluster / grid primitives */
+.l-stack > * + * { margin-top: var(--space-6); }
+.l-stack--sm > * + * { margin-top: var(--space-3); }
+.l-stack--lg > * + * { margin-top: var(--space-10); }
+.l-cluster { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: center; }
+.l-grid { display: grid; gap: var(--space-6); grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+.l-grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+.l-grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+
+/* Two-column split that stays a real two-column composition until tablet */
+.l-split { display: grid; gap: var(--space-10); align-items: center; }
+@media (min-width: 64rem) {
+  .l-split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-16); }
+  .l-split--even { grid-template-columns: 1fr 1fr; }
+}
+
+/* Header offset for fixed/sticky header */
+.l-header-offset { padding-top: var(--header-height); }
+
+/* Hairline separators */
+.l-rule { border: 0; border-top: 1px solid var(--color-border-subtle); }
+.l-rule--strong { border-top-color: var(--color-border-strong); }
