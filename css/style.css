@@ -27,7 +27,9 @@
 @import url("./01-foundation/actions.css") layer(foundation);
 @import url("./01-foundation/header.css") layer(foundation);
 @import url("./01-foundation/motion.css") layer(foundation);
-@import url("./01-foundation/experience.css?v=home-v2c") layer(foundation);
-@import url("./01-foundation/hero.css?v=home-v2c") layer(foundation);
-@import url("./01-foundation/manifesto.css?v=home-v2c") layer(foundation);
-@import url("./01-foundation/journey.css?v=home-v2c") layer(foundation);
+@import url("./01-foundation/experience.css?v=phase2") layer(foundation);
+@import url("./01-foundation/hero.css?v=phase2") layer(foundation);
+@import url("./01-foundation/manifesto.css?v=phase2") layer(foundation);
+@import url("./01-foundation/journey.css?v=phase2") layer(foundation);
+@import url("./01-foundation/audience.css?v=phase2") layer(foundation);
+@import url("./01-foundation/catalog.css?v=phase2") layer(foundation);

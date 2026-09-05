@@ -1,0 +1,42 @@
+/* ================================================================
+   FOUNDATION — AUDIENCE (Kimin için)
+   Two balanced halves; the hovered / focused / chosen half expands
+   and reveals its real capability list while the other recedes.
+   Below 64rem both lists are open. js/experience/audience.js
+   ================================================================ */
+.audience { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: 14vh var(--gutter) 16vh; }
+.audience__wrap { width: 100%; max-width: var(--container-xl); margin: 0 auto; }
+.audience__head { display: flex; justify-content: space-between; align-items: end; gap: var(--space-8); margin-bottom: var(--space-12); }
+.audience__title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.9rem, 1.1rem + 2.6vw, 3rem); line-height: 1.06; letter-spacing: -0.03em; margin: var(--space-3) 0 0; max-width: 18ch; }
+.audience__hint { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--color-fg-tertiary); white-space: nowrap; padding-bottom: 0.4rem; }
+.audience__split { display: flex; border-top: 1px solid var(--color-border-subtle); border-bottom: 1px solid var(--color-border-subtle); }
+.half { position: relative; flex: 1; min-width: 0; padding: var(--space-12) var(--space-10) var(--space-12) 0; transition: flex 0.7s var(--ease-out), background-color 0.5s var(--ease-out); }
+.half + .half { border-left: 1px solid var(--color-border-subtle); padding-left: var(--space-10); padding-right: 0; }
+.half.is-open { flex: 1.5; background: linear-gradient(180deg, var(--color-accent-soft), transparent 70%); }
+.half.is-recede { flex: 0.85; }
+.half__toggle { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); width: 100%; padding: 0; margin: 0 0 var(--space-3); background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.half__toggle h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.5rem, 1rem + 1.8vw, 2.25rem); letter-spacing: -0.02em; margin: 0; }
+.half__toggle .half__num { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.08em; color: var(--color-accent); }
+.half__lead { color: var(--color-fg-secondary); max-width: 38ch; margin: 0; line-height: var(--leading-relaxed); }
+.half__list { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.7s var(--ease-out); }
+.half__list > ul { overflow: hidden; list-style: none; margin: 0; padding: 0; }
+.half.is-open .half__list { grid-template-rows: 1fr; }
+.half__list li { display: grid; grid-template-columns: minmax(0, 17ch) 1fr; gap: var(--space-4); padding: var(--space-3) 0; border-top: 1px solid var(--color-border-subtle); font-size: var(--text-small); line-height: var(--leading-normal); }
+.half__list li:first-child { margin-top: var(--space-6); }
+.half__list b { font-weight: var(--weight-semibold); color: var(--color-fg-primary); }
+.half__list span { color: var(--color-fg-secondary); }
+.half__list a { color: var(--color-fg-primary); text-decoration: underline; text-decoration-color: var(--color-border-strong); text-underline-offset: 0.2em; }
+.half__list a:hover { text-decoration-color: var(--color-accent); }
+.half__more { margin: var(--space-5) 0 0; font-size: var(--text-small); }
+@media (max-width: 63.99rem) {
+  .audience { min-height: 0; padding: var(--space-16) var(--gutter); }
+  .audience__head { flex-direction: column; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-8); }
+  .audience__hint { display: none; }
+  .audience__split { flex-direction: column; }
+  .half, .half + .half { padding: var(--space-8) 0; border-left: 0; flex: 1 !important; background: none !important; }
+  .half + .half { border-top: 1px solid var(--color-border-subtle); }
+  .half__list { grid-template-rows: 1fr !important; }
+  .half__toggle { cursor: default; }
+}
+@media (hover: none) { .audience__hint { display: none; } }
+@media (prefers-reduced-motion: reduce) { html:not(.force-motion) .half, html:not(.force-motion) .half__list { transition: none; } }
