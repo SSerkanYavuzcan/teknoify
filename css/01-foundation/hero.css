@@ -6,8 +6,6 @@
    ================================================================ */
 .hero-v2 { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: calc(var(--header-height) + clamp(2.5rem, 4vh, 4rem)) var(--gutter) clamp(4rem, 10vh, 7rem); }
 .hero-v2__grid { width: 100%; max-width: var(--container-xl); margin: 0 auto; display: grid; grid-template-columns: 1.08fr 0.92fr; gap: clamp(2rem, 4vw, 4rem); align-items: center; will-change: transform, opacity; }
-.hero-v2__kicker { display: inline-flex; align-items: center; gap: var(--space-3); color: var(--color-fg-tertiary); margin-bottom: var(--space-5); opacity: 0; transition: opacity 0.8s 0.1s; }
-.hero-v2__kicker::before { content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 0 4px var(--color-accent-soft); }
 .hero-v2__title { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.6rem, 1.2rem + 4.6vw, 5rem); line-height: 1.02; letter-spacing: -0.035em; margin: 0; }
 .hero-v2__line { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
 .hero-v2__line > span { display: block; transform: translateY(112%); transition: transform 1.15s var(--ease-out); }
@@ -17,7 +15,7 @@
 @supports not ((background-clip: text) or (-webkit-background-clip: text)) { .hero-v2__line em { background-image: none; -webkit-text-fill-color: currentColor; } }
 .hero-v2__sub { margin: var(--space-6) 0 0; max-width: 44ch; font-size: var(--text-body-lg); line-height: var(--leading-relaxed); color: var(--color-fg-secondary); opacity: 0; transform: translateY(16px); transition: opacity 0.9s 0.55s, transform 0.9s 0.55s var(--ease-out); }
 .hero-v2__actions { margin-top: var(--space-8); display: flex; gap: var(--space-3); flex-wrap: wrap; opacity: 0; transform: translateY(16px); transition: opacity 0.9s 0.7s, transform 0.9s 0.7s var(--ease-out); }
-.is-ready .hero-v2__kicker, .is-ready .hero-v2__sub, .is-ready .hero-v2__actions { opacity: 1; transform: none; }
+.is-ready .hero-v2__sub, .is-ready .hero-v2__actions { opacity: 1; transform: none; }
 .is-ready .hero-v2__line > span { transform: none; }
 .hero-v2__hint { position: absolute; left: var(--gutter); bottom: 34px; display: flex; align-items: center; gap: 14px; font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--color-fg-tertiary); opacity: 0; transition: opacity 1s 1.3s; }
 .is-ready .hero-v2__hint { opacity: 1; }
@@ -56,7 +54,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   html:not(.force-motion) .hero-v2__hint i::after, html:not(.force-motion) .lib__caret, html:not(.force-motion) .lib__pulse { animation: none; }
-  html:not(.force-motion) .hero-v2__line > span, html:not(.force-motion) .hero-v2__sub, html:not(.force-motion) .hero-v2__actions, html:not(.force-motion) .hero-v2__kicker, html:not(.force-motion) .hero-v2__window, html:not(.force-motion) .hero-v2__hint { transition: none; transform: none; opacity: 1; scale: 1; }
+  html:not(.force-motion) .hero-v2__line > span, html:not(.force-motion) .hero-v2__sub, html:not(.force-motion) .hero-v2__actions, html:not(.force-motion) .hero-v2__window, html:not(.force-motion) .hero-v2__hint { transition: none; transform: none; opacity: 1; scale: 1; }
   html:not(.force-motion) .lib__row { opacity: 1; transform: none; transition: none; }
 }
 

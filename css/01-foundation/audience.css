@@ -17,7 +17,7 @@
 .audience[data-open]:not([data-open=""]) .audience__split { align-items: flex-start; }
 
 /* the surface */
-.half { position: relative; flex: 1 1 0; min-width: 0; padding: var(--space-8) var(--space-8) var(--space-7); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-xl); background: linear-gradient(180deg, rgba(27, 33, 46, 0.9), rgba(17, 21, 30, 0.84)); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 30px 60px -40px rgba(0, 0, 0, 0.8); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: flex 0.7s var(--ease-out), border-color 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out), background-color 0.5s var(--ease-out); }
+.half { position: relative; flex: 1 1 0; min-width: 0; padding: var(--space-8) var(--space-10) var(--space-8); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-xl); background: linear-gradient(180deg, rgba(27, 33, 46, 0.9), rgba(17, 21, 30, 0.84)); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 30px 60px -40px rgba(0, 0, 0, 0.8); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: flex 0.7s var(--ease-out), border-color 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out), background-color 0.5s var(--ease-out); }
 .half::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; border-radius: inherit; background: linear-gradient(90deg, transparent, var(--half-line, var(--color-border-strong)), transparent); opacity: 0.8; }
 .half::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(60% 50% at 18% 0%, var(--half-glow, transparent), transparent 70%); opacity: 0; transition: opacity 0.5s var(--ease-out); }
 .half--business { --half-line: rgba(143, 227, 255, 0.55); --half-glow: rgba(143, 227, 255, 0.16); }
@@ -28,14 +28,11 @@
 .half.is-recede { flex-grow: 0.92; }
 
 /* hierarchy */
-.half__toggle { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); width: 100%; padding: 0; margin: 0 0 var(--space-3); background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: var(--radius-sm); }
+.half__toggle { display: block; width: 100%; padding: 0; margin: 0 0 var(--space-4); background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: var(--radius-sm); }
 .half__toggle:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 6px; }
 .half__toggle h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.5rem, 1rem + 1.6vw, 2.1rem); letter-spacing: -0.02em; margin: 0; }
-.half__num { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.1em; color: var(--color-fg-tertiary); padding: 0.2rem 0.5rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); }
-.half--business .half__num { color: var(--color-accent); border-color: var(--color-border-accent); }
-.half--individual .half__num { color: var(--color-action); border-color: rgba(240, 198, 94, 0.4); }
-.half__lead { color: var(--color-fg-secondary); max-width: 40ch; margin: 0; line-height: var(--leading-relaxed); }
-.half__tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0 0; }
+.half__lead { color: var(--color-fg-secondary); max-width: 52ch; margin: 0; line-height: var(--leading-relaxed); }
+.half__tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-5) 0 0; }
 .half__tags span { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-fg-tertiary); padding: 0.25rem 0.55rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.02); }
 
 /* capability rows */
@@ -56,7 +53,7 @@
   .audience__head { flex-direction: column; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-8); }
   .audience__hint { display: none; }
   .audience__split { flex-direction: column; gap: var(--space-4); }
-  .half, .half.is-open, .half.is-recede { flex: 1 1 auto; padding: var(--space-6); }
+  .half, .half.is-open, .half.is-recede { flex: 1 1 auto; padding: var(--space-6) var(--space-6) var(--space-5); }
   .half.is-open { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset; }
   .half::after { opacity: 1; }
   .half__list { grid-template-rows: 1fr !important; }
