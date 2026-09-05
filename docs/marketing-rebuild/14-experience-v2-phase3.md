@@ -36,3 +36,10 @@ Removed from the homepage. The form posted to `https://api.teknoify.com/submitCo
 ## 4. Motion, accessibility, performance
 
 One authored entrance per block (opacity/translate 16px, CTA lines clip-revealed), no loop, no pinning, no new canvas or dependency. Under `prefers-reduced-motion` every state is shown at its end value and the observer is skipped. Headings stay h2 per section with h3 principles; the footer uses labelled `nav` groups with h3 headings; buttons and links are real, focus-visible styles apply. Cost: ~12 KB CSS, ~1 KB JS, one IntersectionObserver over 13 targets; total DOM 885 nodes versus 880 before (the legacy form, its custom select and the toast were removed).
+
+## 5. Pre-merge corrections
+
+- Header: the "Hizmetler" item pointed at `#services`, which no longer exists. It is now "Yetenekler" → `#katalog` (desktop and the inlined mobile menu share the same list); the dropdown of service pages is unchanged. Every header anchor (`#home`, `#katalog`, `#contact`) resolves.
+- Title "Teknoify | Hazır yapay zekâ ajanları, araçlar ve otomasyonlar"; description rewritten around the current positioning; `rel="canonical"` → `https://teknoify.com/` added (the homepage had no canonical or OpenGraph tags; none invented).
+- Contact address: `info@teknoify.com` is the address named in the KVKK aydınlatma metni and gizlilik pages as the contact for data-rights requests, appears on every page and the demo, and has been in the repository since the initial commit. `merhaba@teknoify.com` exists only in the prototype and is not used.
+- Trust scope: Product Discover behaviour (three-line access, batches of 20, chat) is now written as the labelled example; scheduled work (planned scraping, the daily rates bot) is named as such; "agents only work with what you added" was narrowed to source-bound capabilities, with a note that tools on prepared data state their source. Why 04 says chat querying applies to Product Discover.
