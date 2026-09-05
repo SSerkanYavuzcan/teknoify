@@ -5,7 +5,7 @@ import { viewport, scheduler, clamp } from './scroll.js';
 import { createField } from './field.js';
 import { initHero } from './hero.js';
 import { initManifesto } from './manifesto.js';
-import { initJourney } from './journey.js';
+import { initJourney } from './journey.js?v=journey-auto';
 import { initPointer } from './pointer.js';
 import { initAudience } from './audience.js';
 import { initCatalog } from './catalog.js';

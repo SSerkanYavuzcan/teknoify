@@ -1,7 +1,11 @@
 /* The pinned product journey: four steps (Keşfet · Seç · Bağla · Çalıştır) driven by native scroll.
    Each step owns a quarter of the pinned range; the device window changes panel; a scripted cursor
    demonstrates the step (time-based inside a scroll-owned step) and every control also answers real
-   clicks. Content is the Product Discover flow as it exists on the platform, labelled temsilî demo. */
+   clicks. Content is the Product Discover flow as it exists on the platform, labelled temsilî demo.
+   Auto-progression: when a scene reaches its authored completion the page scrolls itself to the next
+   step's checkpoint (native smooth scroll, the same target a tab click uses). It runs only for an
+   uninterrupted viewing on fine-pointer devices with motion, never past Çalıştır, and any manual
+   navigation inside the journey hands control back to the visitor for that visit. */
 import { viewport, scheduler, pinProgress, clamp, easeOut } from './scroll.js';
 
 export function initJourney(section) {
@@ -18,7 +22,37 @@ export function initJourney(section) {
     const btnRun = $('[data-btn-run]'), statusEl = $('[data-status]'), statusText = $('[data-status-text]'), logItems = $$('[data-log] li'), counters = $$('[data-counter]');
     let timers = [], countRaf = 0, lastStep = -1, lastIn = false;
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
-    const clearDemo = () => { timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(countRaf); fcur.classList.remove('is-on'); };
+    // ---- auto-progression state ----
+    // SCENE_DONE[k]: ms after runDemo(k) at which the scene's meaningful state is complete (cursor parked
+    // after the final scripted action). ADVANCE_PAUSE: breathing room before the page moves on.
+    const SCENE_DONE = [4300, 3600, 5300, 4600], ADVANCE_PAUSE = 900, SETTLE = 900, AUTO_SAFETY = 2500;
+    const autoCapable = !reduced && !viewport.touch;
+    let autoEnabled = autoCapable;      // false once the visitor takes control; re-armed when the journey leaves view
+    let autoTimer = 0, autoTarget = -1, isAutoAdvancing = false, autoSafety = 0, sceneStartedAt = 0, movedDuringScene = false;
+    const clearAuto = () => { clearTimeout(autoTimer); autoTimer = 0; };
+    const endAutoScroll = () => { isAutoAdvancing = false; autoTarget = -1; clearTimeout(autoSafety); autoSafety = 0; };
+    const clearDemo = () => { timers.forEach(clearTimeout); timers = []; clearAuto(); cancelAnimationFrame(countRaf); fcur.classList.remove('is-on'); };
+    const stepTop = (i) => section.getBoundingClientRect().top + window.scrollY + (i / 4 + 0.04) * (section.offsetHeight - viewport.H);
+    /** the visitor navigated on their own: drop any pending advance and stay manual for this visit */
+    function takeControl() { autoEnabled = false; clearAuto(); if (isAutoAdvancing) endAutoScroll(); }
+    /** wheel / touch / keys inside a running scene: the visitor is adjusting, so this scene will not auto-advance */
+    function noteUserInput() {
+        if (isAutoAdvancing) { takeControl(); return; }
+        if (lastIn && performance.now() - sceneStartedAt > SETTLE) { movedDuringScene = true; clearAuto(); }
+    }
+    function scheduleAdvance(k) {
+        clearAuto();
+        if (!autoEnabled || k >= 3) return;
+        autoTimer = setTimeout(() => {
+            autoTimer = 0;
+            if (!autoEnabled || document.hidden || !lastIn || lastStep !== k || movedDuringScene) return;
+            autoTarget = Math.round(stepTop(k + 1));
+            isAutoAdvancing = true;
+            window.scrollTo({ top: autoTarget, behavior: 'smooth' });
+            autoSafety = setTimeout(endAutoScroll, AUTO_SAFETY);
+        }, SCENE_DONE[k] + ADVANCE_PAUSE);
+        timers.push(autoTimer);
+    }
     const curTo = (el, dx = 0, dy = 0) => { const s = body.getBoundingClientRect(), r = el.getBoundingClientRect(); fcur.style.transform = `translate(${(r.left - s.left + r.width / 2 + dx).toFixed(1)}px, ${(r.top - s.top + r.height / 2 + dy).toFixed(1)}px)`; };
     const curPark = () => { const s = body.getBoundingClientRect(); fcur.style.transform = `translate(${(s.width * 0.3).toFixed(1)}px, ${(s.height * 0.9).toFixed(1)}px)`; };
     const curClick = (el) => { fcur.classList.add('is-click'); setTimeout(() => fcur.classList.remove('is-click'), 320); if (el) { el.classList.add('is-press'); setTimeout(() => el.classList.remove('is-press'), 180); } };
@@ -48,7 +82,9 @@ export function initJourney(section) {
     }
     function runDemo(k) {
         clearDemo(); resetPanels();
+        sceneStartedAt = performance.now(); movedDuringScene = false;
         if (reduced) { finalState(k); return; }
+        scheduleAdvance(k);
         fcur.style.transition = 'none'; curPark(); void fcur.offsetWidth; fcur.style.transition = '';
         at(350, () => fcur.classList.add('is-on'));
         if (k === 0) { const chip = chips.find((c) => c.dataset.chip === 'urun'); at(500, () => curTo(chip)); at(1350, () => { curClick(chip); setFilter('urun'); }); at(2300, () => curTo(tileMain)); at(2700, () => tileMain.classList.add('is-hover')); at(3200, () => { curClick(tileMain); tileMain.classList.add('is-sel'); }); at(4300, curPark); }
@@ -63,7 +99,15 @@ export function initJourney(section) {
     $$('.node__btn', hub).forEach((b) => b.addEventListener('click', () => connect(b.parentElement.dataset.node)));
     btnRun.addEventListener('click', () => { if (btnRun.classList.contains('is-done')) return; startRun(); logItems.forEach((l, i) => setTimeout(() => l.classList.add('is-on'), 300 + i * 500)); runCounters(2800); });
     // tabs scroll to their step inside the pinned range (native scroll, smooth unless reduced)
-    tabs.forEach((t, i) => t.addEventListener('click', () => { const top = section.getBoundingClientRect().top + window.scrollY + (i / 4 + 0.04) * (section.offsetHeight - viewport.H); window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' }); }));
+    tabs.forEach((t, i) => t.addEventListener('click', () => { takeControl(); window.scrollTo({ top: stepTop(i), behavior: reduced ? 'auto' : 'smooth' }); }));
+    // genuine input: wheel, touch, scrolling keys, any pointer press inside the journey (tabs, demo controls)
+    if (autoCapable) {
+        const SCROLL_KEYS = new Set(['PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' ', 'Spacebar']);
+        window.addEventListener('wheel', noteUserInput, { passive: true });
+        window.addEventListener('touchstart', noteUserInput, { passive: true });
+        window.addEventListener('keydown', (e) => { if (SCROLL_KEYS.has(e.key)) noteUserInput(); }, { passive: true });
+        section.addEventListener('pointerdown', () => { if (lastIn) takeControl(); }, { passive: true });
+    }
     tabs.forEach((t, i) => t.addEventListener('keydown', (e) => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return; e.preventDefault(); const n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); n.click(); }));
 
     scheduler.add(({ changed, H }) => {
@@ -72,7 +116,15 @@ export function initJourney(section) {
         const p = clamp(-r.top / (r.height - H), 0, 0.9999);
         const step = Math.floor(p * 4), within = p * 4 - step;
         const inView = r.top < H * 0.5 && r.bottom > H * 0.5;
+        // the auto scroll may reach its target in the same frame that crosses the step boundary: judge the
+        // step change with the state as it was, then release the guard
+        const autoNow = isAutoAdvancing;
+        if (autoNow && Math.abs(window.scrollY - autoTarget) < 2) endAutoScroll();
         if (step !== lastStep || inView !== lastIn) {
+            // a step change while the journey was already being watched, not caused by the auto scroll, is manual navigation
+            if (step !== lastStep && lastIn && inView && lastStep !== -1 && !autoNow) takeControl();
+            // leaving the journey ends the visit; a later fresh entry may auto-progress again
+            if (!inView && lastIn) { autoEnabled = autoCapable; if (isAutoAdvancing) endAutoScroll(); }
             if (step !== lastStep) { tabs.forEach((t, i) => { t.classList.toggle('is-active', i === step); t.setAttribute('aria-selected', String(i === step)); t.tabIndex = i === step ? 0 : -1; }); panels.forEach((pn, i) => { pn.classList.toggle('is-active', i === step); pn.hidden = i !== step; }); title.textContent = TITLES[step]; }
             lastStep = step; lastIn = inView;
             if (inView) runDemo(step); else clearDemo();
