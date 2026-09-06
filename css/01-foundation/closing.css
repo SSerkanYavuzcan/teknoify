@@ -54,7 +54,6 @@
 .trust__item dt small { display: block; font-family: var(--font-mono); font-size: var(--text-caption); font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-fg-tertiary); margin-bottom: var(--space-3); }
 .trust__item dd { margin: var(--space-3) 0 0; color: var(--color-fg-secondary); line-height: var(--leading-relaxed); max-width: 46ch; }
 .trust__item dd b { font-weight: var(--weight-medium, 500); color: var(--color-fg-primary); }
-.trust__note { margin: var(--space-6) 0 0; padding-left: var(--space-4); border-left: 2px solid var(--color-action); color: var(--color-fg-secondary); font-size: var(--text-small); line-height: var(--leading-relaxed); max-width: 64ch; }
 
 /* ================================================================
    3. FINAL CTA — the conclusion
