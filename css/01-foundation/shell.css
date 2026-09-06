@@ -1,0 +1,16 @@
+/* ================================================================
+   FOUNDATION — SECONDARY-PAGE SHELL (html.shell-v2)
+   The homepage's environmental field and header, mounted behind pages
+   that keep their legacy content. The fixed field canvas (.field) and
+   its veil come from experience.css; this file only makes sure the
+   page paints nothing opaque over them and stacks content above.
+   Behaviour: js/experience/shell.js. Stamped by scripts/shell/sync-shell.mjs.
+   ================================================================ */
+html.shell-v2, html.shell-v2 body { background: var(--color-bg-canvas); background-image: none; }
+html.shell-v2 main, html.shell-v2 .footer, html.shell-v2 .site-footer { position: relative; z-index: 2; }
+html.shell-v2 .page-frame { background-image: none; }
+/* legacy painted backgrounds and the old star canvas: the field replaces them */
+html.shell-v2 #stars-container, html.shell-v2 .home-background-surface, html.shell-v2 .hero-surface, html.shell-v2 [class$="-background-surface"] { display: none; }
+html.shell-v2 .home-page-shell::before, html.shell-v2 .home-page-shell::after { display: none; }
+/* the legacy footer painted its own gradient; keep it as a translucent surface over the field */
+html.shell-v2 .footer { background: linear-gradient(180deg, rgba(10, 13, 20, 0.86), rgba(7, 10, 16, 0.97)); }

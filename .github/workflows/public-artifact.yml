@@ -24,6 +24,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Check secondary-page shell is in sync
+        run: node scripts/shell/sync-shell.mjs --check
+
       - name: Build public artifact
         run: node scripts/public-artifact/build.mjs
 

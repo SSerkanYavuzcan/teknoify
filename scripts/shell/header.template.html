@@ -1,0 +1,39 @@
+<header id="header" class="header header--stage">
+    <nav class="navbar" aria-label="Ana navigasyon">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="{{home}}" aria-label="Teknoify ana sayfa">
+                    <img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
+                </a>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="{{home}}" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item dropdown">
+                    <a href="{{home}}#katalog" class="nav-link{{active_yetenekler}}">Yetenekler <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{pages}}investment-analytics.html"><i class="fas fa-chart-pie" aria-hidden="true"></i> Yatırım Analizleri</a></li>
+                        <li><a href="{{pages}}rpa.html"><i class="fas fa-robot" aria-hidden="true"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="{{pages}}webscraping.html"><i class="fas fa-spider" aria-hidden="true"></i> Web Scraping</a></li>
+                        <li><a href="{{pages}}ai-assistant.html"><i class="fas fa-brain" aria-hidden="true"></i> AI Asistan</a></li>
+                        <li><a href="{{pages}}api.html"><i class="fas fa-plug" aria-hidden="true"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="{{pages}}financial-indicators.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="{{pages}}training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim & Danışmanlık</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="https://demo.teknoify.com/" class="nav-link"{{active_demo}}>Demo</a></li>
+                <li class="nav-item"><a href="{{home}}#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-actions">
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-ghost" rel="noopener">Giriş yap</a>
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-primary" rel="noopener">Başla</a>
+                </li>
+            </ul>
+
+            <button class="hamburger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="navMenu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+</header>

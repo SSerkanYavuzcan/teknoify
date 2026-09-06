@@ -34,3 +34,4 @@
 @import url("./01-foundation/audience.css?v=polish2") layer(foundation);
 @import url("./01-foundation/catalog.css?v=polish3") layer(foundation);
 @import url("./01-foundation/closing.css?v=copyfix1") layer(foundation);
+@import url("./01-foundation/shell.css?v=shell1") layer(foundation);

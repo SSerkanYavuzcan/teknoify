@@ -1,0 +1,31 @@
+# 15 — Secondary-page shell: canonical header and environmental field on capability pages and Demo Lab
+
+Date: 2026-09-07. Branch: `feat/unified-secondary-page-shell` (from `main` at `bb49a34`). Status: **local, awaiting manual review; not pushed, no PR.**
+
+Every public page reachable from the homepage's Yetenekler dropdown and footer, and the isolated Demo Lab, now carry the homepage's shell: the canonical fixed header and the animated purple environmental field. Page content is untouched; this phase establishes the shell only.
+
+## 1. Inventory
+
+Reachable from the homepage header dropdown (7) and the footer Yetenekler group (same 7 plus platform/demo links), all in `pages/`: `rpa.html`, `webscraping.html`, `api.html`, `ai-assistant.html`, `financial-indicators.html`, `training-consulting.html`, `investment-analytics.html`. Reachable from the footer legal group (4): `kvkk.html`, `gizlilik.html`, `kullanim-sartlari.html`, `hizmet-sozlesmesi.html`. Separate deploy: `demo/index.html` (demo.teknoify.com, published from `demo/` with no build step, see `demo/netlify.toml`). Not linked from the homepage and left untouched: `pages/subscription.html` (status INVESTIGATE in doc 02; reached only from the investment page and the demo's "Abonelik Al" button).
+
+## 2. Legacy shell problems found
+
+- Every secondary page carried its own copy of the pre-rebuild header (label "Hizmetler" → a removed `#services` anchor, no Demo item, an icon "Giriş Yap" button, a `div` hamburger) hard-set to the solid `scrolled` state, plus an inline script forcing that state.
+- Pages painted their own backgrounds (`body` gradients from base.css, `.page-frame` radial, per-page `*-background-surface` layers and the legacy `#stars-container` effect); none had the field.
+- The demo's own header rules (`.demo-page .nav-menu` sheet at ≤768px, its own hamburger, a 1.75rem logo) diverged from the canonical header, and `demo/index.html` linked `/css/style.css`, which resolves on teknoify.com/demo/ but is a 404 on demo.teknoify.com, so the demo origin had been running without the shared design system.
+
+## 3. Field sharing
+
+One renderer: `js/experience/field.js` with the shared scheduler in `scroll.js`, unchanged. A small mount module, `js/experience/shell.js`, creates the field on the page's single `<canvas class="field" data-field data-field-mode="hero">`, sets the restrained `hero` state (calm motion, canonical `#5945D2` cells and lines, wave cap 0.52), wires the pointer lens and click ripples, and starts the scheduler. DPR cap, adaptive density, self-throttling, hidden-document pause and the reduced-motion single render all come from the renderer. Secondary pages keep the native cursor (the custom cursor belongs to the homepage experience, not the header). `css/01-foundation/shell.css` (scoped to `html.shell-v2`) makes body, page frame and the legacy surfaces transparent, hides the old background layers, stacks `main`/footer above the fixed canvas and veil, and turns the legacy footer gradient translucent.
+
+## 4. Demo sharing
+
+The demo cannot import from the marketing root, so `scripts/shell/sync-shell.mjs` generates its copies from the canonical sources: `demo/styles/shell.css` is `css/style.css` with every layered `@import` inlined into `@layer` blocks (the whole design system, so demo.teknoify.com and teknoify.com/demo/ now render identically), and `demo/scripts/shell/{scroll,field,shell}.js` are verbatim copies with a generated-file banner. `demo/index.html` links those local files instead of `/css/style.css`. The demo's old header rules were removed from `demo/styles/base.css` and `responsive.css`; `demo/scripts/app.js` gained the header's scrolled toggle (the marketing pages get it from `js/script.js`) and the review-only `?motion=force` flag. Demo isolation is unchanged: it still publishes `demo/` alone, and nothing outside `demo/` is referenced.
+
+## 5. Header implementation
+
+Semantic markup stays in each page; the source of truth is `scripts/shell/header.template.html` (the homepage header verbatim, with destination placeholders) and the sync script stamps it between `<!-- shell:header -->` markers, and the field layers between `<!-- shell:field -->` markers. `npm run sync:shell` writes, `npm run check:shell` fails on drift; the check runs first in `npm run check:public` and as a CI step before the artifact build. The homepage `index.html` is not stamped (it is the design source). Destinations: Ana Sayfa `/` (demo: `https://teknoify.com/`), Yetenekler `/#katalog` (demo: `https://teknoify.com/#katalog`) with the current seven-page dropdown, Demo `https://demo.teknoify.com/`, İletişim `/#contact` (demo: `https://teknoify.com/#contact`), Giriş yap and Başla `https://platform.teknoify.com/` (the homepage's verified targets). Active state: `is-active` on Yetenekler for capability pages, `aria-current="page"` on Demo for the demo, nothing on legal pages. The header uses the homepage's `header--stage` variant (transparent at the top, solid backdrop once scrolled); the legacy inline script that forced the solid state was removed. Stacking is the homepage's: canvas 0, veil 1, content 2, header 1000, mobile menu 2000, custom cursor 3000 where present.
+
+## 6. Verification
+
+Real-time Edge runs on every stamped page at 1440×900 and 390×844, plus 1280, 1024, 768 and 375 on a capability page and the demo: one canvas covering the viewport, `pointer-events: none`, purple cells and lines with zero cyan or grey, ink share 0.76–0.90, header fixed at z-index 1000 with all six items and the seven-link dropdown, logo 30px, no failed asset requests, no console errors, no horizontal overflow, first content link still hit-testable; mobile menu opens with all thirteen destinations unclipped. Reduced motion: the field renders once and stays still. Performance: secondary pages go from no animation to the single field loop (about 60 rAF per second, one canvas), DOM count slightly lower (the star container is gone), script payload +14 KB for the field modules. `npm run check:public` passes; `scripts/`, `docs/` and `design-reference/` stay out of the artifact.
