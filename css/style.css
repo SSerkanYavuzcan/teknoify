@@ -27,10 +27,10 @@
 @import url("./01-foundation/actions.css") layer(foundation);
 @import url("./01-foundation/header.css") layer(foundation);
 @import url("./01-foundation/motion.css") layer(foundation);
-@import url("./01-foundation/experience.css?v=polish6") layer(foundation);
+@import url("./01-foundation/experience.css?v=copyfix1") layer(foundation);
 @import url("./01-foundation/hero.css?v=polish6") layer(foundation);
 @import url("./01-foundation/manifesto.css?v=phase2") layer(foundation);
-@import url("./01-foundation/journey.css?v=phase2") layer(foundation);
+@import url("./01-foundation/journey.css?v=copyfix1") layer(foundation);
 @import url("./01-foundation/audience.css?v=polish2") layer(foundation);
 @import url("./01-foundation/catalog.css?v=polish3") layer(foundation);
-@import url("./01-foundation/closing.css?v=phase3") layer(foundation);
+@import url("./01-foundation/closing.css?v=copyfix1") layer(foundation);
