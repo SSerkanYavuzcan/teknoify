@@ -19,7 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <link rel="stylesheet" href="../css/style.css?v=agent1">
-    <link rel="stylesheet" href="../css/ai-agent.css?v=agent2">
+    <link rel="stylesheet" href="../css/tools/tools-page.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/ai-agent.css?v=tools1">
     <!-- secondary-page responsive layer: loaded after the page stylesheet on purpose (unlayered, must win) -->
     <link rel="stylesheet" href="../css/01-foundation/shell-responsive.css?v=mobile5">
 </head>
@@ -71,37 +72,37 @@
 </header>
 <!-- /shell:header -->
 
-<main id="main" class="page-frame agent-page">
+<main id="main" class="page-frame tools-page">
 
     <!-- 1. HERO -->
-    <section class="agent-hero" data-agent-hero data-field-mode="hero" aria-labelledby="agent-hero-title">
-        <div class="agent-hero__grid">
-            <div class="agent-hero__copy">
-                <p class="t-label agent-label">AI Agent</p>
-                <h1 class="agent-hero__title" id="agent-hero-title"><span class="agent-hero__line"><span>İşi tarif edin.</span></span><span class="agent-hero__line"><span><em>Ajan çalışmaya başlasın.</em></span></span></h1>
-                <p class="agent-hero__sub">Teknoify AI Agent'ları araştırma, veri toplama, analiz ve tekrar eden dijital görevleri tek bir akışta yürütmek için araçları ve otomasyonları bir araya getirir.</p>
-                <div class="agent-hero__actions">
+    <section class="tp-hero" data-tp-hero data-field-mode="hero" aria-labelledby="agent-hero-title">
+        <div class="tp-hero__grid">
+            <div class="tp-hero__copy">
+                <p class="t-label tp-kicker">AI Agent</p>
+                <h1 class="tp-hero__title" id="agent-hero-title"><span class="tp-hero__line"><span>İşi tarif edin.</span></span><span class="tp-hero__line"><span><em>Ajan çalışmaya başlasın.</em></span></span></h1>
+                <p class="tp-hero__sub">Teknoify AI Agent'ları araştırma, veri toplama, analiz ve tekrar eden dijital görevleri tek bir akışta yürütmek için araçları ve otomasyonları bir araya getirir.</p>
+                <div class="tp-hero__actions">
                     <a class="btn btn-primary btn-lg" href="https://platform.teknoify.com/" rel="noopener">AI Agent'ları keşfet</a>
                     <a class="btn btn-secondary btn-lg" href="#nasil-calisir">Nasıl çalışır?</a>
                 </div>
             </div>
 
-            <div class="agent-hero__visual">
-                <div class="win rv" data-vignette data-stage="0">
+            <div class="tp-hero__visual">
+                <div class="win tp-run" data-vignette data-stage="0">
                     <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">ajan · çalışma akışı</span></div>
-                    <ol class="rv__steps" aria-label="Örnek ajan çalışması: istek, plan, kullanılan araçlar, sonuç">
-                        <li class="rv__step" data-rv>
-                            <span class="rv__node" aria-hidden="true"></span>
-                            <div class="rv__body">
-                                <span class="rv__k">İstek</span>
-                                <p class="rv__q"><span class="sr-only">Rakiplerimin yeni ürünlerini araştır ve özetle.</span><span aria-hidden="true" data-rv-typed data-text="Rakiplerimin yeni ürünlerini araştır ve özetle."></span><i class="rv__caret" aria-hidden="true"></i></p>
+                    <ol class="tp-run__steps" aria-label="Örnek ajan çalışması: istek, plan, kullanılan araçlar, sonuç">
+                        <li class="tp-run__step" data-rv>
+                            <span class="tp-run__node" aria-hidden="true"></span>
+                            <div class="tp-run__body">
+                                <span class="tp-run__k">İstek</span>
+                                <p class="tp-run__q"><span class="sr-only">Rakiplerimin yeni ürünlerini araştır ve özetle.</span><span aria-hidden="true" data-rv-typed data-text="Rakiplerimin yeni ürünlerini araştır ve özetle."></span><i class="tp-run__caret" aria-hidden="true"></i></p>
                             </div>
                         </li>
-                        <li class="rv__step" data-rv>
-                            <span class="rv__node" aria-hidden="true"></span>
-                            <div class="rv__body">
-                                <span class="rv__k">Plan</span>
-                                <ul class="rv__plan" data-rv-plan>
+                        <li class="tp-run__step" data-rv>
+                            <span class="tp-run__node" aria-hidden="true"></span>
+                            <div class="tp-run__body">
+                                <span class="tp-run__k">Plan</span>
+                                <ul class="tp-run__plan" data-rv-plan>
                                     <li>Kaynakları belirle</li>
                                     <li>Veriyi topla</li>
                                     <li>Ürünleri sınıflandır</li>
@@ -109,22 +110,22 @@
                                 </ul>
                             </div>
                         </li>
-                        <li class="rv__step" data-rv>
-                            <span class="rv__node" aria-hidden="true"></span>
-                            <div class="rv__body">
-                                <span class="rv__k">Kullanılan araçlar</span>
-                                <ul class="rv__tools" data-rv-tools>
+                        <li class="tp-run__step" data-rv>
+                            <span class="tp-run__node" aria-hidden="true"></span>
+                            <div class="tp-run__body">
+                                <span class="tp-run__k">Kullanılan araçlar</span>
+                                <ul class="tp-chips tp-chips--pending" data-rv-tools>
                                     <li>Web Scraping</li>
                                     <li>Product Discover</li>
                                     <li>Analiz</li>
                                 </ul>
                             </div>
                         </li>
-                        <li class="rv__step" data-rv>
-                            <span class="rv__node" aria-hidden="true"></span>
-                            <div class="rv__body">
-                                <span class="rv__k">Sonuç</span>
-                                <p class="rv__out" data-rv-out><b>Rapor hazır</b></p>
+                        <li class="tp-run__step" data-rv>
+                            <span class="tp-run__node" aria-hidden="true"></span>
+                            <div class="tp-run__body">
+                                <span class="tp-run__k">Sonuç</span>
+                                <p class="tp-run__out" data-rv-out><b>Rapor hazır</b></p>
                             </div>
                         </li>
                     </ol>
@@ -134,46 +135,46 @@
     </section>
 
     <!-- 2. WHAT IS AN AI AGENT -->
-    <section class="agent-section agent-what" id="nasil-calisir" data-field-mode="calm" aria-labelledby="what-title">
-        <div class="container agent-what__grid">
-            <div class="agent-what__head">
-                <p class="t-label agent-label" data-reveal>AI Agent nedir?</p>
-                <h2 class="agent-h2" id="what-title" data-reveal>Bir komut değil, bir çalışma akışı.</h2>
-                <p class="agent-lead" data-reveal data-reveal-delay="1">Klasik bir yapay zekâ aracı tek bir soruya yanıt verir. Bir AI Agent ise hedefi anlar, işi adımlara böler, ihtiyaç duyduğu araçları kullanır ve ortaya çıkan sonucu bir sonraki adıma taşır.</p>
+    <section class="tp-section agent-what" id="nasil-calisir" data-field-mode="calm" aria-labelledby="what-title">
+        <div class="container tp-split">
+            <div class="tp-split__head">
+                <p class="t-label tp-kicker" data-reveal>AI Agent nedir?</p>
+                <h2 class="tp-h2" id="what-title" data-reveal>Bir komut değil, bir çalışma akışı.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Klasik bir yapay zekâ aracı tek bir soruya yanıt verir. Bir AI Agent ise hedefi anlar, işi adımlara böler, ihtiyaç duyduğu araçları kullanır ve ortaya çıkan sonucu bir sonraki adıma taşır.</p>
             </div>
-            <ol class="flow" data-reveal data-reveal-delay="2">
-                <li class="flow__step"><div class="flow__body"><span class="flow__n">01</span><h3>Hedefi alır</h3><small class="flow__m">hedef</small></div></li>
-                <li class="flow__step"><div class="flow__body"><span class="flow__n">02</span><h3>Plan oluşturur</h3><small class="flow__m">adımlar</small></div></li>
-                <li class="flow__step"><div class="flow__body"><span class="flow__n">03</span><h3>Araçları çalıştırır</h3><small class="flow__m">araç çağrıları</small></div></li>
-                <li class="flow__step"><div class="flow__body"><span class="flow__n">04</span><h3>Sonucu teslim eder</h3><small class="flow__m">çıktı</small></div></li>
+            <ol class="tp-rail" data-reveal data-reveal-delay="2">
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">01</span><h3>Hedefi alır</h3><small class="tp-rail__m">hedef</small></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">02</span><h3>Plan oluşturur</h3><small class="tp-rail__m">adımlar</small></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">03</span><h3>Araçları çalıştırır</h3><small class="tp-rail__m">araç çağrıları</small></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">04</span><h3>Sonucu teslim eder</h3><small class="tp-rail__m">çıktı</small></div></li>
             </ol>
         </div>
     </section>
 
     <!-- 3. WHAT CAN IT DO -->
-    <section class="agent-section agent-can" data-field-mode="calm" aria-labelledby="can-title">
+    <section class="tp-section agent-can" data-field-mode="calm" aria-labelledby="can-title">
         <div class="container">
-            <h2 class="agent-h2 agent-h2--wide" id="can-title" data-reveal>Tek bir ajan, birden fazla işi birbirine bağlayabilir.</h2>
-            <dl class="cap">
-                <div class="cap__item" data-reveal><dt><small>01</small>Araştırma</dt><dd>Web'deki kaynakları tarar, gerekli bilgiyi toplar ve düzenler.</dd></div>
-                <div class="cap__item" data-reveal data-reveal-delay="1"><dt><small>02</small>Veri</dt><dd>Dağınık veriyi işlenebilir bir yapıya dönüştürür.</dd></div>
-                <div class="cap__item" data-reveal data-reveal-delay="2"><dt><small>03</small>Analiz</dt><dd>Toplanan bilgideki örüntüleri ve önemli değişimleri ortaya çıkarır.</dd></div>
-                <div class="cap__item" data-reveal data-reveal-delay="3"><dt><small>04</small>Aksiyon</dt><dd>Tanımlanan iş akışında bir sonraki adımı çalıştırır.</dd></div>
+            <h2 class="tp-h2 tp-h2--wide" id="can-title" data-reveal>Tek bir ajan, birden fazla işi birbirine bağlayabilir.</h2>
+            <dl class="tp-cells">
+                <div class="tp-cells__item" data-reveal><dt><small>01</small>Araştırma</dt><dd>Web'deki kaynakları tarar, gerekli bilgiyi toplar ve düzenler.</dd></div>
+                <div class="tp-cells__item" data-reveal data-reveal-delay="1"><dt><small>02</small>Veri</dt><dd>Dağınık veriyi işlenebilir bir yapıya dönüştürür.</dd></div>
+                <div class="tp-cells__item" data-reveal data-reveal-delay="2"><dt><small>03</small>Analiz</dt><dd>Toplanan bilgideki örüntüleri ve önemli değişimleri ortaya çıkarır.</dd></div>
+                <div class="tp-cells__item" data-reveal data-reveal-delay="3"><dt><small>04</small>Aksiyon</dt><dd>Tanımlanan iş akışında bir sonraki adımı çalıştırır.</dd></div>
             </dl>
         </div>
     </section>
 
     <!-- 4. AGENT + TOOL + AUTOMATION -->
-    <section class="agent-section agent-arch" data-field-mode="order" aria-labelledby="arch-title">
-        <div class="container agent-arch__grid">
-            <div class="agent-arch__copy">
-                <h2 class="agent-h2" id="arch-title" data-reveal>Ajan düşünür. Araç uzmanlaşır. Otomasyon tekrarlar.</h2>
-                <dl class="arch-def">
+    <section class="tp-section agent-arch" data-field-mode="order" aria-labelledby="arch-title">
+        <div class="container tp-split tp-split--center">
+            <div class="tp-split__head">
+                <h2 class="tp-h2" id="arch-title" data-reveal>Ajan düşünür. Araç uzmanlaşır. Otomasyon tekrarlar.</h2>
+                <dl class="tp-def">
                     <div data-reveal><dt>AI Agent</dt><dd>Hedefi ve çalışma sırasını yönetir.</dd></div>
                     <div data-reveal data-reveal-delay="1"><dt>Araç</dt><dd>Belirli bir işi gerçekleştirir: veri toplama, analiz, araştırma veya benzeri uzman görevler.</dd></div>
                     <div data-reveal data-reveal-delay="2"><dt>Otomasyon</dt><dd>Tekrar eden adımları belirlenen akış veya programa göre çalıştırır.</dd></div>
                 </dl>
-                <p class="agent-arch__close" data-reveal data-reveal-delay="3">Teknoify bunları tek bir çalışma alanında bir araya getirir.</p>
+                <p class="tp-def__close" data-reveal data-reveal-delay="3">Teknoify bunları tek bir çalışma alanında bir araya getirir.</p>
             </div>
             <figure class="arch" data-reveal data-reveal-delay="1">
                 <span class="arch__frame-label">Çalışma alanı</span>
@@ -191,63 +192,63 @@
     </section>
 
     <!-- 5. EXAMPLE RUN -->
-    <section class="agent-section agent-run" data-field-mode="lanes" aria-labelledby="run-title">
-        <div class="container agent-run__grid">
-            <div class="agent-run__head">
-                <p class="t-label agent-label" data-reveal>Örnek çalışma</p>
-                <h2 class="agent-h2" id="run-title" data-reveal>Bir rakip araştırması nasıl ilerler?</h2>
+    <section class="tp-section agent-run" data-field-mode="lanes" aria-labelledby="run-title">
+        <div class="container tp-split tp-split--tight tp-split--wide">
+            <div class="tp-split__sticky">
+                <p class="t-label tp-kicker" data-reveal>Örnek çalışma</p>
+                <h2 class="tp-h2" id="run-title" data-reveal>Bir rakip araştırması nasıl ilerler?</h2>
             </div>
-            <div class="win log" data-reveal>
+            <div class="win tp-log" data-reveal>
                 <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">örnek çalışma · perakende</span></div>
-                <ol class="log__rows">
-                    <li class="log__row log__row--user"><span class="log__who">Kullanıcı</span><p>Perakende sektöründeki rakiplerimin ürün ve kampanyalarını analiz et.</p></li>
-                    <li class="log__row log__row--agent"><span class="log__who">Ajan</span><p>Araştırma planı oluşturuldu.</p></li>
-                    <li class="log__row log__row--tools"><span class="log__who">Araçlar</span><ul class="log__tools"><li>Product Discover</li><li>Web Scraping</li><li>Marketing Intelligence</li></ul></li>
-                    <li class="log__row log__row--proc"><span class="log__who">İşleme</span><div><p>Ürünler, fiyatlar ve kampanya içerikleri işleniyor.</p><i class="log__bar" aria-hidden="true"></i></div></li>
-                    <li class="log__row log__row--out"><span class="log__who">Çıktı</span><p>Bulgular çalışma alanına hazırlandı.</p></li>
+                <ol class="tp-log__rows">
+                    <li class="tp-log__row tp-log__row--user"><span class="tp-log__who">Kullanıcı</span><p>Perakende sektöründeki rakiplerimin ürün ve kampanyalarını analiz et.</p></li>
+                    <li class="tp-log__row tp-log__row--agent"><span class="tp-log__who">Ajan</span><p>Araştırma planı oluşturuldu.</p></li>
+                    <li class="tp-log__row tp-log__row--tools"><span class="tp-log__who">Araçlar</span><ul class="tp-chips"><li>Product Discover</li><li>Web Scraping</li><li>Marketing Intelligence</li></ul></li>
+                    <li class="tp-log__row tp-log__row--proc"><span class="tp-log__who">İşleme</span><div><p>Ürünler, fiyatlar ve kampanya içerikleri işleniyor.</p><i class="tp-log__bar" aria-hidden="true"></i></div></li>
+                    <li class="tp-log__row tp-log__row--out"><span class="tp-log__who">Çıktı</span><p>Bulgular çalışma alanına hazırlandı.</p></li>
                 </ol>
             </div>
         </div>
     </section>
 
     <!-- 6. CONTROL -->
-    <section class="agent-section agent-control" data-field-mode="calm" aria-labelledby="control-title">
-        <div class="container agent-control__grid">
+    <section class="tp-section agent-control" data-field-mode="calm" aria-labelledby="control-title">
+        <div class="container tp-split tp-split--tight">
             <div>
-                <h2 class="agent-h2" id="control-title" data-reveal>Ne yaptığını görebilirsiniz.</h2>
-                <p class="agent-lead" data-reveal data-reveal-delay="1">Ajanın kullandığı araçları, ilerlediği adımları ve ürettiği çıktıları aynı çalışma akışı içinde takip edin.</p>
+                <h2 class="tp-h2" id="control-title" data-reveal>Ne yaptığını görebilirsiniz.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Ajanın kullandığı araçları, ilerlediği adımları ve ürettiği çıktıları aynı çalışma akışı içinde takip edin.</p>
             </div>
-            <ol class="principles">
-                <li data-reveal><span class="principles__n">01</span><div><h3>Görünür adımlar</h3><p>İşin hangi aşamada olduğunu takip edin.</p></div></li>
-                <li data-reveal data-reveal-delay="1"><span class="principles__n">02</span><div><h3>Araç bazlı çalışma</h3><p>Ajan ihtiyaç duyduğu Teknoify araçlarını kullanır.</p></div></li>
-                <li data-reveal data-reveal-delay="2"><span class="principles__n">03</span><div><h3>Sonuç odaklı çıktı</h3><p>Ara sonuçlar yerine çalışılabilir bir çıktı üretmeye odaklanır.</p></div></li>
+            <ol class="tp-list">
+                <li data-reveal><span class="tp-list__n">01</span><div><h3>Görünür adımlar</h3><p>İşin hangi aşamada olduğunu takip edin.</p></div></li>
+                <li data-reveal data-reveal-delay="1"><span class="tp-list__n">02</span><div><h3>Araç bazlı çalışma</h3><p>Ajan ihtiyaç duyduğu Teknoify araçlarını kullanır.</p></div></li>
+                <li data-reveal data-reveal-delay="2"><span class="tp-list__n">03</span><div><h3>Sonuç odaklı çıktı</h3><p>Ara sonuçlar yerine çalışılabilir bir çıktı üretmeye odaklanır.</p></div></li>
             </ol>
         </div>
     </section>
 
     <!-- 7. WHO IS IT FOR -->
-    <section class="agent-section agent-who" data-field-mode="calm" aria-labelledby="who-title">
+    <section class="tp-section agent-who" data-field-mode="calm" aria-labelledby="who-title">
         <div class="container">
-            <h2 class="agent-h2 agent-h2--wide" id="who-title" data-reveal>Tek kişilik ekipten kurumsal operasyona.</h2>
-            <div class="who">
-                <article class="who__half" data-reveal>
+            <h2 class="tp-h2 tp-h2--wide" id="who-title" data-reveal>Tek kişilik ekipten kurumsal operasyona.</h2>
+            <div class="tp-panels">
+                <article class="tp-panel" data-reveal>
                     <h3>Bireysel kullanıcılar</h3>
                     <p>Araştırma, analiz ve tekrar eden dijital işleri tek başına yürütmek zorunda kalmadan tamamlayın.</p>
-                    <ul class="who__tags" aria-label="Örnekler"><li>araştırma</li><li>fiyat / pazar takibi</li><li>bilgi toplama</li><li>kişisel analiz</li></ul>
+                    <ul class="tp-tags" aria-label="Örnekler"><li>araştırma</li><li>fiyat / pazar takibi</li><li>bilgi toplama</li><li>kişisel analiz</li></ul>
                 </article>
-                <article class="who__half" data-reveal data-reveal-delay="1">
+                <article class="tp-panel" data-reveal data-reveal-delay="1">
                     <h3>İşletmeler</h3>
                     <p>Ekiplerin sürekli tekrar ettiği veri ve araştırma işlerini yeniden kullanılabilir ajan akışlarına dönüştürün.</p>
-                    <ul class="who__tags" aria-label="Örnekler"><li>rakip analizi</li><li>katalog araştırması</li><li>web veri toplama</li><li>operasyonel raporlama</li></ul>
+                    <ul class="tp-tags" aria-label="Örnekler"><li>rakip analizi</li><li>katalog araştırması</li><li>web veri toplama</li><li>operasyonel raporlama</li></ul>
                 </article>
             </div>
         </div>
     </section>
 
     <!-- 8. FINAL CTA -->
-    <section class="cta agent-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="agent-cta-title">
+    <section class="cta tp-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="agent-cta-title">
         <div class="cta__wrap">
-            <p class="t-label agent-label">Sıradaki adım</p>
+            <p class="t-label tp-kicker">Sıradaki adım</p>
             <h2 class="cta__title" id="agent-cta-title"><span class="cta__line"><span>İlk işi</span></span><span class="cta__line cta__line--accent"><span>ajana verin.</span></span></h2>
             <p class="cta__lead">Teknoify platformuna girin, ihtiyacınıza uygun ajanı seçin ve çalışma alanınıza ekleyin.</p>
             <div class="cta__actions">
@@ -259,6 +260,7 @@
 
 </main>
 
+<!-- shell:footer -->
 <footer class="site-footer" id="footer">
     <div class="site-footer__wrap">
         <div class="site-footer__brand">
@@ -310,8 +312,9 @@
         <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
     </div>
 </footer>
+<!-- /shell:footer -->
 
 <script src="../js/script.js?v=agent1" defer></script>
-<script type="module" src="../js/experience/agent.js?v=agent2"></script>
+<script type="module" src="../js/experience/tools/ai-agent.js?v=tools1"></script>
 </body>
 </html>

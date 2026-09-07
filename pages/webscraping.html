@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/svg+xml" href="../images/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
-    <title>Web Scraping & Veri Madenciliği | Teknoify</title>
-   
+    <title>Web Scraping | Teknoify</title>
+    <meta name="description" content="Teknoify Web Scraping: belirlediğiniz sitelerdeki sayfaları tarar, ihtiyacınız olan alanları çıkarır ve veriyi Excel, CSV, JSON ya da API ile kullanılabilir bir veri setine dönüştürür. Planlı taramayla düzenli toplama ve değişiklik izleme.">
+    <link rel="canonical" href="https://teknoify.com/pages/webscraping">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#070a10">
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-   
-    <link rel="stylesheet" href="../css/style.css?v=mobile4">
-    <link rel="stylesheet" href="../css/webscraping.css?v=webscraping-quantum-grid-1">
-    <!-- secondary-page responsive layer: loaded after the page stylesheet on purpose (unlayered, must win) -->
+
+    <link rel="stylesheet" href="../css/style.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/tools-page.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/webscraping.css?v=tools1">
+    <!-- secondary-page responsive layer: loaded after the page stylesheets on purpose (unlayered, must win) -->
     <link rel="stylesheet" href="../css/01-foundation/shell-responsive.css?v=mobile5">
 </head>
 <body>
@@ -24,6 +30,7 @@
 <div class="field-veil" aria-hidden="true"></div>
 <!-- /shell:field -->
 
+<a class="skip-link" href="#main">İçeriğe geç</a>
 <!-- shell:header -->
 <header id="header" class="header header--stage">
     <nav class="navbar" aria-label="Ana navigasyon">
@@ -65,238 +72,229 @@
 </header>
 <!-- /shell:header -->
 
-<main class="page-frame home-page-shell webscraping-page-shell">
+<main id="main" class="page-frame tools-page">
 
-    <section class="ws-hero">
-        <div class="container hero-grid">
-            <div class="hero-left">
-                <div class="hero-badge"><i class="fas fa-globe"></i> Big Data & Scraping</div>
-                <h1>İnternetin Veri Gücünü Keşfedin</h1>
-                <p class="subtitle main-headline">
-                    Milyonlarca web sayfasındaki dağınık verileri sizin için topluyor, temizliyor ve analiz edilebilir formatlara dönüştürüyoruz.
-                </p>
-                
-                <div class="hero-ctas">
-                    <a href="../index.html#contact" class="btn btn-primary btn-lg">
-                        Veri Projesi Başlat
-                    </a>
-                    <a href="#ws-cases" class="btn btn-secondary btn-lg">Kullanım Alanları</a>
+    <!-- 1. HERO -->
+    <section class="tp-hero" data-tp-hero data-field-mode="hero" aria-labelledby="hero-title">
+        <div class="tp-hero__grid">
+            <div class="tp-hero__copy">
+                <p class="t-label tp-kicker">Web Scraping</p>
+                <h1 class="tp-hero__title" id="hero-title"><span class="tp-hero__line"><span>Web'deki veriyi</span></span><span class="tp-hero__line"><span><em>yapılandırılmış veri setine</em></span></span><span class="tp-hero__line"><span>dönüştürün.</span></span></h1>
+                <p class="tp-hero__sub">Belirlediğiniz sitelerdeki sayfaları tarar, ihtiyacınız olan alanları çıkarır ve veriyi Excel, CSV, JSON ya da API ile kullanılabilir hâle getirir.</p>
+                <div class="tp-hero__actions">
+                    <a class="btn btn-primary btn-lg" href="https://platform.teknoify.com/" rel="noopener">Platforma git</a>
+                    <a class="btn btn-secondary btn-lg" href="#nasil-calisir">Nasıl çalışır?</a>
                 </div>
             </div>
 
-            <div class="hero-right">
-                <div class="scraping-anim-box">
-                    <div class="target-website">
-                        <div class="site-header">
-                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        </div>
-                        <div class="site-content">
-                            <div class="line w-70"></div>
-                            <div class="line w-50"></div>
-                            <div class="line w-90"></div>
-                            <div class="data-block db-1"></div>
-                            <div class="data-block db-2"></div>
-                        </div>
-                    </div>
-
-                    <div class="data-stream-path">
-                        <div class="packet p-1"><i class="fas fa-code"></i></div>
-                        <div class="packet p-2"><i class="fas fa-image"></i></div>
-                        <div class="packet p-3"><i class="fas fa-tag"></i></div>
-                    </div>
-
-                    <div class="spider-bot">
-                        <div class="spider-body">
-                            <i class="fas fa-spider"></i>
-                            <div class="scan-beam"></div>
-                        </div>
-                    </div>
-
-                    <div class="database-storage">
-                        <i class="fas fa-database"></i>
-                        <div class="db-status-light"></div>
-                    </div>
+            <div class="tp-hero__visual">
+                <div class="win tp-run" data-vignette data-stage="0">
+                    <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">web scraping · çıkarım</span></div>
+                    <ol class="tp-run__steps" aria-label="Örnek çıkarım: kaynak, keşif, alanlar, veri seti">
+                        <li class="tp-run__step" data-rv>
+                            <span class="tp-run__node" aria-hidden="true"></span>
+                            <div class="tp-run__body">
+                                <span class="tp-run__k">Kaynak</span>
+                                <p class="tp-run__q"><span class="sr-only">ornek-magaza.com/urunler</span><span aria-hidden="true" data-rv-typed data-text="ornek-magaza.com/urunler"></span><i class="tp-run__caret" aria-hidden="true"></i></p>
+                            </div>
+                        </li>
+                        <li class="tp-run__step" data-rv>
+                            <span class="tp-run__node" aria-hidden="true"></span>
+                            <div class="tp-run__body">
+                                <span class="tp-run__k">Keşif</span>
+                                <ul class="tp-run__plan" data-rv-plan>
+                                    <li>Liste sayfası bulundu</li>
+                                    <li>Ürün kartı yapısı çözümlendi</li>
+                                    <li>Sayfalama tespit edildi</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="tp-run__step" data-rv>
+                            <span class="tp-run__node" aria-hidden="true"></span>
+                            <div class="tp-run__body">
+                                <span class="tp-run__k">Alanlar</span>
+                                <ul class="tp-chips tp-chips--pending" data-rv-tools>
+                                    <li>Başlık</li>
+                                    <li>Fiyat</li>
+                                    <li>Stok</li>
+                                    <li>Kategori</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="tp-run__step" data-rv>
+                            <span class="tp-run__node" aria-hidden="true"></span>
+                            <div class="tp-run__body">
+                                <span class="tp-run__k">Veri seti</span>
+                                <div class="ws-set" aria-hidden="true">
+                                    <table>
+                                        <thead><tr><th>Başlık</th><th>Fiyat</th><th>Stok</th><th>Kategori</th></tr></thead>
+                                        <tbody data-rv-rows>
+                                            <tr><td><i class="sk" style="width:82%"></i></td><td><i class="sk sk--ac" style="width:54%"></i></td><td><i class="sk sk--ok" style="width:40%"></i></td><td><i class="sk" style="width:64%"></i></td></tr>
+                                            <tr><td><i class="sk" style="width:66%"></i></td><td><i class="sk sk--ac" style="width:48%"></i></td><td><i class="sk sk--ok" style="width:40%"></i></td><td><i class="sk" style="width:52%"></i></td></tr>
+                                            <tr><td><i class="sk" style="width:74%"></i></td><td><i class="sk sk--ac" style="width:58%"></i></td><td><i class="sk" style="width:40%"></i></td><td><i class="sk" style="width:70%"></i></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p class="tp-run__out" data-rv-out><b>Veri seti hazır</b><span class="tp-run__meta">CSV · JSON · API</span></p>
+                            </div>
+                        </li>
+                    </ol>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="ws-content">
+    <!-- 2. HOW IT WORKS -->
+    <section class="tp-section" id="nasil-calisir" data-field-mode="calm" aria-labelledby="how-title">
+        <div class="container tp-split">
+            <div class="tp-split__head">
+                <p class="t-label tp-kicker" data-reveal>Nasıl çalışır?</p>
+                <h2 class="tp-h2" id="how-title" data-reveal>Siteden veri setine, dört adımda.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Kaynağı siz belirlersiniz. Sistem sayfa yapılarını çözümler, ihtiyacınız olan alanları çıkarır ve sonucu analiz edilebilir bir yapıya dönüştürür.</p>
+            </div>
+            <ol class="tp-rail" data-reveal data-reveal-delay="2">
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">01</span><h3>Kaynak</h3><p>Toplanacak siteyi ve sayfaları belirleyin.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">02</span><h3>Keşif</h3><p>Liste, detay ve sayfalama yapıları çözümlenir.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">03</span><h3>Çıkarım</h3><p>Başlık, fiyat, stok gibi alanlar seçilir ve toplanır.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">04</span><h3>Çıktı</h3><p>Veri Excel, CSV, JSON veya API ile teslim edilir.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 3. WHAT CAN BE COLLECTED -->
+    <section class="tp-section" id="neler" data-field-mode="lanes" aria-labelledby="what-title">
         <div class="container">
-            
-            <div class="intro-text-center">
-                <h2>Veriye Dayalı Kararlar Alın</h2>
-                <p>Web Scraping, rekabet analizi, fiyat takibi ve pazar araştırması için en güçlü silahtır. Manuel olarak haftalar sürecek veri toplama işlemlerini dakikalara indiriyoruz. Excel, CSV, JSON veya doğrudan API entegrasyonu ile veriyi size sunuyoruz.</p>
+            <p class="t-label tp-kicker" data-reveal>Neler toplanabilir?</p>
+            <h2 class="tp-h2 tp-h2--wide" id="what-title" data-reveal>Rakip fiyatından ilan verisine.</h2>
+            <div class="tp-cells tp-cells--3">
+                <article class="tp-cells__item" data-reveal><h3><small>01</small>E-ticaret fiyat ve stok</h3><p>Rakiplerinizin fiyatlarını, stok durumlarını ve kampanyalarını takip edin.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="1"><h3><small>02</small>Emlak ilanları</h3><p>İlan listelerini ve ilan detaylarını yapılandırılmış veriye dönüştürün.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="2"><h3><small>03</small>Yorum ve değerlendirmeler</h3><p>Ürün ve hizmet yorumlarını analiz için bir araya getirin.</p></article>
+                <article class="tp-cells__item" data-reveal><h3><small>04</small>İş ilanları</h3><p>Açık pozisyonları ve ilan içeriklerini düzenli olarak toplayın.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="1"><h3><small>05</small>Haber ve içerik takibi</h3><p>Belirlediğiniz kaynaklardaki yeni içerikleri izleyin.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="2"><h3><small>06</small>Lokasyon verileri</h3><p>Harita ve rehber kaynaklarındaki işletme bilgilerini derleyin.</p></article>
             </div>
+        </div>
+    </section>
 
-            <h3 class="section-heading">Web Scraping Avantajları</h3>
-            <div class="benefit-cards-grid">
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-chart-line"></i></div>
-                    <h4>Rakip Analizi</h4>
-                    <p>Rakiplerinizin fiyatlarını, stok durumlarını ve kampanyalarını anlık olarak takip edin.</p>
-                </div>
-
-                <div class="benefit-card" id="card-data-count">
-                    <div class="benefit-icon"><i class="fas fa-database"></i></div>
-                    <h4><span id="counter-data">0</span>+ Veri Noktası</h4>
-                    <p>Günlük milyonlarca veri satırını hatasız bir şekilde işleyip raporluyoruz.</p>
-                </div>
-
-                <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-hourglass-half"></i></div>
-                    <h4>Zaman Tasarrufu</h4>
-                    <p>Manuel kopyala-yapıştır devri bitti. Otomasyon ile ekibiniz analize odaklansın.</p>
-                </div>
-
-                 <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-network-wired"></i></div>
-                    <h4>Esnek Entegrasyon</h4>
-                    <p>Toplanan verileri doğrudan CRM, ERP sistemlerinize veya veritabanınıza aktaralım.</p>
-                </div>
+    <!-- 4. OUTPUT -->
+    <section class="tp-section ws-preview" id="cikti" data-field-mode="order" aria-labelledby="out-title">
+        <div class="container tp-split tp-split--tight tp-split--wide">
+            <div class="tp-split__sticky">
+                <p class="t-label tp-kicker" data-reveal>Çıktı</p>
+                <h2 class="tp-h2" id="out-title" data-reveal>Analiz edilebilir, sisteme aktarılabilir veri.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Toplanan veri düzenli satır ve sütunlara oturur. Elle temizlik yerine doğrudan analize ya da çalıştığınız sisteme geçersiniz.</p>
+                <dl class="tp-def" data-reveal data-reveal-delay="2">
+                    <div><dt>Formatlar</dt><dd>Excel, CSV, JSON veya doğrudan API.</dd></div>
+                    <div><dt>Aktarım</dt><dd>CRM, ERP sisteminize ya da veritabanınıza.</dd></div>
+                    <div><dt>Planlı tarama</dt><dd>Aynı kaynaklar düzenli olarak yeniden toplanır; değişiklikler izlenir.</dd></div>
+                </dl>
             </div>
-
-            <div id="ws-cases" class="use-cases-wrapper">
-                <h3 class="section-heading">Hangi Verileri Toplayabiliriz?</h3>
-                <div class="use-cases-grid">
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-tags"></i></div>
-                        <span>E-Ticaret Fiyatları</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-home"></i></div>
-                        <span>Emlak İlanları</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-comment-dots"></i></div>
-                        <span>Sosyal Medya Yorumları</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-briefcase"></i></div>
-                        <span>LinkedIn & İş İlanları</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-newspaper"></i></div>
-                        <span>Haber ve İçerik Takibi</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-map-marked-alt"></i></div>
-                        <span>Google Maps Lokasyonları</span>
-                    </div>
+            <div class="win tp-data" data-reveal aria-label="Temsilî veri seti önizlemesi">
+                <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">veri seti · önizleme</span></div>
+                <div class="tp-data__scroll">
+                    <table aria-hidden="true">
+                        <thead><tr><th>Başlık</th><th>Fiyat</th><th>Stok</th><th>Kategori</th><th>Kaynak</th><th>Güncelleme</th></tr></thead>
+                        <tbody>
+                            <tr><td><i class="sk" style="width:9rem"></i></td><td><i class="sk sk--ac" style="width:3.5rem"></i></td><td><i class="sk" style="width:2.5rem"></i></td><td><i class="sk" style="width:5rem"></i></td><td><i class="sk" style="width:6rem"></i></td><td><i class="sk" style="width:4rem"></i></td></tr>
+                            <tr><td><i class="sk" style="width:7rem"></i></td><td><i class="sk sk--ac" style="width:3rem"></i></td><td><i class="sk" style="width:2.5rem"></i></td><td><i class="sk" style="width:4.5rem"></i></td><td><i class="sk" style="width:6rem"></i></td><td><i class="sk" style="width:4rem"></i></td></tr>
+                            <tr><td><i class="sk" style="width:10rem"></i></td><td><i class="sk sk--ac" style="width:3.5rem"></i></td><td><i class="sk" style="width:2.5rem"></i></td><td><i class="sk" style="width:5.5rem"></i></td><td><i class="sk" style="width:6rem"></i></td><td><i class="sk" style="width:4rem"></i></td></tr>
+                            <tr><td><i class="sk" style="width:8rem"></i></td><td><i class="sk sk--ac" style="width:3rem"></i></td><td><i class="sk" style="width:2.5rem"></i></td><td><i class="sk" style="width:4rem"></i></td><td><i class="sk" style="width:6rem"></i></td><td><i class="sk" style="width:4rem"></i></td></tr>
+                            <tr><td><i class="sk" style="width:6.5rem"></i></td><td><i class="sk sk--ac" style="width:3.5rem"></i></td><td><i class="sk" style="width:2.5rem"></i></td><td><i class="sk" style="width:5rem"></i></td><td><i class="sk" style="width:6rem"></i></td><td><i class="sk" style="width:4rem"></i></td></tr>
+                        </tbody>
+                    </table>
                 </div>
+                <div class="tp-data__meta"><span>kayıtlar · yapılandırıldı <span class="tp-data__hint">· yana kaydırın</span></span><span>Excel · CSV · JSON · API</span></div>
             </div>
+        </div>
+    </section>
 
-            <div class="bottom-cta">
-                <a href="../index.html#contact" class="btn btn-primary btn-block">
-                    Hemen Teklif Alın
-                </a>
+    <!-- 5. CONTROL AND OUTCOMES -->
+    <section class="tp-section" id="kontrol" data-field-mode="calm" aria-labelledby="control-title">
+        <div class="container tp-split tp-split--tight">
+            <div>
+                <p class="t-label tp-kicker" data-reveal>Kontrol</p>
+                <h2 class="tp-h2" id="control-title" data-reveal>Kaynakları siz belirlersiniz.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Hangi sitelerin, hangi sayfaların ve hangi alanların toplanacağı sizin tanımınızla belirlenir; sonuçlar çalışma alanınızda birikir.</p>
             </div>
+            <ol class="tp-list">
+                <li data-reveal><span class="tp-list__n">01</span><div><h3>Rakip analizi</h3><p>Fiyat, stok ve kampanya hareketlerini elle takip etmeden görün.</p></div></li>
+                <li data-reveal data-reveal-delay="1"><span class="tp-list__n">02</span><div><h3>Zaman tasarrufu</h3><p>Kopyala-yapıştır ile toplanan veriyi otomasyon toplar; ekibiniz analize odaklanır.</p></div></li>
+                <li data-reveal data-reveal-delay="2"><span class="tp-list__n">03</span><div><h3>Esnek entegrasyon</h3><p>Veri, çalıştığınız sistemlere doğrudan aktarılır.</p></div></li>
+            </ol>
+        </div>
+    </section>
 
+    <!-- 6. FINAL CTA -->
+    <section class="cta tp-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="cta-title">
+        <div class="cta__wrap">
+            <p class="t-label tp-kicker">Sıradaki adım</p>
+            <h2 class="cta__title" id="cta-title"><span class="cta__line"><span>Veriyi toplamaya</span></span><span class="cta__line cta__line--accent"><span>başlayın.</span></span></h2>
+            <p class="cta__lead">Platformda Web Scraping aracını seçin, kaynaklarınızı ekleyin ve ilk veri setinizi oluşturun. Proje bazlı ihtiyaçlar için bize yazın.</p>
+            <div class="cta__actions">
+                <a class="btn btn-primary btn-lg" href="https://platform.teknoify.com/" rel="noopener">Platforma git</a>
+                <a class="btn btn-secondary btn-lg" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info%40teknoify.com" target="_blank" rel="noopener noreferrer">Bize yazın</a>
+            </div>
         </div>
     </section>
 
 </main>
 
-<footer class="footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="logo">
-                    <a aria-label="Teknoify ana sayfa" href="../index.html#home" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
-                        <img class="logo-lockup" src="../images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
-                    </a>
-                </div>
-                <p class="footer-desc">
-                    Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
-                </p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-col">
-                <h4>Yasal</h4>
-                <ul>
-                    <li><a href="kvkk.html">KVKK Aydınlatma Metni</a></li>
-                    <li><a href="gizlilik.html">Gizlilik Sözleşmesi</a></li>
-                    <li><a href="kullanim-sartlari.html">Kullanım Şartları</a></li>
-                    <li><a href="hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>Bize Ulaşın</h4>
-                <ul class="contact-list">
-                    <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
-                    <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
-                </ul>
-            </div>
+<!-- shell:footer -->
+<footer class="site-footer" id="footer">
+    <div class="site-footer__wrap">
+        <div class="site-footer__brand">
+            <a href="/" aria-label="Teknoify ana sayfa"><img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async"></a>
+            <p>Hazır yapay zekâ ajanları, araçlar ve otomasyonlar. İşletmeler ve bireyler için.</p>
         </div>
-
-        <div class="footer-bottom">
-            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
-        </div>
+        <nav class="site-footer__group" aria-labelledby="footer-araclar">
+            <h3 id="footer-araclar">Araçlar</h3>
+            <ul>
+                <li><a href="/pages/ai-agent.html">AI Agent</a></li>
+                <li><a href="/pages/api.html">API &amp; Entegrasyon</a></li>
+                <li><a href="/pages/rpa.html">Robotik Süreç Otomasyonu</a></li>
+                <li><a href="/pages/financial-indicators.html">Finansal İndikatör &amp; Botlar</a></li>
+                <li><a href="/pages/webscraping.html" aria-current="page">Web Scraping</a></li>
+                <li><a href="/pages/training-consulting.html">Eğitim &amp; Danışmanlık</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-platform">
+            <h3 id="footer-platform">Platform</h3>
+            <ul>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Platforma git</a></li>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Ajan Kütüphanesi</a></li>
+                <li><a href="https://demo.teknoify.com/">Demo Lab</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-sayfa">
+            <h3 id="footer-sayfa">Ana sayfa</h3>
+            <ul>
+                <li><a href="/#nasil-calisir">Nasıl çalışır</a></li>
+                <li><a href="/#kimin-icin">Kimin için</a></li>
+                <li><a href="/#katalog">Katalog</a></li>
+                <li><a href="/#guven">Güven ve kontrol</a></li>
+                <li><a href="/#contact">İletişim</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-yasal">
+            <h3 id="footer-yasal">Şirket ve yasal</h3>
+            <ul>
+                <li><a href="mailto:info@teknoify.com">info@teknoify.com</a></li>
+                <li>İstanbul, Türkiye</li>
+                <li><a href="/pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
+                <li><a href="/pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                <li><a href="/pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
+                <li><a href="/pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="site-footer__bottom">
+        <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
     </div>
 </footer>
+<!-- /shell:footer -->
 
-
-
-<script src="../js/script.js?v=webscraping-quantum-grid-1" defer></script>
-<script type="module" src="../js/experience/shell.js?v=shell1"></script>
-
-<script>
-   
-    let counterStarted = false;
-
-    // Sayaç Fonksiyonu
-    function animateCounter(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        if(!obj) return;
-        let startTime = null;
-        
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            
-            const easeProgress = 1 - Math.pow(1 - progress, 3);
-            
-            const currentVal = Math.floor(easeProgress * (end - start) + start);
-            
-            obj.textContent = currentVal.toLocaleString('tr-TR');
-            
-            if (progress < 1) window.requestAnimationFrame(step);
-        }
-        window.requestAnimationFrame(step);
-    }
-   
-    // Scroll Observer
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.5 
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-
-                if (id === 'card-data-count' && !counterStarted) {
-                    animateCounter('counter-data', 0, 10000, 2500);
-                    counterStarted = true;
-                }
-            }
-        });
-    }, observerOptions);
-
-    const cardData = document.getElementById('card-data-count');
-    if (cardData) observer.observe(cardData);
-
-</script>
+<script src="../js/script.js?v=tools1" defer></script>
+<script type="module" src="../js/experience/tools/webscraping.js?v=tools1"></script>
 </body>
 </html>
-
-

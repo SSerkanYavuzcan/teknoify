@@ -1,0 +1,37 @@
+/* ================================================================
+   FİNANSAL İNDİKATÖR & BOTLAR — page-specific visuals on top of
+   css/tools/tools-page.css: the hero monitoring vignette (a
+   representative indicator line, a threshold rule, a four-stage
+   pipeline that resolves into a notification). Decorative only:
+   no axes, no symbols, no numbers.
+   ================================================================ */
+.fi-chart { position: relative; margin: 16px 20px 0; height: 132px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.02); overflow: hidden; }
+.fi-chart svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fi-chart .fi-grid { stroke: rgba(238, 241, 246, 0.06); stroke-width: 1; }
+.fi-chart .fi-rule { stroke: var(--tp-lavender); stroke-width: 1; stroke-dasharray: 4 5; opacity: 0; transition: opacity 0.5s; }
+.fi-chart .fi-line { fill: none; stroke: var(--tp-purple); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 600; stroke-dashoffset: 600; transition: stroke-dashoffset 1.6s var(--ease-out); }
+.fi-chart .fi-ma { fill: none; stroke: var(--tp-lilac); stroke-width: 1.25; opacity: 0; stroke-dasharray: 600; stroke-dashoffset: 600; transition: stroke-dashoffset 1.6s var(--ease-out), opacity 0.4s; }
+.fi-chart .fi-mark { fill: var(--color-positive); opacity: 0; transform-origin: center; transition: opacity 0.4s; }
+.fi-chart .fi-mark-ring { fill: none; stroke: var(--color-positive); stroke-width: 1; opacity: 0; transition: opacity 0.4s; }
+.fi-chart.s-data .fi-line { stroke-dashoffset: 0; }
+.fi-chart.s-ind .fi-ma { opacity: 0.9; stroke-dashoffset: 0; }
+.fi-chart.s-rule .fi-rule { opacity: 0.9; }
+.fi-chart.s-signal .fi-mark { opacity: 1; }
+.fi-chart.s-signal .fi-mark-ring { opacity: 0.6; }
+.fi-chart__tag { position: absolute; right: 10px; top: 8px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-fg-tertiary); }
+.fi-chart__rule-label { position: absolute; left: 10px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em; color: var(--tp-lavender); opacity: 0; transition: opacity 0.5s; top: 30px; }
+.fi-chart.s-rule .fi-chart__rule-label { opacity: 1; }
+.fi-pipe { list-style: none; margin: 12px 20px 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.fi-pipe li { position: relative; padding: 9px 10px 10px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.02); opacity: 0.5; transition: opacity 0.4s, border-color 0.4s, background 0.4s; }
+.fi-pipe li.is-on { opacity: 1; border-color: var(--tp-purple-line); background: var(--tp-purple-soft); }
+.fi-pipe b { display: block; font-size: 13px; font-weight: 600; color: var(--color-fg-primary); }
+.fi-pipe small { display: block; margin-top: 3px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--color-fg-tertiary); }
+.fi-out { margin: 12px 20px 18px; }
+@media (max-width: 30rem) {
+  .fi-chart { margin-inline: 16px; height: 118px; }
+  .fi-pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-inline: 16px; }
+  .fi-out { margin-inline: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) .fi-chart *, html:not(.force-motion) .fi-pipe li { transition: none; }
+}

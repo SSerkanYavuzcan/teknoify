@@ -1,0 +1,24 @@
+/* ================================================================
+   ROBOTİK SÜREÇ OTOMASYONU — page-specific visuals on top of
+   css/tools/tools-page.css: the hero workflow vignette (four steps
+   executing in order, with a run record beneath).
+   ================================================================ */
+.rpa-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 16px 20px 0; }
+.rpa-step { position: relative; padding: 10px 10px 13px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.02); opacity: 0.5; overflow: hidden; transition: opacity 0.4s, border-color 0.4s, background 0.4s; }
+.rpa-step__n { display: block; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; color: var(--tp-lavender); }
+.rpa-step b { display: block; margin-top: 3px; font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--color-fg-primary); }
+.rpa-step::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--tp-purple); transform: scaleX(0); transform-origin: left; transition: transform 0.7s var(--ease-out); }
+.rpa-step.is-active { opacity: 1; border-color: var(--tp-purple-line); background: var(--tp-purple-soft); }
+.rpa-step.is-active::after { transform: scaleX(0.5); }
+.rpa-step.is-done { opacity: 1; }
+.rpa-step.is-done::after { transform: scaleX(1); }
+.rpa-log { margin: 14px 20px 6px; padding-top: 12px; border-top: 1px solid var(--color-border-subtle); }
+.rpa-log li { font-size: 13.5px; }
+.rpa-out { margin: 10px 20px 18px; }
+@media (max-width: 30rem) {
+  .rpa-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 14px 16px 0; }
+  .rpa-log, .rpa-out { margin-inline: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) .rpa-step, html:not(.force-motion) .rpa-step::after { transition: none; }
+}
