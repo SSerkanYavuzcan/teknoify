@@ -1,3 +1,5 @@
+// Review-only: ?motion=force previews the field motion under an OS reduced-motion setting (as on the marketing pages).
+if (new URLSearchParams(window.location.search).get('motion') === 'force') document.documentElement.classList.add('force-motion');
 (function () {
     function bindSmoothScroll() {
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
@@ -19,6 +21,9 @@
     }
 
     function bindMobileMenu() {
+        // canonical header: solid backdrop once the page scrolls (same rule as the marketing pages)
+        const header = document.getElementById('header');
+        if (header) { const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 50); onScroll(); window.addEventListener('scroll', onScroll, { passive: true }); }
         const hamburger = document.querySelector('.hamburger');
         const navMenu = document.querySelector('#navMenu');
         if (!hamburger || !navMenu) {

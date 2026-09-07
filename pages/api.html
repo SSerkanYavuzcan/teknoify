@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="shell-v2">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,57 +13,58 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
    
-    <link rel="stylesheet" href="../css/style.css?v=api-quantum-grid-1">
+    <link rel="stylesheet" href="../css/style.css?v=shell1">
     <link rel="stylesheet" href="../css/api.css?v=api-quantum-grid-1">
 </head>
 <body>
+<!-- shell:field -->
+<canvas class="field" data-field data-field-mode="hero" aria-hidden="true"></canvas>
+<div class="field-veil" aria-hidden="true"></div>
+<!-- /shell:field -->
 
-<header id="header" class="header scrolled">
-    <nav class="navbar">
+<!-- shell:header -->
+<header id="header" class="header header--stage">
+    <nav class="navbar" aria-label="Ana navigasyon">
         <div class="nav-container">
             <div class="logo">
-                <a href="../index.html#home" aria-label="Teknoify ana sayfa">
-                    <img class="logo-lockup" src="../images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
+                <a href="/" aria-label="Teknoify ana sayfa">
+                    <img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
                 </a>
             </div>
 
-            <ul class="nav-menu">
-                <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="/" class="nav-link">Ana Sayfa</a></li>
                 <li class="nav-item dropdown">
-                    <a href="../index.html#services" class="nav-link">Hizmetler <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i></a>
+                    <a href="/#katalog" class="nav-link is-active">Yetenekler <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="investment-analytics.html"><i class="fas fa-chart-pie"></i> Yatırım Analizleri</a></li>
-                        <li><a href="rpa.html"><i class="fas fa-robot"></i> Robotik Süreç Otomasyonu</a></li>
-                        <li><a href="webscraping.html"><i class="fas fa-spider"></i> Web Scraping</a></li>
-                        <li><a href="ai-assistant.html"><i class="fas fa-brain"></i> AI Asistan</a></li>
-                        <li><a href="api.html"><i class="fas fa-plug"></i> API Entegrasyon Hizmetleri</a></li>
-                        <li><a href="financial-indicators.html"><i class="fas fa-chart-line"></i> Finansal İndikatör & Botlar</a></li>
-                        <li><a href="training-consulting.html"><i class="fas fa-chalkboard-teacher"></i> Eğitim & Danışmanlık</a></li>
+                        <li><a href="/pages/investment-analytics.html"><i class="fas fa-chart-pie" aria-hidden="true"></i> Yatırım Analizleri</a></li>
+                        <li><a href="/pages/rpa.html"><i class="fas fa-robot" aria-hidden="true"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="/pages/webscraping.html"><i class="fas fa-spider" aria-hidden="true"></i> Web Scraping</a></li>
+                        <li><a href="/pages/ai-assistant.html"><i class="fas fa-brain" aria-hidden="true"></i> AI Asistan</a></li>
+                        <li><a href="/pages/api.html"><i class="fas fa-plug" aria-hidden="true"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="/pages/financial-indicators.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="/pages/training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim & Danışmanlık</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
-                <li class="nav-item nav-login-btn">
-                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-primary" rel="noopener">
-                        <i class="fas fa-user"></i> Giriş Yap
-                    </a>
+                <li class="nav-item"><a href="https://demo.teknoify.com/" class="nav-link">Demo</a></li>
+                <li class="nav-item"><a href="/#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-actions">
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-ghost" rel="noopener">Giriş yap</a>
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-primary" rel="noopener">Başla</a>
                 </li>
             </ul>
-            
-            <div class="hamburger">
+
+            <button class="hamburger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="navMenu">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
-            </div>
+            </button>
         </div>
     </nav>
 </header>
+<!-- /shell:header -->
 
 <main class="page-frame home-page-shell api-page-shell">
-    <div
-        id="stars-container"
-        class="hero-surface home-background-surface api-background-surface"
-        aria-hidden="true"
-    ></div>
 
     <section class="api-hero">
         <div class="container hero-grid">
@@ -242,9 +243,9 @@
 
 
 <script src="../js/script.js?v=api-quantum-grid-1" defer></script>
+<script type="module" src="../js/experience/shell.js?v=shell1"></script>
 
 <script>
-    document.getElementById('header').classList.add('scrolled');
    
     let counterStarted = false;
 

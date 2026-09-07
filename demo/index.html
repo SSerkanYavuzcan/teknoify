@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="tr">
+<html lang="tr" class="shell-v2">
   <head>
     <!-- Canonical production path: https://teknoify.com/demo/ -->
     <meta charset="UTF-8" />
@@ -27,41 +27,60 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="/css/style.css" />
+    <!-- shared design system: GENERATED copy of css/style.css (scripts/shell/sync-shell.mjs) so the isolated demo deploy carries it -->
+    <link rel="stylesheet" href="./styles/shell.css?v=shell1" />
     <link rel="stylesheet" href="./styles/index.css" />
     <script src="./data/demos.js" defer></script>
     <script src="./scripts/demo-catalog.js" defer></script>
     <script src="./scripts/app.js" defer></script>
+    <script type="module" src="./scripts/shell/shell.js?v=shell1"></script>
   </head>
   <body class="demo-page">
-    <header id="header" class="header">
-      <nav class="navbar" aria-label="Teknoify ana navigasyon">
+<!-- shell:field -->
+<canvas class="field" data-field data-field-mode="hero" aria-hidden="true"></canvas>
+<div class="field-veil" aria-hidden="true"></div>
+<!-- /shell:field -->
+    <!-- shell:header -->
+<header id="header" class="header header--stage">
+    <nav class="navbar" aria-label="Ana navigasyon">
         <div class="nav-container">
-          <div class="logo">
-            <a href="/" aria-label="Teknoify Ana Sayfa">
-              <img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
-            </a>
-          </div>
+            <div class="logo">
+                <a href="https://teknoify.com/" aria-label="Teknoify ana sayfa">
+                    <img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
+                </a>
+            </div>
 
-          <ul class="nav-menu" id="navMenu">
-            <li class="nav-item"><a href="/" class="nav-link">Ana Sayfa</a></li>
-            <li class="nav-item"><a href="/demo/" class="nav-link is-active">Demolar</a></li>
-            <li class="nav-item"><a href="/#contact" class="nav-link">İletişim</a></li>
-            <li class="nav-item nav-login-btn">
-              <a class="btn btn-sm btn-outline" href="https://platform.teknoify.com/" rel="noopener">
-                <i class="fas fa-user"></i> Giriş Yap
-              </a>
-            </li>
-          </ul>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="https://teknoify.com/" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item dropdown">
+                    <a href="https://teknoify.com/#katalog" class="nav-link">Yetenekler <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="https://teknoify.com/pages/investment-analytics.html"><i class="fas fa-chart-pie" aria-hidden="true"></i> Yatırım Analizleri</a></li>
+                        <li><a href="https://teknoify.com/pages/rpa.html"><i class="fas fa-robot" aria-hidden="true"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="https://teknoify.com/pages/webscraping.html"><i class="fas fa-spider" aria-hidden="true"></i> Web Scraping</a></li>
+                        <li><a href="https://teknoify.com/pages/ai-assistant.html"><i class="fas fa-brain" aria-hidden="true"></i> AI Asistan</a></li>
+                        <li><a href="https://teknoify.com/pages/api.html"><i class="fas fa-plug" aria-hidden="true"></i> API Entegrasyon Hizmetleri</a></li>
+                        <li><a href="https://teknoify.com/pages/financial-indicators.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Finansal İndikatör & Botlar</a></li>
+                        <li><a href="https://teknoify.com/pages/training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim & Danışmanlık</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="https://demo.teknoify.com/" class="nav-link" aria-current="page">Demo</a></li>
+                <li class="nav-item"><a href="https://teknoify.com/#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-actions">
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-ghost" rel="noopener">Giriş yap</a>
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-primary" rel="noopener">Başla</a>
+                </li>
+            </ul>
 
-          <button class="hamburger" type="button" aria-label="Menü" aria-expanded="false">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-          </button>
+            <button class="hamburger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="navMenu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
         </div>
-      </nav>
-    </header>
+    </nav>
+</header>
+<!-- /shell:header -->
 
     <main class="page-frame home-page-shell demo-shell">
       <div class="hero-surface home-background-surface" aria-hidden="true"></div>
