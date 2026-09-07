@@ -230,6 +230,46 @@
 .agent-page .cta.is-in .cta__actions .btn-primary { box-shadow: 0 0 0 6px rgba(89, 69, 210, 0), 0 18px 50px -20px rgba(89, 69, 210, 0.6); }
 
 /* ================================================================
+   Phone rhythm (≤ 47.99rem): the same chapters, less air between related
+   content. Section padding, panel padding and list rows tighten one step;
+   type sizes are unchanged. Measured at 390×844: 8,158px → see doc 17.
+   ================================================================ */
+@media (max-width: 47.99rem) {
+  .agent-page { --agent-section-y: clamp(3rem, 6.5vh, 4rem); }
+  .agent-hero { padding: calc(var(--header-height) + 2rem) var(--gutter) 3rem; }
+  .agent-hero__grid { gap: 1.75rem; }
+  .agent-hero__sub { margin-top: var(--space-5); }
+  .agent-hero__actions { margin-top: var(--space-6); }
+  .rv__step { padding: 8px 0 12px; }
+  .agent-what__grid, .agent-arch__grid { gap: 2rem; }
+  .agent-run__grid, .agent-control__grid { gap: 1.5rem; }
+  .agent-lead { margin-top: var(--space-4); }
+  .flow__step { padding: 0.9rem 0; }
+  .flow__step:first-child::before { top: calc(0.9rem + 0.6rem); }
+  .flow__step:last-child::before { height: calc(0.9rem + 0.6rem); }
+  .flow__step::after { top: calc(0.9rem + 0.6rem - 4.5px); }
+  .flow__step h3 { margin-top: var(--space-1); }
+  .flow__m { margin-top: var(--space-1); }
+  .cap { margin-top: 2rem; }
+  .cap__item { padding: 1.25rem 1.25rem 1.5rem; }
+  .cap__item::before { left: 1.25rem; }
+  .cap__item dt { margin-top: var(--space-2); }
+  .cap__item dt small { margin-bottom: var(--space-2); }
+  .cap__item dd { margin-top: var(--space-2); }
+  .arch-def { margin-top: var(--space-6); }
+  .arch-def > div { padding: 0.9rem 0; }
+  .agent-arch__close { margin-top: var(--space-5); }
+  .principles li { padding: 1.125rem 0; }
+  .who { margin-top: 2rem; gap: var(--space-3); }
+  .who__half { padding: var(--space-6); }
+  .who__half::before { left: var(--space-6); }
+  .who__tags { margin-top: var(--space-5); }
+  .agent-page .cta { padding: 4rem var(--gutter) 4rem; }
+  .agent-page .cta__lead { margin-top: var(--space-6); }
+  .agent-page .cta__actions { margin-top: var(--space-8); }
+}
+
+/* ================================================================
    Reduced motion: end states, no transitions, no loops (review override: html.force-motion)
    ================================================================ */
 @media (prefers-reduced-motion: reduce) {

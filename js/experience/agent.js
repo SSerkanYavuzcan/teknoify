@@ -28,7 +28,7 @@ if (field && owners.length) {
     });
 }
 
-/* ---- execution vignette ---- */
+/* ---- execution vignette: plays once per page visit ---- */
 function initVignette(root) {
     if (!root) return;
     const steps = Array.from(root.querySelectorAll('[data-rv]'));
@@ -38,15 +38,18 @@ function initVignette(root) {
     const tools = Array.from(root.querySelectorAll('[data-rv-tools] li'));
     const out = root.querySelector('[data-rv-out]');
     let timers = [];
-    let playing = false;
+    let hasPlayed = false;   // in-memory only: one authored run per page visit, never persisted
+    let io = null;
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
     const clear = () => { timers.forEach(clearTimeout); timers = []; };
     const stage = (i) => {
         steps.forEach((s, k) => { s.classList.toggle('is-active', k === i); s.classList.toggle('is-done', k < i); });
         root.dataset.stage = String(i);
     };
+    /** the completed state; idempotent, ends any running sequence for good */
     const finish = () => {
-        clear(); playing = false;
+        clear(); hasPlayed = true;
+        if (io) { io.disconnect(); io = null; }
         steps.forEach((s) => { s.classList.remove('is-active'); s.classList.add('is-done'); });
         if (typed) typed.textContent = text;
         plan.forEach((li) => li.classList.add('is-on'));
@@ -54,15 +57,8 @@ function initVignette(root) {
         if (out) out.classList.add('is-on');
         root.dataset.stage = '4';
     };
-    const reset = () => {
-        clear();
-        steps.forEach((s) => s.classList.remove('is-active', 'is-done'));
-        if (typed) typed.textContent = '';
-        plan.concat(tools).forEach((li) => li.classList.remove('is-on'));
-        if (out) out.classList.remove('is-on');
-    };
     const play = () => {
-        reset(); playing = true; stage(0);
+        hasPlayed = true; stage(0);
         let t = 420;
         for (let i = 1; i <= text.length; i++) { const n = i; at(t, () => { typed.textContent = text.slice(0, n); }); t += 26 + (i % 4) * 8; }
         t += 620; at(t, () => stage(1));
@@ -74,14 +70,15 @@ function initVignette(root) {
         t += 900; at(t, finish);
     };
     if (viewport.reduced || typeof IntersectionObserver === 'undefined') { finish(); return; }
-    // plays when the window is in view, replays after it has left and returned; nothing runs offscreen
-    const io = new IntersectionObserver((entries) => {
+    // first meaningful entry starts the one run; leaving early or hiding the tab jumps to the end.
+    // Scrolling back never restarts it. The observer is released when the run finishes.
+    io = new IntersectionObserver((entries) => {
         for (const e of entries) {
-            if (e.isIntersecting) { if (!playing) play(); }
-            else if (playing) finish();
+            if (e.isIntersecting) { if (!hasPlayed) play(); }
+            else if (hasPlayed) finish();
         }
     }, { threshold: 0.3 });
     io.observe(root);
-    document.addEventListener('visibilitychange', () => { if (document.hidden && playing) finish(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden && hasPlayed) finish(); });
 }
 initVignette(document.querySelector('[data-vignette]'));
