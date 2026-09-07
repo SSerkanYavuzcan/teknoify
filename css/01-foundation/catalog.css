@@ -70,6 +70,10 @@
 .vline > .sk { flex: 0 0 auto; }
 .vline .st--ok { color: var(--color-action); }
 .vline .st--ac { color: var(--accent); }
+/* sentence-length rows (Product Discover, Sentiment Analysis): the main text may wrap to two lines instead of truncating */
+.vline--wrap { align-items: flex-start; }
+.vline--wrap .mono { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.35; }
+.vline--wrap .st { padding-top: 1px; }
 .vbar { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
 .vbar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 3px; }
 .vgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
