@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="tr" class="shell-v2">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent | Teknoify</title>
+    <meta name="description" content="Teknoify AI Agent'ları bir hedef alır, gerekli araçları kullanır, veriyi işler ve görevi sonuçlandırmak için adımlar çalıştırır. Araştırma, veri toplama, analiz ve tekrar eden dijital görevler tek bir akışta.">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#070a10">
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../css/style.css?v=agent1">
+    <link rel="stylesheet" href="../css/ai-agent.css?v=agent1">
+    <!-- secondary-page responsive layer: loaded after the page stylesheet on purpose (unlayered, must win) -->
+    <link rel="stylesheet" href="../css/01-foundation/shell-responsive.css?v=mobile4">
+</head>
+<body>
+<!-- shell:field -->
+<canvas class="field" data-field data-field-mode="hero" aria-hidden="true"></canvas>
+<div class="field-veil" aria-hidden="true"></div>
+<!-- /shell:field -->
+
+<a class="skip-link" href="#main">İçeriğe geç</a>
+<!-- shell:header -->
+<header id="header" class="header header--stage">
+    <nav class="navbar" aria-label="Ana navigasyon">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="/" aria-label="Teknoify ana sayfa">
+                    <img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
+                </a>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="/" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item dropdown">
+                    <a href="/#katalog" class="nav-link is-active">Araçlar <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/pages/ai-agent.html" aria-current="page"><i class="fas fa-diagram-project" aria-hidden="true"></i> AI Agent</a></li>
+                        <li><a href="/pages/api.html"><i class="fas fa-plug" aria-hidden="true"></i> API &amp; Entegrasyon</a></li>
+                        <li><a href="/pages/rpa.html"><i class="fas fa-robot" aria-hidden="true"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="/pages/financial-indicators.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Finansal İndikatör &amp; Botlar</a></li>
+                        <li><a href="/pages/webscraping.html"><i class="fas fa-spider" aria-hidden="true"></i> Web Scraping</a></li>
+                        <li><a href="/pages/training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim &amp; Danışmanlık</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="https://demo.teknoify.com/" class="nav-link">Demo</a></li>
+                <li class="nav-item"><a href="/#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item nav-actions">
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-ghost" rel="noopener">Giriş yap</a>
+                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-primary" rel="noopener">Başla</a>
+                </li>
+            </ul>
+
+            <button class="hamburger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="navMenu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+</header>
+<!-- /shell:header -->
+
+<main id="main" class="page-frame agent-page">
+
+    <!-- 1. HERO -->
+    <section class="agent-hero" data-agent-hero data-field-mode="hero" aria-labelledby="agent-hero-title">
+        <div class="agent-hero__grid">
+            <div class="agent-hero__copy">
+                <p class="t-label agent-label">AI Agent</p>
+                <h1 class="agent-hero__title" id="agent-hero-title"><span class="agent-hero__line"><span>İşi tarif edin.</span></span><span class="agent-hero__line"><span><em>Ajan çalışmaya başlasın.</em></span></span></h1>
+                <p class="agent-hero__sub">Teknoify AI Agent'ları araştırma, veri toplama, analiz ve tekrar eden dijital görevleri tek bir akışta yürütmek için araçları ve otomasyonları bir araya getirir.</p>
+                <div class="agent-hero__actions">
+                    <a class="btn btn-primary btn-lg" href="https://platform.teknoify.com/" rel="noopener">AI Agent'ları keşfet</a>
+                    <a class="btn btn-secondary btn-lg" href="#nasil-calisir">Nasıl çalışır?</a>
+                </div>
+            </div>
+
+            <div class="agent-hero__visual">
+                <div class="win rv" data-vignette data-stage="0">
+                    <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">ajan · çalışma akışı</span></div>
+                    <ol class="rv__steps" aria-label="Örnek ajan çalışması: istek, plan, kullanılan araçlar, sonuç">
+                        <li class="rv__step" data-rv>
+                            <span class="rv__node" aria-hidden="true"></span>
+                            <div class="rv__body">
+                                <span class="rv__k">İstek</span>
+                                <p class="rv__q"><span class="sr-only">Rakiplerimin yeni ürünlerini araştır ve özetle.</span><span aria-hidden="true" data-rv-typed data-text="Rakiplerimin yeni ürünlerini araştır ve özetle."></span><i class="rv__caret" aria-hidden="true"></i></p>
+                            </div>
+                        </li>
+                        <li class="rv__step" data-rv>
+                            <span class="rv__node" aria-hidden="true"></span>
+                            <div class="rv__body">
+                                <span class="rv__k">Plan</span>
+                                <ul class="rv__plan" data-rv-plan>
+                                    <li>Kaynakları belirle</li>
+                                    <li>Veriyi topla</li>
+                                    <li>Ürünleri sınıflandır</li>
+                                    <li>Bulguları özetle</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="rv__step" data-rv>
+                            <span class="rv__node" aria-hidden="true"></span>
+                            <div class="rv__body">
+                                <span class="rv__k">Kullanılan araçlar</span>
+                                <ul class="rv__tools" data-rv-tools>
+                                    <li>Web Scraping</li>
+                                    <li>Product Discover</li>
+                                    <li>Analiz</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="rv__step" data-rv>
+                            <span class="rv__node" aria-hidden="true"></span>
+                            <div class="rv__body">
+                                <span class="rv__k">Sonuç</span>
+                                <p class="rv__out" data-rv-out><b>Rapor hazır</b></p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. WHAT IS AN AI AGENT -->
+    <section class="agent-section agent-what" id="nasil-calisir" data-field-mode="calm" aria-labelledby="what-title">
+        <div class="container agent-what__grid">
+            <div class="agent-what__head">
+                <p class="t-label agent-label" data-reveal>AI Agent nedir?</p>
+                <h2 class="agent-h2" id="what-title" data-reveal>Bir komut değil, bir çalışma akışı.</h2>
+                <p class="agent-lead" data-reveal data-reveal-delay="1">Klasik bir yapay zekâ aracı tek bir soruya yanıt verir. Bir AI Agent ise hedefi anlar, işi adımlara böler, ihtiyaç duyduğu araçları kullanır ve ortaya çıkan sonucu bir sonraki adıma taşır.</p>
+            </div>
+            <ol class="flow" data-reveal data-reveal-delay="2">
+                <li class="flow__step"><div class="flow__body"><span class="flow__n">01</span><h3>Hedefi alır</h3><small class="flow__m">hedef</small></div></li>
+                <li class="flow__step"><div class="flow__body"><span class="flow__n">02</span><h3>Plan oluşturur</h3><small class="flow__m">adımlar</small></div></li>
+                <li class="flow__step"><div class="flow__body"><span class="flow__n">03</span><h3>Araçları çalıştırır</h3><small class="flow__m">araç çağrıları</small></div></li>
+                <li class="flow__step"><div class="flow__body"><span class="flow__n">04</span><h3>Sonucu teslim eder</h3><small class="flow__m">çıktı</small></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 3. WHAT CAN IT DO -->
+    <section class="agent-section agent-can" data-field-mode="calm" aria-labelledby="can-title">
+        <div class="container">
+            <h2 class="agent-h2 agent-h2--wide" id="can-title" data-reveal>Tek bir ajan, birden fazla işi birbirine bağlayabilir.</h2>
+            <dl class="cap">
+                <div class="cap__item" data-reveal><dt><small>01</small>Araştırma</dt><dd>Web'deki kaynakları tarar, gerekli bilgiyi toplar ve düzenler.</dd></div>
+                <div class="cap__item" data-reveal data-reveal-delay="1"><dt><small>02</small>Veri</dt><dd>Dağınık veriyi işlenebilir bir yapıya dönüştürür.</dd></div>
+                <div class="cap__item" data-reveal data-reveal-delay="2"><dt><small>03</small>Analiz</dt><dd>Toplanan bilgideki örüntüleri ve önemli değişimleri ortaya çıkarır.</dd></div>
+                <div class="cap__item" data-reveal data-reveal-delay="3"><dt><small>04</small>Aksiyon</dt><dd>Tanımlanan iş akışında bir sonraki adımı çalıştırır.</dd></div>
+            </dl>
+        </div>
+    </section>
+
+    <!-- 4. AGENT + TOOL + AUTOMATION -->
+    <section class="agent-section agent-arch" data-field-mode="order" aria-labelledby="arch-title">
+        <div class="container agent-arch__grid">
+            <div class="agent-arch__copy">
+                <h2 class="agent-h2" id="arch-title" data-reveal>Ajan düşünür. Araç uzmanlaşır. Otomasyon tekrarlar.</h2>
+                <dl class="arch-def">
+                    <div data-reveal><dt>AI Agent</dt><dd>Hedefi ve çalışma sırasını yönetir.</dd></div>
+                    <div data-reveal data-reveal-delay="1"><dt>Araç</dt><dd>Belirli bir işi gerçekleştirir: veri toplama, analiz, araştırma veya benzeri uzman görevler.</dd></div>
+                    <div data-reveal data-reveal-delay="2"><dt>Otomasyon</dt><dd>Tekrar eden adımları belirlenen akış veya programa göre çalıştırır.</dd></div>
+                </dl>
+                <p class="agent-arch__close" data-reveal data-reveal-delay="3">Teknoify bunları tek bir çalışma alanında bir araya getirir.</p>
+            </div>
+            <figure class="arch" data-reveal data-reveal-delay="1">
+                <span class="arch__frame-label">Çalışma alanı</span>
+                <div class="arch__tier arch__tier--agent"><span class="arch__kind">Ajan</span><b>AI Agent</b><small>hedef · plan · çalışma sırası</small></div>
+                <div class="arch__link arch__link--fan" aria-hidden="true"><i></i><i></i><i></i></div>
+                <div class="arch__tier arch__tier--tools">
+                    <div class="arch__tool"><span class="arch__kind">Araç</span><b>Veri toplama</b></div>
+                    <div class="arch__tool"><span class="arch__kind">Araç</span><b>Analiz</b></div>
+                    <div class="arch__tool"><span class="arch__kind">Araç</span><b>Araştırma</b></div>
+                </div>
+                <div class="arch__link arch__link--merge" aria-hidden="true"><i></i><i></i><i></i><span class="arch__arrow"></span></div>
+                <div class="arch__tier arch__tier--auto"><span class="arch__kind">Otomasyon</span><b>Tekrar eden adımlar</b><small>belirlenen akış veya program</small><i class="arch__loop" aria-hidden="true"></i></div>
+            </figure>
+        </div>
+    </section>
+
+    <!-- 5. EXAMPLE RUN -->
+    <section class="agent-section agent-run" data-field-mode="lanes" aria-labelledby="run-title">
+        <div class="container agent-run__grid">
+            <div class="agent-run__head">
+                <p class="t-label agent-label" data-reveal>Örnek çalışma</p>
+                <h2 class="agent-h2" id="run-title" data-reveal>Bir rakip araştırması nasıl ilerler?</h2>
+            </div>
+            <div class="win log" data-reveal>
+                <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">örnek çalışma · perakende</span></div>
+                <ol class="log__rows">
+                    <li class="log__row log__row--user"><span class="log__who">Kullanıcı</span><p>Perakende sektöründeki rakiplerimin ürün ve kampanyalarını analiz et.</p></li>
+                    <li class="log__row log__row--agent"><span class="log__who">Ajan</span><p>Araştırma planı oluşturuldu.</p></li>
+                    <li class="log__row log__row--tools"><span class="log__who">Araçlar</span><ul class="log__tools"><li>Product Discover</li><li>Web Scraping</li><li>Marketing Intelligence</li></ul></li>
+                    <li class="log__row log__row--proc"><span class="log__who">İşleme</span><div><p>Ürünler, fiyatlar ve kampanya içerikleri işleniyor.</p><i class="log__bar" aria-hidden="true"></i></div></li>
+                    <li class="log__row log__row--out"><span class="log__who">Çıktı</span><p>Bulgular çalışma alanına hazırlandı.</p></li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. CONTROL -->
+    <section class="agent-section agent-control" data-field-mode="calm" aria-labelledby="control-title">
+        <div class="container agent-control__grid">
+            <div>
+                <h2 class="agent-h2" id="control-title" data-reveal>Ne yaptığını görebilirsiniz.</h2>
+                <p class="agent-lead" data-reveal data-reveal-delay="1">Ajanın kullandığı araçları, ilerlediği adımları ve ürettiği çıktıları aynı çalışma akışı içinde takip edin.</p>
+            </div>
+            <ol class="principles">
+                <li data-reveal><span class="principles__n">01</span><div><h3>Görünür adımlar</h3><p>İşin hangi aşamada olduğunu takip edin.</p></div></li>
+                <li data-reveal data-reveal-delay="1"><span class="principles__n">02</span><div><h3>Araç bazlı çalışma</h3><p>Ajan ihtiyaç duyduğu Teknoify araçlarını kullanır.</p></div></li>
+                <li data-reveal data-reveal-delay="2"><span class="principles__n">03</span><div><h3>Sonuç odaklı çıktı</h3><p>Ara sonuçlar yerine çalışılabilir bir çıktı üretmeye odaklanır.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 7. WHO IS IT FOR -->
+    <section class="agent-section agent-who" data-field-mode="calm" aria-labelledby="who-title">
+        <div class="container">
+            <h2 class="agent-h2 agent-h2--wide" id="who-title" data-reveal>Tek kişilik ekipten kurumsal operasyona.</h2>
+            <div class="who">
+                <article class="who__half" data-reveal>
+                    <h3>Bireysel kullanıcılar</h3>
+                    <p>Araştırma, analiz ve tekrar eden dijital işleri tek başına yürütmek zorunda kalmadan tamamlayın.</p>
+                    <ul class="who__tags" aria-label="Örnekler"><li>araştırma</li><li>fiyat / pazar takibi</li><li>bilgi toplama</li><li>kişisel analiz</li></ul>
+                </article>
+                <article class="who__half" data-reveal data-reveal-delay="1">
+                    <h3>İşletmeler</h3>
+                    <p>Ekiplerin sürekli tekrar ettiği veri ve araştırma işlerini yeniden kullanılabilir ajan akışlarına dönüştürün.</p>
+                    <ul class="who__tags" aria-label="Örnekler"><li>rakip analizi</li><li>katalog araştırması</li><li>web veri toplama</li><li>operasyonel raporlama</li></ul>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. FINAL CTA -->
+    <section class="cta agent-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="agent-cta-title">
+        <div class="cta__wrap">
+            <p class="t-label agent-label">Sıradaki adım</p>
+            <h2 class="cta__title" id="agent-cta-title"><span class="cta__line"><span>İlk işi</span></span><span class="cta__line cta__line--accent"><span>ajana verin.</span></span></h2>
+            <p class="cta__lead">Teknoify platformuna girin, ihtiyacınıza uygun ajanı seçin ve çalışma alanınıza ekleyin.</p>
+            <div class="cta__actions">
+                <a class="btn btn-primary btn-lg" href="https://platform.teknoify.com/" rel="noopener">Platforma git</a>
+                <a class="btn btn-secondary btn-lg" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info%40teknoify.com" target="_blank" rel="noopener noreferrer">Bize yazın</a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="site-footer" id="footer">
+    <div class="site-footer__wrap">
+        <div class="site-footer__brand">
+            <a href="/" aria-label="Teknoify ana sayfa"><img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async"></a>
+            <p>Hazır yapay zekâ ajanları, araçlar ve otomasyonlar. İşletmeler ve bireyler için.</p>
+        </div>
+        <nav class="site-footer__group" aria-labelledby="footer-araclar">
+            <h3 id="footer-araclar">Araçlar</h3>
+            <ul>
+                <li><a href="/pages/ai-agent.html" aria-current="page">AI Agent</a></li>
+                <li><a href="/pages/api.html">API &amp; Entegrasyon</a></li>
+                <li><a href="/pages/rpa.html">Robotik Süreç Otomasyonu</a></li>
+                <li><a href="/pages/financial-indicators.html">Finansal İndikatör &amp; Botlar</a></li>
+                <li><a href="/pages/webscraping.html">Web Scraping</a></li>
+                <li><a href="/pages/training-consulting.html">Eğitim &amp; Danışmanlık</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-platform">
+            <h3 id="footer-platform">Platform</h3>
+            <ul>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Platforma git</a></li>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Ajan Kütüphanesi</a></li>
+                <li><a href="https://demo.teknoify.com/">Demo Lab</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-sayfa">
+            <h3 id="footer-sayfa">Ana sayfa</h3>
+            <ul>
+                <li><a href="/#nasil-calisir">Nasıl çalışır</a></li>
+                <li><a href="/#kimin-icin">Kimin için</a></li>
+                <li><a href="/#katalog">Katalog</a></li>
+                <li><a href="/#guven">Güven ve kontrol</a></li>
+                <li><a href="/#contact">İletişim</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-yasal">
+            <h3 id="footer-yasal">Şirket ve yasal</h3>
+            <ul>
+                <li><a href="mailto:info@teknoify.com">info@teknoify.com</a></li>
+                <li>İstanbul, Türkiye</li>
+                <li><a href="/pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
+                <li><a href="/pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                <li><a href="/pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
+                <li><a href="/pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="site-footer__bottom">
+        <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
+    </div>
+</footer>
+
+<script src="../js/script.js?v=agent1" defer></script>
+<script type="module" src="../js/experience/agent.js?v=agent1"></script>
+</body>
+</html>

@@ -19,4 +19,5 @@ export function mountShell(root = document) {
     return field;
 }
 
-mountShell();
+/** the page's field (null when the page has no [data-field] or it was mounted by another module) */
+export const shellField = mountShell();

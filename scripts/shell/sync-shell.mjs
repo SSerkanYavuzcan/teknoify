@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 /**
- * Secondary-page shell sync: stamps the canonical header and the environmental-field layers into every
- * secondary marketing page and into the isolated Demo Lab, and generates the demo's copies of the shared
- * stylesheet and field renderer. The homepage (index.html) is the source of the header's design; this
- * script keeps the other pages from drifting away from it.
+ * Shell sync: stamps the canonical header into the homepage, every secondary marketing page and the
+ * isolated Demo Lab, stamps the environmental-field layers into the secondary pages and the demo, and
+ * generates the demo's copies of the shared stylesheet and field renderer. The header's design is the
+ * homepage's; its markup lives once, in scripts/shell/header.template.html, so the public navigation
+ * (Araçlar taxonomy, destinations, active states) cannot drift between pages.
  *
  *   node scripts/shell/sync-shell.mjs          write the stamped pages and generated files
  *   node scripts/shell/sync-shell.mjs --check  exit 1 if any page or generated file differs (CI guard)
  *
- * Pages carry two marker pairs:
- *   <!-- shell:header --> ... <!-- /shell:header -->   the canonical header markup
- *   <!-- shell:field -->  ... <!-- /shell:field -->    the fixed field canvas and its veil
+ * Pages carry marker pairs:
+ *   <!-- shell:header --> ... <!-- /shell:header -->   the canonical header markup (every page)
+ *   <!-- shell:field -->  ... <!-- /shell:field -->    the fixed field canvas and its veil (not the homepage,
+ *                                                       whose field is owned by js/experience/index.js)
  *
  * The demo deploys from demo/ alone (demo/netlify.toml, Package directory "demo"), so it cannot reach
  * css/ or js/ of the marketing root. Its copies are GENERATED here from the canonical sources:
@@ -25,22 +27,35 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const CHECK = process.argv.includes('--check');
 
+/** origin → how the template's destinations resolve there */
+const ORIGINS = {
+    // the homepage: in-page anchors, relative page paths (as the rest of index.html)
+    home: { home: '#home', katalog: '#katalog', contact: '#contact', pages: 'pages/' },
+    // secondary marketing pages: root-relative (same origin, works on the local preview too)
+    marketing: { home: '/', katalog: '/#katalog', contact: '/#contact', pages: '/pages/' },
+    // the demo lives on demo.teknoify.com and must point at the canonical marketing origin
+    demo: { home: 'https://teknoify.com/', katalog: 'https://teknoify.com/#katalog', contact: 'https://teknoify.com/#contact', pages: 'https://teknoify.com/pages/' },
+};
+
+const HOME_PAGE = { file: 'index.html', origin: 'home', active: 'home', field: false };
 const MARKETING_PAGES = [
-    // capability / service pages linked from the homepage Yetenekler dropdown and footer
-    { file: 'pages/rpa.html', active: 'yetenekler' },
-    { file: 'pages/webscraping.html', active: 'yetenekler' },
-    { file: 'pages/api.html', active: 'yetenekler' },
-    { file: 'pages/ai-assistant.html', active: 'yetenekler' },
-    { file: 'pages/financial-indicators.html', active: 'yetenekler' },
-    { file: 'pages/training-consulting.html', active: 'yetenekler' },
-    { file: 'pages/investment-analytics.html', active: 'yetenekler' },
+    // product / capability pages: the Araçlar dropdown (six items, in this order) …
+    { file: 'pages/ai-agent.html', active: 'araclar' },
+    { file: 'pages/api.html', active: 'araclar' },
+    { file: 'pages/rpa.html', active: 'araclar' },
+    { file: 'pages/financial-indicators.html', active: 'araclar' },
+    { file: 'pages/webscraping.html', active: 'araclar' },
+    { file: 'pages/training-consulting.html', active: 'araclar' },
+    // … and the legacy routes that left the dropdown but keep the shell (still reachable by URL)
+    { file: 'pages/ai-assistant.html', active: 'araclar' },
+    { file: 'pages/investment-analytics.html', active: 'araclar' },
     // legal pages linked from the homepage footer
     { file: 'pages/kvkk.html', active: null },
     { file: 'pages/gizlilik.html', active: null },
     { file: 'pages/kullanim-sartlari.html', active: null },
     { file: 'pages/hizmet-sozlesmesi.html', active: null },
-];
-const DEMO_PAGE = { file: 'demo/index.html', active: 'demo' };
+].map((p) => ({ ...p, origin: 'marketing', field: true }));
+const DEMO_PAGE = { file: 'demo/index.html', origin: 'demo', active: 'demo', field: true };
 
 const FIELD_MARKUP = `<canvas class="field" data-field data-field-mode="hero" aria-hidden="true"></canvas>
 <div class="field-veil" aria-hidden="true"></div>`;
@@ -48,16 +63,19 @@ const FIELD_MARKUP = `<canvas class="field" data-field data-field-mode="hero" ar
 const read = (rel) => fs.readFile(path.join(ROOT, rel), 'utf8');
 const normalize = (s) => s.replace(/\r\n/g, '\n');
 
-function renderHeader(template, { origin, active }) {
-    // marketing pages use root-relative destinations (same origin, work on the local preview too);
-    // the demo lives on demo.teknoify.com and must point at the canonical marketing origin
-    const home = origin === 'demo' ? 'https://teknoify.com/' : '/';
-    const pages = origin === 'demo' ? 'https://teknoify.com/pages/' : '/pages/';
-    return template
-        .replace(/\{\{home\}\}/g, home)
-        .replace(/\{\{pages\}\}/g, pages)
-        .replace(/\{\{active_yetenekler\}\}/g, active === 'yetenekler' ? ' is-active' : '')
-        .replace(/\{\{active_demo\}\}/g, active === 'demo' ? ' aria-current="page"' : '');
+function renderHeader(template, page) {
+    const o = ORIGINS[page.origin];
+    // the dropdown entry of the page being rendered is the current page (aria-current on that link)
+    const self = path.posix.basename(page.file);
+    const withCurrent = template.replace(`href="{{pages}}${self}"`, `href="{{pages}}${self}" aria-current="page"`);
+    return withCurrent
+        .replace(/\{\{home\}\}/g, o.home)
+        .replace(/\{\{katalog\}\}/g, o.katalog)
+        .replace(/\{\{contact\}\}/g, o.contact)
+        .replace(/\{\{pages\}\}/g, o.pages)
+        .replace(/\{\{active_home\}\}/g, page.active === 'home' ? ' aria-current="page"' : '')
+        .replace(/\{\{active_araclar\}\}/g, page.active === 'araclar' ? ' is-active' : '')
+        .replace(/\{\{active_demo\}\}/g, page.active === 'demo' ? ' aria-current="page"' : '');
 }
 
 function stamp(html, name, content) {
@@ -93,14 +111,15 @@ async function generatedDemoFiles() {
 
 async function main() {
     const template = normalize(await read('scripts/shell/header.template.html'));
+    if (/\{\{(?!home|katalog|contact|pages|active_home|active_araclar|active_demo)\w+\}\}/.test(template)) throw new Error('header template uses an unknown placeholder');
     const drift = [];
     const writes = [];
-    const pages = [...MARKETING_PAGES.map((p) => ({ ...p, origin: 'marketing' })), { ...DEMO_PAGE, origin: 'demo' }];
+    const pages = [HOME_PAGE, ...MARKETING_PAGES, DEMO_PAGE];
     for (const page of pages) {
         const current = await read(page.file);
         let next = normalize(current);
         next = stamp(next, 'header', renderHeader(template, page));
-        next = stamp(next, 'field', FIELD_MARKUP);
+        if (page.field) next = stamp(next, 'field', FIELD_MARKUP);
         if (next !== normalize(current)) { drift.push(page.file); writes.push([page.file, next]); }
     }
     for (const [rel, content] of await generatedDemoFiles()) {
