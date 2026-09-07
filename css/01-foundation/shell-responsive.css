@@ -1,0 +1,91 @@
+/* ================================================================
+   FOUNDATION — SECONDARY-PAGE RESPONSIVE LAYER (html.shell-v2)
+   Phone- and tablet-first composition for the legacy capability
+   pages that sit inside the shared shell. Fixes root causes shared
+   by every page (grid items without min-width, CTA rows that do not
+   wrap, desktop-only rhythm, decorative layers wider than a phone,
+   touch targets) in one place instead of six page patches. Content,
+   copy, desktop layout and the pages' own visual language are
+   untouched: every desktop rule here is a no-op above 64rem except
+   the safety rules in section 1.
+   ================================================================ */
+
+/* ---- 1. Safety: nothing may create document width (desktop track sizing is left exactly as it was) ---- */
+html.shell-v2 main :is(img, svg, video, canvas:not(.field)) { max-width: 100%; }
+html.shell-v2 main :is(pre, .code-block) { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+html.shell-v2 main code { overflow-wrap: anywhere; }
+html.shell-v2 main table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* hover polish belongs to pointers that hover; touch must not get a stuck lifted card */
+@media (hover: none) {
+  html.shell-v2 main :is(.benefit-card, .use-case-item, .service-card, .investment-sector-selector-card):hover { transform: none; }
+}
+/* comfortable touch targets without changing the buttons' look */
+@media (pointer: coarse) {
+  html.shell-v2 main .btn { min-height: 2.75rem; }
+  html.shell-v2 main .investment-chart-legend-button { min-height: 2.25rem; padding-inline: 0.55rem; }
+  html.shell-v2 .footer .social-links a { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; }
+  html.shell-v2 .footer-col ul li a { display: inline-block; padding: 0.45rem 0.25rem; }   /* 15px text links become ~34px tap rows */
+}
+
+/* ---- 2. Below desktop (≤ 63.99rem): intrinsic sizing that cannot push the page wider, grids collapse one step ---- */
+@media (max-width: 63.99rem) {
+  html.shell-v2 main :is(.hero-grid, .benefit-cards-grid, .use-cases-grid, .investment-hero-layout, .investment-dashboard-grid, .subscription-plan-grid) > * { min-width: 0; }
+  html.shell-v2 main .hero-ctas { flex-wrap: wrap; }
+  html.shell-v2 main :is(p, li, h1, h2, h3, h4, dd, dt, small) { overflow-wrap: anywhere; }
+  /* decorative rings sized for desktop scale with the phone instead of escaping it */
+  html.shell-v2 main .neural-grid { width: min(300px, 76vw); height: min(300px, 76vw); }
+  html.shell-v2 main .benefit-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+  html.shell-v2 main .use-cases-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  html.shell-v2 main :is(.rpa-hero, .ws-hero, .api-hero, .ai-hero, .fi-hero, .tc-hero) { padding: clamp(7rem, 16vh, 9rem) 0 3.5rem; }
+  html.shell-v2 main .intro-text-center { margin-bottom: 3.5rem; }
+  html.shell-v2 main .benefit-cards-grid { margin-bottom: 4rem; }
+}
+
+/* ---- 3. Phones (≤ 47.99rem): one column, phone rhythm, phone type scale ---- */
+@media (max-width: 47.99rem) {
+  /* phone gutters (the legacy desktop gutter stays untouched above); iPhone landscape safe areas respected */
+  html.shell-v2 main .container { padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right)); }
+  /* hero: badge, heading, copy, stacked CTAs, then the animation */
+  html.shell-v2 main :is(.rpa-hero, .ws-hero, .api-hero, .ai-hero, .fi-hero, .tc-hero) { padding: clamp(6.25rem, 14vh, 7.5rem) 0 2.5rem; }
+  html.shell-v2 main .hero-grid { gap: 2rem; }
+  html.shell-v2 main .hero-grid h1 { font-size: clamp(2rem, 9vw, 2.5rem); line-height: 1.1; margin-bottom: 1rem; }
+  html.shell-v2 main :is(.hero-grid .main-headline, .hero-grid .subtitle) { font-size: clamp(1rem, 4.2vw, 1.125rem); margin-bottom: 1.75rem; max-width: 34ch; margin-inline: auto; }
+  html.shell-v2 main .hero-ctas { gap: 0.75rem; }
+  html.shell-v2 main :is(.rpa-anim-box, .scraping-anim-box, .api-anim-box, .ai-anim-box, .fi-anim-box, .tc-anim-box) { height: clamp(190px, 52vw, 240px); max-width: 100%; overflow: hidden; }
+  /* section rhythm: desktop margins were 5–6rem; phones read better at half */
+  html.shell-v2 main .intro-text-center { margin-bottom: 2.75rem; }
+  html.shell-v2 main .intro-text-center h2 { font-size: clamp(1.5rem, 6.4vw, 1.9rem); margin-bottom: 1rem; }
+  html.shell-v2 main .intro-text-center p { font-size: 1rem; }
+  html.shell-v2 main .section-heading { font-size: clamp(1.35rem, 5.6vw, 1.6rem); margin: 2.25rem 0 1.5rem; }
+  html.shell-v2 main .benefit-cards-grid { grid-template-columns: minmax(0, 1fr); gap: 0.9rem; margin-bottom: 2.75rem; }
+  html.shell-v2 main .benefit-card { padding: 1.35rem 1.25rem; }
+  html.shell-v2 main .benefit-card h4 { font-size: 1.1rem; }
+  html.shell-v2 main .benefit-card p { font-size: 0.95rem; }
+  /* small icon tiles: two per row, never seven tall single-icon cards */
+  html.shell-v2 main .use-cases-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+  html.shell-v2 main .use-case-item { padding: 1.1rem 0.75rem; }
+  html.shell-v2 main .uc-icon { font-size: 1.6rem; margin-bottom: 0.6rem; }
+  html.shell-v2 main .use-case-item span { font-size: 0.92rem; line-height: 1.3; }
+  html.shell-v2 main .use-cases-wrapper { margin-bottom: 2.75rem; }
+  html.shell-v2 main .bottom-cta { max-width: none; }
+  html.shell-v2 main .bottom-cta .btn { width: 100%; justify-content: center; }
+  /* investment page: the same hero rules apply to its own hero class */
+  html.shell-v2 main .investment-hero-content h1 { font-size: clamp(2rem, 9vw, 2.4rem); }
+  html.shell-v2 main .investment-section { padding: 3rem 0; }
+  /* legacy footer: compact, one column, tappable */
+  html.shell-v2 .footer { padding: 2rem 0 1rem; }
+  html.shell-v2 .footer-desc { max-width: 34ch; margin-inline: auto; }
+}
+
+/* ---- 4. Narrow phones (≤ 40rem): CTA rows become a stacked column ---- */
+@media (max-width: 40rem) {
+  html.shell-v2 main .hero-ctas { flex-direction: column; align-items: stretch; width: min(100%, 22rem); margin-inline: auto; }
+  html.shell-v2 main .hero-ctas .btn { width: 100%; justify-content: center; min-height: 3rem; }
+  html.shell-v2 main .investment-hero-content .hero-ctas { width: min(100%, 22rem); }
+}
+
+/* ---- 5. Very small phones (≤ 22.5rem / 360px): keep gutters, never clip the heading ---- */
+@media (max-width: 22.5rem) {
+  html.shell-v2 main .hero-grid h1 { font-size: 2rem; }
+  html.shell-v2 main .use-cases-grid { gap: 0.6rem; }
+}
