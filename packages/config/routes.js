@@ -16,6 +16,7 @@ export const PUBLIC_ROUTES = Object.freeze({
 });
 
 export const PRODUCT_ROUTES = Object.freeze({
+    aiAgent: '/pages/ai-agent.html',
     api: '/pages/api.html',
     rpa: '/pages/rpa.html',
     webScraping: '/pages/webscraping.html',

@@ -8,21 +8,20 @@
             </div>
 
             <ul class="nav-menu" id="navMenu">
-                <li class="nav-item"><a href="{{home}}" class="nav-link">Ana Sayfa</a></li>
+                <li class="nav-item"><a href="{{home}}" class="nav-link"{{active_home}}>Ana Sayfa</a></li>
                 <li class="nav-item dropdown">
-                    <a href="{{home}}#katalog" class="nav-link{{active_yetenekler}}">Yetenekler <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+                    <a href="{{katalog}}" class="nav-link{{active_araclar}}">Araçlar <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{pages}}investment-analytics.html"><i class="fas fa-chart-pie" aria-hidden="true"></i> Yatırım Analizleri</a></li>
+                        <li><a href="{{pages}}ai-agent.html"><i class="fas fa-diagram-project" aria-hidden="true"></i> AI Agent</a></li>
+                        <li><a href="{{pages}}api.html"><i class="fas fa-plug" aria-hidden="true"></i> API &amp; Entegrasyon</a></li>
                         <li><a href="{{pages}}rpa.html"><i class="fas fa-robot" aria-hidden="true"></i> Robotik Süreç Otomasyonu</a></li>
+                        <li><a href="{{pages}}financial-indicators.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Finansal İndikatör &amp; Botlar</a></li>
                         <li><a href="{{pages}}webscraping.html"><i class="fas fa-spider" aria-hidden="true"></i> Web Scraping</a></li>
-                        <li><a href="{{pages}}ai-assistant.html"><i class="fas fa-brain" aria-hidden="true"></i> AI Asistan</a></li>
-                        <li><a href="{{pages}}api.html"><i class="fas fa-plug" aria-hidden="true"></i> API Entegrasyon Hizmetleri</a></li>
-                        <li><a href="{{pages}}financial-indicators.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Finansal İndikatör & Botlar</a></li>
-                        <li><a href="{{pages}}training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim & Danışmanlık</a></li>
+                        <li><a href="{{pages}}training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim &amp; Danışmanlık</a></li>
                     </ul>
                 </li>
                 <li class="nav-item"><a href="https://demo.teknoify.com/" class="nav-link"{{active_demo}}>Demo</a></li>
-                <li class="nav-item"><a href="{{home}}#contact" class="nav-link">İletişim</a></li>
+                <li class="nav-item"><a href="{{contact}}" class="nav-link">İletişim</a></li>
                 <li class="nav-item nav-actions">
                     <a href="https://platform.teknoify.com/" class="btn btn-sm btn-ghost" rel="noopener">Giriş yap</a>
                     <a href="https://platform.teknoify.com/" class="btn btn-sm btn-primary" rel="noopener">Başla</a>

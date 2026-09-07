@@ -79,6 +79,9 @@ html.type-b { --font-display: 'Host Grotesk', 'Inter Tight', system-ui, sans-ser
 }
 .dropdown-menu a:hover { color: var(--color-fg-primary); background: rgba(243, 245, 248, 0.05); }
 .dropdown-menu a i { width: 1.1em; color: var(--color-fg-tertiary); }
+/* the entry of the page being viewed (stamped by scripts/shell/sync-shell.mjs) */
+.dropdown-menu a[aria-current="page"] { color: var(--color-fg-primary); background: rgba(243, 245, 248, 0.05); }
+.dropdown-menu a[aria-current="page"] i { color: var(--color-accent); }
 
 /* Actions cluster: sign-in (ghost) + start (primary) */
 .nav-actions { display: flex; align-items: center; gap: var(--space-2); margin-left: var(--space-3); }

@@ -9,6 +9,7 @@
     "overlayDir": "public",
     "entryPages": [
         "index.html",
+        "pages/ai-agent.html",
         "pages/rpa.html",
         "pages/webscraping.html",
         "pages/api.html",

@@ -4,6 +4,7 @@
      Transitional and application pages are deliberately excluded. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://teknoify.com/</loc></url>
+  <url><loc>https://teknoify.com/pages/ai-agent</loc></url>
   <url><loc>https://teknoify.com/pages/rpa</loc></url>
   <url><loc>https://teknoify.com/pages/webscraping</loc></url>
   <url><loc>https://teknoify.com/pages/api</loc></url>

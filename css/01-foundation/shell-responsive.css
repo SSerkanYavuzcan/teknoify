@@ -25,6 +25,9 @@ html.shell-v2 main table { display: block; max-width: 100%; overflow-x: auto; -w
   html.shell-v2 main .investment-chart-legend-button { min-height: 2.25rem; padding-inline: 0.55rem; }
   html.shell-v2 .footer .social-links a { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; }
   html.shell-v2 .footer-col ul li a { display: inline-block; padding: 0.45rem 0.25rem; }   /* 15px text links become ~34px tap rows */
+  html.shell-v2 .site-footer__group a { display: inline-block; padding: 0.5rem 0; }              /* canonical footer: 17px text links become ~33px tap rows */
+  html.shell-v2 .site-footer__group ul { gap: 0.125rem; }                                       /* the tap rows carry the spacing; no extra list gap on top */
+  html.shell-v2 .site-footer__brand > a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 }
 
 /* ---- 2. Below desktop (≤ 63.99rem): intrinsic sizing that cannot push the page wider, grids collapse one step ---- */
