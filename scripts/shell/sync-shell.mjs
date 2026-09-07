@@ -13,6 +13,9 @@
  *   <!-- shell:header --> ... <!-- /shell:header -->   the canonical header markup (every page)
  *   <!-- shell:field -->  ... <!-- /shell:field -->    the fixed field canvas and its veil (not the homepage,
  *                                                       whose field is owned by js/experience/index.js)
+ *   <!-- shell:footer --> ... <!-- /shell:footer -->   the canonical footer (scripts/shell/footer.template.html:
+ *                                                       the homepage footer with destination placeholders);
+ *                                                       opt-in, only pages carrying the markers receive it
  *
  * The demo deploys from demo/ alone (demo/netlify.toml, Package directory "demo"), so it cannot reach
  * css/ or js/ of the marketing root. Its copies are GENERATED here from the canonical sources:
@@ -78,11 +81,24 @@ function renderHeader(template, page) {
         .replace(/\{\{active_demo\}\}/g, page.active === 'demo' ? ' aria-current="page"' : '');
 }
 
-function stamp(html, name, content) {
+function stamp(html, name, content, optional = false) {
     const open = `<!-- shell:${name} -->`, close = `<!-- /shell:${name} -->`;
     const a = html.indexOf(open), b = html.indexOf(close);
+    if (a < 0 && b < 0 && optional) return html;
     if (a < 0 || b < 0 || b < a) throw new Error(`missing ${open} … ${close} markers`);
     return html.slice(0, a + open.length) + '\n' + content.trim() + '\n' + html.slice(b);
+}
+
+/** the canonical footer (the homepage footer with destination placeholders); the page's own Araçlar entry is current */
+function renderFooter(template, page) {
+    const o = ORIGINS[page.origin];
+    const self = path.posix.basename(page.file);
+    return template
+        .replace(`href="{{pages}}${self}"`, `href="{{pages}}${self}" aria-current="page"`)
+        .replace(/\{\{home\}\}/g, o.home)
+        .replace(/\{\{katalog\}\}/g, o.katalog)
+        .replace(/\{\{contact\}\}/g, o.contact)
+        .replace(/\{\{pages\}\}/g, o.pages);
 }
 
 /** css/style.css with every layered @import inlined into an @layer block, so one file carries the system */
@@ -111,7 +127,8 @@ async function generatedDemoFiles() {
 
 async function main() {
     const template = normalize(await read('scripts/shell/header.template.html'));
-    if (/\{\{(?!home|katalog|contact|pages|active_home|active_araclar|active_demo)\w+\}\}/.test(template)) throw new Error('header template uses an unknown placeholder');
+    const footer = normalize(await read('scripts/shell/footer.template.html'));
+    if (/\{\{(?!home|katalog|contact|pages|active_home|active_araclar|active_demo)\w+\}\}/.test(template + footer)) throw new Error('a shell template uses an unknown placeholder');
     const drift = [];
     const writes = [];
     const pages = [HOME_PAGE, ...MARKETING_PAGES, DEMO_PAGE];
@@ -120,6 +137,7 @@ async function main() {
         let next = normalize(current);
         next = stamp(next, 'header', renderHeader(template, page));
         if (page.field) next = stamp(next, 'field', FIELD_MARKUP);
+        next = stamp(next, 'footer', renderFooter(footer, page), true);   // opt-in: canonical Araçlar pages carry the markers
         if (next !== normalize(current)) { drift.push(page.file); writes.push([page.file, next]); }
     }
     for (const [rel, content] of await generatedDemoFiles()) {

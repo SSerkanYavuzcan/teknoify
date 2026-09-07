@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/svg+xml" href="../images/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
-    <title>Robotik Süreç Otomasyonu (RPA) | Teknoify</title>
-   
+    <title>Robotik Süreç Otomasyonu | Teknoify</title>
+    <meta name="description" content="Teknoify Robotik Süreç Otomasyonu: veri girişi, raporlama ve mutabakat gibi tekrar eden bilgisayar işlerini tanımlı adımlara böler ve otomatik çalıştırır. Fatura işleme, CRM veri girişi, e-posta yönetimi, otomatik raporlama, banka mutabakatı.">
+    <link rel="canonical" href="https://teknoify.com/pages/rpa">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#070a10">
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-   
-    <link rel="stylesheet" href="../css/style.css?v=mobile4">
-    <link rel="stylesheet" href="../css/rpa.css?v=rpa-quantum-grid-1">
-    <!-- secondary-page responsive layer: loaded after the page stylesheet on purpose (unlayered, must win) -->
+
+    <link rel="stylesheet" href="../css/style.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/tools-page.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/rpa.css?v=tools1">
+    <!-- secondary-page responsive layer: loaded after the page stylesheets on purpose (unlayered, must win) -->
     <link rel="stylesheet" href="../css/01-foundation/shell-responsive.css?v=mobile5">
 </head>
 <body>
@@ -24,7 +30,7 @@
 <div class="field-veil" aria-hidden="true"></div>
 <!-- /shell:field -->
 
-
+<a class="skip-link" href="#main">İçeriğe geç</a>
 <!-- shell:header -->
 <header id="header" class="header header--stage">
     <nav class="navbar" aria-label="Ana navigasyon">
@@ -66,245 +72,189 @@
 </header>
 <!-- /shell:header -->
 
+<main id="main" class="page-frame tools-page">
 
-<main class="page-frame home-page-shell rpa-page-shell">
-
-
-    <section class="rpa-hero">
-        <div class="container hero-grid">
-            <div class="hero-left">
-                <div class="hero-badge"><i class="fas fa-robot"></i> RPA Teknolojisi</div>
-                <h1>Robotik Süreç Otomasyonu</h1>
-                <p class="subtitle main-headline">
-                    Tekrarlayan işleri dijital robotlara devredin. Ekibiniz stratejiye, robotlarınız operasyona odaklansın.
-                </p>
-                
-                <div class="hero-ctas">
-                    <a href="../index.html#contact" class="btn btn-primary btn-lg">
-                        Danışmanlık Al <i class="fas fa-arrow-right"></i>
-                    </a>
-                    <a href="#examples" class="btn btn-secondary btn-lg">Örnekleri İncele</a>
+    <!-- 1. HERO -->
+    <section class="tp-hero" data-tp-hero data-field-mode="hero" aria-labelledby="hero-title">
+        <div class="tp-hero__grid">
+            <div class="tp-hero__copy">
+                <p class="t-label tp-kicker">Robotik Süreç Otomasyonu</p>
+                <h1 class="tp-hero__title" id="hero-title"><span class="tp-hero__line"><span>Tekrarlanan işleri</span></span><span class="tp-hero__line"><span><em>akışa dönüştürün.</em></span></span></h1>
+                <p class="tp-hero__sub">Veri girişi, raporlama ve mutabakat gibi tekrar eden bilgisayar işlerini tanımlı adımlara böler ve otomatik çalıştırırız. Ekibiniz sonucu izler.</p>
+                <div class="tp-hero__actions">
+                    <a class="btn btn-primary btn-lg" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info%40teknoify.com" target="_blank" rel="noopener noreferrer">Bize yazın</a>
+                    <a class="btn btn-secondary btn-lg" href="#nasil-calisir">Nasıl çalışır?</a>
                 </div>
             </div>
 
-
-            <div class="hero-right">
-                <div class="rpa-anim-box">
-                    <div class="process-path">
-                        <div class="doc-icon doc-1"><i class="far fa-file-excel"></i></div>
-                        <div class="doc-icon doc-2"><i class="far fa-file-pdf"></i></div>
-                        <div class="doc-icon doc-3"><i class="far fa-envelope"></i></div>
-                        
-                        <div class="bot-core">
-                            <div class="bot-head">
-                                <div class="bot-eyes"></div>
-                            </div>
-                            <div class="bot-body">
-                                <i class="fas fa-cog fa-spin" style="--fa-animation-duration: 3s;"></i>
-                            </div>
-                        </div>
-
-
-                        <div class="result-icon"><i class="fas fa-check-circle"></i></div>
-                    </div>
+            <div class="tp-hero__visual">
+                <div class="win" data-vignette>
+                    <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">akış · çalıştırma</span></div>
+                    <ol class="rpa-steps" aria-label="Temsilî akış adımları">
+                        <li class="rpa-step"><span class="rpa-step__n">01</span><b>Veri al</b></li>
+                        <li class="rpa-step"><span class="rpa-step__n">02</span><b>Kontrol et</b></li>
+                        <li class="rpa-step"><span class="rpa-step__n">03</span><b>İşle</b></li>
+                        <li class="rpa-step"><span class="rpa-step__n">04</span><b>Sonucu aktar</b></li>
+                    </ol>
+                    <ul class="tp-run__plan rpa-log" data-rpa-log aria-label="Çalıştırma kaydı">
+                        <li>Kaynak tablo okundu</li>
+                        <li>Alanlar doğrulandı; eksik kayıtlar ayrıldı</li>
+                        <li>Kayıtlar hedef formata dönüştürüldü</li>
+                        <li>Hedef sisteme aktarıldı</li>
+                        <li>Çalıştırma kaydı ve rapor oluşturuldu</li>
+                    </ul>
+                    <p class="tp-run__out rpa-out" data-rpa-out><b>Akış tamamlandı</b><span class="tp-run__meta">kayıt · rapor hazır</span></p>
                 </div>
             </div>
         </div>
     </section>
 
-
-    <section class="rpa-content">
+    <!-- 2. WHAT CAN BE AUTOMATED -->
+    <section class="tp-section" id="neler" data-field-mode="lanes" aria-labelledby="what-title">
         <div class="container">
-            
-            <div class="intro-text-center">
-                <h2>İnsan Hatasını Sıfırlayan Dijital İş Gücü</h2>
-                <p>RPA çözümleri; insan hatasını ortadan kaldırır, iş hızınızı katlar, maliyetlerinizi düşürür ve ekibinize stratejik görevlere odaklanma fırsatı sunar. 7/24 çalışan sanal çalışanlarınızla tanışın.</p>
+            <p class="t-label tp-kicker" data-reveal>Neleri otomatikleştirebilirsiniz?</p>
+            <h2 class="tp-h2 tp-h2--wide" id="what-title" data-reveal>Faturadan mutabakata, tekrar eden her adım.</h2>
+            <div class="tp-cells tp-cells--3">
+                <article class="tp-cells__item" data-reveal><h3><small>01</small>Fatura işleme</h3><p>Gelen faturaların okunması ve ilgili sisteme işlenmesi.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="1"><h3><small>02</small>CRM veri girişi</h3><p>Form ve e-postalardan gelen bilgilerin CRM'e aktarılması.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="2"><h3><small>03</small>E-posta yönetimi</h3><p>Belirli kurallara göre e-postaların sınıflandırılması ve yönlendirilmesi.</p></article>
+                <article class="tp-cells__item" data-reveal><h3><small>04</small>Otomatik raporlama</h3><p>Düzenli raporların hazırlanması ve ilgili kişilere iletilmesi.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="1"><h3><small>05</small>Banka mutabakatı</h3><p>Banka hareketleri ile kayıtların karşılaştırılması.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="2"><h3><small>06</small>İK süreçleri</h3><p>İşe alım ve özlük işlemlerindeki tekrar eden adımlar.</p></article>
             </div>
-
-
-            <h3 class="section-heading">Neden Teknoify RPA?</h3>
-            <div class="benefit-cards-grid">
-                
-                <div class="benefit-card" id="card-speed">
-                    <div class="benefit-icon"><i class="fas fa-bolt"></i></div>
-                    <h4>Hız Artışı</h4>
-                    <p>İnsan tarafından yapılan işlemleri milisaniyelere indirir ve iş hızınızı %80'e varan oranlarda artırır.</p>
-                </div>
-
-
-                <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
-                    <h4>Hata Oranı = 0</h4>
-                    <p>Rutin veri girişi, raporlama ve işlem süreçlerinde insan hatasını tamamen ortadan kaldırır.</p>
-                </div>
-
-
-                <div class="benefit-card" id="card-247">
-                    <div class="benefit-icon"><i class="fas fa-sync-alt"></i></div>
-                    <h4><span id="counter-7">0</span>/<span id="counter-24">0</span> Kesintisiz</h4>
-                    <p>Dijital iş gücünüz uyumaz, mola vermez ve mesai saati tanımaz. Operasyonlarınız durmaksızın devam eder.</p>
-                </div>
-
-
-                 <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-hand-holding-usd"></i></div>
-                    <h4>Düşük Maliyet</h4>
-                    <p>İş gücü maliyetini düşürür, operasyon verimliliğini artırır ve yatırım maliyetinizi kısa sürede geri kazandırır.</p>
-                </div>
-            </div>
-
-
-            <div id="examples" class="use-cases-wrapper">
-                <h3 class="section-heading">Neleri Otomatize Edebilirsiniz?</h3>
-                <div class="use-cases-grid">
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-                        <span>Fatura İşleme</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-users-cog"></i></div>
-                        <span>CRM Veri Girişi</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-envelope-open-text"></i></div>
-                        <span>E-posta Yönetimi</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-chart-pie"></i></div>
-                        <span>Otomatik Raporlama</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-university"></i></div>
-                        <span>Banka Mutabakatı</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-user-check"></i></div>
-                        <span>İK İşe Alım</span>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="bottom-cta">
-                <a href="../index.html#contact" class="btn btn-primary btn-block">
-                    Hemen Otomasyona Başla
-                </a>
-            </div>
-
-
         </div>
     </section>
 
+    <!-- 3. HOW IT WORKS -->
+    <section class="tp-section" id="nasil-calisir" data-field-mode="calm" aria-labelledby="how-title">
+        <div class="container tp-split">
+            <div class="tp-split__head">
+                <p class="t-label tp-kicker" data-reveal>Nasıl çalışır?</p>
+                <h2 class="tp-h2" id="how-title" data-reveal>İnsan adımından izlenebilir sonuca.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Bugün elle yapılan iş önce adım adım tanımlanır. Sonra bu adımlar bir akışa dönüşür, planlanan zamanda çalışır ve her çalıştırma kayıt altına alınır.</p>
+            </div>
+            <ol class="tp-rail" data-reveal data-reveal-delay="2">
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">01</span><h3>İnsan adımı</h3><p>Bugün elle yapılan iş, adım adım tanımlanır.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">02</span><h3>Tanımlı akış</h3><p>Adımlar, kurallar ve istisnalar bir akışa dönüşür.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">03</span><h3>Otomatik çalıştırma</h3><p>Akış planlanan zamanda veya tetiklendiğinde çalışır.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">04</span><h3>İzlenebilir sonuç</h3><p>Her çalıştırma kayıt altına alınır; sonuç raporlanır.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 4. A FLOW IN DETAIL -->
+    <section class="tp-section" id="akis" data-field-mode="order" aria-labelledby="flow-title">
+        <div class="container tp-split tp-split--tight tp-split--wide">
+            <div class="tp-split__sticky">
+                <p class="t-label tp-kicker" data-reveal>Bir akış</p>
+                <h2 class="tp-h2" id="flow-title" data-reveal>Aç, oku, dönüştür, taşı, raporla.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Bir akış, bilgisayarda yapılan işlemlerin sıralı hâlidir. Her adımın girdisi ve çıktısı bellidir; istisnalar ayrılır, akış devam eder.</p>
+                <dl class="tp-def" data-reveal data-reveal-delay="2">
+                    <div><dt>Tetikleyici</dt><dd>Planlanan zaman ya da yeni bir kayıt, dosya veya e-posta.</dd></div>
+                    <div><dt>Kontrol</dt><dd>Eksik veya hatalı kayıtlar ayrılır; akış durmaz.</dd></div>
+                    <div><dt>Kayıt</dt><dd>Her çalıştırmanın adımları ve sonucu saklanır.</dd></div>
+                </dl>
+            </div>
+            <div class="win tp-log" data-reveal>
+                <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">örnek akış · mutabakat</span></div>
+                <ol class="tp-log__rows">
+                    <li class="tp-log__row tp-log__row--user"><span class="tp-log__who">Tetikleyici</span><p>Günlük banka hareket dosyası geldi.</p></li>
+                    <li class="tp-log__row tp-log__row--tools"><span class="tp-log__who">Adımlar</span><ul class="tp-chips"><li>Aç</li><li>Oku</li><li>Dönüştür</li><li>Karşılaştır</li><li>Raporla</li></ul></li>
+                    <li class="tp-log__row tp-log__row--agent"><span class="tp-log__who">Kontrol</span><p>Eşleşmeyen hareketler ayrı bir listeye alındı.</p></li>
+                    <li class="tp-log__row tp-log__row--proc"><span class="tp-log__who">İşleme</span><div><p>Kayıtlar muhasebe hareketleriyle karşılaştırılıyor.</p><i class="tp-log__bar" aria-hidden="true"></i></div></li>
+                    <li class="tp-log__row tp-log__row--out"><span class="tp-log__who">Sonuç</span><p>Mutabakat raporu ve istisna listesi hazır.</p></li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. WHY -->
+    <section class="tp-section" id="neden" data-field-mode="calm" aria-labelledby="why-title">
+        <div class="container tp-split tp-split--tight">
+            <div>
+                <p class="t-label tp-kicker" data-reveal>Neden akış?</p>
+                <h2 class="tp-h2" id="why-title" data-reveal>Aynı iş, her seferinde aynı şekilde.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Tekrar eden işi bir akışa taşıdığınızda ekibiniz operasyonu değil sonucu yönetir.</p>
+            </div>
+            <ol class="tp-list">
+                <li data-reveal><span class="tp-list__n">01</span><div><h3>Hız</h3><p>Adımlar beklemeden, sırayla ve aynı şekilde çalışır.</p></div></li>
+                <li data-reveal data-reveal-delay="1"><span class="tp-list__n">02</span><div><h3>Daha az hata</h3><p>Aynı kural her kayıtta aynı şekilde uygulanır; elle giriş hataları azalır.</p></div></li>
+                <li data-reveal data-reveal-delay="2"><span class="tp-list__n">03</span><div><h3>Mesaiden bağımsız</h3><p>Akışlar planlanan zamanda çalışır; ekibiniz sonucu izler.</p></div></li>
+                <li data-reveal data-reveal-delay="3"><span class="tp-list__n">04</span><div><h3>Odak</h3><p>Tekrar eden iş yükü azaldıkça ekibiniz analize ve karara odaklanır.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 6. FINAL CTA -->
+    <section class="cta tp-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="cta-title">
+        <div class="cta__wrap">
+            <p class="t-label tp-kicker">Sıradaki adım</p>
+            <h2 class="cta__title" id="cta-title"><span class="cta__line"><span>İlk akışı birlikte</span></span><span class="cta__line cta__line--accent"><span>tanımlayalım.</span></span></h2>
+            <p class="cta__lead">Tekrar eden bir işi anlatın; birlikte adımlara bölelim ve otomatikleştirelim.</p>
+            <div class="cta__actions">
+                <a class="btn btn-primary btn-lg" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info%40teknoify.com" target="_blank" rel="noopener noreferrer">Bize yazın</a>
+                <a class="btn btn-secondary btn-lg" href="https://platform.teknoify.com/" rel="noopener">Platforma git</a>
+            </div>
+        </div>
+    </section>
 
 </main>
 
-
-<footer class="footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="logo">
-                    <a aria-label="Teknoify ana sayfa" href="../index.html#home" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
-                        <img class="logo-lockup" src="../images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
-                    </a>
-                </div>
-                <p class="footer-desc">
-                    Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
-                </p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-
-
-            <div class="footer-col">
-                <h4>Yasal</h4>
-                <ul>
-                    <li><a href="kvkk.html">KVKK Aydınlatma Metni</a></li>
-                    <li><a href="gizlilik.html">Gizlilik Sözleşmesi</a></li>
-                    <li><a href="kullanim-sartlari.html">Kullanım Şartları</a></li>
-                    <li><a href="hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
-                </ul>
-            </div>
-
-
-            <div class="footer-col">
-                <h4>Bize Ulaşın</h4>
-                <ul class="contact-list">
-                    <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
-                    <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
-                </ul>
-            </div>
+<!-- shell:footer -->
+<footer class="site-footer" id="footer">
+    <div class="site-footer__wrap">
+        <div class="site-footer__brand">
+            <a href="/" aria-label="Teknoify ana sayfa"><img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async"></a>
+            <p>Hazır yapay zekâ ajanları, araçlar ve otomasyonlar. İşletmeler ve bireyler için.</p>
         </div>
-
-
-        <div class="footer-bottom">
-            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
-        </div>
+        <nav class="site-footer__group" aria-labelledby="footer-araclar">
+            <h3 id="footer-araclar">Araçlar</h3>
+            <ul>
+                <li><a href="/pages/ai-agent.html">AI Agent</a></li>
+                <li><a href="/pages/api.html">API &amp; Entegrasyon</a></li>
+                <li><a href="/pages/rpa.html" aria-current="page">Robotik Süreç Otomasyonu</a></li>
+                <li><a href="/pages/financial-indicators.html">Finansal İndikatör &amp; Botlar</a></li>
+                <li><a href="/pages/webscraping.html">Web Scraping</a></li>
+                <li><a href="/pages/training-consulting.html">Eğitim &amp; Danışmanlık</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-platform">
+            <h3 id="footer-platform">Platform</h3>
+            <ul>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Platforma git</a></li>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Ajan Kütüphanesi</a></li>
+                <li><a href="https://demo.teknoify.com/">Demo Lab</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-sayfa">
+            <h3 id="footer-sayfa">Ana sayfa</h3>
+            <ul>
+                <li><a href="/#nasil-calisir">Nasıl çalışır</a></li>
+                <li><a href="/#kimin-icin">Kimin için</a></li>
+                <li><a href="/#katalog">Katalog</a></li>
+                <li><a href="/#guven">Güven ve kontrol</a></li>
+                <li><a href="/#contact">İletişim</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-yasal">
+            <h3 id="footer-yasal">Şirket ve yasal</h3>
+            <ul>
+                <li><a href="mailto:info@teknoify.com">info@teknoify.com</a></li>
+                <li>İstanbul, Türkiye</li>
+                <li><a href="/pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
+                <li><a href="/pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                <li><a href="/pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
+                <li><a href="/pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="site-footer__bottom">
+        <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
     </div>
 </footer>
+<!-- /shell:footer -->
 
-
-
-
-<script src="../js/script.js?v=rpa-quantum-grid-1" defer></script>
-<script type="module" src="../js/experience/shell.js?v=shell1"></script>
-
-
-<script>
-   
-    let counterStarted = false;
-
-
-    // Sayaç Animasyonu
-    function animateCounter(id, start, end, duration) {
-        if (start === end) return;
-        const obj = document.getElementById(id);
-        if(!obj) return;
-        let startTime = null;
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            const currentVal = Math.floor(progress * (end - start) + start);
-            obj.textContent = currentVal;
-            if (progress < 1) window.requestAnimationFrame(step);
-        }
-        window.requestAnimationFrame(step);
-    }
-   
-    // Scroll Gözlemcisi
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.5 
-    };
-
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-
-
-                if (id === 'card-247' && !counterStarted) {
-                    animateCounter('counter-7', 0, 7, 2000);
-                    animateCounter('counter-24', 0, 24, 2500);
-                    counterStarted = true;
-                }
-            }
-        });
-    }, observerOptions);
-
-
-    const card247 = document.getElementById('card-247');
-    if (card247) observer.observe(card247);
-
-
-</script>
+<script src="../js/script.js?v=tools1" defer></script>
+<script type="module" src="../js/experience/tools/rpa.js?v=tools1"></script>
 </body>
 </html>
-
-
-

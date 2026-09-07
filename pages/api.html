@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/svg+xml" href="../images/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
-    <title>API Entegrasyon Hizmetleri | Teknoify</title>
-   
+    <title>API & Entegrasyon | Teknoify</title>
+    <meta name="description" content="Teknoify API & Entegrasyon: CRM, ERP, e-ticaret ve muhasebe sistemlerinizi birbirine bağlar; veri ve görevler elle taşınmadan sistemler arasında akar. Pazaryeri, e-fatura, kargo, ödeme ve raporlama entegrasyonları.">
+    <link rel="canonical" href="https://teknoify.com/pages/api">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#070a10">
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-   
-    <link rel="stylesheet" href="../css/style.css?v=mobile4">
-    <link rel="stylesheet" href="../css/api.css?v=api-quantum-grid-1">
-    <!-- secondary-page responsive layer: loaded after the page stylesheet on purpose (unlayered, must win) -->
+
+    <link rel="stylesheet" href="../css/style.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/tools-page.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/api.css?v=tools1">
+    <!-- secondary-page responsive layer: loaded after the page stylesheets on purpose (unlayered, must win) -->
     <link rel="stylesheet" href="../css/01-foundation/shell-responsive.css?v=mobile5">
 </head>
 <body>
@@ -24,6 +30,7 @@
 <div class="field-veil" aria-hidden="true"></div>
 <!-- /shell:field -->
 
+<a class="skip-link" href="#main">İçeriğe geç</a>
 <!-- shell:header -->
 <header id="header" class="header header--stage">
     <nav class="navbar" aria-label="Ana navigasyon">
@@ -65,233 +72,196 @@
 </header>
 <!-- /shell:header -->
 
-<main class="page-frame home-page-shell api-page-shell">
+<main id="main" class="page-frame tools-page">
 
-    <section class="api-hero">
-        <div class="container hero-grid">
-            <div class="hero-left">
-                <div class="hero-badge"><i class="fas fa-network-wired"></i> Sistem Entegrasyonu</div>
-                <h1>Yazılımlarınız Birbiriyle Konuşsun</h1>
-                <p class="subtitle main-headline">
-                    CRM, ERP, E-ticaret ve Muhasebe sistemlerinizi birbirine bağlayarak veri akışını otomatikleştirin. Manuel veri girişini sonlandırın.
-                </p>
-                
-                <div class="hero-ctas">
-                    <a href="../index.html#contact" class="btn btn-primary btn-lg">
-                        Entegrasyon Başlat
-                    </a>
-                    <a href="#api-cases" class="btn btn-secondary btn-lg">Çözümler</a>
+    <!-- 1. HERO -->
+    <section class="tp-hero" data-tp-hero data-field-mode="hero" aria-labelledby="hero-title">
+        <div class="tp-hero__grid">
+            <div class="tp-hero__copy">
+                <p class="t-label tp-kicker">API &amp; Entegrasyon</p>
+                <h1 class="tp-hero__title" id="hero-title"><span class="tp-hero__line"><span>Sistemleriniz</span></span><span class="tp-hero__line"><span><em>birbiriyle konuşsun.</em></span></span></h1>
+                <p class="tp-hero__sub">CRM, ERP, e-ticaret ve muhasebe sistemlerinizi birbirine bağlarız. Veri ve görevler, elle taşınmadan sistemler arasında akar.</p>
+                <div class="tp-hero__actions">
+                    <a class="btn btn-primary btn-lg" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info%40teknoify.com" target="_blank" rel="noopener noreferrer">Bize yazın</a>
+                    <a class="btn btn-secondary btn-lg" href="#nasil-calisir">Nasıl çalışır?</a>
                 </div>
             </div>
 
-            <div class="hero-right">
-                <div class="api-anim-box">
-                    <div class="connection-lines">
-                        <div class="conn-line c1"></div>
-                        <div class="conn-line c2"></div>
-                        <div class="conn-line c3"></div>
+            <div class="tp-hero__visual">
+                <div class="win" data-vignette>
+                    <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">entegrasyon · akış</span></div>
+                    <div class="api-route" aria-label="Temsilî entegrasyon akışı: kaynak sistemler, Teknoify entegrasyon katmanı, hedef sistemler">
+                        <div class="api-col" data-api-src>
+                            <span class="api-col__k">Kaynak sistemler</span>
+                            <span class="api-node">E-ticaret</span>
+                            <span class="api-node">CRM</span>
+                            <span class="api-node">ERP</span>
+                        </div>
+                        <i class="api-link" aria-hidden="true"></i>
+                        <div class="api-hub"><b>Teknoify</b><small>entegrasyon katmanı</small></div>
+                        <i class="api-link" aria-hidden="true"></i>
+                        <div class="api-col" data-api-dst>
+                            <span class="api-col__k">Hedefler</span>
+                            <span class="api-node">Muhasebe</span>
+                            <span class="api-node">Depo</span>
+                            <span class="api-node">Raporlama</span>
+                        </div>
                     </div>
-
-                    <div class="data-packets">
-                        <div class="packet pkt-1"></div>
-                        <div class="packet pkt-2"></div>
-                        <div class="packet pkt-3"></div>
-                    </div>
-
-                    <div class="central-hub">
-                        <div class="hub-icon"><i class="fas fa-plug"></i></div>
-                        <div class="hub-ring"></div>
-                    </div>
-
-                    <div class="node node-crm">
-                        <div class="node-icon"><i class="fas fa-users"></i></div>
-                        <span>CRM</span>
-                    </div>
-                    <div class="node node-erp">
-                        <div class="node-icon"><i class="fas fa-industry"></i></div>
-                        <span>ERP</span>
-                    </div>
-                    <div class="node node-cloud">
-                        <div class="node-icon"><i class="fas fa-cloud"></i></div>
-                        <span>Cloud</span>
-                    </div>
+                    <ul class="tp-chips tp-chips--pending api-status" data-api-states aria-label="Akış durumları">
+                        <li>Bağlantı hazır</li>
+                        <li>Veri eşitlendi</li>
+                        <li>Akış çalışıyor</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="api-content">
+    <!-- 2. HOW IT WORKS -->
+    <section class="tp-section" id="nasil-calisir" data-field-mode="calm" aria-labelledby="how-title">
+        <div class="container tp-split">
+            <div class="tp-split__head">
+                <p class="t-label tp-kicker" data-reveal>Nasıl çalışır?</p>
+                <h2 class="tp-h2" id="how-title" data-reveal>Sistemlerden otomasyona, dört adımda.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Birbirinden kopuk çalışan yazılımlar, aynı veriyi elle taşıma yükü doğurur. Entegrasyon katmanı bu yükü ortadan kaldırır: veri bir kez girilir, ihtiyaç duyan her sisteme ulaşır.</p>
+            </div>
+            <ol class="tp-rail" data-reveal data-reveal-delay="2">
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">01</span><h3>Sistemler</h3><p>Bağlanacak uygulamalar ve veri kaynakları belirlenir.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">02</span><h3>Veri alışverişi</h3><p>Alanlar eşlenir; kayıtların hangi yönde, hangi kuralla taşınacağı tanımlanır.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">03</span><h3>Entegrasyon</h3><p>API üzerinden, olay bazlı veya planlı eşitlemeyle bağlantı kurulur.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">04</span><h3>Otomasyon</h3><p>Bir sistemdeki değişiklik diğerlerine kendiliğinden yansır.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 3. EXAMPLE FLOW -->
+    <section class="tp-section" id="ornek" data-field-mode="order" aria-labelledby="flow-title">
+        <div class="container tp-split tp-split--tight tp-split--wide">
+            <div class="tp-split__sticky">
+                <p class="t-label tp-kicker" data-reveal>Örnek akış</p>
+                <h2 class="tp-h2" id="flow-title" data-reveal>Bir sipariş nasıl yol alır?</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">E-ticaret sitesinde oluşan bir sipariş; stok, fatura ve kargo adımlarını elle tekrar girilmeden tamamlar.</p>
+                <dl class="tp-def" data-reveal data-reveal-delay="2">
+                    <div><dt>Protokol</dt><dd>REST API'ler üzerinden veri alışverişi.</dd></div>
+                    <div><dt>Eşitleme</dt><dd>Olay bazlı veya planlı; ihtiyaca göre.</dd></div>
+                    <div><dt>Güvenlik</dt><dd>OAuth2, JWT ve SSL/TLS ile şifreli aktarım.</dd></div>
+                </dl>
+            </div>
+            <div class="win tp-log" data-reveal>
+                <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">örnek akış · sipariş</span></div>
+                <ol class="tp-log__rows">
+                    <li class="tp-log__row tp-log__row--user"><span class="tp-log__who">Olay</span><p>E-ticaret sitesinde yeni bir sipariş oluşturuldu.</p></li>
+                    <li class="tp-log__row tp-log__row--agent"><span class="tp-log__who">Eşleme</span><p>Sipariş alanları hedef sistemlerin alanlarıyla eşlendi.</p></li>
+                    <li class="tp-log__row tp-log__row--tools"><span class="tp-log__who">Hedefler</span><ul class="tp-chips"><li>Stok güncelle</li><li>Fatura oluştur</li><li>Kargo kaydı</li></ul></li>
+                    <li class="tp-log__row tp-log__row--proc"><span class="tp-log__who">Aktarım</span><div><p>Kayıtlar hedef sistemlere yazılıyor.</p><i class="tp-log__bar" aria-hidden="true"></i></div></li>
+                    <li class="tp-log__row tp-log__row--out"><span class="tp-log__who">Sonuç</span><p>Stok, fatura ve kargo kayıtları aynı siparişi gösteriyor.</p></li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. INTEGRATION AREAS -->
+    <section class="tp-section" id="alanlar" data-field-mode="lanes" aria-labelledby="areas-title">
         <div class="container">
-            
-            <div class="intro-text-center">
-                <h2>Tek Merkezden Yönetilen Veri Akışı</h2>
-                <p>İşletmenizde kullandığınız farklı yazılımların birbirinden kopuk çalışması verimliliğinizi düşürür. Özel API çözümlerimizle; stok takibinden sipariş yönetimine, müşteri verilerinden finansal kayıtlara kadar tüm süreçleri gerçek zamanlı senkronize ediyoruz.</p>
+            <p class="t-label tp-kicker" data-reveal>Entegrasyon alanları</p>
+            <h2 class="tp-h2 tp-h2--wide" id="areas-title" data-reveal>Siparişten muhasebeye, tek katman.</h2>
+            <div class="tp-cells tp-cells--3">
+                <article class="tp-cells__item" data-reveal><h3><small>01</small>Pazaryeri entegrasyonları</h3><p>Trendyol, Hepsiburada gibi pazar yerlerinde sipariş ve stok akışı.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="1"><h3><small>02</small>E-fatura &amp; muhasebe</h3><p>Satış ve tahsilat kayıtlarının muhasebe sistemine aktarımı.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="2"><h3><small>03</small>Kargo &amp; lojistik</h3><p>Gönderi oluşturma ve takip bilgilerinin sistemler arasında paylaşımı.</p></article>
+                <article class="tp-cells__item" data-reveal><h3><small>04</small>SMS &amp; e-posta pazarlama</h3><p>Müşteri ve sipariş verisinin iletişim araçlarına aktarımı.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="1"><h3><small>05</small>Ödeme sistemleri</h3><p>Sanal POS işlemlerinin sipariş ve muhasebe kayıtlarıyla eşleşmesi.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="2"><h3><small>06</small>Özel raporlama panelleri</h3><p>Farklı sistemlerden gelen verinin tek bir panelde toplanması.</p></article>
             </div>
+        </div>
+    </section>
 
-            <h3 class="section-heading">Neden API Entegrasyonu?</h3>
-            <div class="benefit-cards-grid">
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-sync-alt"></i></div>
-                    <h4>Anlık Senkronizasyon</h4>
-                    <p>Bir sistemde yapılan değişiklik (örn: satış) diğer tüm sistemlere (stok, muhasebe) anında yansır.</p>
-                </div>
-
-                <div class="benefit-card" id="card-uptime">
-                    <div class="benefit-icon"><i class="fas fa-check-double"></i></div>
-                    <h4>%<span id="counter-opt">0</span> Veri Tutarlılığı</h4>
-                    <p>Manuel giriş hatalarını ortadan kaldırarak verilerinizin sistemler arasında %100 tutarlı olmasını sağlar.</p>
-                </div>
-
-                <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-user-shield"></i></div>
-                    <h4>Güvenli Protokoller</h4>
-                    <p>OAuth2, JWT ve SSL şifreleme standartlarıyla verileriniz güvenli tünellerden taşınır.</p>
-                </div>
-
-                 <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-expand-arrows-alt"></i></div>
-                    <h4>Tam Ölçeklenebilirlik</h4>
-                    <p>İşiniz büyüdükçe yeni modüller ve yazılımlar sisteme kolayca entegre edilebilir.</p>
-                </div>
+    <!-- 5. WHY -->
+    <section class="tp-section" id="neden" data-field-mode="calm" aria-labelledby="why-title">
+        <div class="container tp-split tp-split--tight">
+            <div>
+                <p class="t-label tp-kicker" data-reveal>Neden entegrasyon?</p>
+                <h2 class="tp-h2" id="why-title" data-reveal>Veri bir kez girilir, her yerde doğru kalır.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Elle taşınan her kayıt bir hata ve zaman maliyetidir. Entegrasyon katmanı bu adımı ortadan kaldırır.</p>
             </div>
+            <ol class="tp-list">
+                <li data-reveal><span class="tp-list__n">01</span><div><h3>Tutarlı veri</h3><p>Bir sistemde yapılan değişiklik diğerlerine yansır; elle giriş hataları azalır.</p></div></li>
+                <li data-reveal data-reveal-delay="1"><span class="tp-list__n">02</span><div><h3>Güvenli aktarım</h3><p>OAuth2, JWT ve SSL standartlarıyla veri şifreli kanallardan taşınır.</p></div></li>
+                <li data-reveal data-reveal-delay="2"><span class="tp-list__n">03</span><div><h3>Ölçeklenebilir yapı</h3><p>İşiniz büyüdükçe yeni modüller ve yazılımlar aynı katmana eklenir.</p></div></li>
+            </ol>
+        </div>
+    </section>
 
-            <div id="api-cases" class="use-cases-wrapper">
-                <h3 class="section-heading">Entegrasyon Alanları</h3>
-                <div class="use-cases-grid">
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-shopping-basket"></i></div>
-                        <span>Pazaryeri (Trendyol/Hepsiburada)</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-                        <span>E-Fatura & Muhasebe</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-shipping-fast"></i></div>
-                        <span>Kargo & Lojistik API</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-bullhorn"></i></div>
-                        <span>SMS & Email Marketing</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-money-check-alt"></i></div>
-                        <span>Ödeme Sistemleri (Sanal POS)</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        <span>Özel Dashboard Yapımı</span>
-                    </div>
-                </div>
+    <!-- 6. FINAL CTA -->
+    <section class="cta tp-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="cta-title">
+        <div class="cta__wrap">
+            <p class="t-label tp-kicker">Sıradaki adım</p>
+            <h2 class="cta__title" id="cta-title"><span class="cta__line"><span>Sistemlerinizi</span></span><span class="cta__line cta__line--accent"><span>bağlayalım.</span></span></h2>
+            <p class="cta__lead">Hangi sistemlerin birbiriyle konuşması gerektiğini yazın; entegrasyon analiziyle başlayalım.</p>
+            <div class="cta__actions">
+                <a class="btn btn-primary btn-lg" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info%40teknoify.com" target="_blank" rel="noopener noreferrer">Bize yazın</a>
+                <a class="btn btn-secondary btn-lg" href="https://platform.teknoify.com/" rel="noopener">Platforma git</a>
             </div>
-
-            <div class="bottom-cta">
-                <a href="../index.html#contact" class="btn btn-primary btn-block">
-                    Entegrasyon Analizi İste
-                </a>
-            </div>
-
         </div>
     </section>
 
 </main>
 
-<footer class="footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="logo">
-                    <a aria-label="Teknoify ana sayfa" href="../index.html#home" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
-                        <img class="logo-lockup" src="../images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
-                    </a>
-                </div>
-                <p class="footer-desc">
-                    Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
-                </p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-col">
-                <h4>Yasal</h4>
-                <ul>
-                    <li><a href="kvkk.html">KVKK Aydınlatma Metni</a></li>
-                    <li><a href="gizlilik.html">Gizlilik Sözleşmesi</a></li>
-                    <li><a href="kullanim-sartlari.html">Kullanım Şartları</a></li>
-                    <li><a href="hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>Bize Ulaşın</h4>
-                <ul class="contact-list">
-                    <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
-                    <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
-                </ul>
-            </div>
+<!-- shell:footer -->
+<footer class="site-footer" id="footer">
+    <div class="site-footer__wrap">
+        <div class="site-footer__brand">
+            <a href="/" aria-label="Teknoify ana sayfa"><img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async"></a>
+            <p>Hazır yapay zekâ ajanları, araçlar ve otomasyonlar. İşletmeler ve bireyler için.</p>
         </div>
-
-        <div class="footer-bottom">
-            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
-        </div>
+        <nav class="site-footer__group" aria-labelledby="footer-araclar">
+            <h3 id="footer-araclar">Araçlar</h3>
+            <ul>
+                <li><a href="/pages/ai-agent.html">AI Agent</a></li>
+                <li><a href="/pages/api.html" aria-current="page">API &amp; Entegrasyon</a></li>
+                <li><a href="/pages/rpa.html">Robotik Süreç Otomasyonu</a></li>
+                <li><a href="/pages/financial-indicators.html">Finansal İndikatör &amp; Botlar</a></li>
+                <li><a href="/pages/webscraping.html">Web Scraping</a></li>
+                <li><a href="/pages/training-consulting.html">Eğitim &amp; Danışmanlık</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-platform">
+            <h3 id="footer-platform">Platform</h3>
+            <ul>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Platforma git</a></li>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Ajan Kütüphanesi</a></li>
+                <li><a href="https://demo.teknoify.com/">Demo Lab</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-sayfa">
+            <h3 id="footer-sayfa">Ana sayfa</h3>
+            <ul>
+                <li><a href="/#nasil-calisir">Nasıl çalışır</a></li>
+                <li><a href="/#kimin-icin">Kimin için</a></li>
+                <li><a href="/#katalog">Katalog</a></li>
+                <li><a href="/#guven">Güven ve kontrol</a></li>
+                <li><a href="/#contact">İletişim</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-yasal">
+            <h3 id="footer-yasal">Şirket ve yasal</h3>
+            <ul>
+                <li><a href="mailto:info@teknoify.com">info@teknoify.com</a></li>
+                <li>İstanbul, Türkiye</li>
+                <li><a href="/pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
+                <li><a href="/pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                <li><a href="/pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
+                <li><a href="/pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="site-footer__bottom">
+        <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
     </div>
 </footer>
+<!-- /shell:footer -->
 
-
-
-<script src="../js/script.js?v=api-quantum-grid-1" defer></script>
-<script type="module" src="../js/experience/shell.js?v=shell1"></script>
-
-<script>
-   
-    let counterStarted = false;
-
-    // Sayaç Fonksiyonu
-    function animateCounter(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        if(!obj) return;
-        let startTime = null;
-        
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            const currentVal = Math.floor(progress * (end - start) + start);
-            obj.textContent = currentVal;
-            if (progress < 1) window.requestAnimationFrame(step);
-        }
-        window.requestAnimationFrame(step);
-    }
-   
-    // Scroll Observer
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.5 
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-
-                // Veri Tutarlılığı Sayacı (%100)
-                if (id === 'card-uptime' && !counterStarted) {
-                    animateCounter('counter-opt', 0, 100, 1500);
-                    counterStarted = true;
-                }
-            }
-        });
-    }, observerOptions);
-
-    const cardUptime = document.getElementById('card-uptime');
-    if (cardUptime) observer.observe(cardUptime);
-
-</script>
+<script src="../js/script.js?v=tools1" defer></script>
+<script type="module" src="../js/experience/tools/api.js?v=tools1"></script>
 </body>
 </html>
-
-

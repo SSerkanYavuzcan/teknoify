@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/svg+xml" href="../images/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
     <title>Finansal İndikatör & Botlar | Teknoify</title>
-   
+    <meta name="description" content="Teknoify Finansal İndikatör & Botlar: belirlediğiniz göstergeler ve kurallarla çalışan teknik analiz indikatörleri, izleme botları ve otomasyonlar. TradingView indikatörleri, borsa API botları, backtest yazılımları, Telegram sinyal botları, portföy takibi.">
+    <link rel="canonical" href="https://teknoify.com/pages/financial-indicators">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#070a10">
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-   
-    <link rel="stylesheet" href="../css/style.css?v=mobile4">
-    <link rel="stylesheet" href="../css/financial-indicators.css?v=financial-quantum-grid-1">
-    <!-- secondary-page responsive layer: loaded after the page stylesheet on purpose (unlayered, must win) -->
+
+    <link rel="stylesheet" href="../css/style.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/tools-page.css?v=tools1">
+    <link rel="stylesheet" href="../css/tools/fi.css?v=tools1">
+    <!-- secondary-page responsive layer: loaded after the page stylesheets on purpose (unlayered, must win) -->
     <link rel="stylesheet" href="../css/01-foundation/shell-responsive.css?v=mobile5">
 </head>
 <body>
@@ -24,6 +30,7 @@
 <div class="field-veil" aria-hidden="true"></div>
 <!-- /shell:field -->
 
+<a class="skip-link" href="#main">İçeriğe geç</a>
 <!-- shell:header -->
 <header id="header" class="header header--stage">
     <nav class="navbar" aria-label="Ana navigasyon">
@@ -65,236 +72,194 @@
 </header>
 <!-- /shell:header -->
 
-<main class="page-frame home-page-shell financial-page-shell">
+<main id="main" class="page-frame tools-page">
 
-
-    <section class="fi-hero">
-        <div class="container hero-grid">
-            <div class="hero-left">
-                <div class="hero-badge"><i class="fas fa-chart-line"></i> Finansal Teknoloji</div>
-                <h1>Piyasaların Ritmini Yapay Zeka ile Yakalayın</h1>
-                <p class="subtitle main-headline">
-                    Duygusal kararları ortadan kaldırın. Özelleştirilmiş algoritmalar ve otomatik al-sat botlarıyla yatırımlarınızı 7/24 profesyonelce yönetin.
-                </p>
-                
-                <div class="hero-ctas">
-                    <a href="../index.html#contact" class="btn btn-primary btn-lg">
-                        Strateji Geliştir
-                    </a>
-                    <a href="#fi-cases" class="btn btn-secondary btn-lg">Çözümlerimiz</a>
+    <!-- 1. HERO -->
+    <section class="tp-hero" data-tp-hero data-field-mode="hero" aria-labelledby="hero-title">
+        <div class="tp-hero__grid">
+            <div class="tp-hero__copy">
+                <p class="t-label tp-kicker">Finansal İndikatör &amp; Botlar</p>
+                <h1 class="tp-hero__title" id="hero-title"><span class="tp-hero__line"><span>Piyasa verisini</span></span><span class="tp-hero__line"><span><em>kurala bağlı sinyallere</em></span></span><span class="tp-hero__line"><span>dönüştürün.</span></span></h1>
+                <p class="tp-hero__sub">Belirlediğiniz göstergeler ve kurallarla çalışan teknik analiz indikatörleri, izleme botları ve otomasyonlar geliştiririz. Kararı siz verirsiniz; sistem izler ve haber verir.</p>
+                <div class="tp-hero__actions">
+                    <a class="btn btn-primary btn-lg" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info%40teknoify.com" target="_blank" rel="noopener noreferrer">Bize yazın</a>
+                    <a class="btn btn-secondary btn-lg" href="#nasil-calisir">Nasıl çalışır?</a>
                 </div>
             </div>
 
-            <div class="hero-right">
-                <div class="fi-anim-box">
-                    <div class="chart-grid">
-                        <div class="grid-line h"></div>
-                        <div class="grid-line h"></div>
-                        <div class="grid-line h"></div>
-                        <div class="grid-line v"></div>
-                        <div class="grid-line v"></div>
-                        <div class="grid-line v"></div>
+            <div class="tp-hero__visual">
+                <div class="win" data-vignette>
+                    <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">izleme · kural</span></div>
+                    <div class="fi-chart" aria-hidden="true">
+                        <svg viewBox="0 0 400 132" preserveAspectRatio="none">
+                            <g class="fi-grid"><line x1="0" y1="33" x2="400" y2="33"/><line x1="0" y1="66" x2="400" y2="66"/><line x1="0" y1="99" x2="400" y2="99"/></g>
+                            <line class="fi-rule" x1="0" y1="46" x2="400" y2="46"/>
+                            <path class="fi-ma" d="M0,92 C40,88 70,84 110,80 S180,70 220,66 S300,58 340,52 S380,46 400,44"/>
+                            <path class="fi-line" d="M0,98 C24,90 36,102 58,88 S92,76 116,84 S150,60 176,68 S212,78 236,62 S276,50 300,56 S332,40 352,44 S380,34 400,30"/>
+                            <circle class="fi-mark-ring" cx="352" cy="44" r="9"/>
+                            <circle class="fi-mark" cx="352" cy="44" r="4"/>
+                        </svg>
+                        <span class="fi-chart__tag">temsilî seri</span>
+                        <span class="fi-chart__rule-label">eşik kuralı</span>
                     </div>
-
-                    <div class="candles-container">
-                        <div class="candle c-up"></div>
-                        <div class="candle c-down"></div>
-                        <div class="candle c-up"></div>
-                        <div class="candle c-up lg"></div> <div class="candle c-down sm"></div>
-                        <div class="candle c-up final"></div>
-                    </div>
-
-                    <svg class="price-line-svg" viewBox="0 0 300 150">
-                        <path class="price-path" d="M0,100 Q50,50 100,80 T200,40 T300,10" />
-                    </svg>
-
-                    <div class="signal-box">
-                        <div class="signal-dot"></div>
-                        <span>AL SİNYALİ</span>
-                    </div>
-
-                    <div class="ticker-tape">
-                        <span>BTC +2.4%</span>
-                        <span>ETH +1.8%</span>
-                        <span>XAU -0.5%</span>
-                    </div>
+                    <ol class="fi-pipe" aria-label="İzleme adımları">
+                        <li><b>Veri</b><small>fiyat serisi</small></li>
+                        <li><b>İndikatör</b><small>hareketli ortalama</small></li>
+                        <li><b>Kural</b><small>sizin eşiğiniz</small></li>
+                        <li><b>Sinyal</b><small>bildirim</small></li>
+                    </ol>
+                    <p class="tp-run__out fi-out" data-fi-out><b>Bildirim hazır</b><span class="tp-run__meta">kural · sizin tanımınız</span></p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="fi-content">
+    <!-- 2. HOW IT WORKS -->
+    <section class="tp-section" id="nasil-calisir" data-field-mode="calm" aria-labelledby="how-title">
+        <div class="container tp-split">
+            <div class="tp-split__head">
+                <p class="t-label tp-kicker" data-reveal>Nasıl çalışır?</p>
+                <h2 class="tp-h2" id="how-title" data-reveal>Veriden sinyale, kural kural.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Karmaşık piyasa verisi, sizin belirlediğiniz göstergeler ve seviyelerden geçerek anlamlı bir sinyale dönüşür. Şans değil, tanımlı kurallar.</p>
+            </div>
+            <ol class="tp-rail" data-reveal data-reveal-delay="2">
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">01</span><h3>Veri</h3><p>Fiyat serileri ve piyasa verisi kaynaktan alınır.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">02</span><h3>İndikatör</h3><p>RSI, MACD gibi göstergeler ya da size özel hesaplamalar uygulanır.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">03</span><h3>Kural</h3><p>Eşikler, stop-loss ve take-profit seviyeleri sizin tanımınızla belirlenir.</p></div></li>
+                <li class="tp-rail__step"><div class="tp-rail__body"><span class="tp-rail__n">04</span><h3>Sinyal ve aksiyon</h3><p>Kural sağlandığında bildirim üretilir ya da tanımlı işlem çalışır.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 3. RULE-BASED -->
+    <section class="tp-section" id="kural" data-field-mode="order" aria-labelledby="rule-title">
+        <div class="container tp-split tp-split--tight tp-split--wide">
+            <div class="tp-split__sticky">
+                <p class="t-label tp-kicker" data-reveal>Kural tabanlı çalışma</p>
+                <h2 class="tp-h2" id="rule-title" data-reveal>Kuralı siz yazarsınız, bot uygular.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Göstergeler, seviyeler ve istisnalar sizin stratejinizden gelir. Sistem her yeni veride aynı kuralı aynı şekilde değerlendirir.</p>
+                <dl class="tp-def" data-reveal data-reveal-delay="2">
+                    <div><dt>Kaynaklar</dt><dd>TradingView, Binance ve özel borsa API'leri.</dd></div>
+                    <div><dt>Kurallar</dt><dd>Sizin belirlediğiniz gösterge ve seviyeler.</dd></div>
+                    <div><dt>Sınama</dt><dd>Backtest ile geçmiş veri üzerinde doğrulama.</dd></div>
+                </dl>
+            </div>
+            <div class="win tp-log" data-reveal>
+                <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">örnek izleme · kur</span></div>
+                <ol class="tp-log__rows">
+                    <li class="tp-log__row tp-log__row--user"><span class="tp-log__who">Veri</span><p>Günlük kur serisi kaynaktan alındı.</p></li>
+                    <li class="tp-log__row tp-log__row--agent"><span class="tp-log__who">İndikatör</span><p>Hareketli ortalama hesaplandı.</p></li>
+                    <li class="tp-log__row tp-log__row--tools"><span class="tp-log__who">Kurallar</span><ul class="tp-chips"><li>Eşik</li><li>Stop-loss</li><li>Take-profit</li></ul></li>
+                    <li class="tp-log__row tp-log__row--proc"><span class="tp-log__who">İzleme</span><div><p>Kural her yeni veride yeniden değerlendiriliyor.</p><i class="tp-log__bar" aria-hidden="true"></i></div></li>
+                    <li class="tp-log__row tp-log__row--out"><span class="tp-log__who">Sinyal</span><p>Eşik aşıldı; bildirim gönderildi.</p></li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. WHY -->
+    <section class="tp-section" id="neden" data-field-mode="calm" aria-labelledby="why-title">
+        <div class="container tp-split tp-split--tight">
+            <div>
+                <p class="t-label tp-kicker" data-reveal>Neden kural tabanlı?</p>
+                <h2 class="tp-h2" id="why-title" data-reveal>Duygu değil, tanımlı kural.</h2>
+                <p class="tp-lead" data-reveal data-reveal-delay="1">Kural bir kez yazılır; sonra her seferinde aynı disiplinle uygulanır.</p>
+                <p class="tp-note" data-reveal data-reveal-delay="2">Teknoify yatırım tavsiyesi vermez. İndikatörler ve botlar yalnızca sizin tanımladığınız kurallara göre çalışır; sonuçlar piyasa koşullarına bağlıdır.</p>
+            </div>
+            <ol class="tp-list">
+                <li data-reveal><span class="tp-list__n">01</span><div><h3>Disiplin</h3><p>Kurallar duygudan bağımsız, her seferinde aynı şekilde uygulanır.</p></div></li>
+                <li data-reveal data-reveal-delay="1"><span class="tp-list__n">02</span><div><h3>Sürekli izleme</h3><p>Bot piyasayı sizin yerinize izler; kural sağlandığında haber verir.</p></div></li>
+                <li data-reveal data-reveal-delay="2"><span class="tp-list__n">03</span><div><h3>Size özel</h3><p>Göstergeler ve seviyeler sizin stratejinize göre yazılır.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- 5. SOLUTIONS -->
+    <section class="tp-section" id="cozumler" data-field-mode="lanes" aria-labelledby="sol-title">
         <div class="container">
-            
-            <div class="intro-text-center">
-                <h2>Veriye Dayalı Yatırım Stratejileri</h2>
-                <p>Karmaşık piyasa verilerini anlamlı sinyallere dönüştürüyoruz. TradingView, Binance veya özel borsa API'leri üzerinde çalışan, size özel teknik analiz indikatörleri ve otomatik işlem botları geliştiriyoruz. Şans faktörünü değil, matematiği kullanın.</p>
+            <p class="t-label tp-kicker" data-reveal>Geliştirdiğimiz çözümler</p>
+            <h2 class="tp-h2 tp-h2--wide" id="sol-title" data-reveal>İndikatörden portföy takibine.</h2>
+            <div class="tp-cells tp-cells--3">
+                <article class="tp-cells__item" data-reveal><h3><small>01</small>TradingView indikatörleri</h3><p>Kendi stratejinize göre çalışan özel göstergeler.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="1"><h3><small>02</small>Kripto para botları</h3><p>Borsa API'leri üzerinde, tanımladığınız kurallarla çalışan botlar.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="2"><h3><small>03</small>Forex &amp; borsa algoritmaları</h3><p>Belirlenen kurallara göre çalışan işlem mantığı.</p></article>
+                <article class="tp-cells__item" data-reveal><h3><small>04</small>Backtest yazılımları</h3><p>Stratejinizi geçmiş veri üzerinde sınayın.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="1"><h3><small>05</small>Telegram sinyal botları</h3><p>Kural sağlandığında bildirim ileten botlar.</p></article>
+                <article class="tp-cells__item" data-reveal data-reveal-delay="2"><h3><small>06</small>Portföy takip sistemleri</h3><p>Varlıklarınızı tek bir görünümde izleyin.</p></article>
             </div>
+        </div>
+    </section>
 
-            <h3 class="section-heading">Neden Algoritmik Ticaret?</h3>
-            <div class="benefit-cards-grid">
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-robot"></i></div>
-                    <h4>7/24 Otomatik İşlem</h4>
-                    <p>Siz uyurken bile piyasaları izleyen botlarınız, fırsatları kaçırmadan milisaniyeler içinde işlem yapar.</p>
-                </div>
-
-                <div class="benefit-card" id="card-profit">
-                    <div class="benefit-icon"><i class="fas fa-chart-pie"></i></div>
-                    <h4>%<span id="counter-win">0</span> Başarı Oranı</h4>
-                    <p>Backtest edilmiş ve optimize edilmiş stratejilerle, riskinizi minimize ederken kâr potansiyelinizi artırın.</p>
-                </div>
-
-                <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
-                    <h4>Disiplinli Risk Yönetimi</h4>
-                    <p>Stop-loss ve take-profit seviyelerine duygusuzca sadık kalarak sermayenizi koruma altına alır.</p>
-                </div>
-
-                 <div class="benefit-card">
-                    <div class="benefit-icon"><i class="fas fa-drafting-compass"></i></div>
-                    <h4>Kişiye Özel Strateji</h4>
-                    <p>Sizin belirlediğiniz kurallara ve indikatörlere (RSI, MACD vb.) göre çalışan tamamen size özel yazılımlar.</p>
-                </div>
+    <!-- 6. FINAL CTA -->
+    <section class="cta tp-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="cta-title">
+        <div class="cta__wrap">
+            <p class="t-label tp-kicker">Sıradaki adım</p>
+            <h2 class="cta__title" id="cta-title"><span class="cta__line"><span>Kendi kurallarınızla</span></span><span class="cta__line cta__line--accent"><span>çalışan bir sistem.</span></span></h2>
+            <p class="cta__lead">Stratejinizi anlatın; indikatörü, botu ya da izleme kuralını birlikte tanımlayalım.</p>
+            <div class="cta__actions">
+                <a class="btn btn-primary btn-lg" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=info%40teknoify.com" target="_blank" rel="noopener noreferrer">Bize yazın</a>
+                <a class="btn btn-secondary btn-lg" href="https://platform.teknoify.com/" rel="noopener">Platforma git</a>
             </div>
-
-            <div id="fi-cases" class="use-cases-wrapper">
-                <h3 class="section-heading">Geliştirdiğimiz Çözümler</h3>
-                <div class="use-cases-grid">
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fab fa-bitcoin"></i></div>
-                        <span>Kripto Para Botları</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-chart-bar"></i></div>
-                        <span>TradingView İndikatörleri</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-dollar-sign"></i></div>
-                        <span>Forex & Borsa Algoritmaları</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-history"></i></div>
-                        <span>Backtest Yazılımları</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fab fa-telegram-plane"></i></div>
-                        <span>Telegram Sinyal Botları</span>
-                    </div>
-                    <div class="use-case-item">
-                        <div class="uc-icon"><i class="fas fa-wallet"></i></div>
-                        <span>Portföy Takip Sistemleri</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bottom-cta">
-                <a href="../index.html#contact" class="btn btn-primary btn-block">
-                    Botunuzu Tasarlayın
-                </a>
-            </div>
-
         </div>
     </section>
 
 </main>
 
-<footer class="footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <div class="logo">
-                    <a aria-label="Teknoify ana sayfa" href="../index.html#home" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
-                        <img class="logo-lockup" src="../images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
-                    </a>
-                </div>
-                <p class="footer-desc">
-                    Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
-                </p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-col">
-                <h4>Yasal</h4>
-                <ul>
-                    <li><a href="kvkk.html">KVKK Aydınlatma Metni</a></li>
-                    <li><a href="gizlilik.html">Gizlilik Sözleşmesi</a></li>
-                    <li><a href="kullanim-sartlari.html">Kullanım Şartları</a></li>
-                    <li><a href="hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>Bize Ulaşın</h4>
-                <ul class="contact-list">
-                    <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
-                    <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
-                </ul>
-            </div>
+<!-- shell:footer -->
+<footer class="site-footer" id="footer">
+    <div class="site-footer__wrap">
+        <div class="site-footer__brand">
+            <a href="/" aria-label="Teknoify ana sayfa"><img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async"></a>
+            <p>Hazır yapay zekâ ajanları, araçlar ve otomasyonlar. İşletmeler ve bireyler için.</p>
         </div>
-
-        <div class="footer-bottom">
-            <span>&copy; 2025 Teknoify. Tüm hakları saklıdır.</span>
-        </div>
+        <nav class="site-footer__group" aria-labelledby="footer-araclar">
+            <h3 id="footer-araclar">Araçlar</h3>
+            <ul>
+                <li><a href="/pages/ai-agent.html">AI Agent</a></li>
+                <li><a href="/pages/api.html">API &amp; Entegrasyon</a></li>
+                <li><a href="/pages/rpa.html">Robotik Süreç Otomasyonu</a></li>
+                <li><a href="/pages/financial-indicators.html" aria-current="page">Finansal İndikatör &amp; Botlar</a></li>
+                <li><a href="/pages/webscraping.html">Web Scraping</a></li>
+                <li><a href="/pages/training-consulting.html">Eğitim &amp; Danışmanlık</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-platform">
+            <h3 id="footer-platform">Platform</h3>
+            <ul>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Platforma git</a></li>
+                <li><a href="https://platform.teknoify.com/" rel="noopener">Ajan Kütüphanesi</a></li>
+                <li><a href="https://demo.teknoify.com/">Demo Lab</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-sayfa">
+            <h3 id="footer-sayfa">Ana sayfa</h3>
+            <ul>
+                <li><a href="/#nasil-calisir">Nasıl çalışır</a></li>
+                <li><a href="/#kimin-icin">Kimin için</a></li>
+                <li><a href="/#katalog">Katalog</a></li>
+                <li><a href="/#guven">Güven ve kontrol</a></li>
+                <li><a href="/#contact">İletişim</a></li>
+            </ul>
+        </nav>
+        <nav class="site-footer__group" aria-labelledby="footer-yasal">
+            <h3 id="footer-yasal">Şirket ve yasal</h3>
+            <ul>
+                <li><a href="mailto:info@teknoify.com">info@teknoify.com</a></li>
+                <li>İstanbul, Türkiye</li>
+                <li><a href="/pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
+                <li><a href="/pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
+                <li><a href="/pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
+                <li><a href="/pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="site-footer__bottom">
+        <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
     </div>
 </footer>
+<!-- /shell:footer -->
 
-
-
-<script src="../js/script.js?v=financial-quantum-grid-1" defer></script>
-<script type="module" src="../js/experience/shell.js?v=shell1"></script>
-
-<script>
-   
-    let counterStarted = false;
-
-    // Sayaç Fonksiyonu
-    function animateCounter(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        if(!obj) return;
-        let startTime = null;
-        
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            const currentVal = Math.floor(progress * (end - start) + start);
-            obj.textContent = currentVal;
-            if (progress < 1) window.requestAnimationFrame(step);
-        }
-        window.requestAnimationFrame(step);
-    }
-   
-    // Scroll Observer
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.5 
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-
-                // Başarı Oranı Sayacı (Sembolik %85)
-                if (id === 'card-profit' && !counterStarted) {
-                    animateCounter('counter-win', 0, 85, 2000);
-                    counterStarted = true;
-                }
-            }
-        });
-    }, observerOptions);
-
-    const cardProfit = document.getElementById('card-profit');
-    if (cardProfit) observer.observe(cardProfit);
-
-</script>
+<script src="../js/script.js?v=tools1" defer></script>
+<script type="module" src="../js/experience/tools/fi.js?v=tools1"></script>
 </body>
 </html>
-
-

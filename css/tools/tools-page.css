@@ -1,0 +1,291 @@
+/* ================================================================
+   TOOLS PAGE SYSTEM — shared grammar of the canonical Araçlar pages
+   (AI Agent, Web Scraping, API & Entegrasyon, RPA, Finansal İndikatör
+   & Botlar, Eğitim & Danışmanlık).
+   Extracted from the AI Agent page, which remains the design source:
+   every value here is the AI Agent value. Pages add one small
+   stylesheet for their own signature visualisation only.
+   Unlayered on purpose (like every page stylesheet) and loaded after
+   css/style.css. Root: <main class="tools-page">.
+   Purple on these pages: #5945D2 for structure (nodes, rails, rules),
+   lavender for labels; the luminous primary CTA stays canonical.
+   ================================================================ */
+.tools-page {
+  --tp-purple: #5945d2;
+  --tp-lavender: #b2a4f2;
+  --tp-lilac: #ddd5fb;
+  --tp-purple-soft: rgba(89, 69, 210, 0.18);
+  --tp-purple-line: rgba(143, 125, 232, 0.55);
+  --tp-surface: rgba(14, 18, 26, 0.72);
+  --tp-section-y: clamp(4rem, 9vh, 7rem);
+}
+
+/* ---- type ---- */
+.tp-kicker { color: var(--tp-lavender); }
+.tp-h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.85rem, 1.1rem + 2.6vw, 3.1rem); line-height: 1.06; letter-spacing: -0.03em; margin: var(--space-4) 0 0; max-width: 18ch; }
+.tp-h2--wide { max-width: 24ch; }
+.tp-h2 em { font-style: normal; color: var(--tp-lavender); }
+.tp-lead { margin: var(--space-5) 0 0; color: var(--color-fg-secondary); font-size: var(--text-body-lg); line-height: var(--leading-relaxed); max-width: 46ch; }
+.tp-note { margin: var(--space-6) 0 0; font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.04em; line-height: 1.6; color: var(--color-fg-tertiary); max-width: 60ch; }
+.tp-section { position: relative; padding: var(--tp-section-y) 0; border-top: 1px solid var(--color-border-subtle); }
+
+/* ---- split layouts: copy column + composition column ---- */
+.tp-split { display: grid; gap: clamp(2.5rem, 6vw, 5rem); }
+.tp-split--tight { gap: clamp(2rem, 5vw, 4rem); }
+@media (min-width: 64rem) {
+  .tp-split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
+  .tp-split--center { align-items: center; }
+  .tp-split--wide { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
+  .tp-split__sticky { position: sticky; top: calc(var(--header-height) + 2rem); }
+}
+
+/* ================================================================
+   HERO — copy left, signature visual right (one column on phones)
+   ================================================================ */
+.tp-hero { position: relative; padding: calc(var(--header-height) + clamp(2.5rem, 6vh, 4.5rem)) var(--gutter) clamp(3rem, 8vh, 5.5rem); }
+.tp-hero__grid { max-width: var(--container-xl); margin: 0 auto; display: grid; gap: clamp(2.25rem, 5vw, 4rem); align-items: center; }
+.tp-hero__title { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.35rem, 1.1rem + 5vw, 4.6rem); line-height: 1.02; letter-spacing: -0.035em; margin: var(--space-4) 0 0; }
+.tp-hero__line { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.tp-hero__line > span { display: block; transform: translateY(112%); transition: transform 1.1s var(--ease-out); }
+.tp-hero__line:nth-child(2) > span { transition-delay: 0.09s; }
+.tp-hero__line:nth-child(3) > span { transition-delay: 0.18s; }
+.tp-hero__title em { font-style: normal; color: #9c8cee; background-image: linear-gradient(92deg, #f4f2ff 0%, #ddd5fb 28%, #b2a4f2 56%, #8371e2 82%, #5945d2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) { .tp-hero__title em { background-image: none; -webkit-text-fill-color: currentColor; } }
+.tp-hero__sub { margin: var(--space-6) 0 0; max-width: 50ch; font-size: var(--text-body-lg); line-height: var(--leading-relaxed); color: var(--color-fg-secondary); opacity: 0; transform: translateY(14px); transition: opacity 0.9s 0.5s, transform 0.9s 0.5s var(--ease-out); }
+.tp-hero__actions { margin-top: var(--space-8); display: flex; flex-wrap: wrap; gap: var(--space-3); opacity: 0; transform: translateY(14px); transition: opacity 0.9s 0.65s, transform 0.9s 0.65s var(--ease-out); }
+.tp-hero__visual { opacity: 0; scale: 0.97; transition: opacity 1s 0.35s, scale 1.2s 0.35s var(--ease-out); }
+.is-ready .tp-hero__line > span { transform: none; }
+.is-ready .tp-hero__sub, .is-ready .tp-hero__actions { opacity: 1; transform: none; }
+.is-ready .tp-hero__visual { opacity: 1; scale: 1; }
+@media (min-width: 64rem) {
+  .tp-hero { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; }
+  .tp-hero__grid { width: 100%; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); }
+}
+@media (max-width: 40rem) {
+  .tp-hero__actions { flex-direction: column; align-items: stretch; }
+  .tp-hero__actions .btn { width: 100%; }
+}
+
+/* ================================================================
+   PROCESS RAIL — numbered stages on one line (vertical on phones)
+   ================================================================ */
+.tp-rail { list-style: none; margin: 0; padding: 0; display: grid; }
+.tp-rail__step { position: relative; display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); column-gap: var(--space-4); padding: var(--space-5) 0; }
+.tp-rail__step::before { content: ""; position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 1px; background: var(--color-border-strong); }
+.tp-rail__step:first-child::before { top: calc(var(--space-5) + 0.6rem); }
+.tp-rail__step:last-child::before { bottom: auto; height: calc(var(--space-5) + 0.6rem); }
+.tp-rail__step::after { content: ""; position: absolute; left: calc(0.5rem - 4.5px); top: calc(var(--space-5) + 0.6rem - 4.5px); width: 9px; height: 9px; border-radius: 50%; background: var(--tp-purple); box-shadow: 0 0 0 4px var(--tp-purple-soft); }
+.tp-rail__body { grid-column: 2; }
+.tp-rail__n { display: block; font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.1em; color: var(--tp-lavender); }
+.tp-rail__step h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.3rem, 1rem + 0.9vw, 1.65rem); letter-spacing: -0.02em; margin: var(--space-2) 0 0; }
+.tp-rail__m { display: block; margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.04em; color: var(--color-fg-tertiary); }
+.tp-rail__step p { margin: var(--space-2) 0 0; color: var(--color-fg-secondary); font-size: var(--text-small); line-height: var(--leading-relaxed); max-width: 30ch; }
+@media (min-width: 64rem) {
+  .tp-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: var(--space-6); }
+  .tp-rail__step { grid-template-columns: minmax(0, 1fr); padding: var(--space-8) var(--space-4) 0 0; }
+  .tp-rail__step::before { left: 0; right: 0; top: 0; bottom: auto; height: 1px; width: auto; }
+  .tp-rail__step:first-child::before { left: 0; top: 0; }
+  .tp-rail__step:last-child::before { display: none; }
+  .tp-rail__step::after { left: -4.5px; top: -4.5px; }
+  .tp-rail__body { grid-column: 1; }
+}
+
+/* ================================================================
+   LINKED CELLS — a chain of capabilities (1 → 2 → 4 columns)
+   ================================================================ */
+.tp-cells { margin: clamp(2.5rem, 5vh, 4rem) 0 0; display: grid; gap: 1px; background: var(--color-border-subtle); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); overflow: hidden; }
+.tp-cells__item { position: relative; margin: 0; padding: var(--space-6) var(--space-6) var(--space-8); background: var(--tp-surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.tp-cells__item::before { content: ""; position: absolute; left: var(--space-6); top: 0; width: 2.5rem; height: 2px; background: var(--tp-purple); }
+.tp-cells__item dt, .tp-cells__item h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem); letter-spacing: -0.015em; margin: var(--space-3) 0 0; }
+.tp-cells__item dt small, .tp-cells__item h3 small { display: block; font-family: var(--font-mono); font-size: var(--text-caption); font-weight: 400; letter-spacing: 0.1em; color: var(--tp-lavender); margin-bottom: var(--space-3); }
+.tp-cells__item dd, .tp-cells__item p { margin: var(--space-3) 0 0; color: var(--color-fg-secondary); line-height: var(--leading-relaxed); max-width: 30ch; }
+@media (min-width: 48rem) { .tp-cells { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 64rem) {
+  .tp-cells { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tp-cells--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tp-cells:not(.tp-cells--3) .tp-cells__item + .tp-cells__item::after { content: ""; position: absolute; z-index: 1; left: -5px; top: calc(var(--space-6) + 1.15rem); width: 8px; height: 8px; border-top: 1px solid var(--tp-lavender); border-right: 1px solid var(--tp-lavender); transform: rotate(45deg); }
+}
+
+/* ================================================================
+   DEFINITION ROWS — term + description, hairline separated
+   ================================================================ */
+.tp-def { margin: var(--space-8) 0 0; border-top: 1px solid var(--color-border-strong); }
+.tp-def > div { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: var(--space-4); padding: var(--space-5) 0; border-bottom: 1px solid var(--color-border-subtle); }
+.tp-def dt { font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; letter-spacing: -0.01em; }
+.tp-def dd { margin: 0; color: var(--color-fg-secondary); line-height: var(--leading-relaxed); }
+.tp-def__close { margin: var(--space-6) 0 0; font-size: var(--text-body-lg); line-height: var(--leading-relaxed); color: var(--color-fg-primary); max-width: 40ch; }
+@media (max-width: 30rem) { .tp-def > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); } }
+
+/* ================================================================
+   NUMBERED LIST — principles, outcomes
+   ================================================================ */
+.tp-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--color-border-strong); }
+.tp-list li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: var(--space-4); padding: var(--space-6) 0; border-bottom: 1px solid var(--color-border-subtle); }
+.tp-list__n { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.1em; color: var(--tp-lavender); padding-top: 0.4rem; }
+.tp-list h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.25rem, 1rem + 0.8vw, 1.6rem); letter-spacing: -0.02em; margin: 0; }
+.tp-list p { margin: var(--space-2) 0 0; color: var(--color-fg-secondary); line-height: var(--leading-relaxed); max-width: 48ch; }
+
+/* ================================================================
+   PANELS — two (or three) framed surfaces with tags
+   ================================================================ */
+.tp-panels { margin: clamp(2.5rem, 5vh, 4rem) 0 0; display: grid; gap: var(--space-4); }
+.tp-panel { position: relative; padding: var(--space-8); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--tp-surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.tp-panel::before { content: ""; position: absolute; left: var(--space-8); top: 0; width: 2.5rem; height: 2px; background: var(--tp-purple); }
+.tp-panel h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.35rem, 1rem + 1vw, 1.75rem); letter-spacing: -0.02em; margin: var(--space-2) 0 0; }
+.tp-panel p { margin: var(--space-3) 0 0; color: var(--color-fg-secondary); line-height: var(--leading-relaxed); max-width: 44ch; }
+.tp-panel .tp-kicker { display: block; }
+.tp-tags { list-style: none; margin: var(--space-6) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.tp-tags li { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.02em; padding: 6px 10px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); color: var(--color-fg-secondary); background: rgba(255, 255, 255, 0.02); }
+@media (min-width: 48rem) { .tp-panels { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); } .tp-panels--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 30rem) { .tp-panel { padding: var(--space-6); } .tp-panel::before { left: var(--space-6); } }
+
+/* ================================================================
+   CHIPS — mono tokens (tools, fields, rules)
+   ================================================================ */
+.tp-chips { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tp-chips li, .tp-chip { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.02em; padding: 5px 9px; border: 1px solid var(--tp-purple-line); border-radius: var(--radius-sm); color: var(--color-fg-primary); background: var(--tp-purple-soft); transition: opacity 0.4s, color 0.4s, border-color 0.4s, background 0.4s; }
+.tp-chips--pending li { opacity: 0.45; color: var(--color-fg-tertiary); border-color: var(--color-border-subtle); background: rgba(255, 255, 255, 0.02); }
+.tp-chips--pending li.is-on { opacity: 1; color: var(--color-fg-primary); border-color: var(--tp-purple-line); background: var(--tp-purple-soft); }
+
+/* ================================================================
+   RUN — a stepped vignette inside the window surface: nodes on one
+   rail, a typed line, a checklist, chips, a result. Steps take
+   .is-active / .is-done; the root carries data-stage (0…4).
+   ================================================================ */
+.tp-run { --rail: 1.1rem; }
+.tp-run__steps { list-style: none; margin: 0; padding: 14px 20px 18px; display: grid; }
+.tp-run__step { position: relative; display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); column-gap: 14px; padding: 10px 0 16px; opacity: 0.42; transition: opacity 0.5s var(--ease-out); }
+.tp-run__step.is-active, .tp-run__step.is-done { opacity: 1; }
+.tp-run__step::before { content: ""; position: absolute; left: calc(var(--rail) / 2 - 0.5px); top: calc(var(--rail) + 14px); bottom: -2px; width: 1px; background: var(--color-border-subtle); transition: background 0.5s; }
+.tp-run__step:last-child::before { display: none; }
+.tp-run__step.is-done::before { background: var(--tp-purple-line); }
+.tp-run__node { position: relative; width: var(--rail); height: var(--rail); margin-top: 3px; border-radius: 50%; border: 1.5px solid var(--color-border-strong); background: rgba(7, 10, 16, 0.6); transition: border-color 0.4s, background 0.4s, box-shadow 0.4s; }
+.tp-run__step.is-active .tp-run__node { border-color: var(--tp-lavender); box-shadow: 0 0 0 4px var(--tp-purple-soft); }
+.tp-run__step.is-done .tp-run__node { border-color: var(--tp-purple); background: var(--tp-purple); }
+.tp-run__step.is-done .tp-run__node::after { content: ""; position: absolute; left: 4.5px; top: 2.5px; width: 4.5px; height: 8px; border-right: 1.5px solid #fff; border-bottom: 1.5px solid #fff; transform: rotate(45deg); }
+.tp-run__k { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-fg-tertiary); transition: color 0.4s; }
+.tp-run__step.is-active .tp-run__k, .tp-run__step.is-done .tp-run__k { color: var(--tp-lavender); }
+.tp-run__q { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--color-fg-primary); min-height: 1.5em; max-width: none; }
+.tp-run__caret { display: none; width: 7px; height: 1em; margin-left: 2px; background: var(--tp-lavender); vertical-align: text-bottom; animation: tp-run-blink 1s steps(2) infinite; }
+.tp-run[data-stage="0"] .tp-run__caret { display: inline-block; }
+@keyframes tp-run-blink { 50% { opacity: 0; } }
+.tp-run__plan { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.tp-run__plan li { position: relative; padding-left: 24px; font-size: 14px; line-height: 1.4; color: var(--color-fg-secondary); opacity: 0; transform: translateX(-4px); transition: opacity 0.4s, transform 0.4s var(--ease-out), color 0.4s; }
+.tp-run__plan li::before { content: ""; position: absolute; left: 0; top: 2px; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--tp-purple-line); background: var(--tp-purple-soft); }
+.tp-run__plan li::after { content: ""; position: absolute; left: 5px; top: 5px; width: 4px; height: 7px; border-right: 1.5px solid var(--tp-lilac); border-bottom: 1.5px solid var(--tp-lilac); transform: rotate(45deg); }
+.tp-run__plan li.is-on { opacity: 1; transform: none; color: var(--color-fg-primary); }
+.tp-run__out { display: flex; align-items: center; gap: 10px; margin: 8px 0 0; font-size: 15px; opacity: 0; transform: translateY(4px); transition: opacity 0.5s, transform 0.5s var(--ease-out); }
+.tp-run__out::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--color-positive); box-shadow: 0 0 0 3px rgba(94, 224, 160, 0.18); }
+.tp-run__out.is-on { opacity: 1; transform: none; }
+.tp-run__out b { font-weight: 600; }
+.tp-run__meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--color-fg-tertiary); }
+
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) .tp-run__caret { animation: none; }
+  html:not(.force-motion) .tp-run__step, html:not(.force-motion) .tp-run__plan li, html:not(.force-motion) .tp-run__out { transition: none; }
+}
+
+/* ================================================================
+   LOG — a transcript / run record inside the window surface
+   ================================================================ */
+.tp-log { font-size: 14px; }   /* row strut: the value the AI Agent page rendered with (inherited from the journey .log rule under its old name) */
+.tp-log__rows { list-style: none; margin: 0; padding: 4px 0 6px; }
+.tp-log__row { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--space-4); padding: 16px 20px; border-top: 1px solid var(--color-border-subtle); opacity: 0; transform: translateY(8px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+.tp-log__row:first-child { border-top: 0; }
+.tp-log.is-in .tp-log__row { opacity: 1; transform: none; }
+.tp-log.is-in .tp-log__row:nth-child(2) { transition-delay: 0.18s; }
+.tp-log.is-in .tp-log__row:nth-child(3) { transition-delay: 0.36s; }
+.tp-log.is-in .tp-log__row:nth-child(4) { transition-delay: 0.54s; }
+.tp-log.is-in .tp-log__row:nth-child(5) { transition-delay: 0.72s; }
+.tp-log.is-in .tp-log__row:nth-child(6) { transition-delay: 0.9s; }
+.tp-log__who { display: flex; align-items: flex-start; gap: 8px; padding-top: 4px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-fg-tertiary); }
+.tp-log__who::before { content: ""; flex: none; width: 8px; height: 8px; margin-top: 3px; border-radius: 50%; background: var(--color-border-strong); }
+.tp-log__row--user .tp-log__who::before { background: var(--color-fg-secondary); }
+.tp-log__row--agent .tp-log__who::before, .tp-log__row--proc .tp-log__who::before { background: var(--tp-purple); }
+.tp-log__row--tools .tp-log__who::before { background: var(--tp-lavender); }
+.tp-log__row--out .tp-log__who::before { background: var(--color-positive); }
+.tp-log__row p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--color-fg-primary); max-width: none; }
+.tp-log__row--user p { font-size: 16px; }
+.tp-log__row--proc p { color: var(--color-fg-secondary); }
+.tp-log__bar { display: block; position: relative; height: 2px; margin-top: 10px; max-width: 14rem; border-radius: 1px; background: var(--color-border-subtle); overflow: hidden; }
+.tp-log__bar::after { content: ""; position: absolute; left: 0; top: 0; width: 38%; height: 100%; background: var(--tp-lavender); animation: tp-bar 2.4s var(--ease-in-out) infinite; }
+@keyframes tp-bar { 0% { transform: translateX(-100%); } 100% { transform: translateX(280%); } }
+.tp-log__row .tp-chips { margin: 4px 0 0; }
+@media (max-width: 30rem) { .tp-log__row { grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 14px 16px; } }
+
+/* ================================================================
+   DATA SURFACE — a compact structured table inside the window;
+   scrolls internally on narrow screens, never widens the document
+   ================================================================ */
+.tp-data { padding: 4px 0 8px; }
+.tp-data__scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* the shared responsive layer turns every main table into a block scroller; Tools tables live inside their own scroll container */
+html.shell-v2 .tools-page .tp-data table, html.shell-v2 .tools-page .win table { display: table; max-width: none; overflow: visible; }
+.tp-data__hint { display: none; }
+@media (max-width: 47.99rem) { .tp-data__hint { display: inline; } }
+.tp-data table { width: 100%; min-width: 24rem; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; }
+.tp-data th { padding: 10px 14px; text-align: left; font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tp-lavender); border-bottom: 1px solid var(--color-border-strong); white-space: nowrap; }
+.tp-data td { padding: 9px 14px; color: var(--color-fg-secondary); border-bottom: 1px solid var(--color-border-subtle); white-space: nowrap; }
+.tp-data tr:last-child td { border-bottom: 0; }
+.tp-data .sk { display: inline-block; height: 9px; border-radius: 3px; background: rgba(255, 255, 255, 0.1); vertical-align: middle; }
+.tp-data .sk--ac { background: var(--tp-purple-line); }
+.tp-data__meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; padding: 10px 14px 6px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--color-fg-tertiary); }
+
+/* ================================================================
+   FINAL CTA — the homepage's closing composition, purple-toned
+   ================================================================ */
+.tools-page .cta { min-height: 0; padding: clamp(5rem, 12vh, 9rem) var(--gutter) clamp(5rem, 12vh, 8rem); border-top: 1px solid var(--color-border-subtle); }
+.tools-page .cta::before { background: radial-gradient(50% 45% at 30% 55%, rgba(89, 69, 210, 0.16), transparent 100%); }
+.tools-page .cta__title { font-size: clamp(2.6rem, 1.2rem + 6vw, 6rem); }
+.tools-page .cta__line--accent > span { color: var(--tp-lavender); }
+.tools-page .cta__actions .btn-primary { box-shadow: 0 0 0 0 rgba(89, 69, 210, 0.35); }
+.tools-page .cta.is-in .cta__actions .btn-primary { box-shadow: 0 0 0 6px rgba(89, 69, 210, 0), 0 18px 50px -20px rgba(89, 69, 210, 0.6); }
+
+/* ================================================================
+   Phone rhythm (≤ 47.99rem): the same chapters, less air between
+   related content. Type sizes are unchanged.
+   ================================================================ */
+@media (max-width: 47.99rem) {
+  .tools-page { --tp-section-y: clamp(3rem, 6.5vh, 4rem); }
+  .tp-hero { padding: calc(var(--header-height) + 2rem) var(--gutter) 3rem; }
+  .tp-hero__grid { gap: 1.75rem; }
+  .tp-hero__sub { margin-top: var(--space-5); }
+  .tp-hero__actions { margin-top: var(--space-6); }
+  .tp-run__step { padding: 8px 0 12px; }
+  .tp-split { gap: 2rem; }
+  .tp-split--tight { gap: 1.5rem; }
+  .tp-lead { margin-top: var(--space-4); }
+  .tp-rail__step { padding: 0.9rem 0; }
+  .tp-rail__step:first-child::before { top: calc(0.9rem + 0.6rem); }
+  .tp-rail__step:last-child::before { height: calc(0.9rem + 0.6rem); }
+  .tp-rail__step::after { top: calc(0.9rem + 0.6rem - 4.5px); }
+  .tp-rail__step h3 { margin-top: var(--space-1); }
+  .tp-rail__m { margin-top: var(--space-1); }
+  .tp-cells { margin-top: 2rem; }
+  .tp-cells__item { padding: 1.25rem 1.25rem 1.5rem; }
+  .tp-cells__item::before { left: 1.25rem; }
+  .tp-cells__item dt, .tp-cells__item h3 { margin-top: var(--space-2); }
+  .tp-cells__item dt small, .tp-cells__item h3 small { margin-bottom: var(--space-2); }
+  .tp-cells__item dd, .tp-cells__item p { margin-top: var(--space-2); }
+  .tp-def { margin-top: var(--space-6); }
+  .tp-def > div { padding: 0.9rem 0; }
+  .tp-def__close { margin-top: var(--space-5); }
+  .tp-list li { padding: 1.125rem 0; }
+  .tp-panels { margin-top: 2rem; gap: var(--space-3); }
+  .tp-panel { padding: var(--space-6); }
+  .tp-panel::before { left: var(--space-6); }
+  .tp-tags { margin-top: var(--space-5); }
+  .tools-page .cta { padding: 4rem var(--gutter) 4rem; }
+  .tools-page .cta__lead { margin-top: var(--space-6); }
+  .tools-page .cta__actions { margin-top: var(--space-8); }
+}
+
+/* ================================================================
+   Reduced motion: end states, no transitions, no loops (review override: html.force-motion)
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) .tp-hero__line > span, html:not(.force-motion) .tp-hero__sub, html:not(.force-motion) .tp-hero__actions, html:not(.force-motion) .tp-hero__visual { transition: none; transform: none; opacity: 1; scale: 1; }
+  html:not(.force-motion) .tp-log__bar::after { animation: none; transform: none; width: 100%; }
+  html:not(.force-motion) .tp-log__row, html:not(.force-motion) .tp-chips li { transition: none; }
+}
