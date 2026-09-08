@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Shell sync: stamps the canonical header into the homepage, every secondary marketing page and the
- * isolated Demo Lab, stamps the environmental-field layers into the secondary pages and the demo, and
+ * Shell sync: stamps the canonical header into the homepage and every secondary marketing page, stamps the
+ * environmental-field layers into the secondary pages and the retired demo page (field only, no header), and
  * generates the demo's copies of the shared stylesheet and field renderer. The header's design is the
  * homepage's; its markup lives once, in scripts/shell/header.template.html, so the public navigation
  * (Araçlar taxonomy, destinations, active states) cannot drift between pages.
@@ -58,7 +58,8 @@ const MARKETING_PAGES = [
     { file: 'pages/kullanim-sartlari.html', active: null },
     { file: 'pages/hizmet-sozlesmesi.html', active: null },
 ].map((p) => ({ ...p, origin: 'marketing', field: true }));
-const DEMO_PAGE = { file: 'demo/index.html', origin: 'demo', active: 'demo', field: true };
+// demo.teknoify.com is a retired destination: one branded "wrong place" page that keeps the field but carries no header
+const DEMO_PAGE = { file: 'demo/index.html', origin: 'demo', active: null, field: true, header: false };
 
 const FIELD_MARKUP = `<canvas class="field" data-field data-field-mode="hero" aria-hidden="true"></canvas>
 <div class="field-veil" aria-hidden="true"></div>`;
@@ -135,7 +136,7 @@ async function main() {
     for (const page of pages) {
         const current = await read(page.file);
         let next = normalize(current);
-        next = stamp(next, 'header', renderHeader(template, page));
+        if (page.header !== false) next = stamp(next, 'header', renderHeader(template, page));
         if (page.field) next = stamp(next, 'field', FIELD_MARKUP);
         next = stamp(next, 'footer', renderFooter(footer, page), true);   // opt-in: canonical Araçlar pages carry the markers
         if (next !== normalize(current)) { drift.push(page.file); writes.push([page.file, next]); }

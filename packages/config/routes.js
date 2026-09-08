@@ -12,7 +12,7 @@ export const PLATFORM_ROUTES = Object.freeze({
 export const PUBLIC_ROUTES = Object.freeze({
     home: '/',
     subscription: '/pages/subscription.html',
-    demo: '/demo/'
+    demo: '/demo/'   // retired: a branded dead-end page, no longer promoted anywhere (doc 19)
 });
 
 export const PRODUCT_ROUTES = Object.freeze({

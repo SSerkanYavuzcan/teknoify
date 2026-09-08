@@ -54,7 +54,6 @@
                         <li><a href="/pages/training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim &amp; Danışmanlık</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a href="https://demo.teknoify.com/" class="nav-link">Demo</a></li>
                 <li class="nav-item"><a href="/#contact" class="nav-link">İletişim</a></li>
                 <li class="nav-item nav-actions">
                     <a href="https://platform.teknoify.com/" class="btn btn-sm btn-ghost" rel="noopener">Giriş yap</a>
@@ -209,7 +208,56 @@
         </div>
     </section>
 
-    <!-- 5. CONTROL AND OUTCOMES -->
+    <!-- 5. COMPARISON: one product, two sources -->
+    <section class="tp-section ws-compare" id="karsilastirma" data-field-mode="lanes" aria-labelledby="cmp-title">
+        <div class="container">
+            <p class="t-label tp-kicker" data-reveal>Karşılaştırma</p>
+            <h2 class="tp-h2 tp-h2--wide" id="cmp-title" data-reveal>Aynı ürün, iki kaynak, tek ekran.</h2>
+            <p class="tp-lead" data-reveal data-reveal-delay="1">Takip ettiğiniz ürün her kaynakta ayrı ayrı izlenir; fiyat, stok ve kampanya farkları yan yana görünür.</p>
+            <div class="win cmp" data-compare data-reveal data-reveal-delay="2" style="margin-top: clamp(2rem, 5vh, 3rem)">
+                <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">fiyat izleme · iki kaynak</span></div>
+                <div class="cmp__top">
+                    <div class="cmp__tabs" role="tablist" aria-label="İzlenen ürün">
+                        <button type="button" role="tab" aria-selected="true" data-product="0">Kablosuz kulaklık</button>
+                        <button type="button" role="tab" aria-selected="false" data-product="1">Robot süpürge</button>
+                        <button type="button" role="tab" aria-selected="false" data-product="2">Akıllı saat</button>
+                    </div>
+                    <p class="cmp__status"><i class="cmp__pulse" aria-hidden="true"></i><span>izleme aktif · günlük tarama</span></p>
+                </div>
+                <div class="cmp__grid">
+                    <article class="cmp__src" data-src="0" aria-label="Birinci kaynak">
+                        <header class="cmp__src-head"><span class="cmp__src-k">Kaynak 1</span><b data-f="source">Pazaryeri</b><small data-f="domain">pazaryeri-a.com</small></header>
+                        <span class="cmp__best" data-f="best">en düşük fiyat</span>
+                        <div class="cmp__product"><i class="cmp__thumb" aria-hidden="true"></i><div><b data-f="name">Kablosuz kulaklık · ANC</b><small><span data-f="code">SKU 4471</span> · <span data-f="seller">Yetkili satıcı</span></small></div></div>
+                        <div class="cmp__price"><b data-f="price">2.499 ₺</b><s data-f="prev">2.699 ₺</s><span class="cmp__delta" data-f="delta" data-dir="down">−7%</span></div>
+                        <svg class="cmp__spark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"><path data-f="spark" d=""/></svg>
+                        <span class="cmp__spark-k">son 7 gün</span>
+                        <ul class="cmp__meta">
+                            <li data-row="stock"><span>Stok</span><b data-f="stock" data-state="ok">Stokta</b></li>
+                            <li data-row="promo"><span>Kampanya</span><b data-f="promo">Sepette %10</b></li>
+                            <li data-row="delivery"><span>Teslimat</span><b data-f="delivery">Yarın kargoda</b></li>
+                        </ul>
+                    </article>
+                    <article class="cmp__src" data-src="1" aria-label="İkinci kaynak">
+                        <header class="cmp__src-head"><span class="cmp__src-k">Kaynak 2</span><b data-f="source">Marka mağazası</b><small data-f="domain">marka-magazasi.com</small></header>
+                        <span class="cmp__best" data-f="best">en düşük fiyat</span>
+                        <div class="cmp__product"><i class="cmp__thumb" aria-hidden="true"></i><div><b data-f="name">Kablosuz kulaklık · ANC</b><small><span data-f="code">SKU 4471</span> · <span data-f="seller">Marka mağazası</span></small></div></div>
+                        <div class="cmp__price"><b data-f="price">2.349 ₺</b><s data-f="prev"></s><span class="cmp__delta" data-f="delta" data-dir="flat">—</span></div>
+                        <svg class="cmp__spark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"><path data-f="spark" d=""/></svg>
+                        <span class="cmp__spark-k">son 7 gün</span>
+                        <ul class="cmp__meta">
+                            <li data-row="stock"><span>Stok</span><b data-f="stock" data-state="low">Son 4 ürün</b></li>
+                            <li data-row="promo"><span>Kampanya</span><b data-f="promo">Ücretsiz kargo</b></li>
+                            <li data-row="delivery"><span>Teslimat</span><b data-f="delivery">2–3 iş günü</b></li>
+                        </ul>
+                    </article>
+                </div>
+                <div class="cmp__foot"><span>Fark</span><b data-cmp-diff aria-live="polite">Marka mağazası 150 ₺ daha uygun.</b><span>Excel · CSV · JSON · API</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. CONTROL AND OUTCOMES -->
     <section class="tp-section" id="kontrol" data-field-mode="calm" aria-labelledby="control-title">
         <div class="container tp-split tp-split--tight">
             <div>
@@ -225,7 +273,7 @@
         </div>
     </section>
 
-    <!-- 6. FINAL CTA -->
+    <!-- 7. FINAL CTA -->
     <section class="cta tp-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="cta-title">
         <div class="cta__wrap">
             <p class="t-label tp-kicker">Sıradaki adım</p>
@@ -263,7 +311,6 @@
             <ul>
                 <li><a href="https://platform.teknoify.com/" rel="noopener">Platforma git</a></li>
                 <li><a href="https://platform.teknoify.com/" rel="noopener">Ajan Kütüphanesi</a></li>
-                <li><a href="https://demo.teknoify.com/">Demo Lab</a></li>
             </ul>
         </nav>
         <nav class="site-footer__group" aria-labelledby="footer-sayfa">
