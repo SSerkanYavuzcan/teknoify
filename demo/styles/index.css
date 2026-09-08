@@ -1,5 +1,32 @@
-@import url('./base.css');
-@import url('./layout.css');
-@import url('./components.css');
-@import url('./demos.css');
-@import url('./responsive.css');
+/* demo.teknoify.com — the retired demo destination is now a single branded "wrong place" page.
+   Everything here sits on the GENERATED shell.css (tokens, base, foundation) so the page shares the
+   Teknoify type, colour and field system; this file only composes the one screen. */
+html.shell-v2.wrong-place, .wrong-place body { min-height: 100%; }
+.wp {
+  position: relative; z-index: 2;
+  min-height: 100vh; min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  max-width: var(--container-xl); margin: 0 auto;
+  padding: calc(var(--space-16) + env(safe-area-inset-top)) var(--gutter) calc(var(--space-12) + env(safe-area-inset-bottom));
+}
+.wp__brand { display: inline-flex; width: max-content; margin-bottom: clamp(3rem, 9vh, 6rem); border-radius: var(--radius-sm); }
+.wp__brand .logo-lockup { height: 1.875rem; width: auto; }
+.wp__kicker { color: #b2a4f2; }
+.wp__title { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.35rem, 1.1rem + 5vw, 4.6rem); line-height: 1.02; letter-spacing: -0.035em; margin: var(--space-4) 0 0; max-width: 16ch; }
+.wp__line { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.wp__line > span { display: block; transform: translateY(112%); transition: transform 1.1s var(--ease-out); }
+.wp__line:nth-child(2) > span { transition-delay: 0.09s; }
+.wp__title em { font-style: normal; color: #9c8cee; background-image: linear-gradient(92deg, #f4f2ff 0%, #ddd5fb 28%, #b2a4f2 56%, #8371e2 82%, #5945d2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) { .wp__title em { background-image: none; -webkit-text-fill-color: currentColor; } }
+.wp__sub { margin: var(--space-6) 0 0; max-width: 44ch; font-size: var(--text-body-lg); line-height: var(--leading-relaxed); color: var(--color-fg-secondary); opacity: 0; transform: translateY(14px); transition: opacity 0.9s 0.5s, transform 0.9s 0.5s var(--ease-out); }
+.wp__actions { margin: var(--space-8) 0 0; opacity: 0; transform: translateY(14px); transition: opacity 0.9s 0.65s, transform 0.9s 0.65s var(--ease-out); }
+.wp__meta { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); margin: clamp(3rem, 10vh, 6rem) 0 0; font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.06em; color: var(--color-fg-tertiary); opacity: 0; transition: opacity 1s 1s; }
+.is-ready .wp__line > span { transform: none; }
+.is-ready .wp__sub, .is-ready .wp__actions, .is-ready .wp__meta { opacity: 1; transform: none; }
+@media (max-width: 47.99rem) {
+  .wp { padding-top: calc(var(--space-12) + env(safe-area-inset-top)); }
+  .wp__brand { margin-bottom: clamp(2.5rem, 8vh, 4rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) .wp__line > span, html:not(.force-motion) .wp__sub, html:not(.force-motion) .wp__actions, html:not(.force-motion) .wp__meta { transition: none; transform: none; opacity: 1; }
+}

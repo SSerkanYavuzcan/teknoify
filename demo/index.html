@@ -1,157 +1,46 @@
 <!doctype html>
 <html lang="tr" class="shell-v2">
   <head>
-    <!-- Canonical production path: https://teknoify.com/demo/ -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Teknoify Demo Lab | Ücretsiz Demolar</title>
-    <meta
-      name="description"
-      content="Teknoify Demo Lab otomasyon, yapay zeka ve veri odaklı çözümler için ücretsiz demo akışları sunar."
-    />
-    <link rel="canonical" href="https://teknoify.com/demo/" />
+    <title>Teknoify</title>
+    <meta name="description" content="Bu adres artık bir Teknoify deneyim alanı değil. Ürün deneyimleri ilgili araç sayfalarının içinde yaşıyor." />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#070a10" />
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <!-- shared design system: GENERATED copy of css/style.css (scripts/shell/sync-shell.mjs) so the isolated demo deploy carries it -->
-    <link rel="stylesheet" href="./styles/shell.css?v=shell1" />
-    <link rel="stylesheet" href="./styles/index.css" />
-    <script src="./data/demos.js" defer></script>
-    <script src="./scripts/demo-catalog.js" defer></script>
-    <script src="./scripts/app.js" defer></script>
-    <script type="module" src="./scripts/shell/shell.js?v=shell1"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+    <!-- shared design system: GENERATED copy of css/style.css (scripts/shell/sync-shell.mjs) so the isolated deploy carries it -->
+    <link rel="stylesheet" href="./styles/shell.css?v=shell2" />
+    <link rel="stylesheet" href="./styles/index.css?v=shell2" />
+    <script>
+      // Review-only: ?motion=force previews the field motion under an OS reduced-motion setting (as on the marketing pages).
+      if (new URLSearchParams(window.location.search).get('motion') === 'force') document.documentElement.classList.add('force-motion');
+    </script>
+    <script type="module" src="./scripts/shell/shell.js?v=shell2"></script>
+    <script type="module">
+      requestAnimationFrame(() => requestAnimationFrame(() => document.querySelector('.wp').classList.add('is-ready')));
+    </script>
   </head>
-  <body class="demo-page">
+  <body class="wrong-place">
 <!-- shell:field -->
 <canvas class="field" data-field data-field-mode="hero" aria-hidden="true"></canvas>
 <div class="field-veil" aria-hidden="true"></div>
 <!-- /shell:field -->
-    <!-- shell:header -->
-<header id="header" class="header header--stage">
-    <nav class="navbar" aria-label="Ana navigasyon">
-        <div class="nav-container">
-            <div class="logo">
-                <a href="https://teknoify.com/" aria-label="Teknoify ana sayfa">
-                    <img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
-                </a>
-            </div>
 
-            <ul class="nav-menu" id="navMenu">
-                <li class="nav-item"><a href="https://teknoify.com/" class="nav-link">Ana Sayfa</a></li>
-                <li class="nav-item dropdown">
-                    <a href="https://teknoify.com/#katalog" class="nav-link">Araçlar <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="https://teknoify.com/pages/ai-agent.html"><i class="fas fa-diagram-project" aria-hidden="true"></i> AI Agent</a></li>
-                        <li><a href="https://teknoify.com/pages/api.html"><i class="fas fa-plug" aria-hidden="true"></i> API &amp; Entegrasyon</a></li>
-                        <li><a href="https://teknoify.com/pages/rpa.html"><i class="fas fa-robot" aria-hidden="true"></i> Robotik Süreç Otomasyonu</a></li>
-                        <li><a href="https://teknoify.com/pages/financial-indicators.html"><i class="fas fa-chart-line" aria-hidden="true"></i> Finansal İndikatör &amp; Botlar</a></li>
-                        <li><a href="https://teknoify.com/pages/webscraping.html"><i class="fas fa-spider" aria-hidden="true"></i> Web Scraping</a></li>
-                        <li><a href="https://teknoify.com/pages/training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim &amp; Danışmanlık</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item"><a href="https://demo.teknoify.com/" class="nav-link" aria-current="page">Demo</a></li>
-                <li class="nav-item"><a href="https://teknoify.com/#contact" class="nav-link">İletişim</a></li>
-                <li class="nav-item nav-actions">
-                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-ghost" rel="noopener">Giriş yap</a>
-                    <a href="https://platform.teknoify.com/" class="btn btn-sm btn-primary" rel="noopener">Başla</a>
-                </li>
-            </ul>
-
-            <button class="hamburger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="navMenu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
-        </div>
-    </nav>
-</header>
-<!-- /shell:header -->
-
-    <main class="page-frame home-page-shell demo-shell">
-      <div class="hero-surface home-background-surface" aria-hidden="true"></div>
-
-      <div class="home-background-stage">
-        <section class="demo-hero" aria-labelledby="demo-hero-title">
-          <div class="demo-hero-container">
-            <div class="demo-hero-copy">
-              <span class="demo-kicker">Demo Workspace</span>
-              <h1 class="hero-title gradient-text" id="demo-hero-title">Teknoify Demo</h1>
-              <p class="hero-subtitle">
-                Explore and test Teknoify demo projects from one place.
-              </p>
-              <div class="hero-ctas demo-hero-actions" aria-label="Demo sayfası aksiyonları">
-                <a class="btn btn-secondary" href="/">Ana Sayfaya Dön</a>
-                <a class="btn btn-primary" href="/pages/subscription.html">Abonelik Al</a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="demo-section demo-control-section" id="demos" aria-labelledby="demo-control-title">
-          <div class="container demo-workspace-container">
-            <h2 class="sr-only" id="demo-control-title">Teknoify Demo Workspace</h2>
-            <div data-demo-control-panel></div>
-          </div>
-        </section>
-      </div>
+    <main class="wp" id="main">
+      <a class="wp__brand" href="https://teknoify.com/" aria-label="Teknoify ana sayfa">
+        <img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async" />
+      </a>
+      <p class="t-label wp__kicker">Yanlış adres</p>
+      <h1 class="wp__title"><span class="wp__line"><span>Güzel deneme ama</span></span><span class="wp__line"><span>sanırım <em>yanlış geldin.</em></span></span></h1>
+      <p class="wp__sub">Burası artık bir Teknoify deneyim alanı değil. Ürün deneyimleri, ilgili araç sayfalarının içinde yaşıyor.</p>
+      <p class="wp__actions"><a class="link-action" href="https://teknoify.com/">teknoify.com'a dön</a></p>
+      <p class="wp__meta"><span>teknoify.com</span><span>info@teknoify.com</span></p>
     </main>
-
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-col">
-            <div class="logo">
-              <a href="/" aria-label="Teknoify Ana Sayfa">
-                <img class="logo-lockup" src="/images/brand/teknoify-logo.svg" alt="" width="996" height="216" decoding="async">
-              </a>
-            </div>
-            <p class="footer-desc">
-              Yapay zeka ve otomasyon çözümleriyle işletmenizi geleceğe taşıyoruz.
-            </p>
-            <div class="social-links" aria-label="Teknoify sosyal medya bağlantıları">
-              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-              <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            </div>
-          </div>
-
-          <div class="footer-col">
-            <h4>Yasal</h4>
-            <ul>
-              <li><a href="/pages/kvkk.html">KVKK Aydınlatma Metni</a></li>
-              <li><a href="/pages/gizlilik.html">Gizlilik Sözleşmesi</a></li>
-              <li><a href="/pages/kullanim-sartlari.html">Kullanım Şartları</a></li>
-              <li><a href="/pages/hizmet-sozlesmesi.html">Hizmet Sözleşmesi</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
-            <h4>Bize Ulaşın</h4>
-            <ul class="contact-list">
-              <li><i class="fas fa-envelope"></i> info@teknoify.com</li>
-              <li><i class="fas fa-map-marker-alt"></i> İstanbul, Türkiye</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <span>&copy; 2026 Teknoify. Tüm hakları saklıdır.</span>
-        </div>
-      </div>
-    </footer>
   </body>
 </html>

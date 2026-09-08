@@ -54,7 +54,6 @@
                         <li><a href="/pages/training-consulting.html"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Eğitim &amp; Danışmanlık</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a href="https://demo.teknoify.com/" class="nav-link">Demo</a></li>
                 <li class="nav-item"><a href="/#contact" class="nav-link">İletişim</a></li>
                 <li class="nav-item nav-actions">
                     <a href="https://platform.teknoify.com/" class="btn btn-sm btn-ghost" rel="noopener">Giriş yap</a>
@@ -131,7 +130,62 @@
         </div>
     </section>
 
-    <!-- 3. RULE-BASED -->
+    <!-- 3. MARKET SCREEN -->
+    <section class="tp-section fi-market" id="piyasa" data-field-mode="order" aria-labelledby="mkt-title">
+        <div class="container">
+            <p class="t-label tp-kicker" data-reveal>Piyasa ekranı</p>
+            <h2 class="tp-h2 tp-h2--wide" id="mkt-title" data-reveal>Seviye, sinyal ve yön: tek ekranda.</h2>
+            <p class="tp-lead" data-reveal data-reveal-delay="1">Gösterge, kural ve sinyal aynı ekranda birlikte okunur; bot kuralı izler, siz yönü görürsünüz.</p>
+            <div class="win mkt" data-market data-reveal data-reveal-delay="2" style="margin-top: clamp(2rem, 5vh, 3rem)">
+                <div class="win__bar"><span class="win__dot win__dot--a"></span><span class="win__dot"></span><span class="win__dot"></span><span class="win__title">izleme ekranı · kural motoru</span></div>
+                <div class="mkt__head">
+                    <div class="mkt__symbol"><b data-m="symbol">BTC/USDT</b><small data-m="venue">spot · temsilî seri</small></div>
+                    <div class="mkt__last"><b data-m="last">—</b><span class="mkt__chg" data-m="chg" data-dir="up">—</span></div>
+                    <div class="mkt__tf" role="group" aria-label="Zaman dilimi">
+                        <button type="button" data-tf="15m" aria-pressed="false">15m</button>
+                        <button type="button" data-tf="1h" aria-pressed="true">1h</button>
+                        <button type="button" data-tf="4h" aria-pressed="false">4h</button>
+                        <button type="button" data-tf="1D" aria-pressed="false">1D</button>
+                    </div>
+                </div>
+                <div class="mkt__body">
+                    <div class="mkt__chart">
+                        <svg viewBox="0 0 640 260" data-chart role="img" aria-label="Temsilî fiyat grafiği: mumlar, EMA 20 ve EMA 50, destek ve direnç seviyeleri"></svg>
+                        <div class="mkt__legend" aria-hidden="true"><span><i class="l-ema"></i>EMA 20</span><span><i class="l-ema2"></i>EMA 50</span><span><i class="l-lvl"></i>destek / direnç</span></div>
+                        <div class="mkt__cross" data-cross hidden aria-hidden="true"><span data-cross-price></span></div>
+                    </div>
+                    <aside class="mkt__rail" aria-label="Sinyal ve göstergeler">
+                        <div class="mkt__signal">
+                            <span class="mkt__k">Sinyal</span>
+                            <b class="mkt__side" data-m="side" data-side="long">LONG</b>
+                            <small data-m="rule">EMA 20, EMA 50 üzerinde · yukarı kesişim</small>
+                            <dl>
+                                <div><dt>Giriş</dt><dd data-m="entry">—</dd></div>
+                                <div><dt>Stop</dt><dd data-m="stop">—</dd></div>
+                                <div><dt>Hedef</dt><dd data-m="target">—</dd></div>
+                            </dl>
+                        </div>
+                        <ul class="mkt__ind">
+                            <li><span>RSI 14</span><b data-m="rsi" data-zone="mid">—</b></li>
+                            <li><span>MACD</span><b data-m="macd">—</b></li>
+                            <li><span>Trend</span><b data-m="trend">—</b></li>
+                            <li><span>Destek / direnç</span><b data-m="levels">—</b></li>
+                        </ul>
+                        <p class="mkt__bot"><i class="cmp__pulse" aria-hidden="true"></i><span>bot aktif · kural her mumda değerlendiriliyor</span></p>
+                    </aside>
+                </div>
+                <ul class="mkt__watch" data-watch aria-label="İzleme listesi">
+                    <li><button type="button" data-sym="BTC/USDT" aria-pressed="true"><b>BTC/USDT</b><span class="mkt__wchg" data-w="chg"></span><span class="mkt__wprice" data-w="price"></span><svg class="mkt__wspark" viewBox="0 0 80 24" aria-hidden="true"><path d=""/></svg></button></li>
+                    <li><button type="button" data-sym="ETH/USDT" aria-pressed="false"><b>ETH/USDT</b><span class="mkt__wchg" data-w="chg"></span><span class="mkt__wprice" data-w="price"></span><svg class="mkt__wspark" viewBox="0 0 80 24" aria-hidden="true"><path d=""/></svg></button></li>
+                    <li><button type="button" data-sym="USD/TRY" aria-pressed="false"><b>USD/TRY</b><span class="mkt__wchg" data-w="chg"></span><span class="mkt__wprice" data-w="price"></span><svg class="mkt__wspark" viewBox="0 0 80 24" aria-hidden="true"><path d=""/></svg></button></li>
+                    <li><button type="button" data-sym="XAU/USD" aria-pressed="false"><b>XAU/USD</b><span class="mkt__wchg" data-w="chg"></span><span class="mkt__wprice" data-w="price"></span><svg class="mkt__wspark" viewBox="0 0 80 24" aria-hidden="true"><path d=""/></svg></button></li>
+                    <li><button type="button" data-sym="EUR/USD" aria-pressed="false"><b>EUR/USD</b><span class="mkt__wchg" data-w="chg"></span><span class="mkt__wprice" data-w="price"></span><svg class="mkt__wspark" viewBox="0 0 80 24" aria-hidden="true"><path d=""/></svg></button></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. RULE-BASED -->
     <section class="tp-section" id="kural" data-field-mode="order" aria-labelledby="rule-title">
         <div class="container tp-split tp-split--tight tp-split--wide">
             <div class="tp-split__sticky">
@@ -157,7 +211,7 @@
         </div>
     </section>
 
-    <!-- 4. WHY -->
+    <!-- 5. WHY -->
     <section class="tp-section" id="neden" data-field-mode="calm" aria-labelledby="why-title">
         <div class="container tp-split tp-split--tight">
             <div>
@@ -174,7 +228,7 @@
         </div>
     </section>
 
-    <!-- 5. SOLUTIONS -->
+    <!-- 6. SOLUTIONS -->
     <section class="tp-section" id="cozumler" data-field-mode="lanes" aria-labelledby="sol-title">
         <div class="container">
             <p class="t-label tp-kicker" data-reveal>Geliştirdiğimiz çözümler</p>
@@ -190,7 +244,7 @@
         </div>
     </section>
 
-    <!-- 6. FINAL CTA -->
+    <!-- 7. FINAL CTA -->
     <section class="cta tp-cta" id="baslayin" data-field-mode="pulse" data-reveal aria-labelledby="cta-title">
         <div class="cta__wrap">
             <p class="t-label tp-kicker">Sıradaki adım</p>
@@ -228,7 +282,6 @@
             <ul>
                 <li><a href="https://platform.teknoify.com/" rel="noopener">Platforma git</a></li>
                 <li><a href="https://platform.teknoify.com/" rel="noopener">Ajan Kütüphanesi</a></li>
-                <li><a href="https://demo.teknoify.com/">Demo Lab</a></li>
             </ul>
         </nav>
         <nav class="site-footer__group" aria-labelledby="footer-sayfa">
