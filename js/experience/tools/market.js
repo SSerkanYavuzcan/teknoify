@@ -81,7 +81,7 @@ export function initMarket(root) {
         const target = long ? last + 2 * risk : last - 2 * risk;
         const rsiV = rsi(closes);
         const macdPos = e20[N - 1] - e50[N - 1] > e20[N - 2] - e50[N - 2];
-        q('symbol').textContent = cfg.sym; q('venue').textContent = cfg.venue + ' · temsilî seri';
+        q('symbol').textContent = cfg.sym; q('venue').textContent = cfg.venue;
         q('last').textContent = fmt(last, cfg.dp);
         const c = q('chg'); c.textContent = (chg >= 0 ? '+' : '−') + Math.abs(chg).toFixed(1).replace('.', ',') + '%'; c.dataset.dir = chg >= 0 ? 'up' : 'down';
         const side = q('side'); side.textContent = long ? 'LONG' : 'SHORT'; side.dataset.side = long ? 'long' : 'short';

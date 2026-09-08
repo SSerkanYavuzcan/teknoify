@@ -1,5 +1,5 @@
 /* Finansal İndikatör & Botlar page: shared Tools page behaviour plus the hero monitoring vignette
-   (veri → indikatör → kural → sinyal), played once per visit. */
+   (veri → indikatör → strateji → sinyal), played once per visit. */
 import { mountToolsPage, oncePlayer } from '../tools.js';
 import { initMarket } from './market.js';
 
