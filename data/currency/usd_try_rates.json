@@ -6,24 +6,24 @@
     "series": "TP.DK.USD.A.YTL",
     "frequency": "daily",
     "startDate": "2023-09-04",
-    "endDate": "2026-10-06",
-    "lastUpdatedAt": "2026-10-06T12:32:37.488376Z",
+    "endDate": "2026-10-07",
+    "lastUpdatedAt": "2026-10-07T12:25:38.846028Z",
     "rateField": "usdTry",
     "notes": [
       "Historical USD/TRY rates are fetched from TCMB EVDS using the Python evds package.",
       "Rates are stored as normalized daily values in YYYY-MM-DD format.",
       "Do not manually invent exchange rates. Use the update script or verified source data."
     ],
-    "lastFetchStartedAt": "2026-10-06T12:32:34.724381Z",
-    "lastFetchCompletedAt": "2026-10-06T12:32:37.488376Z",
+    "lastFetchStartedAt": "2026-10-07T12:25:36.208747Z",
+    "lastFetchCompletedAt": "2026-10-07T12:25:38.846028Z",
     "lastFetchStatus": "success",
     "lastFetchRange": {
-      "startDate": "2026-09-28",
-      "endDate": "2026-10-06",
+      "startDate": "2026-09-29",
+      "endDate": "2026-10-07",
       "mode": "incremental"
     },
-    "lastAvailableRateDate": "2026-10-06",
-    "lastAvailableRate": 49.0732
+    "lastAvailableRateDate": "2026-10-07",
+    "lastAvailableRate": 49.0918
   },
   "rates": [
     {
@@ -4679,6 +4679,12 @@
     {
       "date": "2026-10-06",
       "usdTry": 49.0732,
+      "source": "TCMB",
+      "series": "TP.DK.USD.A.YTL"
+    },
+    {
+      "date": "2026-10-07",
+      "usdTry": 49.0918,
       "source": "TCMB",
       "series": "TP.DK.USD.A.YTL"
     }
