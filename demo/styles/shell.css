@@ -1944,124 +1944,6 @@ select option {
 @layer legacy {
 /* ---- 06-pages/home.css ---- */
 /* =========================================
-   ÇEREZ UYARI BANDI (Cookie Banner)
-   ========================================= */
-
-.cookie-banner {
-    position: fixed;
-    bottom: -300px;
-    left: 20px;
-    right: 20px;
-    max-width: 450px;
-    background: rgba(21, 21, 25, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border-light);
-    border-left: 4px solid var(--primary);
-    border-radius: 12px;
-    padding: 20px;
-    z-index: 99999;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    transition: bottom 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-    font-family: 'Inter Tight', sans-serif;
-}
-
-.cookie-banner.show {
-    bottom: 20px;
-}
-
-.cookie-content {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-}
-
-.cookie-icon {
-    font-size: 1.5rem;
-    color: var(--primary);
-    margin-top: 3px;
-}
-
-.cookie-text h4 {
-    color: #fff;
-    font-size: 1rem;
-    margin: 0 0 5px 0;
-    font-weight: 600;
-}
-
-.cookie-text p {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    margin: 0;
-    line-height: 1.4;
-}
-
-.cookie-text a {
-    color: #fff;
-    text-decoration: underline;
-    transition: 0.3s;
-}
-
-.cookie-text a:hover {
-    color: var(--primary);
-}
-
-.cookie-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.btn-cookie-accept {
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    padding: 8px 24px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-cookie-accept:hover {
-    background: #5e50ee;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(115, 103, 240, 0.4);
-}
-
-.btn-cookie-close {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border-light);
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-cookie-close:hover {
-    color: #fff;
-    border-color: #fff;
-}
-
-@media (max-width: 576px) {
-    .cookie-banner {
-        left: 10px;
-        right: 10px;
-        bottom: -300px;
-    }
-
-    .cookie-banner.show {
-        bottom: 10px;
-    }
-}
-
-
-/* =========================================
    HİZMET KARTLARI - ANA ÇERÇEVE
    ========================================= */
 
@@ -2963,6 +2845,146 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-vis
 .btn:focus-visible, .link-action:focus-visible, .link-inline:focus-visible { outline: none; }
 }
 @layer foundation {
+/* ---- 05-components/cookie-consent.css ---- */
+/* ================================================================
+   COMPONENT — COOKIE CONSENT (js/cookies.js, homepage only)
+   Dark consent surface with the canonical Teknoify purple
+   (#5945D2) and its lavender as the only accents. Lives in the
+   foundation layer so its focus ring wins over the generic one
+   in actions.css. Copy and behaviour: js/cookies.js.
+   ================================================================ */
+
+.cookie-banner {
+    --cookie-purple: #5945d2;
+    --cookie-purple-hover: #6b58e6;
+    --cookie-purple-active: #4b3ac0;
+    --cookie-lavender: #b2a4f2;
+    position: fixed;
+    bottom: -300px;
+    left: 20px;
+    right: 20px;
+    max-width: 450px;
+    background: rgba(21, 21, 25, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--cookie-purple);
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 99999;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: bottom 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+    font-family: 'Inter Tight', sans-serif;
+}
+
+.cookie-banner.show {
+    bottom: 20px;
+}
+
+.cookie-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.cookie-icon {
+    font-size: 1.5rem;
+    color: var(--cookie-purple);
+    margin-top: 3px;
+}
+
+.cookie-text h4 {
+    /* size comes from the foundation heading scale (unchanged from production) */
+    color: #fff;
+    margin: 0 0 5px 0;
+    font-weight: 600;
+}
+
+.cookie-text p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.cookie-text a {
+    color: #fff;
+    text-decoration: underline;
+    transition: 0.3s;
+}
+
+.cookie-text a:hover {
+    color: var(--cookie-lavender);
+}
+
+.cookie-text a:focus-visible,
+.btn-cookie-accept:focus-visible,
+.btn-cookie-close:focus-visible {
+    outline: 2px solid var(--cookie-lavender);
+    outline-offset: 3px;
+}
+
+.cookie-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cookie-accept {
+    background: var(--cookie-purple);
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-cookie-accept:hover {
+    background: var(--cookie-purple-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(89, 69, 210, 0.4);
+}
+
+.btn-cookie-accept:active {
+    background: var(--cookie-purple-active);
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-cookie-close {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-light);
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-cookie-close:hover {
+    color: #fff;
+    border-color: #fff;
+}
+
+@media (max-width: 576px) {
+    .cookie-banner {
+        left: 10px;
+        right: 10px;
+        bottom: -300px;
+    }
+
+    .cookie-banner.show {
+        bottom: 10px;
+    }
+}
+}
+@layer foundation {
 /* ---- 01-foundation/header.css ---- */
 /* ================================================================
    FOUNDATION — HEADER / NAVIGATION SHELL
@@ -3134,7 +3156,7 @@ html.type-b { --font-display: 'Host Grotesk', 'Inter Tight', system-ui, sans-ser
 /* ================================================================
    FOUNDATION — EXPERIENCE CHROME (homepage v2)
    The fixed environmental field, its veil, the scroll progress bar,
-   the optional custom cursor and the shared "window" surface used by
+   and the shared "window" surface used by
    the hero and the product journey. Behaviour: js/experience/*.
    ================================================================ */
 .field { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -3145,16 +3167,6 @@ html.type-b { --font-display: 'Host Grotesk', 'Inter Tight', system-ui, sans-ser
 .home-v2 #stars-container, .home-v2 .home-background-surface, .home-v2 .hero-surface { display: none; }
 
 .scroll-progress { position: fixed; top: 0; left: 0; z-index: 60; width: 100%; height: 2px; background: var(--color-accent); transform-origin: left; transform: scaleX(0); pointer-events: none; }
-
-/* custom cursor: opt-in after the first pointer movement on fine pointers with motion */
-/* the custom cursor must sit above every fixed chrome layer (header 1000, mobile menu 2000) or it vanishes behind the scrolled header */
-.cursor, .cursor__ring { position: fixed; left: 0; top: 0; z-index: 3000; pointer-events: none; border-radius: 50%; display: none; }
-.cursor { width: 7px; height: 7px; background: var(--color-accent); }
-.cursor__ring { width: 34px; height: 34px; border: 1px solid rgba(143, 227, 255, 0.55); transition: width var(--duration-slow), height var(--duration-slow), border-color var(--duration-slow), background var(--duration-slow), opacity var(--duration-slow); }
-.cursor__ring.is-hover { width: 54px; height: 54px; background: rgba(143, 227, 255, 0.1); border-color: rgba(143, 227, 255, 0.9); }
-.cursor.is-out, .cursor__ring.is-out { opacity: 0; }
-html.has-cursor .cursor, html.has-cursor .cursor__ring { display: block; }
-html.has-cursor, html.has-cursor a, html.has-cursor button { cursor: none; }
 
 /* the window surface (hero library, journey device) */
 .win { display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: rgba(14, 18, 26, 0.74); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.85); }
