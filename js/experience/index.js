@@ -1,5 +1,5 @@
 /* Homepage experience v2: wires the environmental field, the hero, the manifesto, the pinned product
-   journey, the audience split, the capability catalog, the closing sections and the pointer layer to one scheduler. Sections declare the field state they own with
+   journey, the audience split, the capability catalog, the closing sections and the field pointer layer to one scheduler. Sections declare the field state they own with
    data-field; the manifesto blends chaos → order with its own progress. */
 import { viewport, scheduler, clamp } from './scroll.js';
 import { createField } from './field.js?v=polish8';

@@ -25,6 +25,7 @@
 @import url("./01-foundation/layout.css") layer(foundation);
 @import url("./01-foundation/surfaces.css") layer(foundation);
 @import url("./01-foundation/actions.css") layer(foundation);
+@import url("./05-components/cookie-consent.css") layer(foundation);
 @import url("./01-foundation/header.css") layer(foundation);
 @import url("./01-foundation/motion.css") layer(foundation);
 @import url("./01-foundation/experience.css?v=copyfix1") layer(foundation);
